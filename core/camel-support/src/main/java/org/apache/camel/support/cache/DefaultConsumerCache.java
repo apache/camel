@@ -52,7 +52,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.consumers = createServicePool(camelContext, maxCacheSize);
+        this.consumers = createServicePool(maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics
@@ -62,7 +62,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         }
     }
 
-    protected PollingConsumerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+    protected PollingConsumerServicePool createServicePool(int cacheSize) {
         return new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, cacheSize);
     }
 

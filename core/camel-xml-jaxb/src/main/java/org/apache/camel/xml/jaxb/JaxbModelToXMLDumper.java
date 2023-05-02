@@ -118,7 +118,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         StringWriter buffer = new StringWriter();
         marshaller.marshal(definition, buffer);
 
-        XmlConverter xmlConverter = newXmlConverter(context);
+        XmlConverter xmlConverter = newXmlConverter();
         String xml = buffer.toString();
         Document dom;
         try {

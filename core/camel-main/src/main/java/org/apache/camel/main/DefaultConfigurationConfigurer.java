@@ -595,7 +595,7 @@ public final class DefaultConfigurationConfigurer {
         initThreadPoolProfiles(registry, camelContext);
     }
 
-    public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
+    public static void afterPropertiesSet() throws Exception {
         // additional configuration
     }
 

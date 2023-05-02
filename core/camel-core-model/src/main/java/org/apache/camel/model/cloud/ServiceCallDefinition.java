@@ -412,7 +412,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     /**
      * Sets a reference to a custom {@link ServiceFilter} to use.
      */
-    public ServiceCallDefinition serviceFilter(String serviceFilterRef) {
+    public ServiceCallDefinition serviceFilter() {
         setServiceDiscoveryRef(serviceDiscoveryRef);
         return this;
     }

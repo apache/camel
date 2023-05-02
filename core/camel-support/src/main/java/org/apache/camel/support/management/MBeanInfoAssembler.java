@@ -123,22 +123,22 @@ public class MBeanInfoAssembler implements Service {
         // extract details from default managed bean
         if (defaultManagedBean != null) {
             extractAttributesAndOperations(camelContext, defaultManagedBean.getClass(), attributes, operations);
-            extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
-            extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
+            extractMbeanAttributes(attributes, mBeanAttributes, mBeanOperations);
+            extractMbeanOperations(operations, mBeanOperations);
             extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
         }
 
         // extract details from custom managed bean
         if (customManagedBean != null) {
             extractAttributesAndOperations(camelContext, customManagedBean.getClass(), attributes, operations);
-            extractMbeanAttributes(customManagedBean, attributes, mBeanAttributes, mBeanOperations);
-            extractMbeanOperations(customManagedBean, operations, mBeanOperations);
+            extractMbeanAttributes(attributes, mBeanAttributes, mBeanOperations);
+            extractMbeanOperations(operations, mBeanOperations);
             extractMbeanNotifications(customManagedBean, mBeanNotifications);
         }
 
         // create the ModelMBeanInfo
-        String name = getName(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
-        String description = getDescription(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
+        String name = getName(customManagedBean != null ? customManagedBean : defaultManagedBean);
+        String description = getDescription(customManagedBean != null ? customManagedBean : defaultManagedBean);
         ModelMBeanAttributeInfo[] arrayAttributes
                 = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[0]);
         ModelMBeanOperationInfo[] arrayOperations
@@ -178,7 +178,7 @@ public class MBeanInfoAssembler implements Service {
             CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
             Set<ManagedOperationInfo> operations) {
         // extract the class
-        doDoExtractAttributesAndOperations(camelContext, managedClass, attributes, operations);
+        doDoExtractAttributesAndOperations(managedClass, attributes, operations);
 
         // and then any sub classes
         if (managedClass.getSuperclass() != null) {
@@ -205,7 +205,7 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void doDoExtractAttributesAndOperations(
-            CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
+            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
             Set<ManagedOperationInfo> operations) {
         LOG.trace("Extracting attributes and operations from class: {}", managedClass);
 
@@ -270,7 +270,7 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void extractMbeanAttributes(
-            Object managedBean, Map<String, ManagedAttributeInfo> attributes,
+            Map<String, ManagedAttributeInfo> attributes,
             Set<ModelMBeanAttributeInfo> mBeanAttributes, Set<ModelMBeanOperationInfo> mBeanOperations)
             throws IntrospectionException {
 
@@ -305,7 +305,7 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void extractMbeanOperations(
-            Object managedBean, Set<ManagedOperationInfo> operations, Set<ModelMBeanOperationInfo> mBeanOperations) {
+            Set<ManagedOperationInfo> operations, Set<ModelMBeanOperationInfo> mBeanOperations) {
         for (ManagedOperationInfo info : operations) {
             ModelMBeanOperationInfo mbean = new ModelMBeanOperationInfo(info.getDescription(), info.getOperation());
             Descriptor opDesc = mbean.getDescriptor();
@@ -328,12 +328,12 @@ public class MBeanInfoAssembler implements Service {
         }
     }
 
-    private String getDescription(Object managedBean, String objectName) {
+    private String getDescription(Object managedBean) {
         ManagedResource mr = ObjectHelper.getAnnotation(managedBean, ManagedResource.class);
         return mr != null ? mr.description() : "";
     }
 
-    private String getName(Object managedBean, String objectName) {
+    private String getName(Object managedBean) {
         return managedBean.getClass().getName();
     }
 

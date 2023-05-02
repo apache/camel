@@ -347,7 +347,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Sets a reference to a custom {@link ServiceFilter} to use.
      */
-    public ServiceCallConfigurationDefinition serviceFilter(String serviceFilterRef) {
+    public ServiceCallConfigurationDefinition serviceFilter() {
         setServiceDiscoveryRef(serviceDiscoveryRef);
         return this;
     }
@@ -389,14 +389,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
      */
     public ServiceCallConfigurationDefinition loadBalancer(ServiceLoadBalancer loadBalancer) {
         setLoadBalancer(loadBalancer);
-        return this;
-    }
-
-    /**
-     * Sets a reference to a custom {@link Expression} to use.
-     */
-    public ServiceCallConfigurationDefinition expression(String expressionRef) {
-        setExpressionRef(loadBalancerRef);
         return this;
     }
 

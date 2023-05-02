@@ -64,7 +64,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
         if (cacheSize >= 0) {
-            this.producers = createServicePool(camelContext, maxCacheSize);
+            this.producers = createServicePool(maxCacheSize);
         } else {
             // no cache then empty
             this.producers = null;
@@ -84,7 +84,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                         .createSharedCamelInternalProcessor(camelContext);
     }
 
-    protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+    protected ProducerServicePool createServicePool(int cacheSize) {
         return new ProducerServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, cacheSize);
     }
 

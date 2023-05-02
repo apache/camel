@@ -125,7 +125,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 // if its the same scheme as the pre-resolved dynamic aware then we can optimise to use it
                 String originalUri = uri;
                 String uri = resolveUri(exchange, recipient);
-                String scheme = resolveScheme(exchange, uri);
+                String scheme = resolveScheme(uri);
                 if (dynamicAware.getScheme().equals(scheme)) {
                     SendDynamicAware.DynamicAwareEntry entry = dynamicAware.prepare(exchange, uri, originalUri);
                     if (entry != null) {
@@ -241,7 +241,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         return uri;
     }
 
-    protected static String resolveScheme(Exchange exchange, String uri) {
+    protected static String resolveScheme(String uri) {
         return ExchangeHelper.resolveScheme(uri);
     }
 

@@ -268,7 +268,7 @@ public class DefaultExchangeHolder implements Serializable {
                 continue;
             }
 
-            Object value = getValidHeaderValue(entry.getKey(), entry.getValue(), allowSerializedHeaders);
+            Object value = getValidHeaderValue(entry.getValue(), allowSerializedHeaders);
             if (value != null) {
                 Serializable converted
                         = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
@@ -330,12 +330,11 @@ public class DefaultExchangeHolder implements Serializable {
      *
      * We make possible store serialized headers by the boolean field allowSerializedHeaders
      *
-     * @param  headerName             the header name
      * @param  headerValue            the header value
      * @param  allowSerializedHeaders the header value
      * @return                        the value to use, <tt>null</tt> to ignore this header
      */
-    protected static Object getValidHeaderValue(String headerName, Object headerValue, boolean allowSerializedHeaders) {
+    protected static Object getValidHeaderValue(Object headerValue, boolean allowSerializedHeaders) {
         if (headerValue instanceof String) {
             return headerValue;
         } else if (headerValue instanceof BigInteger) {
@@ -364,7 +363,7 @@ public class DefaultExchangeHolder implements Serializable {
      * We only want to store exchange property values of primitive and String related types, and as well any caught
      * exception that Camel routing engine has caught.
      * <p/>
-     * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object, boolean)}
+     * This default implementation will allow the same values as {@link #getValidHeaderValue(Object, boolean)}
      * and in addition any value of type {@link Throwable}.
      *
      * @param  propertyName  the property name
@@ -377,7 +376,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (propertyValue instanceof Throwable) {
             return propertyValue;
         }
-        return getValidHeaderValue(propertyName, propertyValue, allowSerializedHeaders);
+        return getValidHeaderValue(propertyValue, allowSerializedHeaders);
     }
 
     private static void logCannotSerializeObject(String type, String key, Object value) {

@@ -191,7 +191,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
         // must configure the wire tap beforehand
         Exchange target;
         try {
-            target = configureExchange(exchange, exchangePattern);
+            target = configureExchange(exchange);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -214,7 +214,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
         return true;
     }
 
-    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) throws IOException {
+    protected Exchange configureExchange(Exchange exchange) throws IOException {
         Exchange answer;
         if (copy) {
             // use a copy of the original exchange

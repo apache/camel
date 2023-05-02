@@ -145,7 +145,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         // you can see in the code below.
         // ----------------------------------------------------------
 
-        if (processor == null || !continueProcessing(exchange, processor)) {
+        if (processor == null || !continueProcessing(exchange)) {
             // no processor or we should not continue then we are done
             originalCallback.done(true);
             return true;
@@ -283,7 +283,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
     /**
      * Strategy to determine if we should continue processing the {@link Exchange}.
      */
-    protected boolean continueProcessing(Exchange exchange, AsyncProcessor processor) {
+    protected boolean continueProcessing(Exchange exchange) {
         if (exchange.isRouteStop()) {
             LOG.debug("Exchange is marked to stop routing: {}", exchange);
             return false;

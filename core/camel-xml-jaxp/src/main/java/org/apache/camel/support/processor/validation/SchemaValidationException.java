@@ -36,7 +36,7 @@ public class SchemaValidationException extends ValidationException {
 
     public SchemaValidationException(Exchange exchange, Object schema, List<SAXParseException> fatalErrors,
                                      List<SAXParseException> errors, List<SAXParseException> warnings) {
-        super(exchange, message(schema, fatalErrors, errors, warnings));
+        super(exchange, message(schema, fatalErrors, errors));
         this.schema = schema;
         this.fatalErrors = fatalErrors;
         this.errors = errors;
@@ -73,7 +73,7 @@ public class SchemaValidationException extends ValidationException {
 
     protected static String message(
             Object schema, List<SAXParseException> fatalErrors,
-            List<SAXParseException> errors, List<SAXParseException> warnings) {
+            List<SAXParseException> errors) {
         StringBuilder buffer = new StringBuilder("Validation failed for: ")
                 .append(schema)
                 .append("\n");

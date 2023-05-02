@@ -30,11 +30,11 @@ public class PredicateValidationException extends ValidationException {
     private final Predicate predicate;
 
     public PredicateValidationException(Exchange exchange, Predicate predicate) {
-        super(exchange, buildMessage(predicate, exchange));
+        super(exchange, buildMessage(predicate));
         this.predicate = predicate;
     }
 
-    protected static String buildMessage(Predicate predicate, Exchange exchange) {
+    protected static String buildMessage(Predicate predicate) {
         StringBuilder builder = new StringBuilder("Validation failed for Predicate[");
         builder.append(predicate.toString());
         builder.append("]");

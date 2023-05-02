@@ -217,7 +217,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         }
 
         @Override
-        protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+        protected ProducerServicePool createServicePool(int cacheSize) {
             myServicePool = new MyServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, cacheSize);
             return myServicePool;
         }

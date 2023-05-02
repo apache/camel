@@ -114,7 +114,7 @@ public class BaseParser {
                     handleUnexpectedAttribute(namespace, name);
                 }
             } else {
-                handleOtherAttribute(definition, name, ns, val);
+                handleOtherAttribute(name, ns);
             }
         }
         while (true) {
@@ -304,7 +304,7 @@ public class BaseParser {
     }
 
     @SuppressWarnings("unchecked")
-    protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
+    protected void handleOtherAttribute(String name, String ns) throws XmlPullParserException {
         // Ignore
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
             return;

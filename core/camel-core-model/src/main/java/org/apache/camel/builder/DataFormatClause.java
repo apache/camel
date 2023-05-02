@@ -1103,41 +1103,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T xmlSecurity(
             String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm,
-            String keyOrTrustStoreParametersId) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
-        xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
-        xsdf.setRecipientKeyAlias(recipientKeyAlias);
-        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersId);
-        return dataFormat(xsdf);
-    }
-
-    /**
-     * Uses the XML Security data format
-     */
-    public T xmlSecurity(
-            String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm,
-            String keyOrTrustStoreParametersId, String keyPassword) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
-        xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(Boolean.toString(secureTagContents));
-        xsdf.setRecipientKeyAlias(recipientKeyAlias);
-        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersId);
-        xsdf.setKeyPassword(keyPassword);
-        return dataFormat(xsdf);
-    }
-
-    /**
-     * Uses the XML Security data format
-     */
-    public T xmlSecurity(
-            String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm,
             KeyStoreParameters keyOrTrustStoreParameters) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
         xsdf.setSecureTag(secureTag);

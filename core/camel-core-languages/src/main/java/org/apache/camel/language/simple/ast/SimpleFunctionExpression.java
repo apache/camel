@@ -72,13 +72,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private Expression createSimpleExpression(CamelContext camelContext, String function, boolean strict) {
         // return the function directly if we can create function without analyzing the prefix
-        Expression answer = createSimpleExpressionDirectly(camelContext, function);
+        Expression answer = createSimpleExpressionDirectly(function);
         if (answer != null) {
             return answer;
         }
 
         // body and headers first
-        answer = createSimpleExpressionBodyOrHeader(function, strict);
+        answer = createSimpleExpressionBodyOrHeader(function);
         if (answer != null) {
             return answer;
         }
@@ -303,7 +303,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
     }
 
-    private Expression createSimpleExpressionBodyOrHeader(String function, boolean strict) {
+    private Expression createSimpleExpressionBodyOrHeader(String function) {
         // bodyAs
         String remainder = ifStartsWithReturnRemainder("bodyAs(", function);
         if (remainder != null) {
@@ -425,7 +425,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private Expression createSimpleExpressionDirectly(CamelContext camelContext, String expression) {
+    private Expression createSimpleExpressionDirectly(String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {

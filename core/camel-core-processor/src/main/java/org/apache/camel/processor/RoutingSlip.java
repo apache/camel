@@ -267,7 +267,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
             //process and prepare the routing slip
             boolean sync = processExchange(endpoint, current, exchange, originalCallback, iter, prototype);
-            current = prepareExchangeForRoutingSlip(current, endpoint);
+            current = prepareExchangeForRoutingSlip(current);
 
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
@@ -372,7 +372,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return endpoint;
     }
 
-    protected Exchange prepareExchangeForRoutingSlip(Exchange current, Endpoint endpoint) {
+    protected Exchange prepareExchangeForRoutingSlip(Exchange current) {
         // we must use the same id as this is a snapshot strategy where Camel copies a snapshot
         // before processing the next step in the pipeline, so we have a snapshot of the exchange
         // just before. This snapshot is used if Camel should do redeliveries (re try) using
@@ -389,7 +389,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return copy;
     }
 
-    protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
+    protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor) {
         AsyncProcessor answer = processor;
 
         boolean tryBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, boolean.class);
@@ -428,7 +428,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
             // rework error handling to support fine grained error handling
             Route route = ExchangeHelper.getRoute(ex);
-            AsyncProcessor target = createErrorHandler(route, ex, p, endpoint);
+            AsyncProcessor target = createErrorHandler(route, ex, p);
 
             // set property which endpoint we send to and the producer that can do it
             ex.setProperty(ExchangePropertyKey.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -452,7 +452,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
                     try {
                         // continue processing the routing slip asynchronously
-                        Exchange current = prepareExchangeForRoutingSlip(ex, endpoint);
+                        Exchange current = prepareExchangeForRoutingSlip(ex);
 
                         while (iter.hasNext(current)) {
 
@@ -507,7 +507,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                                 cb.done(doneNext);
                             };
                             boolean sync = processExchange(nextEndpoint, current, original, cbNext, iter, prototype);
-                            current = prepareExchangeForRoutingSlip(current, nextEndpoint);
+                            current = prepareExchangeForRoutingSlip(current);
 
                             if (!sync) {
                                 if (LOG.isTraceEnabled()) {

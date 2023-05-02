@@ -35,8 +35,7 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final boolean useExchange;
     private final boolean allowNull;
 
-    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry,
-                                       boolean allowNull) {
+    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, boolean allowNull) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterCount() == 2;

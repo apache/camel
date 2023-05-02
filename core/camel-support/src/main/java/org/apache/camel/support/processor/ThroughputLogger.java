@@ -109,7 +109,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         //only process if groupSize is set...otherwise we're in groupInterval mode
         if (groupSize != null) {
             if (receivedCount % groupSize == 0) {
-                lastLogMessage = createLogMessage(exchange, receivedCount);
+                lastLogMessage = createLogMessage(receivedCount);
                 logger.log(lastLogMessage);
             }
         }
@@ -229,7 +229,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         }
     }
 
-    protected String createLogMessage(Exchange exchange, long receivedCount) {
+    protected String createLogMessage(long receivedCount) {
         long time = System.currentTimeMillis();
         if (groupStartTime == 0) {
             groupStartTime = startTime;
