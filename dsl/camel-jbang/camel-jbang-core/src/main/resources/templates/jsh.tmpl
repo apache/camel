@@ -2,7 +2,6 @@
 
 // Write your routes here, for example:
 builder.from("timer:tick?period=1000")
-    .routeId('jsh')
     .setBody()
       .simple('Hello Camel from ${routeId}')
     .log('${body}');

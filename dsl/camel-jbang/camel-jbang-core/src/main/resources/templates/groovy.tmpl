@@ -2,7 +2,6 @@
 
 // Write your routes here, for example:
 from('timer:groovy?period=1000')
-    .routeId('groovy')
     .setBody()
       .simple('Hello Camel from ${routeId}')
     .log('${body}')
