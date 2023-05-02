@@ -31,10 +31,16 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
 import org.apache.camel.xml.in.ModelParser;
+import org.apache.camel.xml.io.util.XmlStreamDetector;
+import org.apache.camel.xml.io.util.XmlStreamInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed XML RoutesBuilderLoader")
 @RoutesLoader(XmlRoutesBuilderLoader.EXTENSION)
 public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
+    public static final Logger LOG = LoggerFactory.getLogger(XmlRoutesBuilderLoader.class);
+
     public static final String EXTENSION = "xml";
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> NAMESPACES = List.of("", NAMESPACE);
@@ -54,20 +60,34 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
             @Override
             public void configure() throws Exception {
-                // we use configure to load the routes (with namespace and without namespace)
-                for (String ns : NAMESPACES) {
-                    new ModelParser(resource, ns)
-                            .parseRouteTemplatesDefinition()
-                            .ifPresent(this::setRouteTemplateCollection);
-                    new ModelParser(resource, ns)
-                            .parseTemplatedRoutesDefinition()
-                            .ifPresent(this::setTemplatedRouteCollection);
-                    new ModelParser(resource, ns)
-                            .parseRestsDefinition()
-                            .ifPresent(this::setRestCollection);
-                    new ModelParser(resource, ns)
-                            .parseRoutesDefinition()
-                            .ifPresent(this::addRoutes);
+                // instead of parsing the document NxM times (for each namespace x root element combination),
+                // we preparse it using XmlStreamDetector and then parse it fully knowing what's inside.
+                // we could even do better, by passing already preparsed information through config file, but
+                // it's getting complicated when using multiple files.
+                XmlStreamDetector detector = new XmlStreamDetector(resource.getInputStream());
+                XmlStreamInfo xmlInfo = detector.information();
+                if (!xmlInfo.isValid()) {
+                    // should be valid, because we checked it before
+                    LOG.warn("Invalid XML document: {}", xmlInfo.getProblem().getMessage());
+                    return;
+                }
+                switch (xmlInfo.getRootElementName()) {
+                    case "routeTemplate", "routeTemplates" ->
+                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseRouteTemplatesDefinition()
+                                .ifPresent(this::setRouteTemplateCollection);
+                    case "templatedRoutes", "templatedRoute" ->
+                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseTemplatedRoutesDefinition()
+                                .ifPresent(this::setTemplatedRouteCollection);
+                    case "rests", "rest" ->
+                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseRestsDefinition()
+                                .ifPresent(this::setRestCollection);
+                    case "routes", "route" ->
+                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseRoutesDefinition()
+                                .ifPresent(this::addRoutes);
                 }
             }
 
