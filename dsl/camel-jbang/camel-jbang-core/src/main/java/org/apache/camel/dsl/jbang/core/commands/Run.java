@@ -923,7 +923,8 @@ public class Run extends CamelCommand {
                     } else {
                         // also support Camel K integrations and Kamelet bindings
                         return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
-                                || data.contains("- rest:") || data.contains("KameletBinding")
+                                || data.contains("- rest:") || data.contains("- beans:")
+                                || data.contains("KameletBinding")
                                 || data.contains("kind: Integration");
                     }
                 }
