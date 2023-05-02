@@ -8,7 +8,7 @@
             https://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<!-- Write your routes here, for example: -->
-    <route id="xml">
+    <route>
         <from uri="timer:xml?period={{time:1000}}"/>
         <setBody>
             <simple>Hello Camel from ${routeId}</simple>

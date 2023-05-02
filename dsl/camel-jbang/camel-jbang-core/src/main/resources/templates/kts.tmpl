@@ -2,7 +2,6 @@
 
 // Write your routes here, for example:
 from("timer:kotlin?period=1000")
-  .routeId("kotlin")
   .setBody()
     .simple("Hello Camel from \${routeId}")
   .log("\${body}")
