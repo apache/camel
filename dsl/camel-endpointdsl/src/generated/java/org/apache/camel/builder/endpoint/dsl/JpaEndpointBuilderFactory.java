@@ -1510,6 +1510,36 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the position of the first result to retrieve.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer
+         * 
+         * @param firstResult the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder firstResult(int firstResult) {
+            doSetProperty("firstResult", firstResult);
+            return this;
+        }
+        /**
+         * Set the position of the first result to retrieve.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer
+         * 
+         * @param firstResult the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder firstResult(String firstResult) {
+            doSetProperty("firstResult", firstResult);
+            return this;
+        }
+        /**
          * Flushes the EntityManager after the entity bean has been persisted.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2181,6 +2211,34 @@ public interface JpaEndpointBuilderFactory {
          */
         public String jpaParameters() {
             return "JpaParameters";
+        }
+
+        /**
+         * Defines the maximum number of results to retrieve on the query; takes
+         * precedence over the value set on the endpoint, if any.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JpaMaximumResults}.
+         */
+        public String jpaMaximumResults() {
+            return "JpaMaximumResults";
+        }
+
+        /**
+         * Defines the position of the first result to retrieve; takes
+         * precedence over the value set on the endpoint, if any.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JpaFirstResult}.
+         */
+        public String jpaFirstResult() {
+            return "JpaFirstResult";
         }
     }
     static JpaEndpointBuilder endpointBuilder(String componentName, String path) {
