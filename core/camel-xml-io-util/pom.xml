@@ -35,4 +35,16 @@
         <firstVersion>3.10.0</firstVersion>
         <label>core,xml</label>
     </properties>
+
+    <dependencies>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>

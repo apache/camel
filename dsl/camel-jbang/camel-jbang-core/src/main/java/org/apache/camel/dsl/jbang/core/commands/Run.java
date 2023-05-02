@@ -63,6 +63,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.xml.io.util.XmlStreamDetector;
+import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
@@ -83,6 +85,17 @@ public class Run extends CamelCommand {
 
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
+
+    private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
+            "route", "routes",
+            "routeTemplate", "routeTemplates",
+            "templatedRoute", "templatedRoutes",
+            "rest", "rests",
+            "routeConfiguration", "beans"
+    };
+
+    private static final Set<String> ACCEPTED_XML_ROOT_ELEMENTS
+            = new HashSet<>(Arrays.asList(ACCEPTED_XML_ROOT_ELEMENT_NAMES));
 
     private static final String OPENAPI_GENERATED_FILE = ".camel-jbang/generated-openapi.yaml";
     private static final String CLIPBOARD_GENERATED_FILE = ".camel-jbang/generated-clipboard";
@@ -958,10 +971,15 @@ public class Run extends CamelCommand {
             if (!github && ("xml".equals(ext2) || "yaml".equals(ext2))) {
                 // load content into memory
                 try (FileInputStream fis = new FileInputStream(file)) {
-                    String data = IOHelper.loadText(fis);
                     if ("xml".equals(ext2)) {
-                        return data.contains("<routes") || data.contains("<routeConfiguration") || data.contains("<rests");
+                        XmlStreamDetector detector = new XmlStreamDetector(fis);
+                        XmlStreamInfo info = detector.information();
+                        if (!info.isValid()) {
+                            return false;
+                        }
+                        return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                     } else {
+                        String data = IOHelper.loadText(fis);
                         // also support Camel K integrations and Kamelet bindings
                         return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
                                 || data.contains("- rest:") || data.contains("- beans:")
