@@ -44,6 +44,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "findentity":
         case "findEntity": target.setFindEntity(property(camelContext, boolean.class, value)); return true;
+        case "firstresult":
+        case "firstResult": target.setFirstResult(property(camelContext, int.class, value)); return true;
         case "flushonsend":
         case "flushOnSend": target.setFlushOnSend(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
@@ -132,6 +134,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "findentity":
         case "findEntity": return boolean.class;
+        case "firstresult":
+        case "firstResult": return int.class;
         case "flushonsend":
         case "flushOnSend": return boolean.class;
         case "greedy": return boolean.class;
@@ -221,6 +225,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return target.getExchangePattern();
         case "findentity":
         case "findEntity": return target.isFindEntity();
+        case "firstresult":
+        case "firstResult": return target.getFirstResult();
         case "flushonsend":
         case "flushOnSend": return target.isFlushOnSend();
         case "greedy": return target.isGreedy();

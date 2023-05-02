@@ -202,9 +202,19 @@ public class JpaProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void configureParameters(Query query, Exchange exchange) {
-        int maxResults = getEndpoint().getMaximumResults();
+        final int maxResults = exchange.getIn().getHeader(
+                JpaConstants.JPA_MAXIMUM_RESULTS,
+                getEndpoint().getMaximumResults(),
+                Integer.class);
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
+        }
+        final int firstResult = exchange.getIn().getHeader(
+                JpaConstants.JPA_FIRST_RESULT,
+                getEndpoint().getFirstResult(),
+                Integer.class);
+        if (firstResult > 0) {
+            query.setFirstResult(firstResult);
         }
         // setup the parameters
         Map<String, ?> params;
