@@ -129,12 +129,12 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
 
         String sql = queryBuilder.toString();
 
-        insertHelper(camelContext, correlationId, exchange, sql, version, completed);
+        insertHelper(correlationId, exchange, sql, version, completed);
     }
 
     protected int insertHelper(
-            final CamelContext camelContext, final String key, final Exchange exchange,
-            final String sql, final Long version, final boolean completed)
+            final String key, final Exchange exchange, final String sql,
+            final Long version, final boolean completed)
             throws Exception {
         final byte[] data = codec.marshallExchange(exchange, allowSerializedHeaders);
         Integer insertCount = super.jdbcTemplate.execute(sql,

@@ -53,8 +53,8 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
         LOG.info("Reloading CamelContext ({}) triggered by: {}", camelContext.getName(), source);
         try {
             EventHelper.notifyContextReloading(getCamelContext(), source);
-            reloadProperties(source);
-            reloadRoutes(source);
+            reloadProperties();
+            reloadRoutes();
             incSucceededCounter();
             EventHelper.notifyContextReloaded(getCamelContext(), source);
         } catch (Exception e) {
@@ -64,11 +64,11 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
         }
     }
 
-    protected void reloadRoutes(Object source) throws Exception {
+    protected void reloadRoutes() throws Exception {
         getCamelContext().getRouteController().reloadAllRoutes();
     }
 
-    protected void reloadProperties(Object source) throws Exception {
+    protected void reloadProperties() throws Exception {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         for (PropertiesSource ps : pc.getPropertiesSources()) {
             // reload by restarting

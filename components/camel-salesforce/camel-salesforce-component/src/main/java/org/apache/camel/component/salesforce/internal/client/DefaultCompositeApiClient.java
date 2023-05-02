@@ -98,7 +98,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
             throws SalesforceException {
         final String url = versionUrl() + "composite";
         final Request post = createRequest(HttpMethod.POST, url, headers);
-        final ContentProvider content = serialize(composite, composite.objectTypes());
+        final ContentProvider content = serialize(composite);
         post.content(content);
 
         doHttpRequest(post,
@@ -118,7 +118,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         final Request post = createRequest(HttpMethod.POST, url, headers);
 
-        final ContentProvider content = serialize(batch, batch.objectTypes());
+        final ContentProvider content = serialize(batch);
         post.content(content);
 
         doHttpRequest(post,
@@ -136,7 +136,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         final Request post = createRequest(HttpMethod.POST, url, headers);
 
-        final ContentProvider content = serialize(tree, tree.objectTypes());
+        final ContentProvider content = serialize(tree);
         post.content(content);
 
         doHttpRequest(post,
@@ -185,7 +185,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return mapper.writerFor(type);
     }
 
-    ContentProvider serialize(final Object body, final Class<?>... additionalTypes)
+    ContentProvider serialize(final Object body)
             throws SalesforceException {
         // input stream as entity content is needed for authentication retries
         return new InputStreamContentProvider(toJson(body));

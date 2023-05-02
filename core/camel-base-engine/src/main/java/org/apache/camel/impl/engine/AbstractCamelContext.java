@@ -3114,7 +3114,7 @@ public abstract class AbstractCamelContext extends BaseService
                     StartupStep step
                             = startupStepRecorder.beginStep(Route.class, routeService.getId(), "Start Route Services");
                     // this method will log the routes being started
-                    internalRouteStartupManager.safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
+                    internalRouteStartupManager.safelyStartRouteServices(true, true, false, addingRoutes, routeService);
                     // start route services if it was configured to auto startup
                     // and we are not adding routes
                     boolean isAutoStartup = routeService.isAutoStartup();
@@ -3145,7 +3145,7 @@ public abstract class AbstractCamelContext extends BaseService
             // resume the route service
             if (shouldStartRoutes()) {
                 // this method will log the routes being started
-                internalRouteStartupManager.safelyStartRouteServices(true, false, true, true, false, routeService);
+                internalRouteStartupManager.safelyStartRouteServices( false, true, true, false, routeService);
                 // must resume route service as well
                 routeService.resume();
             }

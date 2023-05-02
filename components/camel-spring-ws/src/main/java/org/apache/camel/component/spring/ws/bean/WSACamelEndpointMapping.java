@@ -162,7 +162,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
 
         URI actionUri = camelEndpoint.getConfiguration().getOutputAction();
         if (actionUri == null) {
-            actionUri = getDefaultResponseAction(camelEndpoint, requestMap);
+            actionUri = getDefaultResponseAction(requestMap);
         }
         return actionUri;
     }
@@ -205,7 +205,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
 
         URI actionUri = camelEndpoint.getConfiguration().getFaultAction();
         if (actionUri == null) {
-            actionUri = getDefaultFaultAction(camelEndpoint, requestMap);
+            actionUri = getDefaultFaultAction(requestMap);
         }
         return actionUri;
 
@@ -219,7 +219,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         return (SpringWebserviceEndpoint) springWebserviceConsumer.getEndpoint();
     }
 
-    protected URI getDefaultResponseAction(Object endpoint, MessageAddressingProperties requestMap) {
+    protected URI getDefaultResponseAction(MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
         if (requestAction != null) {
             return URI.create(requestAction.toString() + getOutputActionSuffix());
@@ -228,7 +228,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         }
     }
 
-    protected URI getDefaultFaultAction(Object endpoint, MessageAddressingProperties requestMap) {
+    protected URI getDefaultFaultAction(MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
         if (requestAction != null) {
             return URI.create(requestAction.toString() + getFaultActionSuffix());

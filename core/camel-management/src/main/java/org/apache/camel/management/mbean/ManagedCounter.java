@@ -20,7 +20,6 @@ import java.util.Date;
 
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCounterMBean;
-import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed Counter")
 public abstract class ManagedCounter implements ManagedCounterMBean {
@@ -28,7 +27,7 @@ public abstract class ManagedCounter implements ManagedCounterMBean {
     protected Date startTimestamp;
     protected Date resetTimestamp;
 
-    public void init(ManagementStrategy strategy) {
+    public void init() {
         this.exchangesTotal = new StatisticCounter();
         Date now = new Date();
         startTimestamp = now;

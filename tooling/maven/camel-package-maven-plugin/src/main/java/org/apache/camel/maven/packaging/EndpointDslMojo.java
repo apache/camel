@@ -430,7 +430,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
         final Method method = builderClass.addMethod().setPublic().setReturnType(String.class)
                 .setName(name);
-        String javaDoc = createBaseDescription(header, "header", true).replace("@@REPLACE_ME@@",
+        String javaDoc = createBaseDescription(header, "header").replace("@@REPLACE_ME@@",
                 "\nThe option is a: {@code " + header.getJavaType() + "} type.");
         javaDoc += String.format("%n%n@return the name of the header {@code %s}.%n", headerName);
         method.getJavaDoc().setText(javaDoc);
@@ -703,10 +703,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private String createBaseDescription(BaseOptionModel option) {
-        return createBaseDescription(option, "parameter", false);
+        return createBaseDescription(option, "parameter");
     }
 
-    private String createBaseDescription(BaseOptionModel option, String kind, boolean ignoreMultiValue) {
+    private String createBaseDescription(BaseOptionModel option, String kind) {
         String baseDesc = option.getDescription();
         if (Strings.isEmpty(baseDesc)) {
             return baseDesc;

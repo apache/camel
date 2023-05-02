@@ -52,7 +52,7 @@ public class RawProcessor extends AbstractSalesforceProcessor {
     protected void doStart() throws Exception {
         super.doStart();
         SalesforceComponent component = endpoint.getComponent();
-        rawClient = component.createRawClientFor(endpoint);
+        rawClient = component.createRawClientFor();
         ServiceHelper.startService(rawClient);
     }
 

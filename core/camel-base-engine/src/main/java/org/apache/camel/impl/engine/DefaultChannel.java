@@ -201,7 +201,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (route.isTracing() || camelContext.isTracingStandby()) {
             // add logger tracer
             Tracer tracer = camelContext.getTracer();
-            addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
+            addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition));
         }
 
         // sort interceptors according to ordered

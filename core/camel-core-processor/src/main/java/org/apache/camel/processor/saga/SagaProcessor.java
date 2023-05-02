@@ -45,8 +45,8 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor implements Tr
     private String id;
     private String routeId;
 
-    public SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
-                         SagaCompletionMode completionMode, CamelSagaStep step) {
+    public SagaProcessor(Processor childProcessor, CamelSagaService sagaService, SagaCompletionMode completionMode,
+                         CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
         this.completionMode = ObjectHelper.notNull(completionMode, "completionMode");

@@ -132,7 +132,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // load all the found classes into the type converter registry
         for (Class<?> type : classes) {
-            if (acceptClass(type)) {
+            if (acceptClass()) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
                 }
@@ -317,7 +317,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
-    protected boolean acceptClass(Class<?> clazz) {
+    protected boolean acceptClass() {
         return true;
     }
 
@@ -338,14 +338,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 } else {
                     Class<?> fromType = method.getParameterTypes()[0];
                     if (isStatic(modifiers)) {
-                        registerTypeConverter(registry, method, toType, fromType,
+                        registerTypeConverter(registry, toType, fromType,
                                 new StaticMethodTypeConverter(method, allowNull));
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
                         }
-                        registerTypeConverter(registry, method, toType, fromType,
-                                new InstanceMethodTypeConverter(injector, method, registry, allowNull));
+                        registerTypeConverter(registry, toType, fromType,
+                                new InstanceMethodTypeConverter(injector, method, allowNull));
                     }
                 }
             }
@@ -394,7 +394,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected void registerTypeConverter(
             TypeConverterRegistry registry,
-            Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
+            Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
 

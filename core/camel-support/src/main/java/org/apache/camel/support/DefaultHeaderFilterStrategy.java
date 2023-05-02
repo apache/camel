@@ -27,7 +27,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 /**
  * The default header filtering strategy. Users can configure filter by setting filter set and/or setting a regular
  * expression. Subclass can add extended filter logic in
- * {@link #extendedFilter(org.apache.camel.spi.HeaderFilterStrategy.Direction, String, Object, org.apache.camel.Exchange)}
+ * {@link #extendedFilter()}
  *
  * Filters are associated with directions (in or out). "In" direction is referred to propagating headers "to" Camel
  * message. The "out" direction is opposite which is referred to propagating headers from Camel message to a native
@@ -281,7 +281,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         this.filterOnMatch = filterOnMatch;
     }
 
-    protected boolean extendedFilter(Direction direction, String key, Object value, Exchange exchange) {
+    protected boolean extendedFilter() {
         return !filterOnMatch;
     }
 
@@ -349,7 +349,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             }
         }
 
-        return extendedFilter(direction, headerName, headerValue, exchange);
+        return extendedFilter();
     }
 
 }

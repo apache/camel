@@ -75,7 +75,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
         }
     }
 
-    public Map<String, Object> endpointProperties(Exchange exchange, String uri) throws Exception {
+    public Map<String, Object> endpointProperties(String uri) throws Exception {
         Map<String, Object> properties;
         // optimize as we know its only query parameters that can be dynamic
         Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
@@ -100,7 +100,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
         return properties;
     }
 
-    public Map<String, Object> endpointLenientProperties(Exchange exchange, String uri) throws Exception {
+    public Map<String, Object> endpointLenientProperties(String uri) throws Exception {
         Map<String, Object> properties;
         // optimize as we know its only query parameters that can be dynamic
         Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
@@ -129,7 +129,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
         return properties;
     }
 
-    public String asEndpointUri(Exchange exchange, String uri, Map<String, Object> properties) throws Exception {
+    public String asEndpointUri(String uri, Map<String, Object> properties) throws Exception {
         String answer;
         String query = URISupport.createQueryString(properties, false);
         int pos = uri.indexOf('?');

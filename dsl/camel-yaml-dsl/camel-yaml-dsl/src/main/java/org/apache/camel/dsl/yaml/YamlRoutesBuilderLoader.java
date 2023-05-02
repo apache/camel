@@ -301,7 +301,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             boolean binding = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(BINDING_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "KameletBinding");
             if (integration) {
-                target = preConfigureIntegration(root, ctx, target, preParse);
+                target = preConfigureIntegration(root, ctx, preParse);
             } else if (binding && !preParse) {
                 // kamelet binding does not take part in pre-parse phase
                 target = preConfigureKameletBinding(root, ctx, target);
@@ -314,7 +314,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     /**
      * Camel K Integration file
      */
-    private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
+    private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, boolean preParse) {
         // when in pre-parse phase then we only want to gather spec/dependencies,spec/configuration,spec/traits
 
         List<Object> answer = new ArrayList<>();

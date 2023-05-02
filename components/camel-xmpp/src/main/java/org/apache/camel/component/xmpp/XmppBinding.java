@@ -115,7 +115,7 @@ public class XmppBinding {
     /**
      * Extracts the body from the XMPP message
      */
-    public Object extractBodyFromXmpp(Exchange exchange, Stanza stanza) {
+    public Object extractBodyFromXmpp(Stanza stanza) {
         return (stanza instanceof Message) ? getMessageBody((Message) stanza) : stanza;
     }
 

@@ -45,14 +45,12 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
     // API name class
     protected final Class<E> apiNameClass;
 
-    public AbstractApiComponent(Class<? extends Endpoint> endpointClass,
-                                Class<E> apiNameClass, S collection) {
+    public AbstractApiComponent(Class<E> apiNameClass, S collection) {
         this.collection = collection;
         this.apiNameClass = apiNameClass;
     }
 
-    public AbstractApiComponent(CamelContext context, Class<? extends Endpoint> endpointClass,
-                                Class<E> apiNameClass, S collection) {
+    public AbstractApiComponent(CamelContext context, Class<E> apiNameClass, S collection) {
         super(context);
         this.collection = collection;
         this.apiNameClass = apiNameClass;

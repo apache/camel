@@ -32,7 +32,7 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        Map<String, Object> properties = endpointProperties(exchange, uri);
+        Map<String, Object> properties = endpointProperties(uri);
         return new DynamicAwareEntry(uri, originalUri, properties, null);
     }
 
@@ -99,7 +99,7 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
                 }
             }
 
-            return asEndpointUri(exchange, uri, params);
+            return asEndpointUri(uri, params);
         } else {
             return uri;
         }

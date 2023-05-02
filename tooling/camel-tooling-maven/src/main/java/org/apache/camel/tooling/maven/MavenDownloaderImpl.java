@@ -283,7 +283,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         repositorySystem = configureRepositorySystem(registry, systemProperties, mavenSettingsSecurity);
 
         // read the settings
-        Settings settings = mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings);
+        Settings settings = mavenConfiguration(registry, systemProperties, mavenSettings);
 
         // prepare the Maven session (local repository was configured within the settings)
         // this object is thread safe - it uses configurable download pool
@@ -542,7 +542,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             DIRegistry registry,
             Properties systemProperties, String settingsSecurityLocation) {
         basicRepositorySystemConfiguration(registry);
-        transportConfiguration(registry, systemProperties);
+        transportConfiguration(registry);
         settingsConfiguration(registry, settingsSecurityLocation);
 
         return registry.lookupByClass(RepositorySystem.class);
@@ -641,7 +641,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     /**
      * Configure the transport related requirements of {@link RepositorySystem} in {@link DIRegistry}
      */
-    private static void transportConfiguration(DIRegistry registry, Properties systemProperties) {
+    private static void transportConfiguration(DIRegistry registry) {
         // in order to resolve the artifacts we need some connector factories
         registry.bind(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         // repository connectory factory needs transporter provider(s)
@@ -705,9 +705,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     /**
      * Using the configured {@link DIRegistry}, load {@link Settings Maven settings}
      */
-    Settings mavenConfiguration(
-            DIRegistry registry, RepositorySystem repositorySystem,
-            Properties systemProperties, String mavenSettings) {
+    Settings mavenConfiguration(DIRegistry registry, Properties systemProperties, String mavenSettings) {
         // settings are important to configure the session later
         SettingsBuilder settingsBuilder = registry.lookupByClass(SettingsBuilder.class);
         SettingsBuildingRequest sbRequest = new DefaultSettingsBuildingRequest();

@@ -136,7 +136,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     @Override
     public Map<String, Object> before(Exchange exchange) throws Exception {
         Map<String, Object> state = new HashMap<>();
-        if (isOptionsMethod(exchange, state)) {
+        if (isOptionsMethod(exchange)) {
             return state;
         }
         unmarshal(exchange, state);
@@ -153,7 +153,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         }
     }
 
-    private boolean isOptionsMethod(Exchange exchange, Map<String, Object> state) {
+    private boolean isOptionsMethod(Exchange exchange) {
         String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
         if ("OPTIONS".equalsIgnoreCase(method)) {
             // for OPTIONS methods then we should not route at all as its part of CORS

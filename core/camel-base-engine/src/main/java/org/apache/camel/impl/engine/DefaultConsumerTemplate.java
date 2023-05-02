@@ -219,7 +219,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
                 List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
-                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
             } else {
                 // done the unit of work
                 exchange.getUnitOfWork().done(exchange);

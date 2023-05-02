@@ -169,7 +169,7 @@ public class XmlStreamReader extends Reader {
             this.defaultEncoding = defaultEncoding;
         }
         try {
-            doRawStream(is, lenient);
+            doRawStream(is);
         } catch (final XmlStreamReaderException ex) {
             if (!lenient) {
                 throw ex;
@@ -317,7 +317,7 @@ public class XmlStreamReader extends Reader {
             }
         } else {
             try {
-                doRawStream(conn.getInputStream(), lenient);
+                doRawStream(conn.getInputStream());
             } catch (final XmlStreamReaderException ex) {
                 doLenientDetection(null, ex);
             }
@@ -519,7 +519,7 @@ public class XmlStreamReader extends Reader {
         reader.close();
     }
 
-    private void doRawStream(final InputStream is, final boolean lenient) throws IOException {
+    private void doRawStream(final InputStream is) throws IOException {
         final BufferedInputStream pis = new BufferedInputStream(is, BUFFER_SIZE);
         final String bomEnc = getBOMEncoding(pis);
         final String xmlGuessEnc = getXMLGuessEncoding(pis);

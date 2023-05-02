@@ -226,7 +226,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                 .append(VERSION).append(" = ?");
 
         String sql = queryBuilder.toString();
-        updateHelper(camelContext, key, exchange, sql, version);
+        updateHelper(key, exchange, sql, version);
     }
 
     /**
@@ -269,11 +269,10 @@ public class JdbcAggregationRepository extends ServiceSupport
 
         String sql = queryBuilder.toString();
 
-        insertHelper(camelContext, correlationId, exchange, sql, version);
+        insertHelper(correlationId, exchange, sql, version);
     }
 
-    protected int insertHelper(
-            final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
+    protected int insertHelper(final String key, final Exchange exchange, String sql, final Long version)
             throws Exception {
         final byte[] data = codec.marshallExchange(exchange, allowSerializedHeaders);
         Integer insertCount = jdbcTemplate.execute(sql,
@@ -298,8 +297,7 @@ public class JdbcAggregationRepository extends ServiceSupport
         return insertCount == null ? 0 : insertCount;
     }
 
-    protected int updateHelper(
-            final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
+    protected int updateHelper(final String key, final Exchange exchange, String sql, final Long version)
             throws Exception {
         final byte[] data = codec.marshallExchange(exchange, allowSerializedHeaders);
         Integer updateCount = jdbcTemplate.execute(sql,

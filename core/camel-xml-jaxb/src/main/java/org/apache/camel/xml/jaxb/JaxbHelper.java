@@ -163,10 +163,9 @@ public final class JaxbHelper {
     /**
      * Creates a new {@link XmlConverter}
      *
-     * @param  context CamelContext if provided
      * @return         a new XmlConverter instance
      */
-    public static XmlConverter newXmlConverter(CamelContext context) {
+    public static XmlConverter newXmlConverter() {
         return new XmlConverter();
     }
 
@@ -227,7 +226,7 @@ public final class JaxbHelper {
     public static <T extends NamedNode> T modelToXml(CamelContext context, String xml, Class<T> type) throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
-        XmlConverter xmlConverter = newXmlConverter(context);
+        XmlConverter xmlConverter = newXmlConverter();
         Document dom;
         try {
             dom = xmlConverter.toDOMDocument(xml, null);
@@ -271,7 +270,7 @@ public final class JaxbHelper {
     }
 
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
-        XmlConverter xmlConverter = newXmlConverter(context);
+        XmlConverter xmlConverter = newXmlConverter();
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
 
@@ -312,7 +311,7 @@ public final class JaxbHelper {
 
     public static RouteConfigurationsDefinition loadRouteConfigurationsDefinition(CamelContext context, InputStream inputStream)
             throws Exception {
-        XmlConverter xmlConverter = newXmlConverter(context);
+        XmlConverter xmlConverter = newXmlConverter();
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
 
@@ -353,7 +352,7 @@ public final class JaxbHelper {
 
     public static RouteTemplatesDefinition loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream)
             throws Exception {
-        XmlConverter xmlConverter = newXmlConverter(context);
+        XmlConverter xmlConverter = newXmlConverter();
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
 
@@ -402,7 +401,7 @@ public final class JaxbHelper {
      */
     public static TemplatedRoutesDefinition loadTemplatedRoutesDefinition(CamelContext context, InputStream inputStream)
             throws Exception {
-        XmlConverter xmlConverter = newXmlConverter(context);
+        XmlConverter xmlConverter = newXmlConverter();
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
 
@@ -454,7 +453,7 @@ public final class JaxbHelper {
 
     public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
         // load routes using JAXB
-        Document dom = newXmlConverter(context).toDOMDocument(inputStream, null);
+        Document dom = newXmlConverter().toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
 
         if (!CAMEL_NS.equals(dom.getDocumentElement().getNamespaceURI())) {

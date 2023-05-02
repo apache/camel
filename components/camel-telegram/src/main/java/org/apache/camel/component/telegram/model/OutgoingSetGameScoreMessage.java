@@ -54,7 +54,7 @@ public class OutgoingSetGameScoreMessage extends OutgoingMessage {
      * @param messageId          Required if inline_message_id is not specified. Identifier of the sent message
      * @param inlineMessageId    Required if chat_id and message_id are not specified. Identifier of the inline message
      */
-    public OutgoingSetGameScoreMessage(String chatId, Long userId, Long score, Boolean force, Boolean disableEditMessage,
+    public OutgoingSetGameScoreMessage(Long userId, Long score, Boolean force, Boolean disableEditMessage,
                                        Long messageId, String inlineMessageId) {
         this.userId = userId;
         this.score = score;

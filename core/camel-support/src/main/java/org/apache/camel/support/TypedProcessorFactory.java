@@ -33,7 +33,7 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     @Override
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         if (type.isInstance(definition)) {
-            Processor processor = doCreateChildProcessor(route, type.cast(definition), mandatory);
+            Processor processor = doCreateChildProcessor();
             LineNumberAware.trySetLineNumberAware(processor, definition);
             return processor;
         }
@@ -57,7 +57,7 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
         return null;
     }
 
-    protected Processor doCreateChildProcessor(Route route, T definition, boolean mandatory) throws Exception {
+    protected Processor doCreateChildProcessor() throws Exception {
         // not in use
         return null;
     }

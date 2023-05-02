@@ -234,7 +234,7 @@ class InternalRouteStartupManager {
      * @see #safelyStartRouteServices(boolean, boolean, boolean, boolean, Collection)
      */
     protected synchronized void safelyStartRouteServices(
-            boolean forceAutoStart, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
+            boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             RouteService... routeServices)
             throws Exception {
         safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, Arrays.asList(routeServices));

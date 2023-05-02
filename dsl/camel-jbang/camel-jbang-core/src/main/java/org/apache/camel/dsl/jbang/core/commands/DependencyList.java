@@ -132,7 +132,7 @@ public class DependencyList extends Export {
                         v = quarkusVersion;
                     }
 
-                    if (skipArtifact(g, a, v)) {
+                    if (skipArtifact(g)) {
                         continue;
                     }
                     if (v != null) {
@@ -211,7 +211,7 @@ public class DependencyList extends Export {
         }
     }
 
-    protected boolean skipArtifact(String groupId, String artifactId, String version) {
+    protected boolean skipArtifact(String groupId) {
         // skip jansi which is used for color logging
         if ("org.fusesource.jansi".equals(groupId)) {
             return true;

@@ -327,7 +327,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
                 connectorRef = new ConnectorRef(
                         server, connector,
-                        createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
+                        createServletForConnector(server, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
@@ -1127,9 +1127,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     }
 
     protected CamelServlet createServletForConnector(
-            Server server, Connector connector,
-            List<Handler> handlers, JettyHttpEndpoint endpoint)
+            Server server, List<Handler> handlers, JettyHttpEndpoint endpoint)
             throws Exception {
+
         ServletContextHandler context
                 = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
 

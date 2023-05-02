@@ -927,7 +927,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             msg = msg + ". Handled and continue routing.";
 
             // log that we failed but want to continue
-            logFailedDelivery(false, false, false, true, isDeadLetterChannel, exchange, msg, null);
+            logFailedDelivery(false, false, false, true, exchange, msg, null);
         }
 
         protected void prepareExchangeForRedelivery() {
@@ -1039,7 +1039,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
                 String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
                              + ". On delivery attempt: " + redeliveryCounter + " caught: " + e;
-                logFailedDelivery(true, false, false, false, isDeadLetterChannel(), exchange, msg, e);
+                logFailedDelivery(true, false, false, false, exchange, msg, e);
             }
 
             redeliveryCounter = incrementRedeliveryCounter(exchange);
@@ -1215,7 +1215,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         }
 
                         // log that we failed delivery as we are exhausted
-                        logFailedDelivery(false, false, fHandled, false, isDeadLetterChannel, exchange, msg, null);
+                        logFailedDelivery(false, false, fHandled, false, exchange, msg, null);
 
                         // we are done so we can release the task
                         taskFactory.release(this);
@@ -1260,7 +1260,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     }
 
                     // log that we failed delivery as we are exhausted
-                    logFailedDelivery(false, false, fHandled, false, isDeadLetterChannel, exchange, msg, null);
+                    logFailedDelivery(false, false, fHandled, false, exchange, msg, null);
 
                     // we are done so we can release the task
                     taskFactory.release(this);
@@ -1321,7 +1321,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         } else {
                             msg += ". The new exception is not handled as deadLetterHandleNewException=false.";
                         }
-                        logFailedDelivery(false, true, handled, false, true, exchange, msg, newException);
+                        logFailedDelivery(false, true, handled, false, exchange, msg, newException);
                     }
 
                     if (handled) {
@@ -1351,7 +1351,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         private void logFailedDelivery(
-                boolean shouldRedeliver, boolean newException, boolean handled, boolean continued, boolean isDeadLetterChannel,
+                boolean shouldRedeliver, boolean newException, boolean handled, boolean continued,
                 Exchange exchange, String message, Throwable e) {
             if (logger == null) {
                 return;

@@ -325,7 +325,7 @@ public class CatalogDoc extends CamelCommand {
                                 .maxWidth(80, OverflowBehaviour.NEWLINE)
                                 .with(this::getDescription),
                         new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                                .with(r -> r.getShortDefaultValue(25)),
+                                .with(r -> r.getShortDefaultValue()),
                         new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                                 .with(BaseOptionModel::getShortJavaType))));
                 System.out.println("");
@@ -391,7 +391,7 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(this::getDescription),
                 new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
+                        .with(r -> r.getShortDefaultValue()),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                         .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
@@ -409,7 +409,7 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(this::getDescription),
                 new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
+                        .with(r -> r.getShortDefaultValue()),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                         .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
@@ -424,7 +424,7 @@ public class CatalogDoc extends CamelCommand {
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                             .with(this::getDescription),
                     new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.getShortDefaultValue(25)),
+                            .with(r -> r.getShortDefaultValue()),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                             .with(BaseOptionModel::getShortJavaType))));
             System.out.println("");
@@ -482,7 +482,7 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(this::getDescription),
                 new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
+                        .with(r -> r.getShortDefaultValue()),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                         .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
@@ -539,7 +539,7 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(this::getDescription),
                 new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(25)),
+                        .with(r -> r.getShortDefaultValue()),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                         .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");

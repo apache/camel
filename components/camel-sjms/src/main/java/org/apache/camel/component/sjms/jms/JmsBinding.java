@@ -223,8 +223,7 @@ public class JmsBinding {
             answer = createJmsMessage(cause, session);
         } else {
             // create regular jms message using the camel message body
-            answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session,
-                    exchange.getContext());
+            answer = createJmsMessage(exchange, camelMessage.getBody(), session, exchange.getContext());
             appendJmsProperties(answer, exchange, camelMessage.getHeaders());
         }
 
@@ -370,10 +369,10 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(
-            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context)
+            Exchange exchange, Object body, Session session, CamelContext context)
             throws JMSException {
 
-        JmsMessageType type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
+        JmsMessageType type = getJMSMessageTypeForBody(exchange, body);
 
         // create the JmsMessage based on the type
         if (type != null) {
@@ -414,8 +413,7 @@ public class JmsBinding {
      *
      * @return type or null if no mapping was possible
      */
-    protected JmsMessageType getJMSMessageTypeForBody(
-            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
+    protected JmsMessageType getJMSMessageTypeForBody(Exchange exchange, Object body) {
         JmsMessageType type = null;
         // let body determine the type
         if (body instanceof Node || body instanceof String) {

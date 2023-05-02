@@ -85,7 +85,7 @@ public class ClusteredPostgresAggregationRepository extends ClusteredJdbcAggrega
 
         String sql = queryBuilder.toString();
 
-        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, 1L, completed);
+        int updateCount = insertHelper(correlationId, exchange, sql, 1L, completed);
         if (updateCount == 0 && getRepositoryName().equals(repositoryName)) {
             throw new DataIntegrityViolationException("No row was inserted due to data violation");
         }

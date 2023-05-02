@@ -53,6 +53,6 @@ public abstract class AbstractSynchronizedExchange implements SynchronizedExchan
     protected void performSynchronization() {
         //call synchronizations with the result
         UnitOfWorkHelper.doneSynchronizations(getExchange(),
-                synchronizations, AbstractSynchronizedExchange.LOG);
+                synchronizations);
     }
 }

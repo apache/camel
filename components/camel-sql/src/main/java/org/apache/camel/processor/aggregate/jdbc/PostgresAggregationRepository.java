@@ -85,7 +85,7 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
 
         String sql = queryBuilder.toString();
 
-        int updateCount = insertHelper(camelContext, correlationId, exchange, sql, 1L);
+        int updateCount = insertHelper(correlationId, exchange, sql, 1L);
         if (updateCount == 0 && getRepositoryName().equals(repositoryName)) {
             throw new DataIntegrityViolationException("No row was inserted due to data violation");
         }

@@ -43,7 +43,7 @@ public class QuartzConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        getEndpoint().onConsumerStop(this);
+        getEndpoint().onConsumerStop();
         super.doStop();
     }
 

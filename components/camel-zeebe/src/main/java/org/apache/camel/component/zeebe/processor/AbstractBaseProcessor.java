@@ -35,7 +35,7 @@ public abstract class AbstractBaseProcessor extends BaseService implements Zeebe
         this.endpoint = endpoint;
     }
 
-    protected void setBody(Exchange exchange, ZeebeMessage message, boolean formatJSON) {
+    protected void setBody(Exchange exchange, ZeebeMessage message) {
         if (endpoint.isFormatJSON()) {
             try {
                 exchange.getMessage().setBody(objectMapper.writeValueAsString(message));

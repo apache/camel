@@ -621,7 +621,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    public void onConsumerStop(QuartzConsumer quartzConsumer) throws Exception {
+    public void onConsumerStop() throws Exception {
         if (jobAdded.get()) {
             pauseTrigger();
         }

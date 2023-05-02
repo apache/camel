@@ -399,11 +399,11 @@ public final class CSimpleHelper {
         return exchange.getContext().getRegistry().lookupByName(key);
     }
 
-    public static Class<?> type(Exchange exchange, Class<?> type) {
+    public static Class<?> type(Class<?> type) {
         return type;
     }
 
-    public static Object type(Exchange exchange, Class<?> type, String field) {
+    public static Object type(Class<?> type, String field) {
         return ObjectHelper.lookupConstantFieldValue(type, field);
     }
 
@@ -666,7 +666,7 @@ public final class CSimpleHelper {
         }
     }
 
-    public static boolean is(Exchange exchange, Object leftValue, Class<?> type) {
+    public static boolean is(Object leftValue, Class<?> type) {
         return type.isInstance(leftValue);
     }
 

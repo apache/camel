@@ -124,8 +124,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 requestContext, CxfConstants.REQUEST_CONTEXT);
 
         // propagate headers
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
-                requestContext);
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, requestContext);
 
         String overrideAddress = camelExchange.getIn().getHeader(CxfConstants.DESTINATION_OVERRIDE_URL, String.class);
 
@@ -397,8 +396,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 responseContext, CxfConstants.RESPONSE_CONTEXT);
 
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
-                responseContext);
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, responseContext);
+
         if (cxfExchange.getOutMessage() != null) {
             cxfExchange.getOutMessage().put(CxfConstants.PROTOCOL_HEADERS, responseContext.get(CxfConstants.PROTOCOL_HEADERS));
         }
@@ -438,8 +437,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
                 responseContext, CxfConstants.RESPONSE_CONTEXT);
 
-        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
-                responseContext);
+        propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, responseContext);
+
         // create out message
         Endpoint ep = cxfExchange.get(Endpoint.class);
         Message outMessage = ep.getBinding().createMessage();
@@ -760,7 +759,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     protected void propagateHeadersFromCamelToCxf(
             Exchange camelExchange,
             Map<String, Object> camelHeaders,
-            org.apache.cxf.message.Exchange cxfExchange,
             Map<String, Object> cxfContext) {
 
         // get cxf transport headers (if any) from camel exchange

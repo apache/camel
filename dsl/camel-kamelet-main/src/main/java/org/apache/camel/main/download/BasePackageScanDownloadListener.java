@@ -56,14 +56,14 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
         String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
         if (basePackage != null) {
             try {
-                basePackageScanConfiguration(basePackage, file);
+                basePackageScanConfiguration(basePackage);
             } catch (Exception e) {
                 // ignore
             }
         }
     }
 
-    protected void basePackageScanConfiguration(String basePackage, File file) throws Exception {
+    protected void basePackageScanConfiguration(String basePackage) throws Exception {
         Collection<CamelConfiguration> configs = new ArrayList<>();
         // we only want to scan via isolated classloader
         PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);

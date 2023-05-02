@@ -92,13 +92,13 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
             return verifyParameters(parameters);
         }
         if (scope == Scope.CONNECTIVITY) {
-            return verifyConnectivity(parameters);
+            return verifyConnectivity();
         }
 
         return ResultBuilder.unsupportedScope(scope).build();
     }
 
-    protected Result verifyConnectivity(Map<String, Object> parameters) {
+    protected Result verifyConnectivity() {
         return ResultBuilder.withStatusAndScope(Result.Status.UNSUPPORTED, Scope.CONNECTIVITY).build();
     }
 

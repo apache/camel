@@ -289,7 +289,7 @@ public abstract class BaseOptionModel {
         return text;
     }
 
-    public String getShortDefaultValue(int watermark) {
+    public String getShortDefaultValue() {
         String text = defaultValue != null ? defaultValue.toString() : "";
         if (text.endsWith("<T>")) {
             text = text.substring(0, text.length() - 3);

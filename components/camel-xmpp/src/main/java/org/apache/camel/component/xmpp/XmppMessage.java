@@ -83,7 +83,7 @@ public class XmppMessage extends DefaultMessage {
             XmppBinding binding = ExchangeHelper.getBinding(getExchange(), XmppBinding.class);
             if (binding != null) {
                 return (getHeader(XmppConstants.DOC_HEADER) == null)
-                        ? binding.extractBodyFromXmpp(getExchange(), xmppPacket) : getHeader(XmppConstants.DOC_HEADER);
+                        ? binding.extractBodyFromXmpp(xmppPacket) : getHeader(XmppConstants.DOC_HEADER);
             }
         }
         return null;

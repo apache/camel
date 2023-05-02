@@ -38,7 +38,7 @@ public final class CommandLineHelper {
         super();
     }
 
-    public static void augmentWithUserConfiguration(CommandLine commandLine, String... args) {
+    public static void augmentWithUserConfiguration(CommandLine commandLine) {
         File file = new File(System.getProperty("user.home"), USER_CONFIG);
         if (file.isFile() && file.exists()) {
             commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));

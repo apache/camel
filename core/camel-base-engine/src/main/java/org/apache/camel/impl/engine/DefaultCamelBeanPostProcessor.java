@@ -220,7 +220,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
         if (bindToRegistrySupported()) {
             injectClass(bean, beanName);
-            injectNestedClasses(bean, beanName);
+            injectNestedClasses(bean);
             injectBindToRegistryFields(bean, beanName, filter);
             injectBindToRegistryMethods(bean, beanName, filter);
         }
@@ -230,7 +230,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         // on second pass do bind to registry beforehand as they may be used by field/method injections below
         if (bindToRegistrySupported()) {
             injectClass(bean, beanName);
-            injectNestedClasses(bean, beanName);
+            injectNestedClasses(bean);
             injectBindToRegistryFields(bean, beanName, filter);
             injectBindToRegistryMethods(bean, beanName, filter);
         }
@@ -252,12 +252,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
             BeanInject beanInject = field.getAnnotation(BeanInject.class);
             if (beanInject != null) {
-                injectFieldBean(field, beanInject.value(), bean, beanName);
+                injectFieldBean(field, beanInject.value(), bean);
             }
 
             BeanConfigInject beanConfigInject = field.getAnnotation(BeanConfigInject.class);
             if (beanConfigInject != null) {
-                injectFieldBeanConfig(field, beanConfigInject.value(), bean, beanName);
+                injectFieldBeanConfig(field, beanConfigInject.value(), bean);
             }
 
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
@@ -304,12 +304,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                         field.getName(), bean, beanName, binding));
     }
 
-    public void injectFieldBean(Field field, String name, Object bean, String beanName) {
+    public void injectFieldBean(Field field, String name, Object bean) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionBeanValue(field.getType(), name));
     }
 
-    public void injectFieldBeanConfig(Field field, String name, Object bean, String beanName) {
+    public void injectFieldBeanConfig(Field field, String name, Object bean) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionBeanConfigValue(field.getType(), name));
     }
@@ -317,8 +317,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     public void injectFieldProperty(
             Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
-                getPostProcessorHelper().getInjectionPropertyValue(field.getType(), propertyName, propertyDefaultValue,
-                        field.getName(), bean, beanName));
+                getPostProcessorHelper().getInjectionPropertyValue(field.getType(), propertyName, propertyDefaultValue));
     }
 
     protected void injectMethods(final Object bean, final String beanName, Function<Class, Boolean> accept) {
@@ -400,7 +399,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
     }
 
-    protected void injectNestedClasses(final Object bean, final String beanName) {
+    protected void injectNestedClasses(final Object bean) {
         ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
             BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
             if (ann != null) {
@@ -418,12 +417,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
         BeanInject beanInject = method.getAnnotation(BeanInject.class);
         if (beanInject != null) {
-            setterBeanInjection(method, beanInject.value(), bean, beanName);
+            setterBeanInjection(method, beanInject.value(), bean);
         }
 
         BeanConfigInject beanConfigInject = method.getAnnotation(BeanConfigInject.class);
         if (beanConfigInject != null) {
-            setterBeanConfigInjection(method, beanConfigInject.value(), bean, beanName);
+            setterBeanConfigInjection(method, beanConfigInject.value(), bean);
         }
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
@@ -456,14 +455,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
-            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue,
-                    propertyDefaultValue, propertyName, bean, beanName);
+                    propertyDefaultValue);
             invokeMethod(method, bean, value);
         }
     }
 
-    public void setterBeanInjection(Method method, String name, Object bean, String beanName) {
+    public void setterBeanInjection(Method method, String name, Object bean) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
@@ -473,7 +471,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
     }
 
-    public void setterBeanConfigInjection(Method method, String name, Object bean, String beanName) {
+    public void setterBeanConfigInjection(Method method, String name, Object bean) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
@@ -523,7 +521,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             name = method.getName();
         }
         Object value = getPostProcessorHelper()
-                .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName);
+                .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean);
 
         if (value != null) {
             if (unbindEnabled) {

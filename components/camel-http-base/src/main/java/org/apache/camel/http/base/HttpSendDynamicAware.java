@@ -47,8 +47,8 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        Map<String, Object> properties = endpointProperties(exchange, uri);
-        Map<String, Object> lenient = endpointLenientProperties(exchange, uri);
+        Map<String, Object> properties = endpointProperties(uri);
+        Map<String, Object> lenient = endpointLenientProperties(uri);
         return new DynamicAwareEntry(uri, originalUri, properties, lenient);
     }
 

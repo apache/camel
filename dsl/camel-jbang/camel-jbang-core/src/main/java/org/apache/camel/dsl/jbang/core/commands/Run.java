@@ -563,14 +563,14 @@ public class Run extends CamelCommand {
             boolean custom = camelVersion.contains("-");
             if (custom) {
                 // custom camel distribution
-                return runCustomCamelVersion(main);
+                return runCustomCamelVersion();
             } else {
                 // apache camel distribution
-                return runCamelVersion(main);
+                return runCamelVersion();
             }
         } else if (background) {
             // spawn new JVM to run in background
-            return runBackground(main);
+            return runBackground();
         } else {
             // run default in current JVM with same camel version
             return runKameletMain(main);
@@ -605,7 +605,7 @@ public class Run extends CamelCommand {
         return answer;
     }
 
-    protected int runCamelVersion(KameletMain main) throws Exception {
+    protected int runCamelVersion() throws Exception {
         List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
         if (background) {
@@ -640,7 +640,7 @@ public class Run extends CamelCommand {
         }
     }
 
-    protected int runBackground(KameletMain main) throws Exception {
+    protected int runBackground() throws Exception {
         List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
         cmds.remove("--background=true");
@@ -655,7 +655,7 @@ public class Run extends CamelCommand {
         return 0;
     }
 
-    protected int runCustomCamelVersion(KameletMain main) throws Exception {
+    protected int runCustomCamelVersion() throws Exception {
         InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/run-custom-camel-version.tmpl");
         String content = IOHelper.loadText(is);
         IOHelper.close(is);

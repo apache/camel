@@ -224,7 +224,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
 
         // at first done the synchronizations
-        UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
+        UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
 
         // unregister from inflight registry, before signalling we are done
         inflightRepository.remove(exchange);

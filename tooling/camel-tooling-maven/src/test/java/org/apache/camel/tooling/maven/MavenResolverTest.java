@@ -203,8 +203,7 @@ public class MavenResolverTest {
             RepositorySystem repositorySystem
                     = downloader.configureRepositorySystem(registry, systemProperties, localSettingsSecurity);
 
-            Settings settings = downloader.mavenConfiguration(registry, repositorySystem,
-                    systemProperties, localSettings);
+            Settings settings = downloader.mavenConfiguration(registry, systemProperties, localSettings);
 
             // when using Maven without a project that may contain <repositories> in pom.xml, repositories
             // are taken from the active profiles defined in settings. If a repository is protected, the id

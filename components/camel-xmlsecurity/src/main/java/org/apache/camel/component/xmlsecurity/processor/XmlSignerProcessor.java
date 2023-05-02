@@ -434,7 +434,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             node = getTextNode(message, is);
         } else {
             ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
-            Schema schema = getSchemaForSigner(message, errorHandler);
+            Schema schema = getSchemaForSigner(message);
             Document doc = parseInput(is, getConfiguration().getDisallowDoctypeDecl(), schema, errorHandler);
             errorHandler.handleErrors(message.getExchange(), schema, null); // throws ValidationException
             node = doc.getDocumentElement();
@@ -443,7 +443,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return node;
     }
 
-    protected Schema getSchemaForSigner(Message message, ValidatorErrorHandler errorHandler)
+    protected Schema getSchemaForSigner(Message message)
             throws XmlSignatureException, SAXException,
             IOException {
         Schema schema;
@@ -478,15 +478,15 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
         Document doc = (Document) messageBodyNode.getParentNode();
         if (SignatureType.detached == sigType) {
-            return getParentForDetachedCase(doc, inMessage, contentReferenceURI);
+            return getParentForDetachedCase(doc, contentReferenceURI);
         } else {
             // enveloped case
-            return getParentForEnvelopedCase(doc, inMessage);
+            return getParentForEnvelopedCase(doc);
         }
 
     }
 
-    protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception {
+    protected Element getParentForEnvelopedCase(Document doc) throws Exception {
         if (getConfiguration().getParentXpath() != null) {
             XPathFilterParameterSpec xp = getConfiguration().getParentXpath();
             XPathExpression exp;
@@ -530,7 +530,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    private Element getParentForDetachedCase(Document doc, Message inMessage, String referenceUri)
+    private Element getParentForDetachedCase(Document doc, String referenceUri)
             throws XmlSignatureException {
         String elementId = referenceUri;
         if (elementId.startsWith("#")) {

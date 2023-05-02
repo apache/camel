@@ -35,10 +35,6 @@ public final class CamelVersionHelper {
      * @return       <tt>true</tt> if GE, <tt>false</tt> otherwise
      */
     public static boolean isGE(String base, String other) {
-        return isGE(base, other, false);
-    }
-
-    public static boolean isGE(String base, String other, boolean majorMinorOnly) {
         if (base == null || base.isEmpty()) {
             throw new IllegalArgumentException("Empty base version");
         }

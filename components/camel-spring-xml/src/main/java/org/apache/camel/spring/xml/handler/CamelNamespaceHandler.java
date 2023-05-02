@@ -193,7 +193,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser(name, parser);
     }
 
-    protected Object parseUsingJaxb(Element element, ParserContext parserContext, Binder<Node> binder) {
+    protected Object parseUsingJaxb(Element element, Binder<Node> binder) {
         try {
             return binder.unmarshal(element);
         } catch (JAXBException e) {
@@ -228,7 +228,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
 
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             if (value instanceof SSLContextParametersFactoryBean) {
                 SSLContextParametersFactoryBean bean = (SSLContextParametersFactoryBean) value;
@@ -270,7 +270,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             if (value instanceof CamelRouteContextFactoryBean) {
                 CamelRouteContextFactoryBean factoryBean = (CamelRouteContextFactoryBean) value;
@@ -300,7 +300,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             if (value instanceof CamelRouteConfigurationContextFactoryBean) {
                 CamelRouteConfigurationContextFactoryBean factoryBean = (CamelRouteConfigurationContextFactoryBean) value;
@@ -330,7 +330,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             if (value instanceof CamelRouteTemplateContextFactoryBean) {
                 CamelRouteTemplateContextFactoryBean factoryBean = (CamelRouteTemplateContextFactoryBean) value;
@@ -360,7 +360,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             if (value instanceof CamelEndpointFactoryBean) {
                 CamelEndpointFactoryBean factoryBean = (CamelEndpointFactoryBean) value;
@@ -387,7 +387,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             if (value instanceof CamelRestContextFactoryBean) {
                 CamelRestContextFactoryBean factoryBean = (CamelRestContextFactoryBean) value;
@@ -429,7 +429,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            Object value = parseUsingJaxb(element, parserContext, binder);
+            Object value = parseUsingJaxb(element, binder);
 
             CamelContextFactoryBean factoryBean = null;
             if (value instanceof CamelContextFactoryBean) {

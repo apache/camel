@@ -188,7 +188,7 @@ public final class AnnotationDependencyInjection {
             Value value = field.getAnnotation(Value.class);
             if (value != null) {
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), value.value(), null, null, bean, beanName));
+                        helper.getInjectionPropertyValue(field.getType(), value.value(), null));
             }
         }
 
@@ -196,7 +196,7 @@ public final class AnnotationDependencyInjection {
         public void onMethodInject(Method method, Object bean, String beanName) {
             Bean bi = method.getAnnotation(Bean.class);
             if (bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean);
                 if (instance != null) {
                     String name = method.getName();
                     if (bi.name().length > 0) {
@@ -255,7 +255,7 @@ public final class AnnotationDependencyInjection {
             ConfigProperty cp = field.getAnnotation(ConfigProperty.class);
             if (cp != null) {
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), cp.name(), cp.defaultValue(), null, bean, beanName));
+                        helper.getInjectionPropertyValue(field.getType(), cp.name(), cp.defaultValue()));
             }
         }
 
@@ -264,7 +264,7 @@ public final class AnnotationDependencyInjection {
             Produces produces = method.getAnnotation(Produces.class);
             Named bi = method.getAnnotation(Named.class);
             if (produces != null || bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean);
                 if (instance != null) {
                     String name = method.getName();
                     if (bi != null && !bi.value().isBlank()) {

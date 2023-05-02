@@ -181,7 +181,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
             // need to find the expired entries and add to the expired list
             for (Map.Entry<K, TimeoutMapEntry<K, V>> entry : map.entrySet()) {
                 if (entry.getValue().getExpireTime() < now) {
-                    if (isValidForEviction(entry.getValue())) {
+                    if (isValidForEviction()) {
                         log.debug("Evicting inactive entry ID: {}", entry.getValue());
                         expired.add(entry.getValue());
                     }
@@ -249,7 +249,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     /**
      * A hook to allow derivations to avoid evicting the current entry
      */
-    protected boolean isValidForEviction(TimeoutMapEntry<K, V> entry) {
+    protected boolean isValidForEviction() {
         return true;
     }
 

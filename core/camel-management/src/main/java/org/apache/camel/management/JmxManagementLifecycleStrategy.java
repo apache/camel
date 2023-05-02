@@ -189,7 +189,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                     // okay there exists already a CamelContext with this name, we can try to fix it by finding a free name
                     boolean fixed = false;
                     // if we use the default name strategy we can find a free name to use
-                    String newName = findFreeName(mc, context.getManagementNameStrategy(), name);
+                    String newName = findFreeName(context.getManagementNameStrategy(), name);
                     if (newName != null) {
                         // use this as the fixed name
                         fixed = true;
@@ -267,7 +267,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
     }
 
-    private String findFreeName(Object mc, ManagementNameStrategy strategy, String name) throws MalformedObjectNameException {
+    private String findFreeName(ManagementNameStrategy strategy, String name) throws MalformedObjectNameException {
         // we cannot find a free name for fixed named strategies
         if (strategy.isFixedName()) {
             return null;

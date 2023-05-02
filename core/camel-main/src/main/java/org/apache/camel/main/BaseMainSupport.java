@@ -1175,7 +1175,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         // and call after all properties are set
-        DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
+        DefaultConfigurationConfigurer.afterPropertiesSet();
     }
 
     private void setRouteTemplateProperties(

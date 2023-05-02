@@ -199,18 +199,13 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     }
 
     @Override
-    public void processMessage(Message message) {
-        processMessage(null, message);
-    }
-
-    @Override
     public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException {
         if (stanza instanceof Message) {
             processMessage((Message) stanza);
         }
     }
 
-    public void processMessage(Chat chat, Message message) {
+    public void processMessage(Message message) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received XMPP message for {} from {} : {}",
                     endpoint.getUser(), endpoint.getParticipant(), message.getBody());

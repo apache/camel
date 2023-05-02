@@ -46,15 +46,15 @@ public class DeferServiceStartupListener implements StartupListener, Ordered {
 
     @Override
     public void onCamelContextStarting(CamelContext context, boolean alreadyStarted) throws Exception {
-        doStart(earlyServices, context, alreadyStarted);
+        doStart(earlyServices);
     }
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-        doStart(services, context, alreadyStarted);
+        doStart(services);
     }
 
-    protected void doStart(Set<Service> services, CamelContext context, boolean alreadyStarted) throws Exception {
+    protected void doStart(Set<Service> services) throws Exception {
         // new services may be added while starting a service
         // so use a while loop to get the newly added services as well
         while (!services.isEmpty()) {

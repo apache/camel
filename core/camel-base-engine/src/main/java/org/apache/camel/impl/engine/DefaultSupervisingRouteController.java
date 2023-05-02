@@ -183,7 +183,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         this.unhealthyOnExhausted = unhealthyOnExhausted;
     }
 
-    protected BackOff getBackOff(String id) {
+    protected BackOff getBackOff() {
         // currently all routes use the same backoff
         return backOff;
     }
@@ -520,7 +520,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             // use basic endpoint uri to not log verbose details or potential sensitive data
             String uri = route.get().getEndpoint().getEndpointBaseUri();
             uri = URISupport.sanitizeUri(uri);
-            BackOff backOff = getBackOff(id);
+            BackOff backOff = getBackOff();
             lines.add(String.format("    %s %s (%s) with %s", status, id, uri, backOff));
             String cid = route.get().getConfigurationId();
             if (cid != null) {
@@ -589,7 +589,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             routes.computeIfAbsent(
                     route,
                     r -> {
-                        BackOff backOff = getBackOff(r.getId());
+                        BackOff backOff = getBackOff();
 
                         logger.debug("Supervising route: {} with back-off: {}", r.getId(), backOff);
 

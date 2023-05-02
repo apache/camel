@@ -1044,7 +1044,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final NamedRoute routeDefinition;
         private final Synchronization tracingAfterRoute;
 
-        public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition, boolean first) {
+        public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition) {
             this.tracer = tracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;

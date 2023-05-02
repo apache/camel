@@ -62,7 +62,7 @@ public final class UnitOfWorkHelper {
         }
     }
 
-    public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
+    public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations) {
         if (synchronizations == null || synchronizations.isEmpty()) {
             return;
         }
