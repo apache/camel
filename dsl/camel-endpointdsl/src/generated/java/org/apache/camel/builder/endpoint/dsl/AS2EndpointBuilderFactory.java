@@ -265,6 +265,38 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder hostnameVerifier(
+                javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder hostnameVerifier(
+                String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
@@ -505,6 +537,37 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointConsumerBuilder serverPortNumber(
                 String serverPortNumber) {
             doSetProperty("serverPortNumber", serverPortNumber);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -812,7 +875,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Certifiates to validate the messages signature against. If not
+         * Certificates to validate the message's signature against. If not
          * supplied, validation will not take place. Server: validates the
          * received message. Client: not yet implemented, should validate the
          * MDN.
@@ -831,7 +894,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Certifiates to validate the messages signature against. If not
+         * Certificates to validate the message's signature against. If not
          * supplied, validation will not take place. Server: validates the
          * received message. Client: not yet implemented, should validate the
          * MDN.
@@ -847,38 +910,6 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointConsumerBuilder validateSigningCertificateChain(
                 String validateSigningCertificateChain) {
             doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
-            return this;
-        }
-
-        /**
-         * Add sslContext.
-         *
-         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
-         * type.
-         *
-         * Group: common
-         *
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder sslContext(
-                javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Add sslContext.
-         *
-         * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
-         *
-         * Group: common
-         *
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
             return this;
         }
     }
@@ -1195,6 +1226,38 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder hostnameVerifier(
+                javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder hostnameVerifier(
+                String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
@@ -1435,6 +1498,37 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointProducerBuilder serverPortNumber(
                 String serverPortNumber) {
             doSetProperty("serverPortNumber", serverPortNumber);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -1742,7 +1836,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Certifiates to validate the messages signature against. If not
+         * Certificates to validate the message's signature against. If not
          * supplied, validation will not take place. Server: validates the
          * received message. Client: not yet implemented, should validate the
          * MDN.
@@ -1761,7 +1855,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Certifiates to validate the messages signature against. If not
+         * Certificates to validate the message's signature against. If not
          * supplied, validation will not take place. Server: validates the
          * received message. Client: not yet implemented, should validate the
          * MDN.
@@ -1777,38 +1871,6 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointProducerBuilder validateSigningCertificateChain(
                 String validateSigningCertificateChain) {
             doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
-            return this;
-        }
-
-        /**
-         * Add sslContext.
-         *
-         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
-         * type.
-         *
-         * Group: common
-         *
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder sslContext(
-                javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Add sslContext.
-         *
-         * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
-         *
-         * Group: common
-         *
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
             return this;
         }
     }
@@ -2104,6 +2166,37 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder hostnameVerifier(
+                javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
@@ -2340,6 +2433,37 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder serverPortNumber(String serverPortNumber) {
             doSetProperty("serverPortNumber", serverPortNumber);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -2643,7 +2767,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Certifiates to validate the messages signature against. If not
+         * Certificates to validate the message's signature against. If not
          * supplied, validation will not take place. Server: validates the
          * received message. Client: not yet implemented, should validate the
          * MDN.
@@ -2662,7 +2786,7 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Certifiates to validate the messages signature against. If not
+         * Certificates to validate the message's signature against. If not
          * supplied, validation will not take place. Server: validates the
          * received message. Client: not yet implemented, should validate the
          * MDN.
@@ -2678,38 +2802,6 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointBuilder validateSigningCertificateChain(
                 String validateSigningCertificateChain) {
             doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
-            return this;
-        }
-
-        /**
-         * Add sslContext.
-         *
-         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
-         * type.
-         *
-         * Group: common
-         *
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder sslContext(
-                javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Add sslContext.
-         *
-         * The option will be converted to a
-         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
-         *
-         * Group: common
-         *
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
             return this;
         }
     }
