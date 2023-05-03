@@ -790,7 +790,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { serverCert }, serverKP.getPrivate(), serverKP.getPrivate(),
-                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert });
+                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }
