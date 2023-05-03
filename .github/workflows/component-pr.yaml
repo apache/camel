@@ -55,9 +55,12 @@ jobs:
               repo: context.repo.repo,
               body: `:star2: Thank you for your contribution to the Apache Camel project! :star2: 
             
-            :warning: Please note that the changes on this PR may be **tested automatically**. 
+            :camel: Maintainers, please note that first-time contributors *require manual approval* for the GitHub Actions to run.
+            
+            :warning: Please note that the changes on this PR may be **tested automatically** if they change components.
             
             If necessary Apache Camel Committers may access logs and test results in the job summaries!`
+            
             })
       - name: 'Download artifact'
         uses: actions/github-script@v6
