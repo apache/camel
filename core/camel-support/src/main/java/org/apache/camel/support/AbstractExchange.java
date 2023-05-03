@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,15 +52,10 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  * @see DefaultExchange
  */
 class AbstractExchange implements Exchange {
-    // number of elements in array
-    protected static final int INTERNAL_LENGTH = ExchangePropertyKey.values().length;
-    // empty array for reset
-    protected static final Object[] EMPTY_INTERNAL_PROPERTIES = new Object[INTERNAL_LENGTH];
+    protected final EnumMap<ExchangePropertyKey, Object> internalProperties = new EnumMap<>(ExchangePropertyKey.class);
 
     protected final CamelContext context;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
-    // optimize for internal exchange properties (not intended for end users)
-    protected final Object[] internalProperties = new Object[INTERNAL_LENGTH];
     protected long created;
     protected Message in;
     protected Message out;
@@ -155,17 +151,11 @@ class AbstractExchange implements Exchange {
             safeCopyProperties(this.safeCopyProperties, exchange.getSafeCopyProperties());
         }
         // copy over internal properties
-        System.arraycopy(internalProperties, 0, exchange.internalProperties, 0, internalProperties.length);
+        exchange.internalProperties.putAll(internalProperties);
 
         if (getContext().isMessageHistory()) {
-            // safe copy message history using a defensive copy
-            List<MessageHistory> history
-                    = (List<MessageHistory>) exchange.internalProperties[ExchangePropertyKey.MESSAGE_HISTORY.ordinal()];
-            if (history != null) {
-                // use thread-safe list as message history may be accessed concurrently
-                exchange.internalProperties[ExchangePropertyKey.MESSAGE_HISTORY.ordinal()]
-                        = new CopyOnWriteArrayList<>(history);
-            }
+            exchange.internalProperties.computeIfPresent(ExchangePropertyKey.MESSAGE_HISTORY,
+                    (k, v) -> new CopyOnWriteArrayList<>((List<MessageHistory>) v));
         }
 
         return exchange;
@@ -205,7 +195,7 @@ class AbstractExchange implements Exchange {
 
     @Override
     public Object getProperty(ExchangePropertyKey key) {
-        return internalProperties[key.ordinal()];
+        return internalProperties.get(key);
     }
 
     @Override
@@ -253,14 +243,12 @@ class AbstractExchange implements Exchange {
 
     @Override
     public void setProperty(ExchangePropertyKey key, Object value) {
-        internalProperties[key.ordinal()] = value;
+        internalProperties.put(key, value);
     }
 
     @Override
     public Object removeProperty(ExchangePropertyKey key) {
-        Object old = internalProperties[key.ordinal()];
-        internalProperties[key.ordinal()] = null;
-        return old;
+        return internalProperties.remove(key);
     }
 
     @Override
@@ -268,7 +256,7 @@ class AbstractExchange implements Exchange {
         Object answer = null;
         ExchangePropertyKey key = ExchangePropertyKey.asExchangePropertyKey(name);
         if (key != null) {
-            answer = internalProperties[key.ordinal()];
+            answer = internalProperties.get(key);
             // if the property is not an internal then fallback to lookup in the properties map
         }
         if (answer == null && properties != null) {
@@ -372,8 +360,7 @@ class AbstractExchange implements Exchange {
             if (properties != null) {
                 properties.clear();
             }
-            // reset array by copying over from empty which is a very fast JVM optimized operation
-            System.arraycopy(EMPTY_INTERNAL_PROPERTIES, 0, this.internalProperties, 0, INTERNAL_LENGTH);
+            internalProperties.clear();
             return true;
         }
 
@@ -385,7 +372,7 @@ class AbstractExchange implements Exchange {
                     continue;
                 }
                 matches = true;
-                internalProperties[epk.ordinal()] = null;
+                internalProperties.remove(epk);
             }
         }
 
@@ -683,14 +670,13 @@ class AbstractExchange implements Exchange {
     }
 
     void copyInternalProperties(Exchange target) {
-        AbstractExchange ae = (AbstractExchange) target;
-        System.arraycopy(internalProperties, 0, ae.internalProperties, 0, INTERNAL_LENGTH);
+        ((AbstractExchange) target).internalProperties.putAll(internalProperties);
     }
 
     Map<String, Object> getInternalProperties() {
         Map<String, Object> map = new HashMap<>();
         for (ExchangePropertyKey key : ExchangePropertyKey.values()) {
-            Object value = internalProperties[key.ordinal()];
+            Object value = internalProperties.get(key);
             if (value != null) {
                 map.put(key.getName(), value);
             }
