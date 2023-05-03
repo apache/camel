@@ -38,7 +38,7 @@ ldap:ldapServerBean[?options]
 -----------------------------
 
 The _ldapServerBean_ portion of the URI refers to a
-http://java.sun.com/j2se/1.4.2/docs/api/javax/naming/directory/DirContext.html[DirContext]
+https://docs.oracle.com/en/java/javase/17/docs/api/java.naming/javax/naming/directory/DirContext.html[DirContext]
 bean in the registry. The LDAP component only supports producer
 endpoints, which means that an `ldap` URI cannot appear in the `from` at
 the start of a route.
@@ -112,14 +112,14 @@ Name is then extracted from the response.
 ----------------------------------------------------------
 ProducerTemplate template = exchange.getContext().createProducerTemplate();
 
-Collection results = template.sendBody(
+Collection<SearchResult> results = template.requestBody(
     "ldap:ldapserver?base=ou=mygroup,ou=groups,ou=system",
     "(member=uid=huntc,ou=users,ou=system)", Collection.class);
 
 if (results.size() > 0) {
   // Extract what we need from the device's profile
 
-  Iterator> resultIter = results.iterator();
+  Iterator resultIter = results.iterator();
   SearchResult searchResult = (SearchResult) resultIter.next();
   Attributes attributes = searchResult.getAttributes();
   Attribute deviceCNAttr = attributes.get("cn");
@@ -152,12 +152,13 @@ props.setProperty(Context.SECURITY_AUTHENTICATION, "simple");
 props.setProperty(Context.SECURITY_PRINCIPAL, "cn=Manager");
 props.setProperty(Context.SECURITY_CREDENTIALS, "secret");
 
-SimpleRegistry reg = new SimpleRegistry();
-reg.put("myldap", new InitialLdapContext(props, null));
+DefaultRegistry reg = new DefaultRegistry();
+reg.bind("myldap", new InitialLdapContext(props, null));
 
 CamelContext context = new DefaultCamelContext(reg);
 context.addRoutes(
     new RouteBuilder() {
+        @Override
         public void configure() throws Exception { 
             from("direct:start").to("ldap:myldap?base=ou=test");
         }
@@ -172,18 +173,18 @@ Exchange exchange = endpoint.createExchange();
 exchange.getIn().setBody("(uid=test)");
 Exchange out = template.send(endpoint, exchange);
 
-Collection<SearchResult> data = out.getOut().getBody(Collection.class);
+Collection<SearchResult> data = out.getMessage().getBody(Collection.class);
 assert data != null;
 assert !data.isEmpty();
 
-System.out.println(out.getOut().getBody());
+System.out.println(out.getMessage().getBody());
 
 context.stop();
 ---------------------------------------------------------------------------------------
 
 == Configuring SSL
 
-All required is to create a custom socket factory and reference it in
+All that is required is to create a custom socket factory and reference it in
 the InitialDirContext bean - see below sample.
 
 *SSL Configuration*
@@ -191,61 +192,60 @@ the InitialDirContext bean - see below sample.
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------
 <?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-                 http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <sslContextParameters xmlns="http://camel.apache.org/schema/blueprint"
-                          id="sslContextParameters">
-        <keyManagers
-                keyPassword="{{keystore.pwd}}">
-            <keyStore
-                    resource="{{keystore.url}}"
-                    password="{{keystore.pwd}}"/>
+    <sslContextParameters xmlns="http://camel.apache.org/schema/spring" id="sslContextParameters" >
+        <keyManagers keyPassword="{{keystore.pwd}}">
+            <keyStore resource="{{keystore.url}}" password="{{keystore.pwd}}"/>
         </keyManagers>
     </sslContextParameters>
 
-    <bean id="customSocketFactory" class="zotix.co.util.CustomSocketFactory">
-        <argument ref="sslContextParameters" />
+    <bean id="customSocketFactory" class="com.example.ldap.CustomSocketFactory">
+        <constructor-arg index="0" ref="sslContextParameters"/>
     </bean>
+
     <bean id="ldapserver" class="javax.naming.directory.InitialDirContext" scope="prototype">
-        <argument>
+        <constructor-arg>
             <props>
-                <prop key="java.naming.factory.initial" value="com.sun.jndi.ldap.LdapCtxFactory"/>
-                <prop key="java.naming.provider.url" value="ldaps://lab.zotix.co:636"/>
-                <prop key="java.naming.security.protocol" value="ssl"/>
-                <prop key="java.naming.security.authentication" value="simple" />
-                <prop key="java.naming.security.principal" value="cn=Manager,dc=example,dc=com"/>
-                <prop key="java.naming.security.credentials" value="passw0rd"/>
-                <prop key="java.naming.ldap.factory.socket"
-                      value="zotix.co.util.CustomSocketFactory"/>
+                <prop key="java.naming.factory.initial">com.sun.jndi.ldap.LdapCtxFactory</prop>
+                <prop key="java.naming.provider.url">ldaps://127.0.0.1:10636</prop>
+                <prop key="java.naming.security.protocol">ssl</prop>
+                <prop key="java.naming.security.authentication">none</prop>
+                <prop key="java.naming.ldap.factory.socket">com.example.ldap.CustomSocketFactory</prop>
             </props>
-        </argument>
+        </constructor-arg>
     </bean>
-</blueprint>
+</beans>
 ----------------------------------------------------------------------------------------------------------------------------------
 
 *Custom Socket Factory*
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
-import org.apache.camel.support.jsse.SSLContextParameters;
+package com.example.ldap;
 
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.KeyStore;
 
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.apache.camel.support.jsse.SSLContextParameters;
+
 /**
  * The CustomSocketFactory. Loads the KeyStore and creates an instance of SSLSocketFactory
  */
 public class CustomSocketFactory extends SSLSocketFactory {
-
+    
     private static SSLSocketFactory socketFactory;
 
     /**
@@ -255,7 +255,7 @@ public class CustomSocketFactory extends SSLSocketFactory {
     }
 
     /**
-     * Called by Blueprint DI to initialise an instance of SocketFactory
+     * Called by Spring Boot DI to initialize an instance of SocketFactory
      */
     public CustomSocketFactory(SSLContextParameters sslContextParameters) {
         try {
@@ -266,7 +266,7 @@ public class CustomSocketFactory extends SSLSocketFactory {
             ctx.init(null, tmf.getTrustManagers(), null);
             socketFactory = ctx.getSocketFactory();
         } catch (Exception ex) {
-            ex.printStackTrace(System.err);  /* handle exception */
+            ex.printStackTrace(System.err);
         }
     }
 
