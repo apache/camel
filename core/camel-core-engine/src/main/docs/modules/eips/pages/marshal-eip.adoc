@@ -1,4 +1,5 @@
 = Marshal EIP
+:tabs-sync-option:
 
 The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs are used
 for xref:message-translator.adoc[Message Transformation].
@@ -25,6 +26,10 @@ Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java obj
 Then the reverse operation happens to transform the Java objects back into XML also via JAXB,
 but using the `marshal` operation. And finally the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox/xml")
@@ -34,8 +39,8 @@ from("file:inbox/xml")
   .to("jms:queue:order");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -46,4 +51,22 @@ And in XML:
   <to uri="jms:queue:order"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:inbox/xml
+    steps:
+      - unmarshal:
+          jaxb: {}
+      - to:
+          uri: bean:validateOrder
+      - marshal:
+          jaxb: {}
+      - to:
+          uri: jms:queue:order 
+----
+====
 

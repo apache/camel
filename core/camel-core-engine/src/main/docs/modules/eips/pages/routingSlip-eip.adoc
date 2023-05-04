@@ -4,6 +4,7 @@
 :description: Routes a message through a series of steps that are pre-determined (the slip)
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/RoutingTable.html[Routing Slip]
@@ -45,23 +46,18 @@ TIP: A slip can be empty, meaning that the message will not be routed anywhere.
 The following route will take any messages sent to the Apache ActiveMQ queue cheese
 and use the header with key "whereTo" that is used to compute the slip (endpoint xref:manual::uris.adoc[uris]).
 
+[tabs]
+====
+Java::
++
 [source,java]
 ---------------------
 from("activemq:cheese")
   .routingSlip(header("whereTo"));
 ---------------------
 
-The value of the header ("whereTo") should be a comma-delimited string of endpoint URIs you wish the message to be routed to.
-The message will be routed in a xref:pipeline-eip.adoc[pipeline] fashion, i.e., one after the other.
-
-The Routing Slip sets a property, `Exchange.SLIP_ENDPOINT`, on the `Exchange` which contains the
-current endpoint as it advanced though the slip. This allows you to _know_ how far we have processed in the slip.
-
-The Routing Slip will compute the slip *beforehand* which means,
-the slip is only computed once. If you need to compute the slip _on-the-fly_ then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
-
-The same example in XML is simply just:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -71,6 +67,16 @@ The same example in XML is simply just:
   </routingSlip>
 </route>
 ----
+====
+
+The value of the header ("whereTo") should be a comma-delimited string of endpoint URIs you wish the message to be routed to.
+The message will be routed in a xref:pipeline-eip.adoc[pipeline] fashion, i.e., one after the other.
+
+The Routing Slip sets a property, `Exchange.SLIP_ENDPOINT`, on the `Exchange` which contains the
+current endpoint as it advanced though the slip. This allows you to _know_ how far we have processed in the slip.
+
+The Routing Slip will compute the slip *beforehand* which means,
+the slip is only computed once. If you need to compute the slip _on-the-fly_ then use the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP instead.
 
 === How is the slip computed
 
@@ -90,14 +96,18 @@ The default delimiter is comma, but can be re-configured.
 The Routing Slip supports `ignoreInvalidEndpoints` (like xref:recipientList-eip.adoc[Recipient List] EIP).
 You can use it to skip endpoints which are invalid.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ---------------------
 from("direct:start")
   .routingSlip("myHeader").ignoreInvalidEndpoints();
 ---------------------
 
-And in XML DSL it is an attribute on `<routingSlip>`:
-
+XML::
++
 [source,xml]
 ---------------------
 <route>
@@ -107,6 +117,7 @@ And in XML DSL it is an attribute on `<routingSlip>`:
   </routingSlip>
 </route>
 ---------------------
+====
 
 Then let us say the `myHeader` contains the following two endpoints `direct:foo,xxx:bar`.
 The first endpoint is valid and works. However, the second one is invalid and will just be ignored.

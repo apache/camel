@@ -4,6 +4,7 @@
 :description: Converts the message body to another type
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The ConvertBodyTo EIP allows you to transform the message body to a different type.
 
@@ -19,6 +20,10 @@ You can also use `byte[]` for a byte array.
 
 A common use-case is for converting the message body to a `String`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -26,8 +31,8 @@ from("file:inbox")
   .log("The file content: ${body}");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -36,3 +41,17 @@ And in XML DSL:
   <log message="The file content: ${body}"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:inbox
+    steps:
+      - convertBodyTo:
+          type: String
+      - log:
+          message: "The file content: ${body}"
+----
+====

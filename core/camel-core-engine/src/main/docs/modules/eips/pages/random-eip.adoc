@@ -4,6 +4,7 @@
 :description: The destination endpoints are selected by random.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Random mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 
@@ -18,8 +19,12 @@ include::partial$eip-options.adoc[]
 
 We want to load balance between three endpoints in random mode.
 
-This is done as follows in Java DSL:
+This is done as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -30,8 +35,8 @@ from("direct:start")
     .end();
 ----
 
-In XML you'll have a route like this:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -44,3 +49,4 @@ In XML you'll have a route like this:
     </loadBalance>
 </route>
 ----
+====

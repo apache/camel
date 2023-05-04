@@ -1,4 +1,5 @@
 = Request Reply
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/RequestReply.html[Request Reply]
@@ -44,14 +45,18 @@ IMPORTANT: This is only possible on endpoints used by consumers (i.e. in `<from>
 In the example below the message will be forced as a request reply message as the consumer
 is in `InOut` mode.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:someQueue?exchangePattern=InOut")
   .to("bean:processMessage");
 ----
 
-And with XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -59,12 +64,17 @@ And with XML:
     <to uri="bean:processMessage"/>
 </route>
 ----
+====
 
 == Using setExchangePattern EIP
 
 You can specify the
 xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:foo")
@@ -72,8 +82,8 @@ from("direct:foo")
   .to("jms:queue:cheese");
 ----
 
-And with XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -82,6 +92,7 @@ And with XML:
     <to uri="jms:queue:cheese"/>
 </route>
 ----
+====
 
 When using `setExchangePattern` then the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 on the xref:manual::exchange.adoc[Exchange] is changed from this point onwards in the route.

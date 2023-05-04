@@ -1,4 +1,5 @@
 = Event Driven Consumer
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driven Consumer]
@@ -23,14 +24,18 @@ when a xref:message.adoc[Message] is available for processing.
 The following demonstrates a xref:bean-eip.adoc[Bean] being invoked when
 an event occurs from a xref:ROOT:jms-component.adoc[JMS] queue.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:queue:foo")
     .bean(MyBean.class);
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -39,3 +44,14 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: jms:queue:foo
+    steps:
+      - bean:
+          beanType: com.foo.MyBean
+----
+====

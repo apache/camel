@@ -1,4 +1,5 @@
 = Service Activator
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingAdapter.html[Service Activator]
@@ -24,16 +25,18 @@ to a bean using Java annotation.
 Here is a simple example of using a xref:ROOT:direct-component.adoc[Direct] endpoint
 to create a messaging interface to a POJO xref:ROOT:bean-component.adoc[Bean] service.
 
-Using Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:invokeMyService")
   .to("bean:myService");
 ----
 
-Using the XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -41,3 +44,4 @@ Using the XML DSL:
   <to uri="bean:myService"/>
 </route>
 ----
+====

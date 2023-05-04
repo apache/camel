@@ -4,6 +4,7 @@
 :description: Sets the value of a message header
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The SetHeader EIP is used for setting a xref:message.adoc[message] header.
 
@@ -17,6 +18,10 @@ include::partial$eip-options.adoc[]
 
 The following example shows how to set a header in a Camel route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -24,8 +29,8 @@ from("direct:a")
     .to("direct:b");
 ----
 
-And the same example using XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -36,20 +41,34 @@ And the same example using XML:
     <to uri="direct:b"/>
 </route>
 ----
+====
 
 In the example the header value is a xref:components:languages:constant-language.adoc[constant].
 
 Any of the Camel languages can be used, such as xref:components:languages:simple-language.adoc[Simple].
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
     .setHeader("randomNumber", simple("${random(1,100)}"))
     .to("direct:b");
 ----
++
+Header can be set using fluent syntax.
++
+[source,java]
+----
+from("direct:a")
+    .setHeader("randomNumber").simple("${random(1,100)}")
+    .to("direct:b");
+----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -60,15 +79,8 @@ And in XML:
     <to uri="direct:b"/>
 </route>
 ----
+====
 
-Header can be set using fluent syntax.
-
-[source,java]
-----
-from("direct:a")
-    .setHeader("randomNumber").simple("${random(1,100)}")
-    .to("direct:b");
-----
 See xref:components:languages:jsonpath-language.adoc#_using_header_as_input[JSONPath] for another example.
 
 === Setting a header from another header
@@ -77,6 +89,10 @@ You can also set a header with the value from another header.
 
 In the example we set the header foo with the value from an existing header named bar.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -84,8 +100,8 @@ from("direct:a")
     .to("direct:b");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -96,3 +112,4 @@ And in XML:
     <to uri="direct:b"/>
 </route>
 ----
+====

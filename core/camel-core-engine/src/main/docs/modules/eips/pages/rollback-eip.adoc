@@ -4,6 +4,7 @@
 :description: Forces a rollback by stopping routing the message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Rollback EIP is used for marking an xref:manual::exchange.adoc[Exchange]
 to rollback and stop continue routing the message.
@@ -19,6 +20,10 @@ We want test message for some conditions and force a rollback if a message may b
 
 In Java DSL we can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -28,8 +33,8 @@ from("direct:start")
         .to("direct:continue");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -45,6 +50,7 @@ And in XML DSL:
     </choice>
 </route>
 ----
+====
 
 When Camel is rolling back, then a `RollbackExchangeException` is thrown with the caused message "That do not work".
 
@@ -55,6 +61,10 @@ to cause the message to fail and rollback.
 
 This behavior can be modified to only mark for rollback, and not throw the exception.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -64,8 +74,8 @@ from("direct:start")
         .to("direct:continue");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -81,6 +91,7 @@ And in XML DSL:
     </choice>
 </route>
 ----
+====
 
 Then no exception is thrown, but the message is marked to rollback and stopped continue routing.
 

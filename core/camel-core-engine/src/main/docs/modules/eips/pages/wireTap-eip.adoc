@@ -4,6 +4,7 @@
 :description: Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns]
@@ -37,6 +38,10 @@ This route delays the message 1 second before continuing. This is because
 it allows you to see that the tapped message is routed independently of the original
 route, so that you would see log:result happens before log:tap
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -49,8 +54,8 @@ from("direct:tap")
     .to("log:tap");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <routes>
@@ -69,6 +74,25 @@ And in XML:
 </routes>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - wireTap:
+         uri: direct:tap
+      - to: 
+          uri: log:result
+- from:
+    uri: direct:tap
+    steps:
+      - to:
+          uri: log:log
+----
+====
+
 === Wire tapping with dynamic URIs
 
 For example to wire tap to a dynamic URI, then the URI
@@ -77,6 +101,10 @@ allows to construct dynamic URIs.
 
 For example to wire tap to a JMS queue where the header ID is part of the queue name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -84,8 +112,8 @@ from("direct:start")
     .to("bean:doSomething");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -95,6 +123,19 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - wireTap:
+          uri: jms:queue:backup-${header.id}
+      - to:
+          uri: bean:doSomething
+----
+====
 
 == WireTap Thread Pools
 

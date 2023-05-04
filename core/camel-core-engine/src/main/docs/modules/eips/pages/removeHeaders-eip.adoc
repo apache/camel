@@ -4,6 +4,7 @@
 :description: Removes message headers whose name matches a specified pattern
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Headers EIP allows you to remove one or more headers from the xref:message.adoc[Message],
 based on pattern syntax.
@@ -27,6 +28,10 @@ matching by the following rules in the given order:
 
 To remove all headers you can use `*` as the pattern:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -34,8 +39,8 @@ from("seda:b")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -45,10 +50,27 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeHeaders: "*"
+      - to:
+          uri: mock:result
+----
+====
+
 == Remove all Camel headers
 
 To remove all headers that start with `Camel` then use `Camel*` as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -56,8 +78,8 @@ from("seda:b")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -66,6 +88,19 @@ And in XML:
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeHeaders: "Camel*"
+      - to:
+          uri: mock:result
+----
+====
 
 == See Also
 

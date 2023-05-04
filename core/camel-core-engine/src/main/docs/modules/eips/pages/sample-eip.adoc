@@ -4,6 +4,7 @@
 :description: Extract a sample of the messages passing through a route
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route.
 
@@ -22,6 +23,10 @@ include::partial$eip-options.adoc[]
 
 In the example below we sample one message per second (default time period):
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:sample")
@@ -29,8 +34,8 @@ from("direct:sample")
     .to("direct:sampled");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -40,12 +45,17 @@ And in XML
     </sample>
 </route>
 ----
+====
 
 === Sampling using time period
 
 The default time period is 1 second, but this can easily be configured.
 For example to sample 1 message per 5 seconds you can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:sample")
@@ -53,8 +63,8 @@ from("direct:sample")
     .to("direct:sampled");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -64,6 +74,7 @@ And in XML
     </sample>
 </route>
 ----
+====
 
 === Sampling using message frequency
 
@@ -71,6 +82,10 @@ The Sample EIP can also be configured to sample based on frequency instead of ti
 
 For example to sample every 10th message you can do:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:sample")
@@ -78,8 +93,8 @@ from("direct:sample")
     .to("direct:sampled");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -89,3 +104,4 @@ And in XML
     </sample>
 </route>
 ----
+====

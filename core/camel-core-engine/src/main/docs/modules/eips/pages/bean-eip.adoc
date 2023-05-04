@@ -4,6 +4,7 @@
 :description: Calls a Java bean
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Bean EIP is used for invoking a method on a bean, and the returned value
 is the new message body.
@@ -44,6 +45,10 @@ However, when using `prototype` then behaviour is dependent on the delegated reg
 
 The Bean EIP can be used directly in the routes as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // lookup bean from registry and invoke the given method by the name
@@ -53,14 +58,15 @@ from("direct:foo").bean("myBean", "myMethod");
 from("direct:bar").bean("myBean");
 ----
 
-And with Spring XML you can declare the bean using `<bean>` as shown:
+XML:: With Spring XML you can declare the bean using `<bean>` as shown:
++
 [source,xml]
 ----
 <bean id="myBean" class="com.foo.ExampleBean"/>
 ----
-
++
 And in XML DSL you can call this bean:
-
++
 [source,xml]
 ----
 <routes>
@@ -75,9 +81,34 @@ And in XML DSL you can call this bean:
 </routes>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - bean:
+          ref: myBean
+          method: myMethod
+- from:
+    uri: direct:start
+    steps:
+      - bean:
+          ref: myBean
+- beans:
+    - name: myBean
+      type: com.foo.ExampleBean
+----
+====
+
 Instead of passing name of the reference to the bean (so that Camel will
 lookup for it in the registry), you can provide the bean:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Send message to the given bean instance.
@@ -90,8 +121,8 @@ from("direct:bar").bean(new ExampleBean(), "myMethod");
 from("direct:cheese").bean(ExampleBean.class);
 ----
 
-In XML DSL this is also possible using `beanType`:
-
+XML::
++
 [source,xml]
 ----
 <routes>
@@ -109,6 +140,29 @@ In XML DSL this is also possible using `beanType`:
     </route>
 </routes>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:foo
+    steps:
+      - bean:
+          beanType: com.foo.ExampleBean
+          method: myMethod
+- from:
+    uri: direct:bar
+    steps:
+      - bean:
+          beanType: com.foo.ExampleBean
+- from:
+    uri: direct:cheese
+    steps:
+      - bean:
+          beanType: com.foo.ExampleBean
+----
+====
 
 == Bean binding
 

@@ -4,6 +4,7 @@
 :description: Enriches a message with data from a secondary resource
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/DataEnricher.html[Content
@@ -68,8 +69,13 @@ public class ExampleAggregationStrategy implements AggregationStrategy {
 }
 ----
 
-You then use the `AggregationStrategy` with the `enrich` in the Java DSL as shown:
+In the example Camel will call the http endpoint to collect some data, that will then
+be merged with the original message using the `AggregationStrategy`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 AggregationStrategy aggregationStrategy = ...
@@ -79,11 +85,8 @@ from("direct:start")
   .to("mock:result");
 ----
 
-In the example Camel will call the http endpoint to collect some data, that will then
-be merged with the original message using the `AggregationStrategy`.
-
-In XML DSL you use `enrich` as follows:
-
+XML::
++
 [source,xml]
 ----
 <bean id="myStrategy" class="com.foo.ExampleAggregationStrategy"/>
@@ -99,6 +102,25 @@ In XML DSL you use `enrich` as follows:
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - enrich:
+          expression:
+            constant: "http:remoteserver/foo"
+          aggregationStrategy: "#myStrategy"
+      - to: 
+          uri: mock:result
+- beans:
+    - name: myStrategy
+      type: com.foo.ExampleAggregationStrategy
+----
+====
+
 === Aggregation Strategy is optional
 
 The aggregation strategy is optional.
@@ -106,6 +128,10 @@ If not provided then Camel will just use the result exchange as the result.
 
 The following example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -113,8 +139,8 @@ from("direct:start")
   .to("direct:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -126,9 +152,27 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - enrich:
+          expression:
+            constant: "http:remoteserver/foo"
+      - to: 
+          uri: mock:result
+----
+====
 
 Would be the same as using `to`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -136,10 +180,39 @@ from("direct:start")
   .to("direct:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="http:remoteserver/foo"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - to:
+          uri: http:remoteserver/foo
+      - to:
+          uri: mock:result
+----
+====
+
 === Using dynamic uris
 
 Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -147,8 +220,8 @@ from("direct:start")
   .to("direct:result");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -159,6 +232,21 @@ And in XML DSL:
   <to uri="direct:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - enrich:
+          expression:
+            simple: "http:myserver/${header.orderId}/order"
+      - to: 
+          uri: mock:result
+----
+====
 
 TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 

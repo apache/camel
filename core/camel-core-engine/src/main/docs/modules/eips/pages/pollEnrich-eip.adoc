@@ -4,6 +4,7 @@
 :description: Enriches messages with data polled from a secondary resource
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/DataEnricher.html[Content
@@ -152,6 +153,10 @@ Both `enrich` and `pollEnrich` supports using dynamic uris computed based on inf
 
 For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -159,8 +164,8 @@ from("direct:start")
   .to("direct:result");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -171,6 +176,7 @@ And in XML DSL:
   <to uri="direct:result"/>
 </route>
 ----
+====
 
 TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 

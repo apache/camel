@@ -1,4 +1,5 @@
 = Messaging Bridge
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingBridge.html[Messaging Bridge]
@@ -20,14 +21,18 @@ Another alternative is to bridge systems using xref:change-data-capture.adoc[Cha
 A basic bridge between two messaging systems (such as WebsphereMQ and xref:ROOT:jms-component.adoc[JMS] broker)
 can be done with a single Camel route:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mq:queue:foo")
   .to("jms:queue:foo")
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -36,3 +41,4 @@ And in XML
 </route>
 ----
 
+====

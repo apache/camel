@@ -1,4 +1,5 @@
 = Guaranteed Delivery
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
@@ -28,14 +29,18 @@ is not considered successfully delivered until the recipient has
 persisted the message locally guaranteeing its receipt in the event the
 destination becomes unavailable.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("jms:queue:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -43,4 +48,4 @@ And in XML:
     <to uri="jms:queue:foo"/>
 </route>
 ----
-
+====

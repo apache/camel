@@ -4,6 +4,7 @@
 :description: Act as a message source as input to a route
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Every Camel xref:manual::routes.adoc[route] starts from an xref:manual::endpoint.adoc[Endpoint]
 as the input (source) to the route.
@@ -21,14 +22,18 @@ include::partial$eip-options.adoc[]
 In the route below the route starts from
 a xref:ROOT:file-component.adoc[File] endpoint.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
   .to("log:inbox");
 ----
 
-And the same example in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -36,3 +41,15 @@ And the same example in XML DSL:
   <to uri="log:inbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from: 
+    uri: file:inbox
+    steps:
+      - to:
+          uri: log:inbox
+----
+====

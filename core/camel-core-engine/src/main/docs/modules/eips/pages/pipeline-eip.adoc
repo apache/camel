@@ -4,6 +4,7 @@
 :description: Routes the message to a sequence of processors.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways.
@@ -26,6 +27,10 @@ You can create pipelines of logic using multiple
 xref:manual::endpoint.adoc[Endpoint] or
 xref:message-translator.adoc[Message Translator] instances as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:cheese")
@@ -35,8 +40,8 @@ from("activemq:cheese")
         .to("acitvemq:wine");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -48,10 +53,15 @@ And in XML:
     </pipeline>
 </route>
 ----
+====
 
 Though pipeline is the default mode of operation when you specify
 multiple outputs in Camel. Therefore, it's much more common to see this with Camel:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:SomeQueue")
@@ -60,8 +70,8 @@ from("activemq:SomeQueue")
     .to("acitvemq:OutputQueueu");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -71,6 +81,7 @@ And in XML:
     <to uri="activemq:wine"/>
 </route>
 ----
+====
 
 === Pipeline vs Multicast
 
@@ -87,8 +98,10 @@ For example in the example below where xref:multicast-eip.adoc[Multicast] EIP is
 message in two different pipelines. The first pipeline calls the something bean, and the second pipeline
 calls the foo and bar beans and then route the message to another queue.
 
-Notice how we have to use `end()` in the Java DSL to mark the end of the blocks:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:SomeQueue")
@@ -105,9 +118,11 @@ from("activemq:SomeQueue")
     .end() // ends multicast
     .to("log:result");
 ----
++
+Notice how we have to use `end()` to mark the end of the blocks.
 
-In XML its intuitive where you do not need to use `end`:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -126,3 +141,4 @@ In XML its intuitive where you do not need to use `end`:
   <to uri="log:result"/>
 </route>
 ----
+====

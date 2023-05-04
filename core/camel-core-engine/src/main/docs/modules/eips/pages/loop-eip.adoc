@@ -4,6 +4,7 @@
 :description: Processes a message multiple times
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Loop EIP allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 
@@ -39,8 +40,8 @@ In the while mode, then the Loop EIP will keep looping until the expression eval
 
 == Example
 
-The following example shows how to take a request from the direct:x endpoint,
-then send the message repetitively to mock:result.
+The following example shows how to take a request from the `direct:x` endpoint,
+then send the message repetitively to `mock:result`.
 
 The number of times the message is sent is either passed as an argument to `loop`,
 or determined at runtime by evaluating an expression.
@@ -50,6 +51,10 @@ otherwise a `RuntimeCamelException` is thrown.
 
 Pass loop count as an argument:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -57,28 +62,8 @@ from("direct:a")
         .to("mock:result");
 ----
 
-Use expression to determine loop count:
-
-[source,java]
-----
-from("direct:b")
-    .loop(header("loop"))
-        .to("mock:result");
-----
-
-And with the xref:languages:xpath-language.adoc[XPath] language:
-
-[source,java]
-----
-from("direct:c")
-    .loop(xpath("/hello/@times"))
-        .to("mock:result");
-----
-
-And in XML:
-
-Pass loop count as an argument
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -89,9 +74,23 @@ Pass loop count as an argument
   </loop>
 </route>
 ----
+====
 
-Use expression to determine loop count
+Use expression to determine loop count:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:b")
+    .loop(header("loop"))
+        .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -102,12 +101,26 @@ Use expression to determine loop count
   </loop>
 </route>
 ----
+====
+
+And with the xref:languages:xpath-language.adoc[XPath] language:
+
+[source,java]
+----
+from("direct:c")
+    .loop(xpath("/hello/@times"))
+        .to("mock:result");
+----
 
 == Using copy mode
 
 Now suppose we send a message to direct:start endpoint containing the letter A.
 The output of processing this route will be that, each mock:loop endpoint will receive AB as message.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -120,10 +133,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-However, if we do *not* enable copy mode then mock:loop will receive "AB", "ABB", "ABBB", etc. messages.
-
-The equivalent example in XML DSL in copy mode is as follows:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -139,6 +150,9 @@ The equivalent example in XML DSL in copy mode is as follows:
   <to uri="mock:result"/>
 </route>
 ----
+====
+
+However, if we do *not* enable copy mode then mock:loop will receive "AB", "ABB", "ABBB", etc. messages.
 
 == Looping using while
 
@@ -147,6 +161,10 @@ The loop can act like a while loop that loops until the expression evaluates to 
 For example the route below loops while the length of the message body is 5 or fewer characters.
 Notice that the DSL uses `loopDoWhile`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -157,8 +175,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And the same example in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -173,5 +191,6 @@ And the same example in XML:
   <to uri="mock:result"/>
 </route>
 ----
-
-Notice in XML that the while loop is turned on using the `doWhile` attribute.
++
+Notice that the while loop is turned on using the `doWhile` attribute.
+====

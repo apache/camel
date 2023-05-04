@@ -1,4 +1,5 @@
 = Message Bus
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/MessageBus.html[Message
@@ -15,14 +16,18 @@ A messaging system such as Apache ActiveMQ can be used as Message Bus.
 The following demonstrates how the Camel message bus can be used to
 ingest message into the bus with the xref:ROOT:jms-component.adoc[JMS] component.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
     .to("jms:inbox");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -30,3 +35,4 @@ And in XML:
     <to uri="jms:inbox"/>
 </route>
 ----
+====

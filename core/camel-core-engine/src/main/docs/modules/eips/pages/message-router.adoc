@@ -1,4 +1,5 @@
 = Message Router
+:tabs-sync-option:
 
 The
 http://www.enterpriseintegrationpatterns.com/MessageRouter.html[Message
@@ -26,6 +27,10 @@ The following example shows how to route a request from an input
 direct:a endpoint to either direct:b, direct:c, or direct:d depending on
 the evaluation of various xref:manual::predicate.adoc[Predicate]:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -38,8 +43,8 @@ from("direct:a")
             .to("direct:d");
 ----
 
-And the same example using XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -59,3 +64,4 @@ And the same example using XML:
     </choice>
 </route>
 ----
+====

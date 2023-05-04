@@ -4,6 +4,7 @@
 :description: Sends the message to a dynamic endpoint
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message
@@ -43,14 +44,18 @@ the dynamic endpoint URI.
 For example to send a message to an endpoint which is dynamic determined by a
 xref:message.adoc[message header] you can do as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .toD("${header.foo}");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -58,18 +63,23 @@ And in XML:
   <toD uri="${header.foo}"/>
 </route>
 ----
+====
 
 You can also prefix the uri with a value because the endpoint xref:manual::uris.adoc[URI] is
 evaluated using the xref:languages:simple-language.adoc[Simple] language:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .toD("mock:${header.foo}");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -77,6 +87,7 @@ And in XML:
   <toD uri="mock:${header.foo}"/>
 </route>
 ----
+====
 
 In the example above we compute the dynamic endpoint with a prefix "mock:" and
 then the header foo is appended. So for example if the header foo has
@@ -90,14 +101,18 @@ specify `language:` then the endpoint is a component name. And in some
 cases there is both a component and language with the same name such as
 xquery.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
   .toD("language:xpath:/order/@uri");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -105,6 +120,7 @@ And in XML:
   <toD uri="language:xpath:/order/@uri"/>
 </route>
 ----
+====
 
 === Avoid creating endless dynamic endpoints which takes up resources
 
@@ -123,14 +139,18 @@ In the example above then the parameter `userid` is dynamic computed, and would 
 for each different userid. To avoid having too many dynamic endpoints you can configure `toD` to reduce its cache size, for example
 to use a cache size of 10:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:login")
   .toD("http:myloginserver:8080/login?userid=${header.userName}", 10);
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -138,6 +158,7 @@ And in XML:
   <toD uri="http:myloginserver:8080/login?userid=${header.userName}" cacheSize="10"/>
 </route>
 ----
+====
 
 IMPORTANT: this will only reduce the endpoint cache of the `toD` that has a chance
 of being reused in case a message is routed with the same `userName` header. Therefore, reducing the cache size
@@ -213,7 +234,7 @@ from("direct:login")
   .removeHeader(Exchange.HTTP_QUERY);
 ----
 
-Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`\http:myloginserver:8080`).
+Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`http:myloginserver:8080`).
 This optimisation allows Camel to reuse the same endpoint and its associated producer for all dynamic variations.
 This yields much lower resource overhead as the same http producer will be used for all the different variations of userid's.
 

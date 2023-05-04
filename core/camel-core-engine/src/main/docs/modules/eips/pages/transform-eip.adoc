@@ -4,6 +4,7 @@
 :description: Transforms the message body based on an expression
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
@@ -41,6 +42,10 @@ xref:manual::expression.adoc[Expression] to do the transformation:
 In the example below we prepend Hello to the message body using the
 xref:components:languages:simple-language.adoc[Simple] language:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:cheese")
@@ -48,8 +53,8 @@ from("direct:cheese")
     .to("log:hello");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -60,6 +65,21 @@ And in XML DSL:
     <to uri="log:hello"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:cheese
+    steps:
+      - transform:
+          expression:
+            simple: Hello ${body}
+      - to:
+          uri: log:hello
+----
+====
 
 === What is the difference between Transform and Set Body
 

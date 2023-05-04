@@ -13,10 +13,12 @@ image::eip/DurableSubscriptionSolution.gif[image]
 
 == Example
 
-Here is a simple example of creating durable subscribers to a JMS topic
+Here is a simple example of creating durable subscribers to a JMS topic:
 
-Using Java DSL
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -29,8 +31,8 @@ from("activemq:topic:foo?clientId=2&durableSubscriptionName=bar2")
   .to("mock:result2");
 ----
 
-Using XML DSL
-
+XML::
++
 [source,xml]
 ----
 <routes>
@@ -50,3 +52,4 @@ Using XML DSL
     </route>
 </routes>
 ----
+====
