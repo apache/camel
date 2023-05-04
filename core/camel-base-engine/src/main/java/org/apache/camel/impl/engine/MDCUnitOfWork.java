@@ -212,6 +212,12 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
     }
 
     @Override
+    public void done(Exchange exchange) {
+        super.done(exchange);
+        clear();
+    }
+
+    @Override
     protected void onDone() {
         super.onDone();
         // clear MDC, so we do not leak as Camel is done using this UoW
