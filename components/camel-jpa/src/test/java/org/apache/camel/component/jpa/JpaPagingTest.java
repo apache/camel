@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Optional;
@@ -188,12 +184,6 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
 
     protected Processor withHeader(final String headerName, final Object headerValue) {
         return exchange -> exchange.getIn().setHeader(headerName, headerValue);
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ ElementType.METHOD })
-    private @interface AdditionalQueryParameters {
-        String value();
     }
 
 }
