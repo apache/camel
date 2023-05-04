@@ -16,23 +16,16 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JpaPagingTest extends AbstractJpaMethodSupport {
+public class JpaPagingTest extends JpaWithOptionsTestSupport {
 
     private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName() +
                                                "?query=select c from Customer c order by c.name";
@@ -45,8 +38,6 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
     // both should be less than ENTRIES_COUNT / 2
     private static final int FIRST_RESULT = 5;
     private static final int MAXIMUM_RESULTS = 10;
-
-    protected String additionalQueryParameters = "";
 
     @Test
     public void testUnrestrictedQueryReturnsAll() throws Exception {
@@ -122,38 +113,9 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
         assertTrue(customers.get(0).getName().endsWith(String.format(ENTRY_SEQ_FORMAT, firstResult)));
     }
 
-    @SuppressWarnings("unchecked")
-    protected List<Customer> runQueryTest(final Processor... preRun) throws Exception {
-        setUp(getEndpointUri());
-
-        final Exchange result = template.send("direct:start", exchange -> {
-            for (Processor processor : preRun) {
-                processor.process(exchange);
-            }
-        });
-
-        return (List<Customer>) result.getMessage().getBody(List.class);
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        super.beforeEach(context);
-
-        final Optional<AnnotatedElement> element = context.getElement();
-
-        if (element.isPresent()) {
-            final AnnotatedElement annotatedElement = element.get();
-            final AdditionalQueryParameters annotation = annotatedElement.getAnnotation(AdditionalQueryParameters.class);
-            if (annotation != null && !annotation.value().isBlank()) {
-                additionalQueryParameters = annotation.value();
-            }
-        }
-    }
-
     @Override
     protected void setUp(String endpointUri) throws Exception {
         super.setUp(endpointUri);
-
         createCustomers();
         assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
     }
@@ -166,24 +128,9 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
         });
     }
 
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        final String endpointUri = getEndpointUri();
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start")
-                        .to(endpointUri);
-            }
-        };
-    }
-
     protected String getEndpointUri() {
         return ENDPOINT_URI +
-               (additionalQueryParameters.isBlank() ? "" : "&" + additionalQueryParameters);
-    }
-
-    protected Processor withHeader(final String headerName, final Object headerValue) {
-        return exchange -> exchange.getIn().setHeader(headerName, headerValue);
+               createAdditionalQueryParameters();
     }
 
 }
