@@ -112,6 +112,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private Boolean useExecuteUpdate;
     @UriParam(label = "producer")
     private boolean findEntity;
+    @UriParam(label = "producer")
+    private JpaOutputType outputType;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -555,6 +557,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setFindEntity(boolean findEntity) {
         this.findEntity = findEntity;
+    }
+
+    public JpaOutputType getOutputType() {
+        return outputType;
+    }
+
+    /**
+     * If set to SelectOne, a query or a find which would return no results or more than one result, will throw an
+     * exception instead.
+     */
+    public void setOutputType(JpaOutputType outputType) {
+        this.outputType = outputType;
     }
 
     // Implementation methods

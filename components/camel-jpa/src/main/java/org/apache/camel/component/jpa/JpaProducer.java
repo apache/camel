@@ -191,7 +191,16 @@ public class JpaProducer extends DefaultProducer {
             } else {
                 target = exchange.getIn();
             }
-            Object answer = isUseExecuteUpdate() ? innerQuery.executeUpdate() : innerQuery.getResultList();
+
+            final Object answer;
+            if (isUseExecuteUpdate()) {
+                answer = innerQuery.executeUpdate();
+            } else if (getEndpoint().getOutputType() == JpaOutputType.SelectOne) {
+                answer = innerQuery.getSingleResult();
+            } else {
+                answer = innerQuery.getResultList();
+            }
+
             target.setBody(answer);
 
             if (getEndpoint().isFlushOnSend()) {
