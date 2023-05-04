@@ -4,7 +4,6 @@
 :description: Routes a message through a series of steps that are pre-determined (the slip)
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/RoutingTable.html[Routing Slip]
@@ -122,4 +121,3 @@ XML::
 Then let us say the `myHeader` contains the following two endpoints `direct:foo,xxx:bar`.
 The first endpoint is valid and works. However, the second one is invalid and will just be ignored.
 Camel logs at DEBUG level about it, so you can see why the endpoint was invalid.
-

@@ -4,7 +4,6 @@
 :description: Processes a message multiple times
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 The Loop EIP allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 

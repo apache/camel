@@ -4,7 +4,6 @@
 :description: Removes message headers whose name matches a specified pattern
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 The Remove Headers EIP allows you to remove one or more headers from the xref:message.adoc[Message],
 based on pattern syntax.

@@ -4,7 +4,6 @@
 :description: Act as a message source as input to a route
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 Every Camel xref:manual::routes.adoc[route] starts from an xref:manual::endpoint.adoc[Endpoint]
 as the input (source) to the route.

@@ -4,7 +4,6 @@
 :description: Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 Sticky mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 

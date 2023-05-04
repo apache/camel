@@ -4,7 +4,6 @@
 :description: Sets the contents of the message body
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
