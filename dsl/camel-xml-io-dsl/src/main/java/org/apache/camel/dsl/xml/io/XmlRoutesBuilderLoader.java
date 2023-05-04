@@ -55,22 +55,22 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource input) throws Exception {
-        return new RouteConfigurationBuilder() {
-            final Resource resource = new CachedResource(input);
+        final Resource resource = new CachedResource(input);
+        // instead of parsing the document NxM times (for each namespace x root element combination),
+        // we preparse it using XmlStreamDetector and then parse it fully knowing what's inside.
+        // we could even do better, by passing already preparsed information through config file, but
+        // it's getting complicated when using multiple files.
+        XmlStreamDetector detector = new XmlStreamDetector(resource.getInputStream());
+        XmlStreamInfo xmlInfo = detector.information();
+        if (!xmlInfo.isValid()) {
+            // should be valid, because we checked it before
+            LOG.warn("Invalid XML document: {}", xmlInfo.getProblem().getMessage());
+            return null;
+        }
 
+        return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
-                // instead of parsing the document NxM times (for each namespace x root element combination),
-                // we preparse it using XmlStreamDetector and then parse it fully knowing what's inside.
-                // we could even do better, by passing already preparsed information through config file, but
-                // it's getting complicated when using multiple files.
-                XmlStreamDetector detector = new XmlStreamDetector(resource.getInputStream());
-                XmlStreamInfo xmlInfo = detector.information();
-                if (!xmlInfo.isValid()) {
-                    // should be valid, because we checked it before
-                    LOG.warn("Invalid XML document: {}", xmlInfo.getProblem().getMessage());
-                    return;
-                }
                 switch (xmlInfo.getRootElementName()) {
                     case "routeTemplate", "routeTemplates" ->
                         new ModelParser(resource, xmlInfo.getRootElementNamespace())
@@ -93,10 +93,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
             @Override
             public void configuration() throws Exception {
-                for (String ns : NAMESPACES) {
-                    new ModelParser(resource, ns)
-                            .parseRouteConfigurationsDefinition()
-                            .ifPresent(this::addConfigurations);
+                switch (xmlInfo.getRootElementName()) {
+                    case "routeConfigurations", "routeConfiguration" ->
+                            new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                    .parseRouteConfigurationsDefinition()
+                                    .ifPresent(this::addConfigurations);
                 }
             }
 
