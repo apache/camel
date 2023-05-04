@@ -152,6 +152,18 @@ This is very limited as the CLI argument is a bit cumbersome to use than files.
 
 NOTE: Using `--code` is only usable for very quick and small prototypes.
 
+=== Running Routes from source directory
+
+You can also run dev mode when running Camel with `--source-dir`, such as:
+
+[source,bash]
+----
+camel run --source-dir=mycode
+----
+
+This starts Camel where it will load the files from the _source dir_ (also sub folders).
+
+
 === Dev mode with live reload
 
 You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),
@@ -173,6 +185,32 @@ camel run hello.java --dev
 
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
 such as JVM class loading issues, then you may need to restart the integration.
+
+You can also run dev mode when running Camel with `--source-dir`, such as:
+
+[source,bash]
+----
+camel run --source-dir=mycode --dev
+----
+
+This starts Camel where it will load the files from the _source dir_ (also sub folders).
+And in _dev mode_ then you can add new files, update existing files, and delete files, and Camel
+will automatically hot-reload on the fly.
+
+Using _source dir_ is more flexible than having to specify the files in the CLI as shown below:
+
+[source,bash]
+----
+camel run mycode/foo.java mycode/bar.java --dev
+----
+
+In this situation then Camel will only watch and reload these two files (foo.java and bar.java).
+So for example if you add a new file cheese.xml, then this file is not reloaded. On the other hand
+if you use `--source-dir` then any files in this directory (and sub folders) are automatic detected
+and reloaded. You can also delete files to remove routes.
+
+NOTE: You cannot use both files and source dir together.
+The following is not allowed: `camel run abc.java --source-dir=mycode`.
 
 === Developer Console
 

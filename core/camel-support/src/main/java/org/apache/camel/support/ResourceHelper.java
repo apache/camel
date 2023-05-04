@@ -258,12 +258,13 @@ public final class ResourceHelper {
     }
 
     /**
-     * Find resources from the file system using Ant-style path patterns.
+     * Find resources from the file system using Ant-style path patterns (skips hidden files, or files from hidden
+     * folders).
      *
      * @param  root      the starting file
      * @param  pattern   the Ant pattern
-     * @return           a list of files matching the given pattern
-     * @throws Exception
+     * @return           set of files matching the given pattern
+     * @throws Exception is thrown if IO error
      */
     public static Set<Path> findInFileSystem(Path root, String pattern) throws Exception {
         try (Stream<Path> path = Files.walk(root)) {
@@ -273,9 +274,15 @@ public final class ResourceHelper {
                         Path relative = root.relativize(entry);
                         String str = relative.toString().replaceAll(Pattern.quote(File.separator),
                                 AntPathMatcher.DEFAULT_PATH_SEPARATOR);
-                        boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
-                        LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
-                        return match;
+                        // skip files in hidden folders
+                        boolean hidden = str.startsWith(".") || str.contains(AntPathMatcher.DEFAULT_PATH_SEPARATOR + ".");
+                        if (!hidden) {
+                            boolean match = AntPathMatcher.INSTANCE.match(pattern, str);
+                            LOG.debug("Found resource: {} matching pattern: {} -> {}", entry, pattern, match);
+                            return match;
+                        } else {
+                            return false;
+                        }
                     })
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
