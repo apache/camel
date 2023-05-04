@@ -22,11 +22,9 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +51,6 @@ public final class UnitOfWorkHelper {
         // unit of work is done
         try {
             uow.done(exchange);
-            if (uow instanceof Service) {
-                ServiceHelper.stopService(uow);
-            }
         } catch (Throwable e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
                     exchange, e);
