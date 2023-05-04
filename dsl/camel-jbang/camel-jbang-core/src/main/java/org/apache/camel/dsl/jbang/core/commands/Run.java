@@ -104,6 +104,11 @@ public class Run extends CamelCommand {
 
     List<String> files = new ArrayList<>();
 
+    @Option(names = { "--source-dir" },
+            description = "Source directory for loading Camel file(s) to run. When using this, then files cannot be specified at the same time."
+                          + " Multiple directories can be specified separated by comma.")
+    String sourceDir;
+
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     boolean background;
 
@@ -279,6 +284,12 @@ public class Run extends CamelCommand {
     }
 
     private int run() throws Exception {
+        if (!files.isEmpty() && sourceDir != null) {
+            // cannot have both files and source dir at the same time
+            System.err.println("Cannot specify both file(s) and source-dir at the same time.");
+            return 1;
+        }
+
         File work = new File(WORK_DIR);
         removeDir(work);
         work.mkdirs();
@@ -298,11 +309,11 @@ public class Run extends CamelCommand {
         }
 
         // if no specific file to run then try to auto-detect
-        if (files.isEmpty()) {
+        if (files.isEmpty() && sourceDir == null) {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
-                    System.out
+                    System.err
                             .println("Cannot run because " + getProfile()
                                      + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
                     return 1;
@@ -334,6 +345,9 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
             // allow quick shutdown during development
             writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
+        }
+        if (sourceDir != null) {
+            writeSetting(main, profileProperties, "camel.jbang.sourceDir", sourceDir);
         }
         if (trace) {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
@@ -481,6 +495,18 @@ public class Run extends CamelCommand {
         }
         writeSetting(main, profileProperties, "camel.main.name", name);
 
+        if (sourceDir != null) {
+            // must be an existing directory
+            File dir = new File(sourceDir);
+            if (!dir.exists() && !dir.isDirectory()) {
+                System.err.println("Directory does not exist: " + sourceDir);
+                return 1;
+            }
+            // make it a pattern as we load all files from this directory
+            // (optional=true as there may be non Camel routes files as well)
+            js.add("file:" + sourceDir + "/**?optional=true");
+        }
+
         if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
@@ -508,21 +534,28 @@ public class Run extends CamelCommand {
         }
 
         // we can only reload if file based
-        if (dev && sjReload.length() > 0) {
-            String reload = sjReload.toString();
+        if (dev && (sourceDir != null || sjReload.length() > 0)) {
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
-            // use current dir, however if we run a file that are in another folder, then we should track that folder instead
-            String reloadDir = ".";
-            for (String r : reload.split(",")) {
-                String path = FileUtil.onlyPath(r);
-                if (path != null) {
-                    reloadDir = path;
-                    break;
+            if (sourceDir != null) {
+                main.addInitialProperty("camel.main.routesReloadDirectory", sourceDir);
+                main.addInitialProperty("camel.main.routesReloadPattern", "*");
+                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
+            } else {
+                String pattern = sjReload.toString();
+                String reloadDir = ".";
+                // use current dir, however if we run a file that are in another folder, then we should track that folder instead
+                for (String r : sjReload.toString().split(",")) {
+                    String path = FileUtil.onlyPath(r);
+                    if (path != null) {
+                        reloadDir = path;
+                        break;
+                    }
                 }
+                main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
+                main.addInitialProperty("camel.main.routesReloadPattern", pattern);
+                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive",
+                        isReloadRecursive(pattern) ? "true" : "false");
             }
-            main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
-            main.addInitialProperty("camel.main.routesReloadPattern", reload);
-            main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", isReloadRecursive(reload) ? "true" : "false");
             // do not shutdown the JVM but stop routes when max duration is triggered
             main.addInitialProperty("camel.main.durationMaxAction", "stop");
         }

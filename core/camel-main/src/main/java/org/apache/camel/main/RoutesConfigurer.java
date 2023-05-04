@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -51,6 +52,7 @@ public class RoutesConfigurer {
     private String javaRoutesIncludePattern;
     private String routesExcludePattern;
     private String routesIncludePattern;
+    private String routesSourceDir;
 
     public List<RoutesBuilder> getRoutesBuilders() {
         return routesBuilders;
@@ -106,6 +108,14 @@ public class RoutesConfigurer {
 
     public void setRoutesIncludePattern(String routesIncludePattern) {
         this.routesIncludePattern = routesIncludePattern;
+    }
+
+    public String getRoutesSourceDir() {
+        return routesSourceDir;
+    }
+
+    public void setRoutesSourceDir(String routesSourceDir) {
+        this.routesSourceDir = routesSourceDir;
     }
 
     public RoutesCollector getRoutesCollector() {
@@ -258,19 +268,51 @@ public class RoutesConfigurer {
         try {
             LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
 
+            // include pattern may indicate a resource is optional, so we need to scan twice
+            String pattern = getRoutesIncludePattern();
+            String optionalPattern = null;
+            if (pattern != null && pattern.contains("?optional=true")) {
+                StringJoiner sj1 = new StringJoiner(",");
+                StringJoiner sj2 = new StringJoiner(",");
+                for (String p : pattern.split(",")) {
+                    if (p.endsWith("?optional=true")) {
+                        sj2.add(p.substring(0, p.length() - 14));
+                    } else {
+                        sj1.add(p);
+                    }
+                }
+                pattern = sj1.length() > 0 ? sj1.toString() : null;
+                optionalPattern = sj2.length() > 0 ? sj2.toString() : null;
+            }
+
             // we can only scan for modeline for routes that we can load from directory as modelines
             // are comments in the source files
-            resources = getRoutesCollector().findRouteResourcesFromDirectory(
-                    camelContext,
-                    getRoutesExcludePattern(),
-                    getRoutesIncludePattern());
-
+            if (optionalPattern == null) {
+                resources = getRoutesCollector().findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(),
+                        pattern);
+                doConfigureModeline(camelContext, resources, false);
+            } else {
+                // we have optional resources
+                resources = getRoutesCollector().findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(),
+                        optionalPattern);
+                doConfigureModeline(camelContext, resources, true);
+                // and then mandatory after
+                if (pattern != null) {
+                    resources = getRoutesCollector().findRouteResourcesFromDirectory(camelContext, getRoutesExcludePattern(),
+                            pattern);
+                    doConfigureModeline(camelContext, resources, false);
+                }
+            }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
 
+    protected void doConfigureModeline(CamelContext camelContext, Collection<Resource> resources, boolean optional)
+            throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
         ModelineFactory factory = ecc.getModelineFactory();
+        RoutesLoader loader = camelContext.adapt(ExtendedCamelContext.class).getRoutesLoader();
 
         for (Resource resource : resources) {
             LOG.debug("Parsing modeline: {}", resource);
@@ -279,10 +321,8 @@ public class RoutesConfigurer {
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Resource resource : resources) {
             LOG.debug("Pre-parsing: {}", resource);
-            RoutesLoader loader = camelContext.adapt(ExtendedCamelContext.class).getRoutesLoader();
-            loader.preParseRoute(resource);
+            loader.preParseRoute(resource, optional);
         }
-
     }
 
 }
