@@ -20,6 +20,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -28,6 +29,7 @@ import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
@@ -139,28 +141,61 @@ public class DefaultRoutesCollector implements RoutesCollector {
             String includePattern) {
 
         final List<RoutesBuilder> answer = new ArrayList<>();
-        final String[] includes = includePattern != null ? includePattern.split(",") : null;
-
         StopWatch watch = new StopWatch();
-        Collection<Resource> accepted = findRouteResourcesFromDirectory(camelContext, excludePattern, includePattern);
-        try {
-            Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(camelContext).findRoutesBuilders(accepted);
-            if (!builders.isEmpty()) {
-                log.debug("Found {} route builder from locations: {}", builders.size(), includes);
-                answer.addAll(builders);
+
+        // include pattern may indicate a resource is optional, so we need to scan twice
+        String pattern = includePattern;
+        String optionalPattern = null;
+        if (pattern != null && pattern.contains("?optional=true")) {
+            StringJoiner sj1 = new StringJoiner(",");
+            StringJoiner sj2 = new StringJoiner(",");
+            for (String p : pattern.split(",")) {
+                if (p.endsWith("?optional=true")) {
+                    sj2.add(p.substring(0, p.length() - 14));
+                } else {
+                    sj1.add(p);
+                }
             }
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
+            pattern = sj1.length() > 0 ? sj1.toString() : null;
+            optionalPattern = sj2.length() > 0 ? sj2.toString() : null;
         }
+
+        if (optionalPattern == null) {
+            // only mandatory pattern
+            doCollectRoutesFromDirectory(camelContext, answer, excludePattern, pattern, false);
+        } else {
+            // find optional first
+            doCollectRoutesFromDirectory(camelContext, answer, excludePattern, optionalPattern, true);
+            if (pattern != null) {
+                // and then any mandatory
+                doCollectRoutesFromDirectory(camelContext, answer, excludePattern, pattern, false);
+            }
+        }
+
         if (!answer.isEmpty()) {
-            log.debug("Loaded {} ({} millis) additional RoutesBuilder from: {}, pattern: {}", answer.size(), watch.taken(),
-                    includes,
+            log.debug("Loaded {} ({} millis) additional RoutesBuilder from: {}", answer.size(), watch.taken(),
                     includePattern);
         } else {
             log.debug("No additional RoutesBuilder discovered from: {}", includePattern);
         }
 
         return answer;
+    }
+
+    protected void doCollectRoutesFromDirectory(
+            CamelContext camelContext, List<RoutesBuilder> builders,
+            String excludePattern, String includePattern, boolean optional) {
+        RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
+        Collection<Resource> accepted = findRouteResourcesFromDirectory(camelContext, excludePattern, includePattern);
+        try {
+            Collection<RoutesBuilder> found = loader.findRoutesBuilders(accepted, optional);
+            if (!found.isEmpty()) {
+                log.debug("Found {} route builder from locations: {}", builders.size(), found);
+                builders.addAll(found);
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     @Override
@@ -179,6 +214,9 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
         Collection<Resource> accepted = new ArrayList<>();
         for (String include : includes) {
+            if (include.endsWith("?optional=true")) {
+                include = include.substring(0, include.length() - 14);
+            }
             log.debug("Finding additional routes from: {}", include);
             try {
                 for (Resource resource : resolver.findResources(include)) {
