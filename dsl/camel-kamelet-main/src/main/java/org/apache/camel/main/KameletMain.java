@@ -386,10 +386,6 @@ public class KameletMain extends MainCommandLineSupport {
         if (console) {
             VertxHttpServer.registerConsole(answer);
         }
-        String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
-        if (sourceDir != null) {
-            // TODO:
-        }
 
         // always enable developer console as it is needed by camel-cli-connector
         configure().withDevConsoleEnabled(true);
