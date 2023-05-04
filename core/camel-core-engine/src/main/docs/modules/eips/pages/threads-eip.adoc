@@ -4,7 +4,6 @@
 :description: Specifies that all steps after this node are processed asynchronously
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 How can I decouple the continued routing of a message from the current thread?
 

@@ -4,7 +4,6 @@
 :description: Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns]
@@ -155,4 +154,3 @@ should consider enabling xref:manual::stream-caching.adoc[Stream caching] to
 ensure the message body can be read at each endpoint.
 
 See more details at xref:manual::stream-caching.adoc[Stream caching].
-

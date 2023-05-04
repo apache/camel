@@ -4,7 +4,6 @@
 :description: Route messages based on dynamic rules
 :since: 
 :supportlevel: Stable
-:tabs-sync-option:
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
