@@ -79,4 +79,15 @@ public class ConverterTest {
         assertNotNull(node);
     }
 
+    @Test
+    public void testMessageContentsListAsGeneralList() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        Exchange exchange = new DefaultExchange(context);
+        MessageContentsList list = new MessageContentsList();
+        list.add("hehe");
+        list.add("haha");
+        exchange.getIn().setBody(list);
+        String ret = exchange.getIn().getBody(String.class);
+        assertEquals(ret, "[hehe, haha]", "shouldn't miss list content");
+    }
 }
