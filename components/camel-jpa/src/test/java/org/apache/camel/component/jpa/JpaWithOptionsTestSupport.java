@@ -81,6 +81,10 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         return exchange -> exchange.getIn().setHeader(headerName, headerValue);
     }
 
+    protected Processor withBody(final Object body) {
+        return exchange -> exchange.getIn().setBody(body);
+    }
+
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         super.beforeEach(context);
