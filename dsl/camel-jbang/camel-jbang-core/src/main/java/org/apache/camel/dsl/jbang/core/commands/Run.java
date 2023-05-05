@@ -540,6 +540,7 @@ public class Run extends CamelCommand {
         if (dev && (sourceDir != null || sjReload.length() > 0)) {
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
             if (sourceDir != null) {
+                main.addInitialProperty("camel.jbang.sourceDir", sourceDir);
                 main.addInitialProperty("camel.main.routesReloadDirectory", sourceDir);
                 main.addInitialProperty("camel.main.routesReloadPattern", "*");
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");

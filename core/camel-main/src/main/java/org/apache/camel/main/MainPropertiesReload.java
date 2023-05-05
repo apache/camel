@@ -20,6 +20,8 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NonManagedService;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -27,7 +29,8 @@ import org.apache.camel.util.OrderedLocationProperties;
 /**
  * Reloading of application.properties when using Camel Main in reload mode, such as when using camel-jbang.
  */
-public class MainPropertiesReload extends ServiceSupport implements PropertiesReload, CamelContextAware {
+public class MainPropertiesReload extends ServiceSupport
+        implements StaticService, NonManagedService, PropertiesReload, CamelContextAware {
 
     private final BaseMainSupport main;
     private CamelContext camelContext;
