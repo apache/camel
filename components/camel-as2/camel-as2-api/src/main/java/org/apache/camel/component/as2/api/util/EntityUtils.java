@@ -29,9 +29,10 @@ import org.apache.camel.CamelException;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIConsentEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationXMLEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.codec.DecoderException;
@@ -181,7 +182,7 @@ public final class EntityUtils {
         }
     }
 
-    public static ApplicationEDIEntity createEDIEntity(
+    public static ApplicationEntity createEDIEntity(
             String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
             String filename)
             throws CamelException {
@@ -198,6 +199,8 @@ public final class EntityUtils {
                 return new ApplicationEDIX12Entity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             case AS2MediaType.APPLICATION_EDI_CONSENT:
                 return new ApplicationEDIConsentEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
+            case AS2MediaType.APPLICATION_XML:
+                return new ApplicationXMLEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             default:
                 throw new CamelException("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
         }
