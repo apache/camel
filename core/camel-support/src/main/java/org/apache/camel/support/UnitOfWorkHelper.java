@@ -103,18 +103,21 @@ public final class UnitOfWorkHelper {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 
-        // reverse so we invoke it FILO style instead of FIFO
-        Collections.reverse(copy);
-        // and honor if any was ordered by sorting it accordingly
-        copy.sort(OrderedComparator.get());
+        if (copy.size() > 1) {
+            // reverse so we invoke it FILO style instead of FIFO
+            Collections.reverse(copy);
+            // and honor if any was ordered by sorting it accordingly
+            copy.sort(OrderedComparator.get());
+        }
 
         // invoke synchronization callbacks
         for (Synchronization synchronization : copy) {
-            if (synchronization instanceof SynchronizationRouteAware) {
+            final SynchronizationRouteAware routeSynchronization = synchronization.getRouteSynchronization();
+            if (routeSynchronization != null) {
                 try {
                     log.trace("Invoking synchronization.onBeforeRoute: {} with {}", synchronization, exchange);
-                    ((SynchronizationRouteAware) synchronization).onBeforeRoute(route, exchange);
-                } catch (Throwable e) {
+                    routeSynchronization.onBeforeRoute(route, exchange);
+                } catch (Exception e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
                     log.warn("Exception occurred during onBeforeRoute. This exception will be ignored.", e);
                 }
@@ -127,18 +130,21 @@ public final class UnitOfWorkHelper {
         // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
         List<Synchronization> copy = new ArrayList<>(synchronizations);
 
-        // reverse so we invoke it FILO style instead of FIFO
-        Collections.reverse(copy);
-        // and honor if any was ordered by sorting it accordingly
-        copy.sort(OrderedComparator.get());
+        if (copy.size() > 1) {
+            // reverse so we invoke it FILO style instead of FIFO
+            Collections.reverse(copy);
+            // and honor if any was ordered by sorting it accordingly
+            copy.sort(OrderedComparator.get());
+        }
 
         // invoke synchronization callbacks
         for (Synchronization synchronization : copy) {
-            if (synchronization instanceof SynchronizationRouteAware) {
+            final SynchronizationRouteAware routeSynchronization = synchronization.getRouteSynchronization();
+            if (routeSynchronization != null) {
                 try {
                     log.trace("Invoking synchronization.onAfterRoute: {} with {}", synchronization, exchange);
-                    ((SynchronizationRouteAware) synchronization).onAfterRoute(route, exchange);
-                } catch (Throwable e) {
+                    routeSynchronization.onAfterRoute(route, exchange);
+                } catch (Exception e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
                     log.warn("Exception occurred during onAfterRoute. This exception will be ignored.", e);
                 }
