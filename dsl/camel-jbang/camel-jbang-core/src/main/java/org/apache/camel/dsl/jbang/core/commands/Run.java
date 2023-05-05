@@ -534,32 +534,7 @@ public class Run extends CamelCommand {
         }
 
         // we can only reload if file based
-        if (dev && (sourceDir != null || sjReload.length() > 0)) {
-            main.addInitialProperty("camel.main.routesReloadEnabled", "true");
-            if (sourceDir != null) {
-                main.addInitialProperty("camel.jbang.sourceDir", sourceDir);
-                main.addInitialProperty("camel.main.routesReloadDirectory", sourceDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", "*");
-                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
-            } else {
-                String pattern = sjReload.toString();
-                String reloadDir = ".";
-                // use current dir, however if we run a file that are in another folder, then we should track that folder instead
-                for (String r : sjReload.toString().split(",")) {
-                    String path = FileUtil.onlyPath(r);
-                    if (path != null) {
-                        reloadDir = path;
-                        break;
-                    }
-                }
-                main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", pattern);
-                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive",
-                        isReloadRecursive(pattern) ? "true" : "false");
-            }
-            // do not shutdown the JVM but stop routes when max duration is triggered
-            main.addInitialProperty("camel.main.durationMaxAction", "stop");
-        }
+        setupReload(main, sjReload);
 
         if (propertiesFiles != null) {
             String[] filesLocation = propertiesFiles.split(",");
@@ -605,6 +580,35 @@ public class Run extends CamelCommand {
         } else {
             // run default in current JVM with same camel version
             return runKameletMain(main);
+        }
+    }
+
+    private void setupReload(KameletMain main, StringJoiner sjReload) {
+        if (dev && (sourceDir != null || sjReload.length() > 0)) {
+            main.addInitialProperty("camel.main.routesReloadEnabled", "true");
+            if (sourceDir != null) {
+                main.addInitialProperty("camel.jbang.sourceDir", sourceDir);
+                main.addInitialProperty("camel.main.routesReloadDirectory", sourceDir);
+                main.addInitialProperty("camel.main.routesReloadPattern", "*");
+                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
+            } else {
+                String pattern = sjReload.toString();
+                String reloadDir = ".";
+                // use current dir, however if we run a file that are in another folder, then we should track that folder instead
+                for (String r : sjReload.toString().split(",")) {
+                    String path = FileUtil.onlyPath(r);
+                    if (path != null) {
+                        reloadDir = path;
+                        break;
+                    }
+                }
+                main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
+                main.addInitialProperty("camel.main.routesReloadPattern", pattern);
+                main.addInitialProperty("camel.main.routesReloadDirectoryRecursive",
+                        isReloadRecursive(pattern) ? "true" : "false");
+            }
+            // do not shutdown the JVM but stop routes when max duration is triggered
+            main.addInitialProperty("camel.main.durationMaxAction", "stop");
         }
     }
 
