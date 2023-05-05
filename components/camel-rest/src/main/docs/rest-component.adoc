@@ -50,6 +50,7 @@ The following components support rest consumer (Rest DSL):
 * camel-jetty
 * camel-servlet
 * camel-undertow
+* camel-platform-http
 
 The following components support rest producer:
 
