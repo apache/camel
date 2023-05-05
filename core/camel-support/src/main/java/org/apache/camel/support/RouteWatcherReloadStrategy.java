@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,14 +32,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.OrderedLocationProperties;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,33 +161,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                 resource.getLocation());
 
-        // optimize to only update if something changed
-        OrderedLocationProperties changed = null;
-
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
-        PropertiesReload pr = getCamelContext().hasService(PropertiesReload.class);
-        if (pr != null) {
-            // load the properties, so we can update (remember location)
-            InputStream is = resource.getInputStream();
-            OrderedProperties tmp = new OrderedProperties();
-            tmp.load(is);
-            IOHelper.close(is);
-            changed = new OrderedLocationProperties();
-            changed.putAll(resource.getLocation(), tmp);
-            // filter to only keep changed properties
-            pc.keepOnlyChangeProperties(changed);
-        }
-
-        boolean reloaded = false;
-        if (changed != null && !changed.isEmpty()) {
-            reloaded = pc.reloadProperties(resource.getLocation());
-            if (reloaded) {
-                pr.onReload(resource.getLocation(), changed);
-                // trigger all routes to be reloaded
-                if (reloadRoutes) {
-                    onRouteReload(null, true);
-                }
-            }
+        boolean reloaded = pc.reloadProperties(resource.getLocation());
+        if (reloaded && reloadRoutes) {
+            // trigger all routes to be reloaded
+            onRouteReload(null, false);
         }
         return reloaded;
     }
