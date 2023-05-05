@@ -22,6 +22,7 @@ import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 
 import org.apache.camel.Exchange;
@@ -254,6 +255,13 @@ public class JpaProducer extends DefaultProducer {
 
                 Object answer = entityManager.find(getEndpoint().getEntityType(), key);
                 LOG.debug("Find: {} -> {}", key, answer);
+
+                if (getEndpoint().getOutputType() == JpaOutputType.SelectOne && answer == null) {
+                    throw new NoResultException(
+                            String.format(
+                                    "No results for key %s and SelectOne requested",
+                                    key));
+                }
 
                 Message target;
                 if (ExchangeHelper.isOutCapable(exchange)) {
