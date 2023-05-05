@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.camel.model.*;
+import org.apache.camel.model.app.ApplicationDefinition;
+import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.app.ComponentScanDefinition;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
@@ -1555,6 +1558,54 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    public Optional<ApplicationDefinition> parseApplicationDefinition()
+            throws IOException, XmlPullParserException {
+        String tag = getNextTag("beans", "camel-app");
+        if (tag != null) {
+            return Optional.of(doParseApplicationDefinition());
+        }
+        return Optional.empty();
+    }
+    protected ApplicationDefinition doParseApplicationDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ApplicationDefinition(),
+            noAttributeHandler(), beansDefinitionElementHandler(), noValueHandler());
+    }
+    public Optional<BeansDefinition> parseBeansDefinition()
+            throws IOException, XmlPullParserException {
+        String tag = getNextTag("beans", "camel-app");
+        if (tag != null) {
+            return Optional.of(doParseBeansDefinition());
+        }
+        return Optional.empty();
+    }
+    protected <T extends BeansDefinition> ElementHandler<T> beansDefinitionElementHandler() {
+        return (def, key) -> {
+            switch (key) {
+                case "component-scan": doAdd(doParseComponentScanDefinition(), def.getComponentScanning(), def::setComponentScanning); break;
+                case "rest": doAdd(doParseRestDefinition(), def.getRests(), def::setRests); break;
+                case "routeConfiguration": doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations); break;
+                case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates); break;
+                case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); break;
+                case "templatedRoute": doAdd(doParseTemplatedRouteDefinition(), def.getTemplatedRoutes(), def::setTemplatedRoutes); break;
+                default: return false;
+            }
+            return true;
+        };
+    }
+    protected BeansDefinition doParseBeansDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeansDefinition(), 
+            noAttributeHandler(), beansDefinitionElementHandler(), noValueHandler());
+    }
+    protected ComponentScanDefinition doParseComponentScanDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ComponentScanDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "base-package": def.setBasePackage(val); break;
+                case "use-jsr-330": def.setUseJsr330(val); break;
+                default: return false;
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
     }
     protected BlacklistServiceCallServiceFilterConfiguration doParseBlacklistServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
         return doParse(new BlacklistServiceCallServiceFilterConfiguration(),

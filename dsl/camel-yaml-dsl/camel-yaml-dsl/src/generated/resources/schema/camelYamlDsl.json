@@ -3575,6 +3575,99 @@
         },
         "required" : [ "uri" ]
       },
+      "org.apache.camel.model.app.ApplicationDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "componentScan" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.ComponentScanDefinition"
+            }
+          },
+          "rest" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
+            }
+          },
+          "route" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
+            }
+          },
+          "routeConfiguration" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteConfigurationDefinition"
+            }
+          },
+          "routeTemplate" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
+            }
+          },
+          "templatedRoute" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
+            }
+          }
+        }
+      },
+      "org.apache.camel.model.app.BeansDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "componentScan" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.ComponentScanDefinition"
+            }
+          },
+          "rest" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
+            }
+          },
+          "route" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
+            }
+          },
+          "routeConfiguration" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteConfigurationDefinition"
+            }
+          },
+          "routeTemplate" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateDefinition"
+            }
+          },
+          "templatedRoute" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
+            }
+          }
+        }
+      },
+      "org.apache.camel.model.app.ComponentScanDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "basePackage" : {
+            "type" : "string"
+          },
+          "useJsr330" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration" : {
         "type" : "object",
         "properties" : {

@@ -23,6 +23,7 @@ public final class Constants {
 
     public static final String JAXB_CONTEXT_PACKAGES = "org.apache.camel:"
                                                        + "org.apache.camel.model:"
+                                                       + "org.apache.camel.model.app:"
                                                        + "org.apache.camel.model.cloud:"
                                                        + "org.apache.camel.model.config:"
                                                        + "org.apache.camel.model.dataformat:"

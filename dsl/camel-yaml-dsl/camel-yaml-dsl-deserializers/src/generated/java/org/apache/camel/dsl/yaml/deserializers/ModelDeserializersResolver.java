@@ -22,6 +22,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "api-key": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "apiKey": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "org.apache.camel.model.rest.ApiKeyDefinition": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
+            case "camel-app": return new ModelDeserializers.ApplicationDefinitionDeserializer();
+            case "org.apache.camel.model.app.ApplicationDefinition": return new ModelDeserializers.ApplicationDefinitionDeserializer();
             case "avro": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.AvroDataFormat": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "barcode": return new ModelDeserializers.BarcodeDataFormatDeserializer();
@@ -35,6 +37,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.config.BatchResequencerConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
             case "bean": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.BeanDefinition": return new ModelDeserializers.BeanDefinitionDeserializer();
+            case "beans": return new ModelDeserializers.BeansDefinitionDeserializer();
+            case "org.apache.camel.model.app.BeansDefinition": return new ModelDeserializers.BeansDefinitionDeserializer();
             case "bearer-token": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "bearerToken": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "org.apache.camel.model.rest.BearerTokenDefinition": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
@@ -67,6 +71,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "combined-service-filter": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
             case "combinedServiceFilter": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
             case "org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
+            case "org.apache.camel.model.app.ComponentScanDefinition": return new ModelDeserializers.ComponentScanDefinitionDeserializer();
             case "constant": return new ModelDeserializers.ConstantExpressionDeserializer();
             case "org.apache.camel.model.language.ConstantExpression": return new ModelDeserializers.ConstantExpressionDeserializer();
             case "consul-service-discovery": return new ModelDeserializers.ConsulServiceCallServiceDiscoveryConfigurationDeserializer();
