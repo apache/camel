@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.Customer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport {
@@ -45,16 +46,30 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         };
     }
 
-    @SuppressWarnings(value = "unchecked")
-    protected List<Customer> runQueryTest(final Processor... preRun) throws Exception {
+    protected Exchange doRunQueryTest(final Processor... preRun) throws Exception {
         setUp(getEndpointUri());
 
-        final Exchange result = template.send("direct:start", exchange -> {
+        return template.send("direct:start", exchange -> {
             for (Processor processor : preRun) {
                 processor.process(exchange);
             }
         });
-        return (List<Customer>) result.getMessage().getBody(List.class);
+
+    }
+
+    protected <E> E runQueryTest(Class<E> type, final Processor... preRun) throws Exception {
+        final Exchange result = doRunQueryTest(preRun);
+
+        Assertions.assertNull(result.getException());
+        Assertions.assertNull(result.getProperty(Exchange.EXCEPTION_CAUGHT));
+
+        return result.getMessage().getBody(type);
+
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    protected List<Customer> runQueryTest(final Processor... preRun) throws Exception {
+        return (List<Customer>) runQueryTest(List.class, preRun);
     }
 
     protected Processor withHeader(final String headerName, final Object headerValue) {

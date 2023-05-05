@@ -24,7 +24,7 @@ public enum JpaOutputType {
     Default,
     /**
      * Return exactly one entity, not in a list.
-     * 
+     *
      * If no results or more than one are found, throw an Exception.
      */
     SelectOne;
