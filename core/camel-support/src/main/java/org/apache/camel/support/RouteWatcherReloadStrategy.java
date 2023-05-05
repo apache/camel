@@ -147,9 +147,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // attach listener that triggers the route update
             setResourceReload((name, resource) -> {
                 if (name.endsWith(".properties")) {
-                    onPropertiesReload(resource);
+                    onPropertiesReload(resource, true);
                 } else {
-                    onRouteReload(resource);
+                    onRouteReload(List.of(resource), true);
                 }
             });
         }
@@ -162,7 +162,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         return "Live route reloading enabled (directory: " + dir + ")";
     }
 
-    protected void onPropertiesReload(Resource resource) throws Exception {
+    protected boolean onPropertiesReload(Resource resource, boolean reloadRoutes) throws Exception {
         LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                 resource.getLocation());
 
@@ -183,19 +183,21 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             pc.keepOnlyChangeProperties(changed);
         }
 
-        if (changed == null || !changed.isEmpty()) {
-            boolean reloaded = pc.reloadProperties(resource.getLocation());
+        boolean reloaded = false;
+        if (changed != null && !changed.isEmpty()) {
+            reloaded = pc.reloadProperties(resource.getLocation());
             if (reloaded) {
-                if (pr != null) {
-                    pr.onReload(resource.getLocation(), changed);
-                }
+                pr.onReload(resource.getLocation(), changed);
                 // trigger all routes to be reloaded
-                onRouteReload(null);
+                if (reloadRoutes) {
+                    onRouteReload(null, true);
+                }
             }
         }
+        return reloaded;
     }
 
-    protected void onRouteReload(Resource resource) {
+    protected void onRouteReload(Collection<Resource> resources, boolean removeEverything) {
         // remember all existing resources
         List<Resource> sources = new ArrayList<>();
 
@@ -204,7 +206,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // to the last working set
             previousSources.forEach(rs -> {
                 // remember all the sources of the current routes (except the updated)
-                if (rs != null && !equalResourceLocation(resource, rs)) {
+                if (rs != null && !equalResourceLocation(resources, rs)) {
                     sources.add(rs);
                 }
             });
@@ -216,7 +218,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // remember all the sources of the current routes (except the updated)
                 getCamelContext().getRoutes().forEach(r -> {
                     Resource rs = r.getSourceResource();
-                    if (rs != null && !equalResourceLocation(resource, rs)) {
+                    if (rs != null && !equalResourceLocation(resources, rs)) {
                         sources.add(rs);
                     }
                 });
@@ -227,8 +229,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 getCamelContext().getEndpointRegistry().clear();
             }
 
-            if (resource != null && Files.exists(Paths.get(resource.getURI()))) {
-                sources.add(resource);
+            if (resources != null) {
+                for (Resource resource : resources) {
+                    if (Files.exists(Paths.get(resource.getURI()))) {
+                        sources.add(resource);
+                    }
+                }
             }
 
             Collection<Resource> extras
@@ -245,6 +251,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // in case the update fails with an exception
             previousSources.clear();
             previousSources.addAll(sources);
+
+            // special situation where we remove all routes
+            if (removeEverything) {
+                sources.clear();
+            }
 
             // reload those other routes that was stopped and removed as we want to keep running those
             Set<String> ids
@@ -310,6 +321,21 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
+
+    /**
+     * Whether the target is loading any of the given sources
+     */
+    private static boolean equalResourceLocation(Collection<Resource> sources, Resource target) {
+        if (sources == null || target == null || sources.isEmpty()) {
+            return false;
+        }
+        for (Resource source : sources) {
+            if (equalResourceLocation(source, target)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

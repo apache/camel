@@ -48,6 +48,11 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
         this.camelContext = camelContext;
     }
 
+    @ManagedOperation(description = "Trigger on-demand reloading")
+    public void onReload() {
+        onReload("JMX Management");
+    }
+
     @Override
     public void onReload(Object source) {
         LOG.info("Reloading CamelContext ({}) triggered by: {}", camelContext.getName(), source);
