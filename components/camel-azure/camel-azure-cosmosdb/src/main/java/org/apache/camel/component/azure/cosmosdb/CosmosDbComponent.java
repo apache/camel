@@ -82,9 +82,6 @@ public class CosmosDbComponent extends DefaultComponent {
             if (ObjectHelper.isEmpty(configuration.getDatabaseEndpoint())) {
                 throw new IllegalArgumentException("Azure CosmosDB database endpoint must be specified.");
             }
-            if (ObjectHelper.isEmpty(configuration.getAccountKey())) {
-                throw new IllegalArgumentException("Azure CosmosDB account key must be specified.");
-            }
         }
     }
 }
