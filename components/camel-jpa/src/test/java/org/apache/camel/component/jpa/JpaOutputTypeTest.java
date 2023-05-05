@@ -22,7 +22,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Objects;
-import java.util.stream.IntStream;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
@@ -39,14 +38,11 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName();
 
-    private static final int ENTRIES_COUNT = 5;
-    private static final String ENTRY_SEQ_FORMAT = "%d";
-
     private String queryOrFind;
 
     @Test
     @Query
-    @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% 1")
+    @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% 001")
     public void testSingleCustomerOKQuery() throws Exception {
         final Customer customer = runQueryTest(Customer.class);
 
@@ -64,7 +60,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Query
-    @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% 1x")
+    @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% xxx")
     public void testNoCustomersQuery() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -77,21 +73,6 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
                 ENDPOINT_URI,
                 queryOrFind,
                 createAdditionalQueryParameters());
-    }
-
-    @Override
-    protected void setUp(String endpointUri) throws Exception {
-        super.setUp(endpointUri);
-        createCustomers();
-        assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
-    }
-
-    protected void createCustomers() {
-        IntStream.range(0, ENTRIES_COUNT).forEach(idx -> {
-            Customer customer = createDefaultCustomer();
-            customer.setName(String.format("%s " + ENTRY_SEQ_FORMAT, customer.getName(), idx));
-            save(customer);
-        });
     }
 
     @Override
