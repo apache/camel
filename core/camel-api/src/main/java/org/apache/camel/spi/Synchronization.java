@@ -40,4 +40,14 @@ public interface Synchronization {
      * @param exchange the exchange being processed
      */
     void onFailure(Exchange exchange);
+
+    /**
+     * Get an optional {@link SynchronizationRouteAware} for this synchronization
+     *
+     * @return An instance of {@link SynchronizationRouteAware} or null if unset for this synchronization
+     */
+    default SynchronizationRouteAware getRouteSynchronization() {
+        return null;
+    }
+
 }

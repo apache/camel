@@ -51,6 +51,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
@@ -1101,10 +1102,20 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
 
             @Override
-            public void onAfterRoute(Route route, Exchange exchange) {
-                if (routeId.equals(route.getId())) {
-                    tracer.traceAfterRoute(node, exchange);
-                }
+            public SynchronizationRouteAware getRouteSynchronization() {
+                return new SynchronizationRouteAware() {
+                    @Override
+                    public void onBeforeRoute(Route route, Exchange exchange) {
+                        // NO-OP
+                    }
+
+                    @Override
+                    public void onAfterRoute(Route route, Exchange exchange) {
+                        if (routeId.equals(route.getId())) {
+                            tracer.traceAfterRoute(node, exchange);
+                        }
+                    }
+                };
             }
 
             @Override
