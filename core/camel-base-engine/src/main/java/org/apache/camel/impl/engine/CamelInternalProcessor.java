@@ -26,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -933,9 +934,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public StreamCache before(Exchange exchange) throws Exception {
+            final Message inMessage = exchange.getIn();
+
             // check if body is already cached
             try {
-                Object body = exchange.getIn().getBody();
+                Object body = inMessage.getBody();
                 if (body == null) {
                     return null;
                 } else if (body instanceof StreamCache) {
@@ -957,7 +960,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (cause == null) {
                 cause = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
             }
-            boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
+            return tryStreamCache(exchange, inMessage, cause);
+        }
+
+        private StreamCache tryStreamCache(Exchange exchange, Message inMessage, Throwable cause) {
+            final boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
             if (!failed) {
                 boolean disabled = exchange.getExchangeExtension().isStreamCacheDisabled();
                 if (disabled) {
@@ -967,7 +974,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     // cache the body and if we could do that replace it as the new body
                     StreamCache sc = strategy.cache(exchange);
                     if (sc != null) {
-                        exchange.getIn().setBody(sc);
+                        inMessage.setBody(sc);
                     }
                     return sc;
                 } catch (Exception e) {
