@@ -21,7 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
-import java.util.Objects;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
@@ -63,6 +62,31 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
     @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% xxx")
     public void testNoCustomersQuery() throws Exception {
         final Exchange result = doRunQueryTest();
+
+        Assertions.assertInstanceOf(NoResultException.class, getException(result));
+    }
+
+    @Test
+    @Find
+    @AdditionalQueryParameters("outputType=SelectOne")
+    public void testSingleCustomerOKFind() throws Exception {
+        // ids in the db are not known, so query for a known element and use its id.
+        super.setUp(getEndpointUri());
+
+        final Customer fromDb = (Customer) entityManager
+                .createQuery("select c from Customer c where c.name like '% 001'")
+                .getSingleResult();
+
+        final Exchange result = template.send("direct:start", withBody(fromDb.getId()));
+
+        assertNotNull(result.getIn().getBody(Customer.class));
+    }
+
+    @Test
+    @Find
+    @AdditionalQueryParameters("outputType=SelectOne")
+    public void testNoCustomerFind() throws Exception {
+        final Exchange result = doRunQueryTest(withBody(Long.MAX_VALUE));
 
         Assertions.assertInstanceOf(NoResultException.class, getException(result));
     }
@@ -109,8 +133,8 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
     }
 
     private static Exception getException(final Exchange exchange) {
-        return Objects.requireNonNullElse(
-                exchange.getException(),
-                exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+        final Exception exception = exchange.getException();
+
+        return exception != null ? exception : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
     }
 }
