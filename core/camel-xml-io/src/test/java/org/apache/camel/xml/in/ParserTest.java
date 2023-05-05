@@ -21,10 +21,12 @@ import java.io.StringReader;
 
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParserException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled("Run manually to check how the MX parser works")
 public class ParserTest {
 
     @Test
@@ -117,6 +119,8 @@ public class ParserTest {
                 case MXParser.COMMENT -> {
                 }
                 case MXParser.DOCDECL -> {
+                }
+                default -> {
                 }
             }
             eventType = xpp.next();

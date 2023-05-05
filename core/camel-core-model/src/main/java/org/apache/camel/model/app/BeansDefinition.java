@@ -21,37 +21,57 @@ import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Metadata;
+import org.w3c.dom.Element;
 
 /**
- * A groupping POJO (and related XML root element) that's historically associated with "entire application"
- * (or its distinguished fragment). "beans" root element to define "the application" comes from Spring
- * Framework and it can be treated as de-facto standard.
+ * <p>A groupping POJO (and related XML root element) that's historically associated with "entire application" (or its
+ * distinguished fragment).</p>
+ * <p>This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX
+ * parser methods.</p>
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "beans")
+@XmlType(propOrder = {
+        "componentScanning",
+        "beans",
+        "springBeans",
+        "rests",
+        "routeConfigurations",
+        "routeTemplates",
+        "templatedRoutes",
+        "routes"
+})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeansDefinition {
 
     /**
-     * Component scanning definition(s). But unlike package/packageScan/contextScan,
-     * we're not scanning only for org.apache.camel.builder.RouteBuilder.
+     * Component scanning definition(s). But unlike package/packageScan/contextScan, we're not scanning only for
+     * org.apache.camel.builder.RouteBuilder.
      */
     @XmlElement(name = "component-scan")
-    private final List<ComponentScanDefinition> componentScanning = new ArrayList<>();
+    private List<ComponentScanDefinition> componentScanning = new ArrayList<>();
 
-    // this is a place for <bean> element definition, but there's already org.apache.camel.model.BeanDefinition
-    // model. However it is for "bean processor", not "bean definition".
-    // also, it'd be nice to support all that Spring's <bean> can support (constructor args, maps/lists/constants)
-    // for now let's stick to package scanning for JSR330 annotations and SupplierRegistry
+    // this is a place for <bean> element definition, without conflicting with <bean> elements referring
+    // to "bean processors"
+
+    @XmlElement(name = "bean")
+    private List<RegistryBeanDefinition> beans = new ArrayList<>();
+
+    // this is the only way I found to generate usable Schema without imports, while allowing elements
+    // from different namespaces
+    @XmlAnyElement(lax = true)
+    private List<Element> springBeans = new ArrayList<>();
 
     // the order comes from <camelContext> (org.apache.camel.spring.xml.CamelContextFactoryBean)
     // to make things less confusing, as it's not easy to simply tell JAXB to use <xsd:choice maxOccurs="unbounded">
@@ -61,38 +81,78 @@ public class BeansDefinition {
     // org.apache.camel.dsl.xml.io.XmlRoutesBuilderLoader in camel-xml-io-dsl
 
     @XmlElement(name = "rest")
-    private final List<RestDefinition> rests = new ArrayList<>();
+    private List<RestDefinition> rests = new ArrayList<>();
     @XmlElement(name = "routeConfiguration")
-    private final List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
+    private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
     @XmlElement(name = "routeTemplate")
-    private final List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
+    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
     @XmlElement(name = "templatedRoute")
-    private final List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
+    private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
     @XmlElement(name = "route")
-    private final List<RouteDefinition> routes = new ArrayList<>();
+    private List<RouteDefinition> routes = new ArrayList<>();
 
     public List<ComponentScanDefinition> getComponentScanning() {
         return componentScanning;
+    }
+
+    public void setComponentScanning(List<ComponentScanDefinition> componentScanning) {
+        this.componentScanning = componentScanning;
+    }
+
+    public List<RegistryBeanDefinition> getBeans() {
+        return beans;
+    }
+
+    public void setBeans(List<RegistryBeanDefinition> beans) {
+        this.beans = beans;
+    }
+
+    public List<Element> getSpringBeans() {
+        return springBeans;
+    }
+
+    public void setSpringBeans(List<Element> springBeans) {
+        this.springBeans = springBeans;
     }
 
     public List<RestDefinition> getRests() {
         return rests;
     }
 
+    public void setRests(List<RestDefinition> rests) {
+        this.rests = rests;
+    }
+
     public List<RouteConfigurationDefinition> getRouteConfigurations() {
         return routeConfigurations;
+    }
+
+    public void setRouteConfigurations(List<RouteConfigurationDefinition> routeConfigurations) {
+        this.routeConfigurations = routeConfigurations;
     }
 
     public List<RouteTemplateDefinition> getRouteTemplates() {
         return routeTemplates;
     }
 
+    public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
+        this.routeTemplates = routeTemplates;
+    }
+
     public List<TemplatedRouteDefinition> getTemplatedRoutes() {
         return templatedRoutes;
     }
 
+    public void setTemplatedRoutes(List<TemplatedRouteDefinition> templatedRoutes) {
+        this.templatedRoutes = templatedRoutes;
+    }
+
     public List<RouteDefinition> getRoutes() {
         return routes;
+    }
+
+    public void setRoutes(List<RouteDefinition> routes) {
+        this.routes = routes;
     }
 
 }

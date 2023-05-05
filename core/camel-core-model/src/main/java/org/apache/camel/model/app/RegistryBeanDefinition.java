@@ -16,39 +16,56 @@
  */
 package org.apache.camel.model.app;
 
+import java.util.Map;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.DefaultRegistry;
 
 /**
- * <p>
- * An equivalent of Spring's {@code <context:component-scan>} element that can be used to populate underlying bean
- * registry.
- * </p>
- * <p>
- * With Spring application, the bean registry is provided by Spring itself, but if we want to use Camel without Spring,
- * we have an option to use {@link DefaultRegistry} with underlying, supporting bean
- * {@link org.apache.camel.spi.Registry registries} and {@link org.apache.camel.spi.BeanRepository repositories}.
- * </p>
+ * A Pojo representing simplified "bean" element to declare registry beans using any DSL. This is not the same
+ * as "bean processor".
  */
 @Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ComponentScanDefinition {
+public class RegistryBeanDefinition {
 
-    @XmlAttribute(name = "base-package")
-    private String basePackage;
+    @XmlAttribute
+    private String name;
+    @XmlAttribute
+    private String type;
 
-    public String getBasePackage() {
-        return basePackage;
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
+    private Map<String, Object> properties;
+
+    public String getName() {
+        return name;
     }
 
-    public void setBasePackage(String basePackage) {
-        this.basePackage = basePackage;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
 }

@@ -14,8 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.dsl.xml.io.beans;
 
-/**
- * Package with classes that are used together with maven-resolver.
- */
-package org.apache.camel.tooling.maven.support;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.util.StringHelper;
+
+@Named("bean-from-registry")
+public class Greeter implements Processor {
+
+    private final GreeterMessage message;
+
+    @Inject
+    public Greeter(GreeterMessage message) {
+        this.message = message;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String msg = exchange.getIn().getBody(String.class);
+        exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm "));
+    }
+
+}

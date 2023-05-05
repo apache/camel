@@ -108,6 +108,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     private Class<?> restsDefinitionClass;
     private Class<?> processorDefinitionClass;
     private Class<?> dataFormatDefinitionClass;
+    private Class<?> beansDefinitionClass;
+    private Class<?> applicationDefinitionClass;
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -144,6 +146,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         processorDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".ProcessorDefinition");
         restsDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".rest.RestsDefinition");
         expressionDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".language.ExpressionDefinition");
+        beansDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".app.BeansDefinition");
+        applicationDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".app.ApplicationDefinition");
 
         String resName = routesDefinitionClass.getName().replace('.', '/') + ".class";
         String url = classLoader.getResource(resName).toExternalForm().replace(resName, JandexStore.DEFAULT_NAME);
@@ -494,6 +498,22 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 return " noValueHandler()";
             });
+
+            if (clazz == beansDefinitionClass || clazz == applicationDefinitionClass) {
+                // for beans/camel-app we want public methods to be invoked by camel-xml-io-dsl
+
+                parser.addMethod().setPublic()
+                        .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
+                        .setName("parse" + name)
+                        .addThrows(IOException.class)
+                        .addThrows(XML_PULL_PARSER_EXCEPTION)
+                        .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", "beans", "camel-app"),
+                                "if (tag != null) {",
+                                String.format("    return Optional.of(doParse%s());", name),
+                                "}",
+                                "return Optional.empty();");
+            }
+
             if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == templatedRoutesDefinitionClass || clazz == restsDefinitionClass || clazz == routeConfigurationsDefinitionClass) {
 
                 // for routes/rests/routeTemplates we want to support single-mode as well, this means

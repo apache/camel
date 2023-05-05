@@ -14,29 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.dsl.xml.io.beans;
 
-import java.util.Set;
+import jakarta.inject.Named;
 
-import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.support.DefaultRegistry;
+@Named
+public class GreeterMessage {
 
-/**
- * {@link org.apache.camel.spi.Registry} used by Camel Main.
- */
-public final class MainRegistry extends DefaultRegistry {
+    private final String msg = "Hello";
 
-    public MainRegistry(BeanRepository... repositories) {
-        super(repositories);
+    public String getMsg() {
+        return msg;
     }
 
-    /**
-     * Finds beans in the registry by their type.
-     *
-     * @param  type the type of the beans
-     * @return      the types found. Returns an empty Set if none found.
-     */
-    public <T> Set<T> findBindingsByType(Class<T> type) {
-        return fallbackRegistry.findByType(type);
-    }
 }

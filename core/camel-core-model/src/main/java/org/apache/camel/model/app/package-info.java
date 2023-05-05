@@ -16,9 +16,9 @@
  */
 
 /**
- * The JAXB POJOs representing the part of the model, which can be used to create a view of Camel application.
- * This model can be used to group some Camel definitions (routes, templates) without using full Spring
- * application context, but when Spring's {@code <beans>} concept feels appropriate.
+ * The JAXB POJOs representing the part of the model, which can be used to create a view of Camel application. This
+ * model can be used to group some Camel definitions (routes, templates) without using full Spring application context,
+ * but when Spring's {@code <beans>} concept feels appropriate.
  */
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
                                        elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)

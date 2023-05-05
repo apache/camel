@@ -99,6 +99,9 @@ import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.app.ApplicationDefinition;
+import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.app.ComponentScanDefinition;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
@@ -583,6 +586,71 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "camel-app",
+            types = org.apache.camel.model.app.ApplicationDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "component-scan", type = "array:org.apache.camel.model.app.ComponentScanDefinition"),
+                    @YamlProperty(name = "rest", type = "array:org.apache.camel.model.rest.RestDefinition"),
+                    @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition"),
+                    @YamlProperty(name = "route-configuration", type = "array:org.apache.camel.model.RouteConfigurationDefinition"),
+                    @YamlProperty(name = "route-template", type = "array:org.apache.camel.model.RouteTemplateDefinition"),
+                    @YamlProperty(name = "templated-route", type = "array:org.apache.camel.model.TemplatedRouteDefinition")
+            }
+    )
+    public static class ApplicationDefinitionDeserializer extends YamlDeserializerBase<ApplicationDefinition> {
+        public ApplicationDefinitionDeserializer() {
+            super(ApplicationDefinition.class);
+        }
+
+        @Override
+        protected ApplicationDefinition newInstance() {
+            return new ApplicationDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(ApplicationDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "component-scan": {
+                    java.util.List<org.apache.camel.model.app.ComponentScanDefinition> val = asFlatList(node, org.apache.camel.model.app.ComponentScanDefinition.class);
+                    target.setComponentScanning(val);
+                    break;
+                }
+                case "rest": {
+                    java.util.List<org.apache.camel.model.rest.RestDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestDefinition.class);
+                    target.setRests(val);
+                    break;
+                }
+                case "route-configuration": {
+                    java.util.List<org.apache.camel.model.RouteConfigurationDefinition> val = asFlatList(node, org.apache.camel.model.RouteConfigurationDefinition.class);
+                    target.setRouteConfigurations(val);
+                    break;
+                }
+                case "route-template": {
+                    java.util.List<org.apache.camel.model.RouteTemplateDefinition> val = asFlatList(node, org.apache.camel.model.RouteTemplateDefinition.class);
+                    target.setRouteTemplates(val);
+                    break;
+                }
+                case "route": {
+                    java.util.List<org.apache.camel.model.RouteDefinition> val = asFlatList(node, org.apache.camel.model.RouteDefinition.class);
+                    target.setRoutes(val);
+                    break;
+                }
+                case "templated-route": {
+                    java.util.List<org.apache.camel.model.TemplatedRouteDefinition> val = asFlatList(node, org.apache.camel.model.TemplatedRouteDefinition.class);
+                    target.setTemplatedRoutes(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "avro",
             inline = true,
             types = org.apache.camel.model.dataformat.AvroDataFormat.class,
@@ -1030,6 +1098,71 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "beans",
+            types = org.apache.camel.model.app.BeansDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "component-scan", type = "array:org.apache.camel.model.app.ComponentScanDefinition"),
+                    @YamlProperty(name = "rest", type = "array:org.apache.camel.model.rest.RestDefinition"),
+                    @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition"),
+                    @YamlProperty(name = "route-configuration", type = "array:org.apache.camel.model.RouteConfigurationDefinition"),
+                    @YamlProperty(name = "route-template", type = "array:org.apache.camel.model.RouteTemplateDefinition"),
+                    @YamlProperty(name = "templated-route", type = "array:org.apache.camel.model.TemplatedRouteDefinition")
+            }
+    )
+    public static class BeansDefinitionDeserializer extends YamlDeserializerBase<BeansDefinition> {
+        public BeansDefinitionDeserializer() {
+            super(BeansDefinition.class);
+        }
+
+        @Override
+        protected BeansDefinition newInstance() {
+            return new BeansDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(BeansDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "component-scan": {
+                    java.util.List<org.apache.camel.model.app.ComponentScanDefinition> val = asFlatList(node, org.apache.camel.model.app.ComponentScanDefinition.class);
+                    target.setComponentScanning(val);
+                    break;
+                }
+                case "rest": {
+                    java.util.List<org.apache.camel.model.rest.RestDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestDefinition.class);
+                    target.setRests(val);
+                    break;
+                }
+                case "route-configuration": {
+                    java.util.List<org.apache.camel.model.RouteConfigurationDefinition> val = asFlatList(node, org.apache.camel.model.RouteConfigurationDefinition.class);
+                    target.setRouteConfigurations(val);
+                    break;
+                }
+                case "route-template": {
+                    java.util.List<org.apache.camel.model.RouteTemplateDefinition> val = asFlatList(node, org.apache.camel.model.RouteTemplateDefinition.class);
+                    target.setRouteTemplates(val);
+                    break;
+                }
+                case "route": {
+                    java.util.List<org.apache.camel.model.RouteDefinition> val = asFlatList(node, org.apache.camel.model.RouteDefinition.class);
+                    target.setRoutes(val);
+                    break;
+                }
+                case "templated-route": {
+                    java.util.List<org.apache.camel.model.TemplatedRouteDefinition> val = asFlatList(node, org.apache.camel.model.TemplatedRouteDefinition.class);
+                    target.setTemplatedRoutes(val);
                     break;
                 }
                 default: {
@@ -1966,6 +2099,46 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     }
                     existing.add(val);
                     target.setServiceFilterConfigurations(existing);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.app.ComponentScanDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "base-package", type = "string"),
+                    @YamlProperty(name = "use-jsr-330", type = "boolean")
+            }
+    )
+    public static class ComponentScanDefinitionDeserializer extends YamlDeserializerBase<ComponentScanDefinition> {
+        public ComponentScanDefinitionDeserializer() {
+            super(ComponentScanDefinition.class);
+        }
+
+        @Override
+        protected ComponentScanDefinition newInstance() {
+            return new ComponentScanDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(ComponentScanDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "base-package": {
+                    String val = asText(node);
+                    target.setBasePackage(val);
+                    break;
+                }
+                case "use-jsr-330": {
+                    String val = asText(node);
+                    target.setUseJsr330(val);
                     break;
                 }
                 default: {

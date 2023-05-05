@@ -19,36 +19,42 @@ package org.apache.camel.model.app;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.DefaultRegistry;
-
-/**
- * <p>
- * An equivalent of Spring's {@code <context:component-scan>} element that can be used to populate underlying bean
- * registry.
- * </p>
- * <p>
- * With Spring application, the bean registry is provided by Spring itself, but if we want to use Camel without Spring,
- * we have an option to use {@link DefaultRegistry} with underlying, supporting bean
- * {@link org.apache.camel.spi.Registry registries} and {@link org.apache.camel.spi.BeanRepository repositories}.
- * </p>
- */
-@Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ComponentScanDefinition {
+public class BeanPropertyDefinition {
 
-    @XmlAttribute(name = "base-package")
-    private String basePackage;
+    @XmlAttribute
+    private String key;
+    @XmlAttribute
+    private String value;
+    @XmlElement(name = "properties")
+    private BeanPropertiesDefinition properties;
 
-    public String getBasePackage() {
-        return basePackage;
+    public String getKey() {
+        return key;
     }
 
-    public void setBasePackage(String basePackage) {
-        this.basePackage = basePackage;
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public BeanPropertiesDefinition getProperties() {
+        return properties;
+    }
+
+    public void setProperties(BeanPropertiesDefinition properties) {
+        this.properties = properties;
     }
 
 }

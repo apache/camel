@@ -16,7 +16,12 @@
  */
 package org.apache.camel.dsl.xml.io;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import jakarta.inject.Named;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
@@ -26,10 +31,22 @@ import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DIRegistry;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -72,6 +89,10 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configure() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
+                    case "beans", "camel-app" ->
+                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseBeansDefinition()
+                                .ifPresent(this::allInOne);
                     case "routeTemplate", "routeTemplates" ->
                         new ModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteTemplatesDefinition()
@@ -88,6 +109,8 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         new ModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRoutesDefinition()
                                 .ifPresent(this::addRoutes);
+                    default -> {
+                    }
                 }
             }
 
@@ -95,10 +118,90 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             public void configuration() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
                     case "routeConfigurations", "routeConfiguration" ->
-                            new ModelParser(resource, xmlInfo.getRootElementNamespace())
-                                    .parseRouteConfigurationsDefinition()
-                                    .ifPresent(this::addConfigurations);
+                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseRouteConfigurationsDefinition()
+                                .ifPresent(this::addConfigurations);
+                    default -> {
+                    }
                 }
+            }
+
+            private void allInOne(BeansDefinition app) {
+                // selected elements which can be found in camel-spring-xml's <camelContext>
+
+                List<String> packagesToScan = new ArrayList<>();
+                app.getComponentScanning().forEach(cs -> {
+                    Boolean useJakartaInject = CamelContextHelper.parseBoolean(getCamelContext(), cs.getUseJsr330());
+                    if (useJakartaInject != null && useJakartaInject) {
+                        packagesToScan.add(cs.getBasePackage());
+                    }
+                });
+                if (!packagesToScan.isEmpty()) {
+                    DIRegistry registry = null;
+                    DefaultRegistry camelRegistry = getCamelContext().getRegistry(DefaultRegistry.class);
+                    if (camelRegistry != null) {
+                        List<BeanRepository> repos = camelRegistry.getRepositories();
+                        if (repos != null) {
+                            Optional<BeanRepository> diRegistry
+                                    = repos.stream().filter(r -> DIRegistry.class.isAssignableFrom(r.getClass())).findAny();
+                            if (diRegistry.isPresent()) {
+                                registry = (DIRegistry) diRegistry.get();
+                            }
+                        }
+                    }
+                    if (registry != null) {
+                        PackageScanClassResolver scanner
+                                = getCamelContext().getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
+                        if (scanner != null) {
+                            for (String pkg : packagesToScan) {
+                                Set<Class<?>> classes = scanner.findAnnotated(Named.class, pkg);
+                                for (Class<?> c : classes) {
+                                    registry.bind(c, c);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                app.getRests().forEach(r -> {
+                    List<RestDefinition> list = new ArrayList<>();
+                    list.add(r);
+                    RestsDefinition def = new RestsDefinition();
+                    def.setRests(list);
+                    setRestCollection(def);
+                });
+
+                app.getRouteConfigurations().forEach(rc -> {
+                    List<RouteConfigurationDefinition> list = new ArrayList<>();
+                    list.add(rc);
+                    RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+                    def.setRouteConfigurations(list);
+                    addConfigurations(def);
+                });
+
+                app.getRouteTemplates().forEach(rt -> {
+                    List<RouteTemplateDefinition> list = new ArrayList<>();
+                    list.add(rt);
+                    RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+                    def.setRouteTemplates(list);
+                    setRouteTemplateCollection(def);
+                });
+
+                app.getTemplatedRoutes().forEach(tr -> {
+                    List<TemplatedRouteDefinition> list = new ArrayList<>();
+                    list.add(tr);
+                    TemplatedRoutesDefinition def = new TemplatedRoutesDefinition();
+                    def.setTemplatedRoutes(list);
+                    setTemplatedRouteCollection(def);
+                });
+
+                app.getRoutes().forEach(r -> {
+                    List<RouteDefinition> list = new ArrayList<>();
+                    list.add(r);
+                    RoutesDefinition def = new RoutesDefinition();
+                    def.setRoutes(list);
+                    addRoutes(def);
+                });
             }
 
             private void addRoutes(RoutesDefinition routes) {

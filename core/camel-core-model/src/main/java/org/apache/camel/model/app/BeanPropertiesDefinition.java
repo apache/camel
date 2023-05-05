@@ -14,29 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.model.app;
 
-import java.util.Set;
+import java.util.List;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
-import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.support.DefaultRegistry;
+@XmlType
+@XmlAccessorType(XmlAccessType.FIELD)
+public class BeanPropertiesDefinition {
 
-/**
- * {@link org.apache.camel.spi.Registry} used by Camel Main.
- */
-public final class MainRegistry extends DefaultRegistry {
+    @XmlElement(name = "property")
+    private List<BeanPropertyDefinition> properties;
 
-    public MainRegistry(BeanRepository... repositories) {
-        super(repositories);
+    public List<BeanPropertyDefinition> getProperties() {
+        return properties;
     }
 
-    /**
-     * Finds beans in the registry by their type.
-     *
-     * @param  type the type of the beans
-     * @return      the types found. Returns an empty Set if none found.
-     */
-    public <T> Set<T> findBindingsByType(Class<T> type) {
-        return fallbackRegistry.findByType(type);
+    public void setProperties(List<BeanPropertyDefinition> properties) {
+        this.properties = properties;
     }
+
 }

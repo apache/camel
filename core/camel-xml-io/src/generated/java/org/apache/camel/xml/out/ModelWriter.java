@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import org.apache.camel.model.*;
+import org.apache.camel.model.app.ApplicationDefinition;
+import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.app.ComponentScanDefinition;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
@@ -481,6 +484,14 @@ public class ModelWriter extends BaseWriter {
     }
     public void writeWireTapDefinition(WireTapDefinition def) throws IOException {
         doWriteWireTapDefinition("wireTap", def);
+    }
+    public void writeApplicationDefinition(
+            ApplicationDefinition def)
+            throws IOException {
+        doWriteApplicationDefinition("camel-app", def);
+    }
+    public void writeBeansDefinition(BeansDefinition def) throws IOException {
+        doWriteBeansDefinition("beans", def);
     }
     public void writeBlacklistServiceCallServiceFilterConfiguration(
             BlacklistServiceCallServiceFilterConfiguration def)
@@ -2555,6 +2566,41 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("executorService", def.getExecutorService());
         doWriteAttribute("copy", def.getCopy());
         doWriteOptionalIdentifiedDefinitionElements(def);
+        endElement();
+    }
+    protected void doWriteApplicationDefinition(
+            String name,
+            ApplicationDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteBeansDefinitionElements(def);
+        endElement();
+    }
+    protected void doWriteBeansDefinitionElements(
+            BeansDefinition def)
+            throws IOException {
+        doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
+        doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
+        doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
+        doWriteList(null, "routeConfiguration", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
+        doWriteList(null, "routeTemplate", def.getRouteTemplates(), this::doWriteRouteTemplateDefinition);
+        doWriteList(null, "templatedRoute", def.getTemplatedRoutes(), this::doWriteTemplatedRouteDefinition);
+    }
+    protected void doWriteBeansDefinition(
+            String name,
+            BeansDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteBeansDefinitionElements(def);
+        endElement();
+    }
+    protected void doWriteComponentScanDefinition(
+            String name,
+            ComponentScanDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteAttribute("base-package", def.getBasePackage());
+        doWriteAttribute("use-jsr-330", def.getUseJsr330());
         endElement();
     }
     protected void doWriteBlacklistServiceCallServiceFilterConfiguration(

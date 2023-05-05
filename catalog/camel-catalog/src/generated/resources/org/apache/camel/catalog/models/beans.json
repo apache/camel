@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "beans",
     "title": "Beans",
-    "description": "A groupping POJO (and related XML root element) that's historically associated with entire application (or its distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.",
+    "description": "A groupping POJO (and related XML root element) that's historically associated with entire application (or its distinguished fragment). beans root element to define the application comes from Spring Framework and it can be treated as de-facto standard.",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.app.BeansDefinition",
@@ -13,7 +13,6 @@
   },
   "properties": {
     "component-scan": { "kind": "element", "displayName": "Component-scan", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.ComponentScanDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Component scanning definition(s). But unlike package\/packageScan\/contextScan, we're not scanning only for org.apache.camel.builder.RouteBuilder." },
-    "bean": { "kind": "element", "displayName": "Bean", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.app.RegistryBeanDefinition>", "deprecated": false, "autowired": false, "secret": false },
     "rest": { "kind": "element", "displayName": "Rest", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "deprecated": false, "autowired": false, "secret": false },
     "routeConfiguration": { "kind": "element", "displayName": "Route Configuration", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteConfigurationDefinition>", "deprecated": false, "autowired": false, "secret": false },
     "routeTemplate": { "kind": "element", "displayName": "Route Template", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteTemplateDefinition>", "deprecated": false, "autowired": false, "secret": false },
