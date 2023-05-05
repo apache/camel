@@ -192,8 +192,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     @Override
     public Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
-        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+        if (resources == null || resources.isEmpty()) {
+            return answer;
+        }
 
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         for (RoutesBuilder builder : builders) {
             // update any existing route configurations first
             if (builder instanceof RouteConfigurationsBuilder) {
@@ -201,7 +204,6 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                 rcb.updateRouteConfigurationsToCamelContext(getCamelContext());
             }
         }
-
         for (RoutesBuilder builder : builders) {
             // update any existing routes
             Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
