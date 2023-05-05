@@ -19,6 +19,7 @@ package org.apache.camel.component.jpa;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +30,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport {
+
+    // should be less than 1000 as numbers in entries' names are formatted for sorting with %03d (or change format)
+    static final int ENTRIES_COUNT = 30;
+    static final String ENTRY_SEQ_FORMAT = "%03d";
 
     private String additionalQueryParameters = "";
 
@@ -91,5 +96,20 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     protected abstract String getEndpointUri();
+
+    protected void createCustomers() {
+        IntStream.range(0, ENTRIES_COUNT).forEach(idx -> {
+            Customer customer = createDefaultCustomer();
+            customer.setName(String.format("%s " + ENTRY_SEQ_FORMAT, customer.getName(), idx));
+            save(customer);
+        });
+    }
+
+    @Override
+    protected void setUp(String endpointUri) throws Exception {
+        super.setUp(endpointUri);
+        createCustomers();
+        assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
+    }
 
 }

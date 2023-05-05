@@ -17,7 +17,6 @@
 package org.apache.camel.component.jpa;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
@@ -30,12 +29,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName() +
                                                "?query=select c from Customer c order by c.name";
 
-    // should be less than 1000 as numbers in entries' names are formatted for sorting with %03d (or change format)
-    private static final int ENTRIES_COUNT = 30;
-
-    private static final String ENTRY_SEQ_FORMAT = "%03d";
-
-    // both should be less than ENTRIES_COUNT / 2
+    // both should be less than JpaWithOptionsTestSupport.ENTRIES_COUNT / 2
     private static final int FIRST_RESULT = 5;
     private static final int MAXIMUM_RESULTS = 10;
 
@@ -43,7 +37,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     public void testUnrestrictedQueryReturnsAll() throws Exception {
         final List<Customer> customers = runQueryTest();
 
-        assertEquals(ENTRIES_COUNT, customers.size());
+        assertEquals(JpaWithOptionsTestSupport.ENTRIES_COUNT, customers.size());
     }
 
     @Test
@@ -51,13 +45,13 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     public void testFirstResultInUri() throws Exception {
         final List<Customer> customers = runQueryTest();
 
-        assertEquals(ENTRIES_COUNT - FIRST_RESULT, customers.size());
+        assertEquals(JpaWithOptionsTestSupport.ENTRIES_COUNT - FIRST_RESULT, customers.size());
     }
 
     @Test
     public void testMaxResultsInHeader() throws Exception {
-        final List<Customer> customers
-                = runQueryTest(exchange -> exchange.getIn().setHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS));
+        final List<Customer> customers = runQueryTest(
+                withHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS));
 
         assertEquals(MAXIMUM_RESULTS, customers.size());
     }
@@ -87,7 +81,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT * 2));
 
-        assertEquals(ENTRIES_COUNT - (FIRST_RESULT * 2), customers.size());
+        assertEquals(JpaWithOptionsTestSupport.ENTRIES_COUNT - (FIRST_RESULT * 2), customers.size());
         assertFirstCustomerSequence(customers, FIRST_RESULT * 2);
     }
 
@@ -102,7 +96,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + ENTRIES_COUNT)
+    @AdditionalQueryParameters("firstResult=" + JpaWithOptionsTestSupport.ENTRIES_COUNT)
     public void testFirstResultAfterTheEnd() throws Exception {
         final List<Customer> customers = runQueryTest();
 
@@ -110,22 +104,8 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     private static void assertFirstCustomerSequence(final List<Customer> customers, final int firstResult) {
-        assertTrue(customers.get(0).getName().endsWith(String.format(ENTRY_SEQ_FORMAT, firstResult)));
-    }
-
-    @Override
-    protected void setUp(String endpointUri) throws Exception {
-        super.setUp(endpointUri);
-        createCustomers();
-        assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
-    }
-
-    protected void createCustomers() {
-        IntStream.range(0, ENTRIES_COUNT).forEach(idx -> {
-            Customer customer = createDefaultCustomer();
-            customer.setName(String.format("%s " + ENTRY_SEQ_FORMAT, customer.getName(), idx));
-            save(customer);
-        });
+        assertTrue(customers.get(0).getName().endsWith(
+                String.format(JpaWithOptionsTestSupport.ENTRY_SEQ_FORMAT, firstResult)));
     }
 
     protected String getEndpointUri() {
