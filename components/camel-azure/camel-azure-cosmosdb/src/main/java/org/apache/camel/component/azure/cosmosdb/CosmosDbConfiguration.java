@@ -35,8 +35,11 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriPath
     private String containerName;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
+    @Metadata(required = false)
     private String accountKey;
+    @UriParam(label = "security", secret = false)
+    @Metadata(required = false)
+    private boolean useDefaultIdentity;
     @UriParam(label = "common")
     @Metadata(required = true)
     private String databaseEndpoint;
@@ -124,6 +127,17 @@ public class CosmosDbConfiguration implements Cloneable {
 
     public void setAccountKey(String accountKey) {
         this.accountKey = accountKey;
+    }
+
+    /**
+     * Indicates whether to use the default identity mechanism instead of the access key.
+     */
+    public boolean isUseDefaultIdentity() {
+        return useDefaultIdentity;
+    }
+
+    public void setUseDefaultIdentity(boolean useDefaultIdentity) {
+        this.useDefaultIdentity = useDefaultIdentity;
     }
 
     /**
