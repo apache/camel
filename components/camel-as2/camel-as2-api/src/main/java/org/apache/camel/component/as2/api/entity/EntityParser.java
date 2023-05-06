@@ -369,14 +369,14 @@ public final class EntityParser {
     private static void parseApplicationEDIEntity(
             HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding)
             throws HttpException {
-        ApplicationEDIEntity applicationEDIEntity = null;
+        ApplicationEntity applicationEntity = null;
 
         ObjectHelper.notNull(message, "message");
         ObjectHelper.notNull(inBuffer, "inBuffer");
 
         HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
-        if (entity instanceof ApplicationEDIEntity) {
+        if (entity instanceof ApplicationEntity) {
             // already parsed
             return;
         }
@@ -385,10 +385,10 @@ public final class EntityParser {
 
         try {
 
-            applicationEDIEntity = parseEDIEntityBody(inBuffer, null, contentType, contentTransferEncoding, "");
-            applicationEDIEntity.setMainBody(true);
+            applicationEntity = parseEDIEntityBody(inBuffer, null, contentType, contentTransferEncoding, "");
+            applicationEntity.setMainBody(true);
 
-            EntityUtils.setMessageEntity(message, applicationEDIEntity);
+            EntityUtils.setMessageEntity(message, applicationEntity);
 
         } catch (Exception e) {
             throw new HttpException("Failed to parse entity content", e);
@@ -678,12 +678,9 @@ public final class EntityParser {
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType dispositionNotificationContentType = null;
-            String dispositionNotificationContentTransferEncoding = null;
             for (Header header : headers) {
                 if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     dispositionNotificationContentType = ContentType.parse(header.getValue());
-                } else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
-                    dispositionNotificationContentTransferEncoding = header.getValue();
                 }
             }
             if (dispositionNotificationContentType == null) {
@@ -809,6 +806,7 @@ public final class EntityParser {
                 case AS2MimeType.APPLICATION_EDIFACT:
                 case AS2MimeType.APPLICATION_EDI_X12:
                 case AS2MimeType.APPLICATION_EDI_CONSENT:
+                case AS2MimeType.APPLICATION_XML:
                     entity = parseEDIEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding, filename);
                     break;
                 case AS2MimeType.MULTIPART_SIGNED:
@@ -866,7 +864,7 @@ public final class EntityParser {
 
     }
 
-    public static ApplicationEDIEntity parseEDIEntityBody(
+    public static ApplicationEntity parseEDIEntityBody(
             AS2SessionInputBuffer inbuffer,
             String boundary,
             ContentType ediMessageContentType,
@@ -888,10 +886,9 @@ public final class EntityParser {
             if (contentTransferEncoding != null) {
                 ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
             }
-            ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
-                    ediMessageContentType, contentTransferEncoding, false, filename);
 
-            return applicationEDIEntity;
+            return EntityUtils.createEDIEntity(ediMessageBodyPartContent,
+                    ediMessageContentType, contentTransferEncoding, false, filename);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse EDI entity");
             parseException.initCause(e);

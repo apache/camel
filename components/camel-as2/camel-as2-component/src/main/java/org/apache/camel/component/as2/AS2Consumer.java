@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
@@ -120,7 +120,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                 apiProxy.handleMDNResponse(context, getEndpoint().getSubject(),
                         ofNullable(getEndpoint().getFrom()).orElse(getEndpoint().getConfiguration().getServer()));
             }
-            ApplicationEDIEntity ediEntity
+            ApplicationEntity ediEntity
                     = HttpMessageUtils.extractEdiPayload(request,
                             new HttpMessageUtils.DecrpytingAndSigningInfo(
                                     as2ServerConnection.getValidateSigningCertificateChain(),
