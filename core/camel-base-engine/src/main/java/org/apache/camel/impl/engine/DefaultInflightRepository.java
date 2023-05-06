@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,14 +42,14 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
 
-    private final AtomicInteger size = new AtomicInteger();
+    private final LongAdder size = new LongAdder();
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, LongAdder> routeCount = new ConcurrentHashMap<>();
     private boolean inflightExchangeEnabled;
 
     @Override
     public void add(Exchange exchange) {
-        size.incrementAndGet();
+        size.increment();
 
         if (inflightExchangeEnabled) {
             inflight.put(exchange.getExchangeId(), exchange);
@@ -58,7 +58,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void remove(Exchange exchange) {
-        size.decrementAndGet();
+        size.decrement();
 
         if (inflightExchangeEnabled) {
             inflight.remove(exchange.getExchangeId());
@@ -67,28 +67,28 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void add(Exchange exchange, String routeId) {
-        AtomicInteger existing = routeCount.get(routeId);
+        LongAdder existing = routeCount.get(routeId);
         if (existing != null) {
-            existing.incrementAndGet();
+            existing.increment();
         }
     }
 
     @Override
     public void remove(Exchange exchange, String routeId) {
-        AtomicInteger existing = routeCount.get(routeId);
+        LongAdder existing = routeCount.get(routeId);
         if (existing != null) {
-            existing.decrementAndGet();
+            existing.increment();
         }
     }
 
     @Override
     public int size() {
-        return size.get();
+        return size.intValue();
     }
 
     @Override
     public void addRoute(String routeId) {
-        routeCount.putIfAbsent(routeId, new AtomicInteger());
+        routeCount.putIfAbsent(routeId, new LongAdder());
     }
 
     @Override
@@ -98,8 +98,8 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public int size(String routeId) {
-        AtomicInteger existing = routeCount.get(routeId);
-        return existing != null ? existing.get() : 0;
+        LongAdder existing = routeCount.get(routeId);
+        return existing != null ? existing.intValue() : 0;
     }
 
     @Override
