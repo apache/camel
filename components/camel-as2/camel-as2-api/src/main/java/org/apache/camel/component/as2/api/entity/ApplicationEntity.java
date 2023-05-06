@@ -30,14 +30,14 @@ import org.apache.http.HeaderIterator;
 import org.apache.http.entity.ContentType;
 import org.slf4j.helpers.MessageFormatter;
 
-public abstract class ApplicationEDIEntity extends MimeEntity {
+public abstract class ApplicationEntity extends MimeEntity {
 
     protected static final String CONTENT_DISPOSITION_PATTERN = "attachment; filename={}";
 
     private final String ediMessage;
 
-    protected ApplicationEDIEntity(String ediMessage, ContentType contentType, String contentTransferEncoding,
-                                   boolean isMainBody, String filename) {
+    protected ApplicationEntity(String ediMessage, ContentType contentType, String contentTransferEncoding,
+                                boolean isMainBody, String filename) {
         this.ediMessage = ObjectHelper.notNull(ediMessage, "EDI Message");
         setContentType(ObjectHelper.notNull(contentType, "Content Type").toString());
         setContentTransferEncoding(contentTransferEncoding);

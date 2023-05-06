@@ -259,7 +259,8 @@ public class AS2Configuration {
     }
 
     /**
-     * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent
+     * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent,
+     * application/xml
      */
     public void setEdiMessageType(ContentType ediMessageType) {
         this.ediMessageType = ediMessageType;
