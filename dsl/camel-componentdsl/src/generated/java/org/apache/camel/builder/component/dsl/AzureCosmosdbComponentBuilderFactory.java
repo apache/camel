@@ -597,6 +597,23 @@ public interface AzureCosmosdbComponentBuilderFactory {
             doSetProperty("accountKey", accountKey);
             return this;
         }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder useDefaultIdentity(
+                boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
     }
 
     class AzureCosmosdbComponentBuilderImpl
@@ -650,6 +667,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "queryRequestOptions": getOrCreateConfiguration((CosmosDbComponent) component).setQueryRequestOptions((com.azure.cosmos.models.CosmosQueryRequestOptions) value); return true;
             case "autowiredEnabled": ((CosmosDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((CosmosDbComponent) component).setAccountKey((java.lang.String) value); return true;
+            case "useDefaultIdentity": getOrCreateConfiguration((CosmosDbComponent) component).setUseDefaultIdentity((boolean) value); return true;
             default: return false;
             }
         }
