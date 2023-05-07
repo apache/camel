@@ -105,8 +105,7 @@ public class Run extends CamelCommand {
     List<String> files = new ArrayList<>();
 
     @Option(names = { "--source-dir" },
-            description = "Source directory for loading Camel file(s) to run. When using this, then files cannot be specified at the same time."
-                          + " Multiple directories can be specified separated by comma.")
+            description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
     String sourceDir;
 
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
@@ -615,7 +614,12 @@ public class Run extends CamelCommand {
     private Properties loadProfileProperties() throws Exception {
         Properties answer = null;
 
-        File profilePropertiesFile = new File(getProfile() + ".properties");
+        File profilePropertiesFile;
+        if (sourceDir != null) {
+            profilePropertiesFile = new File(sourceDir, getProfile() + ".properties");
+        } else {
+            profilePropertiesFile = new File(getProfile() + ".properties");
+        }
         if (profilePropertiesFile.exists()) {
             answer = loadProfileProperties(profilePropertiesFile);
             // logging level/color may be configured in the properties file
@@ -625,9 +629,9 @@ public class Run extends CamelCommand {
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
             if (propertiesFiles == null) {
-                propertiesFiles = "file:" + getProfile() + ".properties";
+                propertiesFiles = "file:" + profilePropertiesFile.getPath();
             } else {
-                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
+                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getPath();
             }
             repos = answer.getProperty("camel.jbang.repos", repos);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);

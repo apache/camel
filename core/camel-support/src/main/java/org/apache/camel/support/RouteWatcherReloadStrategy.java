@@ -144,7 +144,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 if (name.endsWith(".properties")) {
                     onPropertiesReload(resource, true);
                 } else {
-                    onRouteReload(List.of(resource), true);
+                    onRouteReload(List.of(resource), false);
                 }
             });
         }
