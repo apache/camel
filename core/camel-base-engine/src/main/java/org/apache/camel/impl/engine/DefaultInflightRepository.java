@@ -77,7 +77,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     public void remove(Exchange exchange, String routeId) {
         LongAdder existing = routeCount.get(routeId);
         if (existing != null) {
-            existing.increment();
+            existing.decrement();
         }
     }
 
