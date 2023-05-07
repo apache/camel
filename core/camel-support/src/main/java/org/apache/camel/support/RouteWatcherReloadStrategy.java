@@ -149,7 +149,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 if (name.endsWith(".properties")) {
                     onPropertiesReload(resource, true);
                 } else {
-                    onRouteReload(List.of(resource), true);
+                    onRouteReload(List.of(resource), false);
                 }
             });
         }
@@ -190,7 +190,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 pr.onReload(resource.getLocation(), changed);
                 // trigger all routes to be reloaded
                 if (reloadRoutes) {
-                    onRouteReload(null, true);
+                    onRouteReload(null, false);
                 }
             }
         }
