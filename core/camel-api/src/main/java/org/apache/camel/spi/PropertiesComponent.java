@@ -164,6 +164,11 @@ public interface PropertiesComponent extends StaticService {
     void addLocation(String location);
 
     /**
+     * Gets the {@link PropertiesSourceFactory}.
+     */
+    PropertiesSourceFactory getPropertiesSourceFactory();
+
+    /**
      * Adds a custom {@link PropertiesSource} to use as source for loading and/or looking up property values.
      */
     void addPropertiesSource(PropertiesSource propertiesSource);
