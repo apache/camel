@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -34,6 +35,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesReload;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
@@ -41,6 +43,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,9 +195,35 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 if (reloadRoutes) {
                     onRouteReload(null, false);
                 }
+            } else {
+                // this may be a new properties file, so we need to add as new known location
+                String existing = getPropertiesByLocation(resource.getLocation());
+                if (existing == null) {
+                    // remove scheme
+                    String loc = resource.getLocation();
+                    if (loc.contains(":")) {
+                        loc = StringHelper.after(loc, ":");
+                    }
+                    PropertiesSource ps = pc.getPropertiesSourceFactory().newFilePropertiesSource(loc);
+                    pc.addPropertiesSource(ps);
+                    reloaded = true;
+                }
             }
         }
         return reloaded;
+    }
+
+    private String getPropertiesByLocation(String loc) {
+        PropertiesComponent pc = getCamelContext().getPropertiesComponent();
+        for (String s : pc.getLocations()) {
+            if (s.endsWith(";optional=true")) {
+                s = s.substring(0, s.length() - 14);
+            }
+            if (Objects.equals(s, loc)) {
+                return loc;
+            }
+        }
+        return null;
     }
 
     protected void onRouteReload(Collection<Resource> resources, boolean removeEverything) {
