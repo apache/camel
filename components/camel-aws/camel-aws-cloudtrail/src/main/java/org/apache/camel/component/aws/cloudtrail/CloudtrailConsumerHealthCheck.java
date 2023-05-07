@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.cloudtrail;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws.cloudtrail.client.CloudtrailClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -38,8 +39,8 @@ public class CloudtrailConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (CloudTrailClient client = cloudtrailConsumer.getEndpoint().getClient()) {
-            CloudtrailConfiguration configuration = cloudtrailConsumer.getEndpoint().getConfiguration();
+        CloudtrailConfiguration configuration = cloudtrailConsumer.getEndpoint().getConfiguration();
+        try (CloudTrailClient client = CloudtrailClientFactory.getCloudtrailClient(configuration).getCloudtrailClient()) {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!CloudTrailClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                     builder.message("The service is not supported in this region");

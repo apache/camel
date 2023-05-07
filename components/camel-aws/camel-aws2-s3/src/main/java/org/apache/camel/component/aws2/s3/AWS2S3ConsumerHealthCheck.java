@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.s3;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -38,8 +39,9 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (S3Client client = aws2S3Consumer.getAmazonS3Client()) {
-            AWS2S3Configuration configuration = aws2S3Consumer.getConfiguration();
+        AWS2S3Configuration configuration = aws2S3Consumer.getConfiguration();
+        try (S3Client client = AWS2S3ClientFactory.getAWSS3Client(configuration).getS3Client()) {
+
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                     builder.message("The service is not supported in this region");

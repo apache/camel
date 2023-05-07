@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.cw;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.cw.client.Cw2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +47,7 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (CloudWatchClient cw2Client = cw2Endpoint.getCloudWatchClient()) {
+        try (CloudWatchClient cw2Client = Cw2ClientFactory.getCloudWatchClient(configuration).getCloudWatchClient()) {
             cw2Client.listDashboards(ListDashboardsRequest.builder().build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

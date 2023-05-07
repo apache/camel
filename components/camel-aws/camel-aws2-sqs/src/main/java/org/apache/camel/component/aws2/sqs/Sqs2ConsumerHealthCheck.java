@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.sqs;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -38,8 +39,8 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (SqsClient client = sqs2Consumer.getClient()) {
-            Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
+        Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
+        try (SqsClient client = Sqs2ClientFactory.getSqsClient(configuration).getSQSClient()) {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                     builder.message("The service is not supported in this region");

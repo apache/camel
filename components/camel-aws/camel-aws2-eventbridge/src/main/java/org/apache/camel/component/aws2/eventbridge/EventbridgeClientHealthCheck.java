@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.eventbridge;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +47,8 @@ public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (EventBridgeClient eventbridgeClient = eventbridgeEndpoint.getEventbridgeClient()) {
+        try (EventBridgeClient eventbridgeClient
+                = EventbridgeClientFactory.getEventbridgeClient(configuration).getEventbridgeClient()) {
             eventbridgeClient.listEventBuses(ListEventBusesRequest.builder().limit(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.ec2;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.ec2.client.AWS2EC2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -38,8 +39,8 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (Ec2Client client = aws2EC2Endpoint.getEc2Client()) {
-            AWS2EC2Configuration configuration = aws2EC2Endpoint.getConfiguration();
+        AWS2EC2Configuration configuration = aws2EC2Endpoint.getConfiguration();
+        try (Ec2Client client = AWS2EC2ClientFactory.getEc2Client(configuration).getEc2Client()) {
             if (!Ec2Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();

@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.sns;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -36,8 +37,8 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (SnsClient client = sns2Endpoint.getSNSClient()) {
-            Sns2Configuration configuration = sns2Endpoint.getConfiguration();
+        Sns2Configuration configuration = sns2Endpoint.getConfiguration();
+        try (SnsClient client = Sns2ClientFactory.getSnsClient(configuration).getSNSClient()) {
             if (!SnsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();

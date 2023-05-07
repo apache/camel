@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ses;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.ses.client.Ses2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -36,8 +37,8 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (SesClient client = ses2Endpoint.getSESClient()) {
-            Ses2Configuration configuration = ses2Endpoint.getConfiguration();
+        Ses2Configuration configuration = ses2Endpoint.getConfiguration();
+        try (SesClient client = Ses2ClientFactory.getSesClient(configuration).getSesClient()) {
             if (!SesClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();

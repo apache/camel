@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.msk;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -37,8 +38,8 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (KafkaClient client = msk2Endpoint.getMskClient()) {
-            MSK2Configuration configuration = msk2Endpoint.getConfiguration();
+        MSK2Configuration configuration = msk2Endpoint.getConfiguration();
+        try (KafkaClient client = MSK2ClientFactory.getKafkaClient(configuration).getKafkaClient()) {
             if (!KafkaClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.lambda;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.lambda.client.Lambda2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +47,7 @@ public class Lambda2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (LambdaClient lambda2Client = lambda2Endpoint.getAwsLambdaClient()) {
+        try (LambdaClient lambda2Client = Lambda2ClientFactory.getLambdaClient(configuration).getLambdaClient()) {
             lambda2Client.listFunctions(ListFunctionsRequest.builder().maxItems(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

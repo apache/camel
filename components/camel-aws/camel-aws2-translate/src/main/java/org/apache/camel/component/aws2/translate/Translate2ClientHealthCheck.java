@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.translate;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.translate.client.Translate2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +47,7 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (TranslateClient translateClient = translate2Endpoint.getTranslateClient()) {
+        try (TranslateClient translateClient = Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient()) {
             translateClient.listLanguages(ListLanguagesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

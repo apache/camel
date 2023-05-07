@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.athena;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -39,7 +40,8 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (AthenaClient client = athena2Endpoint.getAthenaClient()) {
+        try (AthenaClient client
+                = Athena2ClientFactory.getAWSAthenaClient(athena2Endpoint.getConfiguration()).getAthenaClient()) {
             if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getRegion())) {
                 if (!AthenaClient.serviceMetadata().regions()
                         .contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {

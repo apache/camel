@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.eks;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +47,7 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (EksClient eks2Client = eks2Endpoint.getEksClient()) {
+        try (EksClient eks2Client = EKS2ClientFactory.getEksClient(configuration).getEksClient()) {
             eks2Client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
