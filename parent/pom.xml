@@ -405,7 +405,7 @@
         <pdfbox-version>2.0.28</pdfbox-version>
         <pgjdbc-driver-version>42.5.1</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
-        <picocli-version>4.7.2</picocli-version>
+        <picocli-version>4.7.3</picocli-version>
         <plc4x-version>0.10.0</plc4x-version>
         <pooled-jms-version>3.0.0</pooled-jms-version>
         <powermock-version>2.0.7</powermock-version>
