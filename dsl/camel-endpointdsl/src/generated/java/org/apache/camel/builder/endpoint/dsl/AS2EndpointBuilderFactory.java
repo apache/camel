@@ -219,7 +219,7 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
+         * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
@@ -236,7 +236,7 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
+         * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
@@ -1180,7 +1180,7 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
+         * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
@@ -1197,7 +1197,7 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
+         * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
@@ -2120,7 +2120,7 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
+         * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
@@ -2137,7 +2137,7 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent.
+         * application/edi-x12, application/edi-consent, application/xml.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.http.entity.ContentType&lt;/code&gt; type.
