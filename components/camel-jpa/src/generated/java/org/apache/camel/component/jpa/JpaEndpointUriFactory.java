@@ -46,7 +46,6 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("maximumResults");
         props.add("namedQuery");
         props.add("nativeQuery");
-        props.add("outputType");
         props.add("parameters");
         props.add("persistenceUnit");
         props.add("pollStrategy");
@@ -61,6 +60,7 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("schedulerProperties");
         props.add("sendEmptyMessageWhenIdle");
         props.add("sharedEntityManager");
+        props.add("singleResult");
         props.add("skipLockedEntity");
         props.add("startScheduler");
         props.add("timeUnit");

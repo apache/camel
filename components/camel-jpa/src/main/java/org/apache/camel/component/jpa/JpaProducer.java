@@ -194,7 +194,7 @@ public class JpaProducer extends DefaultProducer {
             final Object answer;
             if (isUseExecuteUpdate()) {
                 answer = innerQuery.executeUpdate();
-            } else if (getEndpoint().getOutputType() == JpaOutputType.SelectOne) {
+            } else if (getEndpoint().isSingleResult()) {
                 answer = innerQuery.getSingleResult();
             } else {
                 answer = innerQuery.getResultList();
@@ -254,10 +254,10 @@ public class JpaProducer extends DefaultProducer {
                 Object answer = entityManager.find(getEndpoint().getEntityType(), key);
                 LOG.debug("Find: {} -> {}", key, answer);
 
-                if (getEndpoint().getOutputType() == JpaOutputType.SelectOne && answer == null) {
+                if (getEndpoint().isSingleResult() && answer == null) {
                     throw new NoResultException(
                             String.format(
-                                    "No results for key %s and SelectOne requested",
+                                    "No results for key %s and singleResult requested",
                                     key));
                 }
 
