@@ -269,7 +269,6 @@
         <glassfish-jaxb-runtime-version>4.0.1</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>3.1.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
-        <jbpm-version>7.73.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.3.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
