@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.eventbridge.model.ListEventBusesRequest;
 public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
 
     private final EventbridgeEndpoint eventbridgeEndpoint;
+    private EventBridgeClient eventbridgeClient;
 
     public EventbridgeClientHealthCheck(EventbridgeEndpoint eventbridgeEndpoint, String clientId) {
         super("camel", "aws2-eventbridge-client-" + clientId);
@@ -47,9 +48,8 @@ public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (EventBridgeClient eventbridgeClient
-                = EventbridgeClientFactory.getEventbridgeClient(configuration).getEventbridgeClient()) {
-            eventbridgeClient.listEventBuses(ListEventBusesRequest.builder().limit(1).build());
+        try {
+            getEventbridgeClient().listEventBuses(ListEventBusesRequest.builder().limit(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +67,12 @@ public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
             return;
         }
         builder.up();
+    }
+
+    private EventBridgeClient getEventbridgeClient() {
+        if(eventbridgeClient == null){
+            eventbridgeClient= EventbridgeClientFactory.getEventbridgeClient(eventbridgeEndpoint.getConfiguration()).getEventbridgeClient();
+        }
+        return eventbridgeClient;
     }
 }

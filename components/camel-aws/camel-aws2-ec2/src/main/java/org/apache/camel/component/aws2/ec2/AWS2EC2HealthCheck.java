@@ -30,6 +30,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 public class AWS2EC2HealthCheck extends AbstractHealthCheck {
 
     private final AWS2EC2Endpoint aws2EC2Endpoint;
+    private Ec2Client client;
 
     public AWS2EC2HealthCheck(AWS2EC2Endpoint aws2EC2Endpoint, String clientId) {
         super("camel", "aws2-ec2-client-" + clientId);
@@ -39,15 +40,15 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        AWS2EC2Configuration configuration = aws2EC2Endpoint.getConfiguration();
-        try (Ec2Client client = AWS2EC2ClientFactory.getEc2Client(configuration).getEc2Client()) {
+        try {
+            AWS2EC2Configuration configuration = aws2EC2Endpoint.getConfiguration();
             if (!Ec2Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
 
-            client.describeInstances();
+            getClient().describeInstances();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -65,5 +66,12 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
             return;
         }
         builder.up();
+    }
+
+    private Ec2Client getClient() {
+        if(client == null){
+            this.client = AWS2EC2ClientFactory.getEc2Client(this.aws2EC2Endpoint.getConfiguration()).getEc2Client();
+        }
+        return client;
     }
 }

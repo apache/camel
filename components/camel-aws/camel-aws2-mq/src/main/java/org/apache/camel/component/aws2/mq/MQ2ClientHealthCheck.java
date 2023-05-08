@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
 public class MQ2ClientHealthCheck extends AbstractHealthCheck {
 
     private final MQ2Endpoint mq2Endpoint;
+    private MqClient mqClient;
 
     public MQ2ClientHealthCheck(MQ2Endpoint mq2Endpoint, String clientId) {
         super("camel", "aws2-mq-client-" + clientId);
@@ -47,8 +48,8 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (MqClient mqClient = MQ2ClientFactory.getMqClient(configuration).getMqClient()) {
-            mqClient.listBrokers(ListBrokersRequest.builder().maxResults(1).build());
+        try {
+           getMqClient().listBrokers(ListBrokersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -66,5 +67,12 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
             return;
         }
         builder.up();
+    }
+
+    private MqClient getMqClient() {
+        if(mqClient == null){
+            mqClient = MQ2ClientFactory.getMqClient(mq2Endpoint.getConfiguration()).getMqClient();
+        }
+        return mqClient;
     }
 }

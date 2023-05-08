@@ -30,6 +30,7 @@ import software.amazon.awssdk.services.cloudtrail.model.ListChannelsRequest;
 public class CloudtrailConsumerHealthCheck extends AbstractHealthCheck {
 
     private final CloudtrailConsumer cloudtrailConsumer;
+    private CloudTrailClient client;
 
     public CloudtrailConsumerHealthCheck(CloudtrailConsumer cloudtrailConsumer, String routeId) {
         super("camel", "aws-cloudtrail-consumer-" + routeId);
@@ -40,7 +41,7 @@ public class CloudtrailConsumerHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
         CloudtrailConfiguration configuration = cloudtrailConsumer.getEndpoint().getConfiguration();
-        try (CloudTrailClient client = CloudtrailClientFactory.getCloudtrailClient(configuration).getCloudtrailClient()) {
+        try {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!CloudTrailClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                     builder.message("The service is not supported in this region");
@@ -49,7 +50,7 @@ public class CloudtrailConsumerHealthCheck extends AbstractHealthCheck {
                 }
             }
 
-            client.listChannels(ListChannelsRequest.builder().maxResults(1).build());
+            getClient().listChannels(ListChannelsRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -70,5 +71,12 @@ public class CloudtrailConsumerHealthCheck extends AbstractHealthCheck {
 
         builder.up();
 
+    }
+
+    public CloudTrailClient getClient() {
+        if(client == null){
+            client = CloudtrailClientFactory.getCloudtrailClient(cloudtrailConsumer.getEndpoint().getConfiguration()).getCloudtrailClient();
+        }
+        return client;
     }
 }

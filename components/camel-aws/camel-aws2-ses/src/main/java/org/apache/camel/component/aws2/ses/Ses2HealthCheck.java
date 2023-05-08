@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.ses.SesClient;
 public class Ses2HealthCheck extends AbstractHealthCheck {
 
     private final Ses2Endpoint ses2Endpoint;
+    private SesClient client;
 
     public Ses2HealthCheck(Ses2Endpoint ses2Endpoint, String clientId) {
         super("camel", "aws2-ses-client-" + clientId);
@@ -38,13 +39,13 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
         Ses2Configuration configuration = ses2Endpoint.getConfiguration();
-        try (SesClient client = Ses2ClientFactory.getSesClient(configuration).getSesClient()) {
+        try {
             if (!SesClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-            client.getSendStatistics();
+            getClient().getSendStatistics();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -56,5 +57,12 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
         }
         builder.up();
 
+    }
+
+    private SesClient getClient() {
+        if(client == null){
+            client = Ses2ClientFactory.getSesClient(ses2Endpoint.getConfiguration()).getSesClient();
+        }
+        return client;
     }
 }

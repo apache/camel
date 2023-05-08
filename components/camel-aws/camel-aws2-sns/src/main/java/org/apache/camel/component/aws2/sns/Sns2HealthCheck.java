@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 public class Sns2HealthCheck extends AbstractHealthCheck {
 
     private final Sns2Endpoint sns2Endpoint;
+    private SnsClient client;
 
     public Sns2HealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
         super("camel", "aws2-sns-client-" + clientId);
@@ -38,13 +39,13 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
         Sns2Configuration configuration = sns2Endpoint.getConfiguration();
-        try (SnsClient client = Sns2ClientFactory.getSnsClient(configuration).getSNSClient()) {
+        try {
             if (!SnsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-            client.listSubscriptions();
+            getClient().listSubscriptions();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -56,5 +57,12 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
         }
         builder.up();
 
+    }
+
+    public SnsClient getClient() {
+        if(client == null){
+            client = Sns2ClientFactory.getSnsClient(sns2Endpoint.getConfiguration()).getSNSClient();
+        }
+        return client;
     }
 }

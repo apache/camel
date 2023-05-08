@@ -30,6 +30,7 @@ import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final Sqs2Consumer sqs2Consumer;
+    private SqsClient client;
 
     public Sqs2ConsumerHealthCheck(Sqs2Consumer sqs2Consumer, String routeId) {
         super("camel", "aws2-sqs-consumer-" + routeId);
@@ -40,7 +41,7 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
         Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
-        try (SqsClient client = Sqs2ClientFactory.getSqsClient(configuration).getSQSClient()) {
+        try {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                     builder.message("The service is not supported in this region");
@@ -49,7 +50,7 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
                 }
             }
 
-            client.listQueues(ListQueuesRequest.builder().maxResults(1).build());
+            getClient().listQueues(ListQueuesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -70,5 +71,12 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
         builder.up();
 
+    }
+
+    private SqsClient getClient() {
+        if(client == null){
+            client = Sqs2ClientFactory.getSqsClient(sqs2Consumer.getConfiguration()).getSQSClient();
+        }
+        return client;
     }
 }

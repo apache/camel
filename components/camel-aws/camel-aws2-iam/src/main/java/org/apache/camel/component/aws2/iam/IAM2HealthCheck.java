@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.iam;
 
 import java.util.Map;
 
+import org.apache.camel.component.aws2.iam.client.IAM2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -27,6 +28,7 @@ import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 
 public class IAM2HealthCheck extends AbstractHealthCheck {
     private final IAM2Endpoint endpoint;
+    private IamClient client;
 
     public IAM2HealthCheck(IAM2Endpoint endpoint, String clientId) {
         super("camel", "aws2-iam-client-" + clientId);
@@ -35,7 +37,7 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        try (IamClient client = endpoint.getIamClient()) {
+        try {
             IAM2Configuration configuration = endpoint.getConfiguration();
             if (!IamClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
@@ -43,7 +45,7 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
                 return;
             }
 
-            client.listAccessKeys(ListAccessKeysRequest.builder().maxItems(1).build());
+            getClient().listAccessKeys(ListAccessKeysRequest.builder().maxItems(1).build());
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -54,5 +56,12 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
             return;
         }
         builder.up();
+    }
+
+    private IamClient getClient() {
+        if(client == null){
+            client = IAM2ClientFactory.getIamClient(endpoint.getConfiguration()).getIamClient();
+        }
+        return client;
     }
 }

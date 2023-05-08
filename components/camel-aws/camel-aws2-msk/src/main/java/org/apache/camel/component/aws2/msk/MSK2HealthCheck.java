@@ -29,6 +29,7 @@ import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 public class MSK2HealthCheck extends AbstractHealthCheck {
 
     private final MSK2Endpoint msk2Endpoint;
+    private KafkaClient client;
 
     public MSK2HealthCheck(MSK2Endpoint msk2Endpoint, String clientId) {
         super("camel", "aws2-msk-client-" + clientId);
@@ -39,13 +40,13 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
         MSK2Configuration configuration = msk2Endpoint.getConfiguration();
-        try (KafkaClient client = MSK2ClientFactory.getKafkaClient(configuration).getKafkaClient()) {
+        try {
             if (!KafkaClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-            client.listClusters(ListClustersRequest.builder().maxResults(1).build());
+            getClient().listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -57,5 +58,12 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
         }
         builder.up();
 
+    }
+
+    private KafkaClient getClient() {
+        if(client == null){
+            client = MSK2ClientFactory.getKafkaClient(msk2Endpoint.getConfiguration()).getKafkaClient();
+        }
+        return client;
     }
 }
