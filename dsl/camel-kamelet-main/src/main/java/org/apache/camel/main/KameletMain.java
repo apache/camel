@@ -59,6 +59,8 @@ import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
+import org.apache.camel.support.DefaultContextReloadStrategy;
+import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
@@ -450,6 +452,15 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
             answer.getRegistry().bind(DownloadModelineParser.class.getSimpleName(), new DownloadModelineParser(answer));
+            // reloader
+            String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
+            if (sourceDir != null) {
+                RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
+                reloader.setPattern("*");
+                answer.addService(reloader);
+            } else {
+                answer.addService(new DefaultContextReloadStrategy());
+            }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
