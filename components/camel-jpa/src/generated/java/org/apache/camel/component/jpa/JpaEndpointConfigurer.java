@@ -65,8 +65,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": target.setNamedQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "nativequery":
         case "nativeQuery": target.setNativeQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputtype":
-        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jpa.JpaOutputType.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "persistenceunit":
         case "persistenceUnit": target.setPersistenceUnit(property(camelContext, java.lang.String.class, value)); return true;
@@ -91,6 +89,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sharedentitymanager":
         case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
+        case "singleresult":
+        case "singleResult": target.setSingleResult(property(camelContext, boolean.class, value)); return true;
         case "skiplockedentity":
         case "skipLockedEntity": target.setSkipLockedEntity(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
@@ -157,8 +157,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": return java.lang.String.class;
         case "nativequery":
         case "nativeQuery": return java.lang.String.class;
-        case "outputtype":
-        case "outputType": return org.apache.camel.component.jpa.JpaOutputType.class;
         case "parameters": return java.util.Map.class;
         case "persistenceunit":
         case "persistenceUnit": return java.lang.String.class;
@@ -183,6 +181,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "sharedentitymanager":
         case "sharedEntityManager": return boolean.class;
+        case "singleresult":
+        case "singleResult": return boolean.class;
         case "skiplockedentity":
         case "skipLockedEntity": return boolean.class;
         case "startscheduler":
@@ -250,8 +250,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": return target.getNamedQuery();
         case "nativequery":
         case "nativeQuery": return target.getNativeQuery();
-        case "outputtype":
-        case "outputType": return target.getOutputType();
         case "parameters": return target.getParameters();
         case "persistenceunit":
         case "persistenceUnit": return target.getPersistenceUnit();
@@ -276,6 +274,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sharedentitymanager":
         case "sharedEntityManager": return target.isSharedEntityManager();
+        case "singleresult":
+        case "singleResult": return target.isSingleResult();
         case "skiplockedentity":
         case "skipLockedEntity": return target.isSkipLockedEntity();
         case "startscheduler":

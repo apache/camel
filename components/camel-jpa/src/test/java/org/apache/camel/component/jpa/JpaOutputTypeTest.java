@@ -41,7 +41,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Query
-    @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% 001")
+    @AdditionalQueryParameters("singleResult=true&parameters.seq=% 001")
     public void testSingleCustomerOKQuery() throws Exception {
         final Customer customer = runQueryTest(Customer.class);
 
@@ -50,7 +50,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Query("select c from Customer c")
-    @AdditionalQueryParameters("outputType=SelectOne")
+    @AdditionalQueryParameters("singleResult=true")
     public void testTooMuchResults() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -59,7 +59,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Query
-    @AdditionalQueryParameters("outputType=SelectOne&parameters.seq=% xxx")
+    @AdditionalQueryParameters("singleResult=true&parameters.seq=% xxx")
     public void testNoCustomersQuery() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -68,7 +68,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("outputType=SelectOne")
+    @AdditionalQueryParameters("singleResult=true")
     public void testSingleCustomerOKFind() throws Exception {
         // ids in the db are not known, so query for a known element and use its id.
         super.setUp(getEndpointUri());
@@ -84,7 +84,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("outputType=SelectOne")
+    @AdditionalQueryParameters("singleResult=true")
     public void testNoCustomerFind() throws Exception {
         final Exchange result = doRunQueryTest(withBody(Long.MAX_VALUE));
 
