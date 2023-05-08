@@ -53,12 +53,11 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
-import org.apache.camel.support.DefaultContextReloadStrategy;
+import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -265,24 +264,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             } else if ("gc".equals(action)) {
                 System.gc();
             } else if ("reload".equals(action)) {
-                Optional<String> dir = camelContext.getPropertiesComponent().resolveProperty("camel.jbang.sourceDir");
-                if (dir.isPresent()) {
-                    // if using source-dir then reload this specific directory
-                    RouteOnDemandReloadStrategy reloader = camelContext.hasService(RouteOnDemandReloadStrategy.class);
-                    if (reloader == null) {
-                        reloader = new RouteOnDemandReloadStrategy(dir.get(), true);
-                        reloader.setPattern("*");
-                        camelContext.addService(reloader);
-                    }
-                    reloader.onReload("Camel CLI");
+                ContextReloadStrategy cr = camelContext.hasService(ContextReloadStrategy.class);
+                if (cr != null) {
+                    cr.onReload("Camel CLI");
                 } else {
-                    // general camel reloading
-                    ContextReloadStrategy reloader = camelContext.hasService(ContextReloadStrategy.class);
-                    if (reloader == null) {
-                        reloader = new DefaultContextReloadStrategy();
-                        camelContext.addService(reloader);
+                    ResourceReloadStrategy rr = camelContext.hasService(ResourceReloadStrategy.class);
+                    if (rr != null) {
+                        rr.onReload("Camel CLI");
                     }
-                    reloader.onReload("Camel CLI");
                 }
             } else if ("reset-stats".equals(action)) {
                 ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);

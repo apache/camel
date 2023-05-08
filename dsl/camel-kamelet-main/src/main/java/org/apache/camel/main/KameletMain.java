@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
@@ -64,7 +65,9 @@ import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
+import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
@@ -391,10 +394,6 @@ public class KameletMain extends MainCommandLineSupport {
         if (console) {
             VertxHttpServer.registerConsole(answer);
         }
-        String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
-        if (sourceDir != null) {
-            // TODO:
-        }
 
         // always enable developer console as it is needed by camel-cli-connector
         configure().withDevConsoleEnabled(true);
@@ -466,6 +465,17 @@ public class KameletMain extends MainCommandLineSupport {
             answer.addService(new DependencyDownloaderKamelet(answer));
             answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
                     new DownloadModelineParser(answer));
+
+            // reloader
+            String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
+            if (sourceDir != null) {
+                RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
+                reloader.setPattern("*");
+                answer.addService(reloader);
+            } else {
+                answer.addService(new DefaultContextReloadStrategy());
+            }
+
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }

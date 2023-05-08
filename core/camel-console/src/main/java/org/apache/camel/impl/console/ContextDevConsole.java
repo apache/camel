@@ -23,8 +23,7 @@ import java.util.Set;
 
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.spi.ContextReloadStrategy;
-import org.apache.camel.spi.ResourceReloadStrategy;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
@@ -53,12 +52,8 @@ public class ContextDevConsole extends AbstractDevConsole {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
                 int reloaded = 0;
-                Set<ResourceReloadStrategy> rrs = getCamelContext().hasServices(ResourceReloadStrategy.class);
-                for (ResourceReloadStrategy r : rrs) {
-                    reloaded += r.getReloadCounter();
-                }
-                Set<ContextReloadStrategy> crs = getCamelContext().hasServices(ContextReloadStrategy.class);
-                for (ContextReloadStrategy r : crs) {
+                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
+                for (ReloadStrategy r : rs) {
                     reloaded += r.getReloadCounter();
                 }
                 String load1 = getLoad1(mb);
@@ -123,12 +118,8 @@ public class ContextDevConsole extends AbstractDevConsole {
                 JsonObject stats = new JsonObject();
 
                 int reloaded = 0;
-                Set<ResourceReloadStrategy> rrs = getCamelContext().hasServices(ResourceReloadStrategy.class);
-                for (ResourceReloadStrategy r : rrs) {
-                    reloaded += r.getReloadCounter();
-                }
-                Set<ContextReloadStrategy> crs = getCamelContext().hasServices(ContextReloadStrategy.class);
-                for (ContextReloadStrategy r : crs) {
+                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
+                for (ReloadStrategy r : rs) {
                     reloaded += r.getReloadCounter();
                 }
                 String load1 = getLoad1(mb);

@@ -165,9 +165,6 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     protected boolean onPropertiesReload(Resource resource, boolean reloadRoutes) throws Exception {
-        LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
-                resource.getLocation());
-
         // optimize to only update if something changed
         OrderedLocationProperties changed = null;
 
@@ -187,6 +184,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
         boolean reloaded = false;
         if (changed != null && !changed.isEmpty()) {
+            LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
+                    resource.getLocation());
             reloaded = pc.reloadProperties(resource.getLocation());
             if (reloaded) {
                 pr.onReload(resource.getLocation(), changed);

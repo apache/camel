@@ -134,6 +134,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     @Override
+    public void onReload(Object source) {
+        // this implementation uses a watcher to automatic reload
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
