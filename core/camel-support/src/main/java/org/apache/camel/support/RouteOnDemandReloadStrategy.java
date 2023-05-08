@@ -62,6 +62,7 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
     /**
      * Triggers on-demand reloading
      */
+    @Override
     public void onReload(Object source) {
         try {
             doOnReload(source);

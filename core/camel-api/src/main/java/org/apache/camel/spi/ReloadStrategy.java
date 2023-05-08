@@ -16,23 +16,36 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
+
 /**
- * SPI strategy for reloading {@link Resource} in an existing running {@link org.apache.camel.CamelContext}
+ * SPI strategy for reloading.
  *
  * @see ContextReloadStrategy
- * @see ResourceReload
- * @see Resource
+ * @see ResourceReloadStrategy
  */
-public interface ResourceReloadStrategy extends ReloadStrategy {
+public interface ReloadStrategy extends StaticService, CamelContextAware {
 
     /**
-     * Gets the resource listener that is triggered on reload.
+     * Trigger reload.
+     *
+     * @param source source that triggers the reloading.
      */
-    ResourceReload getResourceReload();
+    void onReload(Object source);
 
     /**
-     * Sets the resource listener to trigger on reload.
+     * Number of reloads succeeded.
      */
-    void setResourceReload(ResourceReload listener);
+    int getReloadCounter();
 
+    /**
+     * Number of reloads failed.
+     */
+    int getFailedCounter();
+
+    /**
+     * Reset the counters.
+     */
+    void resetCounters();
 }
