@@ -59,7 +59,7 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
     }
 
     private IamClient getClient() {
-        if(client == null){
+        if (client == null) {
             client = IAM2ClientFactory.getIamClient(endpoint.getConfiguration()).getIamClient();
         }
         return client;

@@ -49,7 +49,7 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-           getMqClient().listBrokers(ListBrokersRequest.builder().maxResults(1).build());
+            getMqClient().listBrokers(ListBrokersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -70,7 +70,7 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     private MqClient getMqClient() {
-        if(mqClient == null){
+        if (mqClient == null) {
             mqClient = MQ2ClientFactory.getMqClient(mq2Endpoint.getConfiguration()).getMqClient();
         }
         return mqClient;

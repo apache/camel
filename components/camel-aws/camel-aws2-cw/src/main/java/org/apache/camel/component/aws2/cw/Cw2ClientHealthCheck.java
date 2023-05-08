@@ -70,7 +70,7 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     private CloudWatchClient getCw2Client() {
-        if(cw2Client == null){
+        if (cw2Client == null) {
             cw2Client = Cw2ClientFactory.getCloudWatchClient(this.cw2Endpoint.getConfiguration()).getCloudWatchClient();
         }
         return cw2Client;

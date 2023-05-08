@@ -48,7 +48,7 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try{
+        try {
             getTranslateClient().listLanguages(ListLanguagesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -70,8 +70,9 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     private TranslateClient getTranslateClient() {
-        if(translateClient == null){
-            translateClient = Translate2ClientFactory.getTranslateClient(translate2Endpoint.getConfiguration()).getTranslateClient();
+        if (translateClient == null) {
+            translateClient
+                    = Translate2ClientFactory.getTranslateClient(translate2Endpoint.getConfiguration()).getTranslateClient();
         }
         return translateClient;
     }

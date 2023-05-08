@@ -60,7 +60,7 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
     }
 
     private SesClient getClient() {
-        if(client == null){
+        if (client == null) {
             client = Ses2ClientFactory.getSesClient(ses2Endpoint.getConfiguration()).getSesClient();
         }
         return client;

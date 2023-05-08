@@ -70,7 +70,7 @@ public class ECS2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     private EcsClient getEcs2Client() {
-        if(ecs2Client == null){
+        if (ecs2Client == null) {
             ecs2Client = ECS2ClientFactory.getEcsClient(ecs2Endpoint.getConfiguration()).getEcsClient();
         }
         return ecs2Client;

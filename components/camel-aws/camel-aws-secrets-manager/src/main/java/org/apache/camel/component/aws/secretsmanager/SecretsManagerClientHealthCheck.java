@@ -70,9 +70,10 @@ public class SecretsManagerClientHealthCheck extends AbstractHealthCheck {
     }
 
     private SecretsManagerClient getSecretsManagerClient() {
-        if(secretsManagerClient == null){
-            secretsManagerClient = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerEndpoint.getConfiguration())
-                    .getSecretsManagerClient();
+        if (secretsManagerClient == null) {
+            secretsManagerClient
+                    = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerEndpoint.getConfiguration())
+                            .getSecretsManagerClient();
         }
         return secretsManagerClient;
     }

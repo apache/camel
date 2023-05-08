@@ -41,7 +41,7 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try{
+        try {
             if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getRegion())) {
                 if (!AthenaClient.serviceMetadata().regions()
                         .contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {
@@ -72,7 +72,7 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     private AthenaClient getClient() {
-        if(client == null){
+        if (client == null) {
             this.client = Athena2ClientFactory.getAWSAthenaClient(athena2Endpoint.getConfiguration()).getAthenaClient();
         }
         return client;

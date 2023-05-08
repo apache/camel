@@ -74,7 +74,7 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
     }
 
     private SqsClient getClient() {
-        if(client == null){
+        if (client == null) {
             client = Sqs2ClientFactory.getSqsClient(sqs2Consumer.getConfiguration()).getSQSClient();
         }
         return client;

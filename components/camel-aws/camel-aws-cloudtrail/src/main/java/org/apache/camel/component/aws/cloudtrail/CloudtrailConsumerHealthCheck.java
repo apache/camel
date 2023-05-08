@@ -74,8 +74,9 @@ public class CloudtrailConsumerHealthCheck extends AbstractHealthCheck {
     }
 
     public CloudTrailClient getClient() {
-        if(client == null){
-            client = CloudtrailClientFactory.getCloudtrailClient(cloudtrailConsumer.getEndpoint().getConfiguration()).getCloudtrailClient();
+        if (client == null) {
+            client = CloudtrailClientFactory.getCloudtrailClient(cloudtrailConsumer.getEndpoint().getConfiguration())
+                    .getCloudtrailClient();
         }
         return client;
     }

@@ -70,8 +70,9 @@ public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
     }
 
     private EventBridgeClient getEventbridgeClient() {
-        if(eventbridgeClient == null){
-            eventbridgeClient= EventbridgeClientFactory.getEventbridgeClient(eventbridgeEndpoint.getConfiguration()).getEventbridgeClient();
+        if (eventbridgeClient == null) {
+            eventbridgeClient = EventbridgeClientFactory.getEventbridgeClient(eventbridgeEndpoint.getConfiguration())
+                    .getEventbridgeClient();
         }
         return eventbridgeClient;
     }

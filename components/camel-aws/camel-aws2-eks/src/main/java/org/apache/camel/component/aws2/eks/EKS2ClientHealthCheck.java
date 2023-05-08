@@ -70,7 +70,7 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     private EksClient getEks2Client() {
-        if(eks2Client == null){
+        if (eks2Client == null) {
             eks2Client = EKS2ClientFactory.getEksClient(eks2Endpoint.getConfiguration()).getEksClient();
         }
         return eks2Client;

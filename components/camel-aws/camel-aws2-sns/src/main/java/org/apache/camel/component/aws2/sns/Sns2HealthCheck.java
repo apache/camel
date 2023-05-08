@@ -60,7 +60,7 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
     }
 
     public SnsClient getClient() {
-        if(client == null){
+        if (client == null) {
             client = Sns2ClientFactory.getSnsClient(sns2Endpoint.getConfiguration()).getSNSClient();
         }
         return client;

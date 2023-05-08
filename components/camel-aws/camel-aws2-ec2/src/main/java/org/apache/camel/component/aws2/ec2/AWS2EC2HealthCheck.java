@@ -69,7 +69,7 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
     }
 
     private Ec2Client getClient() {
-        if(client == null){
+        if (client == null) {
             this.client = AWS2EC2ClientFactory.getEc2Client(this.aws2EC2Endpoint.getConfiguration()).getEc2Client();
         }
         return client;

@@ -75,7 +75,7 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
     }
 
     private S3Client getClient() {
-        if(client == null){
+        if (client == null) {
             client = AWS2S3ClientFactory.getAWSS3Client(aws2S3Consumer.getConfiguration()).getS3Client();
         }
         return client;

@@ -61,7 +61,7 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
     }
 
     private KafkaClient getClient() {
-        if(client == null){
+        if (client == null) {
             client = MSK2ClientFactory.getKafkaClient(msk2Endpoint.getConfiguration()).getKafkaClient();
         }
         return client;
