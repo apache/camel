@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -187,7 +188,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                 url = customResourceLocator(url);
 
                 String urlPath = url.getFile();
-                urlPath = URLDecoder.decode(urlPath, "UTF-8");
+                urlPath = URLDecoder.decode(urlPath, StandardCharsets.UTF_8);
                 if (log.isTraceEnabled()) {
                     log.trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
                 }
