@@ -204,8 +204,6 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             return;
         }
 
-        // must copy over CamelContext
-        CamelContextAware.trySetCamelContext(that, camelContext);
         // cover over exchange if none has been assigned
         if (getExchange() == null) {
             setExchange(that.getExchange());
