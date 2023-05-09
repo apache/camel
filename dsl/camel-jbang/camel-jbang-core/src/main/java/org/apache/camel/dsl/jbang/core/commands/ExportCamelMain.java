@@ -196,6 +196,36 @@ class ExportCamelMain extends Export {
             }
             sb.append("        </dependency>\n");
         }
+
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-aws-secrets-manager").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "GCP":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-google-secret-manager").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "Azure":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-azure-key-vault").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                    }
+                }
+            }
+        }
+
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
         IOHelper.writeText(context, new FileOutputStream(pom, false));
@@ -248,4 +278,27 @@ class ExportCamelMain extends Export {
         safeCopy(is, new File(srcResourcesDir, "assembly/runner.xml"));
     }
 
+    @Override
+    protected void prepareApplicationProperties(Properties properties) {
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            exportAwsSecretsRefreshProp(properties);
+                            break;
+                        case "GCP":
+                            exportGcpSecretsRefreshProp(properties);
+                            break;
+                        case "Azure":
+                            exportAzureSecretsRefreshProp(properties);
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }
