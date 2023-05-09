@@ -21,11 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -257,6 +253,34 @@ class ExportSpringBoot extends Export {
             }
             sb.append("        </dependency>\n");
         }
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-aws-secrets-manager-starter").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "GCP":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-google-secret-manager-starter").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "Azure":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-azure-key-vault-starter").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                    }
+                }
+            }
+        }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
         // add jkube profiles if there is jkube version property
@@ -328,6 +352,38 @@ class ExportSpringBoot extends Export {
             gavs.add(gav);
         }
 
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            MavenGav awsGav = new MavenGav();
+                            awsGav.setGroupId("org.apache.camel.springboot");
+                            awsGav.setArtifactId("camel-aws-secrets-manager-starter");
+                            awsGav.setVersion(null);
+                            gavs.add(awsGav);
+                            break;
+                        case "GCP":
+                            MavenGav gcpGav = new MavenGav();
+                            gcpGav.setGroupId("org.apache.camel.springboot");
+                            gcpGav.setArtifactId("camel-google-secret-manager-starter");
+                            gcpGav.setVersion(null);
+                            gavs.add(gcpGav);
+                            break;
+                        case "Azure":
+                            MavenGav azureGav = new MavenGav();
+                            azureGav.setGroupId("org.apache.camel.springboot");
+                            azureGav.setArtifactId("camel-azure-key-vault-starter");
+                            azureGav.setVersion(null);
+                            gavs.add(azureGav);
+                            break;
+                    }
+                }
+            }
+        }
+
         // sort artifacts
         gavs.sort(mavenGavComparator());
 
@@ -382,6 +438,30 @@ class ExportSpringBoot extends Export {
             fos.write("import org.springframework.stereotype.Component;\n\n"
                     .getBytes(StandardCharsets.UTF_8));
             fos.write("@Component\n".getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    @Override
+    protected void prepareApplicationProperties(Properties properties) {
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            exportAwsSecretsRefreshProp(properties);
+                            break;
+                        case "GCP":
+                            exportGcpSecretsRefreshProp(properties);
+                            break;
+                        case "Azure":
+                            exportAzureSecretsRefreshProp(properties);
+                            break;
+                    }
+                }
+            }
         }
     }
 
