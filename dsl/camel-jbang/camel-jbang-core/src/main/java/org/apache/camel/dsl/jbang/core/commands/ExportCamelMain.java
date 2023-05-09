@@ -202,20 +202,20 @@ class ExportCamelMain extends Export {
                 List<String> providers = getSecretProviders();
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-aws-secrets-manager").append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
-                        case "GCP":
+                        case "gcp":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-google-secret-manager")
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
-                        case "Azure":
+                        case "azure":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-azure-key-vault").append("</artifactId>\n");
@@ -288,13 +288,13 @@ class ExportCamelMain extends Export {
 
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             exportAwsSecretsRefreshProp(properties);
                             break;
-                        case "GCP":
+                        case "gcp":
                             exportGcpSecretsRefreshProp(properties);
                             break;
-                        case "Azure":
+                        case "azure":
                             exportAzureSecretsRefreshProp(properties);
                             break;
                         default:
