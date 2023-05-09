@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -190,8 +189,7 @@ class ExportQuarkus extends Export {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
 
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             exportAwsSecretsRefreshProp(properties);
@@ -309,8 +307,7 @@ class ExportQuarkus extends Export {
         if (secretsRefresh) {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             MavenGav awsGav = new MavenGav();
@@ -474,25 +471,27 @@ class ExportQuarkus extends Export {
         if (secretsRefresh) {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-quarkus-aws-secrets-manager").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-quarkus-aws-secrets-manager")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                         case "GCP":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-quarkus-google-secret-manager").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-quarkus-google-secret-manager")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                         case "Azure":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-quarkus-azure-key-vault").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-quarkus-azure-key-vault")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                     }

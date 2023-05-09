@@ -200,8 +200,7 @@ class ExportCamelMain extends Export {
         if (secretsRefresh) {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             sb.append("        <dependency>\n");
@@ -212,7 +211,8 @@ class ExportCamelMain extends Export {
                         case "GCP":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-google-secret-manager").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-google-secret-manager")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                         case "Azure":
@@ -284,8 +284,7 @@ class ExportCamelMain extends Export {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
 
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             exportAwsSecretsRefreshProp(properties);
