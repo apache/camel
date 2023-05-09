@@ -191,13 +191,13 @@ class ExportQuarkus extends Export {
 
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             exportAwsSecretsRefreshProp(properties);
                             break;
-                        case "GCP":
+                        case "gcp":
                             exportGcpSecretsRefreshProp(properties);
                             break;
-                        case "Azure":
+                        case "azure":
                             exportAzureSecretsRefreshProp(properties);
                             break;
                         default:
@@ -311,21 +311,21 @@ class ExportQuarkus extends Export {
                 List<String> providers = getSecretProviders();
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             MavenGav awsGav = new MavenGav();
                             awsGav.setGroupId("org.apache.camel.quarkus");
                             awsGav.setArtifactId("camel-quarkus-aws-secrets-manager");
                             awsGav.setVersion(null);
                             gavs.add(awsGav);
                             break;
-                        case "GCP":
+                        case "gcp":
                             MavenGav gcpGav = new MavenGav();
                             gcpGav.setGroupId("org.apache.camel.quarkus");
                             gcpGav.setArtifactId("camel-quarkus-google-secret-manager");
                             gcpGav.setVersion(null);
                             gavs.add(gcpGav);
                             break;
-                        case "Azure":
+                        case "azure":
                             MavenGav azureGav = new MavenGav();
                             azureGav.setGroupId("org.apache.camel.quarkus");
                             azureGav.setArtifactId("camel-quarkus-azure-key-vault");
@@ -477,21 +477,21 @@ class ExportQuarkus extends Export {
                 List<String> providers = getSecretProviders();
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-quarkus-aws-secrets-manager")
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
-                        case "GCP":
+                        case "gcp":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-quarkus-google-secret-manager")
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
-                        case "Azure":
+                        case "azure":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-quarkus-azure-key-vault")

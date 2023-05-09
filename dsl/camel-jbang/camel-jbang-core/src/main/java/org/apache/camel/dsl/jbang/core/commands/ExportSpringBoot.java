@@ -262,21 +262,21 @@ class ExportSpringBoot extends Export {
                 List<String> providers = getSecretProviders();
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-aws-secrets-manager-starter")
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
-                        case "GCP":
+                        case "gcp":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-google-secret-manager-starter")
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
-                        case "Azure":
+                        case "azure":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
                             sb.append("            <artifactId>").append("camel-azure-key-vault-starter")
@@ -365,21 +365,21 @@ class ExportSpringBoot extends Export {
                 List<String> providers = getSecretProviders();
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             MavenGav awsGav = new MavenGav();
                             awsGav.setGroupId("org.apache.camel.springboot");
                             awsGav.setArtifactId("camel-aws-secrets-manager-starter");
                             awsGav.setVersion(null);
                             gavs.add(awsGav);
                             break;
-                        case "GCP":
+                        case "gcp":
                             MavenGav gcpGav = new MavenGav();
                             gcpGav.setGroupId("org.apache.camel.springboot");
                             gcpGav.setArtifactId("camel-google-secret-manager-starter");
                             gcpGav.setVersion(null);
                             gavs.add(gcpGav);
                             break;
-                        case "Azure":
+                        case "azure":
                             MavenGav azureGav = new MavenGav();
                             azureGav.setGroupId("org.apache.camel.springboot");
                             azureGav.setArtifactId("camel-azure-key-vault-starter");
@@ -458,13 +458,13 @@ class ExportSpringBoot extends Export {
 
                 for (String provider : providers) {
                     switch (provider) {
-                        case "AWS":
+                        case "aws":
                             exportAwsSecretsRefreshProp(properties);
                             break;
-                        case "GCP":
+                        case "gcp":
                             exportGcpSecretsRefreshProp(properties);
                             break;
-                        case "Azure":
+                        case "azure":
                             exportAzureSecretsRefreshProp(properties);
                             break;
                         default:
