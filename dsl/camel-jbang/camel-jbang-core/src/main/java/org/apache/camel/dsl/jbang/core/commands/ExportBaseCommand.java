@@ -732,4 +732,53 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
         }
     }
+
+
+    protected void exportAwsSecretsRefreshProp(Properties properties) {
+        properties.setProperty("camel.vault.aws.accessKey", "<accessKey>");
+        properties.setProperty("camel.vault.aws.secretKey", "<secretKey>");
+        properties.setProperty("camel.vault.aws.region", "<region>");
+        properties.setProperty("camel.vault.aws.useDefaultCredentialProvider", "<useDefaultCredentialProvider>");
+        properties.setProperty("camel.vault.aws.refreshEnabled", "true");
+        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
+        properties.setProperty("camel.vault.aws.secrets", "<secrets>");
+        properties.setProperty("camel.main.context-reload-enabled", "true");
+    }
+
+    protected void exportGcpSecretsRefreshProp(Properties properties) {
+        properties.setProperty("camel.vault.gcp.serviceAccountKey", "<serviceAccountKey>");
+        properties.setProperty("camel.vault.gcp.projectId", "<projectId>");
+        properties.setProperty("camel.vault.gcp.useDefaultInstance", "<useDefaultInstance>");
+        properties.setProperty("camel.vault.gcp.refreshEnabled", "true");
+        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
+        properties.setProperty("camel.vault.gcp.secrets", "<secrets>");
+        properties.setProperty("camel.vault.gcp.subscriptionName", "<subscriptionName>");
+        properties.setProperty("camel.main.context-reload-enabled", "true");
+    }
+
+    protected void exportAzureSecretsRefreshProp(Properties properties) {
+        properties.setProperty("camel.vault.azure.tenantId", "<tenantId>");
+        properties.setProperty("camel.vault.azure.clientId", "<clientId>");
+        properties.setProperty("camel.vault.azure.clientSecret", "<clientSecret>");
+        properties.setProperty("camel.vault.azure.vaultName", "<vaultName>");
+        properties.setProperty("camel.vault.azure.refreshEnabled", "true");
+        properties.setProperty("camel.vault.azure.refreshPeriod", "30000");
+        properties.setProperty("camel.vault.azure.secrets", "<secrets>");
+        properties.setProperty("camel.vault.azure.eventhubConnectionString", "<eventhubConnectionString>");
+        properties.setProperty("camel.vault.azure.blobAccountName", "<blobAccountName>");
+        properties.setProperty("camel.vault.azure.blobContainerName", "<blobContainerName>");
+        properties.setProperty("camel.vault.azure.blobAccessKey", "<blobAccessKey>");
+        properties.setProperty("camel.main.context-reload-enabled", "true");
+    }
+
+    protected List<String> getSecretProviders() {
+        if (secretsRefreshProviders != null) {
+            List<String> providers = Pattern.compile("\\,")
+                    .splitAsStream(secretsRefreshProviders)
+                    .collect(Collectors.toList());
+            return providers;
+        } else {
+            return null;
+        }
+    }
 }
