@@ -256,25 +256,27 @@ class ExportSpringBoot extends Export {
         if (secretsRefresh) {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-aws-secrets-manager-starter").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-aws-secrets-manager-starter")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                         case "GCP":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-google-secret-manager-starter").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-google-secret-manager-starter")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                         case "Azure":
                             sb.append("        <dependency>\n");
                             sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
-                            sb.append("            <artifactId>").append("camel-azure-key-vault-starter").append("</artifactId>\n");
+                            sb.append("            <artifactId>").append("camel-azure-key-vault-starter")
+                                    .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
                     }
@@ -355,8 +357,7 @@ class ExportSpringBoot extends Export {
         if (secretsRefresh) {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             MavenGav awsGav = new MavenGav();
@@ -447,8 +448,7 @@ class ExportSpringBoot extends Export {
             if (secretsRefreshProviders != null) {
                 List<String> providers = getSecretProviders();
 
-                for (String provider : providers
-                ) {
+                for (String provider : providers) {
                     switch (provider) {
                         case "AWS":
                             exportAwsSecretsRefreshProp(properties);

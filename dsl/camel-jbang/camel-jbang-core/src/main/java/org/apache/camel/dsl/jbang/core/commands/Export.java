@@ -64,7 +64,8 @@ public class Export extends ExportBaseCommand {
             this.buildTool = prop.getProperty("camel.jbang.buildTool", this.buildTool);
             this.secretsRefresh
                     = "true".equals(prop.getProperty("camel.jbang.secretsRefresh", this.secretsRefresh ? "true" : "false"));
-            this.secretsRefreshProviders = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
+            this.secretsRefreshProviders
+                    = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
         }
 
         if (runtime == null) {
