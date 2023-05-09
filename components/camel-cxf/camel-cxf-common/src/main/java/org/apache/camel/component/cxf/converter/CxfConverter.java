@@ -101,7 +101,8 @@ public final class CxfConverter {
     /**
      * Use a fallback type converter so we can convert the embedded list element if the value is MessageContentsList.
      * The algorithm of this converter finds the first non-null list element from the list and applies conversion to the
-     * list element.
+     * list element if can determine this MessageContentsList is used in CXF context(first element is the return value
+     * while others are Holders).
      *
      * @param  type     the desired type to be converted to
      * @param  exchange optional exchange which can be null
@@ -118,6 +119,23 @@ public final class CxfConverter {
         // CXF-WS MessageContentsList class
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
             MessageContentsList list = (MessageContentsList) value;
+
+            if (list.size() > 1 && type == String.class) {
+                //to check if the MessageContentsList is used in CXF context
+                //If not, use the general way to convert from List.class to String.class
+                boolean foundHolder = false;
+                for (Object embedded : list) {
+                    if (embedded != null && embedded.getClass().getName().equals("javax.xml.ws.Holder")) {
+                        foundHolder = true;
+                        break;
+                    }
+                }
+                if (!foundHolder) {
+                    // this isn't a typical CXF MessageContentsList
+                    // just using other fallback converters
+                    return null;
+                }
+            }
 
             // try to turn the first array element into the object that we want
             for (Object embedded : list) {
