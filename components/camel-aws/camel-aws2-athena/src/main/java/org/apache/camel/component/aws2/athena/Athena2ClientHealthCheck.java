@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.athena.model.ListQueryExecutionsRequest;
 public class Athena2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Athena2Endpoint athena2Endpoint;
-    private AthenaClient client;
 
     public Athena2ClientHealthCheck(Athena2Endpoint athena2Endpoint, String clientId) {
         super("camel", "aws2-athena-client-" + clientId);
@@ -50,7 +49,8 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-            getClient().listQueryExecutions(ListQueryExecutionsRequest.builder().maxResults(1).build());
+            AthenaClient client = athena2Endpoint.getAthenaClient();
+            client.listQueryExecutions(ListQueryExecutionsRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -71,10 +71,4 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private AthenaClient getClient() {
-        if (client == null) {
-            this.client = Athena2ClientFactory.getAWSAthenaClient(athena2Endpoint.getConfiguration()).getAthenaClient();
-        }
-        return client;
-    }
 }

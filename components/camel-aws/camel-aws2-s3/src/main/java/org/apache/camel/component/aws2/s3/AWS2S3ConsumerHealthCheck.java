@@ -30,7 +30,6 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final AWS2S3Consumer aws2S3Consumer;
-    private S3Client client;
 
     public AWS2S3ConsumerHealthCheck(AWS2S3Consumer aws2S3Consumer, String routeId) {
         super("camel", "aws2-s3-consumer-" + routeId);
@@ -50,8 +49,8 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-
-            getClient().headBucket(HeadBucketRequest.builder().bucket(configuration.getBucketName()).build());
+            S3Client client = aws2S3Consumer.getAmazonS3Client();
+            client.headBucket(HeadBucketRequest.builder().bucket(configuration.getBucketName()).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -74,10 +73,4 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
     }
 
-    private S3Client getClient() {
-        if (client == null) {
-            client = AWS2S3ClientFactory.getAWSS3Client(aws2S3Consumer.getConfiguration()).getS3Client();
-        }
-        return client;
-    }
 }

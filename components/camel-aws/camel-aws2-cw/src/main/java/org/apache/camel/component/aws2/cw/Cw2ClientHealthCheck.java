@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.cloudwatch.model.ListDashboardsRequest;
 public class Cw2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Cw2Endpoint cw2Endpoint;
-    private CloudWatchClient cw2Client;
 
     public Cw2ClientHealthCheck(Cw2Endpoint cw2Endpoint, String clientId) {
         super("camel", "aws2-cw-client-" + clientId);
@@ -49,7 +48,8 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            getCw2Client().listDashboards(ListDashboardsRequest.builder().build());
+            CloudWatchClient cw2Client = cw2Endpoint.getCloudWatchClient();
+            cw2Client.listDashboards(ListDashboardsRequest.builder().build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -69,10 +69,4 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private CloudWatchClient getCw2Client() {
-        if (cw2Client == null) {
-            cw2Client = Cw2ClientFactory.getCloudWatchClient(this.cw2Endpoint.getConfiguration()).getCloudWatchClient();
-        }
-        return cw2Client;
-    }
 }

@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
 public class SecretsManagerClientHealthCheck extends AbstractHealthCheck {
 
     private final SecretsManagerEndpoint secretsManagerEndpoint;
-    private SecretsManagerClient secretsManagerClient;
 
     public SecretsManagerClientHealthCheck(SecretsManagerEndpoint secretsManagerEndpoint, String clientId) {
         super("camel", "aws-secrets-manager-client-" + clientId);
@@ -49,7 +48,8 @@ public class SecretsManagerClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            getSecretsManagerClient().listSecrets(ListSecretsRequest.builder().maxResults(1).build());
+            SecretsManagerClient secretsManagerClient = secretsManagerEndpoint.getSecretsManagerClient();
+            secretsManagerClient.listSecrets(ListSecretsRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -69,12 +69,4 @@ public class SecretsManagerClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private SecretsManagerClient getSecretsManagerClient() {
-        if (secretsManagerClient == null) {
-            secretsManagerClient
-                    = SecretsManagerClientFactory.getSecretsManagerClient(secretsManagerEndpoint.getConfiguration())
-                            .getSecretsManagerClient();
-        }
-        return secretsManagerClient;
-    }
 }

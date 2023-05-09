@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
 public class Lambda2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Lambda2Endpoint lambda2Endpoint;
-    private LambdaClient client;
 
     public Lambda2ClientHealthCheck(Lambda2Endpoint lambda2Endpoint, String clientId) {
         super("camel", "aws2-lambda-client-" + clientId);
@@ -49,7 +48,8 @@ public class Lambda2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            getClient().listFunctions(ListFunctionsRequest.builder().maxItems(1).build());
+            LambdaClient lambda2Client = lambda2Endpoint.getAwsLambdaClient();
+            lambda2Client.listFunctions(ListFunctionsRequest.builder().maxItems(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -69,10 +69,4 @@ public class Lambda2ClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private LambdaClient getClient() {
-        if (client == null) {
-            client = Lambda2ClientFactory.getLambdaClient(lambda2Endpoint.getConfiguration()).getLambdaClient();
-        }
-        return client;
-    }
 }

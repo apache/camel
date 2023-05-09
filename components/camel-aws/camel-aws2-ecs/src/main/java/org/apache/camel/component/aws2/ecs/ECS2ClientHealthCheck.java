@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 public class ECS2ClientHealthCheck extends AbstractHealthCheck {
 
     private final ECS2Endpoint ecs2Endpoint;
-    private EcsClient ecs2Client;
 
     public ECS2ClientHealthCheck(ECS2Endpoint ecs2Endpoint, String clientId) {
         super("camel", "aws2-ecs-client-" + clientId);
@@ -49,7 +48,8 @@ public class ECS2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            getEcs2Client().listClusters(ListClustersRequest.builder().maxResults(1).build());
+            EcsClient ecs2Client = ecs2Endpoint.getEcsClient();
+            ecs2Client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -69,10 +69,4 @@ public class ECS2ClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private EcsClient getEcs2Client() {
-        if (ecs2Client == null) {
-            ecs2Client = ECS2ClientFactory.getEcsClient(ecs2Endpoint.getConfiguration()).getEcsClient();
-        }
-        return ecs2Client;
-    }
 }

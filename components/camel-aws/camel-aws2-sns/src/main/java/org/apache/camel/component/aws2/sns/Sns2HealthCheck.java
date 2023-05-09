@@ -28,7 +28,6 @@ import software.amazon.awssdk.services.sns.SnsClient;
 public class Sns2HealthCheck extends AbstractHealthCheck {
 
     private final Sns2Endpoint sns2Endpoint;
-    private SnsClient client;
 
     public Sns2HealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
         super("camel", "aws2-sns-client-" + clientId);
@@ -45,7 +44,8 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
-            getClient().listSubscriptions();
+            SnsClient client = sns2Endpoint.getSNSClient();
+            client.listSubscriptions();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -59,10 +59,4 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
 
     }
 
-    public SnsClient getClient() {
-        if (client == null) {
-            client = Sns2ClientFactory.getSnsClient(sns2Endpoint.getConfiguration()).getSNSClient();
-        }
-        return client;
-    }
 }

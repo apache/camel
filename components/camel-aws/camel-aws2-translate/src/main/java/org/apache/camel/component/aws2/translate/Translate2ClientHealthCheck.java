@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.translate.model.ListLanguagesRequest;
 public class Translate2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Translate2Endpoint translate2Endpoint;
-    private TranslateClient translateClient;
 
     public Translate2ClientHealthCheck(Translate2Endpoint translate2Endpoint, String clientId) {
         super("camel", "aws2-translate-client-" + clientId);
@@ -49,7 +48,8 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            getTranslateClient().listLanguages(ListLanguagesRequest.builder().maxResults(1).build());
+            TranslateClient translateClient = translate2Endpoint.getTranslateClient();
+            translateClient.listLanguages(ListLanguagesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -69,11 +69,4 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private TranslateClient getTranslateClient() {
-        if (translateClient == null) {
-            translateClient
-                    = Translate2ClientFactory.getTranslateClient(translate2Endpoint.getConfiguration()).getTranslateClient();
-        }
-        return translateClient;
-    }
 }

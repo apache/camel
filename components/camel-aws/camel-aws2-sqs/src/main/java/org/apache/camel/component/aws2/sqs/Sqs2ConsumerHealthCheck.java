@@ -30,7 +30,6 @@ import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final Sqs2Consumer sqs2Consumer;
-    private SqsClient client;
 
     public Sqs2ConsumerHealthCheck(Sqs2Consumer sqs2Consumer, String routeId) {
         super("camel", "aws2-sqs-consumer-" + routeId);
@@ -49,8 +48,8 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-
-            getClient().listQueues(ListQueuesRequest.builder().maxResults(1).build());
+            SqsClient client = sqs2Consumer.getClient();
+            client.listQueues(ListQueuesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -73,10 +72,4 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
     }
 
-    private SqsClient getClient() {
-        if (client == null) {
-            client = Sqs2ClientFactory.getSqsClient(sqs2Consumer.getConfiguration()).getSQSClient();
-        }
-        return client;
-    }
 }

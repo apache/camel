@@ -28,7 +28,6 @@ import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 
 public class IAM2HealthCheck extends AbstractHealthCheck {
     private final IAM2Endpoint endpoint;
-    private IamClient client;
 
     public IAM2HealthCheck(IAM2Endpoint endpoint, String clientId) {
         super("camel", "aws2-iam-client-" + clientId);
@@ -44,8 +43,8 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
-
-            getClient().listAccessKeys(ListAccessKeysRequest.builder().maxItems(1).build());
+            IamClient client = endpoint.getIamClient();
+            client.listAccessKeys(ListAccessKeysRequest.builder().maxItems(1).build());
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -58,10 +57,4 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private IamClient getClient() {
-        if (client == null) {
-            client = IAM2ClientFactory.getIamClient(endpoint.getConfiguration()).getIamClient();
-        }
-        return client;
-    }
 }

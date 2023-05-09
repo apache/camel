@@ -29,7 +29,6 @@ import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 public class MSK2HealthCheck extends AbstractHealthCheck {
 
     private final MSK2Endpoint msk2Endpoint;
-    private KafkaClient client;
 
     public MSK2HealthCheck(MSK2Endpoint msk2Endpoint, String clientId) {
         super("camel", "aws2-msk-client-" + clientId);
@@ -46,7 +45,8 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
-            getClient().listClusters(ListClustersRequest.builder().maxResults(1).build());
+            KafkaClient client = msk2Endpoint.getMskClient();
+            client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -60,10 +60,4 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
 
     }
 
-    private KafkaClient getClient() {
-        if (client == null) {
-            client = MSK2ClientFactory.getKafkaClient(msk2Endpoint.getConfiguration()).getKafkaClient();
-        }
-        return client;
-    }
 }
