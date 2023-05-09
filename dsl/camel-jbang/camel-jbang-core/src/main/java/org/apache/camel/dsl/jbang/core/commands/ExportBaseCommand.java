@@ -157,9 +157,9 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected boolean secretsRefresh;
 
     @CommandLine.Option(names = { "--secrets-refresh-providers" },
-            description = "Comma separated list of providers in the set AWS, GCP and Azure, to use in combination with --secrets-refresh option")
+                        description = "Comma separated list of providers in the set AWS, GCP and Azure, to use in combination with --secrets-refresh option")
     protected String secretsRefreshProviders;
-    
+
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
