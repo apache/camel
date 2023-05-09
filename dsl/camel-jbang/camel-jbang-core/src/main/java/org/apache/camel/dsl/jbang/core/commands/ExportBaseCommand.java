@@ -164,7 +164,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--secrets-refresh" }, defaultValue = "false", description = "Enabling secrets refresh")
     protected boolean secretsRefresh;
 
-    @CommandLine.Option(names = { "--secrets-refresh-providers" }, description = "Comma separated list of providers in the set AWS, GCP and Azure, to use in combination with --secrets-refresh option")
+    @CommandLine.Option(names = { "--secrets-refresh-providers" },
+                        description = "Comma separated list of providers in the set AWS, GCP and Azure, to use in combination with --secrets-refresh option")
     protected String secretsRefreshProviders;
 
     public ExportBaseCommand(CamelJBangMain main) {
@@ -733,7 +734,6 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
         }
     }
-
 
     protected void exportAwsSecretsRefreshProp(Properties properties) {
         properties.setProperty("camel.vault.aws.accessKey", "<accessKey>");
