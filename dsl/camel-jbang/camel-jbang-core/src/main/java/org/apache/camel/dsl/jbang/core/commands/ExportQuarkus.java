@@ -188,9 +188,7 @@ class ExportQuarkus extends Export {
         }
         if (secretsRefresh) {
             if (secretsRefreshProviders != null) {
-                List<String> providers = Pattern.compile("\\,")
-                        .splitAsStream(secretsRefreshProviders)
-                        .collect(Collectors.toList());
+                List<String> providers = getSecretProviders();
 
                 for (String provider : providers
                 ) {
@@ -208,43 +206,6 @@ class ExportQuarkus extends Export {
                 }
             }
         }
-    }
-
-    private void exportAwsSecretsRefreshProp(Properties properties) {
-        properties.setProperty("camel.vault.aws.accessKey", "<accessKey>");
-        properties.setProperty("camel.vault.aws.secretKey", "<secretKey>");
-        properties.setProperty("camel.vault.aws.region", "<region>");
-        properties.setProperty("camel.vault.aws.useDefaultCredentialProvider", "<useDefaultCredentialProvider>");
-        properties.setProperty("camel.vault.aws.refreshEnabled", "true");
-        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
-        properties.setProperty("camel.vault.aws.secrets", "<secrets>");
-        properties.setProperty("camel.main.context-reload-enabled", "true");
-    }
-
-    private void exportGcpSecretsRefreshProp(Properties properties) {
-        properties.setProperty("camel.vault.gcp.serviceAccountKey", "<serviceAccountKey>");
-        properties.setProperty("camel.vault.gcp.projectId", "<projectId>");
-        properties.setProperty("camel.vault.gcp.useDefaultInstance", "<useDefaultInstance>");
-        properties.setProperty("camel.vault.gcp.refreshEnabled", "true");
-        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
-        properties.setProperty("camel.vault.gcp.secrets", "<secrets>");
-        properties.setProperty("camel.vault.gcp.subscriptionName", "<subscriptionName>");
-        properties.setProperty("camel.main.context-reload-enabled", "true");
-    }
-
-    private void exportAzureSecretsRefreshProp(Properties properties) {
-        properties.setProperty("camel.vault.azure.tenantId", "<tenantId>");
-        properties.setProperty("camel.vault.azure.clientId", "<clientId>");
-        properties.setProperty("camel.vault.azure.clientSecret", "<clientSecret>");
-        properties.setProperty("camel.vault.azure.vaultName", "<vaultName>");
-        properties.setProperty("camel.vault.azure.refreshEnabled", "true");
-        properties.setProperty("camel.vault.azure.refreshPeriod", "30000");
-        properties.setProperty("camel.vault.azure.secrets", "<secrets>");
-        properties.setProperty("camel.vault.azure.eventhubConnectionString", "<eventhubConnectionString>");
-        properties.setProperty("camel.vault.azure.blobAccountName", "<blobAccountName>");
-        properties.setProperty("camel.vault.azure.blobContainerName", "<blobContainerName>");
-        properties.setProperty("camel.vault.azure.blobAccessKey", "<blobAccessKey>");
-        properties.setProperty("camel.main.context-reload-enabled", "true");
     }
 
     private static String removeScheme(String s) {
@@ -343,6 +304,38 @@ class ExportQuarkus extends Export {
                 }
             }
             gavs.add(gav);
+        }
+
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            MavenGav awsGav = new MavenGav();
+                            awsGav.setGroupId("org.apache.camel.quarkus");
+                            awsGav.setArtifactId("camel-quarkus-aws-secrets-manager");
+                            awsGav.setVersion(null);
+                            gavs.add(awsGav);
+                            break;
+                        case "GCP":
+                            MavenGav gcpGav = new MavenGav();
+                            gcpGav.setGroupId("org.apache.camel.quarkus");
+                            gcpGav.setArtifactId("camel-quarkus-google-secret-manager");
+                            gcpGav.setVersion(null);
+                            gavs.add(gcpGav);
+                            break;
+                        case "Azure":
+                            MavenGav azureGav = new MavenGav();
+                            azureGav.setGroupId("org.apache.camel.quarkus");
+                            azureGav.setArtifactId("camel-quarkus-azure-key-vault");
+                            azureGav.setVersion(null);
+                            gavs.add(azureGav);
+                            break;
+                    }
+                }
+            }
         }
 
         // sort artifacts
@@ -477,6 +470,34 @@ class ExportQuarkus extends Export {
                 sb.append("            </exclusions>\n");
             }
             sb.append("        </dependency>\n");
+        }
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers
+                ) {
+                    switch (provider) {
+                        case "AWS":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-quarkus-aws-secrets-manager").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "GCP":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-quarkus-google-secret-manager").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "Azure":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-quarkus-azure-key-vault").append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                    }
+                }
+            }
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
