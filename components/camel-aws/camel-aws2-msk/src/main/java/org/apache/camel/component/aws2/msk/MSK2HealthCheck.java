@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.msk;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;

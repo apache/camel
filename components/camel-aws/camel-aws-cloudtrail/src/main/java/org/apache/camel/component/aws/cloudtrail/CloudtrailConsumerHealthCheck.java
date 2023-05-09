@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.cloudtrail;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws.cloudtrail.client.CloudtrailClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;

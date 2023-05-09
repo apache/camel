@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.mq;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -31,7 +30,6 @@ import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
 public class MQ2ClientHealthCheck extends AbstractHealthCheck {
 
     private final MQ2Endpoint mq2Endpoint;
-    private MqClient mqClient;
 
     public MQ2ClientHealthCheck(MQ2Endpoint mq2Endpoint, String clientId) {
         super("camel", "aws2-mq-client-" + clientId);
@@ -49,7 +47,8 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            getMqClient().listBrokers(ListBrokersRequest.builder().maxResults(1).build());
+            MqClient client = mq2Endpoint.getAmazonMqClient();
+            client.listBrokers(ListBrokersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -69,10 +68,4 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
         builder.up();
     }
 
-    private MqClient getMqClient() {
-        if (mqClient == null) {
-            mqClient = MQ2ClientFactory.getMqClient(mq2Endpoint.getConfiguration()).getMqClient();
-        }
-        return mqClient;
-    }
 }
