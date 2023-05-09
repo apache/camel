@@ -62,6 +62,9 @@ public class Export extends ExportBaseCommand {
                     = "true".equals(prop.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
             this.exportDir = prop.getProperty("camel.jbang.exportDir", this.exportDir);
             this.buildTool = prop.getProperty("camel.jbang.buildTool", this.buildTool);
+            this.secretsRefresh
+                    = "true".equals(prop.getProperty("camel.jbang.secretsRefresh", this.secretsRefresh ? "true" : "false"));
+            this.secretsRefreshProviders = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
         }
 
         if (runtime == null) {
@@ -111,6 +114,8 @@ public class Export extends ExportBaseCommand {
         cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
         cmd.additionalProperties = this.additionalProperties;
+        cmd.secretsRefresh = this.secretsRefresh;
+        cmd.secretsRefreshProviders = this.secretsRefreshProviders;
         // run export
         return cmd.export();
     }
