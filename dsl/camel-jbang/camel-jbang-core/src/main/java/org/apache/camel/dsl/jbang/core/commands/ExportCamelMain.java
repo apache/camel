@@ -221,6 +221,8 @@ class ExportCamelMain extends Export {
                             sb.append("            <artifactId>").append("camel-azure-key-vault").append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -294,6 +296,8 @@ class ExportCamelMain extends Export {
                             break;
                         case "Azure":
                             exportAzureSecretsRefreshProp(properties);
+                            break;
+                        default:
                             break;
                     }
                 }

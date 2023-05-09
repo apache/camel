@@ -200,6 +200,8 @@ class ExportQuarkus extends Export {
                         case "Azure":
                             exportAzureSecretsRefreshProp(properties);
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -329,6 +331,8 @@ class ExportQuarkus extends Export {
                             azureGav.setArtifactId("camel-quarkus-azure-key-vault");
                             azureGav.setVersion(null);
                             gavs.add(azureGav);
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -493,6 +497,8 @@ class ExportQuarkus extends Export {
                             sb.append("            <artifactId>").append("camel-quarkus-azure-key-vault")
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
+                            break;
+                        default:
                             break;
                     }
                 }

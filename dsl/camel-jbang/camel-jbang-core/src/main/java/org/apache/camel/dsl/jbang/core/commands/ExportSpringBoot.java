@@ -377,6 +377,8 @@ class ExportSpringBoot extends Export {
                             azureGav.setVersion(null);
                             gavs.add(azureGav);
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -455,6 +457,8 @@ class ExportSpringBoot extends Export {
                             break;
                         case "Azure":
                             exportAzureSecretsRefreshProp(properties);
+                            break;
+                        default:
                             break;
                     }
                 }
