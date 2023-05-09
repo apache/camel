@@ -36,6 +36,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import picocli.CommandLine;
@@ -99,7 +100,7 @@ public class CodeRestGenerator extends CamelCommand {
 
     private JsonNode readNodeFromYaml() throws FileNotFoundException {
         final ObjectMapper mapper = new ObjectMapper();
-        Yaml loader = new Yaml(new SafeConstructor());
+        Yaml loader = new Yaml(new SafeConstructor(new LoaderOptions()));
         Map map = loader.load(new FileInputStream(Paths.get(input).toFile()));
         return mapper.convertValue(map, JsonNode.class);
     }
