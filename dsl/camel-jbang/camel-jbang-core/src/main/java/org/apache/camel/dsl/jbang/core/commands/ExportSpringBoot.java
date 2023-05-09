@@ -276,6 +276,8 @@ class ExportSpringBoot extends Export {
                                     .append("</artifactId>\n");
                             sb.append("        </dependency>\n");
                             break;
+                        default:
+                            break;
                     }
                 }
             }

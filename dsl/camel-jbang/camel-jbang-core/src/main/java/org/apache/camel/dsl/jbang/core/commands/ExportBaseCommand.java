@@ -153,6 +153,13 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
     protected String additionalProperties;
 
+    @CommandLine.Option(names = { "--secrets-refresh" }, defaultValue = "false", description = "Enabling secrets refresh")
+    protected boolean secretsRefresh;
+
+    @CommandLine.Option(names = { "--secrets-refresh-providers" },
+            description = "Comma separated list of providers in the set AWS, GCP and Azure, to use in combination with --secrets-refresh option")
+    protected String secretsRefreshProviders;
+    
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
@@ -160,13 +167,6 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
                         description = "Will be quiet, only print when error occurs")
     boolean quiet;
-
-    @CommandLine.Option(names = { "--secrets-refresh" }, defaultValue = "false", description = "Enabling secrets refresh")
-    protected boolean secretsRefresh;
-
-    @CommandLine.Option(names = { "--secrets-refresh-providers" },
-                        description = "Comma separated list of providers in the set AWS, GCP and Azure, to use in combination with --secrets-refresh option")
-    protected String secretsRefreshProviders;
 
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
