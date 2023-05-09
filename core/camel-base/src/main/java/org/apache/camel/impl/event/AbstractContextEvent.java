@@ -26,7 +26,7 @@ import org.apache.camel.spi.CamelEvent.CamelContextEvent;
  */
 public abstract class AbstractContextEvent extends EventObject implements CamelContextEvent {
     private static final long serialVersionUID = 1L;
-    private CamelContext context;
+    private final CamelContext context;
     private long timestamp;
 
     public AbstractContextEvent(CamelContext source) {

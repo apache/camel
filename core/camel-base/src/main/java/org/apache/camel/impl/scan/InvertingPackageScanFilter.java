@@ -24,7 +24,7 @@ import org.apache.camel.spi.PackageScanFilter;
  */
 public class InvertingPackageScanFilter implements PackageScanFilter {
 
-    private PackageScanFilter filter;
+    private final PackageScanFilter filter;
 
     public InvertingPackageScanFilter(PackageScanFilter filter) {
         this.filter = filter;
