@@ -21,7 +21,7 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(47);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -60,6 +60,7 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("schedulerProperties");
         props.add("sendEmptyMessageWhenIdle");
         props.add("sharedEntityManager");
+        props.add("singleResult");
         props.add("skipLockedEntity");
         props.add("startScheduler");
         props.add("timeUnit");

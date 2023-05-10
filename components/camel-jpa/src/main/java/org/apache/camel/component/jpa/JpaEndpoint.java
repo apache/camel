@@ -112,6 +112,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private Boolean useExecuteUpdate;
     @UriParam(label = "producer")
     private boolean findEntity;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean singleResult;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -555,6 +557,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setFindEntity(boolean findEntity) {
         this.findEntity = findEntity;
+    }
+
+    public boolean isSingleResult() {
+        return singleResult;
+    }
+
+    /**
+     * If enabled, a query or a find which would return no results or more than one result, will throw an exception
+     * instead.
+     */
+    public void setSingleResult(boolean singleResult) {
+        this.singleResult = singleResult;
     }
 
     // Implementation methods
