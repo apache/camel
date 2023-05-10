@@ -5,6 +5,7 @@
 :description: Stub out any physical endpoints while in development or testing.
 :since: 2.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

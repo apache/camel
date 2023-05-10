@@ -5,6 +5,7 @@
 :description: Poll for changes in a Google Calendar.
 :since: 2.23
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Google

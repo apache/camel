@@ -5,6 +5,7 @@
 :description: Manage VM images and metadata definitions in OpenStack Glance.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: OpenStack

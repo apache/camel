@@ -5,6 +5,7 @@
 :description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: arangodb

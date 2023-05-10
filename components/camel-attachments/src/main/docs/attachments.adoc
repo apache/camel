@@ -5,6 +5,7 @@
 :description: Support for attachments on Camel messages
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

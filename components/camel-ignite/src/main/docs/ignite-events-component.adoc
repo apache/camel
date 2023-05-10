@@ -5,6 +5,7 @@
 :description: Receive events from an Ignite cluster by creating a local event listener.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Ignite

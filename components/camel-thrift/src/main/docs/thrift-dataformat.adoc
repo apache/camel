@@ -5,6 +5,7 @@
 :description: Serialize and deserialize messages using Apache Thrift binary data format.
 :since: 2.20
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: thrift
 

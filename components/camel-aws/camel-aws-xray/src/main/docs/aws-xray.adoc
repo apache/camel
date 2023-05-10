@@ -5,6 +5,7 @@
 :description: Distributed tracing using AWS XRay
 :since: 2.21
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: aws-xray
 

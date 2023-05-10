@@ -5,6 +5,7 @@
 :description: Communicate with OData 2.0 services using Apache Olingo.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: olingo2

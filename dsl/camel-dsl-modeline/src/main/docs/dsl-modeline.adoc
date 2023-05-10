@@ -5,6 +5,7 @@
 :description: Camel DSL Camel K modeline
 :since: 3.16
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
 

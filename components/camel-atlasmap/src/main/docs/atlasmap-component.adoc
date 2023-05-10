@@ -5,6 +5,7 @@
 :description: Transforms the message using an AtlasMap transformation.
 :since: 3.7
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: atlasmap

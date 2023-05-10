@@ -5,6 +5,7 @@
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

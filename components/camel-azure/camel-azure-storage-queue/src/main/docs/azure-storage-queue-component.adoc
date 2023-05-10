@@ -5,6 +5,7 @@
 :description: Stores and retrieves messages to/from Azure Storage Queue.
 :since: 3.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure

@@ -5,6 +5,7 @@
 :description: Camel Spring Main support
 :since: 3.2
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

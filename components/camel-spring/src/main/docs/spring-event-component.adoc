@@ -5,6 +5,7 @@
 :description: Listen for Spring Application Events.
 :since: 1.4
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring

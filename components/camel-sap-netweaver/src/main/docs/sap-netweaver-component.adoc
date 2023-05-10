@@ -5,6 +5,7 @@
 :description: Send requests to SAP NetWeaver Gateway using HTTP.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: sap-netweaver

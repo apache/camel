@@ -5,6 +5,7 @@
 :description: Chat with a ChatScript Server.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: chatscript

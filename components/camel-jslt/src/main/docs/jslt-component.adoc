@@ -5,6 +5,7 @@
 :description: Query or transform JSON payloads using an JSLT.
 :since: 3.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jslt

@@ -5,6 +5,7 @@
 :description: Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.
 :since: 2.15
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: univocity-parsers
 

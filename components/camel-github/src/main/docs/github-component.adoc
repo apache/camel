@@ -5,6 +5,7 @@
 :description: Interact with the GitHub API.
 :since: 2.15
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: github

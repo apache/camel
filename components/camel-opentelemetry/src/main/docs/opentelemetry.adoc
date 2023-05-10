@@ -5,6 +5,7 @@
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: opentelemetry
 

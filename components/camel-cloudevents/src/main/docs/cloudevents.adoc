@@ -5,6 +5,7 @@
 :description: Camel support for the CloudEvents specification
 :since: 3.15
 :supportlevel: Preview
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: cloudevents
 
@@ -14,4 +15,3 @@ Camel support for the CloudEvents specification.
 
 At the moment the camel-cloudevents component is very limited in functionality
 with mapping between Camel Message headers and the specification.
-

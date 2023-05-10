@@ -5,6 +5,7 @@
 :description: Evaluates an XQuery expressions against an XML payload.
 :since: 1.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: saxon
 

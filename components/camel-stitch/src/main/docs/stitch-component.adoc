@@ -5,6 +5,7 @@
 :description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.
 :since: 3.8
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: stitch

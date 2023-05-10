@@ -5,6 +5,7 @@
 :description: Runtime adapter connecting with Camel CLI
 :since: 3.19
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

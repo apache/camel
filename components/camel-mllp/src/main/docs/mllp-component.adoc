@@ -5,6 +5,7 @@
 :description: Communicate with external systems using the MLLP protocol.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: mllp

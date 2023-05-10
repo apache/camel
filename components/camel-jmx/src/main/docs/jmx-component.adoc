@@ -5,6 +5,7 @@
 :description: Receive JMX notifications.
 :since: 2.6
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jmx

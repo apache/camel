@@ -5,6 +5,7 @@
 :description: Interact with Ethereum nodes using web3j client API.
 :since: 2.22
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: web3j

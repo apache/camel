@@ -5,6 +5,7 @@
 :description: Manage files in Google Drive.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google

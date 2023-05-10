@@ -5,6 +5,7 @@
 :description: Validate the payload using XML Schema and JAXP Validation.
 :since: 1.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

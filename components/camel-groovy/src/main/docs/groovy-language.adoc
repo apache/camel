@@ -5,6 +5,7 @@
 :description: Evaluates a Groovy script.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: groovy
 

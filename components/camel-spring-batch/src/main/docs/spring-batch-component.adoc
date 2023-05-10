@@ -5,6 +5,7 @@
 :description: Send messages to Spring Batch for further processing.
 :since: 2.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring

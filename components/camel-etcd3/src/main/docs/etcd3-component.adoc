@@ -5,6 +5,7 @@
 :description: Get, set, delete or watch keys in etcd key-value store.
 :since: 3.19
 :supportlevel: Preview
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: etcd3

@@ -5,6 +5,7 @@
 :description: Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes

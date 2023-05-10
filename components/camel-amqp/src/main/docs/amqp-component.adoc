@@ -5,6 +5,7 @@
 :description: Messaging with AMQP protocol using Apache QPid Client.
 :since: 1.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: amqp

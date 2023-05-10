@@ -5,6 +5,7 @@
 :description: Marshal and unmarshal iCal (.ics) documents to/from model objects.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: ical
 

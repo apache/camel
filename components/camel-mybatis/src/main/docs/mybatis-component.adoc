@@ -5,6 +5,7 @@
 :description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
 :since: 2.7
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: mybatis

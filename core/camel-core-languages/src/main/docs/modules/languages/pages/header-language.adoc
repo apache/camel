@@ -5,6 +5,7 @@
 :description: Gets a header from the Exchange.
 :since: 1.5
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

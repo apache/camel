@@ -5,6 +5,7 @@
 :description: Collect various metrics directly from Camel routes using the DropWizard metrics library.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: metrics

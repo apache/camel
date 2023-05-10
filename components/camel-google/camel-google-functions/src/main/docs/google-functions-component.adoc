@@ -5,6 +5,7 @@
 :description: Manage and invoke Google Cloud Functions
 :since: 3.9
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google

@@ -5,6 +5,7 @@
 :description: To use DataSonnet scripts for message transformations.
 :since: 3.7
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: datasonnet
 

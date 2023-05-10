@@ -5,6 +5,7 @@
 :description: Execute scripts in any of the languages supported by Camel.
 :since: 2.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

@@ -5,6 +5,7 @@
 :description: Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: OpenStack

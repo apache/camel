@@ -5,6 +5,7 @@
 :description: Harvest metadata using OAI-PMH protocol
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: oaipmh

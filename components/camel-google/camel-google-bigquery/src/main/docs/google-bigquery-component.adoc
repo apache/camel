@@ -5,6 +5,7 @@
 :description: Google BigQuery data warehouse for analytics.
 :since: 2.20
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google

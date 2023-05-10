@@ -5,6 +5,7 @@
 :description: Transform XML payloads using an XSLT template using Saxon.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

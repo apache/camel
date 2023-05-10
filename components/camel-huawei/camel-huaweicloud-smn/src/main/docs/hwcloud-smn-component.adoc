@@ -5,6 +5,7 @@
 :description: To broadcast messages and connect cloud services through notifications on Huawei Cloud
 :since: 3.8
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud

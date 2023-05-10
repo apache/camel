@@ -5,6 +5,7 @@
 :description: Unmarshal a CBOR payload to POJO and back.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: cbor
 

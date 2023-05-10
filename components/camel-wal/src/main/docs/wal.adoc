@@ -5,6 +5,7 @@
 :description: Write Ahead Log Strategy for Resume API
 :since: 3.20
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

@@ -5,6 +5,7 @@
 :description: Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: zip-deflater
 

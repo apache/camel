@@ -5,6 +5,7 @@
 :description: Perform operations on Hazelcast distributed multimap.
 :since: 2.7
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Hazelcast

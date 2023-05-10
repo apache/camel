@@ -5,6 +5,7 @@
 :description: Perform searches on LDAP servers.
 :since: 1.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: ldap

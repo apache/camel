@@ -5,6 +5,7 @@
 :description: Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.
 :since: 1.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jaxb
 

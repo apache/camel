@@ -5,6 +5,7 @@
 :description: Get notified about file events in a directory using java.nio.file.WatchService.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: file-watch

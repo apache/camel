@@ -5,6 +5,7 @@
 :description: Perform DNS queries using DNSJava.
 :since: 2.7
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: dns

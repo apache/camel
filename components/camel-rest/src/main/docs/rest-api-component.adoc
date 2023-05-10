@@ -5,6 +5,7 @@
 :description: Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
 :since: 2.16
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
 //Manually maintained attributes

@@ -5,6 +5,7 @@
 :description: A generic interface for triggering events at times specified through the Unix cron syntax.
 :since: 3.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: cron

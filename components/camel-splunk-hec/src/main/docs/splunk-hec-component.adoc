@@ -5,6 +5,7 @@
 :description: The splunk component allows to publish events in Splunk using the HTTP Event Collector.
 :since: 3.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: splunk-hec

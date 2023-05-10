@@ -5,6 +5,7 @@
 :description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: kudu

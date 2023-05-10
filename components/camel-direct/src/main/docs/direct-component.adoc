@@ -5,6 +5,7 @@
 :description: Call another endpoint from the same Camel Context synchronously.
 :since: 1.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

@@ -5,6 +5,7 @@
 :description: Aggregation repository using Redis as datastore
 :since: 3.5
 :supportlevel: Preview
+:tabs-sync-option:
 
 *Since Camel {since}*
 

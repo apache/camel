@@ -5,6 +5,7 @@
 :description: Sends and receives files to/from Azure DataLake Storage.
 :since: 3.8
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure

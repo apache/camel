@@ -5,6 +5,7 @@
 :description: Elytron Security Provider for camel-undertow
 :since: 3.1
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

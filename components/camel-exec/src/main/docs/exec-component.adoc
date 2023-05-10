@@ -5,6 +5,7 @@
 :description: Execute commands on the underlying operating system.
 :since: 2.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: exec

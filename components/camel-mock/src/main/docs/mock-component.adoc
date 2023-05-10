@@ -5,6 +5,7 @@
 :description: Test routes and mediation rules using mocks.
 :since: 1.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

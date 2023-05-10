@@ -5,6 +5,7 @@
 :description: Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
 :since: 3.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS

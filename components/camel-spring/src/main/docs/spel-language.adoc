@@ -5,6 +5,7 @@
 :description: Evaluates a Spring expression (SpEL).
 :since: 2.7
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: spring
 

@@ -5,6 +5,7 @@
 :description: Transforms JSON payload using JSONata transformation.
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jsonata

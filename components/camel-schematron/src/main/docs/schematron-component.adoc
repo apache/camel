@@ -5,6 +5,7 @@
 :description: Validate XML payload using the Schematron Library.
 :since: 2.15
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: schematron

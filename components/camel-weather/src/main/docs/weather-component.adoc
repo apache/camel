@@ -5,6 +5,7 @@
 :description: Poll the weather information from Open Weather Map.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: weather
