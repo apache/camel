@@ -147,7 +147,7 @@
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <fastjson-version>2.0.28</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
-        <google-maps-services-version>0.10.1</google-maps-services-version>
+        <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.5</flatpack-version>
         <flink-version>1.17.0</flink-version>
         <fop-version>2.8</fop-version>
