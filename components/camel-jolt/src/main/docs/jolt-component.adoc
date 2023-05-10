@@ -5,6 +5,7 @@
 :description: JSON to JSON transformation using JOLT.
 :since: 2.16
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jolt

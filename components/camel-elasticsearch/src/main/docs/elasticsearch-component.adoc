@@ -5,6 +5,7 @@
 :description: Send requests to ElasticSearch via Java Client API.
 :since: 3.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: elasticsearch

@@ -5,6 +5,7 @@
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
 :since: 3.9
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google

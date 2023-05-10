@@ -5,6 +5,7 @@
 :description: Send and receive messages to/from Azure Event Bus.
 :since: 3.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure

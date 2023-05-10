@@ -5,6 +5,7 @@
 :description: RxJava based back-end for Camel's reactive streams component
 :since: 2.22
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: rxjava
 

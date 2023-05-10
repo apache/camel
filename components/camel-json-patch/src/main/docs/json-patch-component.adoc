@@ -5,6 +5,7 @@
 :description: Transforms JSON using JSON patch (RFC 6902).
 :since: 3.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: json-patch

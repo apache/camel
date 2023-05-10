@@ -5,6 +5,7 @@
 :description: Camel Spring with XML DSL
 :since: 3.9
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

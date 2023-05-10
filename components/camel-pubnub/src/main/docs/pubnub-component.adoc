@@ -5,6 +5,7 @@
 :description: Send and receive messages to/from PubNub data stream network for connected devices.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: pubnub

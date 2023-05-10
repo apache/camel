@@ -5,6 +5,7 @@
 :description: Access Google Cloud BigQuery service using SQL queries.
 :since: 2.23
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Google

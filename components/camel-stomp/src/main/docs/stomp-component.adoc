@@ -5,6 +5,7 @@
 :description: Send and rececive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: stomp

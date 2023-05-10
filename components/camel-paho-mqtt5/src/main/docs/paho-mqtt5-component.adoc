@@ -5,6 +5,7 @@
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
 :since: 3.8
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: paho-mqtt5

@@ -5,6 +5,7 @@
 :description: Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
 :since: 2.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: hl7
 

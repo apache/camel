@@ -5,6 +5,7 @@
 :description: To identify objects, scenes, and concepts in images on Huawei Cloud
 :since: 3.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud

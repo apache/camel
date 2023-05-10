@@ -5,6 +5,7 @@
 :description: Calls a Java bean method.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: bean
 

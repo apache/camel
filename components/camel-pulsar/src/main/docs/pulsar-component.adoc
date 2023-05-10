@@ -5,6 +5,7 @@
 :description: Send and receive messages from/to Apache Pulsar messaging system.
 :since: 2.24
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: pulsar

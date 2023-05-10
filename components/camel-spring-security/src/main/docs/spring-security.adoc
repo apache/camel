@@ -5,6 +5,7 @@
 :description: Security using Spring Security
 :since: 2.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: spring-security
 

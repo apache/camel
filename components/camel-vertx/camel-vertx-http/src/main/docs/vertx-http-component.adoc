@@ -5,6 +5,7 @@
 :description: Send requests to external HTTP servers using Vert.x
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: vertx-http

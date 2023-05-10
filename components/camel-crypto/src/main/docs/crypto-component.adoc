@@ -5,6 +5,7 @@
 :description: Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 :since: 2.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: crypto

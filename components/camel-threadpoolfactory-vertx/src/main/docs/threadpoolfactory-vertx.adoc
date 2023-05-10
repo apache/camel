@@ -5,6 +5,7 @@
 :description: ThreadPoolFactory for camel-core using Vert.x
 :since: 3.5
 :supportlevel: Experimental
+:tabs-sync-option:
 
 *Since Camel {since}*
 

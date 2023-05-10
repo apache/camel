@@ -5,6 +5,7 @@
 :description: Send print jobs to printers.
 :since: 2.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: printer

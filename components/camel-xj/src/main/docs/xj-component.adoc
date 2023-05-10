@@ -5,6 +5,7 @@
 :description: Transform JSON and XML message using a XSLT.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: xj

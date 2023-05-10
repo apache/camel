@@ -5,6 +5,7 @@
 :description: Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
 :since: 3.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: AWS

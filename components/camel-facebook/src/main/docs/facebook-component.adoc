@@ -5,6 +5,7 @@
 :description: Send requests to Facebook APIs supported by Facebook4J.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: facebook

@@ -5,6 +5,7 @@
 :description: Interact with Ignite Atomic Sequences and ID Generators .
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Ignite

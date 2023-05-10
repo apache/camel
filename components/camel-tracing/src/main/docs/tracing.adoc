@@ -5,6 +5,7 @@
 :description: Distributed tracing common interfaces
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

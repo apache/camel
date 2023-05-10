@@ -5,6 +5,7 @@
 :description: Access databases through SQL and JDBC with Spring Transaction support.
 :since: 3.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring

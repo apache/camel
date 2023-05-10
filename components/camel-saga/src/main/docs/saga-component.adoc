@@ -5,6 +5,7 @@
 :description: Execute custom actions within a route using the Saga EIP.
 :since: 2.21
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

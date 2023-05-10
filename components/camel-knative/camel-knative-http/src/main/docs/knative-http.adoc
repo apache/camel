@@ -5,6 +5,7 @@
 :description: Camel Knative HTTP
 :since: 3.15
 :supportlevel: Preview
+:tabs-sync-option:
 
 *Since Camel {since}*
 

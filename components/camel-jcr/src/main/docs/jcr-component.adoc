@@ -5,6 +5,7 @@
 :description: Read and write nodes to/from a JCR compliant content repository.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: jcr

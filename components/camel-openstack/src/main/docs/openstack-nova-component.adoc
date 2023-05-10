@@ -5,6 +5,7 @@
 :description: Access OpenStack to manage compute resources.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: OpenStack

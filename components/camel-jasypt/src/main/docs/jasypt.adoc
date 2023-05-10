@@ -5,6 +5,7 @@
 :description: Security using Jasypt
 :since: 2.5
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jasypt
 

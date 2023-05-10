@@ -5,6 +5,7 @@
 :description: Compress and decompress streams using LZF deflate algorithm.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: lzf
 

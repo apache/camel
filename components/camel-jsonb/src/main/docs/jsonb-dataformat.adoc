@@ -5,6 +5,7 @@
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jsonb
 

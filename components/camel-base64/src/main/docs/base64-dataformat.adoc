@@ -5,6 +5,7 @@
 :description: Encode and decode data using Base64.
 :since: 2.11
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: base64
 

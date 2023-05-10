@@ -5,6 +5,7 @@
 :description: Expose HTTP endpoints using Jetty 11.
 :since: 1.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jetty

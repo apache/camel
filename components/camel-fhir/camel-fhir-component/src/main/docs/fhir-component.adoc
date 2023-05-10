@@ -5,6 +5,7 @@
 :description: Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
 :since: 2.23
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: fhir

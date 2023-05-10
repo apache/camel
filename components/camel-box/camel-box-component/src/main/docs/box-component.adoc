@@ -5,6 +5,7 @@
 :description: Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: box

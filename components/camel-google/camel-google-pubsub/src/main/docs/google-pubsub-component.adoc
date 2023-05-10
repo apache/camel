@@ -5,6 +5,7 @@
 :description: Send and receive messages to/from Google Cloud Platform PubSub Service.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Google

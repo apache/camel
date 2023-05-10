@@ -5,6 +5,7 @@
 :description: Query and/or transform XML payloads using XQuery and Saxon.
 :since: 1.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: saxon

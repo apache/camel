@@ -5,6 +5,7 @@
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: djl
