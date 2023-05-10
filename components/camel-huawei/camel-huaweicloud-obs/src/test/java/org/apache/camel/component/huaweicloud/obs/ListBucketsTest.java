@@ -73,7 +73,7 @@ public class ListBucketsTest extends CamelTestSupport {
         buckets.add(new ObsBucket("bucket1", "location-1"));
         buckets.add(new ObsBucket("bucket2", "location-2"));
         Owner owner = new Owner();
-        ListBucketsResult response = new ListBucketsResult(buckets, owner);
+        ListBucketsResult response = new ListBucketsResult(buckets, owner, false, null, 10, null);
         Mockito.when(mockClient.listBucketsV2(Mockito.any(ListBucketsRequest.class))).thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:list_buckets_result");
