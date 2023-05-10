@@ -530,6 +530,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             if (model.isDeprecated()) {
                 newLines.add(":deprecated: *deprecated*");
             }
+            newLines.add(":tabs-sync-option:");
             if (model instanceof ComponentModel) {
                 newLines.add(":component-header: " + generateComponentHeader((ComponentModel) model));
                 if (Arrays.asList(model.getLabel().split(",")).contains("core")) {
