@@ -5,6 +5,7 @@
 :description: Camel DSL with JavaShell
 :since: 3.15
 :supportlevel: Experimental
+:tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
 

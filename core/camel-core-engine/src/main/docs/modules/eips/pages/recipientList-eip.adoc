@@ -4,6 +4,7 @@
 :description: Route messages to a number of dynamically specified recipients
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/RecipientList.html[Recipient List]

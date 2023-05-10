@@ -4,6 +4,7 @@
 :description: Removes a named property from the message exchange
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Property EIP allows you to remove a single property from the `Exchange`.
 

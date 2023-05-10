@@ -4,6 +4,7 @@
 :description: Aggregates many messages into a single message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The
 http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]

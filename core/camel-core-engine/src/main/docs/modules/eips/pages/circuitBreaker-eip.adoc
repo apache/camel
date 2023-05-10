@@ -4,6 +4,7 @@
 :description: Route messages in a fault tolerance way using Circuit Breaker
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
 which is used to detect excessive current draw and fail fast to protect electrical equipment.

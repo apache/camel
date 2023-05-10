@@ -4,6 +4,7 @@
 :description: Sorts the contents of the message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 How you can sort the content of the message?
 
@@ -78,4 +79,3 @@ And to use our own `Comparator` we do as follows:
 
 Notice how we use `<simple>$\{body}</simple>` in the example above to tell Sort EIP that it should use the message body for sorting.
 This is needed when you use a custom `Comparator`.
-

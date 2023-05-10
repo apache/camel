@@ -4,6 +4,7 @@
 :description: Executes a script from a language which does not change the message body.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Script EIP is used for executing a coding script.
 

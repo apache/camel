@@ -4,6 +4,7 @@
 :description: Uses a weighted load distribution ratio for each server with respect to others.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Weighted mode for xref:loadBalance-eip.adoc[Load Balancer] EIP.
 With this policy in case of failures the exchange will be tried on the next endpoint.

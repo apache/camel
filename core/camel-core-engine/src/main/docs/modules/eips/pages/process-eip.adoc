@@ -4,6 +4,7 @@
 :description: Calls a Camel processor
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The http://javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/Processor.html[Processor]
 is used for processing message xref:manual::exchange.adoc[Exchanges].

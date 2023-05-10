@@ -4,6 +4,7 @@
 :description: Converts the message body to another type
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The ConvertBodyTo EIP allows you to transform the message body to a different type.
 

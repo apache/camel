@@ -4,6 +4,7 @@
 :description: Removes a named header from the message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Header EIP allows you to remove a single header from the xref:message.adoc[Message].
 

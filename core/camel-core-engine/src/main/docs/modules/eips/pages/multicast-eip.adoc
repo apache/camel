@@ -4,6 +4,7 @@
 :description: Routes the same message to multiple paths either sequentially or in parallel.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Multicast EIP allows to route *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
 and process them in a different way.

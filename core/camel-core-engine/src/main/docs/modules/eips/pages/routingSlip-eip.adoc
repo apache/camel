@@ -4,6 +4,7 @@
 :description: Routes a message through a series of steps that are pre-determined (the slip)
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/RoutingTable.html[Routing Slip]

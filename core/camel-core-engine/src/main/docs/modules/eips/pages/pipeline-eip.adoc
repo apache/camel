@@ -4,6 +4,7 @@
 :description: Routes the message to a sequence of processors.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways.

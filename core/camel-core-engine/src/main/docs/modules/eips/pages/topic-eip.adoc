@@ -4,6 +4,7 @@
 :description: Topic which sends to all destinations.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Topic mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 With this policy then all destination is selected.

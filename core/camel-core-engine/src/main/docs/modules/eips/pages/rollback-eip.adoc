@@ -4,6 +4,7 @@
 :description: Forces a rollback by stopping routing the message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Rollback EIP is used for marking an xref:manual::exchange.adoc[Exchange]
 to rollback and stop continue routing the message.

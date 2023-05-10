@@ -4,6 +4,7 @@
 :description: Stops the processing of the current message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 How can I stop continue routing a message?
 

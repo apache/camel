@@ -4,6 +4,7 @@
 :description: Balances message processing among a number of nodes
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
 
@@ -22,4 +23,3 @@ Camel provides the following policies out-of-the-box:
 | xref:topic-eip.adoc[Topic Load Balancer] | Topic which sends to all destinations.
 | xref:weighted-eip.adoc[Weighted Loader Balancer] | Uses a weighted load distribution ratio for each server with respect to others.
 |=======================================================================
-

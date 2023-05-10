@@ -4,6 +4,7 @@
 :description: Logs the defined message to the logger
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 How can I log the processing of a xref:message.adoc[Message]?
 

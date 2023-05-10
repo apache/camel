@@ -4,6 +4,7 @@
 :description: Transforms the message body based on an expression
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message

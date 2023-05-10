@@ -4,6 +4,7 @@
 :description: In case of failures the exchange will be tried on the next endpoint.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 This EIP allows using fail-over (in case of failures the exchange will be tried on the next endpoint)
 with the xref:loadBalance-eip.adoc[Load Balancer] EIP.

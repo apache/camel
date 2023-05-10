@@ -4,6 +4,7 @@
 :description: Sends the message to a static endpoint
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message

@@ -4,6 +4,7 @@
 :description: Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns]

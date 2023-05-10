@@ -4,6 +4,7 @@
 :description: Route messages based on a series of predicates
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content

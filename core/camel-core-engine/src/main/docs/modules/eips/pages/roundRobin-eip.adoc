@@ -4,6 +4,7 @@
 :description: The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Round Robin mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 

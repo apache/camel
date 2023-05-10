@@ -4,6 +4,7 @@
 :description: Route to be executed when Circuit Breaker EIP executes fallback
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback.
 
@@ -22,4 +23,3 @@ For examples how to use this see the various Circuit Breaker implementations:
 
 - xref:fault-tolerance-eip.adoc[FaultTolerance EIP] - MicroProfile Fault Tolerance Circuit Breaker
 - xref:resilience4j-eip.adoc[Resilience4j EIP] - Resilience4j Circuit Breaker
-

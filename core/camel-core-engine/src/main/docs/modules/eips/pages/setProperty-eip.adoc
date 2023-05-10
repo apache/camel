@@ -4,6 +4,7 @@
 :description: Sets a named property on the message exchange
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The SetProperty EIP is used for setting a xref:manual:ROOT:exchange.adoc[Exchange] property.
 

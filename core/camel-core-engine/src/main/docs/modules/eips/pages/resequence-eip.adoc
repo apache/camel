@@ -4,6 +4,7 @@
 :description: Resequences (re-order) messages based on an expression
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer]

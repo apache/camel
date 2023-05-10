@@ -4,6 +4,7 @@
 :description: Sets the value of a message header
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The SetHeader EIP is used for setting a xref:message.adoc[message] header.
 

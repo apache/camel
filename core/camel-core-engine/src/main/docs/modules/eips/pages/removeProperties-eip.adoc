@@ -4,6 +4,7 @@
 :description: Removes message exchange properties whose name matches a specified pattern
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Properties EIP allows you to remove one or more `Exchange` properties,
 based on pattern syntax.

@@ -4,6 +4,7 @@
 :description: Enriches messages with data polled from a secondary resource
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/DataEnricher.html[Content

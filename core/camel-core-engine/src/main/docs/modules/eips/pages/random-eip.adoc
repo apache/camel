@@ -4,6 +4,7 @@
 :description: The destination endpoints are selected by random.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Random mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 

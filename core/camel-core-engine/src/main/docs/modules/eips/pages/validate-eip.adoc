@@ -4,6 +4,7 @@
 :description: Validates a message based on an expression
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Validate EIP uses an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
 to validate the contents of a message.
