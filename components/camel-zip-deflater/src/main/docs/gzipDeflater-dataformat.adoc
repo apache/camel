@@ -5,6 +5,7 @@
 :description: Compress and decompress messages using java.util.zip.GZIPStream.
 :since: 2.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: zip-deflater
 

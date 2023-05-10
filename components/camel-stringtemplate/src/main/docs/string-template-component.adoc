@@ -5,6 +5,7 @@
 :description: Transform messages using StringTemplate engine.
 :since: 1.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: stringtemplate

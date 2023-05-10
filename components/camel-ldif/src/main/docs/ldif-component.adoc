@@ -5,6 +5,7 @@
 :description: Perform updates on an LDAP server from an LDIF body content.
 :since: 2.20
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: ldif

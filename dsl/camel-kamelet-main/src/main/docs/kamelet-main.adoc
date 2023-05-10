@@ -5,6 +5,7 @@
 :description: Main to run Kamelet standalone
 :since: 3.11
 :supportlevel: Preview
+:tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
 

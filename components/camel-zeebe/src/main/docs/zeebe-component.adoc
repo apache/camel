@@ -5,6 +5,7 @@
 :description: Zeebe component which does integrage with Camunda Zeebe to interact with the API.
 :since: 3.21
 :supportlevel: Experimental
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: zeebe

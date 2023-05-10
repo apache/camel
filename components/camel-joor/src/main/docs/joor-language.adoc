@@ -5,6 +5,7 @@
 :description: Evaluates a jOOR (Java compiled once at runtime) expression.
 :since: 3.7
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: joor
 

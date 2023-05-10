@@ -5,6 +5,7 @@
 :description: Pass camel exchanges to acceptence test written in Robot DSL.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: robotframework

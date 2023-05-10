@@ -5,6 +5,7 @@
 :description: Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
 :since: 2.22
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: service

@@ -5,6 +5,7 @@
 :description: Render messages into PDF and other output formats supported by Apache FOP.
 :since: 2.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: fop

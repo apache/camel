@@ -5,6 +5,7 @@
 :description: Detect and parse documents using Workday.
 :since: 3.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: workday

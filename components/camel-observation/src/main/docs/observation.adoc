@@ -5,6 +5,7 @@
 :description: Observability using Micrometer Observation
 :since: 3.21
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: observation
 

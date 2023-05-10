@@ -5,6 +5,7 @@
 :description: Spring Security Provider for camel-undertow
 :since: 3.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: undertow-spring-security
 

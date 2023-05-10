@@ -5,6 +5,7 @@
 :description: Interact with InfluxDB v2, a time series database.
 :since: 3.20
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: influxdb2

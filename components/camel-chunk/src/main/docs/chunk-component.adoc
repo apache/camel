@@ -5,6 +5,7 @@
 :description: Transform messages using Chunk templating engine.
 :since: 2.15
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: chunk

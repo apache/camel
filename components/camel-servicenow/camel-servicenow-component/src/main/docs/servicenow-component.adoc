@@ -5,6 +5,7 @@
 :description: Interact with ServiceNow via its REST API.
 :since: 2.18
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: servicenow

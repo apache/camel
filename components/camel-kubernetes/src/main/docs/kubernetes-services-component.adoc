@@ -5,6 +5,7 @@
 :description: Perform operations on Kubernetes Services and get notified on Service changes.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes

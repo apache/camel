@@ -5,6 +5,7 @@
 :description: Marshal Java objects to SOAP messages and back.
 :since: 2.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: soap
 

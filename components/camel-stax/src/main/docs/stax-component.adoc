@@ -5,6 +5,7 @@
 :description: Process XML payloads by a SAX ContentHandler.
 :since: 2.9
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: stax

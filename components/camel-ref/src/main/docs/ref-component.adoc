@@ -5,6 +5,7 @@
 :description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.
 :since: 1.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

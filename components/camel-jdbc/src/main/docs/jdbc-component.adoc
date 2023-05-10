@@ -5,6 +5,7 @@
 :description: Access databases through SQL and JDBC.
 :since: 1.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jdbc

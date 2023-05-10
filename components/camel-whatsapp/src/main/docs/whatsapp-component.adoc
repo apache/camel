@@ -5,6 +5,7 @@
 :description: Send messages to WhatsApp.
 :since: 3.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 
 *Since Camel {since}*

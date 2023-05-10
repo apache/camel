@@ -5,6 +5,7 @@
 :description: A fixed value set only once during the route startup.
 :since: 1.5
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

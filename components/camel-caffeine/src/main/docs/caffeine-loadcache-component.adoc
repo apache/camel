@@ -5,6 +5,7 @@
 :description: Perform caching operations using Caffeine Cache with an attached CacheLoader.
 :since: 2.20
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: caffeine

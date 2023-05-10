@@ -5,6 +5,7 @@
 :description: Send SMS messages via CM SMS Gateway.
 :since: 2.18
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: cm-sms

@@ -5,6 +5,7 @@
 :description: To call serverless functions on Huawei Cloud
 :since: 3.11
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud

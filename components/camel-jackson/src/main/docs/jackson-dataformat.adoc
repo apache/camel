@@ -5,6 +5,7 @@
 :description: Marshal POJOs to JSON and back using Jackson.
 :since: 2.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jackson
 

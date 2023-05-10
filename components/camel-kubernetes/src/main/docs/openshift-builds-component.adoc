@@ -5,6 +5,7 @@
 :description: Perform operations on OpenShift Builds.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Kubernetes

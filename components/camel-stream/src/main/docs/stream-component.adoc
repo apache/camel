@@ -5,6 +5,7 @@
 :description: Read from system-in and write to system-out and system-err streams.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: stream

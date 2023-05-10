@@ -5,6 +5,7 @@
 :description: To call Kamelets
 :since: 3.8
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

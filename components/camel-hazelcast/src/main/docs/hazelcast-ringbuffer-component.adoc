@@ -5,6 +5,7 @@
 :description: Perform operations on Hazelcast distributed ringbuffer.
 :since: 2.16
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Hazelcast

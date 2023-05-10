@@ -5,6 +5,7 @@
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: infinispan-embedded

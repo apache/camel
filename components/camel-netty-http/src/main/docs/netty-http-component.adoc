@@ -5,6 +5,7 @@
 :description: Netty HTTP server and client using the Netty 4.x.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: netty-http

@@ -5,6 +5,7 @@
 :description: Serialize and deserialize Java objects using Google's Protocol buffers.
 :since: 2.2
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: protobuf
 

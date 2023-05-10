@@ -5,6 +5,7 @@
 :description: Circuit Breaker EIP using Resilience4j
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: resilience4j
 

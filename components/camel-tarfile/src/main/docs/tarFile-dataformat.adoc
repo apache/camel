@@ -5,6 +5,7 @@
 :description: Archive files into tarballs or extract files from tarballs.
 :since: 2.16
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: tarfile
 

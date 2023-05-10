@@ -5,6 +5,7 @@
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: avro
 

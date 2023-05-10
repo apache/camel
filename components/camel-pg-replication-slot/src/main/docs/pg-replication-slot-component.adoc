@@ -5,6 +5,7 @@
 :description: Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: pg-replication-slot

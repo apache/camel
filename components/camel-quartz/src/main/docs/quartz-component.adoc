@@ -5,6 +5,7 @@
 :description: Schedule sending of messages using the Quartz 2.x scheduler.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: quartz

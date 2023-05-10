@@ -5,6 +5,7 @@
 :description: Transform messages using a Mustache template.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: mustache

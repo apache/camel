@@ -5,6 +5,7 @@
 :description: IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.
 :since: 2.20
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: iec60870

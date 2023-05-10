@@ -5,6 +5,7 @@
 :description: Perform searches in LDAP servers using filters as the message payload.
 :since: 2.11
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Spring

@@ -5,6 +5,7 @@
 :description: Poll for incoming messages in Google Mail.
 :since: 2.22
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Google

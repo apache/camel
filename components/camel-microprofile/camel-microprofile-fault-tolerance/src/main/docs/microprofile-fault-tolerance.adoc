@@ -5,6 +5,7 @@
 :description: Circuit Breaker EIP using MicroProfile Fault Tolerance
 :since: 3.3
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

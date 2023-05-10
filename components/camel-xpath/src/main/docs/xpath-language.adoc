@@ -5,6 +5,7 @@
 :description: Evaluates an XPath expression against an XML payload.
 :since: 1.1
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: xpath
 

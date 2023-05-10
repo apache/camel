@@ -5,6 +5,7 @@
 :description: Expose REST services or call external REST services.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

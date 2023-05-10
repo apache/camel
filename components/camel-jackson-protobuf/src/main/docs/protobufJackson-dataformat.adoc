@@ -5,6 +5,7 @@
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 3.10
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jackson-protobuf
 

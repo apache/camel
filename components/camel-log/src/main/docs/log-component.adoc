@@ -5,6 +5,7 @@
 :description: Log messages to the underlying logging mechanism.
 :since: 1.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

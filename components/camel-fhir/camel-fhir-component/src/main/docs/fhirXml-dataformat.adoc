@@ -5,6 +5,7 @@
 :description: Marshall and unmarshall FHIR objects to/from XML.
 :since: 2.21
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: fhir
 

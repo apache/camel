@@ -5,6 +5,7 @@
 :description: Exchange messages with JGroups-raft clusters.
 :since: 2.24
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: jgroups-raft

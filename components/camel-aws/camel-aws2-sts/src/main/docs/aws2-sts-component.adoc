@@ -5,6 +5,7 @@
 :description: Manage AWS STS cluster instances using AWS SDK version 2.x.
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS

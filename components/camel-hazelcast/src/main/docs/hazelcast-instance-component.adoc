@@ -5,6 +5,7 @@
 :description: Consume join/leave events of a cache instance in a Hazelcast cluster.
 :since: 2.7
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Hazelcast

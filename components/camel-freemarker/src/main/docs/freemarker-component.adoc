@@ -5,6 +5,7 @@
 :description: Transform messages using FreeMarker templates.
 :since: 2.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: freemarker
