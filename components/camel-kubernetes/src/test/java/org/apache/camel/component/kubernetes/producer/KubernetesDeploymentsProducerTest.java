@@ -158,10 +158,10 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
         server.expect().withPath("/apis/apps/v1/namespaces/test/deployments/de1")
                 .andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
-                        .withReplicas(1).endStatus().build())
+                        .withReplicas(5).endStatus().build())
                 .once();
 
-        server.expect().withPath("/apis/apps/v1/namespaces/test/deployments/de1")
+        server.expect().withPath("/apis/apps/v1/namespaces/test/deployments/de1/scale")
                 .andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
                         .withReplicas(5).endStatus().build())

@@ -160,10 +160,10 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
         server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
                 .andReturn(200, new DeploymentConfigBuilder().withNewMetadata().withName("dc1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
-                        .withReplicas(1).endStatus().build())
+                        .withReplicas(5).endStatus().build())
                 .once();
 
-        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
+        server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1/scale")
                 .andReturn(200, new DeploymentConfigBuilder().withNewMetadata().withName("dc1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
                         .withReplicas(5).endStatus().build())
