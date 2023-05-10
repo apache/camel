@@ -739,6 +739,7 @@
                    <configuration>
                         <outputName>camel-sbom</outputName>
                         <outputDirectory>${project.basedir}/camel-sbom/</outputDirectory>
+                        <excludeArtifactId>camel-allcomponents</excludeArtifactId>
                    </configuration>
                    <executions>
                        <execution>
