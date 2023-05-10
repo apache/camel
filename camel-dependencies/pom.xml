@@ -291,7 +291,7 @@
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-guava-version>31.1-jre</jira-guava-version>
-        <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
+        <jira-rest-client-api-version>5.2.5</jira-rest-client-api-version>
         <libthrift-version>0.18.1</libthrift-version>
         <jodatime2-version>2.11.1</jodatime2-version>
         <jolokia-version>1.7.2</jolokia-version>
