@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
@@ -189,7 +190,16 @@ public class JpaProducer extends DefaultProducer {
             } else {
                 target = exchange.getIn();
             }
-            Object answer = isUseExecuteUpdate() ? innerQuery.executeUpdate() : innerQuery.getResultList();
+
+            final Object answer;
+            if (isUseExecuteUpdate()) {
+                answer = innerQuery.executeUpdate();
+            } else if (getEndpoint().isSingleResult()) {
+                answer = innerQuery.getSingleResult();
+            } else {
+                answer = innerQuery.getResultList();
+            }
+
             target.setBody(answer);
 
             if (getEndpoint().isFlushOnSend()) {
@@ -243,6 +253,13 @@ public class JpaProducer extends DefaultProducer {
 
                 Object answer = entityManager.find(getEndpoint().getEntityType(), key);
                 LOG.debug("Find: {} -> {}", key, answer);
+
+                if (getEndpoint().isSingleResult() && answer == null) {
+                    throw new NoResultException(
+                            String.format(
+                                    "No results for key %s and singleResult requested",
+                                    key));
+                }
 
                 Message target;
                 if (ExchangeHelper.isOutCapable(exchange)) {

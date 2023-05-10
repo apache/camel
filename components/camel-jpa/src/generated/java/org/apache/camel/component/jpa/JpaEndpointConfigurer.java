@@ -89,6 +89,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sharedentitymanager":
         case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
+        case "singleresult":
+        case "singleResult": target.setSingleResult(property(camelContext, boolean.class, value)); return true;
         case "skiplockedentity":
         case "skipLockedEntity": target.setSkipLockedEntity(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
@@ -179,6 +181,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "sharedentitymanager":
         case "sharedEntityManager": return boolean.class;
+        case "singleresult":
+        case "singleResult": return boolean.class;
         case "skiplockedentity":
         case "skipLockedEntity": return boolean.class;
         case "startscheduler":
@@ -270,6 +274,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sharedentitymanager":
         case "sharedEntityManager": return target.isSharedEntityManager();
+        case "singleresult":
+        case "singleResult": return target.isSingleResult();
         case "skiplockedentity":
         case "skipLockedEntity": return target.isSkipLockedEntity();
         case "startscheduler":
