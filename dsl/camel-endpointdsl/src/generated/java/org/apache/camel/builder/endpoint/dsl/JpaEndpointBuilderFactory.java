@@ -1602,6 +1602,39 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled, a query or a find which would return no results or more
+         * than one result, will throw an exception instead.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param singleResult the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder singleResult(boolean singleResult) {
+            doSetProperty("singleResult", singleResult);
+            return this;
+        }
+        /**
+         * If enabled, a query or a find which would return no results or more
+         * than one result, will throw an exception instead.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param singleResult the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder singleResult(String singleResult) {
+            doSetProperty("singleResult", singleResult);
+            return this;
+        }
+        /**
          * To configure whether to use executeUpdate() when producer executes a
          * query. When you use INSERT, UPDATE or DELETE statement as a named
          * query, you need to specify this option to 'true'.
