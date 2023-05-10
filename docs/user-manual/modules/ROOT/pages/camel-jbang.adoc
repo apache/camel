@@ -1743,6 +1743,21 @@ To be able to continue to use Camel CLI (i.e. `camel`), you need to add `camel:c
 camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:cli-connector --directory=../myproject
 ----
 
+=== Exporting with Camel Secret Refresh parameters and dependencies included
+
+In Camel we have introduce the ability of refreshing secrets automatically when an update operation happens.
+
+In the camel-jbang cli we introduced the options to prepare the exported project to be able to use this feature.
+
+[source,bash]
+----
+camel export --secrets-refresh --secrets-refresh-providers=aws,gcp,azure --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT  --directory=../myproject
+----
+
+This command will automatically add the Camel-Quarkus extensions for AWS Secrets Manager, Google Secret Manager and Azure Key Vault to the exported POM and also it will add the required options (to be set) in the application.properties file.
+
+These options will work for Quarkus, Spring-Boot and Camel-main runtime.
+
 === Configuring exporting
 
 The export command will by default load configuration from `application.properties`
