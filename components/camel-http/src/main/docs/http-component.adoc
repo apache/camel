@@ -5,6 +5,7 @@
 :description: Send requests to external HTTP servers using Apache HTTP Client 5.x.
 :since: 2.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: http

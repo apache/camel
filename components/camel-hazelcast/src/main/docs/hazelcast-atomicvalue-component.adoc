@@ -5,6 +5,7 @@
 :description: Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
 :since: 2.7
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Hazelcast

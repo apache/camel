@@ -5,6 +5,7 @@
 :description: Handle CSV (Comma Separated Values) payloads.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: csv
 

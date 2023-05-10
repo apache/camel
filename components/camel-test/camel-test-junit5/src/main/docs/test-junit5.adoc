@@ -5,6 +5,7 @@
 :description: Camel unit testing with JUnit 5
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

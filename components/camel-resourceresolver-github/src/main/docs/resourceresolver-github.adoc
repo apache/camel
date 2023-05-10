@@ -5,6 +5,7 @@
 :description: Resource resolver to load files from GitHub
 :since: 3.11
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 
@@ -59,4 +60,3 @@ For example:
 ----
 gist:davsclaus:477ddff5cdeb1ae03619aa544ce47e92:cd1be96034748e42e43879a4d27ed297752b6115:mybeer.xml
 ----
-

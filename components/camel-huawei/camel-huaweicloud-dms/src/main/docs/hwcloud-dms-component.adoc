@@ -5,6 +5,7 @@
 :description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
 :since: 3.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud

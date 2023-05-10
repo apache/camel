@@ -5,6 +5,7 @@
 :description: Store and retrieve objects from Minio Storage Service using Minio SDK.
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: minio
@@ -303,4 +304,3 @@ where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::spring-boot:partial$starter.adoc[]
-

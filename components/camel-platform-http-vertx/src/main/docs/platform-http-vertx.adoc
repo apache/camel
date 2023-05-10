@@ -5,6 +5,7 @@
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

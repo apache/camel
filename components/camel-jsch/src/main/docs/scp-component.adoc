@@ -5,6 +5,7 @@
 :description: Copy files to/from remote hosts using the secure copy protocol (SCP).
 :since: 2.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: jsch

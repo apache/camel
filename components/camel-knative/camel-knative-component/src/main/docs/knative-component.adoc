@@ -5,6 +5,7 @@
 :description: Send and receive events from Knative.
 :since: 3.15
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: knative

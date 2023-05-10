@@ -5,6 +5,7 @@
 :description: Access Twitter Search.
 :since: 2.10
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: twitter

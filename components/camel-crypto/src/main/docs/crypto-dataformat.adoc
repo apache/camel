@@ -5,6 +5,7 @@
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE).
 :since: 2.3
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: crypto
 

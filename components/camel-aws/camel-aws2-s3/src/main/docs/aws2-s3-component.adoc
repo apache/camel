@@ -5,6 +5,7 @@
 :description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
 :since: 3.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AWS

@@ -5,6 +5,7 @@
 :description: Process payments using Braintree Payments.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: braintree

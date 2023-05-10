@@ -5,6 +5,7 @@
 :description: Transforms XML payload using an XSLT template.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

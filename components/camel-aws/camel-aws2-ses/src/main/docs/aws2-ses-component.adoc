@@ -5,6 +5,7 @@
 :description: Send e-mails through AWS SES service using AWS SDK version 2.x.
 :since: 3.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS

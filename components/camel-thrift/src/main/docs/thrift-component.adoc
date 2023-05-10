@@ -5,6 +5,7 @@
 :description: Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
 :since: 2.20
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: thrift

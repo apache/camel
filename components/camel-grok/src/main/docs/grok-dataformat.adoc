@@ -5,6 +5,7 @@
 :description: Unmarshal unstructured data to objects using Logstash based Grok patterns.
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: grok
 

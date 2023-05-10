@@ -5,6 +5,7 @@
 :description: Evaluates a Python expression.
 :since: 3.19
 :supportlevel: Experimental
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: python
 

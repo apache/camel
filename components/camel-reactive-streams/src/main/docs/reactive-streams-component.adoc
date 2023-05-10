@@ -5,6 +5,7 @@
 :description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: reactive-streams

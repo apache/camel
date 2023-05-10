@@ -5,6 +5,7 @@
 :description: Parse fixed width and delimited files using the FlatPack library.
 :since: 1.4
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: flatpack

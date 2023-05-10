@@ -5,6 +5,7 @@
 :description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: vertx-websocket

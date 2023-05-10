@@ -5,6 +5,7 @@
 :description: Capture changes from a DB2 database.
 :since: 3.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Debezium

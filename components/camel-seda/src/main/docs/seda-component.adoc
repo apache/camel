@@ -5,6 +5,7 @@
 :description: Asynchronously call another endpoint from any Camel Context in the same JVM.
 :since: 1.1
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

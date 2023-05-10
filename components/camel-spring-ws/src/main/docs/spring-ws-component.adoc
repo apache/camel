@@ -5,6 +5,7 @@
 :description: Access external web services as a client or expose your own web services.
 :since: 2.6
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring

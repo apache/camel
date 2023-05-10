@@ -5,6 +5,7 @@
 :description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: snakeyaml
 

@@ -5,6 +5,7 @@
 :description: Perform cache operations on an Ignite cache or consume changes from a continuous query.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Ignite

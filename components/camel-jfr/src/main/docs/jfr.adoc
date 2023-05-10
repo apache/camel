@@ -5,6 +5,7 @@
 :description: Diagnose Camel applications with Java Flight Recorder
 :since: 3.8
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jfr
 

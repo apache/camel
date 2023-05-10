@@ -5,6 +5,7 @@
 :description: Uses an existing expression from the registry.
 :since: 2.8
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter

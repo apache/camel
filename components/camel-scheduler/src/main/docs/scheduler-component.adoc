@@ -5,6 +5,7 @@
 :description: Generate messages in specified intervals using java.util.concurrent.ScheduledExecutorService.
 :since: 2.15
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 :core:
 //Manually maintained attributes

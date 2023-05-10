@@ -5,6 +5,7 @@
 :description: Send and receive events to/from Azure Event Hubs using AMQP protocol.
 :since: 3.5
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure

@@ -5,6 +5,7 @@
 :description: Marshal Camel messages with attachments into MIME-Multipart messages and back.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: mail
 

@@ -5,6 +5,7 @@
 :description: Evaluates a JSONPath expression against a JSON message body.
 :since: 2.13
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jsonpath
 

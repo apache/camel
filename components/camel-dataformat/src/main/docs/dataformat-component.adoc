@@ -5,6 +5,7 @@
 :description: Use a Camel Data Format as a regular Camel Component.
 :since: 2.12
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

@@ -5,6 +5,7 @@
 :description: Send and receive messages acting as a Telegram Bot Telegram Bot API.
 :since: 2.18
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: telegram

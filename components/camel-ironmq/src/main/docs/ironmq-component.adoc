@@ -5,6 +5,7 @@
 :description: Send and receive messages to/from IronMQ an elastic and durable hosted message queue as a service.
 :since: 2.17
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: ironmq

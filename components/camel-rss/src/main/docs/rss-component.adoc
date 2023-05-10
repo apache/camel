@@ -5,6 +5,7 @@
 :description: Poll RSS feeds.
 :since: 2.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: rss

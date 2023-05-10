@@ -5,6 +5,7 @@
 :description: Inspect the messages received on endpoints supporting BrowsableEndpoint.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

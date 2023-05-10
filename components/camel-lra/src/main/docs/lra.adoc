@@ -5,6 +5,7 @@
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21
 :supportlevel: Preview
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: lra
 

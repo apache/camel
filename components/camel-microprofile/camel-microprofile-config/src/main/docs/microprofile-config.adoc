@@ -5,6 +5,7 @@
 :description: Bridging Eclipse MicroProfile Config with Camel properties
 :since: 3.0
 :supportlevel: Stable
+:tabs-sync-option:
 
 *Since Camel {since}*
 

@@ -5,6 +5,7 @@
 :description: Manage secrets in Hashicorp Vault Service
 :since: 3.18
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: hashicorp-vault

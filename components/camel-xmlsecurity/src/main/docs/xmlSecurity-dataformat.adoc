@@ -5,6 +5,7 @@
 :description: Encrypt and decrypt XML payloads using Apache Santuario.
 :since: 2.0
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: xmlsecurity
 

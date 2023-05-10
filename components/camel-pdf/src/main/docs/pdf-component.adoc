@@ -5,6 +5,7 @@
 :description: Create, modify or extract content from PDF documents.
 :since: 2.16
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: pdf

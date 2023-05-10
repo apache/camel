@@ -5,6 +5,7 @@
 :description: Store and retrieve Java objects from databases using Java Persistence API (JPA).
 :since: 1.0
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: jpa

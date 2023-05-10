@@ -5,6 +5,7 @@
 :description: Extends the mock component by pulling messages from another endpoint on startup to set the expected message bodies.
 :since: 1.3
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Only producer is supported
 :core:
 //Manually maintained attributes

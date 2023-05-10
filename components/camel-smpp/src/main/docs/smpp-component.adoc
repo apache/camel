@@ -5,6 +5,7 @@
 :description: Send and receive SMS messages using a SMSC (Short Message Service Center).
 :since: 2.2
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: smpp

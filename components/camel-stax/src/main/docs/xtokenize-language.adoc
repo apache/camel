@@ -5,6 +5,7 @@
 :description: Tokenize XML payloads.
 :since: 2.14
 :supportlevel: Stable
+:tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: stax
 
