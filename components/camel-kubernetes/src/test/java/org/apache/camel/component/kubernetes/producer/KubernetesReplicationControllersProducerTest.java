@@ -179,10 +179,10 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
-                        .withReplicas(1).endStatus().build())
+                        .withReplicas(5).endStatus().build())
                 .once();
 
-        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
+        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1/scale")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
                         .withReplicas(5).endStatus().build())
