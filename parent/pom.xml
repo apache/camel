@@ -272,7 +272,7 @@
         <jcache-version>1.1.1</jcache-version>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
-        <jedis-client-version>3.7.1</jedis-client-version>
+        <jedis-client-version>4.3.2</jedis-client-version>
         <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
         <jetcd-guava-version>31.1-jre</jetcd-guava-version>
         <jetcd-version>0.7.5</jetcd-version>
@@ -453,7 +453,7 @@
         <splunk-version>1.9.0_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>4.3.8</spring-batch-version>
-        <spring-data-redis-version>3.0.4</spring-data-redis-version>
+        <spring-data-redis-version>3.0.5</spring-data-redis-version>
         <spring-ldap-version>3.0.2</spring-ldap-version>
         <spring-vault-core-version>3.0.2</spring-vault-core-version>
         <spring-version>6.0.8</spring-version>

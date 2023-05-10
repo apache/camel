@@ -20,26 +20,38 @@ import org.apache.camel.component.redis.RedisConstants;
 import org.apache.camel.component.redis.RedisTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.test.infra.redis.services.RedisService;
+import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled
 public class RedisProducerManualIT extends RedisTestSupport {
-    private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
 
-    static {
-        CONNECTION_FACTORY.afterPropertiesSet();
+    @RegisterExtension
+    static RedisService service = RedisServiceFactory.createService();
+    private static JedisConnectionFactory connectionFactory;
+
+    @BeforeAll
+    public static void beforeAll() {
+        connectionFactory = new JedisConnectionFactory();
+        connectionFactory.getStandaloneConfiguration()
+                .setHostName(service.host());
+        connectionFactory.getStandaloneConfiguration()
+                .setPort(service.port());
+
+        connectionFactory.afterPropertiesSet();
     }
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry registry = new SimpleRegistry();
         redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
+        redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
 
         registry.bind("redisTemplate", redisTemplate);

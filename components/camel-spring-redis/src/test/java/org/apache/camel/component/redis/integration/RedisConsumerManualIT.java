@@ -22,21 +22,35 @@ import org.apache.camel.component.redis.RedisConstants;
 import org.apache.camel.component.redis.RedisTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.test.infra.redis.services.RedisService;
+import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-@Disabled("Requires manual setup")
 public class RedisConsumerManualIT extends RedisTestSupport {
-    private static final JedisConnectionFactory CONNECTION_FACTORY = new JedisConnectionFactory();
-    private static final RedisMessageListenerContainer LISTENER_CONTAINER = new RedisMessageListenerContainer();
 
-    static {
-        CONNECTION_FACTORY.afterPropertiesSet();
-        LISTENER_CONTAINER.setConnectionFactory(CONNECTION_FACTORY);
+    @RegisterExtension
+    static RedisService service = RedisServiceFactory.createService();
+
+    private static final RedisMessageListenerContainer LISTENER_CONTAINER = new RedisMessageListenerContainer();
+    private static JedisConnectionFactory jedisConnectionFactory;
+
+    @BeforeAll
+    public static void beforeAll() {
+        jedisConnectionFactory = new JedisConnectionFactory();
+        jedisConnectionFactory.getStandaloneConfiguration()
+                .setHostName(service.host());
+        jedisConnectionFactory.getStandaloneConfiguration()
+                .setPort(service.port());
+
+        jedisConnectionFactory.afterPropertiesSet();
+        LISTENER_CONTAINER.setConnectionFactory(jedisConnectionFactory);
         LISTENER_CONTAINER.afterPropertiesSet();
+        LISTENER_CONTAINER.start();
     }
 
     @Override
@@ -44,7 +58,7 @@ public class RedisConsumerManualIT extends RedisTestSupport {
         Registry registry = new SimpleRegistry();
 
         redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(CONNECTION_FACTORY);
+        redisTemplate.setConnectionFactory(jedisConnectionFactory);
         redisTemplate.afterPropertiesSet();
 
         registry.bind("redisTemplate", redisTemplate);
@@ -56,14 +70,17 @@ public class RedisConsumerManualIT extends RedisTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
+                String serviceAddress = service.getServiceAddress();
+
+                from("spring-redis://" + serviceAddress
+                     + "?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
                         .startupOrder(1)
                         .to("mock:result");
 
                 from("direct:start")
                         .startupOrder(2)
                         .delay(2000)
-                        .to("spring-redis://localhost:6379?redisTemplate=#redisTemplate");
+                        .to("spring-redis://" + serviceAddress + "?redisTemplate=#redisTemplate");
             }
         };
     }
