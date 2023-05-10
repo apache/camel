@@ -457,7 +457,7 @@
         <spring-ldap-version>3.0.2</spring-ldap-version>
         <spring-vault-core-version>3.0.2</spring-vault-core-version>
         <spring-version>6.0.8</spring-version>
-        <spring-rabbitmq-version>3.0.2</spring-rabbitmq-version>
+        <spring-rabbitmq-version>3.0.4</spring-rabbitmq-version>
         <spring-security-version>6.0.3</spring-security-version>
         <spring-ws-version>4.0.3</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
