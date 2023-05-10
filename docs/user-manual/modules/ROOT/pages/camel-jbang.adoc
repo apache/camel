@@ -26,6 +26,36 @@ jbang app install camel@apache/camel
 This will install Apache Camel as the `camel` command within JBang, meaning that you can run Camel from the command line
 by just executing `camel` (see more next).
 
+== Container Image
+
+There is also a container image availabe in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
+
+[source,bash]
+----
+docker pull apache/camel-jbang:3.20.4
+----
+
+Once you have the image in your local registry you can run all the command listed below by simple doing:
+
+[source,bash]
+----
+docker run apache/camel-jbang:3.20.4 version
+----
+
+This will print the following result:
+
+[source,bash]
+----
+Camel JBang version: 3.20.4
+----
+
+So running a simple route will be as easy as doing the following:
+
+[source,bash]
+----
+docker run apache/camel-jbang:3.20.4 run example.yaml
+----
+
 == Using Camel JBang
 
 The Camel JBang supports multiple commands. Running the command below, will print all of them:
