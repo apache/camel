@@ -97,7 +97,7 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.\n"
                             + "The Image size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.\n"
                             + "The supported image formats include JPG, PNG, and BMP. \n",
-              displayName = "imageBase64")
+              displayName = "Image in Base64")
     @Metadata(required = false)
     private String imageBase64;
 
@@ -106,14 +106,14 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "The options are as follows:\n"
                             + "1.HTTP/HTTPS URLs on the public network\n"
                             + "2.OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n",
-              displayName = "imageUrl")
+              displayName = "Image Url")
     @Metadata(required = false)
     private String imageUrl;
 
     @UriParam(description = "This param can be used when operation is faceDetection or faceVerification, indicating the local image file path.\n"
                             + "Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.\n"
                             + "Image size cannot exceed 8 MB, and it is recommended that the image size be less than 1 MB.",
-              displayName = "imageFilePath")
+              displayName = "Image File Path")
     @Metadata(required = false)
     private String imageFilePath;
 
@@ -122,7 +122,7 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "It needs to be configured if imageBase64 is set.\n"
                             + "The image size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.\n"
                             + "The supported image formats include JPG, PNG, and BMP.",
-              displayName = "anotherImageBase64")
+              displayName = "Another Image in Base64")
     @Metadata(required = false)
     private String anotherImageBase64;
 
@@ -131,14 +131,14 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "The options are as follows:\n"
                             + "1.HTTP/HTTPS URLs on the public network\n"
                             + "2.OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n",
-              displayName = "anotherImageUrl")
+              displayName = "Another Image Url")
     @Metadata(required = false)
     private String anotherImageUrl;
 
     @UriParam(description = "This param can be used when operation is faceVerification, indicating the local file path of the other image.\n"
                             + "It needs to be configured if imageFilePath is set.\n"
                             + "Image size cannot exceed 8 MB, and it is recommended that the image size be less than 1 MB.",
-              displayName = "anotherImageFilePath")
+              displayName = "Another Image File Path")
     @Metadata(required = false)
     private String anotherImageFilePath;
 
@@ -151,7 +151,7 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "3.The recommended frame rate is 10 fps to 30 fps. \n"
                             + "4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV. \n"
                             + "5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.",
-              displayName = "videoBase64")
+              displayName = "Video in Base64")
     @Metadata(required = false)
     private String videoBase64;
 
@@ -164,7 +164,7 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "3.The recommended frame rate is 10 fps to 30 fps.\n"
                             + "4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.\n"
                             + "5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.",
-              displayName = "videoUrl")
+              displayName = "Video Url")
     @Metadata(required = false)
     private String videoUrl;
 
@@ -176,7 +176,7 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "3.The recommended frame rate is 10 fps to 30 fps.\n"
                             + "4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.\n"
                             + "5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.",
-              displayName = "videoFilePath")
+              displayName = "Video File Path")
     @Metadata(required = false)
     private String videoFilePath;
 
@@ -186,14 +186,14 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
                             + "2: Shake the head to the right.\n"
                             + "3: Nod the head.\n"
                             + "4: Mouth movement.",
-              displayName = "actions")
+              displayName = "Actions")
     @Metadata(required = false)
     private String actions;
 
     @UriParam(description = "This param can be used when the operation is faceLiveDetection, indicating the action time array.\n"
                             + "The length of the array is the same as the number of actions.\n"
                             + "Each item contains the start time and end time of the action in the corresponding sequence. The unit is the milliseconds from the video start time.",
-              displayName = "actionTime")
+              displayName = "Action Time")
     @Metadata(required = false)
     private String actionTimes;
 
