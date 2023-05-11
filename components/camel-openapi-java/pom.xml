@@ -78,17 +78,33 @@
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <version>${jackson2-version}</version>
         </dependency>
-
         <dependency>
-            <groupId>io.apicurio</groupId>
-            <artifactId>apicurio-data-models</artifactId>
-            <version>${apicurio-version}</version>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser</artifactId>
+            <version>${swagger-openapi3-java-parser-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-core</artifactId>
+                </exclusion>
+            </exclusions>        
         </dependency>
 
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-core-jakarta</artifactId>
             <version>${swagger-openapi3-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-models-jakarta</artifactId>
+                </exclusion>
+            </exclusions>  
         </dependency>
 
 

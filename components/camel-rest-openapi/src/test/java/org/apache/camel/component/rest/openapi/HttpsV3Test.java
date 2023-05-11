@@ -18,6 +18,7 @@ package org.apache.camel.component.rest.openapi;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -119,11 +120,18 @@ public abstract class HttpsV3Test extends CamelTestSupport {
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);
-        component.setHost("https://localhost:" + petstore.httpsPort());
-        component.setSpecificationUri(RestOpenApiComponentV3Test.class.getResource("/openapi-v3.json").toURI());
+        final String host = "https://localhost:" + petstore.httpsPort();
+        component.setHost(host);
+        // Workaround bug resolving relative references with file URLs in swagger parser
+        component.setSpecificationUri(new URI(host + getSpecName()));
+        //        component.setSpecificationUri(HttpsV3Test.class.getResource(getSpecName()).toURI());
         camelContext.addComponent("petStore", component);
 
         return camelContext;
+    }
+
+    protected String getSpecName() {
+        return "/openapi-v3.json";
     }
 
     @Override
@@ -151,10 +159,14 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     }
 
     @BeforeAll
-    public static void setupStubs() throws IOException, URISyntaxException {
-        petstore.stubFor(get(urlEqualTo("/openapi.json")).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi.json").toURI())))));
+    public static void makeSwaggerTrustLocalhost() {
+        System.setProperty("io.swagger.v3.parser.util.RemoteUrl.trustAll", "true");
+    }
 
+    @BeforeAll
+    public static void setupStubs() throws IOException, URISyntaxException {
+        petstore.stubFor(get(urlEqualTo("/openapi-v3.json")).willReturn(aResponse().withBody(
+                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi-v3.json").toURI())))));
         petstore.stubFor(
                 get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
                         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));

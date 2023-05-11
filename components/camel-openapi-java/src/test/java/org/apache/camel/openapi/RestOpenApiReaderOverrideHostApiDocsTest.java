@@ -16,11 +16,8 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -45,15 +42,11 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         config.setHost("http:mycoolserver:8888/myapi");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
 
         log.info(json);
 
@@ -78,15 +71,11 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         config.setHost("http:mycoolserver:8888/myapi");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = io.swagger.v3.core.util.Json.pretty(openApi);
 
         log.info(json);
 

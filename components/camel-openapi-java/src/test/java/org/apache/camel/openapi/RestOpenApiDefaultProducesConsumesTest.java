@@ -29,6 +29,8 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.openapi.BeanConfig.DEFAULT_MEDIA_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +41,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String[] OPENAPI_VERSIONS = { "3.0", "2.0" };
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @ParameterizedTest
     @MethodSource("getOpenApiVersions")
@@ -72,6 +75,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
 
         String json = exchange.getMessage().getBody(String.class);
         assertNotNull(json);
+        log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
         assertConsumesMatches(root, openApiVersion, "application/xml");
@@ -105,6 +109,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
 
         String json = exchange.getMessage().getBody(String.class);
         assertNotNull(json);
+        log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
         assertProducesMatches(root, openApiVersion, "application/xml");
@@ -141,6 +146,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
 
         String json = exchange.getMessage().getBody(String.class);
         assertNotNull(json);
+        log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
         if (openApiVersion.equals("3.0")) {
@@ -188,6 +194,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
 
         String json = exchange.getMessage().getBody(String.class);
         assertNotNull(json);
+        log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
         if (openApiVersion.equals("3.0")) {
@@ -235,6 +242,7 @@ public class RestOpenApiDefaultProducesConsumesTest {
 
         String json = exchange.getMessage().getBody(String.class);
         assertNotNull(json);
+        log.info(json);
 
         JsonNode root = MAPPER.readTree(json);
         if (openApiVersion.equals("3.0")) {

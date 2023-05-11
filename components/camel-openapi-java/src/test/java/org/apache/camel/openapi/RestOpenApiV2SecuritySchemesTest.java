@@ -16,11 +16,7 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -76,27 +72,23 @@ public class RestOpenApiV2SecuritySchemesTest extends CamelTestSupport {
         config.setVersion("2.0");
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
 
         log.info(json);
 
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
-        assertTrue(json.contains("\"petstore_auth_implicit\" : { \"flow\" : \"implicit\", \"authorizationUrl\" : " +
-                                 "\"https://petstore.swagger.io/oauth/dialog\", \"type\" : \"oauth2\" }"));
-        assertTrue(json.contains("\"oauth_password\" : { \"flow\" : \"password\", \"tokenUrl\" : " +
-                                 "\"https://petstore.swagger.io/oauth/token\", \"type\" : \"oauth2\" }"));
-        assertTrue(json.contains("\"oauth2_accessCode\" : { \"flow\" : \"accessCode\", \"authorizationUrl\" : " +
+        assertTrue(json.contains("\"petstore_auth_implicit\" : { \"type\" : \"oauth2\", \"authorizationUrl\" : " +
+                                 "\"https://petstore.swagger.io/oauth/dialog\", \"flow\" : \"implicit\" }"));
+        assertTrue(json.contains("\"oauth_password\" : { \"type\" : \"oauth2\", \"tokenUrl\" : " +
+                                 "\"https://petstore.swagger.io/oauth/token\", \"flow\" : \"password\" }"));
+        assertTrue(json.contains("\"oauth2_accessCode\" : { \"type\" : \"oauth2\", \"authorizationUrl\" : " +
                                  "\"https://petstore.swagger.io/oauth/dialog\", \"tokenUrl\" : " +
-                                 "\"https://petstore.swagger.io/oauth/token\", \"type\" : \"oauth2\" }"));
+                                 "\"https://petstore.swagger.io/oauth/token\", \"flow\" : \"accessCode\" }"));
         assertTrue(
                 json.contains("\"api_key_header\" : { \"type\" : \"apiKey\", \"name\" : \"myHeader\", \"in\" : \"header\" }"));
         assertTrue(json.contains("\"api_key_query\" : { \"type\" : \"apiKey\", \"name\" : \"myQuery\", \"in\" : \"query\" }"));

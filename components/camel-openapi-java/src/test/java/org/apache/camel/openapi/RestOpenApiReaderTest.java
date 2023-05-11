@@ -16,13 +16,9 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -148,20 +144,15 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        Oas20Info info = new Oas20Info();
-        config.setInfo(info);
+        config.setInfo(new Info());
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
         String flatJson = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         log.info(json);
@@ -180,14 +171,16 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"error\" : \"-1\""));
         assertTrue(json.contains("\"type\" : \"array\""));
 
+        flatJson = flatJson.replaceAll("\"operationId\" : \"[^\\\"]*\", ", "").replaceAll("\"summary\" : \"[^\\\"]*\", ", "");
+        log.info(flatJson);
         assertTrue(flatJson.contains(
-                "\"/hello/bye\" : { \"post\" : { \"consumes\" : [ \"application/xml\" ], \"produces\" : [ \"application/xml\" ], \"tags\" : [ \"/hello\" ],"));
+                "\"/hello/bye\" : { \"post\" : { \"tags\" : [ \"/hello\" ], \"consumes\" : [ \"application/xml\" ], \"produces\" : [ \"application/xml\" ], "));
         assertTrue(flatJson.contains(
-                "\"/tag/single\" : { \"get\" : { \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], \"tags\" : [ \"Organisation\" ],"));
+                "\"/tag/single\" : { \"get\" : { \"tags\" : [ \"Organisation\" ], \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], "));
         assertTrue(flatJson.contains(
-                "\"/tag/multiple/a\" : { \"get\" : { \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], \"tags\" : [ \"Organisation\", \"Group A\" ],"));
+                "\"/tag/multiple/a\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group A\" ], \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], "));
         assertTrue(flatJson.contains(
-                "\"/tag/multiple/b\" : { \"get\" : { \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], \"tags\" : [ \"Organisation\", \"Group B\" ],"));
+                "\"/tag/multiple/b\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group B\" ], \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], "));
         assertTrue(flatJson.contains(
                 "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
 
@@ -200,22 +193,17 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        Oas30Info info = new Oas30Info();
+        Info info = new Info();
         config.setInfo(info);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-        String flatJson = json.replace("\n", " ").replaceAll("\\s+", " ");
-
+        String json = Json.pretty(openApi);
         log.info(json);
+        json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
         assertTrue(json.contains("\"/hello/bye\""));
@@ -224,20 +212,20 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"/hello/hi/{name}\""));
         assertTrue(json.contains("\"type\" : \"number\""));
         assertTrue(json.contains("\"format\" : \"float\""));
-        assertTrue(json.contains("\"application/xml\" : \"<hello>Hi</hello>\""));
-        assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
-        assertTrue(json.contains("\"success\" : \"123\""));
-        assertTrue(json.contains("\"error\" : \"-1\""));
+        assertTrue(json.contains("\"example\" : \"<hello>Hi</hello>\""));
+        assertTrue(json.contains("\"example\" : \"Donald Duck\""));
+        assertTrue(json.contains("\"success\" : { \"value\" : \"123\" }"));
+        assertTrue(json.contains("\"error\" : { \"value\" : \"-1\" }"));
         assertTrue(json.contains("\"type\" : \"array\""));
         assertTrue(json.contains("\"format\" : \"date-time\""));
 
-        assertTrue(flatJson.contains("\"/hello/bye/{name}\" : { \"get\" : { \"tags\" : [ \"/hello\" ],"));
-        assertTrue(flatJson.matches(".*\"/tag/single\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\" ],.*"));
+        assertTrue(json.contains("\"/hello/bye/{name}\" : { \"get\" : { \"tags\" : [ \"/hello\" ],"));
+        assertTrue(json.matches(".*\"/tag/single\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\" ],.*"));
         assertTrue(
-                flatJson.matches(".*\"/tag/multiple/a\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\", \"Group A\" ],.*"));
+                json.matches(".*\"/tag/multiple/a\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\", \"Group A\" ],.*"));
         assertTrue(
-                flatJson.matches(".*\"/tag/multiple/b\" : \\{ \"get\" : .*\"tags\" : \\[ \"Organisation\", \"Group B\" ],.*"));
-        assertTrue(flatJson.contains(
+                json.matches(".*\"/tag/multiple/b\" : \\{ \"get\" : .*\"tags\" : \\[ \"Organisation\", \"Group B\" ],.*"));
+        assertTrue(json.contains(
                 "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
 
         context.stop();

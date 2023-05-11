@@ -16,50 +16,36 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.core.models.Document;
-import io.apicurio.datamodels.core.models.common.SecurityRequirement;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.models.OasOperation;
-import io.apicurio.datamodels.openapi.models.OasParameter;
-import io.apicurio.datamodels.openapi.models.OasPathItem;
-import io.apicurio.datamodels.openapi.models.OasPaths;
-import io.apicurio.datamodels.openapi.models.OasResponse;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Operation;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Parameter;
-import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityDefinitions;
-import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityScheme;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Operation;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
-import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
+import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
+import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.parser.core.models.ParseOptions;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -68,18 +54,16 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
@@ -188,92 +172,45 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         final CamelContext camelContext = getCamelContext();
-        final Document openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
+        final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
+        final Paths paths = openapiDoc.getPaths();
 
-        final OasPaths paths = ((OasDocument) openapiDoc).paths;
-
-        for (final OasPathItem path : paths.getItems()) {
-            final Optional<Entry<HttpMethod, OasOperation>> maybeOperationEntry = getOperationMap(path).entrySet()
-                    .stream().filter(operationEntry -> operationId.equals(operationEntry.getValue().operationId))
+        for (final Entry<String, PathItem> pathEntry : paths.entrySet()) {
+            final PathItem path = pathEntry.getValue();
+            Map<PathItem.HttpMethod, Operation> operationMap = path.readOperationsMap();
+            final Optional<Entry<PathItem.HttpMethod, Operation>> maybeOperationEntry = operationMap.entrySet()
+                    .stream().filter(operationEntry -> operationId.equals(operationEntry.getValue().getOperationId()))
                     .findAny();
 
             if (maybeOperationEntry.isPresent()) {
-                final Entry<HttpMethod, OasOperation> operationEntry = maybeOperationEntry.get();
+                final Entry<PathItem.HttpMethod, Operation> operationEntry = maybeOperationEntry.get();
 
-                final OasOperation operation = operationEntry.getValue();
-                Map<String, OasParameter> pathParameters;
+                final Operation operation = operationEntry.getValue();
+                Map<String, Parameter> pathParameters;
                 if (operation.getParameters() != null) {
                     pathParameters = operation.getParameters().stream()
-                            .filter(p -> "path".equals(p.in))
-                            .collect(Collectors.toMap(OasParameter::getName, Function.identity()));
+                            .filter(p -> "path".equals(p.getIn()))
+                            .collect(Collectors.toMap(Parameter::getName, Function.identity()));
                 } else {
                     pathParameters = new HashMap<>();
                 }
-                final String uriTemplate = resolveUri(path.getPath(), pathParameters);
+                final String uriTemplate = resolveUri(pathEntry.getKey(), pathParameters);
 
                 final HttpMethod httpMethod = operationEntry.getKey();
                 final String method = httpMethod.name();
 
                 return createProducerFor(openapiDoc, operation, method, uriTemplate);
             }
+
         }
 
-        String supportedOperations = paths.getItems().stream().flatMap(p -> getOperationMap(p).values().stream())
-                .map(p -> p.operationId).collect(Collectors.joining(", "));
+        final String supportedOperations = paths.values().stream().flatMap(p -> p.readOperations().stream())
+                .map(Operation::getOperationId).collect(Collectors.joining(", "));
+
         throw new IllegalArgumentException(
                 "The specified operation with ID: `" + operationId
                                            + "` cannot be found in the OpenApi specification loaded from `" + specificationUri
                                            + "`. Operations defined in the specification are: " + supportedOperations);
-    }
-
-    /**
-     * Generates an operationId from provided OpenApi specification path and operation
-     */
-    private void generateMissingOperationId(String path, OasOperation operation) {
-        if (null == operation.operationId) {
-            final StringBuilder idBuilder = new StringBuilder(operation.getMethod().toLowerCase());
-            final Matcher matcher = PATH_EXTRACTOR.matcher(path);
-            while (matcher.find()) {
-                idBuilder.append('-').append(matcher.group(1));
-            }
-            operation.operationId = idBuilder.toString();
-        }
-    }
-
-    private Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
-        Map<HttpMethod, OasOperation> result = new LinkedHashMap<>();
-        final String uriPath = path.getPath();
-
-        if (path.get != null) {
-            generateMissingOperationId(uriPath, path.get);
-            result.put(HttpMethod.GET, path.get);
-        }
-        if (path.put != null) {
-            generateMissingOperationId(uriPath, path.put);
-            result.put(HttpMethod.PUT, path.put);
-        }
-        if (path.post != null) {
-            generateMissingOperationId(uriPath, path.post);
-            result.put(HttpMethod.POST, path.post);
-        }
-        if (path.delete != null) {
-            generateMissingOperationId(uriPath, path.delete);
-            result.put(HttpMethod.DELETE, path.delete);
-        }
-        if (path.patch != null) {
-            generateMissingOperationId(uriPath, path.patch);
-            result.put(HttpMethod.PATCH, path.patch);
-        }
-        if (path.head != null) {
-            generateMissingOperationId(uriPath, path.head);
-            result.put(HttpMethod.HEAD, path.head);
-        }
-        if (path.options != null) {
-            generateMissingOperationId(uriPath, path.options);
-            result.put(HttpMethod.OPTIONS, path.options);
-        }
-
-        return result;
     }
 
     public String getBasePath() {
@@ -342,7 +279,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     Producer createProducerFor(
-            final Document openapi, final OasOperation operation, final String method,
+            final OpenAPI openapi, final Operation operation, final String method,
             final String uriTemplate)
             throws Exception {
 
@@ -366,7 +303,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return new RestOpenApiProducer(endpoint.createProducer(), hasHost);
     }
 
-    String determineBasePath(final Document openapi) {
+    String determineBasePath(final OpenAPI openapi) {
         if (isNotEmpty(basePath)) {
             return basePath;
         }
@@ -376,7 +313,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath = getBasePathFromOasDocument((OasDocument) openapi);
+        final String specificationBasePath = getBasePathFromOpenApi(openapi);
 
         if (isNotEmpty(specificationBasePath)) {
             return specificationBasePath;
@@ -394,22 +331,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
     }
 
-    public static String getBasePathFromOasDocument(final OasDocument openapi) {
+    public static String getBasePathFromOpenApi(final OpenAPI openApi) {
         String basePath = null;
-        if (openapi instanceof Oas20Document) {
-            basePath = ((Oas20Document) openapi).basePath;
-        } else if (openapi instanceof Oas30Document) {
-            if (((Oas30Document) openapi).getServers() != null
-                    && ((Oas30Document) openapi).getServers().get(0) != null) {
-                try {
-                    Oas30Server server = (Oas30Server) ((Oas30Document) openapi).getServers().get(0);
-                    if (server.variables != null && server.variables.get("basePath") != null) {
-                        basePath = server.variables.get("basePath").default_;
-                    }
-                    if (basePath == null) {
-                        // parse server url as fallback
-                        URL serverUrl = new URL(parseVariables(((Oas30Document) openapi).getServers().get(0).url, server));
+        if (openApi.getServers() != null) {
+            for (Server server : openApi.getServers()) {
+                if (server.getUrl() != null) {
+                    try {
+                        URI serverUrl = new URI(parseVariables(server.getUrl(), server));
                         basePath = serverUrl.getPath();
+                        // Is this really necessary?
                         if (basePath.indexOf("//") == 0) {
                             // strip off the first "/" if double "/" exists
                             basePath = basePath.substring(1);
@@ -417,27 +347,24 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                         if ("/".equals(basePath)) {
                             basePath = "";
                         }
+                    } catch (URISyntaxException e) {
+                        //not a valid whole url, just the basePath
+                        basePath = server.getUrl();
                     }
-
-                } catch (MalformedURLException e) {
-                    //not a valid whole url, just the basePath
-                    basePath = ((Oas30Document) openapi).getServers().get(0).url;
                 }
             }
-
         }
         return basePath;
-
     }
 
-    public static String parseVariables(String url, Oas30Server server) {
+    public static String parseVariables(String url, Server server) {
         Pattern p = Pattern.compile("\\{(.*?)\\}");
         Matcher m = p.matcher(url);
         while (m.find()) {
 
             String var = m.group(1);
-            if (server != null && server.variables != null && server.variables.get(var) != null) {
-                String varValue = server.variables.get(var).default_;
+            if (server != null && server.getVariables() != null && server.getVariables().get(var) != null) {
+                String varValue = server.getVariables().get(var).getDefault();
                 url = url.replace("{" + var + "}", varValue);
             }
         }
@@ -448,7 +375,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return Optional.ofNullable(componentName).orElse(component().getComponentName());
     }
 
-    Map<String, Object> determineEndpointParameters(final Document openapi, final OasOperation operation) {
+    Map<String, Object> determineEndpointParameters(final OpenAPI openapi, final Operation operation) {
         final Map<String, Object> parameters = new HashMap<>();
 
         final String componentName = determineComponentName();
@@ -456,7 +383,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             parameters.put("producerComponentName", componentName);
         }
 
-        final String host = determineHost(openapi);
+        final String host = determineHost(openapi, operation);
         if (host != null) {
             parameters.put("host", host);
         }
@@ -466,20 +393,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // what we consume is what the API defined by OpenApi specification
         // produces
         List<String> specificationLevelConsumers = new ArrayList<>();
-        if (openapi instanceof Oas20Document) {
-            specificationLevelConsumers = ((Oas20Document) openapi).produces;
-        }
-        List<String> operationLevelConsumers = new ArrayList<>();
-        if (operation instanceof Oas20Operation) {
-            operationLevelConsumers = ((Oas20Operation) operation).produces;
-        } else if (operation instanceof Oas30Operation) {
-            Oas30Operation oas30Operation = (Oas30Operation) operation;
-            if (oas30Operation.responses != null) {
-                for (OasResponse response : oas30Operation.responses.getResponses()) {
-                    operationLevelConsumers.addAll(((Oas30Response) response).content.keySet());
+        Set<String> operationLevelConsumers = new java.util.HashSet<>();
+        if (operation.getResponses() != null) {
+            for (ApiResponse response : operation.getResponses().values()) {
+                if (response.getContent() != null) {
+                    operationLevelConsumers.addAll(response.getContent().keySet());
                 }
             }
         }
+
         final String determinedConsumes = determineOption(specificationLevelConsumers, operationLevelConsumers,
                 component.getConsumes(), consumes);
 
@@ -488,19 +410,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         // what we produce is what the API defined by OpenApi specification consumes
-
         List<String> specificationLevelProducers = new ArrayList<>();
-        if (openapi instanceof Oas20Document) {
-            specificationLevelProducers = ((Oas20Document) openapi).consumes;
-        }
-        List<String> operationLevelProducers = new ArrayList<>();
-        if (operation instanceof Oas20Operation) {
-            operationLevelProducers = ((Oas20Operation) operation).consumes;
-        } else if (operation instanceof Oas30Operation) {
-            Oas30Operation oas30Operation = (Oas30Operation) operation;
-            if (oas30Operation.requestBody != null && oas30Operation.requestBody.content != null) {
-                operationLevelProducers.addAll(oas30Operation.requestBody.content.keySet());
-            }
+        Set<String> operationLevelProducers = new java.util.HashSet<>();
+        if (operation.getRequestBody() != null && operation.getRequestBody().getContent() != null) {
+            operationLevelProducers.addAll(operation.getRequestBody().getContent().keySet());
         }
 
         final String determinedProducers = determineOption(specificationLevelProducers, operationLevelProducers,
@@ -538,10 +451,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (this.parameters != null) {
             if (operation.getParameters() != null) {
                 for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
-                    for (OasParameter param : operation.getParameters()) {
+                    for (Parameter param : operation.getParameters()) {
                         // skip parameters that are part of the operation as path as otherwise
                         // it will be duplicated as query parameter as well
-                        boolean clash = "path".equals(param.in) && entry.getKey().equals(param.getName());
+                        boolean clash = "path".equals(param.getIn()) && entry.getKey().equals(param.getName());
                         if (!clash) {
                             nestedParameters.put(entry.getKey(), entry.getValue());
                         }
@@ -560,7 +473,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return parameters;
     }
 
-    String determineHost(final Document openapi) {
+    String determineHost(final OpenAPI openApi, Operation operation) {
         if (isNotEmpty(host)) {
             return host;
         }
@@ -570,34 +483,36 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentHost;
         }
 
-        if (openapi instanceof Oas20Document) {
-            final String openapiScheme = pickBestScheme(specificationUri.getScheme(), ((Oas20Document) openapi).schemes);
-            final String openapiHost = ((Oas20Document) openapi).host;
-
-            if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
-                return openapiScheme + "://" + openapiHost;
-            }
-        } else if (openapi instanceof Oas30Document) {
-            //In OpenApi 3.0, scheme/host are in servers url section
-            //But there could be many servers url(like one for production and one for test)
-            //Use first one here
-            Oas30Document oas30Document = (Oas30Document) openapi;
-            if (oas30Document.getServers() != null
-                    && oas30Document.getServers().get(0) != null) {
-                try {
-
-                    URL serverUrl = new URL(
-                            parseVariables(oas30Document.getServers().get(0).url,
-                                    (Oas30Server) oas30Document.getServers().get(0)));
-                    final String openapiScheme = serverUrl.getProtocol();
-                    final String openapiHost = serverUrl.getHost();
-                    if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
-                        return openapiScheme + "://" + openapiHost;
-                    }
-                } catch (MalformedURLException e) {
-                    throw new IllegalStateException(e);
+        URI absoluteURI = null;
+        URI relativeURI = null;
+        Set<URI> operationURIs = getURIs(operation.getServers());
+        // Check if at least one of them is absolute:
+        Optional<URI> opURI = operationURIs.stream().filter(uri -> uri.isAbsolute()).findFirst();
+        if (opURI.isEmpty()) {
+            // look for absolute at api level + possible relative URI for the operation
+            Set<URI> apiURIs = getURIs(openApi.getServers());
+            for (URI uri : apiURIs) {
+                if (uri.isAbsolute()) {
+                    absoluteURI = uri;
+                } else {
+                    relativeURI = uri;
                 }
             }
+            for (URI uri : operationURIs) {
+                if (absoluteURI != null) {
+                    absoluteURI = absoluteURI.resolve(uri);
+                } else if (relativeURI != null && !relativeURI.equals(uri)) {
+                    // concatenate the relativeURIs
+                    relativeURI = relativeURI.resolve(uri);
+                } else {
+                    relativeURI = uri;
+                }
+            }
+        } else {
+            absoluteURI = opURI.get();
+        }
+        if (absoluteURI != null) {
+            return absoluteURI.toString();
         }
 
         final CamelContext camelContext = getCamelContext();
@@ -631,7 +546,22 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                                         + " and there is no global RestConfiguration with those properties");
     }
 
-    String literalPathParameterValue(final OasParameter parameter) {
+    private Set<URI> getURIs(List<Server> servers) {
+        Set<URI> uris = new java.util.HashSet<URI>();
+        if (servers != null) {
+            for (Server server : servers) {
+                try {
+                    uris.add(new URI(parseVariables(server.getUrl(), server)));
+                } catch (URISyntaxException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        return uris;
+    }
+
+    String literalPathParameterValue(final Parameter parameter) {
         final String name = parameter.getName();
 
         final String valueStr = String.valueOf(parameters.get(name));
@@ -639,7 +569,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return UnsafeUriCharactersEncoder.encode(valueStr);
     }
 
-    String literalQueryParameterValue(final OasParameter parameter) {
+    String literalQueryParameterValue(final Parameter parameter) {
         final String name = parameter.getName();
 
         final String valueStr = String.valueOf(parameters.get(name));
@@ -648,7 +578,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return name + "=" + encoded;
     }
 
-    String queryParameter(final OasParameter parameter) {
+    String queryParameter(final Parameter parameter) {
         final String name = parameter.getName();
         if (ObjectHelper.isEmpty(name)) {
             return "";
@@ -661,7 +591,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return queryParameterExpression(parameter);
     }
 
-    String resolveUri(final String uriTemplate, final Map<String, OasParameter> pathParameters) {
+    String resolveUri(final String uriTemplate, final Map<String, Parameter> pathParameters) {
         if (pathParameters.isEmpty()) {
             return uriTemplate;
         }
@@ -682,7 +612,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             final String name = uriTemplate.substring(start + 1, end);
 
             if (parameters.containsKey(name)) {
-                final OasParameter parameter = pathParameters.get(name);
+                final Parameter parameter = pathParameters.get(name);
                 final Object value = literalPathParameterValue(parameter);
                 resolved.append(value);
             } else {
@@ -701,7 +631,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     static String determineOption(
-            final List<String> specificationLevel, final List<String> operationLevel,
+            final List<String> specificationLevel, final Set<String> operationLevel,
             final String componentLevel, final String endpointLevel) {
         if (isNotEmpty(endpointLevel)) {
             return endpointLevel;
@@ -722,54 +652,30 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return null;
     }
 
-    static Stream<OasParameter> determineQueryParameters(final Document openapi, final OasOperation operation) {
-        final List<SecurityRequirement> securityRequirements = operation.security;
-        final List<OasParameter> apiKeyQueryParameters = new ArrayList<>();
+    static Stream<Parameter> determineQueryParameters(final OpenAPI openApi, final Operation operation) {
+        final List<SecurityRequirement> securityRequirements = operation.getSecurity();
+        final List<Parameter> securityQueryParameters = new ArrayList<>();
         if (securityRequirements != null) {
-            if (openapi instanceof Oas20Document) {
-                Oas20Document oas20Document = (Oas20Document) openapi;
-                Oas20SecurityDefinitions securityDefinitions = oas20Document.securityDefinitions;
+            final Map<String, SecurityScheme> securityDefinitions = openApi.getComponents().getSecuritySchemes();
 
-                for (final SecurityRequirement securityRequirement : securityRequirements) {
-                    for (final String securityRequirementName : securityRequirement.getSecurityRequirementNames()) {
-                        final Oas20SecurityScheme securitySchemeDefinition = securityDefinitions
-                                .getSecurityScheme(securityRequirementName);
-                        if (securitySchemeDefinition.in != null
-                                && securitySchemeDefinition.in.equals("query")) {
-                            Oas20Parameter securityParameter = new Oas20Parameter(securitySchemeDefinition.name);
-                            securityParameter.required = true;
-                            securityParameter.type = "string";
-                            securityParameter.description = securitySchemeDefinition.description;
-                            apiKeyQueryParameters.add(securityParameter);
-                        }
-
+            for (final Map<String, List<String>> securityRequirement : securityRequirements) {
+                for (final String securityRequirementName : securityRequirement.keySet()) {
+                    final SecurityScheme securitySchemeDefinition = securityDefinitions
+                            .get(securityRequirementName);
+                    if (In.QUERY.equals(securitySchemeDefinition.getIn())) {
+                        securityQueryParameters.add(new Parameter().name(securitySchemeDefinition.getName())
+                                .required(true).description(securitySchemeDefinition.getDescription()));
+                        // Not needed to set schema or style?
                     }
                 }
-            } else if (openapi instanceof Oas30Document) {
-                Oas30Document oas30Document = (Oas30Document) openapi;
-                for (final SecurityRequirement securityRequirement : securityRequirements) {
-                    for (final String securityRequirementName : securityRequirement.getSecurityRequirementNames()) {
-                        final Oas30SecurityScheme securitySchemeDefinition = oas30Document.components
-                                .getSecurityScheme(securityRequirementName);
-                        if (securitySchemeDefinition.in != null && securitySchemeDefinition.in.equals("query")) {
-                            Oas30Parameter securityParameter = new Oas30Parameter(securitySchemeDefinition.name);
-                            securityParameter.required = true;
-                            securityParameter.description = securitySchemeDefinition.description;
-                            apiKeyQueryParameters.add(securityParameter);
-                        }
-
-                    }
-                }
-            } else {
-                throw new IllegalStateException("We only support OpenApi 2.0 or 3.0 document here");
             }
         }
 
         if (operation.getParameters() != null) {
-            return Stream.concat(apiKeyQueryParameters.stream(),
-                    operation.getParameters().stream().filter(p -> "query".equals(p.in)));
+            return Stream.concat(securityQueryParameters.stream(),
+                    operation.getParameters().stream().filter(p -> "query".equals(p.getIn())));
         } else {
-            return apiKeyQueryParameters.stream();
+            return securityQueryParameters.stream();
         }
     }
 
@@ -796,43 +702,38 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Loads the OpenApi definition model from the given path. Tries to resolve the resource using Camel's resource
-     * loading support, if it fails uses OpenApi's resource loading support instead.
+     * Loads the OpenApi definition model from the given path. This delegates directly to the OpenAPI parser. If the
+     * specification can't be read there is no OpenAPI object in the result.
      *
      * @param  uri          URI of the specification
      * @param  camelContext context to use
      * @return              the specification
      */
-    static Document loadSpecificationFrom(final CamelContext camelContext, final URI uri) {
+    static OpenAPI loadSpecificationFrom(final CamelContext camelContext, final URI uri) {
         final String uriAsString = uri.toString();
-        JsonFactory factory = null;
+        final OpenAPIParser openApiParser = new OpenAPIParser();
+        final ParseOptions options = new ParseOptions();
+        options.setResolveFully(true);
+        final SwaggerParseResult openApi = openApiParser.readLocation(uriAsString, null, options);
 
-        try {
-            final Resource resource = ResourceHelper.resolveMandatoryResource(camelContext, uriAsString);
+        if (openApi != null && openApi.getOpenAPI() != null) {
+            checkV2specification(openApi.getOpenAPI(), uri);
+            return openApi.getOpenAPI();
+        }
 
-            try (InputStream stream = resource.getInputStream()) {
-                if (stream == null) {
-                    String resourcePath = FileUtil.compactPath(uriAsString, '/');
-                    throw new FileNotFoundException("Cannot find resource: " + resourcePath + " for URI: " + uri);
-                }
+        // In theory there should be a message in the parse result but it has disappeared...
+        throw new IllegalArgumentException(
+                "The given OpenApi specification could not be loaded from `" + uri + "`.");
+    }
 
-                if (RestOpenApiHelper.isYamlResource(resource)) {
-                    factory = new YAMLFactory();
-                }
-
-                ObjectMapper mapper = new ObjectMapper(factory);
-                final JsonNode node = mapper.readTree(stream);
-
-                return Library.readDocument(node);
+    private static void checkV2specification(OpenAPI openAPI, final URI uri) {
+        if (openAPI.getExtensions() != null) {
+            Object swaggerVersion = openAPI.getExtensions().get("x-original-swagger-version");
+            if (swaggerVersion != null) {
+                LoggerFactory.getLogger(RestOpenApiEndpoint.class).info(
+                        "The specification {} was upgraded from {} to OpenAPI {}",
+                        uri, swaggerVersion, openAPI.getSpecVersion());
             }
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                    "The given OpenApi specification could not be loaded from `" + uri
-                                               + "`. Tried loading using Camel's resource resolution and using OpenApi's own resource resolution."
-                                               + " OpenApi tends to swallow exceptions while parsing, try specifying Java system property `debugParser`"
-                                               + " (e.g. `-DdebugParser=true`), the exception that occurred when loading using Camel's resource"
-                                               + " loader follows",
-                    e);
         }
     }
 
@@ -850,26 +751,16 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // there is no support for WebSocket (Scheme.WS, Scheme.WSS)
     }
 
-    static String queryParameterExpression(final OasParameter parameter) {
+    static String queryParameterExpression(final Parameter parameter) {
         final String name = parameter.getName();
 
         final StringBuilder expression = new StringBuilder(name).append("={").append(name);
-        if (parameter.required == null || !parameter.required) {
+        if (parameter.getRequired() == null || !parameter.getRequired()) {
             expression.append('?');
         }
         expression.append('}');
 
         return expression.toString();
-    }
-
-    enum HttpMethod {
-        POST,
-        GET,
-        PUT,
-        PATCH,
-        DELETE,
-        HEAD,
-        OPTIONS
     }
 
 }

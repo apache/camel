@@ -16,13 +16,9 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -72,21 +68,15 @@ public class RestOpenApiReaderDisabledTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        Oas20Info info = new Oas20Info();
-        config.setInfo(info);
+        config.setInfo(new Info());
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-
+        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
@@ -114,20 +104,14 @@ public class RestOpenApiReaderDisabledTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
-        Oas30Info info = new Oas30Info();
-        config.setInfo(info);
+        config.setInfo(new Info());
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
-
+        String json = io.swagger.v3.core.util.Json.pretty(openApi);
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
@@ -139,10 +123,10 @@ public class RestOpenApiReaderDisabledTest extends CamelTestSupport {
         assertFalse(json.contains("\"/api/hello/hi/{name}\""));
         assertFalse(json.contains("\"type\" : \"number\""));
         assertFalse(json.contains("\"format\" : \"float\""));
-        assertFalse(json.contains("\"application/xml\" : \"<hello>Hi</hello>\""));
-        assertTrue(json.contains("\"x-example\" : \"Donald Duck\""));
-        assertFalse(json.contains("\"success\" : \"123\""));
-        assertFalse(json.contains("\"error\" : \"-1\""));
+        assertFalse(json.contains("\"example\" : \"<hello>Hi</hello>\""));
+        assertTrue(json.contains("\"example\" : \"Donald Duck\""));
+        assertFalse(json.contains("\"success\" : { \"value\" : \"123\" }"));
+        assertFalse(json.contains("\"error\" : { \"value\" : \"-1\" }"));
         assertTrue(json.contains("\"type\" : \"array\""));
 
         context.stop();

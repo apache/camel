@@ -16,11 +16,7 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -68,17 +64,12 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         config.setBasePath("/api");
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = null;
+        OpenAPI openApi = null;
         openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
 
         assertNotNull(openApi);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
         log.info(json);
 
         assertFalse(json.contains("\"/hello/bye\""));
@@ -96,17 +87,12 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = null;
+        OpenAPI openApi = null;
         openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
 
         assertNotNull(openApi);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = io.swagger.v3.core.util.Json.pretty(openApi);
         log.info(json);
 
         assertFalse(json.contains("\"/hello/bye\""));

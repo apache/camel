@@ -19,11 +19,7 @@ package org.apache.camel.openapi;
 import java.util.List;
 import java.util.Properties;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -93,15 +89,10 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestOpenApiSupport support = new RestOpenApiSupport();
         List<RestDefinition> rests = support.getRestDefinitions(context);
 
-        OasDocument openApi = reader.read(context, rests, config, context.getName(), new DefaultClassResolver());
+        OpenAPI openApi = reader.read(context, rests, config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = RestOpenApiSupport.getJsonFromOpenAPI(openApi, config);
 
         log.info(json);
 
