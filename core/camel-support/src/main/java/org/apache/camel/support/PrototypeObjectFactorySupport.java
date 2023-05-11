@@ -95,7 +95,7 @@ public abstract class PrototypeObjectFactorySupport<T> extends ServiceSupport im
     /**
      * Represents utilization statistics
      */
-    protected final class UtilizationStatistics implements Statistics {
+    protected static final class UtilizationStatistics implements Statistics {
 
         public final LongAdder created = new LongAdder();
         public final LongAdder acquired = new LongAdder();
