@@ -16,49 +16,45 @@
  */
 package org.apache.camel.component.snmp;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.snmp4j.mp.SnmpConstants;
 
-public class PollOIDTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
+public class PollOIDTest extends SnmpRespondTestSupport {
 
-    // a disabled test... before enabling you must fill in a working IP, Port
-    // and maybe oids in the route below
-    @Disabled
-    @Test
-    public void testOIDPolling() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    @ParameterizedTest
+    @MethodSource("supportedVersions")
+    public void testOIDPolling(int version) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultV" + version);
         mock.expectedMinimumMessageCount(1);
         mock.assertIsSatisfied();
-        List<Exchange> oids = mock.getExchanges();
-        if (LOG.isInfoEnabled()) {
-            for (Exchange e : oids) {
-                LOG.info("OID: " + e.getIn().getBody(String.class));
-            }
-        }
-    }
 
-    @Test
-    public void testStartRoute() {
-        // do nothing here , just make sure the camel route can started.
+        SnmpMessage snmpMessage = mock.getReceivedExchanges().get(0).getIn().getBody(SnmpMessage.class);
+        String responseToMatch = "My Printer - response #\\d+, using version: " + version;
+        String receivedMessage = snmpMessage.getSnmpMessage().getVariable(SnmpConstants.sysDescr).toString();
+        Assertions.assertTrue(receivedMessage.matches(responseToMatch),
+                "Expected string matching '" + responseToMatch + "'. Got: " + receivedMessage);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: e1
-                from("snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0")
-                        .transform(body().convertToString()).to("mock:result");
-                // END SNIPPET: e1
+                from(String.format("snmp:%s?protocol=udp&type=POLL&snmpVersion=0&oids=%s&delay=100", getListeningAddress(),
+                        SnmpConstants.sysName))
+                        .to("mock:resultV0");
+
+                from(String.format("snmp:%s?protocol=udp&type=POLL&snmpVersion=1&oids=%s&delay=100", getListeningAddress(),
+                        SnmpConstants.sysName))
+                        .to("mock:resultV1");
+
+                from(String.format(
+                        "snmp:%s?protocol=udp&type=POLL&snmpVersion=3&securityName=%s&securityLevel=1&oids=%s&delay=100",
+                        getListeningAddress(), SECURITY_NAME, SnmpConstants.sysName))
+                        .to("mock:resultV3");
             }
         };
     }
