@@ -6,15 +6,17 @@
   "paths" : {
     "/complexRequest" : {
       "post" : {
+        "summary" : "Demo complex request type",
+        "operationId" : "verb",
         "consumes" : [ "application/json" ],
         "produces" : [ "text/plain" ],
         "parameters" : [ {
+          "in" : "body",
           "name" : "body",
+          "required" : true,
           "schema" : {
             "$ref" : "#/definitions/SampleComplexRequestType"
-          },
-          "in" : "body",
-          "required" : true
+          }
         } ],
         "responses" : {
           "200" : {
@@ -24,13 +26,35 @@
             }
           }
         },
-        "operationId" : "verb",
-        "summary" : "Demo complex request type",
         "x-camelContextId" : "camel"
       }
     }
   },
+  "securityDefinitions" : {
+    "global" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "https://AUTHORIZATION_URL",
+      "tokenUrl" : "https://TOKEN_URL",
+      "flow" : "accessCode",
+      "scopes" : {
+        "groups" : "Required scopes for Camel REST APIs"
+      }
+    }
+  },
   "definitions" : {
+    "SampleComplexResponseType_InnerClass" : {
+      "type" : "object",
+      "properties" : {
+        "doubleField" : {
+          "type" : "number",
+          "format" : "double"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
+        "type" : "string"
+      }
+    },
     "CustomData" : {
       "type" : "object",
       "properties" : {
@@ -44,42 +68,9 @@
       }
     },
     "SampleComplexRequestType" : {
-      "required" : [ "mapOfStrings", "requestField1" ],
       "type" : "object",
+      "required" : [ "mapOfStrings", "requestField1" ],
       "properties" : {
-        "data" : {
-          "$ref" : "#/definitions/CustomData"
-        },
-        "listOfData" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/CustomData"
-          }
-        },
-        "listOfListOfData" : {
-          "type" : "array",
-          "items" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/definitions/CustomData"
-            }
-          }
-        },
-        "mapOfData" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "$ref" : "#/definitions/CustomData"
-          }
-        },
-        "mapOfMapOfData" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/definitions/CustomData"
-            }
-          }
-        },
         "requestField1" : {
           "type" : "string"
         },
@@ -92,10 +83,46 @@
             "type" : "string"
           }
         },
+        "data" : {
+          "$ref" : "#/definitions/CustomData"
+        },
+        "mapOfData" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "$ref" : "#/definitions/CustomData"
+          }
+        },
         "arrayOfString" : {
           "type" : "array",
           "items" : {
             "type" : "string"
+          }
+        },
+        "mapOfMapOfData" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/definitions/CustomData"
+            }
+          }
+        },
+        "innerClass" : {
+          "$ref" : "#/definitions/SampleComplexRequestType_InnerClass"
+        },
+        "listOfListOfData" : {
+          "type" : "array",
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/CustomData"
+            }
+          }
+        },
+        "listOfData" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CustomData"
           }
         },
         "mapOfStrings" : {
@@ -105,11 +132,8 @@
           }
         },
         "timeUnit" : {
-          "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ],
-          "type" : "string"
-        },
-        "innerClass" : {
-          "$ref" : "#/definitions/SampleComplexRequestType_InnerClass"
+          "type" : "string",
+          "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
         }
       },
       "x-className" : {
@@ -121,38 +145,14 @@
       "type" : "object",
       "properties" : {
         "longField" : {
-          "format" : "int64",
-          "type" : "integer"
+          "type" : "integer",
+          "format" : "int64"
         }
       },
       "x-className" : {
         "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
         "type" : "string"
       }
-    },
-    "SampleComplexResponseType_InnerClass" : {
-      "type" : "object",
-      "properties" : {
-        "doubleField" : {
-          "format" : "double",
-          "type" : "number"
-        }
-      },
-      "x-className" : {
-        "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
-        "type" : "string"
-      }
-    }
-  },
-  "securityDefinitions" : {
-    "global" : {
-      "flow" : "accessCode",
-      "authorizationUrl" : "https://AUTHORIZATION_URL",
-      "tokenUrl" : "https://TOKEN_URL",
-      "scopes" : {
-        "groups" : "Required scopes for Camel REST APIs"
-      },
-      "type" : "oauth2"
     }
   }
 }

@@ -101,7 +101,9 @@ public class RestOpenApiComponentYamlTest extends CamelTestSupport {
         assertEquals(Integer.valueOf(14), created.id);
 
         petstore.verify(
-                postRequestedFor(urlEqualTo("/v2/pet")).withHeader("Accept", equalTo("application/xml, application/json"))
+                postRequestedFor(urlEqualTo("/v2/pet"))
+                        // Swagger V2 converted to V3 ignores "produces" if there is no associated response schema
+                        //.withHeader("Accept", equalTo("application/xml, application/json"))
                         .withHeader("Content-Type", equalTo("application/xml")));
     }
 

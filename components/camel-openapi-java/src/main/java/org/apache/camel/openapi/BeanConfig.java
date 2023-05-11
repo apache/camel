@@ -16,14 +16,9 @@
  */
 package org.apache.camel.openapi;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import io.apicurio.datamodels.core.models.common.Info;
-import io.apicurio.datamodels.core.models.common.Server;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 
 public class BeanConfig {
     public static final String DEFAULT_MEDIA_TYPE = "application/json";
@@ -126,40 +121,15 @@ public class BeanConfig {
         this.defaultProduces = defaultProduces;
     }
 
-    public OasDocument configure(OasDocument openApi) {
-        if (openApi instanceof Oas20Document) {
-            configureOas20((Oas20Document) openApi);
-        } else if (openApi instanceof Oas30Document) {
-            configureOas30((Oas30Document) openApi);
+    public OpenAPI configure(OpenAPI openApi) {
+        if (info != null) {
+            openApi.setInfo(info);
+        }
+        for (String scheme : this.schemes) {
+            Server server = new Server().url(scheme + "://" + this.host + this.basePath);
+            openApi.addServersItem(server);
         }
         return openApi;
-    }
-
-    private void configureOas30(Oas30Document openApi) {
-        if (info != null) {
-            openApi.info = info;
-            info._ownerDocument = openApi;
-            info._parent = openApi;
-        }
-        Server server = openApi.createServer();
-        server.url = this.schemes[0] + "://" + this.host + this.basePath;
-        openApi.addServer(server);
-    }
-
-    private void configureOas20(Oas20Document openApi) {
-        if (schemes != null) {
-            if (openApi.schemes == null) {
-                openApi.schemes = new ArrayList<String>();
-            }
-            openApi.schemes.addAll(Arrays.asList(schemes));
-        }
-        if (info != null) {
-            openApi.info = info;
-            info._ownerDocument = openApi;
-            info._parent = openApi;
-        }
-        openApi.host = host;
-        openApi.basePath = basePath;
     }
 
     public boolean isOpenApi3() {

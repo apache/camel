@@ -18,7 +18,7 @@ package org.apache.camel.openapi;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +26,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.apicurio.datamodels.core.models.common.Contact;
-import io.apicurio.datamodels.core.models.common.License;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.rest.RestDefinition;
@@ -102,137 +97,94 @@ public class RestOpenApiSupport {
         response.setHeader("Access-Control-Max-Age", maxAge);
     }
 
-    static void setupXForwardedHeaders(OasDocument openApi, Map<String, Object> headers) {
+    static void setupXForwardedHeaders(OpenAPI openApi, Map<String, Object> headers) {
 
         String basePath = getBasePathFromOasDocument(openApi);
 
-        if (openApi instanceof Oas20Document) {
-            String host = (String) headers.get(HEADER_HOST);
-            if (ObjectHelper.isNotEmpty(host)) {
-                ((Oas20Document) openApi).host = host;
+        String host = (String) headers.get(HEADER_HOST);
+
+        String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
+
+        if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
+            basePath = URISupport.joinPaths(forwardedPrefix, basePath);
+        }
+
+        String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
+        if (ObjectHelper.isNotEmpty(forwardedHost)) {
+            host = forwardedHost;
+        }
+
+        String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
+        if (openApi.getServers() != null) {
+            openApi.getServers().clear();
+        }
+        if (ObjectHelper.isNotEmpty(proto)) {
+            String[] schemes = proto.split(",");
+            for (String schema : schemes) {
+                String trimmedScheme = schema.trim();
+                String serverUrl = String.format("%s://%s%s", trimmedScheme.toLowerCase(), host, basePath);
+                openApi.addServersItem(new Server().url(serverUrl));
             }
-
-            String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
-            if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
-                ((Oas20Document) openApi).basePath = URISupport.joinPaths(forwardedPrefix, basePath);
-            }
-
-            String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
-            if (ObjectHelper.isNotEmpty(forwardedHost)) {
-                ((Oas20Document) openApi).host = forwardedHost;
-            }
-
-            String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
-            if (ObjectHelper.isNotEmpty(proto)) {
-                String[] schemes = proto.split(",");
-                for (String scheme : schemes) {
-                    String trimmedScheme = scheme.trim();
-                    if (ObjectHelper.isNotEmpty(trimmedScheme)) {
-                        if (((Oas20Document) openApi).schemes == null) {
-                            ((Oas20Document) openApi).schemes = new ArrayList<>();
-                        }
-                        ((Oas20Document) openApi).schemes.add(trimmedScheme.toLowerCase());
-                    }
-                }
-            }
-        } else if (openApi instanceof Oas30Document) {
-
-            String host = (String) headers.get(HEADER_HOST);
-
-            String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
-
-            if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
-                basePath = URISupport.joinPaths(forwardedPrefix, basePath);
-            }
-
-            String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
-            if (ObjectHelper.isNotEmpty(forwardedHost)) {
-                host = forwardedHost;
-            }
-
-            String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
-            if (((Oas30Document) openApi).getServers() != null) {
-                ((Oas30Document) openApi).getServers().clear();
-            }
-            if (ObjectHelper.isNotEmpty(proto)) {
-                String[] schemes = proto.split(",");
-                for (String schema : schemes) {
-                    String trimmedScheme = schema.trim();
-                    String serverUrl = String.format("%s://%s%s", trimmedScheme.toLowerCase(), host, basePath);
-                    ((Oas30Document) openApi).addServer(serverUrl, null);
-
-                }
-            } else {
-                ((Oas30Document) openApi).addServer(basePath, null);
-            }
-
+        } else {
+            openApi.addServersItem(new Server().url(basePath));
         }
     }
 
-    public static String getHostFromOasDocument(final OasDocument openapi) {
+    public static String getHostFromOasDocument(final OpenAPI openapi) {
         String host = null;
-        if (openapi instanceof Oas20Document) {
-            host = ((Oas20Document) openapi).host;
-        } else if (openapi instanceof Oas30Document) {
-            if (((Oas30Document) openapi).getServers() != null
-                    && ((Oas30Document) openapi).getServers().get(0) != null) {
-                try {
-                    URL serverUrl = new URL(
-                            parseVariables(((Oas30Document) openapi).getServers().get(0).url,
-                                    (Oas30Server) ((Oas30Document) openapi).getServers().get(0)));
-                    host = serverUrl.getHost();
+        if (openapi.getServers() != null
+                && openapi.getServers().get(0) != null) {
+            try {
+                URL serverUrl = new URL(
+                        parseVariables(openapi.getServers().get(0).getUrl(),
+                                openapi.getServers().get(0)));
+                host = serverUrl.getHost();
 
-                } catch (MalformedURLException e) {
-                    LOG.info("error when parsing OpenApi 3.0 doc server url", e);
-                }
+            } catch (MalformedURLException e) {
+                LOG.info("error when parsing OpenApi 3.0 doc server url", e);
             }
         }
         return host;
 
     }
 
-    public static String getBasePathFromOasDocument(final OasDocument openapi) {
+    public static String getBasePathFromOasDocument(final OpenAPI openapi) {
         String basePath = null;
-        if (openapi instanceof Oas20Document) {
-            basePath = ((Oas20Document) openapi).basePath;
-        } else if (openapi instanceof Oas30Document) {
-            if (((Oas30Document) openapi).getServers() != null
-                    && ((Oas30Document) openapi).getServers().get(0) != null) {
-                try {
-                    Oas30Server server = (Oas30Server) ((Oas30Document) openapi).getServers().get(0);
-                    if (server.variables != null && server.variables.get("basePath") != null) {
-                        basePath = server.variables.get("basePath").default_;
-                    }
-                    if (basePath == null) {
-                        // parse server url as fallback
-                        URL serverUrl = new URL(
-                                parseVariables(((Oas30Document) openapi).getServers().get(0).url,
-                                        (Oas30Server) ((Oas30Document) openapi).getServers().get(0)));
-                        // strip off the first "/" if double "/" exists
-                        basePath = serverUrl.getPath().replaceAll("//", "/");
-                        if ("/".equals(basePath)) {
-                            basePath = "";
-                        }
-                    }
-
-                } catch (MalformedURLException e) {
-                    //not a valid whole url, just the basePath
-                    basePath = ((Oas30Document) openapi).getServers().get(0).url;
+        if (openapi.getServers() != null
+                && openapi.getServers().get(0) != null) {
+            try {
+                Server server = openapi.getServers().get(0);
+                if (server.getVariables() != null && server.getVariables().get("basePath") != null) {
+                    basePath = server.getVariables().get("basePath").getDefault();
                 }
-            }
+                if (basePath == null) {
+                    // parse server url as fallback
+                    URL serverUrl = new URL(
+                            parseVariables(openapi.getServers().get(0).getUrl(),
+                                    openapi.getServers().get(0)));
+                    // strip off the first "/" if double "/" exists
+                    basePath = serverUrl.getPath().replaceAll("//", "/");
+                    if ("/".equals(basePath)) {
+                        basePath = "";
+                    }
+                }
 
+            } catch (MalformedURLException e) {
+                //not a valid whole url, just the basePath
+                basePath = openapi.getServers().get(0).getUrl();
+            }
         }
 
         return basePath;
     }
 
-    public static String parseVariables(String url, Oas30Server server) {
+    public static String parseVariables(String url, Server server) {
         Pattern p = Pattern.compile("\\{(.*?)}");
         Matcher m = p.matcher(url);
         while (m.find()) {
             String var = m.group(1);
-            if (server != null && server.variables != null && server.variables.get(var) != null) {
-                String varValue = server.variables.get(var).default_;
+            if (server != null && server.getVariables() != null && server.getVariables().get(var) != null) {
+                String varValue = server.getVariables().get(var).getDefault();
                 url = url.replace("{" + var + "}", varValue);
             }
         }
@@ -290,65 +242,24 @@ public class RestOpenApiSupport {
         String contactUrl = (String) config.get("api.contact.url");
         String contactEmail = (String) config.get("api.contact.email");
 
-        if (!openApiConfig.isOpenApi3()) {
-            setInfoOas20(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
-                    contactName, contactUrl, contactEmail);
-        } else {
-            setInfoOas30(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
-                    contactName, contactUrl, contactEmail);
-        }
+        setInfo(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
+                contactName, contactUrl, contactEmail);
     }
 
-    private void setInfoOas30(
+    private void setInfo(
             BeanConfig openApiConfig, String version, String title, String description,
             String termsOfService, String licenseName, String licenseUrl,
             String contactName, String contactUrl, String contactEmail) {
-        Oas30Info info = new Oas30Info();
-        info.version = version;
-        info.title = title;
-        info.description = description;
-        info.termsOfService = termsOfService;
+        Info info = new Info().version(version).title(title).description(description).termsOfService(termsOfService);
 
         if (licenseName != null || licenseUrl != null) {
-            License license = info.createLicense();
-            license.name = licenseName;
-            license.url = licenseUrl;
-            info.license = license;
+            License license = new License().name(licenseName).url(licenseUrl);
+            info.setLicense(license);
         }
 
         if (contactName != null || contactUrl != null || contactEmail != null) {
-            Contact contact = info.createContact();
-            contact.name = contactName;
-            contact.url = contactUrl;
-            contact.email = contactEmail;
-            info.contact = contact;
-        }
-        openApiConfig.setInfo(info);
-    }
-
-    private void setInfoOas20(
-            BeanConfig openApiConfig, String version, String title, String description,
-            String termsOfService, String licenseName, String licenseUrl,
-            String contactName, String contactUrl, String contactEmail) {
-        Oas20Info info = new Oas20Info();
-        info.version = version;
-        info.title = title;
-        info.description = description;
-        info.termsOfService = termsOfService;
-
-        if (licenseName != null || licenseUrl != null) {
-            License license = info.createLicense();
-            license.name = licenseName;
-            license.url = licenseUrl;
-            info.license = license;
-        }
-
-        if (contactName != null || contactUrl != null || contactEmail != null) {
-            Contact contact = info.createContact();
-            contact.name = contactName;
-            contact.url = contactUrl;
-            contact.email = contactEmail;
-            info.contact = contact;
+            Contact contact = new Contact().name(contactName).url(contactUrl).email(contactEmail);
+            info.setContact(contact);
         }
         openApiConfig.setInfo(info);
     }
@@ -400,7 +311,7 @@ public class RestOpenApiSupport {
                         .getOrDefault("api.specification.contentType.json", "application/json"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi = reader.read(
+                OpenAPI openApi = reader.read(
                         camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
@@ -409,9 +320,16 @@ public class RestOpenApiSupport {
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(openApi);
                 }
-
-                Object dump = io.apicurio.datamodels.Library.writeNode(openApi);
-                byte[] bytes = mapper.writeValueAsBytes(dump);
+                // Serialize to JSON
+                byte[] bytes = null;
+                if (!openApiConfig.isOpenApi3()) {
+                    OpenAPI3to2 converter = new OpenAPI3to2();
+                    converter.convertOpenAPI3to2(openApi);
+                    bytes = converter.getSwaggerAsJson();
+                } else {
+                    String result = io.swagger.v3.core.util.Json31.pretty(openApi);
+                    bytes = result.getBytes(StandardCharsets.UTF_8);
+                }
                 int len = bytes.length;
                 response.setHeader(Exchange.CONTENT_LENGTH, Integer.toString(len));
 
@@ -421,7 +339,7 @@ public class RestOpenApiSupport {
                         .getOrDefault("api.specification.contentType.yaml", "text/yaml"));
 
                 // read the rest-dsl into openApi model
-                OasDocument openApi = reader.read(
+                OpenAPI openApi = reader.read(
                         camelContext, rests, openApiConfig, camelContext.getName(), classResolver);
                 if (configuration.isUseXForwardHeaders()) {
                     setupXForwardedHeaders(openApi, headers);
@@ -430,13 +348,15 @@ public class RestOpenApiSupport {
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(openApi);
                 }
-
-                Object dump = io.apicurio.datamodels.Library.writeNode(openApi);
-                byte[] jsonData = mapper.writeValueAsBytes(dump);
-
-                // json to yaml
-                JsonNode node = mapper.readTree(jsonData);
-                byte[] bytes = new YAMLMapper().writeValueAsString(node).getBytes();
+                byte[] bytes = null;
+                if (!openApiConfig.isOpenApi3()) {
+                    OpenAPI3to2 converter = new OpenAPI3to2();
+                    converter.convertOpenAPI3to2(openApi);
+                    bytes = converter.getSwaggerAsYaml();
+                } else {
+                    String result = io.swagger.v3.core.util.Yaml.pretty(openApi);
+                    bytes = result.getBytes();
+                }
 
                 int len = bytes.length;
                 response.setHeader(Exchange.CONTENT_LENGTH, Integer.toString(len));
@@ -445,6 +365,16 @@ public class RestOpenApiSupport {
             }
         } else {
             response.noContent();
+        }
+    }
+
+    public static String getJsonFromOpenAPI(OpenAPI openApi3, BeanConfig openApiConfig) {
+        if (!openApiConfig.isOpenApi3()) {
+            OpenAPI3to2 converter = new OpenAPI3to2();
+            converter.convertOpenAPI3to2(openApi3);
+            return new String(converter.getSwaggerAsJson());
+        } else {
+            return io.swagger.v3.core.util.Json.pretty(openApi3);
         }
     }
 

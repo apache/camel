@@ -16,16 +16,10 @@
  */
 package org.apache.camel.openapi;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.models.OasOperation;
-import io.apicurio.datamodels.openapi.models.OasPathItem;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.camel.util.FileUtil;
 
 public final class OpenApiHelper {
@@ -55,79 +49,27 @@ public final class OpenApiHelper {
      * Clears all the vendor extension on the openApi model. This may be needed as some API tooling does not support
      * this.
      */
-    public static void clearVendorExtensions(OasDocument openApi) {
-
-        if (openApi instanceof Oas20Document) {
-            openApi.clearExtensions();
-            if (((Oas20Document) openApi).definitions != null
-                    && ((Oas20Document) openApi).definitions.getDefinitions() != null) {
-                for (Oas20SchemaDefinition schemaDefinition : ((Oas20Document) openApi).definitions.getDefinitions()) {
-                    schemaDefinition.clearExtensions();
-                }
+    public static void clearVendorExtensions(OpenAPI openApi) {
+        if (openApi.getExtensions() != null) {
+            openApi.getExtensions().clear();
+        }
+        if (openApi.getComponents() != null
+                && openApi.getComponents().getSchemas() != null) {
+            for (Schema<?> schemaDefinition : openApi.getComponents().getSchemas().values()) {
+                schemaDefinition.getExtensions().clear();
             }
-            if (openApi.paths != null) {
-                for (OasPathItem path : openApi.paths.getPathItems()) {
-                    path.clearExtensions();
-                    for (OasOperation op : getOperationMap(path).values()) {
-                        op.clearExtensions();
-                    }
+        }
+        if (openApi.getPaths() != null) {
+            for (PathItem path : openApi.getPaths().values()) {
+                if (path.getExtensions() != null) {
+                    path.getExtensions().clear();
                 }
-            }
-        } else if (openApi instanceof Oas30Document) {
-            openApi.clearExtensions();
-            if (((Oas30Document) openApi).components != null
-                    && ((Oas30Document) openApi).components.schemas != null) {
-                for (Oas30SchemaDefinition schemaDefinition : ((Oas30Document) openApi).components.schemas.values()) {
-                    schemaDefinition.clearExtensions();
-                }
-            }
-            if (openApi.paths != null) {
-                for (OasPathItem path : openApi.paths.getPathItems()) {
-                    path.clearExtensions();
-                    for (OasOperation op : getOperationMap(path).values()) {
-                        op.clearExtensions();
+                for (Operation op : path.readOperationsMap().values()) {
+                    if (op.getExtensions() != null) {
+                        op.getExtensions().clear();
                     }
                 }
             }
         }
     }
-
-    private static Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
-        Map<HttpMethod, OasOperation> result = new LinkedHashMap<>();
-
-        if (path.get != null) {
-            result.put(HttpMethod.GET, path.get);
-        }
-        if (path.put != null) {
-            result.put(HttpMethod.PUT, path.put);
-        }
-        if (path.post != null) {
-            result.put(HttpMethod.POST, path.post);
-        }
-        if (path.delete != null) {
-            result.put(HttpMethod.DELETE, path.delete);
-        }
-        if (path.patch != null) {
-            result.put(HttpMethod.PATCH, path.patch);
-        }
-        if (path.head != null) {
-            result.put(HttpMethod.HEAD, path.head);
-        }
-        if (path.options != null) {
-            result.put(HttpMethod.OPTIONS, path.options);
-        }
-
-        return result;
-    }
-
-    enum HttpMethod {
-        POST,
-        GET,
-        PUT,
-        PATCH,
-        DELETE,
-        HEAD,
-        OPTIONS
-    }
-
 }

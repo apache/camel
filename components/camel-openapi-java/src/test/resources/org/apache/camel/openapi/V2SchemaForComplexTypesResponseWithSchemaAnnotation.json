@@ -6,15 +6,17 @@
   "paths" : {
     "/complexResponseWithSchemaAnnotation" : {
       "get" : {
+        "summary" : "Demo complex response type",
+        "operationId" : "verb",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "in" : "body",
           "name" : "body",
+          "required" : true,
           "schema" : {
             "$ref" : "#/definitions/SampleComplexRequestType_InnerClass"
-          },
-          "in" : "body",
-          "required" : true
+          }
         } ],
         "responses" : {
           "200" : {
@@ -24,48 +26,28 @@
             }
           }
         },
-        "operationId" : "verb",
-        "summary" : "Demo complex response type",
         "x-camelContextId" : "camel"
       }
     }
   },
+  "securityDefinitions" : {
+    "global" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "https://AUTHORIZATION_URL",
+      "tokenUrl" : "https://TOKEN_URL",
+      "flow" : "accessCode",
+      "scopes" : {
+        "groups" : "Required scopes for Camel REST APIs"
+      }
+    }
+  },
   "definitions" : {
-    "SampleComplexRequestType_InnerClass" : {
-      "type" : "object",
-      "properties" : {
-        "longField" : {
-          "format" : "int64",
-          "type" : "integer"
-        }
-      },
-      "x-className" : {
-        "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
-        "type" : "string"
-      }
-    },
-    "responseInner" : {
-      "type" : "object",
-      "properties" : {
-        "doubleField" : {
-          "format" : "double",
-          "type" : "number"
-        }
-      },
-      "x-className" : {
-        "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
-        "type" : "string"
-      }
-    },
     "sampleResponseWithSchema" : {
-      "required" : [ "arrayOfStrings", "responseField1" ],
       "type" : "object",
+      "required" : [ "arrayOfStrings", "responseField1" ],
       "properties" : {
-        "responseField1" : {
-          "type" : "string"
-        },
-        "responseField2" : {
-          "type" : "string"
+        "innerClass" : {
+          "$ref" : "#/definitions/responseInner"
         },
         "arrayOfStrings" : {
           "type" : "array",
@@ -74,28 +56,46 @@
           }
         },
         "month" : {
-          "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ],
+          "type" : "string",
+          "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
+        },
+        "responseField2" : {
           "type" : "string"
         },
-        "innerClass" : {
-          "$ref" : "#/definitions/responseInner"
+        "responseField1" : {
+          "type" : "string"
         }
       },
       "x-className" : {
         "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation",
         "type" : "string"
       }
-    }
-  },
-  "securityDefinitions" : {
-    "global" : {
-      "flow" : "accessCode",
-      "authorizationUrl" : "https://AUTHORIZATION_URL",
-      "tokenUrl" : "https://TOKEN_URL",
-      "scopes" : {
-        "groups" : "Required scopes for Camel REST APIs"
+    },
+    "responseInner" : {
+      "type" : "object",
+      "properties" : {
+        "doubleField" : {
+          "type" : "number",
+          "format" : "double"
+        }
       },
-      "type" : "oauth2"
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
+        "type" : "string"
+      }
+    },
+    "SampleComplexRequestType_InnerClass" : {
+      "type" : "object",
+      "properties" : {
+        "longField" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+        "type" : "string"
+      }
     }
   }
 }

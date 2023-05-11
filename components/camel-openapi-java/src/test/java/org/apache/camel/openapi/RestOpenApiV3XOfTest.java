@@ -16,11 +16,7 @@
  */
 package org.apache.camel.openapi;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -110,32 +106,30 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = io.swagger.v3.core.util.Json.pretty(openApi);
 
         LOG.info(json);
+
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         assertTrue(json.contains(
-                "\"XOfFormA\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"a\" : { \"type\" : \"string\" }, \"b\" : { \"format\" : \"int32\", \"type\" : \"integer\" } },"));
+                "\"XOfFormA\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"a\" : { \"type\" : \"string\" }, \"b\" : { \"type\" : \"integer\", \"format\" : \"int32\" } },"));
         assertTrue(json.contains(
-                "\"XOfFormB\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"x\" : { \"format\" : \"int32\", \"type\" : \"integer\" }, \"y\" : { \"type\" : \"string\" } },"));
+                "\"XOfFormB\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"x\" : { \"type\" : \"integer\", \"format\" : \"int32\" }, \"y\" : { \"type\" : \"string\" } },"));
 
         assertTrue(json.contains(
                 "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
         assertTrue(json.contains(
-                "\"OneOfForm\" : { \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ],"
-                                 +
-                                 " \"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : " +
-                                 "{ \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", \"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } },"));
+                "\"OneOfForm\" : { \"type\" : \"object\", " +
+                                 "\"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : " +
+                                 "{ \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", " +
+                                 "\"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } }, " +
+                                 "\"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ],"));
 
         context.stop();
     }
@@ -151,16 +145,12 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = io.swagger.v3.core.util.Json.pretty(openApi);
 
         LOG.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
@@ -168,7 +158,7 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         assertTrue(json.contains(
                 "\"AllOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"fullForm\" : { \"$ref\" : \"#/components/schemas/AllOfForm\" } },"));
         assertTrue(json.contains(
-                "\"AllOfForm\" : { \"allOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ],"));
+                "\"allOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
 
         context.stop();
     }
@@ -184,16 +174,12 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setLicenseUrl("https://www.apache.org/licenses/LICENSE-2.0.html");
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
+        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
                 new DefaultClassResolver());
         assertNotNull(openApi);
         assertNotNull(openApi);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Object dump = Library.writeNode(openApi);
-        String json = mapper.writeValueAsString(dump);
+        String json = io.swagger.v3.core.util.Json.pretty(openApi);
 
         LOG.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
@@ -201,7 +187,7 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         assertTrue(json.contains(
                 "\"AnyOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formElements\" : { \"$ref\" : \"#/components/schemas/AnyOfForm\" } },"));
         assertTrue(json.contains(
-                "\"AnyOfForm\" : { \"anyOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ],"));
+                "\"anyOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
 
         context.stop();
     }

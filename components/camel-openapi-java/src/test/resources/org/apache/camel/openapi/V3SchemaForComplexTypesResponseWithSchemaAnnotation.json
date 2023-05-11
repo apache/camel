@@ -6,6 +6,8 @@
   "paths" : {
     "/complexResponseWithSchemaAnnotation" : {
       "get" : {
+        "summary" : "Demo complex response type",
+        "operationId" : "verb",
         "requestBody" : {
           "description" : "",
           "content" : {
@@ -19,50 +21,22 @@
         },
         "responses" : {
           "200" : {
+            "description" : "Returns a complex object",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/sampleResponseWithSchema"
                 }
               }
-            },
-            "description" : "Returns a complex object"
+            }
           }
         },
-        "operationId" : "verb",
-        "summary" : "Demo complex response type",
         "x-camelContextId" : "camel"
       }
     }
   },
   "components" : {
     "schemas" : {
-      "SampleComplexRequestType_InnerClass" : {
-        "type" : "object",
-        "properties" : {
-          "longField" : {
-            "format" : "int64",
-            "type" : "integer"
-          }
-        },
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
-          "type" : "string"
-        }
-      },
-      "responseInner" : {
-        "type" : "object",
-        "properties" : {
-          "doubleField" : {
-            "format" : "double",
-            "type" : "number"
-          }
-        },
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
-          "type" : "string"
-        }
-      },
       "sampleResponseWithSchema" : {
         "required" : [ "arrayOfStrings", "responseField1" ],
         "type" : "object",
@@ -80,8 +54,8 @@
             }
           },
           "month" : {
-            "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ],
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
           },
           "innerClass" : {
             "$ref" : "#/components/schemas/responseInner"
@@ -91,10 +65,37 @@
           "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation",
           "type" : "string"
         }
+      },
+      "responseInner" : {
+        "type" : "object",
+        "properties" : {
+          "doubleField" : {
+            "type" : "number",
+            "format" : "double"
+          }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
+          "type" : "string"
+        }
+      },
+      "SampleComplexRequestType_InnerClass" : {
+        "type" : "object",
+        "properties" : {
+          "longField" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+          "type" : "string"
+        }
       }
     },
     "securitySchemes" : {
       "global" : {
+        "type" : "oauth2",
         "flows" : {
           "authorizationCode" : {
             "authorizationUrl" : "https://AUTHORIZATION_URL",
@@ -103,8 +104,7 @@
               "groups" : "Required scopes for Camel REST APIs"
             }
           }
-        },
-        "type" : "oauth2"
+        }
       }
     }
   }

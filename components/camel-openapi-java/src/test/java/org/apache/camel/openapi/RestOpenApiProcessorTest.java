@@ -131,8 +131,8 @@ public class RestOpenApiProcessorTest {
         assertEquals("text/yaml", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertTrue(yaml.contains("/foo:"));
         assertTrue(yaml.contains("/bar:"));
-        assertTrue(yaml.contains("summary: \"Foo endpoint\""));
-        assertTrue(yaml.contains("summary: \"Bar endpoint\""));
+        assertTrue(yaml.contains("summary: Foo endpoint"));
+        assertTrue(yaml.contains("summary: Bar endpoint"));
     }
 
     @Test
@@ -183,8 +183,8 @@ public class RestOpenApiProcessorTest {
         assertEquals("text/yaml", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertTrue(yaml.contains("/foo:"));
         assertTrue(yaml.contains("/bar:"));
-        assertTrue(yaml.contains("summary: \"Foo endpoint\""));
-        assertTrue(yaml.contains("summary: \"Bar endpoint\""));
+        assertTrue(yaml.contains("summary: Foo endpoint"));
+        assertTrue(yaml.contains("summary: Bar endpoint"));
     }
 
 }
