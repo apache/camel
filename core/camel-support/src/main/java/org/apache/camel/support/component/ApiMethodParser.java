@@ -343,8 +343,8 @@ public abstract class ApiMethodParser<T> {
 
         private String uniqueName;
 
-        protected ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method,
-                                 String description, String signature) {
+        ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method,
+                       String description, String signature) {
             this.name = name;
             this.resultType = resultType;
             this.arguments = arguments;
@@ -353,8 +353,8 @@ public abstract class ApiMethodParser<T> {
             this.signature = signature;
         }
 
-        protected ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments,
-                                 Method method, String description, String signature) {
+        ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments,
+                       Method method, String description, String signature) {
             this.name = name;
             this.uniqueName = uniqueName;
             this.resultType = resultType;
