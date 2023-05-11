@@ -36,8 +36,8 @@ import org.apache.camel.trait.message.MessageTrait;
  * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
-    CamelContext camelContext;
-    TypeConverter typeConverter;
+    protected CamelContext camelContext;
+    protected TypeConverter typeConverter;
     private Exchange exchange;
     private Object body;
     private String messageId;
