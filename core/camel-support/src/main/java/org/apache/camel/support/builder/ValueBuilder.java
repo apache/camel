@@ -29,7 +29,7 @@ import org.apache.camel.Predicate;
  * A builder of expressions or predicates based on values.
  */
 public class ValueBuilder implements Expression, Predicate {
-    private Expression expression;
+    private final Expression expression;
     private boolean not;
 
     public ValueBuilder(Expression expression) {

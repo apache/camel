@@ -55,8 +55,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     // keep track of all singleton endpoints with a pooled producer that are evicted
     // for multi pool then they have their own house-keeping for evictions (more complex)
     private final ConcurrentMap<Endpoint, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
-    private int capacity;
-    private Map<S, S> cache;
+    private final int capacity;
+    private final Map<S, S> cache;
     // synchronizes access only to cache
     private final Object cacheLock;
 

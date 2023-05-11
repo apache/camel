@@ -60,8 +60,9 @@ import org.apache.camel.util.StringHelper;
  */
 public final class ExchangeHelper {
 
-    private static String defaultCharsetName = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
-    private static Charset defaultCharset = Charset.forName(defaultCharsetName);
+    private static final String DEFAULT_CHARSET_NAME
+            = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    private static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_NAME);
 
     /**
      * Utility classes should not have a public constructor.
@@ -959,11 +960,11 @@ public final class ExchangeHelper {
     }
 
     private static String getDefaultCharsetName() {
-        return defaultCharsetName;
+        return DEFAULT_CHARSET_NAME;
     }
 
     private static Charset getDefaultCharset() {
-        return defaultCharset;
+        return DEFAULT_CHARSET;
     }
 
     /**
