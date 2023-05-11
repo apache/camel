@@ -2263,6 +2263,19 @@ camel config get gav
 com.foo:acme:1.0-SNAPSHOT
 ----
 
+=== Placeholders substitutes
+
+User configuration values can be used as placeholder substitutes with command line properties, for example:
+
+[source,bash]
+----
+camel config set repos=https://maven.repository.my.repo.com/ga
+
+camel run 'Test.java' --logging-level=info --repos=$repos,https://packages.atlassian.com/maven-external
+----
+
+in this example, since `repos` is set in the user configuration (`config set`) and the `camel run` command declares the placeholder `$repos`, `camel run` will replace the placeholder so that both repositories will be used during the execution.
+
 == Troubleshooting
 
 When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
