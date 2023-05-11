@@ -54,7 +54,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
     private String action = "Received";
     private CamelContext camelContext;
     private ScheduledExecutorService logSchedulerService;
-    private CamelLogger logger;
+    private final CamelLogger logger;
     private String lastLogMessage;
     private double rate;
     private double average;

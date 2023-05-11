@@ -57,7 +57,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private EndpointUtilizationStatistics statistics;
     private boolean eventNotifierEnabled = true;
     private boolean extendedStatistics;
-    private int maxCacheSize;
+    private final int maxCacheSize;
 
     public DefaultProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;

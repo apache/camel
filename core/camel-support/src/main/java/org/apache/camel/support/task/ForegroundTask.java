@@ -73,7 +73,7 @@ public class ForegroundTask implements BlockingTask {
     private static final Logger LOG = LoggerFactory.getLogger(ForegroundTask.class);
 
     private final String name;
-    private IterationBudget budget;
+    private final IterationBudget budget;
     private Duration elapsed = Duration.ZERO;
 
     ForegroundTask(IterationBudget budget, String name) {
