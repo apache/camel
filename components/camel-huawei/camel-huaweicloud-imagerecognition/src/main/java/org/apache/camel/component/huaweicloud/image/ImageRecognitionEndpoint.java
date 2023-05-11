@@ -96,7 +96,7 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
               description = "Indicates the Base64 character string converted from the image. The size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels."
                             + "The supported image formats include JPG, PNG, and BMP. \n"
                             + "Configure either this parameter or imageUrl, and this one carries higher precedence than imageUrl.",
-              displayName = "imageContent")
+              displayName = "Image in Base64")
     @Metadata(required = false)
     private String imageContent;
 
@@ -104,25 +104,25 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
                             + "HTTP/HTTPS URLs on the public network\n"
                             + "OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n"
                             + "Configure either this parameter or imageContent, and this one carries lower precedence than imageContent.",
-              displayName = "imageUrl")
+              displayName = "Image Url")
     @Metadata(required = false)
     private String imageUrl;
 
     @UriParam(
               description = "Indicates the language of the returned tags when the operation is tagRecognition, including zh and en.",
-              displayName = "tagLanguage", defaultValue = "zh")
+              displayName = "Tag Language", defaultValue = "zh")
     @Metadata(required = false)
     private String tagLanguage = ImageRecognitionConstants.TAG_LANGUAGE_ZH;
 
     @UriParam(description = "Indicates the threshold of confidence.\n"
                             + "When the operation is tagRecognition, this parameter ranges from 0 to 100. Tags whose confidence score is lower than the threshold will not be returned. The default value is 60.\n"
                             + "When the operation is celebrityRecognition, this parameter ranges from 0 to 1. Labels whose confidence score is lower than the threshold will not be returned. The default value is 0.48.",
-              displayName = "threshold")
+              displayName = "Threshold of confidence")
     @Metadata(required = false)
     private float threshold = -1;
 
     @UriParam(description = "Indicates the maximum number of the returned tags when the operation is tagRecognition.",
-              displayName = "tagLimit", defaultValue = "50")
+              displayName = "Tag Limit", defaultValue = "50")
     @Metadata(required = false)
     private int tagLimit = ImageRecognitionConstants.DEFAULT_TAG_LIMIT;
 
