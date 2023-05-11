@@ -252,6 +252,15 @@ Now the context-path is not in use, and the endpoint can be called with `http://
 
 NOTE: The `platform-http-starter` can also be used with Rest DSL.
 
+== camel-openapi-java
+
+The `camel-openapi-java` component has been changed to use `io.swagger.v3` libraries instead of `io.apicurio.datamodels`.
+As a result, the return type of the public method org.apache.camel.openapi.RestOpenApiReader.read() is now `io.swagger.v3.oas.models.OpenAPI` instead of `io.apicurio.datamodels.openapi.models.OasDocument`.
+When an OpenAPI 2.0 (swagger) specification is parsed, it is automatically upgraded to OpenAPI 3.0.x by the swagger parser.
+This version also supports OpenAPI 3.1.x specifications.
+The related spring-boot starter components have been modified to use the new return type.
+
+
 == camel-optaplanner
 
 The `camel-optaplanner` component has been change to use `SolverManager`. If you were using `SoverManager` in Camel 3, you don't need anymore the boolean useSolverManager in the Route.
