@@ -221,14 +221,17 @@ public class DefaultModel implements Model {
                 if (from != null) {
                     String uri = from.getEndpointUri();
                     if (uri != null && uri.startsWith("rest:")) {
-                        ToDefinition to = (ToDefinition) r.getOutputs().get(0);
-                        String toUri = to.getEndpointUri();
-                        RouteDefinition toBeInlined = directs.get(toUri);
-                        if (toBeInlined != null) {
-                            toBeRemoved.add(toBeInlined);
-                            // inline by replacing the outputs
-                            r.getOutputs().clear();
-                            r.getOutputs().addAll(toBeInlined.getOutputs());
+                        ProcessorDefinition<?> def = r.getOutputs().get(0);
+                        if (def instanceof ToDefinition) {
+                            ToDefinition to = (ToDefinition) def;
+                            String toUri = to.getEndpointUri();
+                            RouteDefinition toBeInlined = directs.get(toUri);
+                            if (toBeInlined != null) {
+                                toBeRemoved.add(toBeInlined);
+                                // inline by replacing the outputs
+                                r.getOutputs().clear();
+                                r.getOutputs().addAll(toBeInlined.getOutputs());
+                            }
                         }
                     }
                 }
