@@ -152,6 +152,44 @@ that contains the input and outgoing (if `InOut`) messages.
 The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
 serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
 
+== CircuitBreaker EIP
+
+The following options in `camel-resilience4j` was mistakenly not defined as attributes:
+
+|===
+| *Option*
+| bulkheadEnabled
+| bulkheadMaxConcurrentCalls
+| bulkheadMaxWaitDuration
+| timeoutEnabled
+| timeoutExecutorService
+| timeoutDuration
+| timeoutCancelRunningFuture
+|===
+
+These options were not exposed in YAML DSL, and in XML DSL you need to migrate from:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration>
+        <timeoutEnabled>true</timeoutEnabled>
+        <timeoutDuration>2000</timeoutDuration>
+    </resilience4jConfiguration>
+...
+</circuitBreaker>
+----
+
+To use attributes instead:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+...
+</circuitBreaker>
+----
+
 == Component changes
 
 === camel-azure-cosmosdb
