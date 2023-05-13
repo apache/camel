@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Optional;
@@ -114,6 +118,17 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         super.setUp(endpointUri);
         createCustomers();
         assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
+    }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Find {
+    }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Query {
+        String value() default "select c from Customer c where c.name like :seq";
     }
 
 }
