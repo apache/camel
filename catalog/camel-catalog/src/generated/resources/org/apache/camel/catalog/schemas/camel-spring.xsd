@@ -3352,6 +3352,8 @@ will fallback to use the fixed value if the Expression result was null or 0.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -3389,8 +3391,6 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -4021,6 +4021,8 @@ should be intercepted by this exception type or not.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -4058,8 +4060,6 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -4223,6 +4223,8 @@ should be intercepted by this exception type or not.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -4260,8 +4262,6 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -4403,6 +4403,8 @@ the branch that matched. Default value: false
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -4440,8 +4442,6 @@ the branch that matched. Default value: false
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -4541,6 +4541,8 @@ the branch that matched. Default value: false
                     
           <xs:element minOccurs="0" ref="tns:faultToleranceConfiguration"/>
                     
+          <xs:element minOccurs="0" ref="tns:onFallback"/>
+                    
           <xs:choice maxOccurs="unbounded" minOccurs="0">
                         
             <xs:element ref="tns:aggregate"/>
@@ -4556,6 +4558,8 @@ the branch that matched. Default value: false
             <xs:element ref="tns:otherwise"/>
                         
             <xs:element ref="tns:circuitBreaker"/>
+                        
+            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:claimCheck"/>
                         
@@ -4594,8 +4598,6 @@ the branch that matched. Default value: false
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -5072,6 +5074,168 @@ bulkhead. Default value: 10
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 References to a custom thread pool to use when bulkhead is enabled.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="onFallbackDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:processorDefinition">
+                
+        <xs:sequence>
+                    
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+                        
+            <xs:element ref="tns:aggregate"/>
+                        
+            <xs:element ref="tns:bean"/>
+                        
+            <xs:element ref="tns:doCatch"/>
+                        
+            <xs:element ref="tns:when"/>
+                        
+            <xs:element ref="tns:choice"/>
+                        
+            <xs:element ref="tns:otherwise"/>
+                        
+            <xs:element ref="tns:circuitBreaker"/>
+                        
+            <xs:element ref="tns:onFallback"/>
+                        
+            <xs:element ref="tns:claimCheck"/>
+                        
+            <xs:element ref="tns:convertBodyTo"/>
+                        
+            <xs:element ref="tns:delay"/>
+                        
+            <xs:element ref="tns:dynamicRouter"/>
+                        
+            <xs:element ref="tns:enrich"/>
+                        
+            <xs:element ref="tns:filter"/>
+                        
+            <xs:element ref="tns:doFinally"/>
+                        
+            <xs:element ref="tns:idempotentConsumer"/>
+                        
+            <xs:element ref="tns:intercept"/>
+                        
+            <xs:element ref="tns:interceptFrom"/>
+                        
+            <xs:element ref="tns:interceptSendToEndpoint"/>
+                        
+            <xs:element ref="tns:kamelet"/>
+                        
+            <xs:element ref="tns:loadBalance"/>
+                        
+            <xs:element ref="tns:log"/>
+                        
+            <xs:element ref="tns:loop"/>
+                        
+            <xs:element ref="tns:marshal"/>
+                        
+            <xs:element ref="tns:multicast"/>
+                        
+            <xs:element ref="tns:onCompletion"/>
+                        
+            <xs:element ref="tns:onException"/>
+                        
+            <xs:element ref="tns:pausable"/>
+                        
+            <xs:element ref="tns:pipeline"/>
+                        
+            <xs:element ref="tns:policy"/>
+                        
+            <xs:element ref="tns:pollEnrich"/>
+                        
+            <xs:element ref="tns:process"/>
+                        
+            <xs:element ref="tns:recipientList"/>
+                        
+            <xs:element ref="tns:removeHeader"/>
+                        
+            <xs:element ref="tns:removeHeaders"/>
+                        
+            <xs:element ref="tns:removeProperties"/>
+                        
+            <xs:element ref="tns:removeProperty"/>
+                        
+            <xs:element ref="tns:resequence"/>
+                        
+            <xs:element ref="tns:resumable"/>
+                        
+            <xs:element ref="tns:rollback"/>
+                        
+            <xs:element ref="tns:route"/>
+                        
+            <xs:element ref="tns:routingSlip"/>
+                        
+            <xs:element ref="tns:saga"/>
+                        
+            <xs:element ref="tns:sample"/>
+                        
+            <xs:element ref="tns:script"/>
+                        
+            <xs:element ref="tns:setBody"/>
+                        
+            <xs:element ref="tns:setExchangePattern"/>
+                        
+            <xs:element ref="tns:setHeader"/>
+                        
+            <xs:element ref="tns:setProperty"/>
+                        
+            <xs:element ref="tns:sort"/>
+                        
+            <xs:element ref="tns:split"/>
+                        
+            <xs:element ref="tns:step"/>
+                        
+            <xs:element ref="tns:stop"/>
+                        
+            <xs:element ref="tns:threads"/>
+                        
+            <xs:element ref="tns:throttle"/>
+                        
+            <xs:element ref="tns:throwException"/>
+                        
+            <xs:element ref="tns:to"/>
+                        
+            <xs:element ref="tns:toD"/>
+                        
+            <xs:element ref="tns:transacted"/>
+                        
+            <xs:element ref="tns:transform"/>
+                        
+            <xs:element ref="tns:doTry"/>
+                        
+            <xs:element ref="tns:unmarshal"/>
+                        
+            <xs:element ref="tns:validate"/>
+                        
+            <xs:element ref="tns:wireTap"/>
+                        
+            <xs:element ref="tns:serviceCall"/>
+                      
+          </xs:choice>
+                  
+        </xs:sequence>
+                
+        <xs:attribute name="fallbackViaNetwork" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the fallback goes over the network. If the fallback will go over the
+network it is another possible point of failure. It is important to execute the
+fallback command on a separate thread-pool, otherwise if the main command were
+to become latent and fill the thread-pool this would prevent the fallback from
+running if the two commands share the same pool. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6237,6 +6401,8 @@ default WARN. Default value: WARN
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -6274,8 +6440,6 @@ default WARN. Default value: WARN
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -6396,6 +6560,8 @@ Setting this allows to know if the filter predicate evaluated as true or false.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -6433,8 +6599,6 @@ Setting this allows to know if the filter predicate evaluated as true or false.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -6652,6 +6816,8 @@ Global option value.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -6689,8 +6855,6 @@ Global option value.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -6886,6 +7050,8 @@ Whether if validation is required for this input type. Default value: false
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -6923,8 +7089,6 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -7059,6 +7223,8 @@ configured, then all incoming messages is intercepted.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -7096,8 +7262,6 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -7235,6 +7399,8 @@ process its result.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -7272,8 +7438,6 @@ process its result.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -7412,6 +7576,8 @@ specified using uri syntax, eg mynamecount=4&type=gold.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -7449,8 +7615,6 @@ specified using uri syntax, eg mynamecount=4&type=gold.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -7878,6 +8042,8 @@ To refer to a custom logger instance to lookup from the registry.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -7915,8 +8081,6 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -11456,6 +11620,8 @@ decompressed size. Default value: 1073741824
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -11493,8 +11659,6 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -11742,6 +11906,8 @@ should be invoked or not.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -11779,8 +11945,6 @@ should be invoked or not.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -11995,6 +12159,8 @@ failure. If this option is enabled then its considered handled as well.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -12032,8 +12198,6 @@ failure. If this option is enabled then its considered handled as well.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -12229,168 +12393,6 @@ message. By default this feature is off. Default value: false
       
   </xs:complexType>
     
-  <xs:complexType name="onFallbackDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:output">
-                
-        <xs:sequence>
-                    
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-                        
-            <xs:element ref="tns:aggregate"/>
-                        
-            <xs:element ref="tns:bean"/>
-                        
-            <xs:element ref="tns:doCatch"/>
-                        
-            <xs:element ref="tns:when"/>
-                        
-            <xs:element ref="tns:choice"/>
-                        
-            <xs:element ref="tns:otherwise"/>
-                        
-            <xs:element ref="tns:circuitBreaker"/>
-                        
-            <xs:element ref="tns:claimCheck"/>
-                        
-            <xs:element ref="tns:convertBodyTo"/>
-                        
-            <xs:element ref="tns:delay"/>
-                        
-            <xs:element ref="tns:dynamicRouter"/>
-                        
-            <xs:element ref="tns:enrich"/>
-                        
-            <xs:element ref="tns:filter"/>
-                        
-            <xs:element ref="tns:doFinally"/>
-                        
-            <xs:element ref="tns:idempotentConsumer"/>
-                        
-            <xs:element ref="tns:intercept"/>
-                        
-            <xs:element ref="tns:interceptFrom"/>
-                        
-            <xs:element ref="tns:interceptSendToEndpoint"/>
-                        
-            <xs:element ref="tns:kamelet"/>
-                        
-            <xs:element ref="tns:loadBalance"/>
-                        
-            <xs:element ref="tns:log"/>
-                        
-            <xs:element ref="tns:loop"/>
-                        
-            <xs:element ref="tns:marshal"/>
-                        
-            <xs:element ref="tns:multicast"/>
-                        
-            <xs:element ref="tns:onCompletion"/>
-                        
-            <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
-                        
-            <xs:element ref="tns:pausable"/>
-                        
-            <xs:element ref="tns:pipeline"/>
-                        
-            <xs:element ref="tns:policy"/>
-                        
-            <xs:element ref="tns:pollEnrich"/>
-                        
-            <xs:element ref="tns:process"/>
-                        
-            <xs:element ref="tns:recipientList"/>
-                        
-            <xs:element ref="tns:removeHeader"/>
-                        
-            <xs:element ref="tns:removeHeaders"/>
-                        
-            <xs:element ref="tns:removeProperties"/>
-                        
-            <xs:element ref="tns:removeProperty"/>
-                        
-            <xs:element ref="tns:resequence"/>
-                        
-            <xs:element ref="tns:resumable"/>
-                        
-            <xs:element ref="tns:rollback"/>
-                        
-            <xs:element ref="tns:route"/>
-                        
-            <xs:element ref="tns:routingSlip"/>
-                        
-            <xs:element ref="tns:saga"/>
-                        
-            <xs:element ref="tns:sample"/>
-                        
-            <xs:element ref="tns:script"/>
-                        
-            <xs:element ref="tns:setBody"/>
-                        
-            <xs:element ref="tns:setExchangePattern"/>
-                        
-            <xs:element ref="tns:setHeader"/>
-                        
-            <xs:element ref="tns:setProperty"/>
-                        
-            <xs:element ref="tns:sort"/>
-                        
-            <xs:element ref="tns:split"/>
-                        
-            <xs:element ref="tns:step"/>
-                        
-            <xs:element ref="tns:stop"/>
-                        
-            <xs:element ref="tns:threads"/>
-                        
-            <xs:element ref="tns:throttle"/>
-                        
-            <xs:element ref="tns:throwException"/>
-                        
-            <xs:element ref="tns:to"/>
-                        
-            <xs:element ref="tns:toD"/>
-                        
-            <xs:element ref="tns:transacted"/>
-                        
-            <xs:element ref="tns:transform"/>
-                        
-            <xs:element ref="tns:doTry"/>
-                        
-            <xs:element ref="tns:unmarshal"/>
-                        
-            <xs:element ref="tns:validate"/>
-                        
-            <xs:element ref="tns:wireTap"/>
-                        
-            <xs:element ref="tns:serviceCall"/>
-                      
-          </xs:choice>
-                  
-        </xs:sequence>
-                
-        <xs:attribute name="fallbackViaNetwork" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether the fallback goes over the network. If the fallback will go over the
-network it is another possible point of failure. It is important to execute the
-fallback command on a separate thread-pool, otherwise if the main command were
-to become latent and fill the thread-pool this would prevent the fallback from
-running if the two commands share the same pool. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
   <xs:complexType name="outputTypeDefinition">
         
     <xs:complexContent>
@@ -12513,6 +12515,8 @@ point.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -12550,8 +12554,6 @@ point.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -12663,6 +12665,8 @@ point.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -12700,8 +12704,6 @@ point.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -13475,6 +13477,8 @@ Name of property to remove.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -13512,8 +13516,6 @@ Name of property to remove.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -13947,6 +13949,8 @@ Reference to the routes in the xml dsl.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -13984,8 +13988,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -14524,6 +14526,8 @@ compensation/completion exchange.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -14561,8 +14565,6 @@ compensation/completion exchange.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -15169,6 +15171,8 @@ Sets the comparator to use for sorting.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -15206,8 +15210,6 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -15463,6 +15465,8 @@ individual unit of work. Default value: false
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -15500,8 +15504,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -16168,6 +16170,8 @@ Whether to auto startup components when toD is starting up. Default value: true
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -16205,8 +16209,6 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
@@ -16390,6 +16392,8 @@ Sets a reference to use for lookup the policy in the registry.
                         
             <xs:element ref="tns:circuitBreaker"/>
                         
+            <xs:element ref="tns:onFallback"/>
+                        
             <xs:element ref="tns:claimCheck"/>
                         
             <xs:element ref="tns:convertBodyTo"/>
@@ -16427,8 +16431,6 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:onCompletion"/>
                         
             <xs:element ref="tns:onException"/>
-                        
-            <xs:element ref="tns:onFallback"/>
                         
             <xs:element ref="tns:pausable"/>
                         
