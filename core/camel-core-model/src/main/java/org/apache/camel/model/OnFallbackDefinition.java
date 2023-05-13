@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,11 +34,13 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition> {
+public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefinition> implements OutputNode {
 
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String fallbackViaNetwork;
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OnFallbackDefinition() {
     }
@@ -47,10 +50,8 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
         return outputs;
     }
 
-    @XmlElementRef
-    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        super.setOutputs(outputs);
+        this.outputs = outputs;
     }
 
     @Override

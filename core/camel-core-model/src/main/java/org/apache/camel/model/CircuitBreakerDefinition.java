@@ -25,10 +25,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.DslProperty;
 
 /**
  * Route messages in a fault tolerance way using Circuit Breaker
@@ -38,14 +36,13 @@ import org.apache.camel.spi.annotations.DslProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
+    @XmlAttribute
+    private String configuration;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
-    @XmlAttribute
-    private String configuration;
-    @DslProperty
-    @XmlTransient
+    @XmlElement
     private OnFallbackDefinition onFallback;
 
     public CircuitBreakerDefinition() {

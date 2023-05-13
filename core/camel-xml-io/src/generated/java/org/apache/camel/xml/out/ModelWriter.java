@@ -1113,6 +1113,7 @@ public class ModelWriter extends BaseWriter {
         doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
+        doWriteElement("onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
         endElement();
     }
     protected void doWriteClaimCheckDefinition(

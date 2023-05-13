@@ -246,6 +246,7 @@ public class ModelParser extends BaseParser {
         }, (def, key) -> {
             switch (key) {
                 case "faultToleranceConfiguration": def.setFaultToleranceConfiguration(doParseFaultToleranceConfigurationDefinition()); break;
+                case "onFallback": def.setOnFallback(doParseOnFallbackDefinition()); break;
                 case "resilience4jConfiguration": def.setResilience4jConfiguration(doParseResilience4jConfigurationDefinition()); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
@@ -259,6 +260,22 @@ public class ModelParser extends BaseParser {
     protected FaultToleranceConfigurationDefinition doParseFaultToleranceConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new FaultToleranceConfigurationDefinition(),
             faultToleranceConfigurationCommonAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected OnFallbackDefinition doParseOnFallbackDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OnFallbackDefinition(), (def, key, val) -> {
+            if ("fallbackViaNetwork".equals(key)) {
+                def.setFallbackViaNetwork(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, (def, key) -> {
+            ProcessorDefinition v = doParseProcessorDefinitionRef(key);
+            if (v != null) { 
+                doAdd(v, def.getOutputs(), def::setOutputs);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected ClaimCheckDefinition doParseClaimCheckDefinition() throws IOException, XmlPullParserException {
         return doParse(new ClaimCheckDefinition(), (def, key, val) -> {
@@ -665,15 +682,6 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, noElementHandler(), noValueHandler());
-    }
-    protected OnFallbackDefinition doParseOnFallbackDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OnFallbackDefinition(), (def, key, val) -> {
-            if ("fallbackViaNetwork".equals(key)) {
-                def.setFallbackViaNetwork(val);
-                return true;
-            }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
-        }, outputDefinitionElementHandler(), noValueHandler());
     }
     protected OutputTypeDefinition doParseOutputTypeDefinition() throws IOException, XmlPullParserException {
         return doParse(new OutputTypeDefinition(), (def, key, val) -> {
@@ -3233,6 +3241,7 @@ public class ModelParser extends BaseParser {
             case "choice": return doParseChoiceDefinition();
             case "otherwise": return doParseOtherwiseDefinition();
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
+            case "onFallback": return doParseOnFallbackDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();
             case "delay": return doParseDelayDefinition();
@@ -3252,7 +3261,6 @@ public class ModelParser extends BaseParser {
             case "multicast": return doParseMulticastDefinition();
             case "onCompletion": return doParseOnCompletionDefinition();
             case "onException": return doParseOnExceptionDefinition();
-            case "onFallback": return doParseOnFallbackDefinition();
             case "pausable": return doParsePausableDefinition();
             case "pipeline": return doParsePipelineDefinition();
             case "policy": return doParsePolicyDefinition();
