@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 
 import jakarta.persistence.NoResultException;
@@ -119,17 +115,6 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
             queryOrFind = "query=" + query.value();
         }
 
-    }
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    private @interface Find {
-    }
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    private @interface Query {
-        String value() default "select c from Customer c where c.name like :seq";
     }
 
     private static Exception getException(final Exchange exchange) {
