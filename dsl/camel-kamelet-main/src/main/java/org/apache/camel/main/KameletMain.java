@@ -455,6 +455,10 @@ public class KameletMain extends MainCommandLineSupport {
             // reloader
             String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
             if (sourceDir != null) {
+                if (console || health) {
+                    // allow to upload source via http when HTTP console enabled
+                    VertxHttpServer.registerUploadSourceDir(answer, sourceDir);
+                }
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");
                 answer.addService(reloader);

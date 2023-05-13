@@ -212,6 +212,65 @@ and reloaded. You can also delete files to remove routes.
 NOTE: You cannot use both files and source dir together.
 The following is not allowed: `camel run abc.java --source-dir=mycode`.
 
+==== Uploading files to source directory via HTTP
+
+When running Camel JBang with `--source-dir`, `--console` and `--dev` (reloading) then you can
+change the source files on-the-fly by copying,modifying or deleting the files in the source directory.
+
+This can also be done via HTTP using the `q/upload/:filename` HTTP endpoint using PUT and DELETE verbs.
+
+Given you run Camel JBang with:
+
+[source,bash]
+----
+camel run --source-dir=mycode --console --dev
+----
+
+Then you can upload or modify a source file named `bar.java` you can send a PUT request via curl:
+
+[source,bash]
+----
+curl -X PUT http://0.0.0.0:8080/q/upload/bar.java --data-binary "@bar.java"
+----
+
+Or via:
+
+[source,bash]
+----
+curl -T bar.java http://0.0.0.0:8080/q/upload/bar.java
+----
+
+To send the data via PUT then the file body can be included when using `Content-Type: application/x-www-form-urlencoded`:
+
+For example from a CURL `--ascii-trace`:
+
+[source,text]
+----
+0000: PUT /q/upload/bar.java HTTP/1.1
+0021: Host: 0.0.0.0:8080
+0035: User-Agent: curl/7.87.0
+004e: Accept: */*
+005b: Content-Length: 385
+0070: Content-Type: application/x-www-form-urlencoded
+00a1:
+=> Send data, 385 bytes (0x181)
+0000: // camel-k: language=java..import org.apache.camel.builder.Route
+0040: Builder;..public class bar extends RouteBuilder {..    @Override
+0080: .    public void configure() throws Exception {..        // Writ
+00c0: e your routes here, for example:.        from("timer:java?period
+0100: ={{time:1000}}").            .setBody().                .simple(
+0140: "XXXCamel from ${routeId}").            .log("${body}");.    }.}
+0180: .
+== Info: Mark bundle as not supporting multiuse
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 19 bytes (0x13)
+0000: content-length: 0
+<= Recv header, 2 bytes (0x2)
+0000:
+== Info: Connection #0 to host 0.0.0.0 left intact
+----
+
 === Developer Console
 
 You can enable the developer console, which presents a variety of information to the developer.
