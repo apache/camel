@@ -254,7 +254,7 @@ public class ModelParser extends BaseParser {
     }
     protected Resilience4jConfigurationDefinition doParseResilience4jConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new Resilience4jConfigurationDefinition(),
-            resilience4jConfigurationCommonAttributeHandler(), resilience4jConfigurationCommonElementHandler(), noValueHandler());
+            resilience4jConfigurationCommonAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected FaultToleranceConfigurationDefinition doParseFaultToleranceConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new FaultToleranceConfigurationDefinition(),
@@ -861,6 +861,9 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "automaticTransitionFromOpenToHalfOpenEnabled": def.setAutomaticTransitionFromOpenToHalfOpenEnabled(val); break;
+                case "bulkheadEnabled": def.setBulkheadEnabled(val); break;
+                case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(val); break;
+                case "bulkheadMaxWaitDuration": def.setBulkheadMaxWaitDuration(val); break;
                 case "circuitBreaker": def.setCircuitBreaker(val); break;
                 case "config": def.setConfig(val); break;
                 case "failureRateThreshold": def.setFailureRateThreshold(val); break;
@@ -871,6 +874,10 @@ public class ModelParser extends BaseParser {
                 case "slowCallDurationThreshold": def.setSlowCallDurationThreshold(val); break;
                 case "slowCallRateThreshold": def.setSlowCallRateThreshold(val); break;
                 case "throwExceptionWhenHalfOpenOrOpenState": def.setThrowExceptionWhenHalfOpenOrOpenState(val); break;
+                case "timeoutCancelRunningFuture": def.setTimeoutCancelRunningFuture(val); break;
+                case "timeoutDuration": def.setTimeoutDuration(val); break;
+                case "timeoutEnabled": def.setTimeoutEnabled(val); break;
+                case "timeoutExecutorService": def.setTimeoutExecutorService(val); break;
                 case "waitDurationInOpenState": def.setWaitDurationInOpenState(val); break;
                 case "writableStackTraceEnabled": def.setWritableStackTraceEnabled(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -878,23 +885,8 @@ public class ModelParser extends BaseParser {
             return true;
         };
     }
-    protected <T extends Resilience4jConfigurationCommon> ElementHandler<T> resilience4jConfigurationCommonElementHandler() {
-        return (def, key) -> {
-            switch (key) {
-                case "bulkheadEnabled": def.setBulkheadEnabled(doParseText()); break;
-                case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(doParseText()); break;
-                case "bulkheadMaxWaitDuration": def.setBulkheadMaxWaitDuration(doParseText()); break;
-                case "timeoutCancelRunningFuture": def.setTimeoutCancelRunningFuture(doParseText()); break;
-                case "timeoutDuration": def.setTimeoutDuration(doParseText()); break;
-                case "timeoutEnabled": def.setTimeoutEnabled(doParseText()); break;
-                case "timeoutExecutorService": def.setTimeoutExecutorService(doParseText()); break;
-                default: return false;
-            }
-            return true;
-        };
-    }
     protected Resilience4jConfigurationCommon doParseResilience4jConfigurationCommon() throws IOException, XmlPullParserException {
-        return doParse(new Resilience4jConfigurationCommon(), resilience4jConfigurationCommonAttributeHandler(), resilience4jConfigurationCommonElementHandler(), noValueHandler());
+        return doParse(new Resilience4jConfigurationCommon(), resilience4jConfigurationCommonAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected RestContextRefDefinition doParseRestContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestContextRefDefinition(), (def, key, val) -> {

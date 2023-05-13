@@ -4712,23 +4712,7 @@ microprofile-fault-tolerance) to use for configuring the circuit breaker EIP.
             
       <xs:extension base="tns:identifiedType">
                 
-        <xs:sequence>
-                    
-          <xs:element minOccurs="0" name="bulkheadEnabled" type="xs:string"/>
-                    
-          <xs:element minOccurs="0" name="bulkheadMaxConcurrentCalls" type="xs:string"/>
-                    
-          <xs:element minOccurs="0" name="bulkheadMaxWaitDuration" type="xs:string"/>
-                    
-          <xs:element minOccurs="0" name="timeoutEnabled" type="xs:string"/>
-                    
-          <xs:element minOccurs="0" name="timeoutExecutorService" type="xs:string"/>
-                    
-          <xs:element minOccurs="0" name="timeoutDuration" type="xs:string"/>
-                    
-          <xs:element minOccurs="0" name="timeoutCancelRunningFuture" type="xs:string"/>
-                  
-        </xs:sequence>
+        <xs:sequence/>
                 
         <xs:attribute name="circuitBreaker" type="xs:string">
           <xs:annotation>
@@ -4873,6 +4857,74 @@ slowCallDurationThreshold. Default value: 100
 Configures the duration threshold (seconds) above which calls are considered as
 slow and increase the slow calls percentage. Default value is 60 seconds.
 Default value: 60
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="bulkheadEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether bulkhead is enabled or not on the circuit breaker. Default is false.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="bulkheadMaxConcurrentCalls" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Configures the max amount of concurrent calls the bulkhead will support. Default
+value: 25
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="bulkheadMaxWaitDuration" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Configures a maximum amount of time which the calling thread will wait to enter
+the bulkhead. If bulkhead has space available, entry is guaranteed and
+immediate. If bulkhead is full, calling threads will contest for space, if it
+becomes available. maxWaitDuration can be set to 0. Note: for threads running on
+an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration
+to 0 is highly recommended. Blocking an event-loop thread will most likely have
+a negative effect on application throughput. Default value: 0
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="timeoutEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether timeout is enabled or not on the circuit breaker. Default is false.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="timeoutExecutorService" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+References to a custom thread pool to use when timeout is enabled (uses
+ForkJoinPool#commonPool() by default).
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="timeoutDuration" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Configures the thread execution timeout. Default value is 1 second. Default
+value: 1000
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="timeoutCancelRunningFuture" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Configures whether cancel is called on the running future. Defaults to true.
+Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

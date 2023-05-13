@@ -2271,6 +2271,15 @@
           "automatic-transition-from-open-to-half-open-enabled" : {
             "type" : "boolean"
           },
+          "bulkhead-enabled" : {
+            "type" : "boolean"
+          },
+          "bulkhead-max-concurrent-calls" : {
+            "type" : "number"
+          },
+          "bulkhead-max-wait-duration" : {
+            "type" : "number"
+          },
           "circuit-breaker" : {
             "type" : "string"
           },
@@ -2304,6 +2313,18 @@
           },
           "throw-exception-when-half-open-or-open-state" : {
             "type" : "boolean"
+          },
+          "timeout-cancel-running-future" : {
+            "type" : "boolean"
+          },
+          "timeout-duration" : {
+            "type" : "number"
+          },
+          "timeout-enabled" : {
+            "type" : "boolean"
+          },
+          "timeout-executor-service" : {
+            "type" : "string"
           },
           "wait-duration-in-open-state" : {
             "type" : "number"

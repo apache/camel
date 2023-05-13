@@ -1920,8 +1920,13 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold());
+        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration());
         doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold());
+        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture());
         doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls());
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration());
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled());
+        doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService());
         doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState());
         doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState());
         doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold());
@@ -1930,19 +1935,10 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("circuitBreaker", def.getCircuitBreaker());
         doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize());
         doWriteAttribute("config", def.getConfig());
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls());
         doWriteAttribute("slidingWindowType", def.getSlidingWindowType());
+        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled());
         doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState());
-    }
-    protected void doWriteResilience4jConfigurationCommonElements(
-            Resilience4jConfigurationCommon def)
-            throws IOException {
-        doWriteElement("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), this::doWriteString);
-        doWriteElement("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), this::doWriteString);
-        doWriteElement("timeoutDuration", def.getTimeoutDuration(), this::doWriteString);
-        doWriteElement("timeoutEnabled", def.getTimeoutEnabled(), this::doWriteString);
-        doWriteElement("timeoutExecutorService", def.getTimeoutExecutorService(), this::doWriteString);
-        doWriteElement("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), this::doWriteString);
-        doWriteElement("bulkheadEnabled", def.getBulkheadEnabled(), this::doWriteString);
     }
     protected void doWriteResilience4jConfigurationCommon(
             String name,
@@ -1950,7 +1946,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteResilience4jConfigurationCommonAttributes(def);
-        doWriteResilience4jConfigurationCommonElements(def);
         endElement();
     }
     protected void doWriteResilience4jConfigurationDefinition(
@@ -1959,7 +1954,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteResilience4jConfigurationCommonAttributes(def);
-        doWriteResilience4jConfigurationCommonElements(def);
         endElement();
     }
     protected void doWriteRestContextRefDefinition(

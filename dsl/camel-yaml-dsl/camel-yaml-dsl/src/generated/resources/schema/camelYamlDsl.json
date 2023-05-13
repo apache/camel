@@ -2181,6 +2181,15 @@
           "automaticTransitionFromOpenToHalfOpenEnabled" : {
             "type" : "boolean"
           },
+          "bulkheadEnabled" : {
+            "type" : "boolean"
+          },
+          "bulkheadMaxConcurrentCalls" : {
+            "type" : "number"
+          },
+          "bulkheadMaxWaitDuration" : {
+            "type" : "number"
+          },
           "circuitBreaker" : {
             "type" : "string"
           },
@@ -2214,6 +2223,18 @@
           },
           "throwExceptionWhenHalfOpenOrOpenState" : {
             "type" : "boolean"
+          },
+          "timeoutCancelRunningFuture" : {
+            "type" : "boolean"
+          },
+          "timeoutDuration" : {
+            "type" : "number"
+          },
+          "timeoutEnabled" : {
+            "type" : "boolean"
+          },
+          "timeoutExecutorService" : {
+            "type" : "string"
           },
           "waitDurationInOpenState" : {
             "type" : "number"

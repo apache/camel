@@ -66,18 +66,25 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "60", javaType = "java.lang.Integer")
     private String slowCallDurationThreshold;
+    @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
+    @XmlAttribute
     @Metadata(defaultValue = "25", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
+    @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "0", javaType = "java.lang.Integer")
     private String bulkheadMaxWaitDuration;
+    @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String timeoutExecutorService;
+    @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
     private String timeoutDuration;
+    @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String timeoutCancelRunningFuture;
 

@@ -11893,6 +11893,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "automatic-transition-from-open-to-half-open-enabled", type = "boolean"),
+                    @YamlProperty(name = "bulkhead-enabled", type = "boolean"),
+                    @YamlProperty(name = "bulkhead-max-concurrent-calls", type = "number"),
+                    @YamlProperty(name = "bulkhead-max-wait-duration", type = "number"),
                     @YamlProperty(name = "circuit-breaker", type = "string"),
                     @YamlProperty(name = "config", type = "string"),
                     @YamlProperty(name = "failure-rate-threshold", type = "number"),
@@ -11904,6 +11907,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "slow-call-duration-threshold", type = "number"),
                     @YamlProperty(name = "slow-call-rate-threshold", type = "number"),
                     @YamlProperty(name = "throw-exception-when-half-open-or-open-state", type = "boolean"),
+                    @YamlProperty(name = "timeout-cancel-running-future", type = "boolean"),
+                    @YamlProperty(name = "timeout-duration", type = "number"),
+                    @YamlProperty(name = "timeout-enabled", type = "boolean"),
+                    @YamlProperty(name = "timeout-executor-service", type = "string"),
                     @YamlProperty(name = "wait-duration-in-open-state", type = "number"),
                     @YamlProperty(name = "writable-stack-trace-enabled", type = "boolean")
             }
@@ -11925,6 +11932,21 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "automatic-transition-from-open-to-half-open-enabled": {
                     String val = asText(node);
                     target.setAutomaticTransitionFromOpenToHalfOpenEnabled(val);
+                    break;
+                }
+                case "bulkhead-enabled": {
+                    String val = asText(node);
+                    target.setBulkheadEnabled(val);
+                    break;
+                }
+                case "bulkhead-max-concurrent-calls": {
+                    String val = asText(node);
+                    target.setBulkheadMaxConcurrentCalls(val);
+                    break;
+                }
+                case "bulkhead-max-wait-duration": {
+                    String val = asText(node);
+                    target.setBulkheadMaxWaitDuration(val);
                     break;
                 }
                 case "circuit-breaker": {
@@ -11980,6 +12002,26 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "throw-exception-when-half-open-or-open-state": {
                     String val = asText(node);
                     target.setThrowExceptionWhenHalfOpenOrOpenState(val);
+                    break;
+                }
+                case "timeout-cancel-running-future": {
+                    String val = asText(node);
+                    target.setTimeoutCancelRunningFuture(val);
+                    break;
+                }
+                case "timeout-duration": {
+                    String val = asText(node);
+                    target.setTimeoutDuration(val);
+                    break;
+                }
+                case "timeout-enabled": {
+                    String val = asText(node);
+                    target.setTimeoutEnabled(val);
+                    break;
+                }
+                case "timeout-executor-service": {
+                    String val = asText(node);
+                    target.setTimeoutExecutorService(val);
                     break;
                 }
                 case "wait-duration-in-open-state": {
