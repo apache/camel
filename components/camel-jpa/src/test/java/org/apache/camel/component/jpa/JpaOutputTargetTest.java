@@ -29,7 +29,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
     private static final String PROP_MARK = ".";
 
     @Test
-    @AdditionalQueryParameters("outputTarget=" + TARGET_NAME)
+    @AdditionalEndpointParameters("outputTarget=" + TARGET_NAME)
     public void testQueryToHeader() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -37,7 +37,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("outputTarget=" + TARGET_NAME)
+    @AdditionalEndpointParameters("outputTarget=" + TARGET_NAME)
     public void testBodyRemainsUnchanged() throws Exception {
         final Object body = new Object();
         final Exchange result = doRunQueryTest(withBody(body));
@@ -46,7 +46,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("outputTarget=" + PROP_MARK + TARGET_NAME)
+    @AdditionalEndpointParameters("outputTarget=" + PROP_MARK + TARGET_NAME)
     public void testQueryToProperty() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -55,7 +55,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("outputTarget=" + TARGET_NAME)
+    @AdditionalEndpointParameters("outputTarget=" + TARGET_NAME)
     public void testFindToHeader() throws Exception {
         final Long customerId = validCustomerId(entityManager);
         final Exchange result = doRunQueryTest(withBody(customerId));
@@ -65,7 +65,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("outputTarget=" + TARGET_NAME)
+    @AdditionalEndpointParameters("outputTarget=" + TARGET_NAME)
     public void testFindBodyRemainsUnchanged() throws Exception {
         final Object body = new Object();
         final Exchange result = doRunQueryTest(withBody(body));
@@ -75,7 +75,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("outputTarget=" + PROP_MARK + TARGET_NAME)
+    @AdditionalEndpointParameters("outputTarget=" + PROP_MARK + TARGET_NAME)
     public void testFindToProperty() throws Exception {
         final Long customerId = validCustomerId(entityManager);
         final Exchange result = doRunQueryTest(withBody(customerId));

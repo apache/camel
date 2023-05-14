@@ -120,7 +120,7 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     private void setAdditionalParameters(final AnnotatedElement annotatedElement) {
-        final AdditionalQueryParameters annotation = annotatedElement.getAnnotation(AdditionalQueryParameters.class);
+        final AdditionalEndpointParameters annotation = annotatedElement.getAnnotation(AdditionalEndpointParameters.class);
         if (annotation != null && !annotation.value().isBlank()) {
             additionalQueryParameters = annotation.value();
         }

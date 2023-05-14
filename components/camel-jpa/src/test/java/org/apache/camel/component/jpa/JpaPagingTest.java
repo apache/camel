@@ -40,7 +40,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + FIRST_RESULT)
+    @AdditionalEndpointParameters("firstResult=" + FIRST_RESULT)
     public void testFirstResultInUri() throws Exception {
         final List<Customer> customers = runQueryTest();
 
@@ -56,7 +56,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("maximumResults=" + MAXIMUM_RESULTS)
+    @AdditionalEndpointParameters("maximumResults=" + MAXIMUM_RESULTS)
     public void testFirstInHeaderMaxInUri() throws Exception {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT));
@@ -66,7 +66,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("maximumResults=" + MAXIMUM_RESULTS)
+    @AdditionalEndpointParameters("maximumResults=" + MAXIMUM_RESULTS)
     public void testMaxHeaderPrevailsOverUri() throws Exception {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS * 2));
@@ -75,7 +75,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + FIRST_RESULT)
+    @AdditionalEndpointParameters("firstResult=" + FIRST_RESULT)
     public void testFirstHeaderPrevailsOverUri() throws Exception {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT * 2));
@@ -95,7 +95,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + JpaWithOptionsTestSupport.ENTRIES_COUNT)
+    @AdditionalEndpointParameters("firstResult=" + JpaWithOptionsTestSupport.ENTRIES_COUNT)
     public void testFirstResultAfterTheEnd() throws Exception {
         final List<Customer> customers = runQueryTest();
 
