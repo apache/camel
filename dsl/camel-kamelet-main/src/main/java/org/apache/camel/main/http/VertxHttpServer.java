@@ -55,6 +55,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.main.util.CamelJBangSettingsHelper;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -495,10 +496,29 @@ public final class VertxHttpServer {
                 int status = 200;
                 boolean delete = HttpMethod.DELETE == ctx.request().method();
                 if (delete) {
-                    LOG.info("Deleting file: {}/{}", dir, name);
-                    File f = new File(dir, name);
-                    if (f.exists() && f.isFile()) {
-                        FileUtil.deleteFile(f);
+                    if (name.contains("*")) {
+                        if (name.equals("*")) {
+                            name = "**";
+                        }
+                        AntPathMatcher match = AntPathMatcher.INSTANCE;
+                        File[] files = new File(dir).listFiles();
+                        if (files != null) {
+                            for (File f : files) {
+                                if (f.getName().startsWith(".") || f.isHidden()) {
+                                    continue;
+                                }
+                                if (match.match(name, f.getName())) {
+                                    LOG.info("Deleting file: {}/{}", dir, name);
+                                    FileUtil.deleteFile(f);
+                                }
+                            }
+                        }
+                    } else {
+                        File f = new File(dir, name);
+                        if (f.exists() && f.isFile()) {
+                            LOG.info("Deleting file: {}/{}", dir, name);
+                            FileUtil.deleteFile(f);
+                        }
                     }
                 } else {
                     File f = new File(dir, name);
