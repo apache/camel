@@ -60,8 +60,6 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
     @AdditionalQueryParameters("singleResult=true")
     public void testSingleCustomerOKFind() throws Exception {
         // ids in the db are not known, so query for a known element and use its id.
-        super.setUp(getEndpointUri());
-
         Long customerId = validCustomerId(entityManager);
 
         final Exchange result = template.send("direct:start", withBody(customerId));
