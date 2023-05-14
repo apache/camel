@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
-    @AdditionalQueryParameters("singleResult=true&parameters.seq=% 001")
+    @AdditionalEndpointParameters("singleResult=true&parameters.seq=% 001")
     public void testSingleCustomerOKQuery() throws Exception {
         final Customer customer = runQueryTest(Customer.class);
 
@@ -40,7 +40,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Query("select c from Customer c")
-    @AdditionalQueryParameters("singleResult=true")
+    @AdditionalEndpointParameters("singleResult=true")
     public void testTooMuchResults() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -48,7 +48,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("singleResult=true&parameters.seq=% xxx")
+    @AdditionalEndpointParameters("singleResult=true&parameters.seq=% xxx")
     public void testNoCustomersQuery() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -57,7 +57,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("singleResult=true")
+    @AdditionalEndpointParameters("singleResult=true")
     public void testSingleCustomerOKFind() throws Exception {
         // ids in the db are not known, so query for a known element and use its id.
         Long customerId = validCustomerId(entityManager);
@@ -69,7 +69,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("singleResult=true")
+    @AdditionalEndpointParameters("singleResult=true")
     public void testNoCustomerFind() throws Exception {
         final Exchange result = doRunQueryTest(withBody(Long.MAX_VALUE));
 
