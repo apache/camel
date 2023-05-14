@@ -17,6 +17,7 @@
 package org.apache.camel.component.jpa;
 
 import java.util.List;
+import org.apache.camel.component.jpa.JpaWithOptionsTestSupport.Query;
 
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
@@ -24,10 +25,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Query("select c from Customer c order by c.name")
 public class JpaPagingTest extends JpaWithOptionsTestSupport {
-
-    private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName() +
-                                               "?query=select c from Customer c order by c.name";
 
     // both should be less than JpaWithOptionsTestSupport.ENTRIES_COUNT / 2
     private static final int FIRST_RESULT = 5;
@@ -106,11 +105,6 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     private static void assertFirstCustomerSequence(final List<Customer> customers, final int firstResult) {
         assertTrue(customers.get(0).getName().endsWith(
                 String.format(JpaWithOptionsTestSupport.ENTRY_SEQ_FORMAT, firstResult)));
-    }
-
-    protected String getEndpointUri() {
-        return ENDPOINT_URI +
-               createAdditionalQueryParameters();
     }
 
 }

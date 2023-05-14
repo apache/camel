@@ -16,14 +16,23 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import javax.persistence.EntityManager;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,7 +48,11 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     static final int ENTRIES_COUNT = 30;
     static final String ENTRY_SEQ_FORMAT = "%03d";
 
+    private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName();
+
     private String additionalQueryParameters = "";
+
+    private String queryOrFind;
 
     protected String createAdditionalQueryParameters() {
         return additionalQueryParameters.isBlank() ? "" : "&" + additionalQueryParameters;
@@ -100,10 +113,43 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
             if (annotation != null && !annotation.value().isBlank()) {
                 additionalQueryParameters = annotation.value();
             }
+
+            if (!(annotatedElement instanceof Method)) {
+                return;
+            }
+
+            final Method annotatedMethod = (Method)annotatedElement;
+
+            final Predicate<Annotation> isQueryOrFind = ann ->
+                    Stream.of(Query.class, Find.class).anyMatch(foc -> foc.isAssignableFrom(ann.annotationType()));
+
+            final List<Annotation> onMethod = Arrays.stream(annotatedMethod.getAnnotations())
+                    .filter(isQueryOrFind)
+                    .collect(Collectors.toList());
+            final List<Annotation> onClass = Arrays.stream(annotatedMethod.getDeclaringClass().getAnnotations())
+                    .filter(isQueryOrFind)
+                    .collect(Collectors.toList());
+            if (onMethod.size() > 1 || onClass.size() > 1 || onMethod.size() + onClass.size() == 0) {
+                throw new IllegalStateException("Test (method or class) must be annotated with EITHER Find OR Query");
+            }
+
+            final Annotation queryOrFindAnn = Stream.concat(onMethod.stream(), onClass.stream())
+                    .filter(isQueryOrFind).findFirst().get();
+
+            if (queryOrFindAnn instanceof Find) {
+                queryOrFind = "findEntity=" + true;
+            } else { // queryOrFindAnn instanceof Query
+                queryOrFind = "query=" + ((Query) queryOrFindAnn).value();
+            }
         }
     }
 
-    protected abstract String getEndpointUri();
+    protected String getEndpointUri() {
+        return String.format("%s?%s%s",
+                ENDPOINT_URI,
+                queryOrFind,
+                createAdditionalQueryParameters());
+    }
 
     protected void createCustomers() {
         IntStream.range(0, ENTRIES_COUNT).forEach(idx -> {
@@ -113,6 +159,12 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         });
     }
 
+    static Long validCustomerId(final EntityManager entityManager) {
+        final Customer fromDb = (Customer) entityManager.createQuery("select c from Customer c where c.name like '% 001'").getSingleResult();
+        final Long customerId = fromDb.getId();
+        return customerId;
+    }
+
     @Override
     protected void setUp(String endpointUri) throws Exception {
         super.setUp(endpointUri);
@@ -120,15 +172,15 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
     }
 
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Find {
     }
 
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Query {
-        String value() default "select c from Customer c where c.name like :seq";
+        String value() default "select c from Customer c";
     }
 
 }
