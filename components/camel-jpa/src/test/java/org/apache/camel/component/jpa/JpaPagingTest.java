@@ -17,8 +17,8 @@
 package org.apache.camel.component.jpa;
 
 import java.util.List;
-import org.apache.camel.component.jpa.JpaWithOptionsTestSupport.Query;
 
+import org.apache.camel.component.jpa.JpaWithOptionsTestSupport.Query;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
 

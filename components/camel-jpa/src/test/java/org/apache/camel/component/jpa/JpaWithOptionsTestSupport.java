@@ -24,14 +24,13 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
 import javax.persistence.EntityManager;
 
 import org.apache.camel.Exchange;
@@ -69,8 +68,6 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     protected Exchange doRunQueryTest(final Processor... preRun) throws Exception {
-        setUp(getEndpointUri());
-
         return template.send("direct:start", exchange -> {
             for (Processor processor : preRun) {
                 processor.process(exchange);
@@ -109,38 +106,54 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         final Optional<AnnotatedElement> element = context.getElement();
         if (element.isPresent()) {
             final AnnotatedElement annotatedElement = element.get();
-            final AdditionalQueryParameters annotation = annotatedElement.getAnnotation(AdditionalQueryParameters.class);
-            if (annotation != null && !annotation.value().isBlank()) {
-                additionalQueryParameters = annotation.value();
-            }
 
-            if (!(annotatedElement instanceof Method)) {
-                return;
-            }
+            setAdditionalParameters(annotatedElement);
+            setQueryOrFind(annotatedElement);
+        }
 
-            final Method annotatedMethod = (Method)annotatedElement;
+    }
 
-            final Predicate<Annotation> isQueryOrFind = ann ->
-                    Stream.of(Query.class, Find.class).anyMatch(foc -> foc.isAssignableFrom(ann.annotationType()));
+    @Override
+    public void beforeTestExecution(ExtensionContext context) throws Exception {
+        super.beforeTestExecution(context);
+        setUp(getEndpointUri());
+    }
 
-            final List<Annotation> onMethod = Arrays.stream(annotatedMethod.getAnnotations())
-                    .filter(isQueryOrFind)
-                    .collect(Collectors.toList());
-            final List<Annotation> onClass = Arrays.stream(annotatedMethod.getDeclaringClass().getAnnotations())
-                    .filter(isQueryOrFind)
-                    .collect(Collectors.toList());
-            if (onMethod.size() > 1 || onClass.size() > 1 || onMethod.size() + onClass.size() == 0) {
-                throw new IllegalStateException("Test (method or class) must be annotated with EITHER Find OR Query");
-            }
+    private void setAdditionalParameters(final AnnotatedElement annotatedElement) {
+        final AdditionalQueryParameters annotation = annotatedElement.getAnnotation(AdditionalQueryParameters.class);
+        if (annotation != null && !annotation.value().isBlank()) {
+            additionalQueryParameters = annotation.value();
+        }
+    }
 
-            final Annotation queryOrFindAnn = Stream.concat(onMethod.stream(), onClass.stream())
-                    .filter(isQueryOrFind).findFirst().get();
+    private void setQueryOrFind(final AnnotatedElement annotatedElement) throws IllegalStateException {
+        if (!(annotatedElement instanceof Method)) {
+            return;
+        }
 
-            if (queryOrFindAnn instanceof Find) {
-                queryOrFind = "findEntity=" + true;
-            } else { // queryOrFindAnn instanceof Query
-                queryOrFind = "query=" + ((Query) queryOrFindAnn).value();
-            }
+        final Method annotatedMethod = (Method) annotatedElement;
+
+        final Predicate<Annotation> isQueryOrFind
+                = ann -> Stream.of(Query.class, Find.class).anyMatch(foc -> foc.isAssignableFrom(ann.annotationType()));
+
+        final List<Annotation> onMethod = Arrays.stream(annotatedMethod.getAnnotations())
+                .filter(isQueryOrFind)
+                .collect(Collectors.toList());
+        final List<Annotation> onClass = Arrays.stream(annotatedMethod.getDeclaringClass().getAnnotations())
+                .filter(isQueryOrFind)
+                .collect(Collectors.toList());
+
+        if (onMethod.size() > 1 || onClass.size() > 1 || onMethod.size() + onClass.size() == 0) {
+            throw new IllegalStateException("Test (method or class) must be annotated with EITHER Find OR Query");
+        }
+
+        final Annotation queryOrFindAnn = Stream.concat(onMethod.stream(), onClass.stream())
+                .filter(isQueryOrFind).findFirst().get();
+
+        if (queryOrFindAnn instanceof Find) {
+            queryOrFind = "findEntity=" + true;
+        } else { // queryOrFindAnn instanceof Query
+            queryOrFind = "query=" + ((Query) queryOrFindAnn).value();
         }
     }
 
@@ -160,7 +173,8 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     static Long validCustomerId(final EntityManager entityManager) {
-        final Customer fromDb = (Customer) entityManager.createQuery("select c from Customer c where c.name like '% 001'").getSingleResult();
+        final Customer fromDb
+                = (Customer) entityManager.createQuery("select c from Customer c where c.name like '% 001'").getSingleResult();
         final Long customerId = fromDb.getId();
         return customerId;
     }
@@ -172,12 +186,12 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
         assertEntitiesInDatabase(ENTRIES_COUNT, Customer.class.getName());
     }
 
-    @Target({ElementType.METHOD, ElementType.TYPE})
+    @Target({ ElementType.METHOD, ElementType.TYPE })
     @Retention(RetentionPolicy.RUNTIME)
     @interface Find {
     }
 
-    @Target({ElementType.METHOD, ElementType.TYPE})
+    @Target({ ElementType.METHOD, ElementType.TYPE })
     @Retention(RetentionPolicy.RUNTIME)
     @interface Query {
         String value() default "select c from Customer c";
