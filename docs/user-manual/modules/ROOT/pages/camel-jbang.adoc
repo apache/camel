@@ -271,6 +271,27 @@ For example from a CURL `--ascii-trace`:
 == Info: Connection #0 to host 0.0.0.0 left intact
 ----
 
+To delete one or more files you use the DELETE verb, such as:
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/bar.java
+----
+
+You can also use wildcards ('*') to delete all .java files:
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/*.java
+----
+
+Or to delete everything
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/*
+----
+
 === Developer Console
 
 You can enable the developer console, which presents a variety of information to the developer.
