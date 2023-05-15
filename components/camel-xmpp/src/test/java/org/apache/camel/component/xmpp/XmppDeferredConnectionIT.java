@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
  * expected.
  */
 
-public class XmppDeferredConnectionTest extends XmppBaseContainerTest {
-    private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionTest.class);
+public class XmppDeferredConnectionIT extends XmppBaseContainerTest {
+    private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionIT.class);
 
     /**
      * Ensures that the XMPP server instance is created and 'stopped' before the camel routes are initialized
