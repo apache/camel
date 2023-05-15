@@ -46,20 +46,6 @@ public interface DataLakeEndpointBuilderFactory {
             return (AdvancedDataLakeEndpointConsumerBuilder) this;
         }
         /**
-         * account key for authentication.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param accountKey the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointConsumerBuilder accountKey(String accountKey) {
-            doSetProperty("accountKey", accountKey);
-            return this;
-        }
-        /**
          * client id for azure account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -71,54 +57,6 @@ public interface DataLakeEndpointBuilderFactory {
          */
         default DataLakeEndpointConsumerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * client secret for azure account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecret the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointConsumerBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointConsumerBuilder clientSecretCredential(
-                com.azure.identity.ClientSecretCredential clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointConsumerBuilder clientSecretCredential(
-                String clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
         /**
@@ -1251,6 +1189,147 @@ public interface DataLakeEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * account key for authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder accountKey(String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * client secret for azure account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder clientSecretCredential(
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder clientSecretCredential(
+                String clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder sasCredential(
+                com.azure.core.credential.AzureSasCredential sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder sasCredential(
+                String sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token signature.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sasSignature the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder sasSignature(String sasSignature) {
+            doSetProperty("sasSignature", sasSignature);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder useDefaultIdentity(
+                Boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder useDefaultIdentity(
+                String useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
     }
 
     /**
@@ -1429,20 +1508,6 @@ public interface DataLakeEndpointBuilderFactory {
             return (AdvancedDataLakeEndpointProducerBuilder) this;
         }
         /**
-         * account key for authentication.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param accountKey the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointProducerBuilder accountKey(String accountKey) {
-            doSetProperty("accountKey", accountKey);
-            return this;
-        }
-        /**
          * client id for azure account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1454,54 +1519,6 @@ public interface DataLakeEndpointBuilderFactory {
          */
         default DataLakeEndpointProducerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * client secret for azure account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecret the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointProducerBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointProducerBuilder clientSecretCredential(
-                com.azure.identity.ClientSecretCredential clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointProducerBuilder clientSecretCredential(
-                String clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
         /**
@@ -2155,6 +2172,147 @@ public interface DataLakeEndpointBuilderFactory {
             doSetProperty("operation", operation);
             return this;
         }
+        /**
+         * account key for authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder accountKey(String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * client secret for azure account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder clientSecretCredential(
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder clientSecretCredential(
+                String clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder sasCredential(
+                com.azure.core.credential.AzureSasCredential sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder sasCredential(
+                String sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token signature.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sasSignature the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder sasSignature(String sasSignature) {
+            doSetProperty("sasSignature", sasSignature);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder useDefaultIdentity(
+                Boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointProducerBuilder useDefaultIdentity(
+                String useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
     }
 
     /**
@@ -2229,20 +2387,6 @@ public interface DataLakeEndpointBuilderFactory {
             return (AdvancedDataLakeEndpointBuilder) this;
         }
         /**
-         * account key for authentication.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param accountKey the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointBuilder accountKey(String accountKey) {
-            doSetProperty("accountKey", accountKey);
-            return this;
-        }
-        /**
          * client id for azure account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2254,54 +2398,6 @@ public interface DataLakeEndpointBuilderFactory {
          */
         default DataLakeEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * client secret for azure account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecret the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointBuilder clientSecretCredential(
-                com.azure.identity.ClientSecretCredential clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default DataLakeEndpointBuilder clientSecretCredential(
-                String clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
         /**
@@ -2915,6 +3011,146 @@ public interface DataLakeEndpointBuilderFactory {
         default DataLakeEndpointBuilder userPrincipalNameReturned(
                 String userPrincipalNameReturned) {
             doSetProperty("userPrincipalNameReturned", userPrincipalNameReturned);
+            return this;
+        }
+        /**
+         * account key for authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder accountKey(String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * client secret for azure account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder clientSecretCredential(
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder clientSecretCredential(
+                String clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder sasCredential(
+                com.azure.core.credential.AzureSasCredential sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder sasCredential(String sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token signature.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sasSignature the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder sasSignature(String sasSignature) {
+            doSetProperty("sasSignature", sasSignature);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder useDefaultIdentity(
+                Boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointBuilder useDefaultIdentity(
+                String useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
             return this;
         }
     }
@@ -3878,6 +4114,33 @@ public interface DataLakeEndpointBuilderFactory {
          */
         public String azureStorageDataLakeUmask() {
             return "AzureStorageDataLakeUmask";
+        }
+
+        /**
+         * Sets the file client to use.
+         * 
+         * The option is a: {@code DataLakeFileClient} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeFileClient}.
+         */
+        public String azureStorageDataLakeFileClient() {
+            return "AzureStorageDataLakeFileClient";
+        }
+
+        /**
+         * Sets whether to flush on append.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeFlush}.
+         */
+        public String azureStorageDataLakeFlush() {
+            return "AzureStorageDataLakeFlush";
         }
     }
     static DataLakeEndpointBuilder endpointBuilder(

@@ -70,6 +70,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "doneFileName": getOrCreateConfiguration(target).setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "forcepathstyle":
+        case "forcePathStyle": getOrCreateConfiguration(target).setForcePathStyle(property(camelContext, boolean.class, value)); return true;
         case "ignorebody":
         case "ignoreBody": getOrCreateConfiguration(target).setIgnoreBody(property(camelContext, boolean.class, value)); return true;
         case "includebody":
@@ -178,6 +180,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "doneFileName": return java.lang.String.class;
         case "filename":
         case "fileName": return java.lang.String.class;
+        case "forcepathstyle":
+        case "forcePathStyle": return boolean.class;
         case "ignorebody":
         case "ignoreBody": return boolean.class;
         case "includebody":
@@ -282,6 +286,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "doneFileName": return getOrCreateConfiguration(target).getDoneFileName();
         case "filename":
         case "fileName": return getOrCreateConfiguration(target).getFileName();
+        case "forcepathstyle":
+        case "forcePathStyle": return getOrCreateConfiguration(target).isForcePathStyle();
         case "ignorebody":
         case "ignoreBody": return getOrCreateConfiguration(target).isIgnoreBody();
         case "includebody":

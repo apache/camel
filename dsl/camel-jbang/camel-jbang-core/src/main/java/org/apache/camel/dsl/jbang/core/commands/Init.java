@@ -59,7 +59,7 @@ public class Init extends CamelCommand {
     private String fromKamelet;
 
     @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.2")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.3")
     private String kameletsVersion;
 
     @Option(names = {
@@ -104,8 +104,8 @@ public class Init extends CamelCommand {
             } else {
                 ext = "kamelet-action.yaml";
             }
-        } else if (ext != null && ext.startsWith("camel.yaml")) {
-            // we allow xxx.camel.yaml
+        } else if (ext != null && (ext.startsWith("camel.yaml") || ext.startsWith("camel.xml"))) {
+            // we allow xxx.camel.yaml / xxx.camel.xml
             ext = ext.substring(6);
         }
 

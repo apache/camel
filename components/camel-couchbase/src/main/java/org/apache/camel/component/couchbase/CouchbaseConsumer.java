@@ -90,7 +90,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
         if ("".equals(rangeStartKey) || "".equals(rangeEndKey)) {
             return;
         }
-        viewOptions.startKey(rangeEndKey).endKey(rangeEndKey);
+        viewOptions.startKey(rangeStartKey).endKey(rangeEndKey);
     }
 
     @Override

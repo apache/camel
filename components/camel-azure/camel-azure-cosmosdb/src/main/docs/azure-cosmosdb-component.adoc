@@ -106,7 +106,7 @@ to("file://directory");
 |`CamelAzureCosmosDbDatabaseRequestOptions`| `CosmosDbConstants.DATABASE_REQUEST_OPTIONS`|`CosmosDatabaseRequestOptions`| Sets additional options to execute on database operations.
 |`CamelAzureCosmosDbContainerPartitionKeyPath`| `CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH`|`String`| Sets the container partition key path.
 |`CamelAzureCosmosDbContainerRequestOptions`| `CosmosDbConstants.CONTAINER_REQUEST_OPTIONS`|`CosmosContainerRequestOptions`| Sets additional options to execute on container operations.
-|`CamelAzureCosmosDbItemPartitionKey`| `CosmosDbConstants.ITEM_PARTITION_KEY`|`PartitionKey`|  Sets partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key identifies the partition where the item is stored in.
+|`CamelAzureCosmosDbItemPartitionKey`| `CosmosDbConstants.ITEM_PARTITION_KEY`|`String`|  Sets partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key identifies the partition where the item is stored in.
 |`CamelAzureCosmosDbItemRequestOptions`| `CosmosDbConstants.ITEM_REQUEST_OPTIONS`|`CosmosItemRequestOptions`|  Sets additional options to execute on item operations.
 |`CamelAzureCosmosDbItemId`| `CosmosDbConstants.ITEM_ID`|`String`|  Sets the itemId in case needed for operation on item like delete, replace.
 |=======================================================================

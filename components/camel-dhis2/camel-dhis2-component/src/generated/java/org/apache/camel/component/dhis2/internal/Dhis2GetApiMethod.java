@@ -28,6 +28,7 @@ public enum Dhis2GetApiMethod implements ApiMethod {
         arg("paging", Boolean.class),
         arg("fields", String.class),
         arg("filter", String.class),
+        arg("rootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class),
         arg("queryParams", java.util.Map.class)),
 
     RESOURCE(
@@ -36,6 +37,7 @@ public enum Dhis2GetApiMethod implements ApiMethod {
         arg("path", String.class),
         arg("fields", String.class),
         arg("filter", String.class),
+        arg("rootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class),
         arg("queryParams", java.util.Map.class));
 
     private final ApiMethod apiMethod;

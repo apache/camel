@@ -17,7 +17,9 @@
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -40,30 +42,40 @@ public final class ConsoleHelper {
             return null;
         }
         Integer lineNumber = extractSourceLocationLineNumber(location);
-        List<JsonObject> code = new ArrayList<>();
         try {
             location = LoggerHelper.stripSourceLocationLineNumber(location);
             Resource resource = camelContext.adapt(ExtendedCamelContext.class).getResourceLoader()
                     .resolveResource(location);
             if (resource != null) {
-                LineNumberReader reader = new LineNumberReader(resource.getReader());
-                int i = 0;
-                String t;
-                do {
-                    t = reader.readLine();
-                    if (t != null) {
-                        i++;
-                        JsonObject c = new JsonObject();
-                        c.put("line", i);
-                        c.put("code", Jsoner.escape(t));
-                        if (lineNumber != null && lineNumber == i) {
-                            c.put("match", true);
-                        }
-                        code.add(c);
-                    }
-                } while (t != null);
-                IOHelper.close(reader);
+                return loadSourceAsJson(resource.getReader(), lineNumber);
             }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return Collections.EMPTY_LIST;
+    }
+
+    public static List<JsonObject> loadSourceAsJson(Reader reader, Integer lineNumber) {
+        List<JsonObject> code = new ArrayList<>();
+        try {
+            LineNumberReader lnr = new LineNumberReader(reader);
+            int i = 0;
+            String t;
+            do {
+                t = lnr.readLine();
+                if (t != null) {
+                    i++;
+                    JsonObject c = new JsonObject();
+                    c.put("line", i);
+                    c.put("code", Jsoner.escape(t));
+                    if (lineNumber != null && lineNumber == i) {
+                        c.put("match", true);
+                    }
+                    code.add(c);
+                }
+            } while (t != null);
+            IOHelper.close(lnr);
         } catch (Exception e) {
             // ignore
         }

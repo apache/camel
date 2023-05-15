@@ -4,7 +4,7 @@
     "name": "solrCloud",
     "title": "Solr",
     "description": "Perform operations against Apache Lucene Solr.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.9.0",
     "label": "monitoring,search",
     "javaType": "org.apache.camel.component.solr.SolrComponent",

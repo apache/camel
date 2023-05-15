@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  * Camel endpoint configuration for {@link org.apache.camel.component.dhis2.api.Dhis2Post}.
  */
 @ApiParams(apiName = "post", 
-           description = "Sample API used by Dhis2 Component whose method signatures are read from Java source",
+           description = "",
            apiMethods = {@ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, Object resource, java.util.Map<String, Object> queryParams)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)

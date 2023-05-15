@@ -1,10 +1,11 @@
-= Solr Component
+= Solr Component (deprecated)
 :doctitle: Solr
 :shortname: solr
 :artifactid: camel-solr
 :description: Perform operations against Apache Lucene Solr.
 :since: 2.9
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: solr

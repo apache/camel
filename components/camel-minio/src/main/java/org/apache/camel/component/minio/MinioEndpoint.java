@@ -92,10 +92,6 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                 LOG.trace("AutoCreateBucket set to true, Creating bucket {}...", bucketName);
                 makeBucket(bucketName);
                 LOG.trace("Bucket created");
-            } else {
-                throw new IllegalArgumentException(
-                        "Bucket does not exists, set autoCreateBucket option for bucket auto creation");
-
             }
         }
 

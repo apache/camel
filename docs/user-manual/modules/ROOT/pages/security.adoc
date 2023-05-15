@@ -89,6 +89,40 @@ camel.vault.aws.secretKey = secretKey
 camel.vault.aws.region = region
 ----
 
+If you want instead to use the https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS default credentials provider], you'll need to provide the following env variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=true
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.defaultCredentialsProvider = true
+camel.vault.aws.region = region
+----
+
+It is also possible to specify a particular profile name for accessing AWS Secrets Manager
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER=true
+export $CAMEL_VAULT_AWS_PROFILE_NAME=test-account
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.profileCredentialsProvider = true
+camel.vault.aws.profileName = test-account
+camel.vault.aws.region = region
+----
+
 At this point you'll be able to reference a property in the following way by using `aws:` as prefix in the `{{ }}` syntax:
 
 [source,xml]

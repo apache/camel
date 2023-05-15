@@ -48,6 +48,12 @@ public interface PulsarMessageHeaders {
     String PROPERTIES_OUT = "CamelPulsarProducerMessageProperties";
     @Metadata(label = "producer", description = "The event time of the message message.", javaType = "Long")
     String EVENT_TIME_OUT = "CamelPulsarProducerMessageEventTime";
+    @Metadata(label = "producer", description = "Deliver the message only at or after the specified absolute timestamp."
+                                                + " The timestamp is milliseconds and based on UTC (eg: System.currentTimeMillis)"
+                                                + " Note: messages are only delivered with delay when a consumer is consuming through a Shared subscription."
+                                                + " With other subscription types, the messages will still be delivered immediately.",
+              javaType = "Long")
+    String DELIVER_AT_OUT = "CamelPulsarProducerMessageDeliverAt";
     @Metadata(label = "consumer", description = "The message redelivery count, redelivery count maintain in pulsar broker.",
               javaType = "int")
     String PULSAR_REDELIVERY_COUNT = "CamelPulsarRedeliveryCount";

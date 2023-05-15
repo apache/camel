@@ -2705,7 +2705,7 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": true
   },
   "GrpcComponentBuilderFactory": {
     "kind": "component",
@@ -6459,7 +6459,7 @@
     "name": "solr",
     "title": "Solr",
     "description": "Perform operations against Apache Lucene Solr.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.9.0",
     "label": "monitoring,search",
     "javaType": "org.apache.camel.component.solr.SolrComponent",
@@ -6482,7 +6482,7 @@
     "name": "solrCloud",
     "title": "Solr",
     "description": "Perform operations against Apache Lucene Solr.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.9.0",
     "label": "monitoring,search",
     "javaType": "org.apache.camel.component.solr.SolrComponent",
@@ -6505,7 +6505,7 @@
     "name": "solrs",
     "title": "Solr (Secure)",
     "description": "Perform operations against Apache Lucene Solr.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.9.0",
     "label": "monitoring,search",
     "javaType": "org.apache.camel.component.solr.SolrComponent",

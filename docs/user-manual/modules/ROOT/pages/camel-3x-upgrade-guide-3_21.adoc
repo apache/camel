@@ -30,6 +30,16 @@ one of each out of the box.
 
 The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.
 
+=== camel-azure-cosmosdb
+
+The option `itemPartitionKey` has been updated. Now it's a String and not a PartitionKey POJO anymore. More details in CAMEL-19222.
+
+=== camel-http-common
+
+The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be more reusable.
+The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
+has been changed to generic `Message` types.
+
 === camel-jaxb
 
 When using schema validation, then access to external DTD/Schema is disabled by default.
@@ -106,9 +116,67 @@ The `certificatePath` parameter can now be specified as resource: for user point
 
 The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
 
+=== camel-micrometer
+
+The metrics has been renamed to follow Micrometer naming convention https://micrometer.io/docs/concepts#_naming_meters[Naming Meters].
+
+|===
+| Old Name | New Name
+| CamelExchangeEventNotifier | camel.exchange.event.notifier
+| CamelExchangesFailed | camel.exchanges.failed
+| CamelExchangesFailuresHandled | camel.exchanges.failures.handled
+| CamelExchangesInflight | camel.exchanges.external.redeliveries
+| CamelExchangesSucceeded | camel.exchanges.succeeded
+| CamelExchangesTotal | camel.exchanges.total
+| CamelMessageHistory | camel.message.history
+| CamelRoutePolicy | camel.route.policy
+| CamelRoutePolicyLongTask | camel.route.policy.long.task
+| CamelRoutesAdded | camel.routes.added
+| CamelRoutesRunning | camel.routes.running
+|===
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:
 
 * camel-dozer
 * camel-cmis
+
+== Backlog Tracing
+
+The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
+was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
+The old behavior can be archived by setting `backlogTracingStandby=true`.
+
+Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
+to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
+
+
+== Camel Spring Boot
+
+The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
+with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+
+=== camel-micrometer-starter
+
+The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
+
+=== camel-platform-http-starter
+
+The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
+Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).
+
+For example:
+
+[source,java]
+----
+from("platform-http:myservice")
+  .to("...")
+----
+
+Then calling _myservice_ would before require to include the context-path, such as `http://localhost:8080/camel/myservice`.
+Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
+
+NOTE: The `platform-http-starter` can also be used with Rest DSL.
+

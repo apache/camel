@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -33,13 +34,21 @@ public class Plc4XComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Plc4XEndpoint endpoint = new Plc4XEndpoint(uri, this);
-        //Tags have a Name, a query and an optional value (for writing)
-        //Reading --> Map<String,String>
-        //Writing --> Map<String,Map.Entry<String,Object>>
-        Map<String, Object> tags = getAndRemoveOrResolveReferenceParameter(parameters, "tags", Map.class);
+
+        Map<String, String> tags = getAndRemoveOrResolveReferenceParameter(parameters, "tags", Map.class);
+        Map<String, Object> map = PropertiesHelper.extractProperties(parameters, "tag.");
+        if (map != null) {
+            if (tags == null) {
+                tags = new LinkedHashMap<>();
+            }
+            for (Map.Entry<String, Object> me : map.entrySet()) {
+                tags.put(me.getKey(), me.getValue().toString());
+            }
+        }
         if (tags != null) {
             endpoint.setTags(tags);
         }
+
         String trigger = getAndRemoveOrResolveReferenceParameter(parameters, "trigger", String.class);
         if (trigger != null) {
             endpoint.setTrigger(trigger);

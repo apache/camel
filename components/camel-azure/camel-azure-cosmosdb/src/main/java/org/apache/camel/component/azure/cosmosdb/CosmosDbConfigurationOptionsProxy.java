@@ -94,8 +94,9 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public PartitionKey getItemPartitionKey(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.ITEM_PARTITION_KEY, configuration::getItemPartitionKey,
-                PartitionKey.class);
+        return new PartitionKey(
+                getOption(exchange, CosmosDbConstants.ITEM_PARTITION_KEY, configuration::getItemPartitionKey,
+                        String.class));
     }
 
     public Object getItem(final Exchange exchange) {

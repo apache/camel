@@ -73,6 +73,10 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "regex": getOrCreateConfiguration(target).setRegex(property(camelContext, java.lang.String.class, value)); return true;
         case "retainuncommiteddata":
         case "retainUncommitedData": getOrCreateConfiguration(target).setRetainUncommitedData(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sascredential":
+        case "sasCredential": getOrCreateConfiguration(target).setSasCredential(property(camelContext, com.azure.core.credential.AzureSasCredential.class, value)); return true;
+        case "sassignature":
+        case "sasSignature": getOrCreateConfiguration(target).setSasSignature(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.file.datalake.DataLakeServiceClient.class, value)); return true;
         case "sharedkeycredential":
@@ -81,6 +85,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "tenantId": getOrCreateConfiguration(target).setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "umask": getOrCreateConfiguration(target).setUmask(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultidentity":
+        case "useDefaultIdentity": getOrCreateConfiguration(target).setUseDefaultIdentity(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": getOrCreateConfiguration(target).setUserPrincipalNameReturned(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
@@ -140,6 +146,10 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "regex": return java.lang.String.class;
         case "retainuncommiteddata":
         case "retainUncommitedData": return java.lang.Boolean.class;
+        case "sascredential":
+        case "sasCredential": return com.azure.core.credential.AzureSasCredential.class;
+        case "sassignature":
+        case "sasSignature": return java.lang.String.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.file.datalake.DataLakeServiceClient.class;
         case "sharedkeycredential":
@@ -148,6 +158,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "tenantId": return java.lang.String.class;
         case "timeout": return java.time.Duration.class;
         case "umask": return java.lang.String.class;
+        case "usedefaultidentity":
+        case "useDefaultIdentity": return java.lang.Boolean.class;
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": return java.lang.Boolean.class;
         default: return null;
@@ -203,6 +215,10 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "regex": return getOrCreateConfiguration(target).getRegex();
         case "retainuncommiteddata":
         case "retainUncommitedData": return getOrCreateConfiguration(target).getRetainUncommitedData();
+        case "sascredential":
+        case "sasCredential": return getOrCreateConfiguration(target).getSasCredential();
+        case "sassignature":
+        case "sasSignature": return getOrCreateConfiguration(target).getSasSignature();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         case "sharedkeycredential":
@@ -211,6 +227,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "tenantId": return getOrCreateConfiguration(target).getTenantId();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "umask": return getOrCreateConfiguration(target).getUmask();
+        case "usedefaultidentity":
+        case "useDefaultIdentity": return getOrCreateConfiguration(target).getUseDefaultIdentity();
         case "userprincipalnamereturned":
         case "userPrincipalNameReturned": return getOrCreateConfiguration(target).getUserPrincipalNameReturned();
         default: return null;

@@ -22,6 +22,8 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -222,6 +224,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     public void setEncryptingCertificateChain(Certificate[] encryptingCertificateChain) {
         configuration.setEncryptingCertificateChain(encryptingCertificateChain);
+    }
+
+    public SSLContext getSslContext() {
+        return configuration.getSslContext();
+    }
+
+    public void setSslContext(SSLContext sslContext) {
+        configuration.setSslContext(sslContext);
     }
 
     @Override

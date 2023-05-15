@@ -29,6 +29,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -48,6 +49,10 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     private Router router;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata(label = "advanced", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST)
+    private String defaultHost = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST;
+    @Metadata(label = "advanced", defaultValue = "" + VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT)
+    private int defaultPort = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -70,20 +75,26 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         URI endpointUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(wsUri));
         URI websocketURI = URISupport.createRemainingURI(endpointUri, parameters);
 
-        if (websocketURI.getHost() == null || websocketURI.getPort() == -1) {
+        if (websocketURI.getHost() == null || websocketURI.getPort() == -1 || ObjectHelper.isEmpty(websocketURI.getPath())) {
+            String path = websocketURI.getPath();
             String host = websocketURI.getHost();
             int port = websocketURI.getPort();
+
             if (websocketURI.getHost() == null) {
-                host = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST;
+                host = getDefaultHost();
             }
 
             if (websocketURI.getPort() == -1) {
-                port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
+                port = getDefaultPort();
+            }
+
+            if (ObjectHelper.isEmpty(path)) {
+                path = "/";
             }
 
             websocketURI = new URI(
                     websocketURI.getScheme(), websocketURI.getUserInfo(),
-                    host, port, websocketURI.getPath(), websocketURI.getQuery(),
+                    host, port, path, websocketURI.getQuery(),
                     websocketURI.getFragment());
         }
 
@@ -236,5 +247,27 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     protected VertxWebsocketHost createVertxWebsocketHost(
             VertxWebsocketHostConfiguration hostConfiguration, VertxWebsocketHostKey hostKey) {
         return new VertxWebsocketHost(getCamelContext(), hostConfiguration, hostKey);
+    }
+
+    /**
+     * Default value for host name that the WebSocket should bind to
+     */
+    public void setDefaultHost(String defaultHost) {
+        this.defaultHost = defaultHost;
+    }
+
+    public String getDefaultHost() {
+        return this.defaultHost;
+    }
+
+    /**
+     * Default value for the port that the WebSocket should bind to
+     */
+    public void setDefaultPort(int defaultPort) {
+        this.defaultPort = defaultPort;
+    }
+
+    public int getDefaultPort() {
+        return this.defaultPort;
     }
 }

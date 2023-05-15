@@ -3934,6 +3934,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SolrComponentBuilderFactory.SolrComponentBuilder solr() {
         return org.apache.camel.builder.component.dsl.SolrComponentBuilderFactory.solr();
     }
@@ -3947,6 +3948,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SolrcloudComponentBuilderFactory.SolrcloudComponentBuilder solrcloud() {
         return org.apache.camel.builder.component.dsl.SolrcloudComponentBuilderFactory.solrcloud();
     }
@@ -3960,6 +3962,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.SolrsComponentBuilder solrs() {
         return org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.solrs();
     }

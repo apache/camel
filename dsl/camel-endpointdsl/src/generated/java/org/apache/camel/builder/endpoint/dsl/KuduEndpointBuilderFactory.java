@@ -242,6 +242,45 @@ public interface KuduEndpointBuilderFactory {
         public String kuduTableOptions() {
             return "KuduTableOptions";
         }
+
+        /**
+         * The projected column names for scan operation.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KuduScanColumnNames}.
+         */
+        public String kuduScanColumnNames() {
+            return "KuduScanColumnNames";
+        }
+
+        /**
+         * The predicate for scan operation.
+         * 
+         * The option is a: {@code org.apache.kudu.client.KuduPredicate} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KuduScanPredicate}.
+         */
+        public String kuduScanPredicate() {
+            return "KuduScanPredicate";
+        }
+
+        /**
+         * The limit on the number of rows for scan operation.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KuduScanLimit}.
+         */
+        public String kuduScanLimit() {
+            return "KuduScanLimit";
+        }
     }
     static KuduEndpointBuilder endpointBuilder(String componentName, String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {

@@ -37,8 +37,8 @@ public class Hawtio extends CamelCommand {
     String name;
 
     @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = "2.17.0")
-    String version = "2.17.0";
+                        description = "Version of the Hawtio web console", defaultValue = "2.17.2")
+    String version = "2.17.1";
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
@@ -112,7 +112,7 @@ public class Hawtio extends CamelCommand {
             // turn off hawito auth
             System.setProperty("hawtio.authenticationEnabled", "false");
 
-            // use CL from camel context that now has the downloaded JAR
+            // use CL from that has the downloaded JAR
             Thread.currentThread().setContextClassLoader(cl);
             Class<?> clazz = cl.loadClass("io.hawt.embedded.Main");
             Object hawt = clazz.getDeclaredConstructor().newInstance();
@@ -151,8 +151,7 @@ public class Hawtio extends CamelCommand {
     }
 
     private ClassLoader createClassLoader() {
-        ClassLoader parentCL = Hawtio.class.getClassLoader();
-        return new DependencyDownloaderClassLoader(parentCL);
+        return new DependencyDownloaderClassLoader(null);
     }
 
     private void installHangupInterceptor() {

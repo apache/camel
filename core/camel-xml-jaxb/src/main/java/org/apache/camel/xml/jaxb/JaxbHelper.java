@@ -18,6 +18,7 @@ package org.apache.camel.xml.jaxb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,10 +29,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -42,6 +45,9 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.OutputDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -55,6 +61,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -199,6 +206,24 @@ public final class JaxbHelper {
         }
     }
 
+    public static void applyNamespaces(RouteConfigurationDefinition config, Map<String, String> namespaces) {
+        List<OutputDefinition<?>> defs = new ArrayList<>();
+        defs.addAll(config.getIntercepts());
+        defs.addAll(config.getInterceptFroms());
+        defs.addAll(config.getInterceptSendTos());
+        defs.addAll(config.getOnCompletions());
+        defs.addAll(config.getOnExceptions());
+        for (OutputDefinition<?> def : defs) {
+            Collection<ExpressionNode> col = filterTypeInOutputs(def.getOutputs(), ExpressionNode.class);
+            for (ExpressionNode en : col) {
+                NamespaceAware na = getNamespaceAwareFromExpression(en);
+                if (na != null) {
+                    na.setNamespaces(namespaces);
+                }
+            }
+        }
+    }
+
     public static <T extends NamedNode> T modelToXml(CamelContext context, String xml, Class<T> type) throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -248,6 +273,7 @@ public final class JaxbHelper {
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -284,10 +310,51 @@ public final class JaxbHelper {
         return answer;
     }
 
+    public static RouteConfigurationsDefinition loadRouteConfigurationsDefinition(CamelContext context, InputStream inputStream)
+            throws Exception {
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = xmlConverter.toDOMDocument(inputStream, null);
+
+        JAXBContext jaxbContext = getJAXBContext(context);
+
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+        if (!namespaces.containsValue(CAMEL_NS)) {
+            addNamespaceToDom(dom);
+        }
+
+        Binder<Node> binder = jaxbContext.createBinder();
+        Object result = binder.unmarshal(dom);
+
+        if (result == null) {
+            throw new JAXBException("Cannot unmarshal to RouteConfigurationsDefinition using JAXB");
+        }
+
+        // can either be routes or a single route
+        RouteConfigurationsDefinition answer;
+        if (result instanceof RouteConfigurationDefinition) {
+            RouteConfigurationDefinition config = (RouteConfigurationDefinition) result;
+            answer = new RouteConfigurationsDefinition();
+            applyNamespaces(config, namespaces);
+            answer.getRouteConfigurations().add(config);
+        } else if (result instanceof RouteConfigurationsDefinition) {
+            answer = (RouteConfigurationsDefinition) result;
+            for (RouteConfigurationDefinition config : answer.getRouteConfigurations()) {
+                applyNamespaces(config, namespaces);
+            }
+        } else {
+            // ignore not supported type
+            return null;
+        }
+
+        return answer;
+    }
+
     public static RouteTemplatesDefinition loadRouteTemplatesDefinition(CamelContext context, InputStream inputStream)
             throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -326,7 +393,7 @@ public final class JaxbHelper {
 
     /**
      * Un-marshals the content of the input stream to an instance of {@link TemplatedRoutesDefinition}.
-     * 
+     *
      * @param  context     the Camel context from which the JAXBContext is extracted
      * @param  inputStream the input stream to unmarshal
      * @return             the content unmarshalled as a {@link TemplatedRoutesDefinition}.
@@ -336,6 +403,7 @@ public final class JaxbHelper {
             throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -386,6 +454,7 @@ public final class JaxbHelper {
     public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
         // load routes using JAXB
         Document dom = newXmlConverter(context).toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         if (!CAMEL_NS.equals(dom.getDocumentElement().getNamespaceURI())) {
             addNamespaceToDom(dom);
@@ -412,4 +481,28 @@ public final class JaxbHelper {
 
         return answer;
     }
+
+    private static void removeNoiseFromUris(Element element) {
+        final NamedNodeMap attrs = element.getAttributes();
+
+        for (int index = 0; index < attrs.getLength(); index++) {
+            final Attr attr = (Attr) attrs.item(index);
+            final String attName = attr.getName();
+
+            if (attName.equals("uri") || attName.endsWith("Uri")) {
+                attr.setValue(URISupport.removeNoiseFromUri(attr.getValue()));
+            }
+        }
+
+        final NodeList children = element.getChildNodes();
+
+        for (int index = 0; index < children.getLength(); index++) {
+            final Node child = children.item(index);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeNoiseFromUris((Element) child);
+            }
+        }
+    }
+
 }

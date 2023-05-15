@@ -151,9 +151,9 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
             Exchange exchange, SpanDecorator sd, String operationName, org.apache.camel.tracing.SpanKind kind,
             SpanAdapter parent) {
         boolean parentPresent = parent != null;
-        Observation.Context context
-                = parentPresent ? new Observation.Context() : spanKindToContextOnExtract(kind, sd, exchange);
-        context.put(SPAN_DECORATOR_INTERNAL, sd instanceof AbstractInternalSpanDecorator);
+        Observation.Context context = spanKindToContextOnExtract(kind, sd, exchange);
+        boolean internalSpanDecorator = sd instanceof AbstractInternalSpanDecorator;
+        context.put(SPAN_DECORATOR_INTERNAL, internalSpanDecorator);
         Observation observation = Observation.createNotStarted(operationName, () -> context, observationRegistry);
         if (parentPresent) {
             observation.parentObservation(getParentObservation(parent));

@@ -624,6 +624,7 @@ public interface SolrEndpointBuilderFactory {
          * @param path url
          * @return the dsl builder
          */
+        @Deprecated
         default SolrEndpointBuilder solr(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solr", path);
         }
@@ -647,6 +648,7 @@ public interface SolrEndpointBuilderFactory {
          * @param path url
          * @return the dsl builder
          */
+        @Deprecated
         default SolrEndpointBuilder solr(String componentName, String path) {
             return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -668,6 +670,7 @@ public interface SolrEndpointBuilderFactory {
          * @param path url
          * @return the dsl builder
          */
+        @Deprecated
         default SolrEndpointBuilder solrs(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrs", path);
         }
@@ -689,6 +692,7 @@ public interface SolrEndpointBuilderFactory {
          * @param path url
          * @return the dsl builder
          */
+        @Deprecated
         default SolrEndpointBuilder solrCloud(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
         }
@@ -770,6 +774,7 @@ public interface SolrEndpointBuilderFactory {
             return "Content-Type";
         }
     }
+    @Deprecated
     static SolrEndpointBuilder endpointBuilder(String componentName, String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {
             public SolrEndpointBuilderImpl(String path) {

@@ -97,7 +97,10 @@ class ExportSpringBoot extends Export {
         srcResourcesDir.mkdirs();
         File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
         srcCamelResourcesDir.mkdirs();
-        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
+        File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
+        srcKameletsResourcesDir.mkdirs();
+        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
+                srcKameletsResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
@@ -109,6 +112,8 @@ class ExportSpringBoot extends Export {
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
+        // copy local lib JARs
+        copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
             createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps);
             if (mavenWrapper) {
@@ -198,30 +203,13 @@ class ExportSpringBoot extends Export {
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
-            int i = 1;
-            StringBuilder sb = new StringBuilder();
-            sb.append("    <repositories>\n");
-            for (String repo : repos.split(",")) {
-                sb.append("        <repository>\n");
-                sb.append("            <id>custom").append(i++).append("</id>\n");
-                sb.append("            <url>").append(repo).append("</url>\n");
-                if (repo.contains("snapshots")) {
-                    sb.append("            <releases>\n");
-                    sb.append("                <enabled>false</enabled>\n");
-                    sb.append("            </releases>\n");
-                    sb.append("            <snapshots>\n");
-                    sb.append("                <enabled>true</enabled>\n");
-                    sb.append("            </snapshots>\n");
-                }
-                sb.append("        </repository>\n");
-            }
-            sb.append("    </repositories>\n");
-            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
+            String s = mavenRepositoriesAsPomXml(repos);
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", s);
         }
 
         List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
-            MavenGav gav = MavenGav.parseGav(dep);
+            MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             String v = gav.getVersion();
@@ -253,8 +241,13 @@ class ExportSpringBoot extends Export {
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
-            // special for camel-kamelets-utils
-            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+            if ("lib".equals(gav.getPackaging())) {
+                // special for lib JARs
+                sb.append("            <scope>system</scope>\n");
+                sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
+                        .append(gav.getVersion()).append(".jar</systemPath>\n");
+            } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                // special for camel-kamelets-utils
                 sb.append("            <exclusions>\n");
                 sb.append("                <exclusion>\n");
                 sb.append("                    <groupId>org.apache.camel</groupId>\n");
@@ -263,6 +256,38 @@ class ExportSpringBoot extends Export {
                 sb.append("            </exclusions>\n");
             }
             sb.append("        </dependency>\n");
+        }
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers) {
+                    switch (provider) {
+                        case "aws":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-aws-secrets-manager-starter")
+                                    .append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "gcp":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-google-secret-manager-starter")
+                                    .append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        case "azure":
+                            sb.append("        <dependency>\n");
+                            sb.append("            <groupId>").append("org.apache.camel.springboot").append("</groupId>\n");
+                            sb.append("            <artifactId>").append("camel-azure-key-vault-starter")
+                                    .append("</artifactId>\n");
+                            sb.append("        </dependency>\n");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
@@ -314,7 +339,7 @@ class ExportSpringBoot extends Export {
 
         List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
-            MavenGav gav = MavenGav.parseGav(dep);
+            MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             String v = gav.getVersion();
@@ -335,13 +360,50 @@ class ExportSpringBoot extends Export {
             gavs.add(gav);
         }
 
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+                for (String provider : providers) {
+                    switch (provider) {
+                        case "aws":
+                            MavenGav awsGav = new MavenGav();
+                            awsGav.setGroupId("org.apache.camel.springboot");
+                            awsGav.setArtifactId("camel-aws-secrets-manager-starter");
+                            awsGav.setVersion(null);
+                            gavs.add(awsGav);
+                            break;
+                        case "gcp":
+                            MavenGav gcpGav = new MavenGav();
+                            gcpGav.setGroupId("org.apache.camel.springboot");
+                            gcpGav.setArtifactId("camel-google-secret-manager-starter");
+                            gcpGav.setVersion(null);
+                            gavs.add(gcpGav);
+                            break;
+                        case "azure":
+                            MavenGav azureGav = new MavenGav();
+                            azureGav.setGroupId("org.apache.camel.springboot");
+                            azureGav.setArtifactId("camel-azure-key-vault-starter");
+                            azureGav.setVersion(null);
+                            gavs.add(azureGav);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
         // sort artifacts
         gavs.sort(mavenGavComparator());
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
-            // special for camel-kamelets-utils
-            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+            if ("lib".equals(gav.getPackaging())) {
+                // special for lib JARs
+                sb.append("    implementation files('lib/").append(gav.getArtifactId())
+                        .append("-").append(gav.getVersion()).append(".jar')\n");
+            } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                // special for camel-kamelets-utils
                 sb.append("    implementation ('").append(gav).append("') {\n");
                 sb.append("        exclude group: 'org.apache.camel', module: '*'\n");
                 sb.append("    }\n");
@@ -385,6 +447,31 @@ class ExportSpringBoot extends Export {
             fos.write("import org.springframework.stereotype.Component;\n\n"
                     .getBytes(StandardCharsets.UTF_8));
             fos.write("@Component\n".getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    @Override
+    protected void prepareApplicationProperties(Properties properties) {
+        if (secretsRefresh) {
+            if (secretsRefreshProviders != null) {
+                List<String> providers = getSecretProviders();
+
+                for (String provider : providers) {
+                    switch (provider) {
+                        case "aws":
+                            exportAwsSecretsRefreshProp(properties);
+                            break;
+                        case "gcp":
+                            exportGcpSecretsRefreshProp(properties);
+                            break;
+                        case "azure":
+                            exportAzureSecretsRefreshProp(properties);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
     }
 

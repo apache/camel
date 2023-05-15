@@ -152,6 +152,18 @@ This is very limited as the CLI argument is a bit cumbersome to use than files.
 
 NOTE: Using `--code` is only usable for very quick and small prototypes.
 
+=== Running Routes from source directory
+
+You can also run dev mode when running Camel with `--source-dir`, such as:
+
+[source,bash]
+----
+camel run --source-dir=mycode
+----
+
+This starts Camel where it will load the files from the _source dir_ (also sub folders).
+
+
 === Dev mode with live reload
 
 You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),
@@ -173,6 +185,112 @@ camel run hello.java --dev
 
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
 such as JVM class loading issues, then you may need to restart the integration.
+
+You can also run dev mode when running Camel with `--source-dir`, such as:
+
+[source,bash]
+----
+camel run --source-dir=mycode --dev
+----
+
+This starts Camel where it will load the files from the _source dir_ (also sub folders).
+And in _dev mode_ then you can add new files, update existing files, and delete files, and Camel
+will automatically hot-reload on the fly.
+
+Using _source dir_ is more flexible than having to specify the files in the CLI as shown below:
+
+[source,bash]
+----
+camel run mycode/foo.java mycode/bar.java --dev
+----
+
+In this situation then Camel will only watch and reload these two files (foo.java and bar.java).
+So for example if you add a new file cheese.xml, then this file is not reloaded. On the other hand
+if you use `--source-dir` then any files in this directory (and sub folders) are automatic detected
+and reloaded. You can also delete files to remove routes.
+
+NOTE: You cannot use both files and source dir together.
+The following is not allowed: `camel run abc.java --source-dir=mycode`.
+
+==== Uploading files to source directory via HTTP
+
+When running Camel JBang with `--source-dir`, `--console` and `--dev` (reloading) then you can
+change the source files on-the-fly by copying,modifying or deleting the files in the source directory.
+
+This can also be done via HTTP using the `q/upload/:filename` HTTP endpoint using PUT and DELETE verbs.
+
+Given you run Camel JBang with:
+
+[source,bash]
+----
+camel run --source-dir=mycode --console --dev
+----
+
+Then you can upload or modify a source file named `bar.java` you can send a PUT request via curl:
+
+[source,bash]
+----
+curl -X PUT http://0.0.0.0:8080/q/upload/bar.java --data-binary "@bar.java"
+----
+
+Or via:
+
+[source,bash]
+----
+curl -T bar.java http://0.0.0.0:8080/q/upload/bar.java
+----
+
+To send the data via PUT then the file body can be included when using `Content-Type: application/x-www-form-urlencoded`:
+
+For example from a CURL `--ascii-trace`:
+
+[source,text]
+----
+0000: PUT /q/upload/bar.java HTTP/1.1
+0021: Host: 0.0.0.0:8080
+0035: User-Agent: curl/7.87.0
+004e: Accept: */*
+005b: Content-Length: 385
+0070: Content-Type: application/x-www-form-urlencoded
+00a1:
+=> Send data, 385 bytes (0x181)
+0000: // camel-k: language=java..import org.apache.camel.builder.Route
+0040: Builder;..public class bar extends RouteBuilder {..    @Override
+0080: .    public void configure() throws Exception {..        // Writ
+00c0: e your routes here, for example:.        from("timer:java?period
+0100: ={{time:1000}}").            .setBody().                .simple(
+0140: "XXXCamel from ${routeId}").            .log("${body}");.    }.}
+0180: .
+== Info: Mark bundle as not supporting multiuse
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 19 bytes (0x13)
+0000: content-length: 0
+<= Recv header, 2 bytes (0x2)
+0000:
+== Info: Connection #0 to host 0.0.0.0 left intact
+----
+
+To delete one or more files you use the DELETE verb, such as:
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/bar.java
+----
+
+You can also use wildcards ('*') to delete all .java files:
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/*.java
+----
+
+Or to delete everything
+
+[source,bash]
+----
+curl -X DELETE http://0.0.0.0:8080/q/upload/*
+----
 
 === Developer Console
 
@@ -1704,6 +1822,21 @@ To be able to continue to use Camel CLI (i.e. `camel`), you need to add `camel:c
 ----
 camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:cli-connector --directory=../myproject
 ----
+
+=== Exporting with Camel Secret Refresh parameters and dependencies included
+
+In Camel we have introduce the ability of refreshing secrets automatically when an update operation happens.
+
+In the camel-jbang cli we introduced the options to prepare the exported project to be able to use this feature.
+
+[source,bash]
+----
+camel export --secrets-refresh --secrets-refresh-providers=aws,gcp,azure --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT  --directory=../myproject
+----
+
+This command will automatically add the Camel-Quarkus extensions for AWS Secrets Manager, Google Secret Manager and Azure Key Vault to the exported POM and also it will add the required options (to be set) in the application.properties file.
+
+These options will work for Quarkus, Spring-Boot and Camel-main runtime.
 
 === Configuring exporting
 

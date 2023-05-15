@@ -20,16 +20,22 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -56,7 +62,14 @@ import org.apache.camel.util.ObjectHelper;
              category = { Category.TRANSFORMATION }, headersClass = JsltConstants.class)
 public class JsltEndpoint extends ResourceEndpoint {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        OBJECT_MAPPER.setSerializerFactory(OBJECT_MAPPER.getSerializerFactory().withSerializerModifier(
+                new SafeTypesOnlySerializerModifier()));
+    }
+
     private Expression transform;
 
     @UriParam(defaultValue = "false")
@@ -268,5 +281,33 @@ public class JsltEndpoint extends ResourceEndpoint {
      */
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    private static class SafeTypesOnlySerializerModifier extends BeanSerializerModifier {
+        // Serialize only safe types: primitives, records, serializable objects and
+        // collections/maps/arrays of them. To avoid serializing something like Response object.
+        // Types that are not safe are serialized as their toString() value.
+        @Override
+        public JsonSerializer<?> modifySerializer(
+                SerializationConfig config, BeanDescription beanDesc,
+                JsonSerializer<?> serializer) {
+            final Class<?> beanClass = beanDesc.getBeanClass();
+
+            if (Collection.class.isAssignableFrom(beanClass)
+                    || Map.class.isAssignableFrom(beanClass)
+                    || beanClass.isArray()
+                    || beanClass.isPrimitive()
+                    || isRecord(beanClass)
+                    || Serializable.class.isAssignableFrom(beanClass)) {
+                return serializer;
+            }
+
+            return ToStringSerializer.instance;
+        }
+
+        private static boolean isRecord(Class<?> clazz) {
+            final Class<?> parent = clazz.getSuperclass();
+            return parent != null && parent.getName().equals("java.lang.Record");
+        }
     }
 }

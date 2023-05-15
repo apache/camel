@@ -33,6 +33,10 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "profilecredentialsprovider":
+        case "ProfileCredentialsProvider": target.setProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "profilename":
+        case "ProfileName": target.setProfileName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshenabled":
         case "RefreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
         case "refreshperiod":
@@ -62,6 +66,10 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "profilecredentialsprovider":
+        case "ProfileCredentialsProvider": return boolean.class;
+        case "profilename":
+        case "ProfileName": return java.lang.String.class;
         case "refreshenabled":
         case "RefreshEnabled": return boolean.class;
         case "refreshperiod":
@@ -92,6 +100,10 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "profilecredentialsprovider":
+        case "ProfileCredentialsProvider": return target.isProfileCredentialsProvider();
+        case "profilename":
+        case "ProfileName": return target.getProfileName();
         case "refreshenabled":
         case "RefreshEnabled": return target.isRefreshEnabled();
         case "refreshperiod":

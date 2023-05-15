@@ -48,6 +48,7 @@ public class Export extends ExportBaseCommand {
             }
             // allow configuring versions from profile
             this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
+            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
             this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
             this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
             this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
@@ -61,6 +62,10 @@ public class Export extends ExportBaseCommand {
                     = "true".equals(prop.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
             this.exportDir = prop.getProperty("camel.jbang.exportDir", this.exportDir);
             this.buildTool = prop.getProperty("camel.jbang.buildTool", this.buildTool);
+            this.secretsRefresh
+                    = "true".equals(prop.getProperty("camel.jbang.secretsRefresh", this.secretsRefresh ? "true" : "false"));
+            this.secretsRefreshProviders
+                    = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
         }
 
         if (runtime == null) {
@@ -87,12 +92,14 @@ public class Export extends ExportBaseCommand {
     protected Integer export(ExportBaseCommand cmd) throws Exception {
         // copy properties from this to cmd
         cmd.profile = this.profile;
+        cmd.repos = this.repos;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.gav = this.gav;
         cmd.exportDir = this.exportDir;
         cmd.fresh = this.fresh;
         cmd.javaVersion = this.javaVersion;
+        cmd.camelVersion = this.camelVersion;
         cmd.kameletsVersion = this.kameletsVersion;
         cmd.localKameletDir = this.localKameletDir;
         cmd.logging = this.logging;
@@ -108,6 +115,8 @@ public class Export extends ExportBaseCommand {
         cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
         cmd.additionalProperties = this.additionalProperties;
+        cmd.secretsRefresh = this.secretsRefresh;
+        cmd.secretsRefreshProviders = this.secretsRefreshProviders;
         // run export
         return cmd.export();
     }

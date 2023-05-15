@@ -20,7 +20,6 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
-import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -36,8 +35,11 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriPath
     private String containerName;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
+    @Metadata(required = false)
     private String accountKey;
+    @UriParam(label = "security", secret = false)
+    @Metadata(required = false)
+    private boolean useDefaultIdentity;
     @UriParam(label = "common")
     @Metadata(required = true)
     private String databaseEndpoint;
@@ -81,7 +83,7 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String query;
     @UriParam(label = "producer")
-    private PartitionKey itemPartitionKey;
+    private String itemPartitionKey;
     @UriParam(label = "producer")
     private String itemId;
     @UriParam(label = "producer")
@@ -128,6 +130,17 @@ public class CosmosDbConfiguration implements Cloneable {
     }
 
     /**
+     * Indicates whether to use the default identity mechanism instead of the access key.
+     */
+    public boolean isUseDefaultIdentity() {
+        return useDefaultIdentity;
+    }
+
+    public void setUseDefaultIdentity(boolean useDefaultIdentity) {
+        this.useDefaultIdentity = useDefaultIdentity;
+    }
+
+    /**
      * Sets the Azure Cosmos database endpoint the component will connect to.
      */
     public String getDatabaseEndpoint() {
@@ -153,11 +166,11 @@ public class CosmosDbConfiguration implements Cloneable {
      * Sets partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key
      * identifies the partition where the item is stored in.
      */
-    public PartitionKey getItemPartitionKey() {
+    public String getItemPartitionKey() {
         return itemPartitionKey;
     }
 
-    public void setItemPartitionKey(PartitionKey itemPartitionKey) {
+    public void setItemPartitionKey(String itemPartitionKey) {
         this.itemPartitionKey = itemPartitionKey;
     }
 

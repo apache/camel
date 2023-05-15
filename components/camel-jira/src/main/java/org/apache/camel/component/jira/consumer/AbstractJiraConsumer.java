@@ -17,7 +17,9 @@
 package org.apache.camel.component.jira.consumer;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
@@ -33,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AbstractJiraConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractJiraConsumer.class);
 
     private final JiraEndpoint endpoint;
 
@@ -79,25 +81,33 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
     protected List<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
         LOG.debug("Start indexing current JIRA issues...");
 
-        List<Issue> issues = new ArrayList<>();
+        if (maxResults < maxPerQuery) {
+            maxPerQuery = maxResults;
+        }
+
+        // Avoid duplicates
+        Set<Issue> issues = new LinkedHashSet<>();
         while (true) {
             SearchRestClient searchRestClient = endpoint.getClient().getSearchClient();
-            SearchResult searchResult = searchRestClient.searchJql(jql, maxResults, start, null).claim();
+            SearchResult searchResult = searchRestClient.searchJql(jql, maxPerQuery, start, null).claim();
 
             for (Issue issue : searchResult.getIssues()) {
                 issues.add(issue);
             }
 
             // Note: #getTotal == the total # the query would return *without* pagination, effectively telling us
-            // we've reached the end. Also exit early if we're limiting the # of results.
-            if (start >= searchResult.getTotal() || maxResults > 0 && issues.size() >= maxResults) {
+            // we've reached the end. Also exit early if we're limiting the # of results or
+            // if total # of returned issues is lower than the actual page size.
+            if (maxPerQuery >= searchResult.getTotal() ||
+                    start >= searchResult.getTotal() ||
+                    maxResults > 0 && issues.size() >= maxResults) {
                 break;
             }
 
             start += maxPerQuery;
         }
         LOG.debug("End indexing current JIRA issues. {} issues indexed.", issues.size());
-        return issues;
+        return new ArrayList<>(issues);
     }
 
     protected JiraRestClient client() {

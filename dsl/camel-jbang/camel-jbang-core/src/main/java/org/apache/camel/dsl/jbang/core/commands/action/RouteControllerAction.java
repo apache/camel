@@ -269,6 +269,7 @@ public class RouteControllerAction extends ActionWatchCommand {
             if (r.elapsed != null && !r.elapsed.isEmpty()) {
                 s += " (" + r.elapsed + ")";
             }
+            return s;
         }
         return "";
     }

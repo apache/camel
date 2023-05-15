@@ -237,6 +237,7 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     List<PrioritizedFilterProcessor> matchFilters(final Exchange exchange) {
         return Optional.of(
                 filterMap.values().stream()
+                        .sorted()
                         .filter(f -> f.matches(exchange))
                         .limit(MODE_FIRST_MATCH.equals(recipientMode) ? 1 : Integer.MAX_VALUE)
                         .collect(Collectors.toList()))

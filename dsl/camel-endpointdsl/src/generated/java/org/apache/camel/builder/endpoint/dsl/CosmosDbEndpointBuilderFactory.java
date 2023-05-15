@@ -679,7 +679,6 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param accountKey the value to set
@@ -687,6 +686,41 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointConsumerBuilder accountKey(String accountKey) {
             doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder useDefaultIdentity(
+                boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointConsumerBuilder useDefaultIdentity(
+                String useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
             return this;
         }
     }
@@ -1310,26 +1344,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Cosmos DB database service. A partition key identifies the partition
          * where the item is stored in.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder itemPartitionKey(
-                com.azure.cosmos.models.PartitionKey itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -1434,7 +1449,6 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param accountKey the value to set
@@ -1442,6 +1456,41 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointProducerBuilder accountKey(String accountKey) {
             doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder useDefaultIdentity(
+                boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointProducerBuilder useDefaultIdentity(
+                String useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
             return this;
         }
     }
@@ -1983,7 +2032,6 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param accountKey the value to set
@@ -1991,6 +2039,41 @@ public interface CosmosDbEndpointBuilderFactory {
          */
         default CosmosDbEndpointBuilder accountKey(String accountKey) {
             doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder useDefaultIdentity(
+                boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
+        /**
+         * Indicates whether to use the default identity mechanism instead of
+         * the access key.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default CosmosDbEndpointBuilder useDefaultIdentity(
+                String useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
             return this;
         }
     }

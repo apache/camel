@@ -42,8 +42,8 @@ import com.helger.security.keystore.EKeyStoreType;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
@@ -169,7 +169,7 @@ public class AS2MessageTest {
 
     private static File keystoreFile;
 
-    private static ApplicationEDIEntity ediEntity;
+    private static ApplicationEntity ediEntity;
 
     private AS2SignedDataGenerator gen;
 
@@ -216,7 +216,7 @@ public class AS2MessageTest {
         testServer = new AS2ServerConnection(
                 AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE,
-                VALIDATE_SIGNING_CERTIFICATE_CHAIN);
+                VALIDATE_SIGNING_CERTIFICATE_CHAIN, null);
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(HttpRequest request, HttpResponse response, HttpContext context)
@@ -654,8 +654,8 @@ public class AS2MessageTest {
         assertTrue(entity instanceof MultipartSignedEntity, "Unexpected request entity type");
         MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
         MimeEntity signedEntity = multipartSignedEntity.getSignedDataEntity();
-        assertTrue(signedEntity instanceof ApplicationEDIEntity, "Signed entity wrong type");
-        ApplicationEDIEntity ediMessageEntity = (ApplicationEDIEntity) signedEntity;
+        assertTrue(signedEntity instanceof ApplicationEntity, "Signed entity wrong type");
+        ApplicationEntity ediMessageEntity = (ApplicationEntity) signedEntity;
         assertNotNull(ediMessageEntity, "Multipart signed entity does not contain EDI message entity");
         ApplicationPkcs7SignatureEntity signatureEntity = multipartSignedEntity.getSignatureEntity();
         assertNotNull(signatureEntity, "Multipart signed entity does not contain signature entity");
@@ -713,7 +713,7 @@ public class AS2MessageTest {
                 certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
 
         // Create plain edi request message to acknowledge
-        ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
+        ApplicationEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false, "filename.txt");
         HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
@@ -1071,7 +1071,7 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(
                 AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT, HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE,
-                HTTP_CONNECTION_POOL_TTL);
+                HTTP_CONNECTION_POOL_TTL, null, null);
         return new AS2ClientManager(clientConnection);
     }
 }

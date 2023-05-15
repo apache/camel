@@ -70,6 +70,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean sharedEntityManager;
     @UriParam(defaultValue = "-1")
     private int maximumResults = -1;
+    @UriParam(label = "producer", defaultValue = "-1")
+    private int firstResult = -1;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean consumeDelete = true;
     @UriParam(label = "consumer", defaultValue = "true")
@@ -110,6 +112,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private Boolean useExecuteUpdate;
     @UriParam(label = "producer")
     private boolean findEntity;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean singleResult;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -207,6 +211,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setMaximumResults(int maximumResults) {
         this.maximumResults = maximumResults;
+    }
+
+    public int getFirstResult() {
+        return firstResult;
+    }
+
+    /**
+     * Set the position of the first result to retrieve.
+     */
+    public void setFirstResult(int firstResult) {
+        this.firstResult = firstResult;
     }
 
     public Class<?> getEntityType() {
@@ -542,6 +557,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setFindEntity(boolean findEntity) {
         this.findEntity = findEntity;
+    }
+
+    public boolean isSingleResult() {
+        return singleResult;
+    }
+
+    /**
+     * If enabled, a query or a find which would return no results or more than one result, will throw an exception
+     * instead.
+     */
+    public void setSingleResult(boolean singleResult) {
+        this.singleResult = singleResult;
     }
 
     // Implementation methods

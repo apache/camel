@@ -30,8 +30,6 @@ import org.apache.camel.Component;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
@@ -127,6 +125,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     @UriParam(label = "advanced", prefix = "template.", multiValue = true,
               description = "Configures the Spring JdbcTemplate with the key/values from the Map")
     private Map<String, Object> templateOptions;
+    @UriParam(label = "advanced",
+              description = "Factory for creating RowMapper")
+    private RowMapperFactory rowMapperFactory;
 
     public DefaultSqlEndpoint() {
     }
@@ -449,16 +450,27 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
         this.templateOptions = templateOptions;
     }
 
+    public RowMapperFactory getRowMapperFactory() {
+        return rowMapperFactory;
+    }
+
+    /**
+     * Factory for creating RowMapper
+     */
+    public void setRowMapperFactory(RowMapperFactory rowMapperFactory) {
+        this.rowMapperFactory = rowMapperFactory;
+    }
+
     @SuppressWarnings("unchecked")
     public List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
             Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
+            RowMapper rowMapper = rowMapperFactory.newBeanRowMapper(outputClazz);
             RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
             List<?> data = mapper.extractData(rs);
             return data;
         } else {
-            ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
+            RowMapper rowMapper = rowMapperFactory.newColumnRowMapper();
             RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<>(rowMapper);
             List<Map<String, Object>> data = mapper.extractData(rs);
             return data;
@@ -469,7 +481,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     public Object queryForObject(ResultSet rs) throws SQLException {
         Object result = null;
         if (outputClass == null) {
-            RowMapper rowMapper = new ColumnMapRowMapper();
+            RowMapper rowMapper = rowMapperFactory.newColumnRowMapper();
             RowMapperResultSetExtractor<Map<String, Object>> mapper
                     = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
             List<Map<String, Object>> data = mapper.extractData(rs);
@@ -487,7 +499,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             }
         } else {
             Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = new BeanPropertyRowMapper(outputClzz);
+            RowMapper rowMapper = rowMapperFactory.newBeanRowMapper(outputClzz);
             RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
             List<?> data = mapper.extractData(rs);
             if (data.size() > 1) {
@@ -505,13 +517,21 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     @SuppressWarnings("unchecked")
     public ResultSetIterator queryForStreamList(Connection connection, Statement statement, ResultSet rs) throws SQLException {
         if (outputClass == null) {
-            RowMapper rowMapper = new ColumnMapRowMapper();
+            RowMapper rowMapper = rowMapperFactory.newColumnRowMapper();
             return new ResultSetIterator(connection, statement, rs, rowMapper);
         } else {
             Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = new BeanPropertyRowMapper(outputClzz);
+            RowMapper rowMapper = rowMapperFactory.newBeanRowMapper(outputClzz);
             return new ResultSetIterator(connection, statement, rs, rowMapper);
         }
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (rowMapperFactory == null) {
+            rowMapperFactory = new DefaultRowMapperFactory();
+        }
+    }
 }

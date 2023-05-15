@@ -111,8 +111,13 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     private boolean reconnect = true;
     @UriParam(label = "consumer", defaultValue = "10000")
     private int reconnectInterval = 10000;
+    @UriParam(label = "advanced")
+    private String unixDomainSocketPath;
 
     public String getAddress() {
+        if (unixDomainSocketPath != null) {
+            return unixDomainSocketPath;
+        }
         return host + ":" + port;
     }
 
@@ -565,6 +570,18 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.reconnectInterval = reconnectInterval;
     }
 
+    public String getUnixDomainSocketPath() {
+        return unixDomainSocketPath;
+    }
+
+    /**
+     * Path to unix domain socket to use instead of inet socket. Host and port parameters will not be used, however
+     * required. It is ok to set dummy values for them. Must be used with nativeTransport=true and clientMode=false.
+     */
+    public void setUnixDomainSocketPath(String unixDomainSocketPath) {
+        this.unixDomainSocketPath = unixDomainSocketPath;
+    }
+
     /**
      * Checks if the other {@link NettyServerBootstrapConfiguration} is compatible with this, as a Netty listener bound
      * on port X shares the same common {@link NettyServerBootstrapConfiguration}, which must be identical.
@@ -647,6 +664,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (reconnectInterval != other.reconnectInterval) {
             isCompatible = false;
+        } else if (unixDomainSocketPath != other.unixDomainSocketPath) {
+            isCompatible = false;
         }
 
         return isCompatible;
@@ -688,6 +707,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                + ", networkInterface='" + networkInterface + '\''
                + ", reconnect='" + reconnect + '\''
                + ", reconnectInterval='" + reconnectInterval + '\''
+               + ", unixDomainSocketPath='" + unixDomainSocketPath + '\''
                + '}';
     }
 }

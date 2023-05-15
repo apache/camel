@@ -69,9 +69,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     @Override
     public void doStop() throws Exception {
         super.doStop();
-
         ServiceHelper.stopService(loaders.values());
-
         loaders.clear();
     }
 
@@ -87,27 +85,41 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
     @Override
     public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources) throws Exception {
+        return findRoutesBuilders(resources, false);
+    }
+
+    @Override
+    public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources, boolean optional) throws Exception {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
         // first we need to parse for modeline to gather all the configurations
         if (camelContext.isModeline()) {
             ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
             for (Resource resource : resources) {
-                RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
-                // gather resources for modeline
-                factory.parseModeline(resource);
-                // pre-parse before loading
-                loader.preParseRoute(resource);
+                if (resource.exists()) {
+                    try (RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional)) {
+                        if (loader != null) {
+                            // gather resources for modeline
+                            factory.parseModeline(resource);
+                            // pre-parse before loading
+                            loader.preParseRoute(resource);
+                        }
+                    }
+                }
             }
         }
 
         // now group resources by loader
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
         for (Resource resource : resources) {
-            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
-            List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
-            list.add(resource);
-            groups.put(loader, list);
+            if (resource.exists()) {
+                RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
+                if (loader != null) {
+                    List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
+                    list.add(resource);
+                    groups.put(loader, list);
+                }
+            }
         }
 
         // now load all the same resources for each loader
@@ -134,8 +146,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     }
 
     @Override
-    public void preParseRoute(Resource resource) throws Exception {
-        resolveRoutesBuilderLoader(resource).preParseRoute(resource);
+    public void preParseRoute(Resource resource, boolean optional) throws Exception {
+        RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
+        if (loader != null) {
+            loader.preParseRoute(resource);
+        }
     }
 
     @Override
@@ -177,8 +192,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     @Override
     public Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
-        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+        if (resources == null || resources.isEmpty()) {
+            return answer;
+        }
 
+        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         for (RoutesBuilder builder : builders) {
             // update any existing route configurations first
             if (builder instanceof RouteConfigurationsBuilder) {
@@ -186,7 +204,6 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                 rcb.updateRouteConfigurationsToCamelContext(getCamelContext());
             }
         }
-
         for (RoutesBuilder builder : builders) {
             // update any existing routes
             Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
@@ -196,7 +213,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         return answer;
     }
 
-    protected RoutesBuilderLoader resolveRoutesBuilderLoader(Resource resource) throws Exception {
+    protected RoutesBuilderLoader resolveRoutesBuilderLoader(Resource resource, boolean optional) throws Exception {
         // the loader to use is derived from the file extension
         final String extension = FileUtil.onlyExt(resource.getLocation(), false);
 
@@ -206,7 +223,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
 
         RoutesBuilderLoader loader = getRoutesLoader(extension);
-        if (loader == null) {
+        if (!optional && loader == null) {
             throw new IllegalArgumentException(
                     "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
         }

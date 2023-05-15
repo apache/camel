@@ -61,14 +61,15 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
 
     private static final Logger LOG = LoggerFactory.getLogger(FileWatcherResourceReloadStrategy.class);
 
-    private String folder;
-    private boolean isRecursive;
-    private WatchService watcher;
-    private ExecutorService executorService;
-    private WatchFileChangesTask task;
-    private Map<WatchKey, Path> folderKeys;
-    private long pollTimeout = 2000;
-    private FileFilter fileFilter;
+    WatchService watcher;
+    ExecutorService executorService;
+    WatchFileChangesTask task;
+    Map<WatchKey, Path> folderKeys;
+    FileFilter fileFilter;
+    String folder;
+    boolean isRecursive;
+    boolean scheduler = true;
+    long pollTimeout = 2000;
 
     public FileWatcherResourceReloadStrategy() {
         setRecursive(false);
@@ -94,6 +95,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
 
     public void setRecursive(boolean isRecursive) {
         this.isRecursive = isRecursive;
+    }
+
+    public void setScheduler(boolean scheduler) {
+        this.scheduler = scheduler;
     }
 
     /**
@@ -130,11 +135,20 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     @Override
+    public void onReload(Object source) {
+        // this implementation uses a watcher to automatic reload
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
         if (folder == null) {
             // no folder configured
+            return;
+        }
+        if (!scheduler) {
+            // do not start scheduler so exit start phase
             return;
         }
 

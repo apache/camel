@@ -23,9 +23,6 @@ import java.util.Map;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.operation.PostOperation;
 
-/**
- * Sample API used by Dhis2 Component whose method signatures are read from Java source.
- */
 public class Dhis2Post {
     private final Dhis2Client dhis2Client;
 

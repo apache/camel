@@ -46,8 +46,7 @@ public class ECS2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try {
-            EcsClient ecs2Client = ecs2Endpoint.getEcsClient();
+        try (EcsClient ecs2Client = ecs2Endpoint.getEcsClient()) {
             ecs2Client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

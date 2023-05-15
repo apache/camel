@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.http;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -32,8 +34,10 @@ import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -51,6 +55,9 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.main.util.CamelJBangSettingsHelper;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -70,6 +77,7 @@ public final class VertxHttpServer {
     private static final AtomicBoolean REGISTERED = new AtomicBoolean();
     private static final AtomicBoolean CONSOLE = new AtomicBoolean();
     private static final AtomicBoolean HEALTH_CHECK = new AtomicBoolean();
+    private static final AtomicBoolean UPLOAD = new AtomicBoolean();
 
     private VertxHttpServer() {
     }
@@ -290,7 +298,7 @@ public final class VertxHttpServer {
         dev.handler(handler);
         devSub.handler(handler);
 
-        phc.addHttpEndpoint("/q/dev", null);
+        phc.addHttpEndpoint("/q/dev", null, null);
     }
 
     public static void registerHealthCheck(CamelContext camelContext) {
@@ -366,7 +374,7 @@ public final class VertxHttpServer {
         live.handler(handler);
         ready.handler(handler);
 
-        phc.addHttpEndpoint("/q/health", null);
+        phc.addHttpEndpoint("/q/health", null, null);
     }
 
     private static void healthCheckStatus(StringBuilder sb, boolean up) {
@@ -458,6 +466,92 @@ public final class VertxHttpServer {
         trace = trace.replace('\t', ' ');
         trace = trace.replace(System.lineSeparator(), " ");
         return trace;
+    }
+
+    public static void registerUploadSourceDir(CamelContext camelContext, String dir) {
+        if (UPLOAD.compareAndSet(false, true)) {
+            doRegisterUploadSourceDir(camelContext, dir);
+        }
+    }
+
+    private static void doRegisterUploadSourceDir(CamelContext context, final String dir) {
+        final Route upload = router.route("/q/upload/:filename")
+                .method(HttpMethod.PUT)
+                // need body handler to handle file uploads
+                .handler(BodyHandler.create(true));
+
+        final Route uploadDelete = router.route("/q/upload/:filename");
+        uploadDelete.method(HttpMethod.DELETE);
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                String name = ctx.pathParam("filename");
+                if (name == null) {
+                    ctx.response().setStatusCode(400);
+                    ctx.end();
+                    return;
+                }
+
+                int status = 200;
+                boolean delete = HttpMethod.DELETE == ctx.request().method();
+                if (delete) {
+                    if (name.contains("*")) {
+                        if (name.equals("*")) {
+                            name = "**";
+                        }
+                        AntPathMatcher match = AntPathMatcher.INSTANCE;
+                        File[] files = new File(dir).listFiles();
+                        if (files != null) {
+                            for (File f : files) {
+                                if (f.getName().startsWith(".") || f.isHidden()) {
+                                    continue;
+                                }
+                                if (match.match(name, f.getName())) {
+                                    LOG.info("Deleting file: {}/{}", dir, name);
+                                    FileUtil.deleteFile(f);
+                                }
+                            }
+                        }
+                    } else {
+                        File f = new File(dir, name);
+                        if (f.exists() && f.isFile()) {
+                            LOG.info("Deleting file: {}/{}", dir, name);
+                            FileUtil.deleteFile(f);
+                        }
+                    }
+                } else {
+                    File f = new File(dir, name);
+                    boolean exists = f.isFile() && f.exists();
+                    LOG.info("{} file: {}/{}", exists ? "Updating" : "Creating", dir, name);
+
+                    File tmp = new File(dir, name + ".tmp");
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(tmp, false);
+                        RequestBody rb = ctx.body();
+                        IOHelper.writeText(rb.asString(), fos);
+
+                        FileUtil.renameFileUsingCopy(tmp, f);
+                        FileUtil.deleteFile(tmp);
+                    } catch (Exception e) {
+                        // some kind of error
+                        LOG.warn("Error saving file: {}/{} due to: {}", dir, name, e.getMessage(), e);
+                        status = 500;
+                    } finally {
+                        IOHelper.close(fos);
+                        FileUtil.deleteFile(tmp);
+                    }
+                }
+
+                ctx.response().setStatusCode(status);
+                ctx.end();
+            }
+        };
+        upload.handler(handler);
+        uploadDelete.handler(handler);
+
+        phc.addHttpEndpoint("/q/upload", "PUT,DELETE", null);
     }
 
 }

@@ -32,6 +32,10 @@ public class AwsVaultConfiguration extends VaultConfiguration {
     @Metadata
     private boolean defaultCredentialsProvider;
     @Metadata
+    private boolean profileCredentialsProvider;
+    @Metadata
+    private String profileName;
+    @Metadata
     private boolean refreshEnabled;
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
@@ -80,6 +84,28 @@ public class AwsVaultConfiguration extends VaultConfiguration {
      */
     public void setDefaultCredentialsProvider(boolean defaultCredentialsProvider) {
         this.defaultCredentialsProvider = defaultCredentialsProvider;
+    }
+
+    public boolean isProfileCredentialsProvider() {
+        return profileCredentialsProvider;
+    }
+
+    /**
+     * Define if we want to use the AWS Profile Credentials Provider or not
+     */
+    public void setProfileCredentialsProvider(boolean profileCredentialsProvider) {
+        this.profileCredentialsProvider = profileCredentialsProvider;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    /**
+     * Define the profile name to use if Profile Credentials Provider is selected
+     */
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
     }
 
     public boolean isRefreshEnabled() {

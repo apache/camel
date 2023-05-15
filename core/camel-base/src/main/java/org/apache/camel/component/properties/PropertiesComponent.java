@@ -40,6 +40,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.PropertiesSourceFactory;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
@@ -111,6 +112,7 @@ public class PropertiesComponent extends ServiceSupport
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
+    private final PropertiesSourceFactory propertiesSourceFactory = new DefaultPropertiesSourceFactory(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
@@ -367,6 +369,11 @@ public class PropertiesComponent extends ServiceSupport
         }
 
         setLocations(propertiesLocations);
+    }
+
+    @Override
+    public PropertiesSourceFactory getPropertiesSourceFactory() {
+        return propertiesSourceFactory;
     }
 
     public void addLocation(PropertiesLocation location) {

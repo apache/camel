@@ -21,7 +21,10 @@ import java.io.InputStream;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -31,6 +34,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRestsDefinition;
+import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteConfigurationsDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRouteTemplatesDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadRoutesDefinition;
 import static org.apache.camel.xml.jaxb.JaxbHelper.loadTemplatedRoutesDefinition;
@@ -44,9 +48,13 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         super(EXTENSION);
     }
 
+    JaxbXmlRoutesBuilderLoader(String extension) {
+        super(extension);
+    }
+
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
-        return new RouteBuilder() {
+        return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes
@@ -74,15 +82,29 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 try (InputStream is = resourceInputStream(resource)) {
                     RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
                     if (routes != null) {
-                        CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                         // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                         // so create a copy and use the fluent builder to add the route
                         for (RouteDefinition route : routes.getRoutes()) {
+                            CamelContextAware.trySetCamelContext(route, getCamelContext());
                             getRouteCollection().route(route);
                         }
                     }
                 }
             }
+
+            @Override
+            public void configuration() throws Exception {
+                try (InputStream is = resourceInputStream(resource)) {
+                    RouteConfigurationsDefinition configurations = loadRouteConfigurationsDefinition(getCamelContext(), is);
+                    if (configurations != null) {
+                        for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
+                            CamelContextAware.trySetCamelContext(config, getCamelContext());
+                            getRouteConfigurationCollection().routeConfiguration(config);
+                        }
+                    }
+                }
+            }
+
         };
     }
 }

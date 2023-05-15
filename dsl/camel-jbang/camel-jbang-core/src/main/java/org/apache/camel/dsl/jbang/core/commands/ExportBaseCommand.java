@@ -24,16 +24,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -68,6 +71,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
     protected String profile;
 
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    protected String repos;
+
     @CommandLine.Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
     protected String dependencies;
@@ -86,8 +93,12 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)", defaultValue = "11")
     protected String javaVersion;
 
+    @CommandLine.Option(names = { "--camel-version" },
+                        description = "To export using a different Camel version than the default version.")
+    protected String camelVersion;
+
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.2")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.3")
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -95,7 +106,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.9")
+                        defaultValue = "2.7.10")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
@@ -110,7 +121,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "2.16.4.Final")
+                        defaultValue = "2.16.6.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -140,6 +151,13 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
     protected String additionalProperties;
 
+    @CommandLine.Option(names = { "--secrets-refresh" }, defaultValue = "false", description = "Enabling secrets refresh")
+    protected boolean secretsRefresh;
+
+    @CommandLine.Option(names = { "--secrets-refresh-providers" },
+                        description = "Comma separated list of providers in the set aws,gcp and azure, to use in combination with --secrets-refresh option")
+    protected String secretsRefreshProviders;
+
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
@@ -161,13 +179,53 @@ abstract class ExportBaseCommand extends CamelCommand {
             RuntimeUtil.configureLog("off", false, false, false, true);
         }
 
-        printConfigurationValues("Exporting integration with the following configuration:");
+        if (!quiet) {
+            printConfigurationValues("Exporting integration with the following configuration:");
+        }
         // export
         return export();
     }
 
     public String getProfile() {
         return profile;
+    }
+
+    protected static String mavenRepositoriesAsPomXml(String repos) {
+        StringBuilder sb = new StringBuilder();
+        int i = 1;
+        sb.append("    <repositories>\n");
+        for (String repo : repos.split(",")) {
+            sb.append("        <repository>\n");
+            sb.append("            <id>custom").append(i++).append("</id>\n");
+            sb.append("            <url>").append(repo).append("</url>\n");
+            if (repo.contains("snapshots")) {
+                sb.append("            <releases>\n");
+                sb.append("                <enabled>false</enabled>\n");
+                sb.append("            </releases>\n");
+                sb.append("            <snapshots>\n");
+                sb.append("                <enabled>true</enabled>\n");
+                sb.append("            </snapshots>\n");
+            }
+            sb.append("        </repository>\n");
+        }
+        sb.append("    </repositories>\n");
+        sb.append("    <pluginRepositories>\n");
+        for (String repo : repos.split(",")) {
+            sb.append("        <pluginRepository>\n");
+            sb.append("            <id>custom").append(i++).append("</id>\n");
+            sb.append("            <url>").append(repo).append("</url>\n");
+            if (repo.contains("snapshots")) {
+                sb.append("            <releases>\n");
+                sb.append("                <enabled>false</enabled>\n");
+                sb.append("            </releases>\n");
+                sb.append("            <snapshots>\n");
+                sb.append("                <enabled>true</enabled>\n");
+                sb.append("            </snapshots>\n");
+            }
+            sb.append("        </pluginRepository>\n");
+        }
+        sb.append("    </pluginRepositories>\n");
+        return sb.toString();
     }
 
     protected abstract Integer export() throws Exception;
@@ -240,6 +298,14 @@ abstract class ExportBaseCommand extends CamelCommand {
                         answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                     }
                 }
+            } else if (line.startsWith("camel.jbang.classpathFiles")) {
+                String deps = StringHelper.after(line, "camel.jbang.classpathFiles=");
+                for (String d : deps.split(",")) {
+                    // special to include local JARs in export lib folder
+                    if (d.endsWith(".jar")) {
+                        answer.add("lib:" + d.trim());
+                    }
+                }
             } else if (line.startsWith("camel.main.routesIncludePattern=")) {
                 String routes = StringHelper.after(line, "camel.main.routesIncludePattern=");
                 for (String r : routes.split(",")) {
@@ -307,7 +373,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected void copySourceFiles(
             File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
-            String packageName)
+            File srcKameletsResourcesDir, String packageName)
             throws Exception {
         // read the settings file and find the files to copy
         Properties prop = new CamelCaseOrderedProperties();
@@ -327,8 +393,8 @@ abstract class ExportBaseCommand extends CamelCommand {
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
-                    boolean camel = "camel.main.routesIncludePattern".equals(k)
-                            || "camel.component.kamelet.location".equals(k)
+                    boolean camel = "camel.main.routesIncludePattern".equals(k);
+                    boolean kamelet = "camel.component.kamelet.location".equals(k)
                             || "camel.jbang.localKameletDir".equals(k);
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
@@ -339,7 +405,13 @@ abstract class ExportBaseCommand extends CamelCommand {
                         out = new File(target, source.getName());
                     }
                     if (!java) {
-                        safeCopy(source, out, true);
+                        if (camel) {
+                            safeCopy(source, out, true);
+                        }
+                        if (kamelet) {
+                            out = srcKameletsResourcesDir;
+                            safeCopy(source, out, true);
+                        }
                     } else {
                         // need to append package name in java source file
                         List<String> lines = Files.readAllLines(source.toPath());
@@ -502,12 +574,12 @@ abstract class ExportBaseCommand extends CamelCommand {
      * @param  camelVersion the camel version
      * @return              repositories or null if none are in use
      */
-    protected static String getMavenRepos(File settings, Properties prop, String camelVersion) throws Exception {
-        StringJoiner sj = new StringJoiner(",");
+    protected String getMavenRepos(File settings, Properties prop, String camelVersion) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
 
-        String repos = prop.getProperty("camel.jbang.repos");
-        if (repos != null) {
-            sj.add(repos);
+        String propRepos = prop.getProperty("camel.jbang.repos");
+        if (propRepos != null) {
+            answer.add(propRepos);
         }
 
         if (camelVersion == null) {
@@ -515,7 +587,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
         // include apache snapshot repo if we use SNAPSHOT version of Camel
         if (camelVersion.endsWith("-SNAPSHOT")) {
-            sj.add("https://repository.apache.org/content/groups/snapshots/");
+            answer.add("https://repository.apache.org/content/groups/snapshots/");
         }
 
         // there may be additional extra repositories
@@ -523,11 +595,15 @@ abstract class ExportBaseCommand extends CamelCommand {
         for (String line : lines) {
             if (line.startsWith("repository=")) {
                 String r = StringHelper.after(line, "repository=");
-                sj.add(r);
+                answer.add(r);
             }
         }
 
-        return sj.toString();
+        if (this.repos != null) {
+            Collections.addAll(answer, this.repos.split(","));
+        }
+
+        return String.join(",", answer);
     }
 
     protected static boolean hasModeline(File settings) {
@@ -586,4 +662,123 @@ abstract class ExportBaseCommand extends CamelCommand {
         return matcher.find() ? matcher.group(1) : null;
     }
 
+    protected static MavenGav parseMavenGav(String dep) {
+        MavenGav gav;
+        if (dep.startsWith("lib:") && dep.endsWith(".jar")) {
+            // lib:commons-lang3-3.12.0.jar
+            String n = dep.substring(4);
+            n = n.substring(0, n.length() - 4);
+            // scan inside JAR in META-INF/maven and find pom.properties file
+            gav = parseLocalJar(n);
+            if (gav == null) {
+                // okay JAR was not maven build
+                gav = new MavenGav();
+                String v = "1.0";
+                String a = n;
+                int pos = n.lastIndexOf("-");
+                if (pos != -1) {
+                    a = n.substring(0, pos);
+                    v = n.substring(pos + 1);
+                }
+                gav.setGroupId("local");
+                gav.setArtifactId(a);
+                gav.setVersion(v);
+                gav.setPackaging("lib");
+            }
+        } else {
+            gav = MavenGav.parseGav(dep);
+        }
+        return gav;
+    }
+
+    private static MavenGav parseLocalJar(String dep) {
+        File file = new File(dep + ".jar");
+        if (!file.isFile() || !file.exists()) {
+            return null;
+        }
+
+        try {
+            JarFile jf = new JarFile(file);
+            Optional<JarEntry> je = jf.stream().filter(e -> e.getName().startsWith("META-INF/maven/")
+                    && e.getName().endsWith("/pom.properties")).findFirst();
+            if (je.isPresent()) {
+                JarEntry e = je.get();
+                InputStream is = jf.getInputStream(e);
+                Properties prop = new Properties();
+                prop.load(is);
+                IOHelper.close(is);
+                MavenGav gav = new MavenGav();
+                gav.setGroupId(prop.getProperty("groupId"));
+                gav.setArtifactId(prop.getProperty("artifactId"));
+                gav.setVersion(prop.getProperty("version"));
+                gav.setPackaging("lib");
+                return gav;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return null;
+    }
+
+    protected void copyLocalLibDependencies(Set<String> deps) throws Exception {
+        for (String d : deps) {
+            if (d.startsWith("lib:")) {
+                File libDir = new File(BUILD_DIR, "lib");
+                libDir.mkdirs();
+                String n = d.substring(4);
+                File source = new File(n);
+                File target = new File(libDir, n);
+                safeCopy(source, target, true);
+            }
+        }
+    }
+
+    protected void exportAwsSecretsRefreshProp(Properties properties) {
+        properties.setProperty("camel.vault.aws.accessKey", "<accessKey>");
+        properties.setProperty("camel.vault.aws.secretKey", "<secretKey>");
+        properties.setProperty("camel.vault.aws.region", "<region>");
+        properties.setProperty("camel.vault.aws.useDefaultCredentialProvider", "<useDefaultCredentialProvider>");
+        properties.setProperty("camel.vault.aws.refreshEnabled", "true");
+        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
+        properties.setProperty("camel.vault.aws.secrets", "<secrets>");
+        properties.setProperty("camel.main.context-reload-enabled", "true");
+    }
+
+    protected void exportGcpSecretsRefreshProp(Properties properties) {
+        properties.setProperty("camel.vault.gcp.serviceAccountKey", "<serviceAccountKey>");
+        properties.setProperty("camel.vault.gcp.projectId", "<projectId>");
+        properties.setProperty("camel.vault.gcp.useDefaultInstance", "<useDefaultInstance>");
+        properties.setProperty("camel.vault.gcp.refreshEnabled", "true");
+        properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
+        properties.setProperty("camel.vault.gcp.secrets", "<secrets>");
+        properties.setProperty("camel.vault.gcp.subscriptionName", "<subscriptionName>");
+        properties.setProperty("camel.main.context-reload-enabled", "true");
+    }
+
+    protected void exportAzureSecretsRefreshProp(Properties properties) {
+        properties.setProperty("camel.vault.azure.tenantId", "<tenantId>");
+        properties.setProperty("camel.vault.azure.clientId", "<clientId>");
+        properties.setProperty("camel.vault.azure.clientSecret", "<clientSecret>");
+        properties.setProperty("camel.vault.azure.vaultName", "<vaultName>");
+        properties.setProperty("camel.vault.azure.refreshEnabled", "true");
+        properties.setProperty("camel.vault.azure.refreshPeriod", "30000");
+        properties.setProperty("camel.vault.azure.secrets", "<secrets>");
+        properties.setProperty("camel.vault.azure.eventhubConnectionString", "<eventhubConnectionString>");
+        properties.setProperty("camel.vault.azure.blobAccountName", "<blobAccountName>");
+        properties.setProperty("camel.vault.azure.blobContainerName", "<blobContainerName>");
+        properties.setProperty("camel.vault.azure.blobAccessKey", "<blobAccessKey>");
+        properties.setProperty("camel.main.context-reload-enabled", "true");
+    }
+
+    protected List<String> getSecretProviders() {
+        if (secretsRefreshProviders != null) {
+            List<String> providers = Pattern.compile("\\,")
+                    .splitAsStream(secretsRefreshProviders)
+                    .collect(Collectors.toList());
+            return providers;
+        } else {
+            return null;
+        }
+    }
 }

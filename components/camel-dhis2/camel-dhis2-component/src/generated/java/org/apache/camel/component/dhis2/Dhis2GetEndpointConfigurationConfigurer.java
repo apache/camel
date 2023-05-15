@@ -31,6 +31,7 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         map.put("Password", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("QueryParams", java.util.Map.class);
+        map.put("RootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class);
         map.put("Username", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -61,6 +62,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "queryparams":
         case "QueryParams": target.setQueryParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "rootjunction":
+        case "RootJunction": target.setRootJunction(property(camelContext, org.apache.camel.component.dhis2.api.RootJunctionEnum.class, value)); return true;
         case "username":
         case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -97,6 +100,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Path": return java.lang.String.class;
         case "queryparams":
         case "QueryParams": return java.util.Map.class;
+        case "rootjunction":
+        case "RootJunction": return org.apache.camel.component.dhis2.api.RootJunctionEnum.class;
         case "username":
         case "Username": return java.lang.String.class;
         default: return null;
@@ -129,6 +134,8 @@ public class Dhis2GetEndpointConfigurationConfigurer extends org.apache.camel.su
         case "Path": return target.getPath();
         case "queryparams":
         case "QueryParams": return target.getQueryParams();
+        case "rootjunction":
+        case "RootJunction": return target.getRootJunction();
         case "username":
         case "Username": return target.getUsername();
         default: return null;

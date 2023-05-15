@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(WatchUpdatesConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WatchUpdatesConsumer.class);
     HashMap<Long, Issue> watchedIssues;
     List<String> watchedFieldsList;
     String watchedIssuesKeys;

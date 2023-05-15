@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2PostApiMethod;
-import org.hisp.dhis.api.model.v2_38_1.OrganisationUnit;
+import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,14 +42,23 @@ public class Dhis2PostIT extends AbstractDhis2TestSupport {
     private static final String PATH_PREFIX = Dhis2ApiCollection.getCollection().getApiName(Dhis2PostApiMethod.class).getName();
 
     @Test
-    public void testResource() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+    public void testResourceGivenInBody() {
+        postResource("direct://RESOURCE_WITH_INBODY");
+    }
+
+    @Test
+    public void testResource() {
+        postResource("direct://RESOURCE");
+    }
+
+    private void postResource(String endpointUri) {
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelDhis2.path", "organisationUnits");
         // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
-        final java.io.InputStream result = requestBodyAndHeaders("direct://RESOURCE",
+        final java.io.InputStream result = requestBodyAndHeaders(endpointUri,
                 new OrganisationUnit().withName("Foo").withShortName("Foo").withOpeningDate(new Date()),
                 headers);
 
@@ -58,13 +67,15 @@ public class Dhis2PostIT extends AbstractDhis2TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resource
-                from("direct://RESOURCE")
+                from("direct://RESOURCE_WITH_INBODY")
                         .to("dhis2://" + PATH_PREFIX + "/resource?inBody=resource");
 
+                from("direct://RESOURCE")
+                        .to("dhis2://" + PATH_PREFIX + "/resource");
             }
         };
     }

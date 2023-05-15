@@ -19,12 +19,12 @@ package org.apache.camel.impl.console;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.spi.ContextReloadStrategy;
-import org.apache.camel.spi.ResourceReloadStrategy;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
@@ -53,13 +53,9 @@ public class ContextDevConsole extends AbstractDevConsole {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
                 int reloaded = 0;
-                ResourceReloadStrategy rrs = getCamelContext().hasService(ResourceReloadStrategy.class);
-                if (rrs != null) {
-                    reloaded += rrs.getReloadCounter();
-                }
-                ContextReloadStrategy crs = getCamelContext().hasService(ContextReloadStrategy.class);
-                if (crs != null) {
-                    reloaded += crs.getReloadCounter();
+                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
+                for (ReloadStrategy r : rs) {
+                    reloaded += r.getReloadCounter();
                 }
                 String load1 = getLoad1(mb);
                 String load5 = getLoad5(mb);
@@ -123,13 +119,9 @@ public class ContextDevConsole extends AbstractDevConsole {
                 JsonObject stats = new JsonObject();
 
                 int reloaded = 0;
-                ResourceReloadStrategy rrs = getCamelContext().hasService(ResourceReloadStrategy.class);
-                if (rrs != null) {
-                    reloaded += rrs.getReloadCounter();
-                }
-                ContextReloadStrategy crs = getCamelContext().hasService(ContextReloadStrategy.class);
-                if (crs != null) {
-                    reloaded += crs.getReloadCounter();
+                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
+                for (ReloadStrategy r : rs) {
+                    reloaded += r.getReloadCounter();
                 }
                 String load1 = getLoad1(mb);
                 String load5 = getLoad5(mb);

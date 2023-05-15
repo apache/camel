@@ -79,9 +79,10 @@ public final class ServiceBusClientFactory {
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
         final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder receiverClientBuilder = busClientBuilder.receiver();
 
-        if (configuration.isDisableAutoComplete()) {
-            receiverClientBuilder.disableAutoComplete();
-        }
+        // We handle auto-complete in the consumer, since we have no way to propagate errors back to the reactive
+        // pipeline messages are published on so the message would be completed even if an error occurs during Exchange
+        // processing.
+        receiverClientBuilder.disableAutoComplete();
 
         if (configuration.getServiceBusType() == ServiceBusType.queue) {
             return receiverClientBuilder.queueName(configuration.getTopicOrQueueName());

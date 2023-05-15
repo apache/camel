@@ -44,7 +44,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -295,7 +294,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         }
 
         private boolean shouldExclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
-            return sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
+            return !sd.newSpan()
                     || isExcluded(exchange, endpoint);
         }
     }

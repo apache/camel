@@ -348,6 +348,11 @@ public class LegacyDefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderS
      * with custom headers and include the original message body. The former wont let you do this, as its using the
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
+     * The original input message is defensively copied, and the copied message body is converted to
+     * {@link org.apache.camel.StreamCache} if possible, to ensure the body can be read when the original message is
+     * being used later. If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
+     * able to re-read when accessed later.
+     * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
      * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they
      * are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints
@@ -384,6 +389,11 @@ public class LegacyDefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderS
      * and headers, where as the latter only includes the original body. You can use the latter to enrich the message
      * with custom headers and include the original message body. The former wont let you do this, as its using the
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
+     * The original input message is defensively copied, and the copied message body is converted to
+     * {@link org.apache.camel.StreamCache} if possible, to ensure the body can be read when the original message is
+     * being used later. If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
+     * able to re-read when accessed later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
      * {@link org.apache.camel.spi.UnitOfWork}. An unit of work typically spans one route, or multiple routes if they

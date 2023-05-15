@@ -34,6 +34,7 @@
     <description>Camel JBang Modules (parent)</description>
 
     <modules>
+        <module>camel-jbang-console</module>
         <module>camel-jbang-core</module>
         <module>camel-jbang-main</module>
     </modules>

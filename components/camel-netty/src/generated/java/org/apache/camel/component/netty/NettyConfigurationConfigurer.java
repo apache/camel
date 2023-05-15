@@ -163,6 +163,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "UdpByteArrayCodec": target.setUdpByteArrayCodec(property(camelContext, boolean.class, value)); return true;
         case "udpconnectionlesssending":
         case "UdpConnectionlessSending": target.setUdpConnectionlessSending(property(camelContext, boolean.class, value)); return true;
+        case "unixdomainsocketpath":
+        case "UnixDomainSocketPath": target.setUnixDomainSocketPath(property(camelContext, java.lang.String.class, value)); return true;
         case "usebytebuf":
         case "UseByteBuf": target.setUseByteBuf(property(camelContext, boolean.class, value)); return true;
         case "usingexecutorservice":
@@ -320,6 +322,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "UdpByteArrayCodec": return boolean.class;
         case "udpconnectionlesssending":
         case "UdpConnectionlessSending": return boolean.class;
+        case "unixdomainsocketpath":
+        case "UnixDomainSocketPath": return java.lang.String.class;
         case "usebytebuf":
         case "UseByteBuf": return boolean.class;
         case "usingexecutorservice":
@@ -478,6 +482,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "UdpByteArrayCodec": return target.isUdpByteArrayCodec();
         case "udpconnectionlesssending":
         case "UdpConnectionlessSending": return target.isUdpConnectionlessSending();
+        case "unixdomainsocketpath":
+        case "UnixDomainSocketPath": return target.getUnixDomainSocketPath();
         case "usebytebuf":
         case "UseByteBuf": return target.isUseByteBuf();
         case "usingexecutorservice":

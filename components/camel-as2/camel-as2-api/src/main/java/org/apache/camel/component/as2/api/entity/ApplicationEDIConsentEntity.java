@@ -19,7 +19,7 @@ package org.apache.camel.component.as2.api.entity;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.http.entity.ContentType;
 
-public class ApplicationEDIConsentEntity extends ApplicationEDIEntity {
+public class ApplicationEDIConsentEntity extends ApplicationEntity {
 
     public ApplicationEDIConsentEntity(String content, String charset, String contentTransferEncoding,
                                        boolean isMainBody, String fileName) {

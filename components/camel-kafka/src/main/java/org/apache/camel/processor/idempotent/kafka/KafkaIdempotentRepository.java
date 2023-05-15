@@ -82,6 +82,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     // configurable
     private String topic;
     private String bootstrapServers;
+
+    private String groupId;
     private Properties producerConfig;
     private Properties consumerConfig;
     private int maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
@@ -113,6 +115,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this(topic, bootstrapServers, DEFAULT_MAXIMUM_CACHE_SIZE, DEFAULT_POLL_DURATION_MS);
     }
 
+    public KafkaIdempotentRepository(String topic, String bootstrapServers, String groupId) {
+        this(topic, bootstrapServers, DEFAULT_MAXIMUM_CACHE_SIZE, DEFAULT_POLL_DURATION_MS, groupId);
+    }
+
     public KafkaIdempotentRepository(String topic, String bootstrapServers, int maxCacheSize, int pollDurationMs) {
         this.topic = topic;
         this.bootstrapServers = bootstrapServers;
@@ -124,6 +130,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this(topic, consumerConfig, producerConfig, DEFAULT_MAXIMUM_CACHE_SIZE, DEFAULT_POLL_DURATION_MS);
     }
 
+    public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, String groupId) {
+        this(topic, consumerConfig, producerConfig, DEFAULT_MAXIMUM_CACHE_SIZE, DEFAULT_POLL_DURATION_MS, groupId);
+    }
+
     public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, int maxCacheSize,
                                      int pollDurationMs) {
         this.topic = topic;
@@ -131,6 +141,25 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this.producerConfig = producerConfig;
         this.maxCacheSize = maxCacheSize;
         this.pollDurationMs = pollDurationMs;
+    }
+
+    public KafkaIdempotentRepository(String topic, String bootstrapServers, int maxCacheSize, int pollDurationMs,
+                                     String groupId) {
+        this.topic = topic;
+        this.bootstrapServers = bootstrapServers;
+        this.maxCacheSize = maxCacheSize;
+        this.pollDurationMs = pollDurationMs;
+        this.groupId = groupId;
+    }
+
+    public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, int maxCacheSize,
+                                     int pollDurationMs, String groupId) {
+        this.topic = topic;
+        this.consumerConfig = consumerConfig;
+        this.producerConfig = producerConfig;
+        this.maxCacheSize = maxCacheSize;
+        this.pollDurationMs = pollDurationMs;
+        this.groupId = groupId;
     }
 
     public String getTopic() {
@@ -250,6 +279,19 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this.pollDurationMs = pollDurationMs;
     }
 
+    public String getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * Sets the group id of the Kafka consumer.
+     *
+     * @param groupId The poll duration in milliseconds.
+     */
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -284,8 +326,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         ObjectHelper.notNull(producerConfig, "producerConfig");
 
         // each consumer instance must have control over its own offset, so
-        // assign a groupID at random
-        String groupId = UUID.randomUUID().toString();
+        // assign a groupID at random if not specified
+        if (ObjectHelper.isEmpty(groupId)) {
+            groupId = UUID.randomUUID().toString();
+        }
         log.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
         consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);

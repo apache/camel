@@ -167,6 +167,41 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder forcePathStyle(
+                boolean forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder forcePathStyle(
+                String forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -1722,6 +1757,41 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder forcePathStyle(
+                boolean forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder forcePathStyle(
+                String forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -2729,6 +2799,39 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder delimiter(String delimiter) {
             doSetProperty("delimiter", delimiter);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder forcePathStyle(boolean forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder forcePathStyle(String forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
             return this;
         }
         /**

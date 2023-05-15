@@ -184,7 +184,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
         Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = getVertxHostRegistry();
         for (VertxWebsocketHost host : registry.values()) {
             Map<String, ServerWebSocket> hostPeers = host.getConnectedPeers();
-            if (hostPeers.containsKey(connectionKey) && host.getPort() == getConfiguration().getWebsocketURI().getPort()) {
+            if (hostPeers.containsKey(connectionKey) && host.isManagedHost(getConfiguration().getWebsocketURI().getHost())
+                    && host.isManagedPort(getConfiguration().getWebsocketURI().getPort())) {
                 return hostPeers.get(connectionKey);
             }
         }
@@ -198,15 +199,11 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
         return getVertxHostRegistry()
                 .values()
                 .stream()
-                .filter(host -> host.getPort() == getConfiguration().getWebsocketURI().getPort())
+                .filter(host -> host.isManagedHost(getConfiguration().getWebsocketURI().getHost()))
+                .filter(host -> host.isManagedPort(getConfiguration().getWebsocketURI().getPort()))
                 .flatMap(host -> host.getConnectedPeers().entrySet().stream())
-                .filter(entry -> entry.getValue().path().equals(getConfiguration().getWebsocketURI().getPath()))
+                .filter(entry -> VertxWebsocketHelper.webSocketHostPathMatches(entry.getValue().path(),
+                        getConfiguration().getWebsocketURI().getPath()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    protected boolean isManagedPort() {
-        return getVertxHostRegistry().values()
-                .stream()
-                .anyMatch(host -> host.getPort() == getConfiguration().getWebsocketURI().getPort());
     }
 }

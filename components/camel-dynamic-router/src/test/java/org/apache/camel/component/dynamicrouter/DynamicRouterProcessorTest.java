@@ -45,7 +45,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
         when(controlMessage.getPriority()).thenReturn(1);
         when(controlMessage.getPredicate()).thenReturn(e -> true);
         PrioritizedFilterProcessor result = processor.createFilter(controlMessage);
-        assertEquals(filterProcessor, result);
+        assertEquals(filterProcessorLowPriority, result);
     }
 
     @Test
@@ -56,19 +56,30 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
 
     @Test
     void addFilterAsFilterProcessor() {
-        processor.addFilter(filterProcessor);
+        processor.addFilter(filterProcessorLowPriority);
         PrioritizedFilterProcessor result = processor.getFilter(TEST_ID);
-        assertEquals(filterProcessor, result);
+        assertEquals(filterProcessorLowPriority, result);
     }
 
     @Test
     void addMultipleFiltersWithSameId() {
-        processor.addFilter(filterProcessor);
-        processor.addFilter(filterProcessor);
-        processor.addFilter(filterProcessor);
-        processor.addFilter(filterProcessor);
+        processor.addFilter(filterProcessorLowPriority);
+        processor.addFilter(filterProcessorLowPriority);
+        processor.addFilter(filterProcessorLowPriority);
+        processor.addFilter(filterProcessorLowPriority);
         List<PrioritizedFilterProcessor> matchingFilters = processor.matchFilters(exchange);
         assertEquals(1, matchingFilters.size());
+    }
+
+    @Test
+    void testMultipleFilterOrderByPriorityNotIdKey() {
+        when(filterProcessorLowestPriority.getId()).thenReturn("anIdThatComesLexicallyBeforeTestId");
+        processor.addFilter(filterProcessorLowestPriority);
+        processor.addFilter(filterProcessorLowPriority);
+        List<PrioritizedFilterProcessor> matchingFilters = processor.matchFilters(exchange);
+        assertEquals(1, matchingFilters.size());
+        PrioritizedFilterProcessor matchingFilter = matchingFilters.get(0);
+        assertEquals(matchingFilter.getId(), TEST_ID);
     }
 
     @Test
@@ -89,21 +100,21 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     @Test
     void matchFiltersDoesNotMatch() {
         PrioritizedFilterProcessor result = processor.matchFilters(exchange).get(0);
-        assertEquals(Integer.MAX_VALUE, result.getPriority());
+        assertEquals(Integer.MAX_VALUE - 1000, result.getPriority());
     }
 
     @Test
     void processMatching() {
         addFilterAsFilterProcessor();
-        when(filterProcessor.matches(exchange)).thenReturn(true);
-        lenient().when(filterProcessor.process(any(Exchange.class), any(AsyncCallback.class))).thenReturn(true);
+        when(filterProcessorLowPriority.matches(exchange)).thenReturn(true);
+        lenient().when(filterProcessorLowPriority.process(any(Exchange.class), any(AsyncCallback.class))).thenReturn(true);
         Assertions.assertFalse(processor.process(exchange, asyncCallback));
     }
 
     @Test
     void processNotMatching() {
         addFilterAsFilterProcessor();
-        when(filterProcessor.matches(exchange)).thenReturn(false);
+        when(filterProcessorLowPriority.matches(exchange)).thenReturn(false);
         Assertions.assertFalse(processor.process(exchange, asyncCallback));
     }
 

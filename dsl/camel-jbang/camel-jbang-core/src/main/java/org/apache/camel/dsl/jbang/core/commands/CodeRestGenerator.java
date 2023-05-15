@@ -50,7 +50,7 @@ public class CodeRestGenerator extends CamelCommand {
     private String input;
     @CommandLine.Option(names = { "-o", "--output" }, description = "Output REST DSL file name")
     private String output;
-    @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)")
+    @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
     private String type;
     @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (YAML)")
     private boolean generateRoutes;
@@ -73,9 +73,9 @@ public class CodeRestGenerator extends CamelCommand {
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new LightweightCamelContext()) {
             String text = null;
-            if (type.equalsIgnoreCase("yaml")) {
+            if ("yaml".equalsIgnoreCase(type)) {
                 text = RestDslGenerator.toYaml(document).generate(context, generateRoutes);
-            } else if (type.equalsIgnoreCase("xml")) {
+            } else if ("xml".equalsIgnoreCase(type)) {
                 text = RestDslGenerator.toXml(document).generate(context);
             }
             if (text != null) {

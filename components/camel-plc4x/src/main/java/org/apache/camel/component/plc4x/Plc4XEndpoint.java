@@ -17,7 +17,6 @@
 package org.apache.camel.component.plc4x;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -54,9 +53,9 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
     private String driver;
-    @UriParam
-    @Metadata(description = "The tags to read as Map<String,String> containing the tag name associated to its query")
-    private Map<String, Object> tags;
+    @UriParam(label = "consumer", prefix = "tag.", multiValue = true)
+    @Metadata(description = "Tags as key/values from the Map to use in query")
+    private Map<String, String> tags;
     @UriParam
     @Metadata(label = "consumer",
               description = "Query to a trigger. On a rising edge of the trigger, the tags will be read once")
@@ -94,7 +93,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
 
     public void setTrigger(String trigger) {
         this.trigger = trigger;
-        plcDriverManager = new PooledPlcDriverManager();
+        this.plcDriverManager = new PooledPlcDriverManager();
     }
 
     public void setAutoReconnect(boolean autoReconnect) {
@@ -107,7 +106,6 @@ public class Plc4XEndpoint extends DefaultEndpoint {
 
     /**
      * Set up the connection.
-     * <p>
      *
      * @throws PlcConnectionException if no connection could be established and auto-reconnect is turned off
      */
@@ -178,24 +176,22 @@ public class Plc4XEndpoint extends DefaultEndpoint {
 
     @Override
     public PollingConsumer createPollingConsumer() {
-        LOGGER.debug("Creating Plc4XPollingConsumer");
         return new Plc4XPollingConsumer(this);
     }
 
     /**
      * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
-     * <p>
-     *
-     * @return {@link PlcReadRequest}
      */
     public PlcReadRequest buildPlcReadRequest() {
         PlcReadRequest.Builder builder = connection.readRequestBuilder();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            try {
-                builder.addItem(tag.getKey(), (String) tag.getValue());
-            } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
-                        tags.getClass().getSimpleName());
+        if (tags != null) {
+            for (Map.Entry<String, String> tag : tags.entrySet()) {
+                try {
+                    builder.addItem(tag.getKey(), tag.getValue());
+                } catch (PlcIncompatibleDatatypeException e) {
+                    LOGGER.warn("For consumer, please use Map<String,String>, currently using {}",
+                            tags.getClass().getSimpleName());
+                }
             }
         }
         return builder.build();
@@ -233,34 +229,12 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         this.driver = driver;
     }
 
-    public Map<String, Object> getTags() {
+    public Map<String, String> getTags() {
         return tags;
     }
 
-    public void setTags(Map<String, Object> tags) {
+    public void setTags(Map<String, String> tags) {
         this.tags = tags;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Plc4XEndpoint)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        Plc4XEndpoint that = (Plc4XEndpoint) o;
-        return Objects.equals(getDriver(), that.getDriver()) &&
-                Objects.equals(getTags(), that.getTags()) &&
-                Objects.equals(getPlcDriverManager(), that.getPlcDriverManager());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getDriver(), getTags(), getPlcDriverManager());
     }
 
     @Override
@@ -268,6 +242,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         //Shutting down the connection when leaving the Context
         if (connection != null && connection.isConnected()) {
             connection.close();
+            connection = null;
         }
     }
 

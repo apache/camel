@@ -64,7 +64,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "itemid":
         case "itemId": getOrCreateConfiguration(target).setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
-        case "itemPartitionKey": getOrCreateConfiguration(target).setItemPartitionKey(property(camelContext, com.azure.cosmos.models.PartitionKey.class, value)); return true;
+        case "itemPartitionKey": getOrCreateConfiguration(target).setItemPartitionKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "leasecontainername":
@@ -83,6 +83,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": getOrCreateConfiguration(target).setReadRequestsFallbackEnabled(property(camelContext, boolean.class, value)); return true;
         case "throughputproperties":
         case "throughputProperties": getOrCreateConfiguration(target).setThroughputProperties(property(camelContext, com.azure.cosmos.models.ThroughputProperties.class, value)); return true;
+        case "usedefaultidentity":
+        case "useDefaultIdentity": getOrCreateConfiguration(target).setUseDefaultIdentity(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -131,7 +133,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":
-        case "itemPartitionKey": return com.azure.cosmos.models.PartitionKey.class;
+        case "itemPartitionKey": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "leasecontainername":
@@ -150,6 +152,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": return boolean.class;
         case "throughputproperties":
         case "throughputProperties": return com.azure.cosmos.models.ThroughputProperties.class;
+        case "usedefaultidentity":
+        case "useDefaultIdentity": return boolean.class;
         default: return null;
         }
     }
@@ -213,6 +217,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "readRequestsFallbackEnabled": return getOrCreateConfiguration(target).isReadRequestsFallbackEnabled();
         case "throughputproperties":
         case "throughputProperties": return getOrCreateConfiguration(target).getThroughputProperties();
+        case "usedefaultidentity":
+        case "useDefaultIdentity": return getOrCreateConfiguration(target).isUseDefaultIdentity();
         default: return null;
         }
     }
