@@ -40,6 +40,9 @@ public class JpaProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
 
+    /* prefix for marking property in outputTarget */
+    private static final String PROPERTY_PREFIX = "property:";
+
     private Language simple;
 
     private final EntityManagerFactory entityManagerFactory;
@@ -371,8 +374,8 @@ public class JpaProducer extends DefaultProducer {
     private static void putAnswer(final Exchange exchange, final Object answer, final String outputTarget) {
         if (outputTarget == null || outputTarget.isBlank()) {
             getTargetMessage(exchange).setBody(answer);
-        } else if (outputTarget.startsWith(".")) {
-            exchange.setProperty(outputTarget.substring(1), answer);
+        } else if (outputTarget.startsWith(PROPERTY_PREFIX)) {
+            exchange.setProperty(outputTarget.substring(PROPERTY_PREFIX.length()), answer);
         } else {
             getTargetMessage(exchange).setHeader(outputTarget, answer);
         }

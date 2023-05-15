@@ -578,8 +578,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To put the query (or find) result in a header or property instead of the body. If the value starts with a dot,
-     * put the result into the so named property (without the dot), otherwise into the header.
+     * To put the query (or find) result in a header or property instead of the body. If the value starts with the
+     * prefix "property:", put the result into the so named property, otherwise into the header.
      */
     public void setOutputTarget(String outputTarget) {
         this.outputTarget = outputTarget;
