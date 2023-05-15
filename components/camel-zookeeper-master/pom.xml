@@ -150,4 +150,33 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <!-- Zookeeper master tests only run on x86 64 or ARM-->
+            <id>Notx86</id>
+            <activation>
+                <os>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Zookeeper master tests only run on x86 64 or ARM-->
+            <id>NotARM</id>
+            <activation>
+                <os>
+                    <arch>!aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
