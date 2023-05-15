@@ -150,6 +150,30 @@
                     <skipTests>${skipTests}</skipTests>
                     <reuseForks>true</reuseForks>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <excludedGroups>health,idempotent</excludedGroups>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>serials-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <reuseForks>false</reuseForks>
+                            <groups>health,idempotent</groups>
+                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -164,10 +188,10 @@
             </properties>
         </profile>
         <profile>
-            <id>arm</id>
+            <id>backwards-compatibility</id>
             <activation>
                 <os>
-                    <arch>!aarch64</arch>
+                    <arch>amd64</arch>
                 </os>
             </activation>
 
@@ -190,11 +214,10 @@
                                     </systemPropertyVariables>
                                     <reuseForks>true</reuseForks>
                                     <reportNameSuffix>kafka-2</reportNameSuffix>
-                                    <excludedGroups>non-abstract</excludedGroups>
+                                    <excludedGroups>non-abstract,health,idempotent</excludedGroups>
                                 </configuration>
                                 <goals>
                                     <goal>integration-test</goal>
-                                    <goal>verify</goal>
                                 </goals>
                             </execution>
                         </executions>
