@@ -158,6 +158,19 @@
                 <skipTests>true</skipTests>
             </properties>
         </profile>
+        <profile>
+            <!-- Disable tests not available on platform -->
+            <id>s390x</id>
+            <activation>
+                <os>
+                    <arch>s390x</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
     </profiles>
 
 </project>
