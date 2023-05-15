@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ZookeeprContainer.class)
-public class GroupTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupTest.class);
+public class GroupIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupIT.class);
 
     private static String beforeTmpdir;
 
