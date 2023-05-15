@@ -38,6 +38,7 @@ import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -295,8 +296,9 @@ public final class VertxHttpServer {
                 }
             }
         };
-        dev.handler(handler);
-        devSub.handler(handler);
+        // use blocking handler as the task can take longer time to complete
+        dev.handler(new BlockingHandlerDecorator(handler, true));
+        devSub.handler(new BlockingHandlerDecorator(handler, true));
 
         phc.addHttpEndpoint("/q/dev", null);
     }
@@ -370,9 +372,10 @@ public final class VertxHttpServer {
                 ctx.end(sb.toString());
             }
         };
-        health.handler(handler);
-        live.handler(handler);
-        ready.handler(handler);
+        // use blocking handler as the task can take longer time to complete
+        health.handler(new BlockingHandlerDecorator(handler, true));
+        live.handler(new BlockingHandlerDecorator(handler, true));
+        ready.handler(new BlockingHandlerDecorator(handler, true));
 
         phc.addHttpEndpoint("/q/health", null);
     }
@@ -548,8 +551,9 @@ public final class VertxHttpServer {
                 ctx.end();
             }
         };
-        upload.handler(handler);
-        uploadDelete.handler(handler);
+        // use blocking handler as the task can take longer time to complete
+        upload.handler(new BlockingHandlerDecorator(handler, true));
+        uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
 
         phc.addHttpEndpoint("/q/upload", "PUT,DELETE", null);
     }
