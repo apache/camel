@@ -43,12 +43,12 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PulsarConsumerAcknowledgementTest extends CamelTestSupport {
+public class PulsarConsumerAcknowledgementIT extends CamelTestSupport {
 
     @RegisterExtension
     static PulsarService service = PulsarServiceFactory.createService();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerAcknowledgementTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerAcknowledgementIT.class);
     private static final String TOPIC_URI = "persistent://public/default/camel-topic-";
     private static int topicId;
 
@@ -71,7 +71,7 @@ public class PulsarConsumerAcknowledgementTest extends CamelTestSupport {
         context.removeRoute("myRoute");
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
 
-        String topicUri = PulsarConsumerAcknowledgementTest.TOPIC_URI + ++topicId;
+        String topicUri = PulsarConsumerAcknowledgementIT.TOPIC_URI + ++topicId;
         producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
 
         from = context.getEndpoint("pulsar:" + topicUri + "?numberOfConsumers=1&subscriptionType=Exclusive"
