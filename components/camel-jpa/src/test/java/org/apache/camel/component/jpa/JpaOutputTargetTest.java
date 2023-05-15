@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
 
     private static final String TARGET_NAME = "__target";
-    private static final String PROP_MARK = ".";
+    private static final String PROP_MARK = "property:";
 
     @Test
     @AdditionalEndpointParameters("outputTarget=" + TARGET_NAME)
