@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -138,10 +137,10 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
 
         final List<Annotation> onMethod = Arrays.stream(annotatedMethod.getAnnotations())
                 .filter(isQueryOrFind)
-                .collect(Collectors.toList());
+                .toList();
         final List<Annotation> onClass = Arrays.stream(annotatedMethod.getDeclaringClass().getAnnotations())
                 .filter(isQueryOrFind)
-                .collect(Collectors.toList());
+                .toList();
 
         if (onMethod.size() > 1 || onClass.size() > 1 || onMethod.size() + onClass.size() == 0) {
             throw new IllegalStateException("Test (method or class) must be annotated with EITHER Find OR Query");
