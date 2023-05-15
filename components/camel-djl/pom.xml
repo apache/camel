@@ -129,4 +129,20 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <!-- DJL components are only available for Linux on x86 64 -->
+            <id>Notx86</id>
+            <activation>
+                <os>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
