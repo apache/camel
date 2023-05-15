@@ -24,7 +24,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.Message;
 
-public class SqsBatchConsumerConcurrentConsumersTest extends CamelTestSupport {
+public class SqsBatchConsumerConcurrentConsumersIT extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;

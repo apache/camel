@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sqs;
+package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Sqs2ConsumerHealthCheckIAMProfileCredsTest extends CamelTestSupport {
+public class Kinesis2ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createSQSService();
+    public static AWSService service = AWSServiceFactory.createS3Service();
 
-    private static final Logger LOG = LoggerFactory.getLogger(Sqs2ConsumerHealthCheckProfileCredsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Kinesis2ConsumerHealthCheckProfileCredsIT.class);
 
     CamelContext context;
 
@@ -50,12 +50,11 @@ public class Sqs2ConsumerHealthCheckIAMProfileCredsTest extends CamelTestSupport
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
-        Sqs2Component component = new Sqs2Component(context);
-        component.getConfiguration().setAmazonSQSClient(AWSSDKClientUtils.newSQSClient());
+        Kinesis2Component component = new Kinesis2Component(context);
+        component.getConfiguration().setAmazonKinesisClient(AWSSDKClientUtils.newKinesisClient());
         component.init();
-        context.addComponent("aws2-sqs", component);
+        context.addComponent("aws2-kinesis", component);
 
-        // install health check manually (yes a bit cumbersome)
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
         Object hc = registry.resolveById("context");
@@ -75,7 +74,7 @@ public class Sqs2ConsumerHealthCheckIAMProfileCredsTest extends CamelTestSupport
 
             @Override
             public void configure() {
-                from("aws2-sqs://queue1?region=l&useProfileCredentialsProvider=true&autoCreateQueue=true")
+                from("aws2-kinesis://stream?region=l&useDefaultCredentialsProvider=true")
                         .startupOrder(2).log("${body}").routeId("test-health-it");
             }
         };
@@ -92,15 +91,15 @@ public class Sqs2ConsumerHealthCheckIAMProfileCredsTest extends CamelTestSupport
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2SqsHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-sqs-consumer"))
+            boolean containsKinesis2HealthCheck = res2.stream()
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-kinesis-consumer"))
                     .findAny()
                     .isPresent();
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2SqsHealthCheck, "aws2-sqs check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-sqs check error message");
+            Assertions.assertTrue(containsKinesis2HealthCheck, "aws2-kinesis check");
+            Assertions.assertTrue(hasRegionMessage, "aws2-kinesis check error message");
         });
 
     }

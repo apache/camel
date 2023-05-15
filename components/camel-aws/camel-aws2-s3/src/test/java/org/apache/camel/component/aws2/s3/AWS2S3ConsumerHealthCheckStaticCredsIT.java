@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.kinesis;
+package org.apache.camel.component.aws2.s3;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -31,20 +31,18 @@ import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
-public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
+public class AWS2S3ConsumerHealthCheckStaticCredsIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
 
-    private static final Logger LOG = LoggerFactory.getLogger(Kinesis2ConsumerHealthCustomClientTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ConsumerHealthCheckStaticCredsIT.class);
 
     CamelContext context;
 
@@ -52,11 +50,12 @@ public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
-        Kinesis2Component component = new Kinesis2Component(context);
-        component.getConfiguration().setAmazonKinesisClient(AWSSDKClientUtils.newKinesisClient());
+        AWS2S3Component component = new AWS2S3Component(context);
+        component.getConfiguration().setAmazonS3Client(AWSSDKClientUtils.newS3Client());
         component.init();
-        context.addComponent("aws2-kinesis", component);
+        context.addComponent("aws2-s3", component);
 
+        // install health check manually (yes a bit cumbersome)
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
         Object hc = registry.resolveById("context");
@@ -76,7 +75,7 @@ public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("aws2-kinesis://stream")
+                from("aws2-s3://bucket1?moveAfterRead=true&region=l&secretKey=l&accessKey=k&destinationBucket=bucket1&autoCreateBucket=false")
                         .startupOrder(2).log("${body}").routeId("test-health-it");
             }
         };
@@ -94,14 +93,14 @@ public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2S3HealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-kinesis-consumer"))
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-s3-consumer"))
                     .findAny()
                     .isPresent();
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2S3HealthCheck, "aws2-kinesis check");
-            Assertions.assertFalse(hasRegionMessage, "aws2-kinesis check error message");
+            Assertions.assertTrue(containsAws2S3HealthCheck, "aws2-s3 check");
+            Assertions.assertTrue(hasRegionMessage, "aws2-s3 check error message");
         });
 
     }
