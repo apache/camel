@@ -32,7 +32,6 @@
     <description>Camel Couchbase component</description>
 
     <dependencies>
-
         <dependency>
             <groupId>com.couchbase.client</groupId>
             <artifactId>java-client</artifactId>
@@ -72,6 +71,21 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <profiles>
+        <profile>
+            <!-- Couchbase container is only available for x86 64 and ARM 64 -->
+            <id>Notx86</id>
+            <activation>
+                <os>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
