@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpringZooKeeperClusteredRouteConfigurationTest extends CamelSpringTestSupport {
+public class SpringZooKeeperClusteredRouteConfigurationIT extends CamelSpringTestSupport {
 
     @Test
     public void test() {

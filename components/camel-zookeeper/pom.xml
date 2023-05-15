@@ -210,4 +210,31 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <!-- Zookeeper container is only available for on x86 64 or ARM-->
+            <id>Notx86</id>
+            <activation>
+                <os>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+        <profile>
+            <!-- XMPP container is only available for on x86 64 or ARM-->
+            <id>NotARM</id>
+            <activation>
+                <os>
+                    <arch>!aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
