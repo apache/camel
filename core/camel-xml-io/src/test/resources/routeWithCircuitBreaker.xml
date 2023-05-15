@@ -20,14 +20,14 @@
 <routes id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
-        <loadBalance>
+        <circuitBreaker>
             <throwException exceptionType="java.lang.IllegalArgumentException" message="Forced"/>
+            <to uri="mock:result"/>
             <onFallback>
                 <transform>
                     <constant>Fallback message</constant>
                 </transform>
             </onFallback>
-            <to uri="mock:result"/>
-        </loadBalance>
+        </circuitBreaker>
     </route>
 </routes>
