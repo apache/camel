@@ -75,7 +75,8 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     private void replacePlaceholders() throws Exception {
         for (CommandLine.Model.ArgSpec argSpec : spec.args()) {
-            String defaultValue = spec.defaultValueProvider().defaultValue(argSpec);
+            var provider = spec.defaultValueProvider();
+            String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
 
             if (defaultValue != null &&
                     argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
