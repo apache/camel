@@ -37,4 +37,30 @@
         <module>camel-fhir-component</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <!-- FHIR container is only available for x86 64 and ARM-->
+            <id>Notx86</id>
+            <activation>
+                <os>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+        <profile>
+            <id>NotARM</id>
+            <activation>
+                <os>
+                    <arch>!aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
