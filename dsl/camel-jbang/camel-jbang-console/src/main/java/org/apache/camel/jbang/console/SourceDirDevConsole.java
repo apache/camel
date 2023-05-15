@@ -17,12 +17,20 @@
 package org.apache.camel.jbang.console;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.LineNumberReader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.console.ConsoleHelper;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -30,12 +38,21 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole("source-dir")
 public class SourceDirDevConsole extends AbstractDevConsole {
 
+    /**
+     * Whether to show the source in the output
+     */
+    public static final String SOURCE = "source";
+
     public SourceDirDevConsole() {
         super("camel", "source-dir", "Source Directory", "Information about Camel JBang source files");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String path = (String) options.get(Exchange.HTTP_PATH);
+        String subPath = path != null ? StringHelper.after(path, "/") : null;
+        String source = (String) options.get(SOURCE);
+
         final StringBuilder sb = new StringBuilder();
 
         RouteOnDemandReloadStrategy reload = getCamelContext().hasService(RouteOnDemandReloadStrategy.class);
@@ -51,11 +68,39 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                     Arrays.sort(files, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
                     for (File f : files) {
                         boolean skip = f.getName().startsWith(".") || f.isHidden();
-                        if (!skip) {
+                        if (skip) {
+                            continue;
+                        }
+                        boolean match = subPath == null || f.getName().startsWith(subPath) || f.getName().endsWith(subPath)
+                                || PatternHelper.matchPattern(f.getName(), subPath);
+                        if (match) {
                             long size = f.length();
                             long ts = f.lastModified();
                             String age = ts > 0 ? TimeUtils.printSince(ts) : "n/a";
                             sb.append(String.format("    %s (size: %d age: %s)%n", f.getName(), size, age));
+                            if ("true".equals(source)) {
+                                StringBuilder code = new StringBuilder();
+                                try {
+                                    LineNumberReader reader = new LineNumberReader(new FileReader(f));
+                                    int i = 0;
+                                    String t;
+                                    do {
+                                        t = reader.readLine();
+                                        if (t != null) {
+                                            i++;
+                                            code.append(String.format("\n    #%s %s", i, t));
+                                        }
+                                    } while (t != null);
+                                    IOHelper.close(reader);
+                                } catch (Exception e) {
+                                    // ignore
+                                }
+                                if (code.length() > 0) {
+                                    sb.append("    ").append("-".repeat(40));
+                                    sb.append(code);
+                                    sb.append("\n\n");
+                                }
+                            }
                         }
                     }
                 }
@@ -67,6 +112,10 @@ public class SourceDirDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String path = (String) options.get(Exchange.HTTP_PATH);
+        String subPath = path != null ? StringHelper.after(path, "/") : null;
+        String source = (String) options.get(SOURCE);
+
         JsonObject root = new JsonObject();
 
         RouteOnDemandReloadStrategy reload = getCamelContext().hasService(RouteOnDemandReloadStrategy.class);
@@ -83,11 +132,26 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                     root.put("files", arr);
                     for (File f : files) {
                         boolean skip = f.getName().startsWith(".") || f.isHidden();
-                        if (!skip) {
+                        if (skip) {
+                            continue;
+                        }
+                        boolean match = subPath == null || f.getName().startsWith(subPath) || f.getName().endsWith(subPath)
+                                || PatternHelper.matchPattern(f.getName(), subPath);
+                        if (match) {
                             JsonObject jo = new JsonObject();
                             jo.put("name", f.getName());
                             jo.put("size", f.length());
                             jo.put("lastModified", f.lastModified());
+                            if ("true".equals(source)) {
+                                try {
+                                    List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new FileReader(f), null);
+                                    if (code != null) {
+                                        jo.put("code", code);
+                                    }
+                                } catch (Exception e) {
+                                    // ignore
+                                }
+                            }
                             arr.add(jo);
                         }
                     }
