@@ -31,9 +31,6 @@
     <name>Camel :: MongoDB</name>
     <description>Camel MongoDB (Java Driver 3) component</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -107,4 +104,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+	<profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <properties>
+		<skipITs>true</skipITs>
+	   </properties>
+	</profile>
+    </profiles>
 </project>
