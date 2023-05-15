@@ -33,7 +33,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 @Component("mybatis")
 public class MyBatisComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private SqlSessionFactory sqlSessionFactory;
     @Metadata(defaultValue = "SqlMapConfig.xml")
     private String configurationUri = "SqlMapConfig.xml";
