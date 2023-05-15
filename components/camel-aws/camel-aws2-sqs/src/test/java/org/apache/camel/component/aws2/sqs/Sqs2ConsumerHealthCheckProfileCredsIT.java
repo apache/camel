@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Sqs2ConsumerHealthCheckStaticCredsTest extends CamelTestSupport {
+public class Sqs2ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createSQSService();
 
-    private static final Logger LOG = LoggerFactory.getLogger(Sqs2ConsumerHealthCheckStaticCredsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Sqs2ConsumerHealthCheckProfileCredsIT.class);
 
     CamelContext context;
 
@@ -75,7 +75,7 @@ public class Sqs2ConsumerHealthCheckStaticCredsTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("aws2-sqs://queue1?region=l&secretKey=l&accessKey=k&autoCreateQueue=true")
+                from("aws2-sqs://queue1?region=l&useDefaultCredentialsProvider=true&autoCreateQueue=true")
                         .startupOrder(2).log("${body}").routeId("test-health-it");
             }
         };
