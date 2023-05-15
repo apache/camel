@@ -337,6 +337,25 @@ usual:
 </camelContext>
 ----
 
+== MyBatis Spring Boot Starter integration
 
+Spring Boot users can use https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/[mybatis-spring-boot-starter] artifact provided by the mybatis team
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.mybatis.spring.boot</groupId>
+  <artifactId>mybatis-spring-boot-starter</artifactId>
+  <version>2.3.0</version>
+</dependency>
+----
+
+in particular AutoConfigured beans from mybatis-spring-boot-starter can be used as follow:
+
+[source,properties]
+----
+#application.properties
+camel.component.mybatis.sql-session-factory=#sqlSessionFactory
+----
 
 include::spring-boot:partial$starter.adoc[]
