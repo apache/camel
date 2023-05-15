@@ -33,6 +33,7 @@
     <description>Camel Zookeeper Master Support</description>
 
     <properties>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencies>
@@ -152,29 +153,26 @@
 
     <profiles>
         <profile>
-            <!-- Zookeeper master tests only run on x86 64 or ARM-->
-            <id>Notx86</id>
+            <!-- Zookeeper master is only available for x86 64 and ARM 64 -->
+            <id>x86</id>
             <activation>
                 <os>
-                    <arch>!amd64</arch>
+                    <arch>amd64</arch>
                 </os>
             </activation>
             <properties>
-                <skipTests>true</skipTests>
-                <skipITs>true</skipITs>
+                <skipITs>false</skipITs>
             </properties>
         </profile>
         <profile>
-            <!-- Zookeeper master tests only run on x86 64 or ARM-->
-            <id>NotARM</id>
+            <id>Arm</id>
             <activation>
                 <os>
-                    <arch>!aarch64</arch>
+                    <arch>aarch64</arch>
                 </os>
             </activation>
             <properties>
-                <skipTests>true</skipTests>
-                <skipITs>true</skipITs>
+                <skipITs>false</skipITs>
             </properties>
         </profile>
     </profiles>

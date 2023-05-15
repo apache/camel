@@ -32,6 +32,10 @@
     <name>Camel :: Infinispan :: Remote</name>
     <description>Camel Infinispan Remote support</description>
 
+    <properties>
+        <skipITs>true</skipITs>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -193,26 +197,26 @@
         </profile>
 
         <profile>
-            <!-- Infinispan container is only available for x86 64 and ARM-->
-            <id>Notx86</id>
+            <!-- Infinispan container is only available for x86 64 and ARM 64 -->
+            <id>x86</id>
             <activation>
                 <os>
-                    <arch>!amd64</arch>
+                    <arch>amd64</arch>
                 </os>
             </activation>
             <properties>
-                <skipITs>true</skipITs>
+                <skipITs>false</skipITs>
             </properties>
         </profile>
         <profile>
-            <id>NotARM</id>
+            <id>Arm</id>
             <activation>
                 <os>
-                    <arch>!aarch64</arch>
+                    <arch>aarch64</arch>
                 </os>
             </activation>
             <properties>
-                <skipITs>true</skipITs>
+                <skipITs>false</skipITs>
             </properties>
         </profile>
     </profiles>
