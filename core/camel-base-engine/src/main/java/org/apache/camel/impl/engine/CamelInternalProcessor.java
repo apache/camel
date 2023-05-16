@@ -245,7 +245,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             try {
                 AdviceIterator.runAfterTasks(advices, states, exchange);
@@ -270,7 +269,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback originalCallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS

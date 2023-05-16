@@ -176,7 +176,6 @@ class AbstractExchange implements Exchange {
         return new HashMap<>(headers);
     }
 
-    @SuppressWarnings("unchecked")
     private void copyProperties(Map<String, Object> source, Map<String, Object> target) {
         target.putAll(source);
     }

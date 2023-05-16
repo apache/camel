@@ -303,7 +303,6 @@ public class BaseParser {
         return pn;
     }
 
-    @SuppressWarnings("unchecked")
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         // Ignore
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
