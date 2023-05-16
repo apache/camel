@@ -161,7 +161,7 @@ public class MainSupervisingRouteControllerTest {
         }
     }
 
-    private class MyJmsConsumer extends SedaConsumer {
+    private static class MyJmsConsumer extends SedaConsumer {
 
         private int counter;
 

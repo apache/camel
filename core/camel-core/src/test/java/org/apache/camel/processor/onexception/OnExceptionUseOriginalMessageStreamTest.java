@@ -140,15 +140,15 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
         };
     }
 
-    public class ExceptionOne extends Exception {
+    public static class ExceptionOne extends Exception {
 
     }
 
-    public class ExceptionTwo extends Exception {
+    public static class ExceptionTwo extends Exception {
 
     }
 
-    public class MyDataFormatException extends Exception {
+    public static class MyDataFormatException extends Exception {
 
         public MyDataFormatException(String message) {
             super(message);

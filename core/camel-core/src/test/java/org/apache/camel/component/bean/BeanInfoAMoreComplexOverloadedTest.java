@@ -81,7 +81,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         }
     }
 
-    class Bean {
+    static class Bean {
         public void doSomething(RequestA request) {
         }
 

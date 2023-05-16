@@ -135,7 +135,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         }
     }
 
-    private class MyJmsComponent extends SedaComponent {
+    private static class MyJmsComponent extends SedaComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

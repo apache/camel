@@ -136,7 +136,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     public static class MyOtherBuilderBean extends MyBuilderBean {
     }
 
-    public class MyOtherOtherBuilderBean extends MyOtherBuilderBean {
+    public static class MyOtherOtherBuilderBean extends MyOtherBuilderBean {
 
         @Override
         public MyOtherOtherBuilderBean setName(String name) {

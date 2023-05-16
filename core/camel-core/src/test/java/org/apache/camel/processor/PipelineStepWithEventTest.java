@@ -143,7 +143,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         }
     }
 
-    private class MyInterceptStrategy implements InterceptStrategy {
+    private static class MyInterceptStrategy implements InterceptStrategy {
 
         @Override
         public Processor wrapProcessorInInterceptors(

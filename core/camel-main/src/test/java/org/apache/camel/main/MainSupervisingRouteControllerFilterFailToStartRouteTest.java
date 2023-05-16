@@ -94,7 +94,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         }
     }
 
-    private class MyJmsConsumer extends SedaConsumer {
+    private static class MyJmsConsumer extends SedaConsumer {
 
         public MyJmsConsumer(SedaEndpoint endpoint, Processor processor) {
             super(endpoint, processor);

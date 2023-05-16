@@ -83,7 +83,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         };
     }
 
-    private final class MyService extends ServiceSupport {
+    private static final class MyService extends ServiceSupport {
 
         @Override
         protected void doStart() throws Exception {
@@ -96,7 +96,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         }
     }
 
-    private final class MyNonService extends ServiceSupport implements NonManagedService {
+    private static final class MyNonService extends ServiceSupport implements NonManagedService {
 
         @Override
         protected void doStart() throws Exception {
