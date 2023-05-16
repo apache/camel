@@ -30,13 +30,13 @@ public final class ThreadHelper {
 
     private static final Pattern INVALID_PATTERN = Pattern.compile(".*#\\w+#.*");
 
-    private static AtomicLong threadCounter = new AtomicLong();
+    private static final AtomicLong THREAD_COUNTER = new AtomicLong();
 
     private ThreadHelper() {
     }
 
     private static long nextThreadCounter() {
-        return threadCounter.incrementAndGet();
+        return THREAD_COUNTER.incrementAndGet();
     }
 
     /**

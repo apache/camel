@@ -63,9 +63,9 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     private static final int BUFFER_SIZE = 1024;
 
-    private Readable source;
-    private Pattern delimPattern;
-    private Matcher matcher;
+    private final Readable source;
+    private final Pattern delimPattern;
+    private final Matcher matcher;
     private CharBuffer buf;
     private int position;
     private boolean inputExhausted;
