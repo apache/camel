@@ -205,7 +205,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
          * Indicator whether the file input stream caches are closed on completion of the exchanges.
          */
         private final boolean closedOnCompletion;
-        private AtomicInteger exchangeCounter = new AtomicInteger();
+        private final AtomicInteger exchangeCounter = new AtomicInteger();
         private File tempFile;
         private OutputStream outputStream; // file output stream
         private CipherPair ciphers;
