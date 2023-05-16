@@ -63,7 +63,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         assertTrue(producer.getStatus().isStopped(), "Should be stopped");
     }
 
-    public class MyDummyComponent extends DefaultComponent {
+    public static class MyDummyComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

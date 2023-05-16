@@ -136,7 +136,7 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
         }
     }
 
-    private class MyJmsConsumer extends SedaConsumer {
+    private static class MyJmsConsumer extends SedaConsumer {
 
         public MyJmsConsumer(SedaEndpoint endpoint, Processor processor) {
             super(endpoint, processor);

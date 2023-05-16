@@ -155,7 +155,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         };
     }
 
-    class BoomProcess implements Processor {
+    static class BoomProcess implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -166,7 +166,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
 
     }
 
-    class DummyHandler implements ThrottlingExceptionHalfOpenHandler {
+    static class DummyHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {

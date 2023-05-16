@@ -53,7 +53,7 @@ public class ConsumerRouteIdAwareTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private class MyComponent extends DefaultComponent {
+    private static class MyComponent extends DefaultComponent {
 
         public MyComponent(CamelContext context) {
             super(context);

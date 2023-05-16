@@ -62,7 +62,7 @@ public class LoadTimerTest extends ContextTestSupport {
         myTimer.stop();
     }
 
-    private class TestLoadAware implements TimerListener {
+    private static class TestLoadAware implements TimerListener {
 
         volatile int counter;
         LoadTriplet load = new LoadTriplet();

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class MainSupportCommandLineTest {
 
-    private class MyMainSupport extends MainCommandLineSupport {
+    private static class MyMainSupport extends MainCommandLineSupport {
 
         private CamelContext context = new DefaultCamelContext();
 
