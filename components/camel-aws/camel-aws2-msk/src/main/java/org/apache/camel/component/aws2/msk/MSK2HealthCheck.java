@@ -37,13 +37,14 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (KafkaClient client = msk2Endpoint.getMskClient()) {
-            MSK2Configuration configuration = msk2Endpoint.getConfiguration();
+        MSK2Configuration configuration = msk2Endpoint.getConfiguration();
+        try {
             if (!KafkaClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
+            KafkaClient client = msk2Endpoint.getMskClient();
             client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -57,4 +58,5 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
         builder.up();
 
     }
+
 }
