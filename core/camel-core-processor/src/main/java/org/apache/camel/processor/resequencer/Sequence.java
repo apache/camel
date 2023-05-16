@@ -27,7 +27,7 @@ public class Sequence<E> extends TreeSet<E> {
 
     private static final long serialVersionUID = 5647393631147741711L;
 
-    private SequenceElementComparator<E> comparator;
+    private final SequenceElementComparator<E> comparator;
 
     /**
      * Creates a new {@link Sequence} instance.
