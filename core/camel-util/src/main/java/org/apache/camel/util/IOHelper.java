@@ -601,7 +601,7 @@ public final class IOHelper {
         private final Charset defaultStreamCharset;
 
         private ByteBuffer bufferBytes;
-        private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+        private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
 
         public EncodingInputStream(File file, String charset) throws IOException {
             this.file = file;
