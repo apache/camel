@@ -24,7 +24,9 @@ import io.micrometer.observation.transport.ReceiverContext;
 import io.micrometer.observation.transport.RequestReplyReceiverContext;
 import io.micrometer.observation.transport.RequestReplySenderContext;
 import io.micrometer.observation.transport.SenderContext;
+import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.handler.TracingObservationHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.api.management.ManagedResource;
@@ -130,15 +132,29 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected SpanAdapter startSendingEventSpan(
-            String operationName, SpanKind kind, SpanAdapter parentObservation, Exchange exchange,
+            String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange,
             InjectAdapter injectAdapter) {
         Observation.Context context = spanKindToContextOnInject(kind, injectAdapter, exchange);
         Observation observation = Observation.createNotStarted(CAMEL_CONTEXT_NAME, () -> context, observationRegistry);
         observation.contextualName(operationName);
-        if (parentObservation != null) {
-            observation.parentObservation(getParentObservation(parentObservation));
+        Observation parentObservation = getParentObservation(parent);
+        Tracer.SpanInScope scope = null;
+        try {
+            if (parentObservation != observationRegistry.getCurrentObservation()) {
+                // Because Camel allows to close scopes multiple times
+                TracingObservationHandler.TracingContext tracingContext = parentObservation.getContextView().get(TracingObservationHandler.TracingContext.class);
+                Span parentSpan = tracingContext.getSpan();
+                scope = tracer.withSpan(parentSpan);
+            }
+            if (parentObservation != null) {
+                observation.parentObservation(parentObservation);
+            }
+            return new MicrometerObservationSpanAdapter(observation.start(), tracer);
+        } finally {
+            if (scope != null) {
+                scope.close();
+            }
         }
-        return new MicrometerObservationSpanAdapter(observation.start(), tracer);
     }
 
     @Override
@@ -147,6 +163,9 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
     }
 
     private static Observation getParentObservation(SpanAdapter parentObservation) {
+        if (parentObservation == null) {
+            return null;
+        }
         MicrometerObservationSpanAdapter observationWrapper = (MicrometerObservationSpanAdapter) parentObservation;
         return observationWrapper.getMicrometerObservation();
     }
