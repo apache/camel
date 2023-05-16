@@ -431,7 +431,6 @@ public final class URISupport {
      *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    @SuppressWarnings("unchecked")
     public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
         return createQueryString(options.keySet(), options, true);
     }
@@ -445,7 +444,6 @@ public final class URISupport {
      *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    @SuppressWarnings("unchecked")
     public static String createQueryString(Map<String, Object> options, boolean encode) throws URISyntaxException {
         return createQueryString(options.keySet(), options, encode);
     }

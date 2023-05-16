@@ -252,7 +252,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public String getNodeId() {
             return exchange.getExchangeExtension().getHistoryNodeId();
         }
@@ -263,7 +262,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public String getAtRouteId() {
             return ExchangeHelper.getAtRouteId(exchange);
         }

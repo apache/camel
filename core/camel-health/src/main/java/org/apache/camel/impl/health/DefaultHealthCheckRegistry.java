@@ -173,7 +173,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
     private HealthCheck resolveHealthCheckById(String id) {
         HealthCheck answer = checks.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
@@ -185,7 +184,6 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
     private HealthCheckRepository resolveHealthCheckRepositoryById(String id) {
         HealthCheckRepository answer = repositories.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
