@@ -93,7 +93,7 @@ public class ObjectConverterTest {
         assertNull(ObjectConverter.toInteger(Double.NaN));
         assertNull(ObjectConverter.toInteger(Float.NaN));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
-        assertEquals(Integer.valueOf("1234"), ObjectConverter.toInteger(new byte[]{49, 50, 51, 52}, null));
+        assertEquals(Integer.valueOf("1234"), ObjectConverter.toInteger(new byte[] { 49, 50, 51, 52 }, null));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ObjectConverterTest {
         assertNull(ObjectConverter.toLong(Double.NaN));
         assertNull(ObjectConverter.toLong(Float.NaN));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
-        assertEquals(Long.valueOf("1234"), ObjectConverter.toLong(new byte[]{49, 50, 51, 52}, null));
+        assertEquals(Long.valueOf("1234"), ObjectConverter.toLong(new byte[] { 49, 50, 51, 52 }, null));
     }
 
     @Test
