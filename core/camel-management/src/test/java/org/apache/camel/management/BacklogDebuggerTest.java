@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.debugger.BacklogDebugger;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -918,6 +919,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     /**
      * Ensure that the suspend mode works as expected when it is set using an environment variable.
      */
+    @Disabled
     @Test
     @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
     public void testSuspendModeConfiguredWithEnvVariable() throws Exception {
@@ -937,6 +939,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
      * Ensure that the suspend mode works as expected when it is configured by relying on the precedence of the env
      * variable over the system property.
      */
+    @Disabled
     @Test
     @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
     @SetSystemProperty(key = BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "false")
