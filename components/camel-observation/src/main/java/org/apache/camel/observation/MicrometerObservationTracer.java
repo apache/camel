@@ -140,7 +140,7 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
         Observation parentObservation = getParentObservation(parent);
         Tracer.SpanInScope scope = null;
         try {
-            if (parentObservation != observationRegistry.getCurrentObservation()) {
+            if (parentObservation != null && parentObservation != observationRegistry.getCurrentObservation()) {
                 // Because Camel allows to close scopes multiple times
                 TracingObservationHandler.TracingContext tracingContext
                         = parentObservation.getContextView().get(TracingObservationHandler.TracingContext.class);
