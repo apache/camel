@@ -16,32 +16,22 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.AnnotatedElement;
-
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jpa.JpaWithOptionsTestSupport.Query;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Query("select c from Customer c where c.name like :seq")
 public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
-    private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName();
-
-    private String queryOrFind;
-
     @Test
-    @Query
-    @AdditionalQueryParameters("singleResult=true&parameters.seq=% 001")
+    @AdditionalEndpointParameters("singleResult=true&parameters.seq=% 001")
     public void testSingleCustomerOKQuery() throws Exception {
         final Customer customer = runQueryTest(Customer.class);
 
@@ -50,7 +40,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Query("select c from Customer c")
-    @AdditionalQueryParameters("singleResult=true")
+    @AdditionalEndpointParameters("singleResult=true")
     public void testTooMuchResults() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -58,8 +48,7 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @Query
-    @AdditionalQueryParameters("singleResult=true&parameters.seq=% xxx")
+    @AdditionalEndpointParameters("singleResult=true&parameters.seq=% xxx")
     public void testNoCustomersQuery() throws Exception {
         final Exchange result = doRunQueryTest();
 
@@ -68,68 +57,23 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
     @Test
     @Find
-    @AdditionalQueryParameters("singleResult=true")
+    @AdditionalEndpointParameters("singleResult=true")
     public void testSingleCustomerOKFind() throws Exception {
         // ids in the db are not known, so query for a known element and use its id.
-        super.setUp(getEndpointUri());
+        Long customerId = validCustomerId(entityManager);
 
-        final Customer fromDb = (Customer) entityManager
-                .createQuery("select c from Customer c where c.name like '% 001'")
-                .getSingleResult();
-
-        final Exchange result = template.send("direct:start", withBody(fromDb.getId()));
+        final Exchange result = template.send("direct:start", withBody(customerId));
 
         assertNotNull(result.getIn().getBody(Customer.class));
     }
 
     @Test
     @Find
-    @AdditionalQueryParameters("singleResult=true")
+    @AdditionalEndpointParameters("singleResult=true")
     public void testNoCustomerFind() throws Exception {
         final Exchange result = doRunQueryTest(withBody(Long.MAX_VALUE));
 
         Assertions.assertInstanceOf(NoResultException.class, getException(result));
-    }
-
-    @Override
-    protected String getEndpointUri() {
-        return String.format("%s?%s%s",
-                ENDPOINT_URI,
-                queryOrFind,
-                createAdditionalQueryParameters());
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        super.beforeEach(context);
-
-        // a query or a find is necessary - without the annotation test can't continue
-        final AnnotatedElement annotatedElement = context.getElement().get();
-
-        final Find find = annotatedElement.getAnnotation(Find.class);
-        final Query query = annotatedElement.getAnnotation(Query.class);
-
-        if ((find == null) == (query == null)) {
-            throw new IllegalStateException("Test must be annotated with EITHER Find OR Query");
-        }
-
-        if (find != null) {
-            queryOrFind = "findEntity=" + true;
-        } else { // query != null
-            queryOrFind = "query=" + query.value();
-        }
-
-    }
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    private @interface Find {
-    }
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    private @interface Query {
-        String value() default "select c from Customer c where c.name like :seq";
     }
 
     private static Exception getException(final Exchange exchange) {
@@ -137,4 +81,5 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
         return exception != null ? exception : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
     }
+
 }

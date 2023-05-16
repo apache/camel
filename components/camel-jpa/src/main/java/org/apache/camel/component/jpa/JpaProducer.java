@@ -40,6 +40,9 @@ public class JpaProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
 
+    /* prefix for marking property in outputTarget */
+    private static final String PROPERTY_PREFIX = "property:";
+
     private Language simple;
 
     private final EntityManagerFactory entityManagerFactory;
@@ -184,15 +187,6 @@ public class JpaProducer extends DefaultProducer {
                 entityManager.joinTransaction();
             }
 
-            Message target;
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                target = exchange.getMessage();
-                // preserve headers
-                target.getHeaders().putAll(exchange.getIn().getHeaders());
-            } else {
-                target = exchange.getIn();
-            }
-
             final Object answer;
             if (isUseExecuteUpdate()) {
                 answer = innerQuery.executeUpdate();
@@ -202,7 +196,7 @@ public class JpaProducer extends DefaultProducer {
                 answer = innerQuery.getResultList();
             }
 
-            target.setBody(answer);
+            putAnswer(exchange, answer, getEndpoint().getOutputTarget());
 
             if (getEndpoint().isFlushOnSend()) {
                 entityManager.flush();
@@ -263,15 +257,7 @@ public class JpaProducer extends DefaultProducer {
                                     key));
                 }
 
-                Message target;
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    target = exchange.getMessage();
-                    // preserve headers
-                    target.getHeaders().putAll(exchange.getIn().getHeaders());
-                } else {
-                    target = exchange.getIn();
-                }
-                target.setBody(answer);
+                putAnswer(exchange, answer, getEndpoint().getOutputTarget());
 
                 if (getEndpoint().isFlushOnSend()) {
                     entityManager.flush();
@@ -383,6 +369,28 @@ public class JpaProducer extends DefaultProducer {
                 }
             });
         }
+    }
+
+    private static void putAnswer(final Exchange exchange, final Object answer, final String outputTarget) {
+        if (outputTarget == null || outputTarget.isBlank()) {
+            getTargetMessage(exchange).setBody(answer);
+        } else if (outputTarget.startsWith(PROPERTY_PREFIX)) {
+            exchange.setProperty(outputTarget.substring(PROPERTY_PREFIX.length()), answer);
+        } else {
+            getTargetMessage(exchange).setHeader(outputTarget, answer);
+        }
+    }
+
+    private static Message getTargetMessage(Exchange exchange) {
+        final Message target;
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            target = exchange.getMessage();
+            // preserve headers
+            target.getHeaders().putAll(exchange.getIn().getHeaders());
+        } else {
+            target = exchange.getIn();
+        }
+        return target;
     }
 
     @Override
