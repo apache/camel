@@ -68,7 +68,7 @@ public class DynamicRouterConvertBodyToIssueManualTest extends ContextTestSuppor
         exchange.setProperty("EXIT", "NO");
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
-            sb.append(UUID.randomUUID().toString());
+            sb.append(UUID.randomUUID());
         }
         exchange.getIn().setBody(sb);
 

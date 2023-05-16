@@ -118,7 +118,7 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
                             v = camelContext.resolvePropertyPlaceholders((String) v);
                         } catch (Exception e) {
                             throw new IllegalArgumentException(
-                                    String.format("Exception while resolving %s (%s)", k, v.toString()), e);
+                                    String.format("Exception while resolving %s (%s)", k, v), e);
                         }
                     }
 
