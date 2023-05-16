@@ -36,7 +36,7 @@ import org.apache.camel.support.builder.Namespaces;
  * part of the DSL
  */
 public class ExpressionClause<T> implements Expression, Predicate {
-    private ExpressionClauseSupport<T> delegate;
+    private final ExpressionClauseSupport<T> delegate;
     private volatile Expression expr;
     private volatile Predicate pred;
 

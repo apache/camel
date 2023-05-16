@@ -1549,7 +1549,7 @@ public class NotifyBuilder {
      */
     private static final class CompoundEventPredicate implements EventPredicate {
 
-        private List<EventPredicate> predicates = new ArrayList<>();
+        private final List<EventPredicate> predicates = new ArrayList<>();
 
         private CompoundEventPredicate(List<EventPredicate> predicates) {
             this.predicates.addAll(predicates);
