@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.ExtendedCamelContext;
@@ -96,7 +97,7 @@ public class AbstractCamelContextFactoryBeanTest {
                     "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
-    Set<String> valuesThatReturnLong = new HashSet<>(asList("{{getDelayer}}"));
+    Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
 
     public AbstractCamelContextFactoryBeanTest() throws Exception {
         ((Service) typeConverter).start();
