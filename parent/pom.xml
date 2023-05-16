@@ -473,7 +473,7 @@
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.17.6</testcontainers-version>
-        <tika-version>2.7.0</tika-version>
+        <tika-version>2.8.0</tika-version>
         <twilio-version>9.2.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
         <undertow-version>2.3.5.Final</undertow-version>
