@@ -398,8 +398,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.15</metrics-version>
-        <micrometer-version>1.10.5</micrometer-version>
-        <micrometer-tracing-version>1.0.3</micrometer-tracing-version>
+        <micrometer-version>1.10.7</micrometer-version>
+        <micrometer-tracing-version>1.0.6</micrometer-tracing-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
