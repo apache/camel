@@ -1474,7 +1474,7 @@ public class NotifyBuilder {
         boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken);
     }
 
-    private abstract class EventPredicateSupport implements EventPredicate {
+    private abstract static class EventPredicateSupport implements EventPredicate {
 
         @Override
         public boolean isAbstract() {
