@@ -369,7 +369,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private Properties tryLoadProperties(Properties initialProperties, String initialPropertiesLocation, CamelContext camelContext)
+    private Properties tryLoadProperties(
+            Properties initialProperties, String initialPropertiesLocation, CamelContext camelContext)
             throws IOException {
         Properties ip = initialProperties;
         if (ip == null || ip.isEmpty()) {
