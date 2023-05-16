@@ -106,7 +106,7 @@
     </dependencies>
 
     <profiles>
-	<profile>
+        <profile>
             <id>ppc64le</id>
             <activation>
                 <os>
@@ -114,8 +114,8 @@
                 </os>
             </activation>
             <properties>
-		<skipITs>true</skipITs>
-	   </properties>
-	</profile>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
     </profiles>
 </project>
