@@ -555,7 +555,7 @@ public final class VertxHttpServer {
         upload.handler(new BlockingHandlerDecorator(handler, true));
         uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
 
-        phc.addHttpEndpoint("/q/upload", "PUT,DELETE", null);
+        phc.addHttpEndpoint("/q/upload", "PUT,DELETE");
     }
 
 }
