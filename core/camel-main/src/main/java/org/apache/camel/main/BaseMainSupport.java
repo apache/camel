@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -357,9 +358,22 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
+        final Properties ip = tryLoadProperties(initialProperties, INITIAL_PROPERTIES_LOCATION, camelContext);
+        if (ip != null) {
+            pc.setInitialProperties(ip);
+        }
+
+        final Properties op = tryLoadProperties(overrideProperties, OVERRIDE_PROPERTIES_LOCATION, camelContext);
+        if (op != null) {
+            pc.setOverrideProperties(op);
+        }
+    }
+
+    private Properties tryLoadProperties(Properties initialProperties, String initialPropertiesLocation, CamelContext camelContext)
+            throws IOException {
         Properties ip = initialProperties;
         if (ip == null || ip.isEmpty()) {
-            Optional<String> location = MainHelper.lookupPropertyFromSysOrEnv(INITIAL_PROPERTIES_LOCATION);
+            Optional<String> location = MainHelper.lookupPropertyFromSysOrEnv(initialPropertiesLocation);
             if (location.isPresent()) {
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
                     ip = new Properties();
@@ -367,23 +381,7 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
         }
-        if (ip != null) {
-            pc.setInitialProperties(ip);
-        }
-
-        Properties op = overrideProperties;
-        if (op == null || op.isEmpty()) {
-            Optional<String> location = MainHelper.lookupPropertyFromSysOrEnv(OVERRIDE_PROPERTIES_LOCATION);
-            if (location.isPresent()) {
-                try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location.get())) {
-                    op = new Properties();
-                    op.load(is);
-                }
-            }
-        }
-        if (op != null) {
-            pc.setOverrideProperties(op);
-        }
+        return ip;
     }
 
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
@@ -399,60 +397,34 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         if (vc.aws().isRefreshEnabled()) {
-            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                    .newInstance("aws-secret-refresh", Runnable.class);
-            if (task.isPresent()) {
-                long period = vc.aws().getRefreshPeriod();
-                Runnable r = task.get();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-                }
-                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                    // refresh is enabled then we need to automatically enable context-reload as well
-                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                    camelContext.addService(reloader);
-                }
-                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
-                scheduler.schedulePeriodTask(r, period);
-            }
+            scheduleRefresh(camelContext, "aws-secret-refresh", vc.aws().getRefreshPeriod());
         }
 
         if (vc.gcp().isRefreshEnabled()) {
-            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                    .newInstance("gcp-secret-refresh", Runnable.class);
-            if (task.isPresent()) {
-                long period = vc.gcp().getRefreshPeriod();
-                Runnable r = task.get();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-                }
-                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                    // refresh is enabled then we need to automatically enable context-reload as well
-                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                    camelContext.addService(reloader);
-                }
-                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
-                scheduler.schedulePeriodTask(r, period);
-            }
+            scheduleRefresh(camelContext, "gcp-secret-refresh", vc.gcp().getRefreshPeriod());
         }
 
         if (vc.azure().isRefreshEnabled()) {
-            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                    .newInstance("azure-secret-refresh", Runnable.class);
-            if (task.isPresent()) {
-                long period = vc.azure().getRefreshPeriod();
-                Runnable r = task.get();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-                }
-                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                    // refresh is enabled then we need to automatically enable context-reload as well
-                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                    camelContext.addService(reloader);
-                }
-                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
-                scheduler.schedulePeriodTask(r, period);
+            scheduleRefresh(camelContext, "azure-secret-refresh", vc.azure().getRefreshPeriod());
+        }
+    }
+
+    private void scheduleRefresh(CamelContext camelContext, String key, long vc) throws Exception {
+        final Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                .newInstance(key, Runnable.class);
+        if (task.isPresent()) {
+            long period = vc;
+            Runnable r = task.get();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
             }
+            if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                // refresh is enabled then we need to automatically enable context-reload as well
+                ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                camelContext.addService(reloader);
+            }
+            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
+            scheduler.schedulePeriodTask(r, period);
         }
     }
 
@@ -495,41 +467,33 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-            boolean header = false;
-            for (var entry : autoConfiguredProperties.entrySet()) {
-                String k = entry.getKey().toString();
-                Object v = entry.getValue();
-                String loc = locationSummary(autoConfiguredProperties, k);
-
-                // tone down logging noise for our own internal configurations
-                boolean debug = loc.contains("[camel-main]");
-                if (debug && !LOG.isDebugEnabled()) {
-                    continue;
-                }
-
-                if (!header) {
-                    LOG.info("Auto-configuration summary");
-                    header = true;
-                }
-
-                if (SensitiveUtils.containsSensitive(k)) {
-                    if (debug) {
-                        LOG.debug("    {} {}=xxxxxx", loc, k);
-                    } else {
-                        LOG.info("    {} {}=xxxxxx", loc, k);
-                    }
-                } else {
-                    if (debug) {
-                        LOG.debug("    {} {}={}", loc, k, v);
-                    } else {
-                        LOG.info("    {} {}={}", loc, k, v);
-                    }
-                }
-            }
+            logConfigurationSummary(autoConfiguredProperties);
         }
 
         // we are now done with the main helper during bootstrap
         helper.bootstrapDone();
+    }
+
+    private static void logConfigurationSummary(OrderedLocationProperties autoConfiguredProperties) {
+        boolean header = false;
+        for (var entry : autoConfiguredProperties.entrySet()) {
+            String k = entry.getKey().toString();
+            Object v = entry.getValue();
+            String loc = locationSummary(autoConfiguredProperties, k);
+
+            // tone down logging noise for our own internal configurations
+            boolean debug = loc.contains("[camel-main]");
+            if (debug && !LOG.isDebugEnabled()) {
+                continue;
+            }
+
+            if (!header) {
+                LOG.info("Auto-configuration summary");
+                header = true;
+            }
+
+            sensitiveAwareLogging(k, v, loc, debug);
+        }
     }
 
     protected void configureStartupRecorder(CamelContext camelContext) {
@@ -604,28 +568,18 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
-        RoutesConfigurer configurer = new RoutesConfigurer();
-
-        if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
-            configurer.setRoutesCollector(routesCollector);
-        }
-
-        configurer.setBeanPostProcessor(PluginHelper.getBeanPostProcessor(camelContext));
-        configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
-        configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
-        if (mainConfigurationProperties.isBasePackageScanEnabled()) {
-            // only set the base package if enabled
-            configurer.setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
-        }
-        configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
-        configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
-        configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
-        configurer.setRoutesIncludePattern(mainConfigurationProperties.getRoutesIncludePattern());
+        RoutesConfigurer configurer = doCommonRouteConfiguration(camelContext);
 
         configurer.configureModeline(camelContext);
     }
 
     protected void configureRoutes(CamelContext camelContext) throws Exception {
+        RoutesConfigurer configurer = doCommonRouteConfiguration(camelContext);
+
+        configurer.configureRoutes(camelContext);
+    }
+
+    private RoutesConfigurer doCommonRouteConfiguration(CamelContext camelContext) {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
 
@@ -644,8 +598,7 @@ public abstract class BaseMainSupport extends BaseService {
         configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
         configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
         configurer.setRoutesIncludePattern(mainConfigurationProperties.getRoutesIncludePattern());
-
-        configurer.configureRoutes(camelContext);
+        return configurer;
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
@@ -1654,37 +1607,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-            boolean header = false;
-            for (var entry : autoConfiguredProperties.entrySet()) {
-                String k = entry.getKey().toString();
-                Object v = entry.getValue();
-                String loc = locationSummary(autoConfiguredProperties, k);
-
-                // tone down logging noise for our own internal configurations
-                boolean debug = loc.contains("[camel-main]");
-                if (debug && !LOG.isDebugEnabled()) {
-                    continue;
-                }
-
-                if (!header) {
-                    LOG.info("Auto-configuration summary");
-                    header = true;
-                }
-
-                if (SensitiveUtils.containsSensitive(k)) {
-                    if (debug) {
-                        LOG.debug("    {} {}=xxxxxx", loc, k);
-                    } else {
-                        LOG.info("    {} {}=xxxxxx", loc, k);
-                    }
-                } else {
-                    if (debug) {
-                        LOG.debug("    {} {}={}", loc, k, v);
-                    } else {
-                        LOG.info("    {} {}={}", loc, k, v);
-                    }
-                }
-            }
+            logConfigurationSummary(autoConfiguredProperties);
         }
     }
 
@@ -1830,23 +1753,27 @@ public abstract class BaseMainSupport extends BaseService {
                         header = true;
                     }
 
-                    if (SensitiveUtils.containsSensitive(k)) {
-                        if (debug) {
-                            LOG.debug("    {} {}=xxxxxx", loc, k);
-                        } else {
-                            LOG.info("    {} {}=xxxxxx", loc, k);
-                        }
-                    } else {
-                        if (debug) {
-                            LOG.debug("    {} {}={}", loc, k, v);
-                        } else {
-                            LOG.info("    {} {}={}", loc, k, v);
-                        }
-                    }
+                    sensitiveAwareLogging(k, v, loc, debug);
                 }
             }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+    }
+
+    private static void sensitiveAwareLogging(String k, Object v, String loc, boolean debug) {
+        if (SensitiveUtils.containsSensitive(k)) {
+            if (debug) {
+                LOG.debug("    {} {}=xxxxxx", loc, k);
+            } else {
+                LOG.info("    {} {}=xxxxxx", loc, k);
+            }
+        } else {
+            if (debug) {
+                LOG.debug("    {} {}={}", loc, k, v);
+            } else {
+                LOG.info("    {} {}={}", loc, k, v);
+            }
         }
     }
 
