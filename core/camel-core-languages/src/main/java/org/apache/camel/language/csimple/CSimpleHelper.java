@@ -84,21 +84,9 @@ public final class CSimpleHelper {
     }
 
     public static <T> T bodyAsIndex(Message message, Class<T> type, String key) {
-        Object obj = message.getBody();
+        final Object obj = message.getBody();
         // try key as-is as it may be using dots or something that valid
-        Object objKey = doObjectAsIndex(message.getExchange().getContext(), obj, key);
-        if (objKey != null && objKey != obj) {
-            return type.cast(objKey);
-        }
-        // the key may contain multiple keys ([0][foo]) so we need to walk these keys
-        List<String> keys = OgnlHelper.splitOgnl(key);
-        for (String k : keys) {
-            if (k.startsWith("[") && k.endsWith("]")) {
-                k = StringHelper.between(k, "[", "]");
-            }
-            obj = doObjectAsIndex(message.getExchange().getContext(), obj, k);
-        }
-        return type.cast(obj);
+        return tryCast(message.getExchange().getContext(), type, key, obj);
     }
 
     public static <T> T mandatoryBodyAsIndex(Message message, Class<T> type, int key) throws InvalidPayloadException {
@@ -126,9 +114,13 @@ public final class CSimpleHelper {
     }
 
     public static <T> T headerAsIndex(Message message, Class<T> type, String name, String key) {
-        Object obj = message.getHeader(name);
+        final Object obj = message.getHeader(name);
         // try key as-is as it may be using dots or something that valid
-        Object objKey = doObjectAsIndex(message.getExchange().getContext(), obj, key);
+        return tryCast(message.getExchange().getContext(), type, key, obj);
+    }
+
+    private static <T> T tryCast(CamelContext context, Class<T> type, String key, Object obj) {
+        final Object objKey = doObjectAsIndex(context, obj, key);
         if (objKey != null && objKey != obj) {
             return type.cast(objKey);
         }
@@ -138,7 +130,7 @@ public final class CSimpleHelper {
             if (k.startsWith("[") && k.endsWith("]")) {
                 k = StringHelper.between(k, "[", "]");
             }
-            obj = doObjectAsIndex(message.getExchange().getContext(), obj, k);
+            obj = doObjectAsIndex(context, obj, k);
         }
         return type.cast(obj);
     }
