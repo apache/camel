@@ -179,14 +179,7 @@ public final class MessageHelper {
      * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractValueForLogging(Object value, Message message) {
-        boolean streams = false;
-        if (message.getExchange() != null) {
-            String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_STREAMS);
-            if (globalOption != null) {
-                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(),
-                        globalOption);
-            }
-        }
+        boolean streams = isStreams(message);
 
         // default to 1000 chars
         int maxChars = 1000;
@@ -201,6 +194,18 @@ public final class MessageHelper {
         return extractValueForLogging(value, message, streams, false, maxChars);
     }
 
+    private static boolean isStreams(Message message) {
+        boolean streams = false;
+        if (message.getExchange() != null) {
+            String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_STREAMS);
+            if (globalOption != null) {
+                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(),
+                        globalOption);
+            }
+        }
+        return streams;
+    }
+
     /**
      * Extracts the body for logging purpose.
      * <p/>
@@ -213,14 +218,7 @@ public final class MessageHelper {
      * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(Message message, String prepend) {
-        boolean streams = false;
-        if (message.getExchange() != null) {
-            String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_STREAMS);
-            if (globalOption != null) {
-                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(),
-                        globalOption);
-            }
-        }
+        boolean streams = isStreams(message);
         return extractBodyForLogging(message, prepend, streams, false);
     }
 
