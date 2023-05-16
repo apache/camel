@@ -283,16 +283,7 @@ public abstract class AbstractCamelCatalog {
                         }
                     }
                     if (!found) {
-                        result.addInvalidEnum(name, value);
-                        result.addInvalidEnumChoices(name, enums.toArray(new String[0]));
-                        if (suggestionStrategy != null) {
-                            Set<String> names = new LinkedHashSet<>(enums);
-                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
-                            if (suggestions != null) {
-                                result.addInvalidEnumSuggestions(name, suggestions);
-                            }
-                        }
-
+                        handleNotFound(result, value, name, enums);
                     }
                 }
 
@@ -400,6 +391,30 @@ public abstract class AbstractCamelCatalog {
         }
 
         return result;
+    }
+
+    private void handleNotFound(EndpointValidationResult result, String value, String name, List<String> enums) {
+        result.addInvalidEnum(name, value);
+        result.addInvalidEnumChoices(name, enums.toArray(new String[0]));
+        if (suggestionStrategy != null) {
+            Set<String> names = new LinkedHashSet<>(enums);
+            String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
+            if (suggestions != null) {
+                result.addInvalidEnumSuggestions(name, suggestions);
+            }
+        }
+    }
+
+    private void handleNotFound(ConfigurationPropertiesValidationResult result, String value, String longKey, List<String> enums) {
+        result.addInvalidEnum(longKey, value);
+        result.addInvalidEnumChoices(longKey, enums.toArray(new String[0]));
+        if (suggestionStrategy != null) {
+            Set<String> names = new LinkedHashSet<>(enums);
+            String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
+            if (suggestions != null) {
+                result.addInvalidEnumSuggestions(longKey, suggestions);
+            }
+        }
     }
 
     public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly) {
@@ -1228,15 +1243,7 @@ public abstract class AbstractCamelCatalog {
                     }
                 }
                 if (!found) {
-                    result.addInvalidEnum(longKey, value);
-                    result.addInvalidEnumChoices(longKey, enums.toArray(new String[0]));
-                    if (suggestionStrategy != null) {
-                        Set<String> names = new LinkedHashSet<>(enums);
-                        String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
-                        if (suggestions != null) {
-                            result.addInvalidEnumSuggestions(longKey, suggestions);
-                        }
-                    }
+                    handleNotFound(result, value, longKey, enums);
                 }
             }
 
@@ -1267,6 +1274,7 @@ public abstract class AbstractCamelCatalog {
             }
         }
     }
+
 
     private static boolean acceptConfigurationPropertyKey(String key) {
         if (key == null) {
