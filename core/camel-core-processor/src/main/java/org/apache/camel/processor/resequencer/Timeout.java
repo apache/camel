@@ -29,9 +29,9 @@ public class Timeout extends TimerTask {
 
     private TimeoutHandler timeoutHandler;
 
-    private Timer timer;
+    private final Timer timer;
 
-    private long timeout;
+    private final long timeout;
 
     /**
      * Creates a new timeout task using the given {@link Timer} instance and timeout value. The task is not scheduled
