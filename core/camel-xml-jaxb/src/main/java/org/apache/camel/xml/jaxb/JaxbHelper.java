@@ -277,11 +277,7 @@ public final class JaxbHelper {
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
-        Map<String, String> namespaces = new LinkedHashMap<>();
-        extractNamespaces(dom, namespaces);
-        if (!namespaces.containsValue(CAMEL_NS)) {
-            addNamespaceToDom(dom);
-        }
+        Map<String, String> namespaces = doExtractNamespaces(dom);
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(dom);
@@ -318,11 +314,7 @@ public final class JaxbHelper {
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
-        Map<String, String> namespaces = new LinkedHashMap<>();
-        extractNamespaces(dom, namespaces);
-        if (!namespaces.containsValue(CAMEL_NS)) {
-            addNamespaceToDom(dom);
-        }
+        Map<String, String> namespaces = doExtractNamespaces(dom);
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(dom);
@@ -359,11 +351,7 @@ public final class JaxbHelper {
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
-        Map<String, String> namespaces = new LinkedHashMap<>();
-        extractNamespaces(dom, namespaces);
-        if (!namespaces.containsValue(CAMEL_NS)) {
-            addNamespaceToDom(dom);
-        }
+        Map<String, String> namespaces = doExtractNamespaces(dom);
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(dom);
@@ -392,6 +380,15 @@ public final class JaxbHelper {
         return answer;
     }
 
+    private static Map<String, String> doExtractNamespaces(Document dom) {
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+        if (!namespaces.containsValue(CAMEL_NS)) {
+            addNamespaceToDom(dom);
+        }
+        return namespaces;
+    }
+
     /**
      * Un-marshals the content of the input stream to an instance of {@link TemplatedRoutesDefinition}.
      *
@@ -408,11 +405,7 @@ public final class JaxbHelper {
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
-        Map<String, String> namespaces = new LinkedHashMap<>();
-        extractNamespaces(dom, namespaces);
-        if (!namespaces.containsValue(CAMEL_NS)) {
-            addNamespaceToDom(dom);
-        }
+        doExtractNamespaces(dom);
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(dom);
