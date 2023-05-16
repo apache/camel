@@ -33,6 +33,7 @@
     <description>Camel ElasticSearch Java API Client support</description>
 
     <properties>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencies>
@@ -101,4 +102,30 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!-- Elasticsearch container is only available for x86 64 and ARM 64 -->
+            <id>x86</id>
+            <activation>
+                <os>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+        <profile>
+            <id>Arm</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+    </profiles>
 </project>
