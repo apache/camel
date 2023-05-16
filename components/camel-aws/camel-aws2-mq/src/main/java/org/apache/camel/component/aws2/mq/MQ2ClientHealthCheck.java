@@ -52,8 +52,9 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (MqClient mqClient = mq2Endpoint.getAmazonMqClient()) {
-            mqClient.listBrokers(ListBrokersRequest.builder().maxResults(1).build());
+        try {
+            MqClient client = mq2Endpoint.getAmazonMqClient();
+            client.listBrokers(ListBrokersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -72,4 +73,5 @@ public class MQ2ClientHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
+
 }

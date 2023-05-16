@@ -54,7 +54,8 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (CloudWatchClient cw2Client = cw2Endpoint.getCloudWatchClient()) {
+        try {
+            CloudWatchClient cw2Client = cw2Endpoint.getCloudWatchClient();
             cw2Client.listDashboards(ListDashboardsRequest.builder().build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -74,4 +75,5 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
+
 }

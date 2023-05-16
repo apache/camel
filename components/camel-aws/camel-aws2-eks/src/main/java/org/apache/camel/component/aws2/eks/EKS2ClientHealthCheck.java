@@ -54,7 +54,8 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (EksClient eks2Client = eks2Endpoint.getEksClient()) {
+        try {
+            EksClient eks2Client = eks2Endpoint.getEksClient();
             eks2Client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -74,4 +75,5 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
+
 }
