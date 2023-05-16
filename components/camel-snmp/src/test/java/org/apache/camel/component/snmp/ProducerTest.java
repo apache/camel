@@ -16,39 +16,52 @@
  */
 package org.apache.camel.component.snmp;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.snmp4j.mp.SnmpConstants;
 
-@Disabled("CAMEL-10319: Set host, port and oids to test snmp producer.")
-public class ProducerTest extends CamelTestSupport {
+public class ProducerTest extends SnmpRespondTestSupport {
 
-    private String host = "192.168.0.254";
-    private String port = "161";
     private String oids = "1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1";
 
-    @Test
-    public void testSnmpProducer() throws Exception {
-        template.sendBody("direct:in", "");
+    @ParameterizedTest
+    @MethodSource("supportedVersions")
+    public void testSnmpProducer(int version) throws Exception {
+        template.sendBody("direct:inV" + version, "");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:resultV" + version);
         mock.expectedMinimumMessageCount(1);
 
-        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+
+        SnmpMessage snmpMessage = mock.getReceivedExchanges().get(0).getIn().getBody(SnmpMessage.class);
+        String responseToMatch = "My Printer - response #\\d+, using version: " + version;
+        String receivedMessage = snmpMessage.getSnmpMessage().getVariable(SnmpConstants.sysDescr).toString();
+        Assertions.assertTrue(receivedMessage.matches(responseToMatch),
+                "Expected string matching '" + responseToMatch + "'. Got: " + receivedMessage);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in")
-                        .to("snmp://" + host + ":" + port + "?oids=" + oids)
-                        .log("${body}")
-                        .to("mock:result");
+                from("direct:inV0")
+                        .to("snmp://" + getListeningAddress() + "?oids=" + oids)
+                        .log("V0: ${body}")
+                        .to("mock:resultV0");
+
+                from("direct:inV1")
+                        .to("snmp://" + getListeningAddress() + "?snmpVersion=1&oids=" + oids)
+                        .log("V0: ${body}")
+                        .to("mock:resultV1");
+
+                from("direct:inV3")
+                        .to("snmp://" + getListeningAddress() + "?securityName=test&securityLevel=1&snmpVersion=3&oids=" + oids)
+                        .log("V0: ${body}")
+                        .to("mock:resultV3");
             }
         };
     }
