@@ -63,7 +63,7 @@ public class Init extends CamelCommand {
     private String kameletsVersion;
 
     @Option(names = {
-            "-dir",
+            "--dir",
             "--directory" }, description = "Directory where the project will be saved", defaultValue = ".")
     private String directory;
 
