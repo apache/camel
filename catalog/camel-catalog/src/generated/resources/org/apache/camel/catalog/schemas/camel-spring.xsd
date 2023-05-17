@@ -5718,74 +5718,6 @@ Default value: 60
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-                
-        <xs:attribute name="bulkheadEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether bulkhead is enabled or not on the circuit breaker. Default is false.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="bulkheadMaxConcurrentCalls" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures the max amount of concurrent calls the bulkhead will support. Default
-value: 25
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="bulkheadMaxWaitDuration" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures a maximum amount of time which the calling thread will wait to enter
-the bulkhead. If bulkhead has space available, entry is guaranteed and
-immediate. If bulkhead is full, calling threads will contest for space, if it
-becomes available. maxWaitDuration can be set to 0. Note: for threads running on
-an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration
-to 0 is highly recommended. Blocking an event-loop thread will most likely have
-a negative effect on application throughput. Default value: 0
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether timeout is enabled or not on the circuit breaker. Default is false.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutExecutorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-References to a custom thread pool to use when timeout is enabled (uses
-ForkJoinPool#commonPool() by default).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutDuration" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures the thread execution timeout. Default value is 1 second. Default
-value: 1000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutCancelRunningFuture" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures whether cancel is called on the running future. Defaults to true.
-Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
               
       </xs:extension>
           
@@ -6253,13 +6185,109 @@ To use a custom Thread Pool if asyncDelay has been enabled.
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-Sets the uri delimiter to use. Default value: ,
+Enables asynchronous delay which means the thread will not block while delaying.
+Default value: true
             ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
                 
         <xs:attribute name="ignoreInvalidEndpoints" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Whether or not the caller should run the task when it was rejected by the thread
+pool. Is by default true. Default value: true
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="cacheSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+To use a custom Thread Pool if asyncDelay has been enabled.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="enrichDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:processorDefinition">
+                
+        <xs:choice>
+                    
+          <xs:element ref="tns:expressionDefinition"/>
+                    
+          <xs:element ref="tns:csimple"/>
+                    
+          <xs:element ref="tns:constant"/>
+                    
+          <xs:element ref="tns:datasonnet"/>
+                    
+          <xs:element ref="tns:exchangeProperty"/>
+                    
+          <xs:element ref="tns:groovy"/>
+                    
+          <xs:element ref="tns:header"/>
+                    
+          <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
+                    
+          <xs:element ref="tns:joor"/>
+                    
+          <xs:element ref="tns:jq"/>
+                    
+          <xs:element ref="tns:jsonpath"/>
+                    
+          <xs:element ref="tns:language"/>
+                    
+          <xs:element ref="tns:method"/>
+                    
+          <xs:element ref="tns:mvel"/>
+                    
+          <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
+                    
+          <xs:element ref="tns:ref"/>
+                    
+          <xs:element ref="tns:simple"/>
+                    
+          <xs:element ref="tns:spel"/>
+                    
+          <xs:element ref="tns:tokenize"/>
+                    
+          <xs:element ref="tns:xtokenize"/>
+                    
+          <xs:element ref="tns:xpath"/>
+                    
+          <xs:element ref="tns:xquery"/>
+                  
+        </xs:choice>
+                
+        <xs:attribute name="aggregationStrategy" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets the uri delimiter to use. Default value: ,
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="aggregationStrategyMethodName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -6270,7 +6298,7 @@ endpoint. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="cacheSize" type="xs:string">
+        <xs:attribute name="aggregationStrategyMethodAllowNull" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -9813,16 +9841,6 @@ by comma.
                 
         <xs:attribute name="allowUnmarshallType" type="xs:string">
           <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If enabled then Jackson is allowed to attempt to use the
-CamelJacksonUnmarshalType header during the unmarshalling. This should only be
-enabled when desired to be used. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timezone" type="xs:string">
-          <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 The JCE algorithm name indicating the cryptographic algorithm that will be used.
@@ -9831,7 +9849,7 @@ The JCE algorithm name indicating the cryptographic algorithm that will be used.
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
+        <xs:attribute name="timezone" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -10755,15 +10773,6 @@ Whether to validate. Default value: false
                 
         <xs:attribute name="fhirContext" type="xs:string">
           <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a custom fhir context. Reference to object of type
-ca.uhn.fhir.context.FhirContext.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="prettyPrint" type="xs:string">
-          <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 Lookup and use the existing XmlMapper with the given id.
@@ -10772,7 +10781,7 @@ Lookup and use the existing XmlMapper with the given id.
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="parserErrorHandler" type="xs:string">
+        <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -11147,22 +11156,8 @@ To use a custom xml stream writer.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="grokDataFormat">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:dataFormat">
                 
-        <xs:sequence/>
-                
-        <xs:attribute name="pattern" type="xs:string" use="required">
+        <xs:attribute name="schemaLocation" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -11382,24 +11377,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="timezone" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If set then Jackson will use the Timezone when marshalling/unmarshalling.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
         <xs:attribute name="enableJaxbAnnotationModule" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable the JAXB annotations module when using jackson. When enabled
-then JAXB annotations can be used by Jackson. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="moduleClassNames" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -12263,19 +12241,6 @@ The quote escape symbol. Default value: "
                 
         <xs:attribute name="enableFeatures" type="xs:string">
           <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Set of features to enable on the Jackson
-com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or
-com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated
-by comma.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="disableFeatures" type="xs:string">
-          <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 The string representation of a null value. The default value is null.
@@ -12284,7 +12249,7 @@ The string representation of a null value. The default value is null.
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="allowUnmarshallType" type="xs:string">
+        <xs:attribute name="disableFeatures" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -13311,16 +13276,6 @@ decompressed size. Default value: 1073741824
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="signatureKeyFileName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Filename of the keyring to use for signing (during encryption) or for signature
-verification (during decryption); must be accessible as a classpath resource
-(but you can specify a location in the file system by using the file: prefix).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
         <xs:attribute name="signatureKeyRing" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -14088,16 +14043,6 @@ Default value: false
         </xs:attribute>
                 
         <xs:attribute name="executorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a custom Thread Pool to be used for parallel processing. Notice if you
-set this option, then parallel processing is automatic implied, and you do not
-have to enable that option as well.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="useOriginalMessage" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
