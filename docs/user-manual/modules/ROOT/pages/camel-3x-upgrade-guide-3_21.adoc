@@ -10,6 +10,12 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
 
+==== Tracing
+
+The xref:tracer.adoc[Tracer] and xref:backlog-tracer.adoc[Backlog Tracer] no longer includes internal tracing events
+from routes that was created by Rest DSL or route templates or Kamelets. You can turn this on, by setting
+`traceTemplates=true` in the tracer.
+
 ==== UseOriginalMessage / UseOriginalBody
 
 When `useOriginalMessage` or `useOriginalBody` is enabled in `OnException`, `OnCompletion` or error handlers,

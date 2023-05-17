@@ -47,6 +47,12 @@ messages with a given header, use `${header.foo} != null`. To use
 xref:components:languages:groovy-language.adoc[Groovy] then prefix the value with "groovy:". And
 similar for the other languages.
 
+|traceRests |`false` | Whether tracing should trace inner details from Rest DSL.
+Turning this on increases the verbosity of tracing by including events from internal routes by Rest DSL.
+
+|traceTemplates |`false` | Whether tracing should trace inner details from route templates (or kamelets).
+Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets.
+
 |removeOnDump |`true` |Whether to remove the traced messages that was returned when invoking
 the dump methods.
 
