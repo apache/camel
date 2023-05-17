@@ -67,5 +67,17 @@
             <artifactId>camel-test-spring-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${commons-dbcp2-version}</version>
+            <scope>test</scope>
+        </dependency>
+	<dependency>
+	    <groupId>org.hsqldb</groupId>
+	    <artifactId>hsqldb</artifactId>
+	    <version>${hsqldb-version}</version>
+	    <scope>test</scope>
+	</dependency>
     </dependencies>
 </project>

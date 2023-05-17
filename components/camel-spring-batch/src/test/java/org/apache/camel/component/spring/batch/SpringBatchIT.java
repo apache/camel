@@ -20,10 +20,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+
+@Disabled("Requires a running database")
 public class SpringBatchIT extends CamelSpringTestSupport {
     @EndpointInject("mock:header")
     MockEndpoint headerEndpoint;

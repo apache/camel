@@ -63,11 +63,18 @@
 
     <camel:template id="template" camelContextId="camel"/>
 
-    <!-- Spring Batch infrastructure -->
+
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:mem:testdb;sql.enforce_strict_size=true;hsqldb.tx=mvcc" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
 
     <bean id="jobRepository"
-          class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+          class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
@@ -78,24 +85,24 @@
     </bean>
 
     <bean id="camelReader" class="org.apache.camel.component.spring.batch.support.CamelItemReader">
-        <constructor-arg ref="consumerTemplate"/>
-        <constructor-arg value="seda:inputQueue"/>
+        <constructor-arg index="0" ref="consumerTemplate"/>
+        <constructor-arg index="1" value="seda:inputQueue"/>
     </bean>
 
     <bean id="camelWriter" class="org.apache.camel.component.spring.batch.support.CamelItemWriter">
-        <constructor-arg ref="template"/>
-        <constructor-arg value="mock:output"/>
+        <constructor-arg index="0" ref="template"/>
+        <constructor-arg index="1" value="mock:output"/>
     </bean>
 
     <bean id="camelProcessor" class="org.apache.camel.component.spring.batch.support.CamelItemProcessor">
-        <constructor-arg ref="template"/>
-        <constructor-arg value="direct:processor"/>
+        <constructor-arg index="0" ref="template"/>
+        <constructor-arg index="1" value="direct:processor"/>
     </bean>
 
     <bean id="camelJobExecutionListener"
           class="org.apache.camel.component.spring.batch.support.CamelJobExecutionListener">
-        <constructor-arg ref="template"/>
-        <constructor-arg value="mock:jobExecutionEventsQueue"/>
+        <constructor-arg index="0" ref="template"/>
+        <constructor-arg index="1" value="mock:jobExecutionEventsQueue"/>
     </bean>
 
 </beans>

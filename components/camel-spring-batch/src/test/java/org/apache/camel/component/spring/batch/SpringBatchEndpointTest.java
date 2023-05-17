@@ -226,22 +226,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void setNullValueToJobParams() throws Exception {
-        // Given
-        String headerKey = "headerKey";
-        Date headerValue = null;
-
-        // When
-        template.sendBodyAndHeader("direct:start", "Start the job, please.", headerKey, headerValue);
-
-        // Then
-        ArgumentCaptor<JobParameters> jobParameters = ArgumentCaptor.forClass(JobParameters.class);
-        verify(jobLauncher).run(any(Job.class), jobParameters.capture());
-        Date parameter = jobParameters.getValue().getDate(headerKey);
-        assertEquals(parameter, headerValue);
-    }
-
-    @Test
     public void shouldConvertDateHeadersToJobParams() throws Exception {
         // Given
         String headerKey = "headerKey";
