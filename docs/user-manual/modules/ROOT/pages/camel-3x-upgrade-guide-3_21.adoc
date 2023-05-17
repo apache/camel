@@ -69,6 +69,8 @@ XML parsers has been made more secure by disabling DOCTYPE and/or access to exte
 
 The command `camel dependencies` has been renamed to `camel dependency`.
 
+In Camel JBang the `-dir` parameter for `init` and `run` goal has been renamed to require 2 dashes `--dir` like all the other options.
+
 === camel-spring-boot
 
 The health-check has aligned to be more similar to microprofile-health in the JSon output.

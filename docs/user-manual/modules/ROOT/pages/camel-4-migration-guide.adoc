@@ -262,35 +262,13 @@ The metrics has been renamed to follow Micrometer naming convention https://micr
 | CamelRoutesRunning | camel.routes.running
 |===
 
-== Camel Spring Boot
+== camel-jbang
 
-The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
-with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+The command `camel dependencies` has been renamed to `camel dependency`.
 
-=== camel-micrometer-starter
+In Camel JBang the `-dir` parameter for `init` and `run` goal has been renamed to require 2 dashes `--dir` like all the other options.
 
-The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
-This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
-
-=== camel-platform-http-starter
-
-The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
-Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).
-
-For example:
-
-[source,java]
-----
-from("platform-http:myservice")
-  .to("...")
-----
-
-Then calling _myservice_ would before require to include the context-path, such as `http://localhost:8080/camel/myservice`.
-Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
-
-NOTE: The `platform-http-starter` can also be used with Rest DSL.
-
-== camel-openapi-java
+=== camel-openapi-java
 
 The `camel-openapi-java` component has been changed to use `io.swagger.v3` libraries instead of `io.apicurio.datamodels`.
 As a result, the return type of the public method org.apache.camel.openapi.RestOpenApiReader.read() is now `io.swagger.v3.oas.models.OpenAPI` instead of `io.apicurio.datamodels.openapi.models.OasDocument`.
@@ -298,8 +276,7 @@ When an OpenAPI 2.0 (swagger) specification is parsed, it is automatically upgra
 This version also supports OpenAPI 3.1.x specifications.
 The related spring-boot starter components have been modified to use the new return type.
 
-
-== camel-optaplanner
+=== camel-optaplanner
 
 The `camel-optaplanner` component has been change to use `SolverManager`. If you were using `SoverManager` in Camel 3, you don't need anymore the boolean useSolverManager in the Route.
 Deprecated `ProblemFactChange` has been replaced by `ProblemChange`.
@@ -328,4 +305,33 @@ from("optaplanner:myProblemName?configFile=PATH/TO/CONFIG.FILE.xml")
 ----
 
 Solver Daemon solutions should be migrated to use SolverManager.
+
+
+== Camel Spring Boot
+
+The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
+with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+
+=== camel-micrometer-starter
+
+The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
+
+=== camel-platform-http-starter
+
+The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
+Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).
+
+For example:
+
+[source,java]
+----
+from("platform-http:myservice")
+  .to("...")
+----
+
+Then calling _myservice_ would before require to include the context-path, such as `http://localhost:8080/camel/myservice`.
+Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
+
+NOTE: The `platform-http-starter` can also be used with Rest DSL.
 

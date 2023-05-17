@@ -4,6 +4,14 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.20.4 to 3.20.5
+
+In Camel JBang the `-dir` parameter for `init` and `run` goal has been renamed to require 2 dashes `--dir` like all the other options.
+
+== Upgrading Camel 3.20.3 to 3.20.4
+
+No changes
+
 == Upgrading Camel 3.20.2 to 3.20.3
 
 The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
