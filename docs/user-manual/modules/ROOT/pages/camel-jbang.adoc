@@ -2064,6 +2064,29 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=..
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+=== Exporting with selected files
+
+By default, Camel will export what was last run, or all files from the current directory.
+You can also explicit specify which files should be exported.
+
+For example, you may have 3 files in a folder:
+
+- Foo.java
+- bar.xml
+- cheese.yaml
+
+These are 3 Camel routes, and you want to export them into 2 different applications:
+
+[source,bash]
+----
+camel export Foo.java --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=../export1
+camel export bar.xml cheese.yaml --runtime=spring-boot --gav=com.foo:cheese:1.0-SNAPSHOT --directory=../export2
+----
+
+As you can see the first export command will only include `Foo.java`, and then 2nd export includes both `bar.xml` and `cheese.yaml`.
+
+NOTE: If you have `application.properties` in the folder as well, then this will be included in both exports.
+
 === Exporting as Gradle Project
 
 Camel JBang exports by default as a Maven based project. To use Gradle instead, you can
