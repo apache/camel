@@ -307,7 +307,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             if (integration) {
                 target = preConfigureIntegration(root, ctx, target, preParse);
             } else if (binding) {
-                // kamelet binding does not take part in pre-parse phase
                 target = preConfigureKameletBinding(root, ctx, target, preParse);
             }
         }
@@ -651,7 +650,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
      * Camel K Kamelet Binding file
      */
     private Object preConfigureKameletBinding(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
-        // when in pre-parse phase then we only want to gather spec/dependencies,spec/configuration,spec/traits
+        // when in pre-parse phase then we only want to gather /metadata/annotations
 
         List<Object> answer = new ArrayList<>();
 
