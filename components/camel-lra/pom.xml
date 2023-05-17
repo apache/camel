@@ -86,4 +86,19 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <!-- LRA Coordinator container is only available for x86 64 -->
+            <id>Notx86</id>
+            <activation>
+                <os>
+                    <arch>!amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>true</skipITs>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
