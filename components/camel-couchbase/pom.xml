@@ -73,6 +73,47 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <skipITs>${skipITs}</skipITs>
+                    <skipTests>${skipTests}</skipTests>
+                    <reuseForks>true</reuseForks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <skipITs>${skipITs}</skipITs>
+                            <forkCount>1</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <excludedGroups>couchbase-7</excludedGroups>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>couchbase-7</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <groups>couchbase-7</groups>
+                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                            <systemPropertyVariables>
+                                <couchbase.container>couchbase/server:7.1.1</couchbase.container>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <!-- Couchbase container is only available for x86 64 and ARM 64 -->
