@@ -41,6 +41,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
         case "backlogtracingstandby":
         case "BacklogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "backlogtracingtemplates":
+        case "BacklogTracingTemplates": target.setBacklogTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "basepackagescanenabled":
@@ -243,6 +245,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
         case "TracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "tracingtemplates":
+        case "TracingTemplates": target.setTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "typeconverterstatisticsenabled":
         case "TypeConverterStatisticsEnabled": target.setTypeConverterStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
         case "usebreadcrumb":
@@ -280,6 +284,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BacklogTracing": return boolean.class;
         case "backlogtracingstandby":
         case "BacklogTracingStandby": return boolean.class;
+        case "backlogtracingtemplates":
+        case "BacklogTracingTemplates": return boolean.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "basepackagescanenabled":
@@ -482,6 +488,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
         case "TracingStandby": return boolean.class;
+        case "tracingtemplates":
+        case "TracingTemplates": return boolean.class;
         case "typeconverterstatisticsenabled":
         case "TypeConverterStatisticsEnabled": return boolean.class;
         case "usebreadcrumb":
@@ -520,6 +528,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BacklogTracing": return target.isBacklogTracing();
         case "backlogtracingstandby":
         case "BacklogTracingStandby": return target.isBacklogTracingStandby();
+        case "backlogtracingtemplates":
+        case "BacklogTracingTemplates": return target.isBacklogTracingTemplates();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "basepackagescanenabled":
@@ -722,6 +732,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":
         case "TracingStandby": return target.isTracingStandby();
+        case "tracingtemplates":
+        case "TracingTemplates": return target.isTracingTemplates();
         case "typeconverterstatisticsenabled":
         case "TypeConverterStatisticsEnabled": return target.isTypeConverterStatisticsEnabled();
         case "usebreadcrumb":

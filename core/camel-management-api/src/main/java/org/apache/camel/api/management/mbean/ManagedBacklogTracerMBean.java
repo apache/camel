@@ -93,6 +93,12 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
     boolean isIncludeExchangeProperties();
 
+    @ManagedAttribute(description = "Whether tracing routes created from Rest DSL.")
+    boolean isTraceRests();
+
+    @ManagedAttribute(description = "Whether tracing routes created from route templates or kamelets.")
+    boolean isTraceTemplates();
+
     @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 

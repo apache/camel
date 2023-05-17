@@ -557,6 +557,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final NamedNode processorDefinition;
         private final NamedRoute routeDefinition;
         private final boolean first;
+        private final boolean rest;
+        private final boolean template;
+        private final boolean skip;
 
         public BacklogTracerAdvice(BacklogTracer backlogTracer, NamedNode processorDefinition,
                                    NamedRoute routeDefinition, boolean first) {
@@ -564,11 +567,27 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
             this.first = first;
+
+            if (routeDefinition != null) {
+                this.rest = routeDefinition.isCreatedFromRest();
+                this.template = routeDefinition.isCreatedFromTemplate();
+            } else {
+                this.rest = false;
+                this.template = false;
+            }
+            // optimize whether to skip this route or not
+            if (this.rest && !backlogTracer.isTraceRests()) {
+                this.skip = true;
+            } else if (this.template && !backlogTracer.isTraceTemplates()) {
+                this.skip = true;
+            } else {
+                this.skip = false;
+            }
         }
 
         @Override
         public DefaultBacklogTracerEventMessage before(Exchange exchange) throws Exception {
-            if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
+            if (!skip && backlogTracer.shouldTrace(processorDefinition, exchange)) {
                 long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
@@ -588,8 +607,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     long created = exchange.getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
-                            messageAsXml,
-                            messageAsJSon);
+                            rest, template, messageAsXml, messageAsJSon);
                     backlogTracer.traceEvent(pseudoFirst);
                     exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                         @Override
@@ -608,9 +626,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                                             backlogTracer.getBodyMaxChars(), true);
                             DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
                                     false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null,
-                                    exchangeId,
-                                    messageAsXml,
-                                    messageAsJSon);
+                                    exchangeId, rest, template, messageAsXml, messageAsJSon);
                             backlogTracer.traceEvent(pseudoLast);
                             doneProcessing(exchange, pseudoLast);
                             doneProcessing(exchange, pseudoFirst);
@@ -623,8 +639,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                         false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, exchangeId,
-                        messageAsXml,
-                        messageAsJSon);
+                        rest, template, messageAsXml, messageAsJSon);
                 backlogTracer.traceEvent(event);
 
                 return event;
@@ -635,21 +650,21 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public void after(Exchange exchange, DefaultBacklogTracerEventMessage data) throws Exception {
-            doneProcessing(exchange, data);
+            if (data != null) {
+                doneProcessing(exchange, data);
+            }
         }
 
         private void doneProcessing(Exchange exchange, DefaultBacklogTracerEventMessage data) {
-            if (data != null) {
-                data.doneProcessing();
-                if (!data.isFirst()) {
-                    // we want to capture if there was an exception
-                    Throwable e = exchange.getException();
-                    if (e != null) {
-                        String xml = MessageHelper.dumpExceptionAsXML(e, 4);
-                        data.setExceptionAsXml(xml);
-                        String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
-                        data.setExceptionAsJSon(json);
-                    }
+            data.doneProcessing();
+            if (!data.isFirst()) {
+                // we want to capture if there was an exception
+                Throwable e = exchange.getException();
+                if (e != null) {
+                    String xml = MessageHelper.dumpExceptionAsXML(e, 4);
+                    data.setExceptionAsXml(xml);
+                    String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
+                    data.setExceptionAsJSon(json);
                 }
             }
         }
@@ -1049,6 +1064,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final NamedNode processorDefinition;
         private final NamedRoute routeDefinition;
         private final Synchronization tracingAfterRoute;
+        private final boolean rest;
+        private final boolean template;
+        private final boolean skip;
 
         public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition, boolean first) {
             this.tracer = tracer;
@@ -1057,11 +1075,27 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             this.tracingAfterRoute
                     = routeDefinition != null
                             ? new TracingAfterRoute(tracer, routeDefinition.getRouteId(), routeDefinition) : null;
+
+            if (routeDefinition != null) {
+                this.rest = routeDefinition.isCreatedFromRest();
+                this.template = routeDefinition.isCreatedFromTemplate();
+            } else {
+                this.rest = false;
+                this.template = false;
+            }
+            // optimize whether to skip this route or not
+            if (this.rest && !tracer.isTraceRests()) {
+                this.skip = true;
+            } else if (this.template && !tracer.isTraceTemplates()) {
+                this.skip = true;
+            } else {
+                this.skip = false;
+            }
         }
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            if (tracer.isEnabled()) {
+            if (!skip && tracer.isEnabled()) {
                 if (tracingAfterRoute != null) {
                     // add before route and after route tracing but only once per route, so check if there is already an existing
                     boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
@@ -1077,7 +1111,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
-            if (tracer.isEnabled()) {
+            if (!skip && tracer.isEnabled()) {
                 tracer.traceAfterNode(processorDefinition, exchange);
             }
         }

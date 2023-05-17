@@ -52,6 +52,8 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     private CamelContext camelContext;
     private boolean enabled = true;
     private boolean standby;
+    private boolean traceRests;
+    private boolean traceTemplates;
     private long traceCounter;
 
     private ExchangeFormatter exchangeFormatter;
@@ -204,6 +206,26 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     @Override
     public void setStandby(boolean standby) {
         this.standby = standby;
+    }
+
+    @Override
+    public boolean isTraceRests() {
+        return traceRests;
+    }
+
+    @Override
+    public void setTraceRests(boolean traceRests) {
+        this.traceRests = traceRests;
+    }
+
+    @Override
+    public boolean isTraceTemplates() {
+        return traceTemplates;
+    }
+
+    @Override
+    public void setTraceTemplates(boolean traceTemplates) {
+        this.traceTemplates = traceTemplates;
     }
 
     @Override

@@ -40,6 +40,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String toNode;
     private final String exchangeId;
     private final String threadName;
+    private final boolean rest;
+    private final boolean template;
     private final String messageAsXml;
     private final String messageAsJSon;
     private String exceptionAsXml;
@@ -49,6 +51,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public DefaultBacklogTracerEventMessage(boolean first, boolean last, long uid, long timestamp,
                                             String location, String routeId, String toNode, String exchangeId,
+                                            boolean rest, boolean template,
                                             String messageAsXml, String messageAsJSon) {
         this.watch = new StopWatch();
         this.first = first;
@@ -59,6 +62,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.routeId = routeId;
         this.toNode = toNode;
         this.exchangeId = exchangeId;
+        this.rest = rest;
+        this.template = template;
         this.messageAsXml = messageAsXml;
         this.messageAsJSon = messageAsJSon;
         this.threadName = Thread.currentThread().getName();
@@ -100,6 +105,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getRouteId() {
         return routeId;
+    }
+
+    @Override
+    public boolean isRest() {
+        return rest;
+    }
+
+    @Override
+    public boolean isTemplate() {
+        return template;
     }
 
     @Override
@@ -190,6 +205,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
         sb.append(prefix).append("  <first>").append(first).append("</first>\n");
         sb.append(prefix).append("  <last>").append(last).append("</last>\n");
+        sb.append(prefix).append("  <rest>").append(rest).append("</rest>\n");
+        sb.append(prefix).append("  <template>").append(template).append("</template>\n");
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
         sb.append(prefix).append("  <elapsed>").append(getElapsed()).append("</elapsed>\n");
@@ -232,6 +249,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         jo.put("uid", uid);
         jo.put("first", first);
         jo.put("last", last);
+        jo.put("rest", rest);
+        jo.put("template", template);
         if (location != null) {
             jo.put("location", location);
         }

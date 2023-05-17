@@ -57,6 +57,16 @@ public interface BacklogTracerEventMessage {
     String getRouteId();
 
     /**
+     * Whether this event was from a route that is created from Rest DSL.
+     */
+    boolean isRest();
+
+    /**
+     * Whether this event was from a route that is created from route template or kamelet.
+     */
+    boolean isTemplate();
+
+    /**
      * Node id where the message is being routed to
      */
     String getToNode();

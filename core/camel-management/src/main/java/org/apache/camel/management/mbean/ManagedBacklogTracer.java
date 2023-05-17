@@ -172,6 +172,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public boolean isTraceRests() {
+        return backlogTracer.isTraceRests();
+    }
+
+    @Override
+    public boolean isTraceTemplates() {
+        return backlogTracer.isTraceTemplates();
+    }
+
+    @Override
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId) {
         return backlogTracer.dumpTracedMessages(nodeOrRouteId);
     }

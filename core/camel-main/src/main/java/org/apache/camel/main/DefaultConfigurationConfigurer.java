@@ -303,10 +303,12 @@ public final class DefaultConfigurationConfigurer {
 
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setBacklogTracingStandby(config.isBacklogTracingStandby());
+        camelContext.setBacklogTracingTemplates(config.isBacklogTracingTemplates());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
         camelContext.setTracingPattern(config.getTracingPattern());
         camelContext.setTracingLoggingFormat(config.getTracingLoggingFormat());
+        camelContext.setTracingTemplates(config.isTracingTemplates());
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
