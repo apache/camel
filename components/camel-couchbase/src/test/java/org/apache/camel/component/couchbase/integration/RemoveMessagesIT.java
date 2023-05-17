@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 
-@Tags({@Tag("couchbase-7")})
+@Tags({ @Tag("couchbase-7") })
 public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 
     @BeforeEach

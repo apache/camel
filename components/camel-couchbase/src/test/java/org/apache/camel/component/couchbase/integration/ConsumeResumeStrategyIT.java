@@ -38,7 +38,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_
 import static org.awaitility.Awaitility.await;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Flaky on Apache CI")
-@Tags({@Tag("couchbase-6")})
+@Tags({ @Tag("couchbase-6") })
 public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
     static class TestCouchbaseResumeAdapter implements ResumeActionAware {
         volatile boolean setResumeActionCalled;

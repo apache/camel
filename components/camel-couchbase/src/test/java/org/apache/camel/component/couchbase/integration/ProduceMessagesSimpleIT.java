@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-@Tags({@Tag ("couchbase-7")})
+@Tags({ @Tag("couchbase-7") })
 public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
 
     @Test
