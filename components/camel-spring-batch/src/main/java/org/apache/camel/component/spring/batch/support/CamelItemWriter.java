@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.spring.batch.support;
 
-import java.util.List;
-
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.lang.NonNull;
 
 public class CamelItemWriter<I> implements ItemWriter<I> {
 
@@ -37,7 +34,6 @@ public class CamelItemWriter<I> implements ItemWriter<I> {
         this.template = template;
         this.endpointUri = endpointUri;
     }
-
 
     @Override
     public void write(Chunk<? extends I> chunk) throws Exception {

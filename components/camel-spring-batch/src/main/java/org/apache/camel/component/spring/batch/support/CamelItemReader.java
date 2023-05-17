@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.batch.support;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -72,6 +71,5 @@ public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>,
     public String getEndpointUri() {
         return endpointUri;
     }
-
 
 }

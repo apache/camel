@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 @Disabled("Requires a running database")
 public class SpringBatchIT extends CamelSpringTestSupport {
     @EndpointInject("mock:header")

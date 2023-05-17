@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.spring.batch.support;
 
-import java.util.Collections;
-
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.Chunk;
