@@ -74,7 +74,7 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.66</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.67</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.11</azure-sdk-bom-version>
@@ -127,7 +127,7 @@
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
-        <datasonnet-mapper-version>2.5-jakarta4</datasonnet-mapper-version>
+        <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
         <debezium-version>2.2.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.32</debezium-mysql-connector-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
