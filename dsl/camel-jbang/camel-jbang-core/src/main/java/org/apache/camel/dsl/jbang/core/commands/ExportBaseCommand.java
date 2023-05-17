@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
@@ -66,6 +69,12 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
+                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+    Path[] filePaths; // Defined only for file path completion; the field never used
+
+    List<String> files = new ArrayList<>();
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
                         description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
@@ -137,7 +146,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String buildTool;
 
     @CommandLine.Option(names = {
-            "-dir",
+            "--dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
@@ -244,6 +253,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.profile = profile;
         run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
+        run.files = files;
         Integer code = run.runSilent();
         return code;
     }
@@ -781,4 +791,13 @@ abstract class ExportBaseCommand extends CamelCommand {
             return null;
         }
     }
+
+    static class FilesConsumer extends ParameterConsumer<Export> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Export cmd) {
+            String arg = args.pop();
+            cmd.files.add(arg);
+        }
+    }
+
 }
