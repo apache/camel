@@ -73,9 +73,9 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    Path[] filePaths; // Defined only for file path completion; the field never used
+    protected Path[] filePaths; // Defined only for file path completion; the field never used
 
-    List<String> files = new ArrayList<>();
+    protected List<String> files = new ArrayList<>();
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
                         description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
