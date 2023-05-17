@@ -18,8 +18,11 @@ package org.apache.camel.component.couchbase.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
+@Tags({@Tag("couchbase-7")})
 public class ProduceMessagesWithAutoIDIT extends CouchbaseIntegrationTestBase {
 
     @Test

@@ -19,11 +19,14 @@ package org.apache.camel.component.couchbase.integration;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 
+@Tags({@Tag("couchbase-7")})
 public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 
     @BeforeEach
