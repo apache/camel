@@ -1128,6 +1128,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         this.errorHandlerFactory = errorHandlerFactory;
     }
 
+    /**
+     * This route is created from REST DSL
+     */
     public void setRest(Boolean rest) {
         this.rest = rest;
     }
@@ -1204,6 +1207,16 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     @Metadata(label = "advanced")
     public void setRouteProperties(List<PropertyDefinition> routeProperties) {
         this.routeProperties = routeProperties;
+    }
+
+    @Override
+    public boolean isCreatedFromTemplate() {
+        return template != null && template;
+    }
+
+    @Override
+    public boolean isCreatedFromRest() {
+        return rest != null && rest;
     }
 
     // ****************************

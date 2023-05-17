@@ -32,6 +32,16 @@ public interface NamedRoute {
     String getEndpointUrl();
 
     /**
+     * Is the route created from template;
+     */
+    boolean isCreatedFromTemplate();
+
+    /**
+     * Is the route created from Rest DSL
+     */
+    boolean isCreatedFromRest();
+
+    /**
      * Gets the route input
      */
     NamedNode getInput();

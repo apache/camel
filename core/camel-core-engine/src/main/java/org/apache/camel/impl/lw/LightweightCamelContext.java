@@ -907,6 +907,26 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setBacklogTracingTemplates(boolean backlogTracingTemplates) {
+        delegate.setBacklogTracingTemplates(backlogTracingTemplates);
+    }
+
+    @Override
+    public boolean isBacklogTracingTemplates() {
+        return delegate.isBacklogTracingTemplates();
+    }
+
+    @Override
+    public void setTracingTemplates(boolean tracingTemplates) {
+        delegate.setTracingTemplates(tracingTemplates);
+    }
+
+    @Override
+    public boolean isTracingTemplates() {
+        return delegate.isTracingTemplates();
+    }
+
+    @Override
     public UuidGenerator getUuidGenerator() {
         return delegate.getUuidGenerator();
     }

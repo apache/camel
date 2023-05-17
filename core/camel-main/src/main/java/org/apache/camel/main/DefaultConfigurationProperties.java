@@ -72,9 +72,11 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean debugging;
     private boolean backlogTracing;
     private boolean backlogTracingStandby;
+    private boolean backlogTracingTemplates;
     private boolean typeConverterStatisticsEnabled;
     private boolean tracing;
     private boolean tracingStandby;
+    private boolean tracingTemplates;
     private String tracingPattern;
     @Metadata(defaultValue = "%-4.4s [%-12.12s] [%-33.33s]")
     private String tracingLoggingFormat;
@@ -625,6 +627,20 @@ public abstract class DefaultConfigurationProperties<T> {
         this.tracingStandby = tracingStandby;
     }
 
+    public boolean isTracingTemplates() {
+        return tracingTemplates;
+    }
+
+    /**
+     * Whether tracing should trace inner details from route templates (or kamelets). Turning this on increases the
+     * verbosity of tracing by including events from internal routes in the templates or kamelets.
+     *
+     * Default is false.
+     */
+    public void setTracingTemplates(boolean tracingTemplates) {
+        this.tracingTemplates = tracingTemplates;
+    }
+
     public String getTracingPattern() {
         return tracingPattern;
     }
@@ -688,6 +704,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setBacklogTracingStandby(boolean backlogTracingStandby) {
         this.backlogTracingStandby = backlogTracingStandby;
+    }
+
+    public boolean isBacklogTracingTemplates() {
+        return backlogTracingTemplates;
+    }
+
+    /**
+     * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases
+     * the verbosity of tracing by including events from internal routes in the templates or kamelets.
+     *
+     * Default is false.
+     */
+    public void setBacklogTracingTemplates(boolean backlogTracingTemplates) {
+        this.backlogTracingTemplates = backlogTracingTemplates;
     }
 
     public boolean isMessageHistory() {
@@ -1952,6 +1982,17 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Whether tracing should trace inner details from route templates (or kamelets). Turning this on increases the
+     * verbosity of tracing by including events from internal routes in the templates or kamelets.
+     *
+     * Default is false.
+     */
+    public T withTracingTemplates(boolean tracingTemplates) {
+        this.tracingTemplates = tracingTemplates;
+        return (T) this;
+    }
+
+    /**
      * Sets whether backlog tracing is enabled or not.
      *
      * Default is false.
@@ -1969,6 +2010,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withBacklogTracingStandby(boolean backlogTracingStandby) {
         this.backlogTracingStandby = backlogTracingStandby;
+        return (T) this;
+    }
+
+    /**
+     * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases
+     * the verbosity of tracing by including events from internal routes in the templates or kamelets.
+     *
+     * Default is false.
+     */
+    public T withBacklogTracingTemplates(boolean backlogTracingTemplates) {
+        this.backlogTracingTemplates = backlogTracingTemplates;
         return (T) this;
     }
 

@@ -443,6 +443,26 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setBacklogTracingTemplates(boolean backlogTracingTemplates) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isBacklogTracingTemplates() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTracingTemplates(boolean tracingTemplates) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isTracingTemplates() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isDebugging() {
         throw new UnsupportedOperationException();
     }

@@ -100,6 +100,26 @@ public interface BacklogTracer {
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
     /**
+     * Whether to trace routes that is created from Rest DSL.
+     */
+    boolean isTraceRests();
+
+    /**
+     * Whether to trace routes that is created from route templates or kamelets.
+     */
+    void setTraceRests(boolean traceRests);
+
+    /**
+     * Whether to trace routes that is created from route templates or kamelets.
+     */
+    boolean isTraceTemplates();
+
+    /**
+     * Whether to trace routes that is created from route templates or kamelets.
+     */
+    void setTraceTemplates(boolean traceTemplates);
+
+    /**
      * Filter for tracing by route or node id
      */
     String getTracePattern();

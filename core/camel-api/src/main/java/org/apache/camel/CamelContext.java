@@ -1228,6 +1228,19 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean isBacklogTracingStandby();
 
     /**
+     * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this off can
+     * reduce the verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel
+     * routes only.
+     */
+    void setBacklogTracingTemplates(boolean backlogTracingTemplates);
+
+    /**
+     * Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases
+     * the verbosity of tracing by including events from internal routes in the templates or kamelets.
+     */
+    boolean isBacklogTracingTemplates();
+
+    /**
      * Gets the current {@link UuidGenerator}
      *
      * @return the uuidGenerator
@@ -1400,6 +1413,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param format the logging format
      */
     void setTracingLoggingFormat(String format);
+
+    /**
+     * Whether tracing should trace inner details from route templates (or kamelets). Turning this on increases the
+     * verbosity of tracing by including events from internal routes in the templates or kamelets.
+     */
+    void setTracingTemplates(boolean tracingTemplates);
+
+    /**
+     * Whether tracing should trace inner details from route templates (or kamelets). Turning this off can reduce the
+     * verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel routes only.
+     */
+    boolean isTracingTemplates();
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
