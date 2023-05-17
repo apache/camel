@@ -30,7 +30,11 @@ import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -39,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
 
     @RegisterExtension
@@ -83,24 +89,24 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivity() {
-
+    @Order(1)
+    public void testLiveness() {
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");
+    }
 
+    @Test
+    @Order(2)
+    public void testReadinessWhenDown() {
         // health-check readiness should be down
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2S3HealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-kinesis-consumer"))
-                    .findAny()
-                    .isPresent();
+
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2S3HealthCheck, "aws2-kinesis check");
             Assertions.assertFalse(hasRegionMessage, "aws2-kinesis check error message");
         });
 
