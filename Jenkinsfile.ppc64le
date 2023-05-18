@@ -71,7 +71,7 @@ pipeline {
             }
             steps {
                 // Skip modules camel-kudu and docs as these are not supported on ppc64le.
-                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
+                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install -pl '!docs'"
             }
         }
 
