@@ -89,7 +89,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
             JsonObject jo = new JsonObject();
-            jo.put("uri", e.toString());
+            jo.put("uri", e.getEndpointUri());
             var stat = findStats(stats, e.getEndpointUri());
             if (stat.isPresent()) {
                 var st = stat.get();
