@@ -329,7 +329,7 @@
         <jool-version>0.9.14</jool-version>
         <jooq-version>3.16.11</jooq-version>
         <joor-version>0.9.14</joor-version>
-        <johnzon-version>1.2.19</johnzon-version>
+        <johnzon-version>1.2.20</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jslt-version>0.1.11</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
@@ -423,7 +423,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.91.Final</netty-version>
+        <netty-version>4.1.92.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
