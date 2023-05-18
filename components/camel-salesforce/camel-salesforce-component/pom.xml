@@ -287,40 +287,12 @@
                 <version>${gmavenplus-plugin-version}</version>
                 <executions>
                     <execution>
-                        <id>check-platform</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <scripts>
-                                <script><![CDATA[
-                  project.properties['skipTests']=project.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';
-                ]]></script>
-                            </scripts>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <goals>
                             <goal>addTestSources</goal>
                             <goal>compileTests</goal>
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.groovy</groupId>
-                        <artifactId>groovy</artifactId>
-                        <version>${groovy-version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.groovy</groupId>
-                        <artifactId>groovy-ant</artifactId>
-                        <version>${groovy-version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
