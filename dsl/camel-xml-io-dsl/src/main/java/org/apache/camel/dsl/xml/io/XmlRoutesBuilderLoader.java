@@ -18,11 +18,9 @@ package org.apache.camel.dsl.xml.io;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-import jakarta.inject.Named;
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,13 +37,12 @@ import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
-import org.apache.camel.support.DIRegistry;
-import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -133,26 +130,20 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     packagesToScan.add(cs.getBasePackage());
                 });
                 if (!packagesToScan.isEmpty()) {
-                    DIRegistry registry = null;
-                    DefaultRegistry camelRegistry = getCamelContext().getRegistry(DefaultRegistry.class);
-                    if (camelRegistry != null) {
-                        List<BeanRepository> repos = camelRegistry.getRepositories();
-                        if (repos != null) {
-                            Optional<BeanRepository> diRegistry
-                                    = repos.stream().filter(r -> DIRegistry.class.isAssignableFrom(r.getClass())).findAny();
-                            if (diRegistry.isPresent()) {
-                                registry = (DIRegistry) diRegistry.get();
-                            }
-                        }
-                    }
+                    Registry registry = getCamelContext().getRegistry();
                     if (registry != null) {
                         PackageScanClassResolver scanner
                                 = getCamelContext().getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
-                        if (scanner != null) {
+                        Injector injector = getCamelContext().getInjector();
+                        if (scanner != null && injector != null) {
                             for (String pkg : packagesToScan) {
-                                Set<Class<?>> classes = scanner.findAnnotated(Named.class, pkg);
+                                Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
                                 for (Class<?> c : classes) {
-                                    registry.bind(c, c);
+                                    // should:
+                                    // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
+                                    // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
+                                    // - bind to registry if @org.apache.camel.BindToRegistry is present
+                                    injector.newInstance(c, true);
                                 }
                             }
                         }

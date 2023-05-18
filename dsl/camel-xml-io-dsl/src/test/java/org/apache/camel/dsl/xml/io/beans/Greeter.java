@@ -16,20 +16,22 @@
  */
 package org.apache.camel.dsl.xml.io.beans;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-
+import org.apache.camel.BeanInject;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.StringHelper;
 
-@Named("bean-from-registry")
+@BindToRegistry("bean-from-registry")
 public class Greeter implements Processor {
 
-    private final GreeterMessage message;
+    private GreeterMessage message;
 
-    @Inject
-    public Greeter(GreeterMessage message) {
+    public Greeter() {
+    }
+
+    @BeanInject
+    public void setMessage(GreeterMessage message) {
         this.message = message;
     }
 

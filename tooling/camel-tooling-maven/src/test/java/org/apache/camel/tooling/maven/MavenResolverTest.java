@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.support.DIRegistry;
+import org.apache.camel.tooling.maven.support.DIRegistry;
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.http.Header;

@@ -37,8 +37,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.camel.support.DIRegistry;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.tooling.maven.support.DIRegistry;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
