@@ -13276,15 +13276,6 @@ decompressed size. Default value: 1073741824
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="signatureKeyRing" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Keyring used for signing/verifying as byte array. You can not set the
-signatureKeyFileName and signatureKeyRing at the same time.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
         <xs:attribute name="armored" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
