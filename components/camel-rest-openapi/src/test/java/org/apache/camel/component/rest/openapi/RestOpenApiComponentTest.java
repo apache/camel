@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -95,6 +96,27 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
         pet.name = "Jean-Luc Picard";
 
         final Pet created = template.requestBody("direct:addPet", pet, Pet.class);
+
+        assertNotNull(created);
+
+        assertEquals(Integer.valueOf(14), created.id);
+
+        petstore.verify(
+                postRequestedFor(urlEqualTo("/v2/pet"))
+                        // Swagger V2 converted to V3 ignores "produces" if there is no associated response schema
+                        //.withHeader("Accept", equalTo("application/xml, application/json"))
+                        .withHeader("Content-Type", equalTo("application/xml")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "Classpath", "Bean", "File" })
+    public void shouldBeAddingPetsDifferentLookup(String startPath) throws Exception {
+        doSetUp("http");
+
+        final Pet pet = new Pet();
+        pet.name = "Jean-Luc Picard";
+
+        final Pet created = template.requestBody("direct:addPetVia" + startPath, pet, Pet.class);
 
         assertNotNull(created);
 
@@ -212,6 +234,8 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
         camelContext.addComponent("altPetStore", altPetStore);
 
+        camelContext.getRegistry().bind("openapiBean", new RestOpenApiBean());
+
         return camelContext;
     }
 
@@ -230,7 +254,14 @@ public class RestOpenApiComponentTest extends CamelTestSupport {
 
                 from("direct:getPetByIdWithEndpointParams").to("petStore:getPetById?petId=14").unmarshal(jaxb);
 
-                from("direct:addPet").marshal(jaxb).to("petStore:addPet").unmarshal(jaxb);
+                from("direct:addPet").marshal(jaxb).to("petStore:addPet?specificationUri=classpath:openapi.json")
+                        .unmarshal(jaxb);
+                from("direct:addPetViaClasspath").marshal(jaxb).to("petStore:addPet?specificationUri=classpath:openapi.json")
+                        .unmarshal(jaxb);
+                from("direct:addPetViaBean").marshal(jaxb)
+                        .to("petStore:addPet?specificationUri=bean:openapiBean.getOpenApiJson").unmarshal(jaxb);
+                from("direct:addPetViaFile").marshal(jaxb)
+                        .to("petStore:addPet?specificationUri=file:target/test-classes/openapi.json").unmarshal(jaxb);
 
                 from("direct:findPetsByStatus").to("petStore:findPetsByStatus").unmarshal(jaxb);
             }

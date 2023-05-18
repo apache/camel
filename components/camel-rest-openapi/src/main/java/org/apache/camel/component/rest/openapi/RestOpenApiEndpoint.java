@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,15 +57,18 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Optional.ofNullable;
@@ -714,11 +720,36 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         final OpenAPIParser openApiParser = new OpenAPIParser();
         final ParseOptions options = new ParseOptions();
         options.setResolveFully(true);
-        final SwaggerParseResult openApi = openApiParser.readLocation(uriAsString, null, options);
 
-        if (openApi != null && openApi.getOpenAPI() != null) {
-            checkV2specification(openApi.getOpenAPI(), uri);
-            return openApi.getOpenAPI();
+        File tmpFileToDelete = null;
+        try {
+            Resource resource = ResourceHelper.resolveMandatoryResource(camelContext, uriAsString);
+            //if location can not be used in Swagger API (e.g. in case of "bean;")
+            // the content of the resource has to be copied into a tmp file for swagger API.
+            String locationToSearch;
+            if ("bean:".equals(ResourceHelper.getScheme(uriAsString))) {
+                Path tmpFile = Files.createTempFile(null, null);
+                tmpFileToDelete = tmpFile.toFile();
+                tmpFileToDelete.deleteOnExit();
+                FileUtils.copyInputStreamToFile(resource.getInputStream(), tmpFileToDelete);
+                locationToSearch = tmpFile.toUri().toString();
+            } else {
+                locationToSearch = resource.getURI().toString();
+            }
+
+            final SwaggerParseResult openApi = openApiParser.readLocation(locationToSearch, null, options);
+
+            if (openApi != null && openApi.getOpenAPI() != null) {
+                checkV2specification(openApi.getOpenAPI(), uri);
+                return openApi.getOpenAPI();
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "The given OpenApi specification could not be loaded from `" + uri + "`.", e);
+        } finally {
+            if (tmpFileToDelete != null) {
+                tmpFileToDelete.delete();
+            }
         }
 
         // In theory there should be a message in the parse result but it has disappeared...
