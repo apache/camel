@@ -43,7 +43,6 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
 
     private static final Logger LOG = LoggerFactory.getLogger(PublishEventNotifier.class);
 
-    private CamelContext camelContext;
     private Endpoint endpoint;
     private String endpointUri;
     private Producer producer;
@@ -57,7 +56,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
         }
 
         // only notify when camel context is running
-        if (!camelContext.getStatus().isStarted()) {
+        if (!getCamelContext().getStatus().isStarted()) {
             LOG.debug("Cannot publish event as CamelContext is not started: {}", event);
             return;
         }
@@ -82,16 +81,6 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
         return true;
     }
 
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -110,13 +99,13 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "camelContext", this);
+        ObjectHelper.notNull(getCamelContext(), "camelContext", this);
         if (endpoint == null && endpointUri == null) {
             throw new IllegalArgumentException("Either endpoint or endpointUri must be configured");
         }
 
         if (endpoint == null) {
-            endpoint = camelContext.getEndpoint(endpointUri);
+            endpoint = getCamelContext().getEndpoint(endpointUri);
         }
 
         producer = endpoint.createProducer();

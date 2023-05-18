@@ -86,6 +86,8 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
             this.startedEventNotifiers.add(eventNotifier);
         }
         if (getCamelContext() != null) {
+            // inject camel context if needed
+            CamelContextAware.trySetCamelContext(eventNotifier, getCamelContext());
             // okay we have an event notifier that accepts exchange events so its applicable
             if (!eventNotifier.isIgnoreExchangeEvents()) {
                 getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
