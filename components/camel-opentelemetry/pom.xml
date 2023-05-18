@@ -26,7 +26,6 @@
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-
     <artifactId>camel-opentelemetry</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: OpenTelemetry</name>
@@ -37,6 +36,12 @@
         <label>monitoring,microservice</label>
         <title>OpenTelemetry</title>
         <opentracing-agent.lib>${project.build.directory}/lib</opentracing-agent.lib>
+
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
+        <camel.surefire.forkCount>1</camel.surefire.forkCount>
+        <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
     </properties>
 
     <dependencies>
@@ -88,5 +93,54 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${camel.surefire.fork.vmargs} -Xmx1024m</argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <excludedGroups>not-parallel</excludedGroups>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>serials-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>4</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <groups>not-parallel</groups>
+                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/activemq-data</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

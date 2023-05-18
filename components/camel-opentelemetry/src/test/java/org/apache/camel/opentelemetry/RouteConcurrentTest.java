@@ -22,10 +22,13 @@ import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tags({ @Tag("not-parallel") })
 class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
