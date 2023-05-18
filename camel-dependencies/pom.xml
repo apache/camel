@@ -335,7 +335,7 @@
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
     <jnats-version>2.16.5</jnats-version>
     <jodatime2-version>2.11.1</jodatime2-version>
-    <johnzon-version>1.2.19</johnzon-version>
+    <johnzon-version>1.2.20</johnzon-version>
     <jolokia-version>1.7.2</jolokia-version>
     <jolt-version>0.1.7</jolt-version>
     <jool-version>0.9.14</jool-version>
@@ -433,7 +433,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.91.Final</netty-version>
+    <netty-version>4.1.92.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
     <nitrite-version>3.4.4</nitrite-version>
