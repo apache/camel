@@ -10,6 +10,8 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
 
+The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`.
+
 ==== Tracing
 
 The xref:tracer.adoc[Tracer] and xref:backlog-tracer.adoc[Backlog Tracer] no longer includes internal tracing events
