@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
@@ -43,11 +41,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements CamelContextAware, RuntimeEndpointRegistry {
+public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements RuntimeEndpointRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRuntimeEndpointRegistry.class);
-
-    private CamelContext camelContext;
 
     // route id -> endpoint urls
     private Map<String, Set<String>> inputs;
@@ -57,16 +53,6 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     private volatile boolean extended;
     private EndpointUtilizationStatistics inputUtilization;
     private EndpointUtilizationStatistics outputUtilization;
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
 
     @Override
     public boolean isEnabled() {
@@ -188,7 +174,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     protected void doInit() throws Exception {
-        ObjectHelper.notNull(camelContext, "camelContext", this);
+        ObjectHelper.notNull(getCamelContext(), "camelContext", this);
 
         if (inputs == null) {
             inputs = new HashMap<>();

@@ -468,6 +468,10 @@ public final class DefaultConfigurationConfigurer {
         if (!tcs.isEmpty()) {
             tcs.forEach(t -> camelContext.getTypeConverterRegistry().addTypeConverters(t));
         }
+        Set<EventNotifier> ens = registry.findByType(EventNotifier.class);
+        if (!ens.isEmpty()) {
+            ens.forEach(n -> camelContext.getManagementStrategy().addEventNotifier(n));
+        }
         Set<EndpointStrategy> ess = registry.findByType(EndpointStrategy.class);
         if (!ess.isEmpty()) {
             ess.forEach(ecc::registerEndpointCallback);

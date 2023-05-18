@@ -18,6 +18,8 @@ package org.apache.camel.main.injection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -39,6 +41,8 @@ import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
@@ -65,6 +69,7 @@ public final class AnnotationDependencyInjection {
 
         // camel / common
         registry.bind("CamelTypeConverterCompilePostProcessor", new TypeConverterCompilePostProcessor());
+        registry.bind("CamelEventNotifierCompilePostProcessor", new EventNotifierCompilePostProcessor());
         registry.bind("CamelBindToRegistryCompilePostProcessor", new BindToRegistryCompilePostProcessor());
         // spring
         registry.bind("SpringAnnotationCompilePostProcessor", new SpringAnnotationCompilePostProcessor());
@@ -95,6 +100,34 @@ public final class AnnotationDependencyInjection {
             }
         }
 
+    }
+
+    private static class EventNotifierCompilePostProcessor implements CompilePostProcessor {
+
+        private final Map<String, EventNotifier> notifiers = new HashMap<>();
+
+        @Override
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
+            if (instance == null) {
+                return;
+            }
+
+            if (instance instanceof EventNotifier) {
+                ManagementStrategy ms = camelContext.getManagementStrategy();
+                if (ms != null) {
+                    // remove previous instance
+                    EventNotifier old = notifiers.get(name);
+                    if (old != null) {
+                        ms.removeEventNotifier(old);
+                    }
+                    // and new notifier
+                    EventNotifier en = (EventNotifier) instance;
+                    ms.addEventNotifier(en);
+                    notifiers.put(name, en);
+                }
+            }
+        }
     }
 
     private static class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
