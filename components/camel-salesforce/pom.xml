@@ -32,12 +32,6 @@
     <name>Camel :: Salesforce :: Parent</name>
     <description>Camel Salesforce parent</description>
 
-    <modules>
-        <module>camel-salesforce-component</module>
-        <module>camel-salesforce-codegen</module>
-        <module>camel-salesforce-maven-plugin</module>
-    </modules>
-
     <properties>
         <salesforce.component.root>${project.basedir}</salesforce.component.root>
 
@@ -49,5 +43,35 @@
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
     </properties>
+
+    <profiles>
+        <profile>
+            <!-- Salesforce requires protobuf generator which is not available for s390x -->
+            <id>NotS390x</id>
+            <activation>
+                <os>
+                    <arch>!s390x</arch>
+                </os>
+            </activation>
+            <modules>
+                <module>camel-salesforce-component</module>
+                <module>camel-salesforce-codegen</module>
+                <module>camel-salesforce-maven-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <!-- Salesforce requires protobuf generator which is not available for s390x -->
+            <id>s390x</id>
+            <activation>
+                <os>
+                    <arch>s390x</arch>
+                </os>
+            </activation>
+            <modules>
+                <module>camel-salesforce-codegen</module>
+                <module>camel-salesforce-maven-plugin</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
