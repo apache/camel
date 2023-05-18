@@ -47,6 +47,12 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>${jakarta-inject-version}</version>
+        </dependency>
+
         <!-- maven / maven resolver -->
         <dependency>
             <groupId>org.apache.maven</groupId>

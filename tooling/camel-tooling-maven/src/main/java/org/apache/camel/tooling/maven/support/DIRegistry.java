@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.tooling.maven.support;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import org.apache.camel.support.SupplierRegistry;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.Suppliers;
 

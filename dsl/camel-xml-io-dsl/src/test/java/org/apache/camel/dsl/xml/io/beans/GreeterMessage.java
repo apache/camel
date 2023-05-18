@@ -16,15 +16,13 @@
  */
 package org.apache.camel.dsl.xml.io.beans;
 
-import jakarta.inject.Named;
+import org.apache.camel.BindToRegistry;
 
-@Named
+@BindToRegistry
 public class GreeterMessage {
 
-    private final String msg = "Hello";
-
     public String getMsg() {
-        return msg;
+        return "Hello";
     }
 
 }

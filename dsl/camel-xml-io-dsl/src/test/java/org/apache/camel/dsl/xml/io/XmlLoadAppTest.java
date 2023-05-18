@@ -19,8 +19,6 @@ package org.apache.camel.dsl.xml.io;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.support.DIRegistry;
-import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +30,6 @@ public class XmlLoadAppTest {
     @Test
     public void testLoadCamelAppFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getCamelContextExtension().setRegistry(new DefaultRegistry(new DIRegistry()));
             context.start();
 
             // load route from XML and add them to the existing camel context
