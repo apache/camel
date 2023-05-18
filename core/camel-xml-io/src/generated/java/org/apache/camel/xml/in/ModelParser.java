@@ -29,10 +29,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.w3c.dom.Element;
 import org.apache.camel.model.*;
-import org.apache.camel.model.app.ApplicationDefinition;
-import org.apache.camel.model.app.BeansDefinition;
-import org.apache.camel.model.app.ComponentScanDefinition;
+import org.apache.camel.model.app.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
@@ -1581,7 +1580,16 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends BeansDefinition> ElementHandler<T> beansDefinitionElementHandler() {
         return (def, key) -> {
+            if ("http://www.springframework.org/schema/beans".equals(parser.getNamespace())) {
+                Element el = doParseDOMElement("beans", "http://www.springframework.org/schema/beans", def.getSpringBeans());
+                if (el != null) {
+                    doAddElement(el, def.getSpringBeans(), def::setSpringBeans);
+                    return true;
+                }
+                return false;
+            }
             switch (key) {
+                case "bean": doAdd(doParseRegistryBeanDefinition(), def.getBeans(), def::setBeans); break;
                 case "component-scan": doAdd(doParseComponentScanDefinition(), def.getComponentScanning(), def::setComponentScanning); break;
                 case "rest": doAdd(doParseRestDefinition(), def.getRests(), def::setRests); break;
                 case "routeConfiguration": doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations); break;
@@ -1595,17 +1603,58 @@ public class ModelParser extends BaseParser {
     }
     protected BeansDefinition doParseBeansDefinition() throws IOException, XmlPullParserException {
         return doParse(new BeansDefinition(), 
-            noAttributeHandler(), beansDefinitionElementHandler(), noValueHandler());
+            noAttributeHandler(), beansDefinitionElementHandler(), noValueHandler(), true);
     }
     protected ComponentScanDefinition doParseComponentScanDefinition() throws IOException, XmlPullParserException {
         return doParse(new ComponentScanDefinition(), (def, key, val) -> {
+            if ("base-package".equals(key)) {
+                def.setBasePackage(val);
+                return true;
+            }
+            return false;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected RegistryBeanDefinition doParseRegistryBeanDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RegistryBeanDefinition(), (def, key, val) -> {
             switch (key) {
-                case "base-package": def.setBasePackage(val); break;
-                case "use-jsr-330": def.setUseJsr330(val); break;
+                case "name": def.setName(val); break;
+                case "type": def.setType(val); break;
                 default: return false;
             }
             return true;
-        }, noElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            if ("properties".equals(key)) {
+                def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition()));
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
+    protected BeanPropertiesDefinition doParseBeanPropertiesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanPropertiesDefinition(),
+            noAttributeHandler(), (def, key) -> {
+            if ("property".equals(key)) {
+                doAdd(doParseBeanPropertyDefinition(), def.getProperties(), def::setProperties);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
+    protected BeanPropertyDefinition doParseBeanPropertyDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanPropertyDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "key": def.setKey(val); break;
+                case "value": def.setValue(val); break;
+                default: return false;
+            }
+            return true;
+        }, (def, key) -> {
+            if ("properties".equals(key)) {
+                def.setProperties(doParseBeanPropertiesDefinition());
+                return true;
+            }
+            return false;
+        }, noValueHandler());
     }
     protected BlacklistServiceCallServiceFilterConfiguration doParseBlacklistServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
         return doParse(new BlacklistServiceCallServiceFilterConfiguration(),

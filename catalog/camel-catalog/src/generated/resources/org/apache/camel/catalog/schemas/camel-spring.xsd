@@ -81,6 +81,17 @@ BeanPostProcessor to post process beans.
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="beans" type="tns:beansDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+A groupping POJO (and related XML root element) that's historically associated
+with entire application (or its distinguished fragment). This class is not meant
+to be used with Camel Java DSL, but it's needed to generate XML Schema and MX
+parser methods.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="bearerToken" type="tns:bearerTokenDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -110,6 +121,15 @@ Deprecated: null
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Deprecated: null
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
+  <xs:element name="camel-app" type="tns:applicationDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+If beans reminds Spring application too much, we can use camel-app (similar to
+web-app from Servlet API specification).
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -384,7 +404,7 @@ Enriches a message with data from a secondary resource
   <xs:element name="errorHandler" nillable="true" type="xs:anyType">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Camel error handling.
+Error handler settings
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -16758,6 +16778,901 @@ Uses a custom thread pool.
       
   </xs:complexType>
     
+  <xs:complexType name="applicationDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:beansDefinition">
+                
+        <xs:sequence/>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="beansDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="component-scan" type="tns:componentScanDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Component scanning definition(s). But unlike package/packageScan/contextScan,
+we're not scanning only for org.apache.camel.builder.RouteBuilder.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition"/>
+            
+      <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templatedRoute"/>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:route"/>
+          
+    </xs:sequence>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="componentScanDefinition">
+        
+    <xs:sequence/>
+        
+    <xs:attribute name="base-package" type="xs:string"/>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="registryBeanDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
+          
+    </xs:sequence>
+        
+    <xs:attribute name="name" type="xs:string"/>
+        
+    <xs:attribute name="type" type="xs:string"/>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="beanPropertiesDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="property" type="tns:beanPropertyDefinition"/>
+          
+    </xs:sequence>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="beanPropertyDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
+          
+    </xs:sequence>
+        
+    <xs:attribute name="key" type="xs:string"/>
+        
+    <xs:attribute name="value" type="xs:string"/>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="restDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+                
+        <xs:sequence>
+                    
+          <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirements" type="tns:securityDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+Sets the security requirement(s) for all endpoints.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+                    
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+                        
+            <xs:element ref="tns:delete"/>
+                        
+            <xs:element ref="tns:get"/>
+                        
+            <xs:element ref="tns:head"/>
+                        
+            <xs:element ref="tns:patch"/>
+                        
+            <xs:element ref="tns:post"/>
+                        
+            <xs:element ref="tns:put"/>
+                      
+          </xs:choice>
+                  
+        </xs:sequence>
+                
+        <xs:attribute name="path" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Path of the rest service, such as /foo.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="consumes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To define the content type what the REST service consumes (accept as input),
+such as application/xml or application/json. This option will override what may
+be configured on a parent level.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="produces" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To define the content type what the REST service produces (uses for output),
+such as application/xml or application/json This option will override what may
+be configured on a parent level.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to disable this REST service from the route during build time. Once an
+REST service has been disabled then it cannot be enabled later at runtime.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="bindingMode" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the binding mode to use. This option will override what may be configured
+on a parent level The default value is auto. Default value: off
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to skip binding on output if there is a custom HTTP error code header.
+This allows to build custom error messages that do not bind to json / xml etc,
+as success messages otherwise will do. This option will override what may be
+configured on a parent level. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="clientRequestValidation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to enable validation of the client request to check: 1) Content-Type
+header matches what the Rest DSL consumes; returns HTTP Status 415 if validation
+error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
+406 if validation error. 3) Missing required data (query parameters, HTTP
+headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of
+the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
+Status 400 if validation error. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="enableCORS" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to enable CORS headers in the HTTP response. This option will override
+what may be configured on a parent level The default value is false. Default
+value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="apiDocs" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to include or exclude this rest operation in API documentation. This
+option will override what may be configured on a parent level. The default value
+is true. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="tag" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To configure a special tag for the operations within this rest definition.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="restSecuritiesDefinition">
+        
+    <xs:sequence>
+            
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+                
+        <xs:element ref="tns:apiKey"/>
+                
+        <xs:element ref="tns:basicAuth"/>
+                
+        <xs:element name="bearer" type="tns:bearerTokenDefinition"/>
+                
+        <xs:element ref="tns:oauth2"/>
+                
+        <xs:element ref="tns:openIdConnect"/>
+                
+        <xs:element ref="tns:mutualTLS"/>
+              
+      </xs:choice>
+          
+    </xs:sequence>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="apiKeyDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:restSecurityDefinition">
+                
+        <xs:sequence/>
+                
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The name of the header or query parameter to be used.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="inHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use header as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="inQuery" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use query parameter as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="inCookie" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a cookie as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType abstract="true" name="restSecurityDefinition">
+        
+    <xs:sequence/>
+        
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Key used to refer to this security definition.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="description" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+A short description for security scheme.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="basicAuthDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:restSecurityDefinition">
+                
+        <xs:sequence/>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="bearerTokenDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:restSecurityDefinition">
+                
+        <xs:sequence/>
+                
+        <xs:attribute name="format" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A hint to the client to identify how the bearer token is formatted.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="oAuth2Definition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:restSecurityDefinition">
+                
+        <xs:sequence>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="scopes" type="tns:restPropertyDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+The available scopes for an OAuth2 security scheme.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+                  
+        </xs:sequence>
+                
+        <xs:attribute name="authorizationUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The authorization URL to be used for this flow. This SHOULD be in the form of a
+URL. Required for implicit and access code flows.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="tokenUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The token URL to be used for this flow. This SHOULD be in the form of a URL.
+Required for password, application, and access code flows.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="refreshUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The URL to be used for obtaining refresh tokens. This MUST be in the form of a
+URL.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="flow" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The flow used by the OAuth2 security scheme. Valid values are implicit,
+password, application or accessCode.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="restPropertyDefinition">
+        
+    <xs:sequence/>
+        
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Property key.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="value" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Property value.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="openIdConnectDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:restSecurityDefinition">
+                
+        <xs:sequence/>
+                
+        <xs:attribute name="url" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+OpenId Connect URL to discover OAuth2 configuration values.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="mutualTLSDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:restSecurityDefinition">
+                
+        <xs:sequence/>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="securityDefinition">
+        
+    <xs:sequence/>
+        
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Key used to refer to this security definition.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="scopes" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The scopes to allow (separate multiple scopes by comma).
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
+  <xs:complexType abstract="true" name="verbDefinition">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+                
+        <xs:sequence>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:param"/>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:responseMessage"/>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:security"/>
+                    
+          <xs:element ref="tns:to"/>
+                  
+        </xs:sequence>
+                
+        <xs:attribute name="path" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The path mapping URIs of this REST operation such as /{id}.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="consumes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To define the content type what the REST service consumes (accept as input),
+such as application/xml or application/json. This option will override what may
+be configured on a parent level.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="produces" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To define the content type what the REST service produces (uses for output),
+such as application/xml or application/json This option will override what may
+be configured on a parent level.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to disable this REST service from the route during build time. Once an
+REST service has been disabled then it cannot be enabled later at runtime.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="type" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name to use for binding from input to POJO for the incoming data
+This option will override what may be configured on a parent level. The name of
+the class of the input data. Append a to the end of the name if you want the
+input to be an array type.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="outType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name to use for binding from POJO to output for the outgoing data
+This option will override what may be configured on a parent level The name of
+the class of the input data. Append a to the end of the name if you want the
+input to be an array type.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="bindingMode" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the binding mode to use. This option will override what may be configured
+on a parent level The default value is off. Default value: off
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to skip binding on output if there is a custom HTTP error code header.
+This allows to build custom error messages that do not bind to json / xml etc,
+as success messages otherwise will do. This option will override what may be
+configured on a parent level. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="clientRequestValidation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to enable validation of the client request to check: 1) Content-Type
+header matches what the Rest DSL consumes; returns HTTP Status 415 if validation
+error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
+406 if validation error. 3) Missing required data (query parameters, HTTP
+headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of
+the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
+Status 400 if validation error. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="enableCORS" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to enable CORS headers in the HTTP response. This option will override
+what may be configured on a parent level The default value is false. Default
+value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="apiDocs" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether to include or exclude this rest operation in API documentation. The
+default value is true. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="deprecated" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Marks this rest operation as deprecated in OpenApi documentation. Default value:
+false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="routeId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the id of the route.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="paramDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element minOccurs="0" name="allowableValues">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter list of allowable values (enum).
+          ]]></xs:documentation>
+        </xs:annotation>
+                
+        <xs:complexType>
+                    
+          <xs:sequence>
+                        
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
+                      
+          </xs:sequence>
+                  
+        </xs:complexType>
+              
+      </xs:element>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter examples.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+          
+    </xs:sequence>
+        
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter name.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="type" type="tns:restParamType" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter type. Default value: path
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="description" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter description.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="defaultValue" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter default value.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="required" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter required flag. Default value: true
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="collectionFormat" type="tns:collectionFormat">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter collection format. Default value: csv
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="arrayType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter array type. Required if data type is array. Describes the
+type of items in the array. Default value: string
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="dataType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter data type. Default value: string
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="dataFormat" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter data format.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="responseMessageDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="tns:responseHeaderDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Adds a response header.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+            
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Examples of response messages.
+          ]]></xs:documentation>
+        </xs:annotation>
+      </xs:element>
+          
+    </xs:sequence>
+        
+    <xs:attribute name="code" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The response code such as a HTTP status code. Default value: 200
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="message" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The response message (description).
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="responseModel" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The response model.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="responseHeaderDefinition">
+        
+    <xs:sequence>
+            
+      <xs:element minOccurs="0" name="allowableValues">
+        <xs:annotation>
+          <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter list of allowable values.
+          ]]></xs:documentation>
+        </xs:annotation>
+                
+        <xs:complexType>
+                    
+          <xs:sequence>
+                        
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
+                      
+          </xs:sequence>
+                  
+        </xs:complexType>
+              
+      </xs:element>
+          
+    </xs:sequence>
+        
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Name of the parameter. This option is mandatory.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="description" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Description of the parameter.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="collectionFormat" type="tns:collectionFormat">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter collection format. Default value: csv
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="arrayType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter array type. Required if data type is array. Describes the
+type of items in the array. Default value: string
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="dataType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the header data type. Default value: string
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="dataFormat" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the parameter data format.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="example" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Sets the example.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+      
+  </xs:complexType>
+    
   <xs:complexType name="blacklistServiceCallServiceFilterConfiguration">
         
     <xs:complexContent>
@@ -18587,110 +19502,6 @@ configuration, so these custom functions can be used in xquery expressions.
       
   </xs:complexType>
     
-  <xs:complexType name="apiKeyDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:restSecurityDefinition">
-                
-        <xs:sequence/>
-                
-        <xs:attribute name="name" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The name of the header or query parameter to be used.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="inHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use header as the location of the API key. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="inQuery" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use query parameter as the location of the API key. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="inCookie" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a cookie as the location of the API key. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType abstract="true" name="restSecurityDefinition">
-        
-    <xs:sequence/>
-        
-    <xs:attribute name="key" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Key used to refer to this security definition.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="description" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-A short description for security scheme.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="basicAuthDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:restSecurityDefinition">
-                
-        <xs:sequence/>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="bearerTokenDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:restSecurityDefinition">
-                
-        <xs:sequence/>
-                
-        <xs:attribute name="format" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A hint to the client to identify how the bearer token is formatted.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
   <xs:complexType name="deleteDefinition">
         
     <xs:complexContent>
@@ -18702,444 +19513,6 @@ A hint to the client to identify how the bearer token is formatted.
       </xs:extension>
           
     </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType abstract="true" name="verbDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:optionalIdentifiedDefinition">
-                
-        <xs:sequence>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:param"/>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:responseMessage"/>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:security"/>
-                    
-          <xs:element ref="tns:to"/>
-                  
-        </xs:sequence>
-                
-        <xs:attribute name="path" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The path mapping URIs of this REST operation such as /{id}.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="consumes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To define the content type what the REST service consumes (accept as input),
-such as application/xml or application/json. This option will override what may
-be configured on a parent level.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="produces" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To define the content type what the REST service produces (uses for output),
-such as application/xml or application/json This option will override what may
-be configured on a parent level.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="disabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to disable this REST service from the route during build time. Once an
-REST service has been disabled then it cannot be enabled later at runtime.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="type" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name to use for binding from input to POJO for the incoming data
-This option will override what may be configured on a parent level. The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="outType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name to use for binding from POJO to output for the outgoing data
-This option will override what may be configured on a parent level The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="bindingMode" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the binding mode to use. This option will override what may be configured
-on a parent level The default value is off. Default value: off
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to skip binding on output if there is a custom HTTP error code header.
-This allows to build custom error messages that do not bind to json / xml etc,
-as success messages otherwise will do. This option will override what may be
-configured on a parent level. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="clientRequestValidation" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable validation of the client request to check: 1) Content-Type
-header matches what the Rest DSL consumes; returns HTTP Status 415 if validation
-error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
-406 if validation error. 3) Missing required data (query parameters, HTTP
-headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of
-the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
-Status 400 if validation error. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="enableCORS" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable CORS headers in the HTTP response. This option will override
-what may be configured on a parent level The default value is false. Default
-value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="apiDocs" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to include or exclude this rest operation in API documentation. The
-default value is true. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="deprecated" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Marks this rest operation as deprecated in OpenApi documentation. Default value:
-false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="routeId" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the id of the route.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="paramDefinition">
-        
-    <xs:sequence>
-            
-      <xs:element minOccurs="0" name="allowableValues">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter list of allowable values (enum).
-          ]]></xs:documentation>
-        </xs:annotation>
-                
-        <xs:complexType>
-                    
-          <xs:sequence>
-                        
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
-                      
-          </xs:sequence>
-                  
-        </xs:complexType>
-              
-      </xs:element>
-            
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter examples.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-          
-    </xs:sequence>
-        
-    <xs:attribute name="name" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter name.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="type" type="tns:restParamType" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter type. Default value: path
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="description" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter description.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="defaultValue" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter default value.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="required" type="xs:boolean">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter required flag. Default value: true
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="collectionFormat" type="tns:collectionFormat">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter collection format. Default value: csv
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="arrayType" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter array type. Required if data type is array. Describes the
-type of items in the array. Default value: string
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="dataType" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter data type. Default value: string
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="dataFormat" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter data format.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="restPropertyDefinition">
-        
-    <xs:sequence/>
-        
-    <xs:attribute name="key" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Property key.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="value" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Property value.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="responseMessageDefinition">
-        
-    <xs:sequence>
-            
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="tns:responseHeaderDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Adds a response header.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-            
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Examples of response messages.
-          ]]></xs:documentation>
-        </xs:annotation>
-      </xs:element>
-          
-    </xs:sequence>
-        
-    <xs:attribute name="code" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-The response code such as a HTTP status code. Default value: 200
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="message" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-The response message (description).
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="responseModel" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-The response model.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="responseHeaderDefinition">
-        
-    <xs:sequence>
-            
-      <xs:element minOccurs="0" name="allowableValues">
-        <xs:annotation>
-          <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter list of allowable values.
-          ]]></xs:documentation>
-        </xs:annotation>
-                
-        <xs:complexType>
-                    
-          <xs:sequence>
-                        
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
-                      
-          </xs:sequence>
-                  
-        </xs:complexType>
-              
-      </xs:element>
-          
-    </xs:sequence>
-        
-    <xs:attribute name="name" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Name of the parameter. This option is mandatory.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="description" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Description of the parameter.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="collectionFormat" type="tns:collectionFormat">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter collection format. Default value: csv
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="arrayType" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter array type. Required if data type is array. Describes the
-type of items in the array. Default value: string
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="dataType" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the header data type. Default value: string
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="dataFormat" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the parameter data format.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="example" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the example.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="securityDefinition">
-        
-    <xs:sequence/>
-        
-    <xs:attribute name="key" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Key used to refer to this security definition.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-        
-    <xs:attribute name="scopes" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-The scopes to allow (separate multiple scopes by comma).
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
       
   </xs:complexType>
     
@@ -19164,102 +19537,6 @@ The scopes to allow (separate multiple scopes by comma).
       <xs:extension base="tns:verbDefinition">
                 
         <xs:sequence/>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="mutualTLSDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:restSecurityDefinition">
-                
-        <xs:sequence/>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="oAuth2Definition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:restSecurityDefinition">
-                
-        <xs:sequence>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="scopes" type="tns:restPropertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The available scopes for an OAuth2 security scheme.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-                  
-        </xs:sequence>
-                
-        <xs:attribute name="authorizationUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The authorization URL to be used for this flow. This SHOULD be in the form of a
-URL. Required for implicit and access code flows.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="tokenUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The token URL to be used for this flow. This SHOULD be in the form of a URL.
-Required for password, application, and access code flows.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="refreshUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The URL to be used for obtaining refresh tokens. This MUST be in the form of a
-URL.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="flow" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The flow used by the OAuth2 security scheme. Valid values are implicit,
-password, application or accessCode.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="openIdConnectDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:restSecurityDefinition">
-                
-        <xs:sequence/>
-                
-        <xs:attribute name="url" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-OpenId Connect URL to discover OAuth2 configuration values.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
               
       </xs:extension>
           
@@ -19688,172 +19965,6 @@ to refer to an existing data format instance.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="restDefinition">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:optionalIdentifiedDefinition">
-                
-        <xs:sequence>
-                    
-          <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirements" type="tns:securityDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the security requirement(s) for all endpoints.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-                    
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-                        
-            <xs:element ref="tns:delete"/>
-                        
-            <xs:element ref="tns:get"/>
-                        
-            <xs:element ref="tns:head"/>
-                        
-            <xs:element ref="tns:patch"/>
-                        
-            <xs:element ref="tns:post"/>
-                        
-            <xs:element ref="tns:put"/>
-                      
-          </xs:choice>
-                  
-        </xs:sequence>
-                
-        <xs:attribute name="path" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Path of the rest service, such as /foo.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="consumes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To define the content type what the REST service consumes (accept as input),
-such as application/xml or application/json. This option will override what may
-be configured on a parent level.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="produces" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To define the content type what the REST service produces (uses for output),
-such as application/xml or application/json This option will override what may
-be configured on a parent level.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="disabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to disable this REST service from the route during build time. Once an
-REST service has been disabled then it cannot be enabled later at runtime.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="bindingMode" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the binding mode to use. This option will override what may be configured
-on a parent level The default value is auto. Default value: off
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to skip binding on output if there is a custom HTTP error code header.
-This allows to build custom error messages that do not bind to json / xml etc,
-as success messages otherwise will do. This option will override what may be
-configured on a parent level. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="clientRequestValidation" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable validation of the client request to check: 1) Content-Type
-header matches what the Rest DSL consumes; returns HTTP Status 415 if validation
-error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
-406 if validation error. 3) Missing required data (query parameters, HTTP
-headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of
-the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
-Status 400 if validation error. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="enableCORS" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to enable CORS headers in the HTTP response. This option will override
-what may be configured on a parent level The default value is false. Default
-value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="apiDocs" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to include or exclude this rest operation in API documentation. This
-option will override what may be configured on a parent level. The default value
-is true. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="tag" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To configure a special tag for the operations within this rest definition.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="restSecuritiesDefinition">
-        
-    <xs:sequence>
-            
-      <xs:choice maxOccurs="unbounded" minOccurs="0">
-                
-        <xs:element ref="tns:apiKey"/>
-                
-        <xs:element ref="tns:basicAuth"/>
-                
-        <xs:element name="bearer" type="tns:bearerTokenDefinition"/>
-                
-        <xs:element ref="tns:oauth2"/>
-                
-        <xs:element ref="tns:openIdConnect"/>
-                
-        <xs:element ref="tns:mutualTLS"/>
-              
-      </xs:choice>
-          
-    </xs:sequence>
       
   </xs:complexType>
     
@@ -21319,27 +21430,19 @@ multiple certificates.
       
   </xs:simpleType>
     
-  <xs:simpleType name="bindyType">
+  <xs:simpleType name="restParamType">
         
     <xs:restriction base="xs:string">
             
-      <xs:enumeration value="Csv"/>
+      <xs:enumeration value="body"/>
             
-      <xs:enumeration value="Fixed"/>
+      <xs:enumeration value="formData"/>
             
-      <xs:enumeration value="KeyValue"/>
-          
-    </xs:restriction>
-      
-  </xs:simpleType>
-    
-  <xs:simpleType name="yamlTypeFilterType">
-        
-    <xs:restriction base="xs:string">
+      <xs:enumeration value="header"/>
             
-      <xs:enumeration value="type"/>
+      <xs:enumeration value="path"/>
             
-      <xs:enumeration value="regexp"/>
+      <xs:enumeration value="query"/>
           
     </xs:restriction>
       
@@ -21363,19 +21466,27 @@ multiple certificates.
       
   </xs:simpleType>
     
-  <xs:simpleType name="restParamType">
+  <xs:simpleType name="bindyType">
         
     <xs:restriction base="xs:string">
             
-      <xs:enumeration value="body"/>
+      <xs:enumeration value="Csv"/>
             
-      <xs:enumeration value="formData"/>
+      <xs:enumeration value="Fixed"/>
             
-      <xs:enumeration value="header"/>
+      <xs:enumeration value="KeyValue"/>
+          
+    </xs:restriction>
+      
+  </xs:simpleType>
+    
+  <xs:simpleType name="yamlTypeFilterType">
+        
+    <xs:restriction base="xs:string">
             
-      <xs:enumeration value="path"/>
+      <xs:enumeration value="type"/>
             
-      <xs:enumeration value="query"/>
+      <xs:enumeration value="regexp"/>
           
     </xs:restriction>
       

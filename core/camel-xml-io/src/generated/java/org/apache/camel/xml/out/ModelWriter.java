@@ -29,9 +29,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import org.apache.camel.model.*;
-import org.apache.camel.model.app.ApplicationDefinition;
-import org.apache.camel.model.app.BeansDefinition;
-import org.apache.camel.model.app.ComponentScanDefinition;
+import org.apache.camel.model.app.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
@@ -2576,11 +2574,31 @@ public class ModelWriter extends BaseWriter {
         doWriteBeansDefinitionElements(def);
         endElement();
     }
+    protected void doWriteBeanPropertiesDefinition(
+            String name,
+            BeanPropertiesDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteList(null, "property", def.getProperties(), this::doWriteBeanPropertyDefinition);
+        endElement();
+    }
+    protected void doWriteBeanPropertyDefinition(
+            String name,
+            BeanPropertyDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteAttribute("value", def.getValue());
+        doWriteAttribute("key", def.getKey());
+        doWriteElement("properties", def.getProperties(), this::doWriteBeanPropertiesDefinition);
+        endElement();
+    }
     protected void doWriteBeansDefinitionElements(
             BeansDefinition def)
             throws IOException {
         doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
+        domElements(def.getSpringBeans());
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
+        doWriteList(null, "bean", def.getBeans(), this::doWriteRegistryBeanDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
         doWriteList(null, "routeConfiguration", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
         doWriteList(null, "routeTemplate", def.getRouteTemplates(), this::doWriteRouteTemplateDefinition);
@@ -2600,7 +2618,16 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteAttribute("base-package", def.getBasePackage());
-        doWriteAttribute("use-jsr-330", def.getUseJsr330());
+        endElement();
+    }
+    protected void doWriteRegistryBeanDefinition(
+            String name,
+            RegistryBeanDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteAttribute("name", def.getName());
+        doWriteAttribute("type", def.getType());
+        doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         endElement();
     }
     protected void doWriteBlacklistServiceCallServiceFilterConfiguration(

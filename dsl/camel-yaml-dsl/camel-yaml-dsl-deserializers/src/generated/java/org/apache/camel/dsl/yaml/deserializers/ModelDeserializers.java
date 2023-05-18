@@ -100,8 +100,11 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.app.ApplicationDefinition;
+import org.apache.camel.model.app.BeanPropertiesDefinition;
+import org.apache.camel.model.app.BeanPropertyDefinition;
 import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.app.ComponentScanDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
@@ -590,6 +593,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.app.ApplicationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "bean", type = "array:org.apache.camel.model.app.RegistryBeanDefinition"),
                     @YamlProperty(name = "component-scan", type = "array:org.apache.camel.model.app.ComponentScanDefinition"),
                     @YamlProperty(name = "rest", type = "array:org.apache.camel.model.rest.RestDefinition"),
                     @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition"),
@@ -612,6 +616,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ApplicationDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "bean": {
+                    java.util.List<org.apache.camel.model.app.RegistryBeanDefinition> val = asFlatList(node, org.apache.camel.model.app.RegistryBeanDefinition.class);
+                    target.setBeans(val);
+                    break;
+                }
                 case "component-scan": {
                     java.util.List<org.apache.camel.model.app.ComponentScanDefinition> val = asFlatList(node, org.apache.camel.model.app.ComponentScanDefinition.class);
                     target.setComponentScanning(val);
@@ -1109,10 +1118,89 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            types = org.apache.camel.model.app.BeanPropertiesDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = @YamlProperty(name = "property", type = "array:org.apache.camel.model.app.BeanPropertyDefinition")
+    )
+    public static class BeanPropertiesDefinitionDeserializer extends YamlDeserializerBase<BeanPropertiesDefinition> {
+        public BeanPropertiesDefinitionDeserializer() {
+            super(BeanPropertiesDefinition.class);
+        }
+
+        @Override
+        protected BeanPropertiesDefinition newInstance() {
+            return new BeanPropertiesDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(BeanPropertiesDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "property": {
+                    java.util.List<org.apache.camel.model.app.BeanPropertyDefinition> val = asFlatList(node, org.apache.camel.model.app.BeanPropertyDefinition.class);
+                    target.setProperties(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.app.BeanPropertyDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "key", type = "string"),
+                    @YamlProperty(name = "properties", type = "object:org.apache.camel.model.app.BeanPropertiesDefinition"),
+                    @YamlProperty(name = "value", type = "string")
+            }
+    )
+    public static class BeanPropertyDefinitionDeserializer extends YamlDeserializerBase<BeanPropertyDefinition> {
+        public BeanPropertyDefinitionDeserializer() {
+            super(BeanPropertyDefinition.class);
+        }
+
+        @Override
+        protected BeanPropertyDefinition newInstance() {
+            return new BeanPropertyDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(BeanPropertyDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "key": {
+                    String val = asText(node);
+                    target.setKey(val);
+                    break;
+                }
+                case "properties": {
+                    org.apache.camel.model.app.BeanPropertiesDefinition val = asType(node, org.apache.camel.model.app.BeanPropertiesDefinition.class);
+                    target.setProperties(val);
+                    break;
+                }
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "beans",
             types = org.apache.camel.model.app.BeansDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "bean", type = "array:org.apache.camel.model.app.RegistryBeanDefinition"),
                     @YamlProperty(name = "component-scan", type = "array:org.apache.camel.model.app.ComponentScanDefinition"),
                     @YamlProperty(name = "rest", type = "array:org.apache.camel.model.rest.RestDefinition"),
                     @YamlProperty(name = "route", type = "array:org.apache.camel.model.RouteDefinition"),
@@ -1135,6 +1223,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(BeansDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "bean": {
+                    java.util.List<org.apache.camel.model.app.RegistryBeanDefinition> val = asFlatList(node, org.apache.camel.model.app.RegistryBeanDefinition.class);
+                    target.setBeans(val);
+                    break;
+                }
                 case "component-scan": {
                     java.util.List<org.apache.camel.model.app.ComponentScanDefinition> val = asFlatList(node, org.apache.camel.model.app.ComponentScanDefinition.class);
                     target.setComponentScanning(val);
@@ -2112,10 +2205,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     @YamlType(
             types = org.apache.camel.model.app.ComponentScanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "base-package", type = "string"),
-                    @YamlProperty(name = "use-jsr-330", type = "boolean")
-            }
+            properties = @YamlProperty(name = "base-package", type = "string")
     )
     public static class ComponentScanDefinitionDeserializer extends YamlDeserializerBase<ComponentScanDefinition> {
         public ComponentScanDefinitionDeserializer() {
@@ -2134,11 +2224,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "base-package": {
                     String val = asText(node);
                     target.setBasePackage(val);
-                    break;
-                }
-                case "use-jsr-330": {
-                    String val = asText(node);
-                    target.setUseJsr330(val);
                     break;
                 }
                 default: {
@@ -11676,6 +11761,52 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.app.RegistryBeanDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "properties", type = "object"),
+                    @YamlProperty(name = "type", type = "string")
+            }
+    )
+    public static class RegistryBeanDefinitionDeserializer extends YamlDeserializerBase<RegistryBeanDefinition> {
+        public RegistryBeanDefinitionDeserializer() {
+            super(RegistryBeanDefinition.class);
+        }
+
+        @Override
+        protected RegistryBeanDefinition newInstance() {
+            return new RegistryBeanDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(RegistryBeanDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "properties": {
+                    java.util.Map val = asMap(node);
+                    target.setProperties(val);
+                    break;
+                }
+                case "type": {
+                    String val = asText(node);
+                    target.setType(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;

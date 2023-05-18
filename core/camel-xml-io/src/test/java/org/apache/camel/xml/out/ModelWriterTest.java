@@ -29,9 +29,12 @@ import java.util.stream.Stream;
 
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.xml.in.ModelParser;
 import org.junit.jupiter.api.DisplayName;
@@ -102,6 +105,20 @@ public class ModelWriterTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("beans")
+    @DisplayName("Test xml roundtrip for <beans>")
+    void testBeans(String xml, String ns) throws Exception {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml)) {
+            BeansDefinition expected = new ModelParser(is, NAMESPACE).parseBeansDefinition().get();
+            StringWriter sw = new StringWriter();
+            new ModelWriter(sw, ns).writeBeansDefinition(expected);
+            BeansDefinition actual
+                    = new ModelParser(new StringReader(sw.toString()), ns).parseBeansDefinition().get();
+            assertDeepEquals(expected, actual, sw.toString());
+        }
+    }
+
     private static Stream<Arguments> routes() {
         return definitions("routes");
     }
@@ -116,6 +133,10 @@ public class ModelWriterTest {
 
     private static Stream<Arguments> templatedRoutes() {
         return definitions("templatedRoutes");
+    }
+
+    private static Stream<Arguments> beans() {
+        return definitions("beans");
     }
 
     private static Stream<Arguments> definitions(String xml) {
@@ -173,6 +194,10 @@ public class ModelWriterTest {
             assertEquals(((Enum) expected).name(), ((Enum) actual).name(), path);
         } else if (expected.getClass().getName().startsWith("java.")) {
             assertEquals(expected, actual, path);
+        } else if (Element.class.isAssignableFrom(expected.getClass())) {
+            // TODO: deep check
+            assertEquals(((Element) expected).getTagName(), ((Element) actual).getTagName(), path);
+            assertEquals(((Element) expected).getNamespaceURI(), ((Element) actual).getNamespaceURI(), path);
         } else {
             for (Class<?> clazz = expected.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
                 for (Field field : clazz.getDeclaredFields()) {

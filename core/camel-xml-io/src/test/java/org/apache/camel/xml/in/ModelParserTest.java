@@ -19,6 +19,7 @@ package org.apache.camel.xml.in;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +29,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -36,6 +43,8 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -46,6 +55,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModelParserTest {
 
@@ -54,6 +66,8 @@ public class ModelParserTest {
             = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
+    private static final List<String> BEANS_XMLS
+            = Arrays.asList("beansEmpty.xml", "beansWithProperties.xml", "beansWithSpringNS.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
@@ -92,6 +106,7 @@ public class ModelParserTest {
                 boolean isRest = REST_XMLS.contains(path.getFileName().toString());
                 boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
                 boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
+                boolean isBeans = BEANS_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                     assertNotNull(rests);
@@ -101,7 +116,7 @@ public class ModelParserTest {
                 } else if (isTemplatedRoute) {
                     TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
                     assertNotNull(templatedRoutes);
-                } else {
+                } else if (!isBeans) {
                     RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
                     assertNotNull(routes);
                 }
@@ -200,6 +215,70 @@ public class ModelParserTest {
         Assertions.assertEquals(1, verb.getParams().size());
         ParamDefinition param = verb.getParams().get(0);
         Assertions.assertEquals(4, param.getAllowableValues().size());
+    }
+
+    @Test
+    public void testEmptyBeans() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansEmpty.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertTrue(beans.getBeans().isEmpty());
+        assertTrue(beans.getSpringBeans().isEmpty());
+    }
+
+    @Test
+    public void testBeansWithProperties() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansWithProperties.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertEquals(2, beans.getBeans().size());
+        assertTrue(beans.getSpringBeans().isEmpty());
+
+        RegistryBeanDefinition b1 = beans.getBeans().get(0);
+        RegistryBeanDefinition b2 = beans.getBeans().get(1);
+
+        assertEquals("b1", b1.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals("v1", b1.getProperties().get("p1"));
+        assertEquals("v2", b1.getProperties().get("p2"));
+        assertNotNull(b1.getProperties().get("nested"));
+        assertEquals("v1a", ((Map<String, Object>) b1.getProperties().get("nested")).get("p1"));
+        assertEquals("v2a", ((Map<String, Object>) b1.getProperties().get("nested")).get("p2"));
+
+        assertEquals("b2", b2.getName());
+        assertEquals("org.apache.camel.xml.in.ModelParserTest.MyBean", b1.getType());
+        assertEquals("v1", b2.getProperties().get("p1"));
+        assertEquals("v2", b2.getProperties().get("p2"));
+        assertNull(b2.getProperties().get("nested"));
+        assertEquals("v1a", b2.getProperties().get("nested.p1"));
+        assertEquals("v2a", b2.getProperties().get("nested.p2"));
+    }
+
+    @Test
+    public void testSpringBeans() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "beansWithSpringNS.xml").toPath();
+        final ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
+        assertNotNull(beans);
+        assertTrue(beans.getBeans().isEmpty());
+        assertEquals(2, beans.getSpringBeans().size());
+        Document dom = beans.getSpringBeans().get(0).getOwnerDocument();
+        StringWriter sw = new StringWriter();
+        TransformerFactory.newInstance().newTransformer().transform(new DOMSource(dom), new StreamResult(sw));
+        String document = sw.toString();
+        assertTrue(document.contains("class=\"java.lang.String\""));
+
+        assertSame(beans.getSpringBeans().get(0).getOwnerDocument(), beans.getSpringBeans().get(1).getOwnerDocument());
+        assertEquals("s1", beans.getSpringBeans().get(0).getAttribute("id"));
+        assertEquals("s2", beans.getSpringBeans().get(1).getAttribute("id"));
+
+        assertEquals(1, beans.getComponentScanning().size());
+        assertEquals("com.example", beans.getComponentScanning().get(0).getBasePackage());
     }
 
     @Test

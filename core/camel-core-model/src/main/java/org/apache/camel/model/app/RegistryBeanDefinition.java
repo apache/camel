@@ -24,11 +24,12 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.apache.camel.spi.Metadata;
 
 /**
- * A Pojo representing simplified "bean" element to declare registry beans using any DSL. This is not the same
- * as "bean processor".
+ * A Pojo representing simplified "bean" element to declare registry beans using any DSL. This is not the same as "bean
+ * processor".
  */
 @Metadata(label = "configuration")
 @XmlType

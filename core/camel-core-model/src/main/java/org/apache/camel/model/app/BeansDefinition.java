@@ -26,19 +26,24 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Metadata;
-import org.w3c.dom.Element;
+import org.apache.camel.spi.annotations.ExternalSchemaElement;
 
 /**
- * <p>A groupping POJO (and related XML root element) that's historically associated with "entire application" (or its
- * distinguished fragment).</p>
- * <p>This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX
- * parser methods.</p>
+ * <p>
+ * A groupping POJO (and related XML root element) that's historically associated with "entire application" (or its
+ * distinguished fragment).
+ * </p>
+ * <p>
+ * This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.
+ * </p>
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "beans")
@@ -70,7 +75,9 @@ public class BeansDefinition {
 
     // this is the only way I found to generate usable Schema without imports, while allowing elements
     // from different namespaces
-    @XmlAnyElement(lax = true)
+    @ExternalSchemaElement(names = { "bean", "alias" }, namespace = "http://www.springframework.org/schema/beans",
+                           documentElement = "beans")
+    @XmlAnyElement
     private List<Element> springBeans = new ArrayList<>();
 
     // the order comes from <camelContext> (org.apache.camel.spring.xml.CamelContextFactoryBean)

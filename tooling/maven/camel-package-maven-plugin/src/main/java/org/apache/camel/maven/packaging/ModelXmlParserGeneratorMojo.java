@@ -48,6 +48,7 @@ import java.util.stream.Stream;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyAttribute;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
@@ -62,6 +63,7 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.maven.packaging.generics.JandexStore;
+import org.apache.camel.spi.annotations.ExternalSchemaElement;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -230,6 +232,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         parser.addImport(Array.class);
         parser.addImport(List.class);
         parser.addImport(ArrayList.class);
+        parser.addImport(org.w3c.dom.Element.class);
         parser.addAnnotation(SuppressWarnings.class).setLiteralValue("\"unused\"");
         parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter("org.apache.camel.spi.Resource", "input").addThrows(IOException.class)
                 .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input);");
@@ -315,6 +318,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 .collect(Collectors.toList());
             Map<String, String> expressionHandlersDefs = new LinkedHashMap<>();
             Map<String, String> cases = new LinkedHashMap<>();
+            // to handle elements from external namespaces
+            List<String[]> externalNamespaces = new ArrayList<>();
             // XmlElementRef
             elementMembers.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlElementRef.class) != null
                                                      || (clazz == outputDefinitionClass && "setOutputs".equals(member.getName())))
@@ -407,9 +412,9 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                     Class<?> c = new GenericType(t).getRawClass();
                     String n = adapter.getDeclaringClass() != null ? adapter.getDeclaringClass().getSimpleName() + "." + adapter.getSimpleName() : adapter.getSimpleName();
                     if (c == String.class) {
-                        pc = "unmarshal(new " + n + "(), doParseText())";
+                        pc = "new " + n + "().unmarshal(doParseText())";
                     } else if (model.contains(c)) {
-                        pc = "unmarshal(new " + n + "(), doParse" + c.getSimpleName() + "())";
+                        pc = "new " + n + "().unmarshal(doParse" + c.getSimpleName() + "())";
                     } else {
                         throw new UnsupportedOperationException("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlJavaTypeAdapter");
                     }
@@ -421,11 +426,19 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 } else if (root == String.class) {
                     pc = "doParseText()";
                 } else {
-                    String n = root.getName();
-                    if (n.startsWith("java.lang.")) {
-                        n = tn;
+                    XmlAnyElement any = ((AccessibleObject) member).getAnnotation(XmlAnyElement.class);
+                    ExternalSchemaElement external = ((AccessibleObject) member).getAnnotation(ExternalSchemaElement.class);
+                    if (any != null && external != null) {
+                        // a case for external "namespace handler"
+                        externalNamespaces.add(new String[] { external.documentElement(), external.namespace(), gn, sn });
+                        return;
+                    } else {
+                        String n = root.getName();
+                        if (n.startsWith("java.lang.")) {
+                            n = tn;
+                        }
+                        pc = n + ".valueOf(doParseText())";
                     }
-                    pc = n + ".valueOf(doParseText())";
                 }
 
                 // special for allowableValues
@@ -448,6 +461,29 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             if (expressionHandlersDefs.size() > 1) {
                 throw new IllegalStateException();
             }
+            String externalElements = "";
+            if (!externalNamespaces.isEmpty()) {
+                boolean first = true;
+                StringBuilder sb = new StringBuilder();
+                for (String[] nn : externalNamespaces) {
+                    String gn = nn[2];
+                    String sn = nn[3];
+                    if (first) {
+                        sb.append("    if (\"" + nn[1] + "\".equals(parser.getNamespace())) {\n");
+                        first = false;
+                    } else {
+                        sb.append("    else if (\"" + nn[1] + "\".equals(parser.getNamespace())) {\n");
+                    }
+                    sb.append("        Element el = doParseDOMElement(\"" + nn[0] + "\", \"" + nn[1] + "\", def." + gn + "());\n");
+                    sb.append("        if (el != null) {\n");
+                    sb.append("            doAddElement(el, def." + gn + "(), def::" + sn + ");\n");
+                    sb.append("            return true;\n");
+                    sb.append("        }\n");
+                    sb.append("        return false;\n");
+                    sb.append("    }\n");
+                }
+                externalElements = sb.toString();
+            }
             String elements;
             if (cases.isEmpty()) {
                 if (expressionHandlersDefs.isEmpty()) {
@@ -461,11 +497,11 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                                       + (expressionHandler == null ? "return false;" : "return " + expressionHandler + ".accept(def, key);");
                 if (cases.size() == 1) {
                     Map.Entry<String, String> entry = cases.entrySet().iterator().next();
-                    elements = " (def, key) -> {\n" + "    if (\"" + entry.getKey() + "\".equals(key)) {\n" + "        " + entry.getValue() + "\n" + "        return true;\n"
+                    elements = " (def, key) -> {\n" + externalElements + "    if (\"" + entry.getKey() + "\".equals(key)) {\n" + "        " + entry.getValue() + "\n" + "        return true;\n"
                                + "    }\n" + "    " + returnClause + "\n" + "}";
                 } else {
                     StringBuilder sb = new StringBuilder();
-                    sb.append(" (def, key) -> {\n" + "    switch (key) {\n");
+                    sb.append(" (def, key) -> {\n" + externalElements + "    switch (key) {\n");
                     for (Map.Entry<String, String> entry : cases.entrySet()) {
                         sb.append("        case \"").append(entry.getKey()).append("\": ").append(entry.getValue()).append(" break;\n");
                     }
@@ -564,9 +600,15 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                         .setBody("return" + elements + ";");
                 }
                 if (!Modifier.isAbstract(clazz.getModifiers())) {
-                    parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
-                        .setBody("return doParse(new " + qname + "(), " + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", "
-                                 + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ");\n");
+                    if (externalNamespaces.isEmpty()) {
+                        parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                            .setBody("return doParse(new " + qname + "(), " + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", "
+                                     + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ");\n");
+                    } else {
+                        parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                            .setBody("return doParse(new " + qname + "(), " + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", "
+                                     + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ", true);\n");
+                    }
                 }
             } else {
                 // special for value definition
