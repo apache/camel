@@ -29,13 +29,13 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole("reload")
 public class ReloadDevConsole extends AbstractDevConsole {
 
-    // reload on demand should run async to avoid blocking
-    private volatile ExecutorService reloadThread;
-
     /**
      * Option to trigger reloading
      */
     public static final String RELOAD = "reload";
+
+    // reload on demand should run async to avoid blocking
+    private volatile ExecutorService reloadThread;
 
     public ReloadDevConsole() {
         super("camel", "reload", "Reload", "Console for reloading running Camel");
