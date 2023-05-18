@@ -51,6 +51,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
+    @CommandLine.Option(names = { "--wide-uri" },
+                        description = "List endpoint URI in full details")
+    boolean wideUri;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Filter routes by limiting to the given number of rows")
     int limit;
@@ -174,9 +178,13 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
-                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getFrom),
+                new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(45, OverflowBehaviour.NEWLINE)
                         .with(this::getFrom),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
