@@ -18,30 +18,55 @@ package org.apache.camel.xml.out;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import org.apache.camel.xml.io.XMLWriter;
 
 public class BaseWriter {
 
     protected final XMLWriter writer;
-    protected final String namespace;
+    protected final Deque<String> namespacesStack = new LinkedList<>();
     protected boolean namespaceWritten;
 
     public BaseWriter(Writer writer, String namespace) throws IOException {
         this.writer = new XMLWriter(writer);
-        this.namespace = namespace;
+        this.namespacesStack.push(namespace);
     }
 
     protected void startElement(String name) throws IOException {
         writer.startElement(name);
-        if (!namespaceWritten && namespace != null) {
-            writer.addAttribute("xmlns", namespace);
+        if (!namespaceWritten && namespacesStack.peek() != null) {
+            writer.addAttribute("xmlns", namespacesStack.peek());
             namespaceWritten = true;
+        }
+    }
+
+    protected void startElement(String name, String namespace) throws IOException {
+        writer.startElement(name);
+        if (!namespacesStack.isEmpty() && !namespace.equals(namespacesStack.peek())) {
+            namespacesStack.push(namespace);
+            writer.addAttribute("xmlns", namespace);
         }
     }
 
     protected void endElement() throws IOException {
         writer.endElement();
+    }
+
+    protected void endElement(String namespace) throws IOException {
+        endElement();
+        if (!namespacesStack.isEmpty() && namespacesStack.peek().equals(namespace)) {
+            namespacesStack.pop();
+        }
     }
 
     protected void text(String text) throws IOException {
@@ -51,4 +76,34 @@ public class BaseWriter {
     protected void attribute(String name, String value) throws IOException {
         writer.addAttribute(name, value);
     }
+
+    protected void domElements(List<Element> elements) throws IOException {
+        for (Element e : elements) {
+            domElement(e);
+        }
+    }
+
+    protected void domElement(Element v) throws IOException {
+        if (v != null) {
+            startElement(v.getTagName(), v.getNamespaceURI());
+            NamedNodeMap nnm = v.getAttributes();
+            if (nnm != null) {
+                for (int i = 0; i < nnm.getLength(); i++) {
+                    Attr attr = (Attr) nnm.item(i);
+                    attribute(attr.getName(), attr.getValue());
+                }
+            }
+            NodeList children = v.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node item = children.item(i);
+                if (item instanceof Element) {
+                    domElement((Element) item);
+                } else if (item instanceof Text) {
+                    text(((Text) item).getWholeText());
+                }
+            }
+            endElement(v.getNamespaceURI());
+        }
+    }
+
 }

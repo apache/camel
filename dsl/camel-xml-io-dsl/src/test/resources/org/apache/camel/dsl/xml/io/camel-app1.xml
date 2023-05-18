@@ -19,7 +19,7 @@
 -->
 <camel-app xmlns="http://camel.apache.org/schema/spring">
 
-    <component-scan use-jsr-330="true" base-package="org.apache.camel.dsl.xml.io.beans" />
+    <component-scan base-package="org.apache.camel.dsl.xml.io.beans" />
 
     <route id="r1">
         <from uri="direct:x1"/>

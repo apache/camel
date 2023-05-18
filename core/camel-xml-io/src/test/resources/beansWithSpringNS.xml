@@ -17,12 +17,24 @@
     limitations under the License.
 
 -->
-<camel-app xmlns:s="http://www.springframework.org/schema/beans">
+<beans xmlns="http://camel.apache.org/schema/spring" xmlns:s="http://www.springframework.org/schema/beans">
 
-    <route id="r2">
-        <from uri="direct:x2"/>
-        <bean ref="bean-from-registry" />
-        <to uri="mock:y2"/>
-    </route>
+	<s:bean id="s1" class="java.lang.String">
+		<s:description>Real Spring Bean</s:description>
+		<s:constructor-arg index="0" value="Hello " />
+		<s:constructor-arg index="1" value="World!" />
+	</s:bean>
 
-</camel-app>
+	<s:bean id="s2" class="java.lang.String">
+		<s:property name="a" ref="x" />
+		<s:property name="b">
+			<s:list value-type="java.lang.Integer">
+				<s:null />
+				<s:value>there's value in it</s:value>
+			</s:list>
+		</s:property>
+	</s:bean>
+
+	<component-scan base-package="com.example" />
+
+</beans>

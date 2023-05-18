@@ -44,7 +44,6 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DIRegistry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.xml.in.ModelParser;
@@ -131,10 +130,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
                 List<String> packagesToScan = new ArrayList<>();
                 app.getComponentScanning().forEach(cs -> {
-                    Boolean useJakartaInject = CamelContextHelper.parseBoolean(getCamelContext(), cs.getUseJsr330());
-                    if (useJakartaInject != null && useJakartaInject) {
-                        packagesToScan.add(cs.getBasePackage());
-                    }
+                    packagesToScan.add(cs.getBasePackage());
                 });
                 if (!packagesToScan.isEmpty()) {
                     DIRegistry registry = null;

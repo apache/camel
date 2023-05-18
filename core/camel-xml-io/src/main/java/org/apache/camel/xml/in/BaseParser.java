@@ -31,10 +31,19 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
@@ -81,6 +90,13 @@ public class BaseParser {
     protected <T> T doParse(
             T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
             throws IOException, XmlPullParserException {
+        return doParse(definition, attributeHandler, elementHandler, valueHandler, false);
+    }
+
+    protected <T> T doParse(
+            T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler,
+            boolean supportsExternalNamespaces)
+            throws IOException, XmlPullParserException {
         if (definition instanceof LineNumberAware) {
             // we want to get the line number where the tag starts (in case its multi-line)
             int line = parser.getStartLineNumber();
@@ -111,7 +127,7 @@ public class BaseParser {
             }
             if (Objects.equals(ns, "") || Objects.equals(ns, namespace)) {
                 if (attributeHandler == null || !attributeHandler.accept(definition, name, val)) {
-                    handleUnexpectedAttribute(namespace, name);
+                    handleUnexpectedAttribute(ns, name);
                 }
             } else {
                 handleOtherAttribute(definition, name, ns, val);
@@ -126,12 +142,20 @@ public class BaseParser {
             } else if (event == XmlPullParser.START_TAG) {
                 String ns = parser.getNamespace();
                 String name = parser.getName();
-                if (Objects.equals(ns, namespace)) {
+                if (supportsExternalNamespaces) {
+                    // pass element to the handler regardless of namespace
                     if (elementHandler == null || !elementHandler.accept(definition, name)) {
-                        handleUnexpectedElement(namespace, name);
+                        handleUnexpectedElement(ns, name);
                     }
                 } else {
-                    handleUnexpectedElement(ns, name);
+                    // pass element to the handler only if matches the declared namespace for the parser
+                    if (Objects.equals(ns, namespace)) {
+                        if (elementHandler == null || !elementHandler.accept(definition, name)) {
+                            handleUnexpectedElement(namespace, name);
+                        }
+                    } else {
+                        handleUnexpectedElement(ns, name);
+                    }
                 }
             } else if (event == XmlPullParser.END_TAG) {
                 return definition;
@@ -250,6 +274,42 @@ public class BaseParser {
         return s;
     }
 
+    protected Element doParseDOMElement(String rootElementName, String namespace, List<Element> existing)
+            throws XmlPullParserException, IOException {
+        Document doc = null;
+        if (existing != null && !existing.isEmpty()) {
+            doc = existing.get(0).getOwnerDocument();
+        } else {
+            // create a new one
+            try {
+                doc = createDocumentBuilderFactory().newDocumentBuilder().newDocument();
+                // with root element generated from @ExternalSchemaElement.documentElement
+                Element rootElement = doc.createElementNS(namespace, rootElementName);
+                doc.appendChild(rootElement);
+            } catch (ParserConfigurationException e) {
+                throw new XmlPullParserException(
+                        "Problem handling external element '{" + namespace + "}" + parser.getName()
+                                                 + ": " + e.getMessage());
+            }
+        }
+        if (doc == null) {
+            return null;
+        }
+
+        Element element = doc.createElementNS(namespace, parser.getName());
+        doc.getDocumentElement().appendChild(element);
+        doParse(element, domAttributeHandler(), domElementHandler(), domValueHandler(), true);
+        return element;
+    }
+
+    protected void doAddElement(Element element, List<Element> existing, Consumer<List<Element>> setter) {
+        if (existing == null) {
+            existing = new ArrayList<>();
+            setter.accept(existing);
+        }
+        existing.add(element);
+    }
+
     protected boolean handleUnexpectedAttribute(String namespace, String name) throws XmlPullParserException {
         throw new XmlPullParserException("Unexpected attribute '{" + namespace + "}" + name + "'");
     }
@@ -324,8 +384,66 @@ public class BaseParser {
         return (def, text) -> handleUnexpectedText(text);
     }
 
+    protected AttributeHandler<Element> domAttributeHandler() {
+        return (el, name, value) -> {
+            el.setAttribute(name, value);
+            return true;
+        };
+    }
+
+    protected ElementHandler<Element> domElementHandler() {
+        return (def, name) -> {
+            Element child = def.getOwnerDocument().createElementNS(parser.getNamespace(), name);
+            def.appendChild(child);
+            doParse(child, domAttributeHandler(), domElementHandler(), domValueHandler(), true);
+            return true;
+        };
+    }
+
+    protected ValueHandler<Element> domValueHandler() {
+        return (def, text) -> {
+            Text txt = def.getOwnerDocument().createTextNode(text);
+            def.appendChild(txt);
+        };
+    }
+
     protected <T extends ExpressionDefinition> ValueHandler<T> expressionDefinitionValueHandler() {
         return ExpressionDefinition::setExpression;
+    }
+
+    // another one...
+    private static DocumentBuilderFactory createDocumentBuilderFactory() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        factory.setIgnoringComments(true);
+        try {
+            // Set secure processing
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        } catch (ParserConfigurationException e) {
+        }
+        try {
+            // Disable the external-general-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+        }
+        try {
+            // Disable the external-parameter-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (ParserConfigurationException e) {
+        }
+        // setup the SecurityManager by default if it's apache xerces
+        try {
+            Class<?> smClass = ObjectHelper.loadClass("org.apache.xerces.util.SecurityManager");
+            if (smClass != null) {
+                Object sm = smClass.getDeclaredConstructor().newInstance();
+                // Here we just use the default setting of the SeurityManager
+                factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
+            }
+        } catch (Exception e) {
+        }
+        return factory;
     }
 
     interface AttributeHandler<T> {

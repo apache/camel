@@ -847,7 +847,33 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         cb.beginControlFlow("case $S:", fieldName);
 
         ClassInfo c = view.getClassByName(field.type().name());
-        if (c != null && c.isEnum()) {
+        if (hasAnnotation(field, XML_JAVA_TYPE_ADAPTER_CLASS)) {
+            // conversion using JAXB Adapter of known class
+            Optional<AnnotationValue> adapter = annotationValue(field, XML_JAVA_TYPE_ADAPTER_CLASS, "value");
+            if (adapter.isEmpty()) {
+                return false;
+            }
+            String adapterClass = adapter.get().asClass().name().toString();
+            ClassInfo adapterClassInfo = view.getClassByName(adapter.get().asClass().name());
+            if (adapterClassInfo.superClassType().kind() == Type.Kind.PARAMETERIZED_TYPE) {
+                List<Type> arguments = adapterClassInfo.superClassType().asParameterizedType().arguments();
+                if (arguments.size() == 2) {
+                    // extends XmlAdapter<BeanPropertiesDefinition, Map<String, Object>>
+//                    Type type = arguments.get(0);
+//                    cb.addStatement("$L val = new $L().unmarshal(asType(node, $L.class))",
+//                            field.type().name().toString(), adapterClass, type.name());
+                    Type type = arguments.get(1);
+                    if (type.name().toString().equals("java.util.Map")) {
+                        cb.addStatement("$L val = asMap(node)", field.type().name().toString());
+                        cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
+                        cb.addStatement("break");
+                        annotations.add(
+                                yamlProperty(fieldName, "object", isRequired(field), isDeprecated(field))
+                        );
+                    }
+                }
+            }
+        } else if (c != null && c.isEnum()) {
             cb.addStatement("target.set$L(asEnum(node, $L.class))", StringHelper.capitalize(field.name()), field.type().name().toString());
             cb.addStatement("break");
 

@@ -37,6 +37,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.config.BatchResequencerConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
             case "bean": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.BeanDefinition": return new ModelDeserializers.BeanDefinitionDeserializer();
+            case "org.apache.camel.model.app.BeanPropertiesDefinition": return new ModelDeserializers.BeanPropertiesDefinitionDeserializer();
+            case "org.apache.camel.model.app.BeanPropertyDefinition": return new ModelDeserializers.BeanPropertyDefinitionDeserializer();
             case "beans": return new ModelDeserializers.BeansDefinitionDeserializer();
             case "org.apache.camel.model.app.BeansDefinition": return new ModelDeserializers.BeansDefinitionDeserializer();
             case "bearer-token": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
@@ -322,6 +324,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition": return new ModelDeserializers.RefErrorHandlerDefinitionDeserializer();
             case "ref": return new ModelDeserializers.RefExpressionDeserializer();
             case "org.apache.camel.model.language.RefExpression": return new ModelDeserializers.RefExpressionDeserializer();
+            case "org.apache.camel.model.app.RegistryBeanDefinition": return new ModelDeserializers.RegistryBeanDefinitionDeserializer();
             case "remove-header": return new ModelDeserializers.RemoveHeaderDefinitionDeserializer();
             case "removeHeader": return new ModelDeserializers.RemoveHeaderDefinitionDeserializer();
             case "org.apache.camel.model.RemoveHeaderDefinition": return new ModelDeserializers.RemoveHeaderDefinitionDeserializer();

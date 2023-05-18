@@ -83,6 +83,10 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("jakarta.xml.bind.annotation.XmlElements");
     public static final DotName XML_TRANSIENT_CLASS
             = DotName.createSimple("jakarta.xml.bind.annotation.XmlTransient");
+    public static final DotName XML_ANY_ELEMENT_CLASS
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlAnyElement");
+    public static final DotName XML_JAVA_TYPE_ADAPTER_CLASS
+            = DotName.createSimple("jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter");
 
     public static final DotName METADATA_ANNOTATION_CLASS
             = DotName.createSimple("org.apache.camel.spi.Metadata");

@@ -19,6 +19,7 @@ package org.apache.camel.model.app;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class BeanPropertiesAdapter extends XmlAdapter<BeanPropertiesDefinition, Map<String, Object>> {

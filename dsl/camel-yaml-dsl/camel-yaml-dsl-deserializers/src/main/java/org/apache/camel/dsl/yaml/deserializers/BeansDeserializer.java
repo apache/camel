@@ -24,10 +24,12 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -39,7 +41,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "__extends",
-                                type = "array:org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition")
+                                type = "array:org.apache.camel.model.app.RegistryBeanDefinition")
           })
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
     @Override
@@ -51,10 +53,13 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         for (Node item : sn.getValue()) {
             setDeserializationContext(item, dc);
 
-            NamedBeanDefinition bean = asType(item, NamedBeanDefinition.class);
+            RegistryBeanDefinition bean = asType(item, RegistryBeanDefinition.class);
 
             ObjectHelper.notNull(bean.getName(), "The bean name must be set");
             ObjectHelper.notNull(bean.getType(), "The bean type must be set");
+            if (!bean.getType().startsWith("#class:")) {
+                bean.setType("#class:" + bean.getType());
+            }
 
             customizers.add(new CamelContextCustomizer() {
                 @Override
@@ -65,7 +70,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
                         camelContext.getRegistry().unbind(name);
                         camelContext.getRegistry().bind(
                                 name,
-                                bean.newInstance(camelContext));
+                                newInstance(bean, camelContext));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -75,4 +80,15 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
         return YamlSupport.customizer(customizers);
     }
+
+    public Object newInstance(RegistryBeanDefinition bean, CamelContext context) throws Exception {
+        final Object target = PropertyBindingSupport.resolveBean(context, bean.getType());
+
+        if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
+            YamlSupport.setPropertiesOnTarget(context, target, bean.getProperties());
+        }
+
+        return target;
+    }
+
 }

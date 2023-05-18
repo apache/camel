@@ -49,6 +49,7 @@ import java.util.stream.Stream;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyAttribute;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
@@ -364,9 +365,29 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         elements.add("doWriteList(" + (w != null ? "\"" + w + "\"" : "null") + ", " +
                                 "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
                     } else {
-                        elements.add("doWriteElement(" +
-                                "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
+                        XmlJavaTypeAdapter adapter = member.getAnnotation(XmlJavaTypeAdapter.class);
+                        if (adapter != null) {
+                            Class<? extends XmlAdapter> cl = adapter.value();
+                            Class<?> actualType = null;
+                            for (Method m : cl.getDeclaredMethods()) {
+                                if (m.getName().equals("marshal") && m.getReturnType() != Object.class) {
+                                    actualType = m.getReturnType();
+                                    break;
+                                }
+                            }
+                            if (actualType == null) {
+                                throw new IllegalArgumentException("Unable to determine property name for JAXB" +
+                                        " adapted member: " + member);
+                            }
+                            elements.add("doWriteElement(" +
+                                    "\"" + n + "\", new " + cl.getSimpleName() + "().marshal(def." + gn + "()), this::doWrite" + actualType.getSimpleName() + ");");
+                        } else {
+                            elements.add("doWriteElement(" +
+                                    "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
+                        }
                     }
+                } else if (member.getAnnotation(XmlAnyElement.class) != null) {
+                    elements.add("domElements(def." + gn + "());");
                 } else {
                     String t = root.getSimpleName();
                     String n = root.getAnnotation(XmlRootElement.class) != null
@@ -779,7 +800,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         } else if (accessType == XmlAccessType.FIELD) {
             return m -> m.getDeclaringClass() == clazz
                     && ((isSetter(m) || isGetter(m)) && isXmlBindAnnotated(m)
-                            || isField(m) && !Modifier.isStatic(m.getModifiers()) && !Modifier.isTransient(m.getModifiers()));
+                            || isField(m) && /*isNotAnyXml(m) && */!Modifier.isStatic(m.getModifiers()) && !Modifier.isTransient(m.getModifiers()));
         } else if (accessType == XmlAccessType.PUBLIC_MEMBER) {
             return m -> m.getDeclaringClass() == clazz
                     && (Modifier.isPublic(m.getModifiers()) || isXmlBindAnnotated(m));
@@ -791,7 +812,13 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     private boolean isXmlBindAnnotated(Member m) {
         return Stream.of(((AnnotatedElement) m).getAnnotations())
-                .anyMatch(a -> a.getClass().getAnnotatedInterfaces()[0].getType().getTypeName().startsWith("jakarta.xml.bind.annotation."));
+                .anyMatch(a -> a.getClass().getAnnotatedInterfaces()[0].getType().getTypeName().startsWith("jakarta.xml.bind.annotation.")
+                        /*&& !a.getClass().getAnnotatedInterfaces()[0].getType().getTypeName().endsWith("XmlAnyElement")*/);
+    }
+
+    private boolean isNotAnyXml(Member m) {
+        return Stream.of(((AnnotatedElement) m).getAnnotations())
+                .noneMatch(a -> a.getClass().getAnnotatedInterfaces()[0].getType().getTypeName().equals("jakarta.xml.bind.annotation.XmlAnyElement"));
     }
 
     private boolean isField(Member member) {

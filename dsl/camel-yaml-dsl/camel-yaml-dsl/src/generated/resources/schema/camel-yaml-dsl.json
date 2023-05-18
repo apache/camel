@@ -292,7 +292,7 @@
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
         "type" : "array",
         "items" : {
-          "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+          "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
         }
       },
       "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer" : {
@@ -317,21 +317,6 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
           }
         }
-      },
-      "org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "properties" : {
-            "type" : "object"
-          },
-          "type" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "name", "type" ]
       },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition" : {
         "type" : "object",
@@ -2568,7 +2553,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
             }
           },
           "from" : {
@@ -3037,7 +3022,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
             }
           },
           "parameters" : {
@@ -3668,6 +3653,12 @@
       "org.apache.camel.model.app.ApplicationDefinition" : {
         "type" : "object",
         "properties" : {
+          "bean" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+            }
+          },
           "component-scan" : {
             "type" : "array",
             "items" : {
@@ -3706,9 +3697,40 @@
           }
         }
       },
+      "org.apache.camel.model.app.BeanPropertiesDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "property" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.BeanPropertyDefinition"
+            }
+          }
+        }
+      },
+      "org.apache.camel.model.app.BeanPropertyDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.app.BeanPropertiesDefinition"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
       "org.apache.camel.model.app.BeansDefinition" : {
         "type" : "object",
         "properties" : {
+          "bean" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+            }
+          },
           "component-scan" : {
             "type" : "array",
             "items" : {
@@ -3752,9 +3774,20 @@
         "properties" : {
           "base-package" : {
             "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.model.app.RegistryBeanDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
           },
-          "use-jsr-330" : {
-            "type" : "boolean"
+          "properties" : {
+            "type" : "object"
+          },
+          "type" : {
+            "type" : "string"
           }
         }
       },
