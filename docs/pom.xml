@@ -31,6 +31,10 @@
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <skipOnUnsupported>true</skipOnUnsupported>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -90,6 +94,7 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <arguments>gulp</arguments>
+                            <skip>${skipOnUnsupported}</skip>
                         </configuration>
                     </execution>
                 </executions>
@@ -109,5 +114,41 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>x86</id>
+            <activation>
+                <os>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipOnUnsupported>false</skipOnUnsupported>
+            </properties>
+        </profile>
+        <profile>
+            <id>Arm</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipOnUnsupported>false</skipOnUnsupported>
+            </properties>
+        </profile>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipOnUnsupported>false</skipOnUnsupported>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
