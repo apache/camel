@@ -33,6 +33,10 @@
     <description>ActiveMQ component for Camel</description>
 
     <properties>
+        <camel.osgi.import.before.defaults>
+            javax.jms;version="[1.1,2)",
+            org.apache.activemq.pool;version="[5.17,6)"
+        </camel.osgi.import.before.defaults>
         <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
@@ -44,6 +48,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- ActiveMQ is JMS 1.1 spec only -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
