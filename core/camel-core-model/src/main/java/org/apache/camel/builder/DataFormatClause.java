@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.Map;
 
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -1249,6 +1250,28 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T asn1(Boolean usingIterator) {
         return dataFormat(new ASN1DataFormat(usingIterator));
+    }
+
+    /**
+     * Uses the parquet-avro file data format
+     */
+    public T parquetAvro() {
+        ParquetAvroDataFormat parquetAvroDataFormat = new ParquetAvroDataFormat();
+        return dataFormat(parquetAvroDataFormat);
+    }
+
+    /**
+     * Uses the parquet-avro file data format
+     */
+    public T parquetAvro(String unmarshalType) {
+        return dataFormat(new ParquetAvroDataFormat(unmarshalType));
+    }
+
+    /**
+     * Uses the parquet-avro file data format
+     */
+    public T parquetAvro(Class<?> unmarshalType) {
+        return dataFormat(new ParquetAvroDataFormat(unmarshalType));
     }
 
     /**

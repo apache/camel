@@ -685,6 +685,11 @@ public class ModelWriter extends BaseWriter {
     public void writePGPDataFormat(PGPDataFormat def) throws IOException {
         doWritePGPDataFormat("pgp", def);
     }
+    public void writeParquetAvroDataFormat(
+            ParquetAvroDataFormat def)
+            throws IOException {
+        doWriteParquetAvroDataFormat("parquetAvro", def);
+    }
     public void writeProtobufDataFormat(
             ProtobufDataFormat def)
             throws IOException {
@@ -1533,6 +1538,7 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) def.getDataFormatType());
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) def.getDataFormatType());
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) def.getDataFormatType());
+                case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) def.getDataFormatType());
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) def.getDataFormatType());
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) def.getDataFormatType());
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) def.getDataFormatType());
@@ -2506,6 +2512,7 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) def.getDataFormatType());
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) def.getDataFormatType());
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) def.getDataFormatType());
+                case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) def.getDataFormatType());
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) def.getDataFormatType());
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) def.getDataFormatType());
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) def.getDataFormatType());
@@ -3473,6 +3480,15 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("signatureKeyFileName", def.getSignatureKeyFileName());
         doWriteAttribute("hashAlgorithm", def.getHashAlgorithm());
         doWriteAttribute("algorithm", def.getAlgorithm());
+        endElement();
+    }
+    protected void doWriteParquetAvroDataFormat(
+            String name,
+            ParquetAvroDataFormat def)
+            throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
         endElement();
     }
     protected void doWriteProtobufDataFormat(
@@ -4592,6 +4608,7 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) def.getDataFormatType());
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) def.getDataFormatType());
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) def.getDataFormatType());
+                case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) def.getDataFormatType());
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) def.getDataFormatType());
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) def.getDataFormatType());
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) def.getDataFormatType());

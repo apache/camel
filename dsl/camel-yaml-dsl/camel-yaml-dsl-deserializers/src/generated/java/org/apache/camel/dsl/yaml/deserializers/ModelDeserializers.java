@@ -151,6 +151,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
@@ -3144,6 +3145,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat"),
                     @YamlProperty(name = "mime-multipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
+                    @YamlProperty(name = "parquet-avro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
@@ -3291,6 +3293,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "mime-multipart": {
                     org.apache.camel.model.dataformat.MimeMultipartDataFormat val = asType(node, org.apache.camel.model.dataformat.MimeMultipartDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "parquet-avro": {
+                    org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -8417,6 +8424,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat"),
                     @YamlProperty(name = "mime-multipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
+                    @YamlProperty(name = "parquet-avro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
@@ -8562,6 +8570,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "mime-multipart": {
                     org.apache.camel.model.dataformat.MimeMultipartDataFormat val = asType(node, org.apache.camel.model.dataformat.MimeMultipartDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "parquet-avro": {
+                    org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -10076,6 +10089,56 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "type": {
                     target.setType(asEnum(node, org.apache.camel.model.rest.RestParamType.class));
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "parquet-avro",
+                    "parquetAvro"
+            },
+            inline = true,
+            types = org.apache.camel.model.dataformat.ParquetAvroDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "unmarshal-type", type = "string")
+            }
+    )
+    public static class ParquetAvroDataFormatDeserializer extends YamlDeserializerBase<ParquetAvroDataFormat> {
+        public ParquetAvroDataFormatDeserializer() {
+            super(ParquetAvroDataFormat.class);
+        }
+
+        @Override
+        protected ParquetAvroDataFormat newInstance() {
+            return new ParquetAvroDataFormat();
+        }
+
+        @Override
+        protected ParquetAvroDataFormat newInstance(String value) {
+            return new ParquetAvroDataFormat(value);
+        }
+
+        @Override
+        protected boolean setProperty(ParquetAvroDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "unmarshal-type": {
+                    String val = asText(node);
+                    target.setUnmarshalTypeName(val);
                     break;
                 }
                 default: {
@@ -17704,6 +17767,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat"),
                     @YamlProperty(name = "mime-multipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
+                    @YamlProperty(name = "parquet-avro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
@@ -17854,6 +17918,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "mime-multipart": {
                     org.apache.camel.model.dataformat.MimeMultipartDataFormat val = asType(node, org.apache.camel.model.dataformat.MimeMultipartDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "parquet-avro": {
+                    org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

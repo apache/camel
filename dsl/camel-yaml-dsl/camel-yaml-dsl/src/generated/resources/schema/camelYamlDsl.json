@@ -1364,6 +1364,9 @@
           "mimeMultipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
           },
+          "parquetAvro" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
+          },
           "pgp" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
           },
@@ -3359,6 +3362,9 @@
           "mimeMultipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
           },
+          "parquetAvro" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
+          },
           "pgp" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
           },
@@ -5330,6 +5336,21 @@
             "type" : "string"
           }
         }
+      },
+      "org.apache.camel.model.dataformat.ParquetAvroDataFormat" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "type" : "string"
+            },
+            "unmarshalType" : {
+              "type" : "string"
+            }
+          }
+        } ]
       },
       "org.apache.camel.model.dataformat.ProtobufDataFormat" : {
         "oneOf" : [ {
@@ -7960,6 +7981,9 @@
           },
           "mimeMultipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
+          },
+          "parquetAvro" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
           },
           "pgp" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"

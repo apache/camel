@@ -26,6 +26,7 @@ JsonLibrary
 LZFDataFormat
 MimeMultipartDataFormat
 PGPDataFormat
+ParquetAvroDataFormat
 ProtobufDataFormat
 ProtobufLibrary
 RssDataFormat

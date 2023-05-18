@@ -2347,6 +2347,15 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected ParquetAvroDataFormat doParseParquetAvroDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new ParquetAvroDataFormat(), (def, key, val) -> {
+            if ("unmarshalType".equals(key)) {
+                def.setUnmarshalTypeName(val);
+                return true;
+            }
+            return identifiedTypeAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
     protected ProtobufDataFormat doParseProtobufDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ProtobufDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -3457,6 +3466,7 @@ public class ModelParser extends BaseParser {
             case "lzf": return doParseLZFDataFormat();
             case "mimeMultipart": return doParseMimeMultipartDataFormat();
             case "pgp": return doParsePGPDataFormat();
+            case "parquetAvro": return doParseParquetAvroDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
             case "soap": return doParseSoapDataFormat();

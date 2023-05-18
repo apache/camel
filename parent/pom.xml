@@ -2457,6 +2457,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.camel.dataformat.parquet.avro</groupId>
+                <artifactId>camel-parquet-avro</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.camel.maven</groupId>
                 <artifactId>camel-debezium-maven-plugin</artifactId>
                 <version>${project.version}</version>
