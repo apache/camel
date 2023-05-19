@@ -18,7 +18,6 @@ package org.apache.camel.console;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
@@ -78,7 +77,7 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
     default Collection<String> getConsoleIDs() {
         return stream()
                 .map(DevConsole::getId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
