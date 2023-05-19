@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.NotRegisteredException;
@@ -247,7 +246,7 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
                 .port(definition.getPort()).name(definition.getName())
                 .id(definition.getId()).check(computeCheck(definition))
                 .tags(definition.getMetadata().entrySet().stream().filter(e -> e.getValue() != null)
-                        .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList()))
+                        .map(e -> e.getKey() + "=" + e.getValue()).toList())
                 .addTags("_consul.service.registry.id=" + getId()).build();
 
         // perform service registration against consul
