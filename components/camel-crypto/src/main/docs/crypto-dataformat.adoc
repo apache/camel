@@ -85,7 +85,7 @@ from("direct:hmac-algorithm")
     .to("mock:unencrypted");
 ----------------------------------------------------------
 
-A list of the available algorithms in Java 7 is available via the Java Cryptography Architecture Standard Algorithm Name Documentation.
+A list of the available algorithms in Java 17 is available via the https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names] documentation.
 
 
 == Specifying an Initialization Vector
@@ -116,9 +116,7 @@ or with spring, suppling a reference to a byte[]
 <crypto id="initvector" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" initVectorRef="initializationVector" />
 ----------------------------------------------------------
 
-The same vector is required in both the encryption and decryption phases. As it is not necessary to keep the IV a secret,
-the DataFormat allows for it to be inlined into the encrypted data and subsequently read out in the decryption
-phase to initialize the Cipher. To inline the IV set the /oinline flag.
+The same vector is required in both the encryption and decryption phases. As it is not necessary to keep the IV a secret, the DataFormat allows for it to be inlined into the encrypted data and subsequently read out in the decryption phase to initialize the Cipher. To inline the IV set the `Inline` flag.
 
 
 [source,java]
@@ -153,14 +151,11 @@ For more information of the use of Initialization Vectors, consult
 
 * http://en.wikipedia.org/wiki/Initialization_vector
 * http://www.herongyang.com/Cryptography/
-* http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation
+* http://en.wikipedia.org/wiki/Block_cipher_mode_of_operation
 
 
 == Hashed Message Authentication Codes (HMAC)
-To avoid attacks against the encrypted data while it is in transit the CryptoDataFormat can also calculate a Message Authentication
-Code for the encrypted exchange contents based on a configurable MAC algorithm. The calculated HMAC is appended to the stream after encryption.
-It is separated from the stream in the decryption phase. The MAC is recalculated and verified against the transmitted version to insure nothing
-was tampered with in transit.For more information on Message Authentication Codes see http://en.wikipedia.org/wiki/HMAC
+To avoid attacks against the encrypted data while it is in transit the CryptoDataFormat can also calculate a Message Authentication Code for the encrypted exchange contents based on a configurable MAC algorithm. The calculated HMAC is appended to the stream after encryption. It is separated from the stream in the decryption phase. The MAC is recalculated and verified against the transmitted version to ensure nothing was tampered with in transit. For more information on Message Authentication Codes see http://en.wikipedia.org/wiki/HMAC
 
 [source,java]
 ----------------------------------------------------------
@@ -183,8 +178,7 @@ or with spring.
 <crypto id="hmac" algorithm="DES" keyRef="desKey" shouldAppendHMAC="true" />
 ----------------------------------------------------------
 
-By default the HMAC is calculated using the HmacSHA1 mac algorithm though this can be easily changed by supplying a different algorithm name.
-See here for how to check what algorithms are available through the configured security providers
+By default the HMAC is calculated using the HmacSHA1 mac algorithm though this can be easily changed by supplying a different algorithm name. See here for how to check what algorithms are available through the configured security providers
 
 [source,java]
 ----------------------------------------------------------
@@ -214,7 +208,7 @@ or with spring.
 When using a Recipient list or similar EIP the recipient of an exchange can vary dynamically.
 Using the same key across all recipients may neither be feasible or desirable. It would be useful to be able to specify
 keys dynamically on a per exchange basis. The exchange could then be dynamically enriched with the key of its target
-recipient before being processed by the data format. To facilitate this the DataFormat allow for keys to be supplied
+recipient before being processed by the data format. To facilitate this the DataFormat allows for keys to be supplied
 dynamically via the message headers below
 
 * CryptoDataFormat.KEY "CamelCryptoKey"
@@ -237,12 +231,12 @@ from("direct:key-in-header-encrypt")
 from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
-        exchange.getOut().copyFrom(exchange.getIn());
+        exchange.getMessage().copyFrom(exchange.getIn());
     }
 }).to("mock:unencrypted");
 ----------------------------------------------------------
 
-or with spring.
+or with spring:
 
 [source,xml]
 ----------------------------------------------------------

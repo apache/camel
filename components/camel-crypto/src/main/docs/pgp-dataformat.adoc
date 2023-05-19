@@ -26,8 +26,8 @@ include::partial$dataformat-options.adoc[]
 
 == PGPDataFormat Message Headers
 
-You can override the PGPDataFormat options by applying below headers
-into message dynamically.
+You can override the PGPDataFormat options by applying the below headers
+into messages dynamically.
 
 [width="70%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -89,7 +89,22 @@ The following sample performs signing + encryption, and then signature
 verification + decryption. It uses the same keyring for both signing and
 encryption, but you can obviously use different keys:
 
+[source,java]
+----
+from("direct:pgp-encrypt")
+    .marshal().pgp("file:pubring.gpg", "alice@example.com")
+    .unmarshal().pgp("file:secring.gpg", "alice@example.com", "letmein");
+----
 Or using Spring:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:encrypt"/>
+  <marshal><pgp keyFileName="file:pubring.gpg" keyUserid="alice@example.com"/></marshal>
+  <unmarshal><pgp keyFileName="file:secring.gpg" keyUserid="alice@example.com" password="letmein"/></unmarshal>
+</route>
+----
 
 === To work with the previous example you need the following
 
@@ -125,19 +140,31 @@ If you need to import someone elses public key so that you can encrypt a file fo
 --------------------------
 gpg --import <filename.key
 --------------------------
-The following files should now exist and can be used to run the example
+If you are using GnuPG versions prior to 2.1, the key formats are stored in different files that can be used for the example. You can check if the required files exist by running the following command:
 
 [source,bash]
 -----------------------------------------------
 ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 -----------------------------------------------
 
+However, starting from GnuPG 2.1, the key formats were changed to improve efficiency and flexibility. Unfortunately, these new formats cannot be directly used with the Bouncy Castle libraries, which are used to implement the PGP data format. For more details about the changes to the key formats, you can refer to the https://gnupg.org/faq/whats-new-in-2.1.html[GnuPG FAQ].
+
+In the newer GnuPG versions, the `pubring.gpg` file is replaced with a keybox file named `pubring.kbx`. Additionally, the `secring.gpg` file is replaced with several files with a `.key` extension located in the `~/.gnupg/private-keys-v1.d` directory.
+
+To export the keys to the older format that can be used with PGP data format, you can execute the following commands:
+
+[source,bash]
+----
+gpg --export > pubring.gpg
+gpg --export-secret-keys > secring.gpg
+----
+
 [[Crypto-PGPDecryptingVerifyingofMessagesEncryptedSignedbyDifferentPrivatePublicKeys]]
 == PGP Decrypting/Verifying of Messages Encrypted/Signed by Different Private/Public Keys
 
-A PGP Data Formater can decrypt/verify messages which have been
+A PGP Data Formatter can decrypt/verify messages which have been
 encrypted by different public keys or signed by different private keys.
-Just, provide the corresponding private keys in the secret keyring, the
+Just provide the corresponding private keys in the secret keyring, the
 corresponding public keys in the public keyring, and the passphrases in
 the passphrase accessor.
 
