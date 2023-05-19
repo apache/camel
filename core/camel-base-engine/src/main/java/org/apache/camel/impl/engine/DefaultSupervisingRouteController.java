@@ -32,7 +32,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedStartupListener;
@@ -349,21 +348,21 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public Collection<Route> getControlledRoutes() {
         return routes.stream()
                 .map(RouteHolder::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public Collection<Route> getRestartingRoutes() {
         return routeManager.routes.keySet().stream()
                 .map(RouteHolder::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public Collection<Route> getExhaustedRoutes() {
         return routeManager.exhausted.keySet().stream()
                 .map(RouteHolder::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -443,7 +442,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                     .filter(r -> r.getStatus() == ServiceStatus.Stopped)
                     .filter(r -> !isSupervised(r.route))
                     .map(RouteHolder::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         for (String route : routeList) {
@@ -469,7 +468,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                     .filter(r -> r.getStatus() == ServiceStatus.Stopped)
                     .filter(r -> isSupervised(r.route))
                     .map(RouteHolder::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         LOG.debug("Starting {} supervised routes", routeList.size());
