@@ -296,8 +296,8 @@
         <jodatime2-version>2.11.1</jodatime2-version>
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.7</jolt-version>
-        <jool-version>0.9.14</jool-version>
-        <jooq-version>3.18.0</jooq-version>
+        <jool-version>0.9.15</jool-version>
+        <jooq-version>3.18.4</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.20</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
@@ -481,10 +481,10 @@
         <tika-version>2.8.0</tika-version>
         <twilio-version>9.2.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.3.5.Final</undertow-version>
+        <undertow-version>2.3.6.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
-        <vavr-version>0.10.2</vavr-version>
+        <vavr-version>0.10.4</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.3</velocity-version>
         <vertx-version>4.4.2</vertx-version>
