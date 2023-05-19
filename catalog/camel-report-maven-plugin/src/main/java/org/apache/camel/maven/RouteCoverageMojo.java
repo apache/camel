@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -203,8 +202,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         final AtomicInteger coveredNodes = new AtomicInteger();
         int totalNumberOfNodes = 0;
 
-        List<CamelNodeDetails> routeIdTrees = routeTrees.stream().filter(t -> t.getRouteId() != null).collect(Collectors.toList());
-        List<CamelNodeDetails> anonymousRouteTrees = routeTrees.stream().filter(t -> t.getRouteId() == null).collect(Collectors.toList());
+        List<CamelNodeDetails> routeIdTrees = routeTrees.stream().filter(t -> t.getRouteId() != null).toList();
+        List<CamelNodeDetails> anonymousRouteTrees = routeTrees.stream().filter(t -> t.getRouteId() == null).toList();
         Document document = null;
         File file = null;
         Element report = null;
