@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -97,7 +96,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).collect(Collectors.toList()));
+        this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).toList());
     }
 
     public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
