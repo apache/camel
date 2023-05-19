@@ -158,4 +158,16 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${camel.surefire.fork.vmargs} -Dio.undertow.client.https.disableEndpointIdentification=true</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
