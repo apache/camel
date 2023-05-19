@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
@@ -157,7 +156,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 // to be present when storing the actual data in the model.
                 List<String> result = Arrays.stream(line.split(separator))
                         .map(x -> x.replace("\u0085", ""))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if (result.isEmpty()) {
                     throw new IllegalArgumentException("No records have been defined in the KVP");
