@@ -18,7 +18,6 @@ package org.apache.camel.management.mbean;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
@@ -51,7 +50,7 @@ public class ManagedRouteController extends ManagedService implements ManagedRou
         if (controller != null) {
             return controller.getControlledRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();

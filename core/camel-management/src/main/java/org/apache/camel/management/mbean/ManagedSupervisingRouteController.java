@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -125,7 +124,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
         if (controller != null) {
             return controller.getControlledRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();
@@ -145,7 +144,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
         if (controller != null) {
             return controller.getRestartingRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();
@@ -156,7 +155,7 @@ public class ManagedSupervisingRouteController extends ManagedService implements
         if (controller != null) {
             return controller.getExhaustedRoutes().stream()
                     .map(Route::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return Collections.emptyList();
