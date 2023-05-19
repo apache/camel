@@ -39,7 +39,10 @@ public class ErrorHandlerSuppressExceptionTest extends ContextTestSupport {
         Assertions.assertTrue(out.isFailed());
         Exception t = out.getException();
         Assertions.assertNotNull(t);
-        Assertions.assertEquals("Root exception", t.getMessage());
+        Assertions.assertEquals("Forced error during handling", t.getMessage());
+        // only 1 suppressed to avoid the same exception being added multiple times
+        Assertions.assertEquals(1, t.getSuppressed().length);
+        Assertions.assertEquals("Root exception", t.getSuppressed()[0].getMessage());
     }
 
     @Override
@@ -47,21 +50,24 @@ public class ErrorHandlerSuppressExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler().maximumRedeliveries(3).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalArgumentException("Forced error during handling");
-                    }
-                }));
+                onException(Exception.class).maximumRedeliveries(3).redeliveryDelay(0)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // throw a new exception while handling an exception
+                                // this should not leak with the same exception being nested
+                                // as suppressed exception
+                                throw new IllegalArgumentException("Forced error during handling");
+                            }
+                        });
 
                 from("direct:start")
-                        .throwException(new IOException("Root exception"));
-                //                        .process(new Processor() {
-                //                            @Override
-                //                            public void process(Exchange exchange) throws Exception {
-                //                                throw new IOException("Root exception");
-                //                            }
-                //                        });
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                throw new IOException("Root exception");
+                            }
+                        });
             }
         };
     }
