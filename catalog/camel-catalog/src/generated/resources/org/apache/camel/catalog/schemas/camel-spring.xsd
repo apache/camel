@@ -111,17 +111,6 @@ BeanPostProcessor to post process beans.
     </xs:annotation>
   </xs:element>
     
-  <xs:element name="beans" type="tns:beansDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-A groupping POJO (and related XML root element) that's historically associated
-with entire application (or its distinguished fragment). This class is not meant
-to be used with Camel Java DSL, but it's needed to generate XML Schema and MX
-parser methods.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-    
   <xs:element name="bearerToken" type="tns:bearerTokenDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -160,14 +149,6 @@ Deprecated: null
 Deprecated: null
       ]]>
       </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-    
-  <xs:element name="camel" type="tns:applicationDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-If beans reminds Spring application too much, we can use camel.
-      ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
     
@@ -5737,74 +5718,6 @@ Default value: 60
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-                
-        <xs:attribute name="bulkheadEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether bulkhead is enabled or not on the circuit breaker. Default is false.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="bulkheadMaxConcurrentCalls" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures the max amount of concurrent calls the bulkhead will support. Default
-value: 25
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="bulkheadMaxWaitDuration" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures a maximum amount of time which the calling thread will wait to enter
-the bulkhead. If bulkhead has space available, entry is guaranteed and
-immediate. If bulkhead is full, calling threads will contest for space, if it
-becomes available. maxWaitDuration can be set to 0. Note: for threads running on
-an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration
-to 0 is highly recommended. Blocking an event-loop thread will most likely have
-a negative effect on application throughput. Default value: 0
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether timeout is enabled or not on the circuit breaker. Default is false.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutExecutorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-References to a custom thread pool to use when timeout is enabled (uses
-ForkJoinPool#commonPool() by default).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutDuration" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures the thread execution timeout. Default value is 1 second. Default
-value: 1000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="timeoutCancelRunningFuture" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Configures whether cancel is called on the running future. Defaults to true.
-Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
               
       </xs:extension>
           
@@ -11370,19 +11283,6 @@ true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-                
-        <xs:attribute name="accessExternalSchemaProtocols" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Only in use if schema validation has been enabled. Restrict access to the
-protocols specified for external reference set by the schemaLocation attribute,
-Import and Include element. Examples of protocols are file, http, jar:file.
-false or none to deny all access to external references; a specific protocol,
-such as file, to give permission to only the protocol; the keyword all to grant
-permission to all protocols. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
               
       </xs:extension>
           
@@ -11669,15 +11569,6 @@ XML, or application/json for data formats marshalling to JSON. Default value:
 true
             ]]>
             </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="dateFormatPattern" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To configure the date format while marshall or unmarshall Date fields in JSON
-using Gson.
-            ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
               
@@ -20227,23 +20118,7 @@ org.apache.camel.language.simple.SimpleLanguage expression.
             
       <xs:extension base="tns:serviceCallConfiguration">
                 
-        <xs:sequence/>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="consulServiceCallServiceDiscoveryConfiguration">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-                
-        <xs:sequence/>
-                
-        <xs:attribute name="url" type="xs:string">
+        <xs:attribute name="component" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -21157,14 +21032,6 @@ configuration, so these custom functions can be used in xquery expressions.
                 
         <xs:attribute name="serviceDiscoveryRef" type="xs:string">
           <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a custom ServiceDiscovery to use.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="serviceFilterRef" type="xs:string">
-          <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 The name of the header or query parameter to be used.
@@ -21173,7 +21040,7 @@ The name of the header or query parameter to be used.
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="serviceChooserRef" type="xs:string">
+        <xs:attribute name="serviceFilterRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -21183,7 +21050,7 @@ To use header as the location of the API key. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="loadBalancerRef" type="xs:string">
+        <xs:attribute name="serviceChooserRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -21506,30 +21373,8 @@ Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="javaScriptExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:typedExpressionDefinition"/>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="joorExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:typedExpressionDefinition">
                 
-        <xs:attribute name="preCompile" type="xs:string">
+        <xs:attribute name="type" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -21542,7 +21387,7 @@ input to be an array type.
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="singleQuotes" type="xs:string">
+        <xs:attribute name="outType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
@@ -21554,30 +21399,8 @@ input to be an array type.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="jqExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="jsonPathExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:singleInputTypedExpressionDefinition">
                 
-        <xs:attribute name="suppressExceptions" type="xs:string">
+        <xs:attribute name="singleQuotes" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
