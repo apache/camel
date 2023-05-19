@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
@@ -193,7 +192,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private List<String> convertBodyToList(final Iterable<Object> inputBody) {
         return StreamSupport.stream(inputBody.spliterator(), false)
                 .map(body -> getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, body))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private <T> void subscribeToMono(
