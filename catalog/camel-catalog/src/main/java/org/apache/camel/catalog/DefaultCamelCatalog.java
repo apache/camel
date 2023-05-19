@@ -30,7 +30,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.catalog.impl.AbstractCamelCatalog;
@@ -202,7 +201,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return cache("findComponentNames", () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
@@ -210,7 +209,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return cache("findDataFormatNames", () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
                 .flatMap(Collection::stream)
                 .sorted()
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
@@ -403,7 +402,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::componentJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("component"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
@@ -412,7 +411,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::dataFormatJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("dataformat"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
@@ -421,7 +420,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::languageJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("language"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
@@ -430,7 +429,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::modelJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("model"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
@@ -439,7 +438,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 .map(this::otherJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("other"))
-                .collect(Collectors.toList())));
+                .toList()));
     }
 
     @Override
