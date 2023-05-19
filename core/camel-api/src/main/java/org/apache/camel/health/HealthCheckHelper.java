@@ -144,7 +144,7 @@ public final class HealthCheckHelper {
                     .sorted(Comparator.comparingInt(HealthCheck::getOrder))
                     .distinct()
                     .map(check -> check.call(optionsSupplier.apply(check)))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (result.isEmpty()) {
                 return Collections.emptyList();

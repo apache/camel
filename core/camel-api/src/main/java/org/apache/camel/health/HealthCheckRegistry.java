@@ -18,7 +18,6 @@ package org.apache.camel.health;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
@@ -80,7 +79,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
     default Collection<String> getCheckIDs() {
         return stream()
                 .map(HealthCheck::getId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
