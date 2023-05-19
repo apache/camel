@@ -144,9 +144,10 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}-jakarta.jar
+                    <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}-jakarta.jar -Xmx3G
                         ${camel.surefire.fork.vmargs}
                     </argLine>
+                    <forkedProcessTimeoutInSeconds>240</forkedProcessTimeoutInSeconds>
                 </configuration>
             </plugin>
         </plugins>
