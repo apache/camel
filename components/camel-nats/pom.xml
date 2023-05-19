@@ -32,6 +32,7 @@
     <name>Camel :: Nats</name>
 
     <properties>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencies>
@@ -62,16 +63,28 @@
     </dependencies>
 
     <profiles>
-       <profile>
-            <id>ppc64le</id>
+        <profile>
+            <!-- Nats container is only available for x86 64 and ARM 64 -->
+            <id>x86</id>
             <activation>
                 <os>
-                    <arch>ppc64le</arch>
-               </os>
+                    <arch>amd64</arch>
+                </os>
             </activation>
             <properties>
-               <skipITs>true</skipITs>
-          </properties>
-       </profile>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+        <profile>
+            <id>Arm</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
     </profiles>
 </project>
