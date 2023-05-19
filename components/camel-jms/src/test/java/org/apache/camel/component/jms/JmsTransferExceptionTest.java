@@ -22,6 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.spi.CamelLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class JmsTransferExceptionTest extends CamelTestSupport {
 
     private static int counter;
+    protected MyErrorLogger errorLogger = new MyErrorLogger();
 
     protected String getUri() {
         return "activemq:queue:foo?transferException=true";
@@ -66,7 +69,15 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
         assertNotNull(e.getCause().getStackTrace(), "Should contain a remote stacktrace");
 
         // we still try redeliver
-        assertEquals(3, counter);
+        assertEquals(5, counter);
+
+        // it's all the same exception so no suppressed
+        assertEquals(0, e.getSuppressed().length);
+
+        // and check what camel logged
+        Throwable t = errorLogger.getException();
+        assertNotNull(t);
+        assertEquals(0, t.getSuppressed().length);
     }
 
     @Override
@@ -84,7 +95,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler().maximumRedeliveries(2));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(4).logger(errorLogger));
 
                 from(getUri())
                         .process(exchange -> {
@@ -100,4 +111,30 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
         };
     }
 
+    private static class MyErrorLogger extends CamelLogger {
+
+        private Throwable exception;
+        private String message;
+        private LoggingLevel loggingLevel;
+
+        @Override
+        public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
+            super.log(message, exception, loggingLevel);
+            this.message = message;
+            this.exception = exception;
+            this.loggingLevel = loggingLevel;
+        }
+
+        public Throwable getException() {
+            return exception;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public LoggingLevel getLoggingLevel() {
+            return loggingLevel;
+        }
+    }
 }
