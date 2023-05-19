@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -122,7 +121,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
-        this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).collect(Collectors.toList());
+        this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).toList();
         this.size = processors.size();
     }
 
