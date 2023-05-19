@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -334,7 +333,7 @@ public class PropertiesComponent extends ServiceSupport
         if (locations.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return locations.stream().map(PropertiesLocation::toString).collect(Collectors.toList());
+            return locations.stream().map(PropertiesLocation::toString).toList();
         }
     }
 
