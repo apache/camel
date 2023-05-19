@@ -51,7 +51,7 @@ public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatR
         // convert string to list/set for the following options
         if (definition.getDontStripVersionsFromReferencesAtPaths() != null) {
             List<String> list = Arrays.stream(definition.getDontStripVersionsFromReferencesAtPaths().split(","))
-                    .collect(Collectors.toList());
+                    .toList();
             properties.put("dontStripVersionsFromReferencesAtPaths", list);
         }
         if (definition.getDontEncodeElements() != null) {
