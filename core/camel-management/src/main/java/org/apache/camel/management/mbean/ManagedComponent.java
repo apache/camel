@@ -111,7 +111,7 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
                 String rscope = result.getScope().toString();
                 return new ResultImpl(
                         Scope.valueOf(rscope), Status.valueOf(rstatus),
-                        result.getErrors().stream().map(this::translate).collect(Collectors.toList()));
+                        result.getErrors().stream().map(this::translate).toList());
 
             } else {
                 return new ResultImpl(Scope.PARAMETERS, Status.UNSUPPORTED, Collections.emptyList());
