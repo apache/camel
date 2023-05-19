@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -653,7 +652,7 @@ public final class CamelContextHelper {
         return camelContext.getComponentNames().stream()
                 .map(camelContext::getComponent)
                 .filter(predicate)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -666,7 +665,7 @@ public final class CamelContextHelper {
     public static List<Endpoint> getEndpoints(CamelContext camelContext, Predicate<Endpoint> predicate) {
         return camelContext.getEndpoints().stream()
                 .filter(predicate)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static void validateRestConfigurationComponent(String component, String configurationComponent) {
