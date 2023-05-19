@@ -22,7 +22,7 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "api-key": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "apiKey": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "org.apache.camel.model.rest.ApiKeyDefinition": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
-            case "camel-app": return new ModelDeserializers.ApplicationDefinitionDeserializer();
+            case "camel": return new ModelDeserializers.ApplicationDefinitionDeserializer();
             case "org.apache.camel.model.app.ApplicationDefinition": return new ModelDeserializers.ApplicationDefinitionDeserializer();
             case "avro": return new ModelDeserializers.AvroDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.AvroDataFormat": return new ModelDeserializers.AvroDataFormatDeserializer();

@@ -125,11 +125,10 @@ Deprecated: null
     </xs:annotation>
   </xs:element>
     
-  <xs:element name="camel-app" type="tns:applicationDefinition">
+  <xs:element name="camel" type="tns:applicationDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-If beans reminds Spring application too much, we can use camel-app (similar to
-web-app from Servlet API specification).
+If beans reminds Spring application too much, we can use camel.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>

@@ -35,6 +35,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Injector;
@@ -43,6 +44,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -85,7 +87,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configure() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
-                    case "beans", "camel-app" ->
+                    case "beans", "camel" ->
                         new ModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseBeansDefinition()
                                 .ifPresent(this::allInOne);
@@ -146,6 +148,28 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                                     injector.newInstance(c, true);
                                 }
                             }
+                        }
+                    }
+                }
+
+                for (RegistryBeanDefinition bean : app.getBeans()) {
+                    String type = bean.getType();
+                    String name = bean.getName();
+                    if (name == null || "".equals(name.trim())) {
+                        name = type;
+                    }
+                    if (type != null && !type.startsWith("#")) {
+                        type = "#class:" + type;
+                        try {
+                            final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
+
+                            if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
+                                PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, bean.getProperties());
+                            }
+                            getCamelContext().getRegistry().unbind(name);
+                            getCamelContext().getRegistry().bind(name, target);
+                        } catch (Exception e) {
+                            LOG.warn("Problem creating bean {}", type, e);
                         }
                     }
                 }

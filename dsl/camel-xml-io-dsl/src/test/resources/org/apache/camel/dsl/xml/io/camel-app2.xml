@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<camel-app xmlns:s="http://www.springframework.org/schema/beans">
+<camel xmlns:s="http://www.springframework.org/schema/beans">
 
     <route id="r2">
         <from uri="direct:x2"/>
@@ -25,4 +25,4 @@
         <to uri="mock:y2"/>
     </route>
 
-</camel-app>
+</camel>
