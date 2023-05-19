@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
@@ -263,7 +262,7 @@ public class BlobOperations {
 
         final List<String> blockIds = blockEntries.stream()
                 .map(Block::getName)
-                .collect(Collectors.toList());
+                .toList();
 
         final Response<BlockBlobItem> response = client.commitBlockBlob(blockIds, commonRequestOptions.getBlobHttpHeaders(),
                 commonRequestOptions.getMetadata(),
