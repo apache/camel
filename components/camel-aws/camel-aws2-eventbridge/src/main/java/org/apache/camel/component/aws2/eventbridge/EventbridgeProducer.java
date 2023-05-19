@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
@@ -509,7 +508,7 @@ public class EventbridgeProducer extends DefaultProducer {
             PutEventsRequestEntry.Builder entryBuilder = PutEventsRequestEntry.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN))) {
                 String resourcesArn = exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, String.class);
-                entryBuilder.resources(Stream.of(resourcesArn.split(",")).collect(Collectors.toList()));
+                entryBuilder.resources(Stream.of(resourcesArn.split(",")).toList());
             } else {
                 throw new IllegalArgumentException("At least one resource ARN must be specified");
             }

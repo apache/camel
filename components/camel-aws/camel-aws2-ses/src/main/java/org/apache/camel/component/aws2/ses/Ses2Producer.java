@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
@@ -134,7 +133,7 @@ public class Ses2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(replyToAddresses)) {
             return Stream.of(replyToAddresses.split(","))
                     .map(String::trim)
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             return Collections.emptyList();
         }
@@ -163,7 +162,7 @@ public class Ses2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(cc)) {
             return Stream.of(cc.split(","))
                     .map(String::trim)
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             return Collections.emptyList();
         }
@@ -177,7 +176,7 @@ public class Ses2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(bcc)) {
             return Stream.of(bcc.split(","))
                     .map(String::trim)
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             return Collections.emptyList();
         }
@@ -191,7 +190,7 @@ public class Ses2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(to)) {
             return Stream.of(to.split(","))
                     .map(String::trim)
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             return Collections.emptyList();
         }
