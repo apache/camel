@@ -32,6 +32,10 @@
     <name>Camel :: MongoDB GridFS</name>
     <description>Camel MongoDB GridFS component</description>
 
+    <properties>
+        <skipITs>true</skipITs>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -79,14 +83,26 @@
 
     <profiles>
         <profile>
-            <id>ppc64le</id>
+            <!-- MongoDB container is only available for x86 64 and ARM 64 -->
+            <id>x86</id>
             <activation>
                 <os>
-                    <arch>ppc64le</arch>
+                    <arch>amd64</arch>
                 </os>
             </activation>
             <properties>
-                <skipITs>true</skipITs>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+        <profile>
+            <id>Arm</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <skipITs>false</skipITs>
             </properties>
         </profile>
     </profiles>
