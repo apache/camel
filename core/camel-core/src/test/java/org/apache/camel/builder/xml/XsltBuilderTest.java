@@ -261,7 +261,7 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         // now done the exchange
         List<Synchronization> onCompletions = exchange.getExchangeExtension().handoverCompletions();
-        UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions, log);
+        UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions);
 
         // the file should be deleted
         assertFileNotExists(testFile("xsltout.xml"));
