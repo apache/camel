@@ -17,14 +17,18 @@
     limitations under the License.
 
 -->
-<camel xmlns="http://camel.apache.org/schema/spring">
+<camel xmlns="http://camel.apache.org/schema/spring" xmlns:s="http://www.springframework.org/schema/beans">
 
-    <component-scan base-package="org.apache.camel.dsl.xml.io.beans" />
+    <bean name="xml-bean-from-registry" type="org.apache.camel.dsl.xml.io.beans.StandaloneGreeter">
+        <properties>
+            <property key="message.msg" value="Hello" />
+        </properties>
+    </bean>
 
-    <route id="r1">
-        <from uri="direct:x1"/>
-        <bean ref="bean-from-registry" />
-        <to uri="mock:y1"/>
+    <route id="r4">
+        <from uri="direct:x4"/>
+        <bean ref="xml-bean-from-registry" />
+        <to uri="mock:y4"/>
     </route>
 
 </camel>

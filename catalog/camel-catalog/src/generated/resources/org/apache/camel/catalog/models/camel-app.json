@@ -1,9 +1,9 @@
 {
   "model": {
     "kind": "model",
-    "name": "camel-app",
-    "title": "Camel-app",
-    "description": "If beans reminds Spring application too much, we can use camel-app (similar to web-app from Servlet API specification).",
+    "name": "camel",
+    "title": "Camel",
+    "description": "If beans reminds Spring application too much, we can use camel.",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.app.ApplicationDefinition",

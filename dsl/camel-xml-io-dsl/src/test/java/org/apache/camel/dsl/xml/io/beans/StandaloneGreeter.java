@@ -16,18 +16,14 @@
  */
 package org.apache.camel.dsl.xml.io.beans;
 
-import org.apache.camel.BeanInject;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.StringHelper;
 
-@BindToRegistry("bean-from-registry")
-public class Greeter implements Processor {
+public class StandaloneGreeter implements Processor {
 
     private GreeterMessage message;
 
-    @BeanInject
     public void setMessage(GreeterMessage message) {
         this.message = message;
     }

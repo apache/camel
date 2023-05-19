@@ -85,7 +85,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         final Object target = PropertyBindingSupport.resolveBean(context, bean.getType());
 
         if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
-            YamlSupport.setPropertiesOnTarget(context, target, bean.getProperties());
+            PropertyBindingSupport.setPropertiesOnTarget(context, target, bean.getProperties());
         }
 
         return target;

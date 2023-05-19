@@ -1560,7 +1560,7 @@ public class ModelParser extends BaseParser {
     }
     public Optional<ApplicationDefinition> parseApplicationDefinition()
             throws IOException, XmlPullParserException {
-        String tag = getNextTag("beans", "camel-app");
+        String tag = getNextTag("beans", "camel");
         if (tag != null) {
             return Optional.of(doParseApplicationDefinition());
         }
@@ -1572,7 +1572,7 @@ public class ModelParser extends BaseParser {
     }
     public Optional<BeansDefinition> parseBeansDefinition()
             throws IOException, XmlPullParserException {
-        String tag = getNextTag("beans", "camel-app");
+        String tag = getNextTag("beans", "camel");
         if (tag != null) {
             return Optional.of(doParseBeansDefinition());
         }

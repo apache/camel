@@ -536,14 +536,14 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             });
 
             if (clazz == beansDefinitionClass || clazz == applicationDefinitionClass) {
-                // for beans/camel-app we want public methods to be invoked by camel-xml-io-dsl
+                // for beans/camel we want public methods to be invoked by camel-xml-io-dsl
 
                 parser.addMethod().setPublic()
                         .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
                         .setName("parse" + name)
                         .addThrows(IOException.class)
                         .addThrows(XML_PULL_PARSER_EXCEPTION)
-                        .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", "beans", "camel-app"),
+                        .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", "beans", "camel"),
                                 "if (tag != null) {",
                                 String.format("    return Optional.of(doParse%s());", name),
                                 "}",

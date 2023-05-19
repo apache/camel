@@ -486,7 +486,7 @@ public class ModelWriter extends BaseWriter {
     public void writeApplicationDefinition(
             ApplicationDefinition def)
             throws IOException {
-        doWriteApplicationDefinition("camel-app", def);
+        doWriteApplicationDefinition("camel", def);
     }
     public void writeBeansDefinition(BeansDefinition def) throws IOException {
         doWriteBeansDefinition("beans", def);

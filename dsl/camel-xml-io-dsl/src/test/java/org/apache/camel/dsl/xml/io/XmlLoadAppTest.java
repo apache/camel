@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dsl.xml.io.beans.GreeterMessage;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
@@ -32,7 +33,8 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            // load route from XML and add them to the existing camel context
+            // load route from XML and add them both to the existing camel context
+            // only first XML declares component scanning (to put beans into the registry)
             String[] contexts = new String[] {
                     "camel-app1.xml",
                     "camel-app2.xml"
@@ -48,6 +50,10 @@ public class XmlLoadAppTest {
             assertNotNull(context.getRoute("r2"), "Loaded r2 route should be there");
             assertEquals(2, context.getRoutes().size());
 
+            // tweak bean in registry
+            GreeterMessage gm = context.getRegistry().findSingleByType(GreeterMessage.class);
+            gm.setMsg("Hello");
+
             // test that loaded route works
             MockEndpoint y1 = context.getEndpoint("mock:y1", MockEndpoint.class);
             y1.expectedBodiesReceived("Hello World");
@@ -58,6 +64,53 @@ public class XmlLoadAppTest {
             y2.expectedBodiesReceived("Hello World");
             context.createProducerTemplate().sendBody("direct:x2", "I'm World");
             y2.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeansAndDI() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            // camel-app3 registers two beans and 2nd one uses @BeanInject on first one
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app3.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r3"), "Loaded r3 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y3 = context.getEndpoint("mock:y3", MockEndpoint.class);
+            y3.expectedBodiesReceived("Hello World");
+            context.createProducerTemplate().sendBody("direct:x3", "I'm World");
+            y3.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeansAndFlattenedProperties() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            // camel-app4 registers one bean, where its dependency is created from the flattened properties
+            // and using org.apache.camel.spi.Injector.newInstance()
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app4.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r4"), "Loaded r4 route should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint y4 = context.getEndpoint("mock:y4", MockEndpoint.class);
+            y4.expectedBodiesReceived("Hello World");
+            context.createProducerTemplate().sendBody("direct:x4", "I'm World");
+            y4.assertIsSatisfied();
         }
     }
 

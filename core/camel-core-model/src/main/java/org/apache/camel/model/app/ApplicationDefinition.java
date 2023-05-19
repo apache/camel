@@ -21,10 +21,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * If "beans" reminds Spring application too much, we can use "camel-app" (similar to "web-app" from Servlet API
- * specification).
+ * If "beans" reminds Spring application too much, we can use "camel".
  */
 @Metadata(label = "configuration")
-@XmlRootElement(name = "camel-app")
+@XmlRootElement(name = "camel")
 public class ApplicationDefinition extends BeansDefinition {
 }

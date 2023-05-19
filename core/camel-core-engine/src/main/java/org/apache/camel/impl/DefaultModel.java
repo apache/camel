@@ -28,12 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
@@ -66,17 +64,14 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.NodeIdFactory;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.ScriptHelper;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -581,7 +576,7 @@ public class DefaultModel implements Model {
                     bindings.put("rtc", routeTemplateContext);
                     Object local = slan.evaluate(script, bindings, clazz);
                     if (!props.isEmpty()) {
-                        setPropertiesOnTarget(camelContext, local, props);
+                        PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                     }
                     return local;
                 }));
@@ -598,7 +593,7 @@ public class DefaultModel implements Model {
                             Expression exp = lan.createExpression(text);
                             Object local = exp.evaluate(dummy, clazz);
                             if (!props.isEmpty()) {
-                                setPropertiesOnTarget(camelContext, local, props);
+                                PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                             }
                             return local;
                         } else {
@@ -654,7 +649,7 @@ public class DefaultModel implements Model {
                             local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, params);
                         }
                         if (!props.isEmpty()) {
-                            setPropertiesOnTarget(camelContext, local, props);
+                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                         }
                         return local;
                     } catch (Exception e) {
@@ -673,7 +668,7 @@ public class DefaultModel implements Model {
                         Suppliers.memorize(() -> {
                             Object local = camelContext.getInjector().newInstance(clazz);
                             if (!props.isEmpty()) {
-                                setPropertiesOnTarget(camelContext, local, props);
+                                PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                             }
                             return local;
                         }));
@@ -696,67 +691,6 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException(
                     "Route template local bean: " + beanFactory.getName() + " has invalid type syntax: " + beanFactory.getType()
                                                + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
-        }
-    }
-
-    /**
-     * Sets the properties to the given target.
-     *
-     * @param context    the context into which the properties must be set.
-     * @param target     the object to which the properties must be set.
-     * @param properties the properties to set.
-     */
-    private static void setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties) {
-        ObjectHelper.notNull(context, "context");
-        ObjectHelper.notNull(target, "target");
-        ObjectHelper.notNull(properties, "properties");
-
-        if (target instanceof CamelContext) {
-            throw new UnsupportedOperationException("Configuring the Camel Context is not supported");
-        }
-
-        PropertyConfigurer configurer = null;
-        if (target instanceof Component) {
-            // the component needs to be initialized to have the configurer ready
-            ServiceHelper.initService(target);
-            configurer = ((Component) target).getComponentPropertyConfigurer();
-        }
-
-        if (configurer == null) {
-            // see if there is a configurer for it
-            configurer = PluginHelper.getConfigurerResolver(context)
-                    .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
-        }
-
-        try {
-            PropertyBindingSupport.build()
-                    .withMandatory(true)
-                    .withRemoveParameters(false)
-                    .withConfigurer(configurer)
-                    .withIgnoreCase(true)
-                    .withFlattenProperties(true)
-                    .bind(context, target, properties);
-        } catch (PropertyBindingException e) {
-            String key = e.getOptionKey();
-            if (key == null) {
-                String prefix = e.getOptionPrefix();
-                if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
-                }
-
-                key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
-                        : e.getPropertyName();
-            }
-
-            // enrich the error with more precise details with option prefix and key
-            throw new PropertyBindingException(
-                    e.getTarget(),
-                    e.getPropertyName(),
-                    e.getValue(),
-                    null,
-                    key,
-                    e.getCause());
         }
     }
 
