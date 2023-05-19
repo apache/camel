@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.catalog.CatalogService;
@@ -64,7 +63,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
             List<CatalogService> services = client.get().catalogClient().getService(name, queryOptions).getResponse();
             List<ServiceHealth> healths = client.get().healthClient().getAllServiceInstances(name, queryOptions).getResponse();
 
-            return services.stream().map(service -> newService(name, service, healths)).collect(Collectors.toList());
+            return services.stream().map(service -> newService(name, service, healths)).toList();
         } catch (Exception e) {
             LOGGER.warn("Error getting '{}' services from consul.", name, e);
             return Collections.emptyList();
