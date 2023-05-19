@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     @Override
     public <K, V> Map<K, V> createLRUCache(int maximumCacheSize) {
         LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
-        return new SimpleLRUCache<>(maximumCacheSize);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(maximumCacheSize));
     }
 
     /**
@@ -53,7 +54,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     @Override
     public <K, V> Map<K, V> createLRUCache(int maximumCacheSize, Consumer<V> onEvict) {
         LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
-        return new SimpleLRUCache<>(16, maximumCacheSize, onEvict);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(16, maximumCacheSize, onEvict));
     }
 
     /**
@@ -67,7 +68,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     @Override
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
-        return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(initialCapacity, maximumCacheSize));
     }
 
     /**
@@ -83,7 +84,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
                 maximumCacheSize, stopOnEviction);
-        return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction));
     }
 
     /**
@@ -96,20 +97,20 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int maximumCacheSize) {
         LOG.trace("Creating LRUSoftCache with maximumCacheSize: {}", maximumCacheSize);
-        return new SimpleLRUCache<>(maximumCacheSize);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(maximumCacheSize));
     }
 
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
-        return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(initialCapacity, maximumCacheSize));
     }
 
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
                 maximumCacheSize, stopOnEviction);
-        return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction));
     }
 
     /**
@@ -122,20 +123,20 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int maximumCacheSize) {
         LOG.trace("Creating LRUWeakCache with maximumCacheSize: {}", maximumCacheSize);
-        return new SimpleLRUCache<>(maximumCacheSize);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(maximumCacheSize));
     }
 
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
-        return new SimpleLRUCache<>(initialCapacity, maximumCacheSize);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(initialCapacity, maximumCacheSize));
     }
 
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
         LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
                 maximumCacheSize, stopOnEviction);
-        return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
+        return Collections.synchronizedMap(new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction));
     }
 
     private class SimpleLRUCache<K, V> extends LinkedHashMap<K, V> {
