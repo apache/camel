@@ -20,7 +20,6 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -51,7 +50,7 @@ public class JavaSecurityDevConsole extends AbstractDevConsole {
                 }
                 List<Provider.Service> services = p.getServices().stream()
                         .sorted(JavaSecurityDevConsole::compare)
-                        .collect(Collectors.toList());
+                        .toList();
                 for (Provider.Service s : services) {
                     sb.append(String.format("\n        %s: %s (%s)", s.getType(), s.getAlgorithm(), s.getClassName()));
                 }
@@ -81,7 +80,7 @@ public class JavaSecurityDevConsole extends AbstractDevConsole {
                 }
                 List<Provider.Service> services = p.getServices().stream()
                         .sorted(JavaSecurityDevConsole::compare)
-                        .collect(Collectors.toList());
+                        .toList();
                 if (!services.isEmpty()) {
                     JsonArray arr2 = new JsonArray();
                     jo.put("services", arr2);
