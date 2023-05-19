@@ -19,7 +19,6 @@ package org.apache.camel.component.azure.storage.datalake.client;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.util.Context;
@@ -48,7 +47,7 @@ public class DataLakeFileSystemClientWrapper {
     }
 
     public List<PathItem> listPaths(final ListPathsOptions listPathsOptions, final Duration timeout) {
-        return client.listPaths(listPathsOptions, timeout).stream().collect(Collectors.toList());
+        return client.listPaths(listPathsOptions, timeout).stream().toList();
     }
 
     public DataLakeDirectoryClientWrapper getDataLakeDirectoryClientWrapper(final String directoryName) {
