@@ -18,7 +18,6 @@ package org.apache.camel.component.digitalocean.producer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.myjeeva.digitalocean.common.ResourceType;
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -249,7 +248,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_KEYS))) {
             List<String> keys = (List<String>) exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_KEYS);
-            droplet.setKeys(keys.stream().map(Key::new).collect(Collectors.toList()));
+            droplet.setKeys(keys.stream().map(Key::new).toList());
         }
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_BACKUPS))) {
