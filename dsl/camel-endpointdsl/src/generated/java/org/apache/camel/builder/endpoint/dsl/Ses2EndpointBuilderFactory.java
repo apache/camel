@@ -576,9 +576,10 @@ public interface Ses2EndpointBuilderFactory {
         }
 
         /**
-         * The reply-to email address(es) for the message.
+         * The reply-to email address(es) for the message. Use comma to separate
+         * multiple values.
          * 
-         * The option is a: {@code List<String>} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
