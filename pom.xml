@@ -136,7 +136,6 @@
         <jaxb-osgi-version>4.0.1</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.1</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.1</jaxb-jxc-version>
-        <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <groovy-version>4.0.12</groovy-version>

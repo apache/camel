@@ -3452,32 +3452,6 @@
             </build>
         </profile>
 
-        <profile>
-            <id>errorprone</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>${maven-compiler-plugin-version}</version>
-                        <configuration>
-                            <release>${jdk.version}</release>
-                            <maxmem>512M</maxmem>
-                            <fork>${compiler.fork}</fork>
-                            <compilerId>javac-with-errorprone</compilerId>
-                            <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.codehaus.plexus</groupId>
-                                <artifactId>plexus-compiler-javac-errorprone</artifactId>
-                                <version>${errorprone-version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>cleanrepo</id>
