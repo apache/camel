@@ -27,9 +27,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IrcIntegrationTestSupport extends CamelTestSupport {
+public class IrcIntegrationITSupport extends CamelTestSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IrcIntegrationTestSupport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcIntegrationITSupport.class);
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;

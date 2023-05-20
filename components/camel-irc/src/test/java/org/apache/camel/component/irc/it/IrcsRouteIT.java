@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.irc.it;
 
-public class IrcsRouteTest extends IrcRouteTest {
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
+@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
+                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+public class IrcsRouteIT extends IrcRouteIT {
 
     @Override
     protected String sendUri() {

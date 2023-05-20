@@ -23,12 +23,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IrcRouteTest extends IrcIntegrationTestSupport {
+@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
+                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+public class IrcRouteIT extends IrcIntegrationITSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IrcRouteTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcRouteIT.class);
 
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
