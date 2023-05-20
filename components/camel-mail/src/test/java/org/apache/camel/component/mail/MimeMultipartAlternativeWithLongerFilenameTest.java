@@ -26,10 +26,11 @@ import jakarta.mail.internet.MimeMultipart;
 import org.apache.camel.Exchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser ryanWithLongerFilename = Mailbox.getOrCreateUser("ryanWithLongerFilename", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
@@ -47,7 +50,7 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         Mailbox.clearAll();
 
         // create an exchange with a normal body and attachment to be produced as email
-        MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
+        MailEndpoint endpoint = context.getEndpoint(ryanWithLongerFilename.uriPrefix(Protocol.smtp), MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
         endpoint.getConfiguration().setAlternativeBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
 
@@ -103,7 +106,8 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://ryan@mymailserver.com?password=secret&initialDelay=100&delay=100").to("mock:result");
+                from(ryanWithLongerFilename.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .to("mock:result");
             }
         };
     }

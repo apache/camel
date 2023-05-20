@@ -1151,7 +1151,7 @@ public interface MailEndpointBuilderFactory {
          * have the SORT capability.
          * 
          * The option is a:
-         * &lt;code&gt;com.sun.mail.imap.SortTerm[]&lt;/code&gt; type.
+         * &lt;code&gt;org.eclipse.angus.mail.imap.SortTerm[]&lt;/code&gt; type.
          * 
          * Group: sort
          * 
@@ -1159,7 +1159,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sortTerm(
-                com.sun.mail.imap.SortTerm[] sortTerm) {
+                org.eclipse.angus.mail.imap.SortTerm[] sortTerm) {
             doSetProperty("sortTerm", sortTerm);
             return this;
         }
@@ -1169,7 +1169,7 @@ public interface MailEndpointBuilderFactory {
          * have the SORT capability.
          * 
          * The option will be converted to a
-         * &lt;code&gt;com.sun.mail.imap.SortTerm[]&lt;/code&gt; type.
+         * &lt;code&gt;org.eclipse.angus.mail.imap.SortTerm[]&lt;/code&gt; type.
          * 
          * Group: sort
          * 

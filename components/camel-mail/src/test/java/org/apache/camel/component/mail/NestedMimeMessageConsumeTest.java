@@ -30,10 +30,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -43,6 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NestedMimeMessageConsumeTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser james3 = Mailbox.getOrCreateUser("james3", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser james4 = Mailbox.getOrCreateUser("james4", "secret");
 
     @Test
     public void testNestedMultipart() throws Exception {
@@ -51,7 +56,7 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
-        prepareMailbox("james3");
+        prepareMailbox(james3);
 
         resultEndpoint.assertIsSatisfied();
 
@@ -72,11 +77,11 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
         }
     }
 
-    private void prepareMailbox(String user) throws MessagingException {
+    private void prepareMailbox(MailboxUser user) throws MessagingException {
         // connect to mailbox
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, user, "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), user.getLogin(), user.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -94,8 +99,10 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james3@localhost?initialDelay=100&delay=100").removeHeader("to").to("smtp://james4@localhost");
-                from("pop3://james4@localhost?initialDelay=200&delay=100").convertBodyTo(String.class).to("mock:result");
+                from(james3.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").removeHeader("to")
+                        .to(james4.uriPrefix(Protocol.smtp));
+                from(james4.uriPrefix(Protocol.pop3) + "&initialDelay=200&delay=100").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -17,6 +17,8 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * and a polling event yields no results.
  */
 public class MailConsumerIdleMessageTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     @Test
     public void testConsumeIdleMessages() throws Exception {
@@ -42,7 +46,7 @@ public class MailConsumerIdleMessageTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james@localhost?password=foo&initialDelay=100&delay=100&sendEmptyMessageWhenIdle=true")
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&sendEmptyMessageWhenIdle=true")
                         .to("mock:result");
             }
         };

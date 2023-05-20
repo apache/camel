@@ -28,11 +28,12 @@ import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,14 +45,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class RawMailMessageTest extends CamelTestSupport {
 
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jonesPop3 = Mailbox.getOrCreateUser("jonesPop3", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jonesRawPop3 = Mailbox.getOrCreateUser("jonesRawPop3", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jonesImap = Mailbox.getOrCreateUser("jonesImap", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jonesRawImap = Mailbox.getOrCreateUser("jonesRawImap", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         Mailbox.clearAll();
-        prepareMailbox("jonesPop3", "pop3");
-        prepareMailbox("jonesRawPop3", "pop3");
-        prepareMailbox("jonesImap", "imap");
-        prepareMailbox("jonesRawImap", "imap");
+        prepareMailbox(jonesPop3);
+        prepareMailbox(jonesRawPop3);
+        prepareMailbox(jonesImap);
+        prepareMailbox(jonesRawImap);
         super.setUp();
     }
 
@@ -60,14 +72,16 @@ public class RawMailMessageTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("To", "davsclaus@apache.org");
+        map.put("To", davsclaus.getEmail());
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
 
         getMockEndpoint("mock:mail").expectedMessageCount(1);
-        template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, map);
+        template.sendBodyAndHeaders(
+                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword(), body,
+                map);
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = getMockEndpoint("mock:mail").getReceivedExchanges().get(0);
@@ -83,17 +97,17 @@ public class RawMailMessageTest extends CamelTestSupport {
 
     @Test
     public void testRawMessageConsumerPop3() throws Exception {
-        testRawMessageConsumer("Pop3");
+        testRawMessageConsumer("Pop3", jonesRawPop3);
     }
 
     @Test
     public void testRawMessageConsumerImap() throws Exception {
-        testRawMessageConsumer("Imap");
+        testRawMessageConsumer("Imap", jonesRawImap);
     }
 
-    private void testRawMessageConsumer(String type) throws Exception {
-        Mailbox mailboxRaw = Mailbox.get("jonesRaw" + type + "@localhost");
-        assertEquals(1, mailboxRaw.size());
+    private void testRawMessageConsumer(String type, MailboxUser user) throws Exception {
+        Mailbox mailboxRaw = user.getInbox();
+        assertEquals(1, mailboxRaw.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock://rawMessage" + type);
         mock.expectedMessageCount(1);
@@ -112,17 +126,17 @@ public class RawMailMessageTest extends CamelTestSupport {
 
     @Test
     public void testNormalMessageConsumerPop3() throws Exception {
-        testNormalMessageConsumer("Pop3");
+        testNormalMessageConsumer("Pop3", jonesPop3);
     }
 
     @Test
     public void testNormalMessageConsumerImap() throws Exception {
-        testNormalMessageConsumer("Imap");
+        testNormalMessageConsumer("Imap", jonesImap);
     }
 
-    private void testNormalMessageConsumer(String type) throws Exception {
-        Mailbox mailbox = Mailbox.get("jones" + type + "@localhost");
-        assertEquals(1, mailbox.size());
+    private void testNormalMessageConsumer(String type, MailboxUser user) throws Exception {
+        Mailbox mailbox = user.getInbox();
+        assertEquals(1, mailbox.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock://normalMessage" + type);
         mock.expectedMessageCount(1);
@@ -140,11 +154,11 @@ public class RawMailMessageTest extends CamelTestSupport {
         assertTrue(!headers.isEmpty());
     }
 
-    private void prepareMailbox(String user, String type) throws Exception {
+    private void prepareMailbox(MailboxUser user) throws Exception {
         // connect to mailbox
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore(type);
-        store.connect("localhost", 25, user, "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), user.getLogin(), user.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -162,18 +176,20 @@ public class RawMailMessageTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://davsclaus@apache.org").to("mock:mail");
+                from(davsclaus.uriPrefix(Protocol.pop3) + "&closeFolder=false").to("mock:mail");
 
-                from("pop3://jonesRawPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
+                from(jonesRawPop3.uriPrefix(Protocol.pop3)
+                     + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessagePop3");
 
-                from("imap://jonesRawImap@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
+                from(jonesImap.uriPrefix(Protocol.imap)
+                     + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessageImap");
 
-                from("pop3://jonesPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true")
+                from(jonesPop3.uriPrefix(Protocol.pop3) + "&closeFolder=false&initialDelay=100&delay=100&delete=true")
                         .to("mock://normalMessagePop3");
 
-                from("imap://jonesImap@localhost?password=secret&initialDelay=100&delay=100&delete=true")
+                from(jonesImap.uriPrefix(Protocol.imap) + "&closeFolder=false&initialDelay=100&delay=100&delete=true")
                         .to("mock://normalMessageImap");
             }
         };

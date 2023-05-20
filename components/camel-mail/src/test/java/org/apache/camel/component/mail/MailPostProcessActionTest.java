@@ -23,11 +23,12 @@ import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Tests if post process action is called if it is set
  */
 public class MailPostProcessActionTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
     private static final Logger LOG = LoggerFactory.getLogger(MailPostProcessActionTest.class);
 
     @BindToRegistry("postProcessAction")
@@ -51,8 +54,8 @@ public class MailPostProcessActionTest extends CamelTestSupport {
 
     @Test
     public void testActionCalled() throws Exception {
-        Mailbox mailbox = Mailbox.get("bill@localhost");
-        assertEquals(1, mailbox.size());
+        Mailbox mailbox = bill.getInbox();
+        assertEquals(1, mailbox.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("TestText");
@@ -77,8 +80,8 @@ public class MailPostProcessActionTest extends CamelTestSupport {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "bill", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), bill.getLogin(), bill.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -98,7 +101,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&initialDelay=100&delay=100")
+                from(bill.uriPrefix(Protocol.imap) + "&postProcessAction=#postProcessAction&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         };

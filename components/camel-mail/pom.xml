@@ -58,13 +58,6 @@
             <groupId>org.eclipse.angus</groupId>
             <artifactId>angus-mail</artifactId>
             <version>${angus-mail-version}</version>
-            <exclusions>
-                <!-- javax activation is part of the JDK now -->
-                <exclusion>
-                    <groupId>com.sun.activation</groupId>
-                    <artifactId>jakarta.activation</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- testing -->
@@ -79,15 +72,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jvnet.mock-javamail</groupId>
-            <artifactId>mock-javamail</artifactId>
-            <version>${mock-javamail-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.mail</groupId>
-                    <artifactId>mail</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+            <version>${greenmail-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

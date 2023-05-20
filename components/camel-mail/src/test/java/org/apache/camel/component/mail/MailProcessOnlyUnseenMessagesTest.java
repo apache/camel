@@ -23,16 +23,19 @@ import jakarta.mail.Store;
 import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for unseen option.
  */
 public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
 
     @Override
     @BeforeEach
@@ -65,7 +68,7 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("imap");
-        store.connect("localhost", 25, "claus", "secret");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), claus.getLogin(), claus.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -88,9 +91,9 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("smtp://claus@localhost");
+                from("direct:a").to(claus.uriPrefix(Protocol.smtp));
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&initialDelay=100&delay=100")
+                from(claus.uriPrefix(Protocol.imap) + "&unseen=true&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         };

@@ -22,11 +22,12 @@ import jakarta.mail.Store;
 import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for a special corner case with fetchSize=0
  */
 public class MailFetchSizeZeroTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @Override
     @BeforeEach
@@ -44,8 +47,8 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
 
     @Test
     public void testFetchSize() throws Exception {
-        Mailbox mailbox = Mailbox.get("bill@localhost");
-        assertEquals(5, mailbox.size());
+        Mailbox mailbox = bill.getInbox();
+        assertEquals(5, mailbox.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // no messages expected as we have a fetch size of zero
@@ -54,15 +57,15 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
-        assertEquals(5, mailbox.size());
+        assertEquals(5, mailbox.getMessageCount());
     }
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "bill", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), bill.getLogin(), bill.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -82,7 +85,7 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://bill@localhost?password=secret&fetchSize=0&initialDelay=100&delay=100").to("mock:result");
+                from(bill.uriPrefix(Protocol.pop3) + "&fetchSize=0&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

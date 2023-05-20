@@ -25,11 +25,12 @@ import jakarta.mail.internet.MimeMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for rollback option.
  */
 public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
 
     private static int counter;
 
@@ -64,7 +67,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
 
         JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("imap");
-        store.connect("localhost", 25, "claus", "secret");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), claus.getLogin(), claus.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -90,7 +93,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
                 // no redelivery for unit test as we want it to be polled next time
                 onException(IllegalArgumentException.class).to("mock:error");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&initialDelay=100&delay=100")
+                from(claus.uriPrefix(Protocol.imap) + "&unseen=true&initialDelay=100&delay=100")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 counter++;

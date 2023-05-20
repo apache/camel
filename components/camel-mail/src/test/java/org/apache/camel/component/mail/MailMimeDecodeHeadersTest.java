@@ -19,15 +19,20 @@ package org.apache.camel.component.mail;
 import jakarta.mail.internet.MimeUtility;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for Mail header decoding/unfolding support.
  */
 public class MailMimeDecodeHeadersTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser plain = Mailbox.getOrCreateUser("plain", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser decoded = Mailbox.getOrCreateUser("decoded", "secret");
     private String nonAsciiSubject = "\uD83D\uDC2A rocks!";
     private String encodedNonAsciiSubject = "=?UTF-8?Q?=F0=9F=90=AA_rocks!?=";
 
@@ -91,16 +96,16 @@ public class MailMimeDecodeHeadersTest extends CamelTestSupport {
             public void configure() {
                 from("direct:longSubject")
                         .setHeader("subject", constant(longSubject))
-                        .to("smtp://plain@localhost", "smtp://decoded@localhost");
+                        .to(plain.uriPrefix(Protocol.smtp), decoded.uriPrefix(Protocol.smtp));
 
                 from("direct:nonAsciiSubject")
                         .setHeader("subject", constant(nonAsciiSubject))
-                        .to("smtp://plain@localhost", "smtp://decoded@localhost");
+                        .to(plain.uriPrefix(Protocol.smtp), decoded.uriPrefix(Protocol.smtp));
 
-                from("pop3://localhost?username=plain&password=secret&initialDelay=100&delay=100")
+                from(plain.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
                         .to("mock:plain");
 
-                from("pop3://localhost?username=decoded&password=secret&initialDelay=100&delay=100&mimeDecodeHeaders=true")
+                from(decoded.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&mimeDecodeHeaders=true")
                         .to("mock:decoded");
             }
         };

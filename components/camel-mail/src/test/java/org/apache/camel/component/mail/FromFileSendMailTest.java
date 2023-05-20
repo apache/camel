@@ -19,14 +19,17 @@ package org.apache.camel.component.mail;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromFileSendMailTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     @Test
     public void testSendFileAsMail() throws Exception {
@@ -40,8 +43,8 @@ public class FromFileSendMailTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Mailbox mailbox = Mailbox.get("james@localhost");
-        assertEquals(1, mailbox.size());
+        Mailbox mailbox = james.getInbox();
+        assertEquals(1, mailbox.getMessageCount());
         Object body = mailbox.get(0).getContent();
         assertEquals("Hi how are you", body);
         Object subject = mailbox.get(0).getSubject();
@@ -57,7 +60,7 @@ public class FromFileSendMailTest extends CamelTestSupport {
                         .setHeader("Subject", constant("Hello World"))
                         .setHeader("To", constant("james@localhost"))
                         .setHeader("From", constant("claus@localhost"))
-                        .to("smtp://localhost?password=secret&username=claus&initialDelay=100&delay=100", "mock:result");
+                        .to(james.uriPrefix(Protocol.smtp) + "&initialDelay=100&delay=100", "mock:result");
             }
         };
     }

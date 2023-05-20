@@ -26,10 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for Camel attachments and Mail attachments.
  */
 public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     @Test
     public void testSendAndReceiveMailWithAttachmentsWithDuplicateNames() throws Exception {
@@ -48,7 +51,7 @@ public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
         // START SNIPPET: e1
 
         // create an exchange with a normal body and attachment to be produced as email
-        Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
+        Endpoint endpoint = context.getEndpoint(james.uriPrefix(Protocol.smtp));
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         Exchange exchange = endpoint.createExchange();
@@ -94,7 +97,7 @@ public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100").to("mock:result");
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }
