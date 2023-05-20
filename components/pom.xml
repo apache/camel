@@ -325,8 +325,13 @@
     </modules>
 
     <properties>
-
         <camel-prepare-component>true</camel-prepare-component>
+        <skipTests.aarch64 />
+        <skipITs.aarch64 />
+        <skipTests.ppc64le />
+        <skipITs.ppc64le />
+        <skipTests.s390x />
+        <skipITs.s390x />
     </properties>
     
     <dependencies>    
@@ -445,5 +450,97 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Platform-specific block list for tests. This is required because,
+            sometimes, containers or native components are not available on
+            certain platforms. Define the properties and set them as true on
+            the component poms to skip.
+         -->
+        <profile>
+            <id>Arm</id>
+            <activation>
+                <os>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin-version}</version>
+                        <configuration>
+                            <skipTests>${skipTests.aarch64}</skipTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven-failsafe-plugin-version}</version>
+                        <configuration>
+                            <skipITs>${skipITs.aarch64}</skipITs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>s390x</id>
+            <activation>
+                <os>
+                    <arch>s390x</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin-version}</version>
+                        <configuration>
+                            <skipTests>${skipTests.s390x}</skipTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven-failsafe-plugin-version}</version>
+                        <configuration>
+                            <skipITs>${skipITs.s390x}</skipITs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin-version}</version>
+                        <configuration>
+                            <skipTests>${skipTests.ppc64le}</skipTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven-failsafe-plugin-version}</version>
+                        <configuration>
+                            <skipITs>${skipITs.ppc64le}</skipITs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

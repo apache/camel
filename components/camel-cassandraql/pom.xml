@@ -34,7 +34,9 @@
     <description>Cassandra CQL3 support</description>
 
     <properties>
-        <skipITs>true</skipITs>
+        <!-- Cassandra is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -92,30 +94,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <!-- Localstack container is only available for x86 64 and ARM 64 -->
-            <id>x86</id>
-            <activation>
-                <os>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipITs>false</skipITs>
-            </properties>
-        </profile>
-        <profile>
-            <id>Arm</id>
-            <activation>
-                <os>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipITs>false</skipITs>
-            </properties>
-        </profile>
-    </profiles>
 </project>

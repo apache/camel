@@ -31,6 +31,13 @@
     <name>Camel :: Couchbase</name>
     <description>Camel Couchbase component</description>
 
+    <properties>
+        <!-- Couchbase container is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.aarch64>true</skipITs.aarch64>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.couchbase.client</groupId>
@@ -79,8 +86,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <skipITs>${skipITs}</skipITs>
-                    <skipTests>${skipTests}</skipTests>
                     <reuseForks>true</reuseForks>
                 </configuration>
                 <executions>
@@ -90,7 +95,6 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <skipITs>${skipITs}</skipITs>
                             <forkCount>1</forkCount>
                             <reuseForks>false</reuseForks>
                             <excludedGroups>couchbase-7</excludedGroups>
@@ -113,20 +117,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <!-- Couchbase container is only available for x86 64 and ARM 64 -->
-            <id>Notx86</id>
-            <activation>
-                <os>
-                    <arch>!amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipITs>true</skipITs>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>

@@ -30,6 +30,16 @@
     <name>Camel :: Deep Java Library</name>
     <description>Camel Deep Java Library support</description>
 
+    <properties>
+        <!-- DJL requires native components only available on x86 -->
+        <skipTests.ppc64le>true</skipTests.ppc64le>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipTests.aarch64>true</skipTests.aarch64>
+        <skipITs.aarch64>true</skipITs.aarch64>
+    </properties>
+
     <dependencies>
         <!-- camel -->
         <dependency>
@@ -128,21 +138,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <!-- DJL components are only available for Linux on x86 64 -->
-            <id>Notx86</id>
-            <activation>
-                <os>
-                    <arch>!amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-                <skipITs>true</skipITs>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>

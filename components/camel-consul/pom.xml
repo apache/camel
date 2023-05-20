@@ -33,6 +33,9 @@
     <description>Camel Consul support</description>
 
     <properties>
+        <!-- Consul container is not available on these platforms -->
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -178,19 +181,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <!-- Disable tests not available on platform -->
-            <id>s390x</id>
-            <activation>
-                <os>
-                    <arch>s390x</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipTests>true</skipTests>
-                <skipITs>true</skipITs>
-            </properties>
         </profile>
     </profiles>
 

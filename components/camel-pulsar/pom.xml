@@ -32,8 +32,14 @@
     <name>Camel :: Pulsar</name>
     <description>Camel Apache Pulsar Component</description>
 
-    <dependencies>
+    <properties>
+        <!-- Pulsar container is only available on x86 -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.aarch64>true</skipITs.aarch64>
+    </properties>
 
+    <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -111,19 +117,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <!-- Pulsar container is only available for Linux on x86 64 -->
-            <id>Notx86</id>
-            <activation>
-                <os>
-                    <arch>!amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipITs>true</skipITs>
-            </properties>
-        </profile>
-    </profiles>
 </project>

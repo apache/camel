@@ -31,6 +31,11 @@
     <name>Camel :: Kafka</name>
     <description>Camel Kafka support</description>
 
+    <properties>
+        <!-- Kafka is not available on this platform -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+    </properties>
+
     <dependencies>
 
         <!-- camel -->
@@ -225,17 +230,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>ppc64le</id>
-            <activation>
-                <os>
-                    <arch>ppc64le</arch>
-                </os>
-            </activation>
-            <properties>
-                <skipITs>true</skipITs>
-            </properties>
         </profile>
     </profiles>
 </project>
