@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration test for the {@link IrcConfiguration#isNamesOnJoin()} option. Joins a channel and asserts that the
  * username of the current test user is listed for the channel.
  */
-public class IrcsListUsersTest extends IrcIntegrationTestSupport {
+@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
+                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+public class IrcsListUsersIT extends IrcIntegrationITSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IrcsListUsersTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcsListUsersIT.class);
 
     /** message code for a reply to a <code>NAMES</code> command. */
     private static final String IRC_RPL_NAMREPLY = "353";

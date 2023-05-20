@@ -23,7 +23,7 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Disabled;
 
 @Disabled
-public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
+public class IrcsWithSslContextParamsRouteIT extends IrcRouteIT {
 
     // TODO This test is disabled until we can find a public SSL enabled IRC
     // server to test against. To use this test, follow the following procedures:
