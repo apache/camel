@@ -45,16 +45,16 @@ public class PollOIDTest extends SnmpRespondTestSupport {
             public void configure() {
                 from(String.format("snmp:%s?protocol=udp&type=POLL&snmpVersion=0&oids=%s&delay=100", getListeningAddress(),
                         SnmpConstants.sysName))
-                        .to("mock:resultV0");
+                                .to("mock:resultV0");
 
                 from(String.format("snmp:%s?protocol=udp&type=POLL&snmpVersion=1&oids=%s&delay=100", getListeningAddress(),
                         SnmpConstants.sysName))
-                        .to("mock:resultV1");
+                                .to("mock:resultV1");
 
                 from(String.format(
                         "snmp:%s?protocol=udp&type=POLL&snmpVersion=3&securityName=%s&securityLevel=1&oids=%s&delay=100",
                         getListeningAddress(), SECURITY_NAME, SnmpConstants.sysName))
-                        .to("mock:resultV3");
+                                .to("mock:resultV3");
             }
         };
     }
