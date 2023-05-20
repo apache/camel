@@ -34,7 +34,7 @@
   <properties>
     <abdera-version>1.1.3</abdera-version>
     <activemq-artemis-version>2.20.0</activemq-artemis-version>
-    <activemq-version>5.17.1</activemq-version>
+    <activemq-version>5.17.4</activemq-version>
     <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.7</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
@@ -404,8 +404,8 @@
     <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-    <metrics-version>4.2.15</metrics-version>
-    <micrometer-version>1.10.2</micrometer-version>
+    <metrics-version>4.2.18</metrics-version>
+    <micrometer-version>1.10.7</micrometer-version>
     <microprofile-config-version>2.0.1</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -505,9 +505,9 @@
     <spark-version>3.2.2</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spock-version>2.1-groovy-3.0</spock-version>
-    <spring-batch-version>4.3.7</spring-batch-version>
+    <spring-batch-version>4.3.8</spring-batch-version>
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
-    <spring-integration-version>5.5.16</spring-integration-version>
+    <spring-integration-version>5.5.18</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
     <spring-security-version>5.7.8</spring-security-version>
@@ -533,7 +533,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.2.23.Final</undertow-version>
+    <undertow-version>2.2.24.Final</undertow-version>
     <univocity-parsers-version>2.9.1</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
