@@ -34,7 +34,7 @@
   <properties>
     <abdera-version>1.1.3</abdera-version>
     <activemq-artemis-version>2.19.0</activemq-artemis-version>
-    <activemq-version>5.16.5</activemq-version>
+    <activemq-version>5.16.6</activemq-version>
     <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.4</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
@@ -199,7 +199,7 @@
     <flink-version>1.14.0</flink-version>
     <fop-version>2.6</fop-version>
     <formatter-maven-plugin-version>2.16.0</formatter-maven-plugin-version>
-    <freemarker-version>2.3.31</freemarker-version>
+    <freemarker-version>2.3.32</freemarker-version>
     <ftpserver-version>1.1.1</ftpserver-version>
     <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
     <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
@@ -254,7 +254,7 @@
     <hapi-version>2.3</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>4.2.5</hazelcast-version>
+    <hazelcast-version>4.2.7</hazelcast-version>
     <hbase-version>2.3.1</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
     <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
@@ -263,7 +263,7 @@
     <hsqldb-version>2.5.1</hsqldb-version>
     <htrace-version>3.1.0-incubating</htrace-version>
     <httpasyncclient-version>4.1.5</httpasyncclient-version>
-    <httpclient4-version>4.5.13</httpclient4-version>
+    <httpclient4-version>4.5.14</httpclient4-version>
     <httpcore4-version>4.4.15</httpcore4-version>
     <httpunit-version>1.7</httpunit-version>
     <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
@@ -328,7 +328,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.46.v20220331</jetty9-version>
+    <jetty9-version>9.4.51.v20230217</jetty9-version>
     <jgit-version>5.13.0.202109080827-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -339,7 +339,7 @@
     <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
     <jnats-version>2.13.1</jnats-version>
     <jodatime2-version>2.10.11</jodatime2-version>
-    <johnzon-version>1.2.18</johnzon-version>
+    <johnzon-version>1.2.20</johnzon-version>
     <jolt-version>0.1.5</jolt-version>
     <jool-version>0.9.12</jool-version>
     <jooq-version>3.14.16</jooq-version>
@@ -406,8 +406,8 @@
     <maven-shade-plugin-version>3.2.4</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-    <metrics-version>4.2.3</metrics-version>
-    <micrometer-version>1.8.11</micrometer-version>
+    <metrics-version>4.2.18</metrics-version>
+    <micrometer-version>1.8.13</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.1</microprofile-health-version>
@@ -432,7 +432,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.84.Final</netty-version>
+    <netty-version>4.1.92.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
@@ -515,16 +515,16 @@
     <spark-version>3.1.2</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spock-version>2.0-M4-groovy-3.0</spock-version>
-    <spring-batch-version>4.3.7</spring-batch-version>
+    <spring-batch-version>4.3.8</spring-batch-version>
     <spring-data-redis-version>2.5.6</spring-data-redis-version>
-    <spring-integration-version>5.5.14</spring-integration-version>
+    <spring-integration-version>5.5.18</spring-integration-version>
     <spring-ldap-version>2.3.8.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-    <spring-security-version>5.6.8</spring-security-version>
+    <spring-security-version>5.6.10</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
-    <spring-ws-version>3.1.3</spring-ws-version>
-    <spring5-version>5.3.23</spring5-version>
+    <spring-ws-version>3.1.6</spring-ws-version>
+    <spring5-version>5.3.27</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -543,7 +543,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.2.17.Final</undertow-version>
+    <undertow-version>2.2.24.Final</undertow-version>
     <univocity-parsers-version>2.9.1</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
