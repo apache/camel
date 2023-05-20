@@ -32,6 +32,8 @@
     <description>Camel JPA support</description>
 
     <properties>
+        <!-- Needs to be investigated: crashes on CI on s390x -->
+        <skipTests.s390x>true</skipTests.s390x>
     </properties>
 
     <dependencies>
