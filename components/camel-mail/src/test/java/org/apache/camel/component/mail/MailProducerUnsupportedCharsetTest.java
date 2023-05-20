@@ -22,15 +22,18 @@ import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -44,25 +47,25 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&ignoreUnsupportedCharset=true")
+                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&ignoreUnsupportedCharset=true")
                         .to("mock:result");
             }
         });
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+        mock.expectedBodiesReceived("Hello World\r\n", "Bye World\r\n");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
-        template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=true", "Hello World", headers);
+        template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Hello World", headers);
 
         headers.clear();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain; charset=ansi_x3.110-1983");
-        template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=true", "Bye World", headers);
+        template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Bye World", headers);
 
         mock.assertIsSatisfied();
     }
@@ -74,26 +77,27 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&ignoreUnsupportedCharset=false")
+                from(jones.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&ignoreUnsupportedCharset=false")
                         .to("mock:result");
             }
         });
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Hello World\r\n");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
-        template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=false", "Hello World", headers);
+        template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Hello World", headers);
 
         headers.clear();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain; charset=XXX");
         try {
-            template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=false", "Bye World", headers);
+            template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Bye World",
+                    headers);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(UnsupportedEncodingException.class, e.getCause());

@@ -29,10 +29,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -40,6 +41,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailRouteTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser result = Mailbox.getOrCreateUser("result", "secret");
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser copy = Mailbox.getOrCreateUser("copy", "secret");
 
     @Test
     public void testSendAndReceiveMails() throws Exception {
@@ -50,10 +57,10 @@ public class MailRouteTest extends CamelTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(MailConstants.MAIL_REPLY_TO, "route-test-reply@localhost");
-        template.sendBodyAndHeaders("smtp://route-test-james@localhost", "hello world!", headers);
+        template.sendBodyAndHeaders(james.uriPrefix(Protocol.smtp), "hello world!", headers);
 
         // lets test the first sent worked
-        assertMailboxReceivedMessages("route-test-james@localhost");
+        assertMailboxReceivedMessages(james);
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
@@ -63,7 +70,7 @@ public class MailRouteTest extends CamelTestSupport {
         String replyTo = (String) exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO);
         assertEquals("route-test-reply@localhost", replyTo);
 
-        assertMailboxReceivedMessages("route-test-copy@localhost");
+        assertMailboxReceivedMessages(copy);
     }
 
     @Test
@@ -95,9 +102,9 @@ public class MailRouteTest extends CamelTestSupport {
 
     }
 
-    protected void assertMailboxReceivedMessages(String name) throws IOException, MessagingException {
-        Mailbox mailbox = Mailbox.get(name);
-        assertEquals(1, mailbox.size(), name + " should have received 1 mail");
+    protected void assertMailboxReceivedMessages(MailboxUser name) throws IOException, MessagingException {
+        Mailbox mailbox = name.getInbox();
+        assertEquals(1, mailbox.getMessageCount(), name + " should have received 1 mail");
 
         Message message = mailbox.get(0);
         assertNotNull(message, name + " should have received at least one mail!");
@@ -105,7 +112,7 @@ public class MailRouteTest extends CamelTestSupport {
         assertEquals("camel@localhost", message.getFrom()[0].toString());
         boolean found = false;
         for (Address adr : message.getRecipients(RecipientType.TO)) {
-            if (name.equals(adr.toString())) {
+            if (name.getEmail().equals(adr.toString())) {
                 found = true;
             }
         }
@@ -116,7 +123,7 @@ public class MailRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost?initialDelay=100&delay=100").to("direct:a");
+                from(james.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").to("direct:a");
 
                 // must use fixed to option to send the mail to the given
                 // receiver, as we have polled
@@ -126,10 +133,10 @@ public class MailRouteTest extends CamelTestSupport {
                 // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
-                        .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
-                        .to("smtp://localhost");
+                        .setHeader("to", constant("result@localhost; copy@localhost"))
+                        .to(result.uriPrefix(Protocol.smtp));
 
-                from("pop3://route-test-result@localhost?initialDelay=100&delay=100").convertBodyTo(String.class)
+                from(result.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100").convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

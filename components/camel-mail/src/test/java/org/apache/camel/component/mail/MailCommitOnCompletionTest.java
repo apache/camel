@@ -24,11 +24,12 @@ import jakarta.mail.Store;
 import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for delete mail runs as an onCompletion.
  */
 public class MailCommitOnCompletionTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("jonesCommitOnCompletion", "secret");
 
     @Override
     @BeforeEach
@@ -47,25 +50,26 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
 
     @Test
     public void testCommitOnCompletion() throws Exception {
-        Mailbox mailbox = Mailbox.get("jones@localhost");
-        assertEquals(5, mailbox.size());
+        Mailbox mailbox = jones.getInbox();
+        assertEquals(5, mailbox.getMessageCount());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hi Message 0", "Hi Message 1", "Hi Message 2", "Hi Message 3", "Hi Message 4");
+        mock.expectedBodiesReceived("Hi Message 0\r\n", "Hi Message 1\r\n", "Hi Message 2\r\n", "Hi Message 3\r\n",
+                "Hi Message 4\r\n");
 
         mock.assertIsSatisfied();
 
         // wait a bit because delete is on completion
-        await().atMost(500, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> assertEquals(0, mailbox.size()));
+        await().atMost(5000, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(0, jones.getInbox().getMessageCount()));
     }
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "jones", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), jones.getLogin(), jones.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -85,7 +89,7 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://jones@localhost?password=secret&delete=true&initialDelay=100&delay=100")
+                from(jones.uriPrefix(Protocol.pop3) + "&delete=true&initialDelay=100&delay=100")
                         .process(exchange -> {
                             String msg = exchange.getIn().getBody(String.class);
                             exchange.getMessage().setBody("Hi " + msg);

@@ -25,13 +25,14 @@ import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for idempotent repository.
  */
 public class MailIdempotentRepositoryTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @BindToRegistry("myRepo")
     private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
@@ -63,7 +66,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
 
         // windows need a little slack
         Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount()));
+                .untilAsserted(() -> assertEquals(0, jones.getInbox().getNewMessageCount()));
         // they get deleted after processing by default so we should be back to
         // 0
         assertEquals(0, myRepo.getCacheSize());
@@ -73,8 +76,8 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
         // connect to mailbox
         Mailbox.clearAll();
         JavaMailSender sender = new DefaultJavaMailSender();
-        Store store = sender.getSession().getStore("pop3");
-        store.connect("localhost", 25, "jones", "secret");
+        Store store = sender.getSession().getStore("imap");
+        store.connect("localhost", Mailbox.getPort(Protocol.imap), jones.getLogin(), jones.getPassword());
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
         folder.expunge();
@@ -94,7 +97,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&initialDelay=100&delay=100")
+                from(jones.uriPrefix(Protocol.imap) + "&idempotentRepository=#myRepo&initialDelay=100&delay=100")
                         .routeId("foo").noAutoStartup()
                         .to("mock:result");
             }

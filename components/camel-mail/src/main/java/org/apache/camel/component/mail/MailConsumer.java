@@ -33,9 +33,6 @@ import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Store;
 import jakarta.mail.search.SearchTerm;
 
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.IMAPStore;
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
@@ -49,6 +46,9 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.imap.SortTerm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

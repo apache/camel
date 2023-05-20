@@ -23,7 +23,6 @@ import java.util.Set;
 
 import jakarta.mail.search.SearchTerm;
 
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
@@ -32,6 +31,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
+import org.eclipse.angus.mail.imap.SortTerm;
 
 /**
  * Component for JavaMail.

@@ -19,10 +19,11 @@ package org.apache.camel.component.mail;
 import java.util.Properties;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test allowing end users to set additional mail.xxx properties.
  */
 public class AdditionalMailPropertiesTest extends CamelTestSupport {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser user = Mailbox.getOrCreateUser("additionalMailProperties");
 
     @Test
     public void testAdditionalMailProperties() {
@@ -37,7 +40,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         MailEndpoint endpoint = context.getEndpoint(
-                "pop3://localhost?username=james&mail.pop3.forgettopheaders=true&initialDelay=100&delay=100",
+                user.uriPrefix(Protocol.pop3) + "&mail.pop3.forgettopheaders=true&initialDelay=100&delay=100",
                 MailEndpoint.class);
         Properties prop = endpoint.getConfiguration().getAdditionalJavaMailProperties();
         assertEquals("true", prop.get("mail.pop3.forgettopheaders"));
@@ -50,9 +53,9 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
 
-        template.sendBodyAndHeader("smtp://james@localhost", "Hello james how are you?", "subject", "Hello");
+        template.sendBodyAndHeader(user.uriPrefix(Protocol.smtp), "Hello james how are you?\r\n", "subject", "Hello");
 
-        mock.expectedBodiesReceived("Hello james how are you?");
+        mock.expectedBodiesReceived("Hello james how are you?\r\n");
         mock.expectedHeaderReceived("subject", "Hello");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -63,7 +66,8 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("pop3://james@localhost?mail.pop3.forgettopheaders=true&initialDelay=100&delay=100").to("mock:result");
+                from(user.uriPrefix(Protocol.pop3) + "&mail.pop3.forgettopheaders=true&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
 

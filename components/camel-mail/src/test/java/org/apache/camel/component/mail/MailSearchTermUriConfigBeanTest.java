@@ -18,8 +18,12 @@ package org.apache.camel.component.mail;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.Mailbox.MailboxUser;
+import org.apache.camel.component.mail.Mailbox.Protocol;
 
 public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest {
+    @SuppressWarnings({ "checkstyle:ConstantName" })
+    private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @BindToRegistry("mySearchTerm")
     public SimpleSearchTerm addSearchTerm() {
@@ -33,7 +37,7 @@ public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://bill@localhost?password=secret&searchTerm=#mySearchTerm").to("mock:result");
+                from(bill.uriPrefix(Protocol.pop3) + "&searchTerm=#mySearchTerm").to("mock:result");
             }
         };
     }

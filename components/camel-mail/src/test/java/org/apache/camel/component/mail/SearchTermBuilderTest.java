@@ -23,7 +23,6 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.search.SearchTerm;
 
 import org.junit.jupiter.api.Test;
-import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;
 import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;

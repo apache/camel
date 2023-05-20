@@ -127,7 +127,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "skipfailedmessage":
         case "skipFailedMessage": target.getConfiguration().setSkipFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "sortterm":
-        case "sortTerm": target.setSortTerm(property(camelContext, com.sun.mail.imap.SortTerm[].class, value)); return true;
+        case "sortTerm": target.setSortTerm(property(camelContext, org.eclipse.angus.mail.imap.SortTerm[].class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startscheduler":
@@ -255,7 +255,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "skipfailedmessage":
         case "skipFailedMessage": return boolean.class;
         case "sortterm":
-        case "sortTerm": return com.sun.mail.imap.SortTerm[].class;
+        case "sortTerm": return org.eclipse.angus.mail.imap.SortTerm[].class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startscheduler":

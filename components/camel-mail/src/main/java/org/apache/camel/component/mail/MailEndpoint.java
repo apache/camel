@@ -19,7 +19,6 @@ package org.apache.camel.component.mail;
 import jakarta.mail.Message;
 import jakarta.mail.search.SearchTerm;
 
-import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -31,6 +30,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.eclipse.angus.mail.imap.SortTerm;
 
 import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
 import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
