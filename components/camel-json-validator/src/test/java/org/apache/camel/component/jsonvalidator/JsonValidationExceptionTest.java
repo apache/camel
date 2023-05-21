@@ -17,6 +17,7 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import com.networknt.schema.ValidationMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JsonValidationExceptionTest {
 
@@ -35,6 +37,11 @@ public class JsonValidationExceptionTest {
         assertEquals(
                 "JSON validation error with 2 errors:\nname: is missing but it is required\nid: string found, integer expected",
                 new JsonValidationException(null, null, errors).getMessage());
+    }
+
+    @Test
+    void testErrorsEmpty() {
+        assertSame(Collections.EMPTY_SET, new JsonValidationException(null, null, new Exception()).getErrors());
     }
 
     private ValidationMessage createError(String msg) {
