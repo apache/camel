@@ -24,7 +24,7 @@ import org.apache.camel.CamelContext;
 /**
  * Can be used to create custom schema for the JSON validator endpoint.
  *
- * @deprecated Use UriJsonSchemaLoader instead
+ * @deprecated Use JsonUriSchemaLoader instead
  */
 @Deprecated
 public interface JsonSchemaLoader {

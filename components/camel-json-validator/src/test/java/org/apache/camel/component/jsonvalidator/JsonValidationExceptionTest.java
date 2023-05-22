@@ -17,7 +17,6 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -25,7 +24,6 @@ import com.networknt.schema.ValidationMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JsonValidationExceptionTest {
 
@@ -41,7 +39,7 @@ public class JsonValidationExceptionTest {
 
     @Test
     void testErrorsEmpty() {
-        assertSame(Collections.EMPTY_SET, new JsonValidationException(null, null, new Exception()).getErrors());
+        assertEquals(0, new JsonValidationException(null, null, new Exception()).getNumberOfErrors());
     }
 
     private ValidationMessage createError(String msg) {
