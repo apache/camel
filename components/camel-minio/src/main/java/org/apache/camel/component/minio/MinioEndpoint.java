@@ -92,7 +92,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                 LOG.trace("AutoCreateBucket set to true, Creating bucket {}...", bucketName);
                 makeBucket(bucketName);
                 LOG.trace("Bucket created");
-            } 
+            }
         }
 
         if (isNotEmpty(getConfiguration().getPolicy())) {
