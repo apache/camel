@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelLogger;
