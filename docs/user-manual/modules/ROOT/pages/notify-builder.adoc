@@ -61,7 +61,7 @@ The table below list the most commonly used methods.
 | whenBodiesDone(bodies) | Matches when the message bodies are done in the same order. This method is non strict which means that it will disregard any additional done messages.
 | whenAnyDoneMatches(predicate) | Matches if any one of the done messages matched the Predicate.
 | create | Creates the notifier. After you have created it you can use the matches methods.
-| matches | Tests whether the notifier currently matches. This operation returns immediately. This operation returns immediately. This method is to be used after you have created the expression.
+| matches | Tests whether the notifier currently matches. This operation returns immediately. This method is to be used after you have created the expression.
 | matches(timeout) | Waits until the notifier matches or times out. Returns `true` if matches, or `false` if time-out occurs. This operation returns immediately. This method is to be used after you have created the expression.
 | matchesWaitTime | Wait until the builder matches or timeout. The timeout value used is based on the highest result wait time configured on any of mock endpoints being used. If no mock endpoint was used, then the default timeout value is 10 seconds. This method is convenient to use in unit tests when you use mocks. Then you don't have to specify the timeout value explicit.
 |=======================================================================
