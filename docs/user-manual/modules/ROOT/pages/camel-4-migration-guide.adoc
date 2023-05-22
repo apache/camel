@@ -326,7 +326,7 @@ to complete first (stopping Spring Boot HTTP server gracefully),
 and then afterward Camel is doing its own xref:graceful-shutdown.adoc[].
 
 Technically `camel-spring` has changed `getPhase()` from returning `Integer.MAX_VALUE` to
-`Integer.MAX_VALUE - 65537`. This gives room for Spring Boot services to shut down first.
+`Integer.MAX_VALUE - 2049`. This gives room for Spring Boot services to shut down first.
 
 === camel-micrometer-starter
 
