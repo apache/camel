@@ -12,7 +12,9 @@ In development since 2023-05, so far experimental.
 
 Formulated requirement in https://issues.apache.org/jira/browse/CAMEL-19279.
 
-Started be blending FTP component and camel-azure-storage-blob.
+Forked Git as https://github.com/pekuz/camel/tree/camel-3.x
+and started blending camel-ftp, camel-azure-storage-blob
+with intent to support Azure Files. 
 
 FTPFile is replaced by ShareFileItem.
 
@@ -26,12 +28,19 @@ Initially I had hoped, I could reuse some classes as-is but in
 reality a copy-and-paste has been needed because of FTPFile use
 (despite impl needs only: file name, last modified and length). 
 
+A set of problems with mvn generate.
+
+While cloning the fork in Github Desktop, I had selected "I want to contribute mode",
+and it updated upstream to fork's upstream i.e. https://github.com/apache/camel.git
+it's likely at cause of subsequent problems so changing the upstream back
+to https://github.com/pekuz/camel.git
+
 ## Deps
 
-At first I want to use the component with Camel 3.16+ hence
-Java 11 is selected as a base dependency.
+At first I want to use the Azure Files component with Camel 3.16+
+hence Java 11 is selected as a base dependency.
 
 https://camel.apache.org/manual/what-are-the-dependencies.html
 
-Java 17, and hence Camel 4 port, might come later once Java 17 is
-approved by our security team.
+Java 17, and Camel 4 port, might come later after Java 17 and its tools
+chain is approved by our security team.
