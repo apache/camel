@@ -296,7 +296,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Receive events from an Ignite cluster by creating a local event
          * listener.
          * 
-         * Category: messaging,eventbus
+         * Category: messaging,cache,clustering
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
@@ -316,7 +316,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Receive events from an Ignite cluster by creating a local event
          * listener.
          * 
-         * Category: messaging,eventbus
+         * Category: messaging,cache,clustering
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 

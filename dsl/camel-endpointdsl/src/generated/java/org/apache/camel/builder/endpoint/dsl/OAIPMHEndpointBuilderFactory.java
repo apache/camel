@@ -1320,7 +1320,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * OAI-PMH (camel-oaipmh)
          * Harvest metadata using OAI-PMH protocol
          * 
-         * Category: endpoint,webservice,batch
+         * Category: search
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
@@ -1333,7 +1333,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * OAI-PMH (camel-oaipmh)
          * Harvest metadata using OAI-PMH protocol
          * 
-         * Category: endpoint,webservice,batch
+         * Category: search
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
@@ -1353,7 +1353,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * OAI-PMH (camel-oaipmh)
          * Harvest metadata using OAI-PMH protocol
          * 
-         * Category: endpoint,webservice,batch
+         * Category: search
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 

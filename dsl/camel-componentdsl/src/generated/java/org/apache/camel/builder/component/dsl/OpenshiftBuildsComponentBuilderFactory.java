@@ -34,7 +34,7 @@ public interface OpenshiftBuildsComponentBuilderFactory {
      * Openshift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

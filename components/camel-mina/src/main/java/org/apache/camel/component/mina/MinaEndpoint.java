@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  * Socket level networking using TCP or UDP with Apache Mina 2.x.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port",
-             category = { Category.NETWORKING, Category.TCP, Category.UDP }, headersClass = MinaConstants.class)
+             category = { Category.NETWORKING }, headersClass = MinaConstants.class)
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam

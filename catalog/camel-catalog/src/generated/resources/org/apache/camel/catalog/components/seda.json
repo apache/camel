@@ -6,7 +6,7 @@
     "description": "Asynchronously call another endpoint from any Camel Context in the same JVM.",
     "deprecated": false,
     "firstVersion": "1.1.0",
-    "label": "core,endpoint",
+    "label": "core,messaging",
     "javaType": "org.apache.camel.component.seda.SedaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

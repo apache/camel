@@ -41,7 +41,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
  * parameters if necessary. This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_COMPUTE, title = "Ignite Compute", syntax = "ignite-compute:endpointId",
-             category = { Category.COMPUTE }, producerOnly = true, headersClass = IgniteConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_R
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_RESOURCES_QUOTA, title = "Kubernetes Resources Quota",
              syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesResourcesQuotaEndpoint(String uri, KubernetesResourcesQuotaComponent component,

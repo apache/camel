@@ -1097,7 +1097,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Read and write from/to Infinispan distributed key/value store and
          * data grid.
          * 
-         * Category: cache,datagrid,clustering
+         * Category: cache,clustering
          * Since: 2.13
          * Maven coordinates: org.apache.camel:camel-infinispan-embedded
          * 
@@ -1111,7 +1111,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Read and write from/to Infinispan distributed key/value store and
          * data grid.
          * 
-         * Category: cache,datagrid,clustering
+         * Category: cache,clustering
          * Since: 2.13
          * Maven coordinates: org.apache.camel:camel-infinispan-embedded
          * 
@@ -1133,7 +1133,7 @@ public interface InfinispanEmbeddedEndpointBuilderFactory {
          * Read and write from/to Infinispan distributed key/value store and
          * data grid.
          * 
-         * Category: cache,datagrid,clustering
+         * Category: cache,clustering
          * Since: 2.13
          * Maven coordinates: org.apache.camel:camel-infinispan-embedded
          * 

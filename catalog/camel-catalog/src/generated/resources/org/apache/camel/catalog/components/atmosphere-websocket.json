@@ -7,7 +7,7 @@
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "2.14.0",
-    "label": "websocket",
+    "label": "http,networking",
     "javaType": "org.apache.camel.component.atmosphere.websocket.WebsocketComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

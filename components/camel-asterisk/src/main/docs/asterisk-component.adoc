@@ -2,7 +2,7 @@
 :doctitle: Asterisk
 :shortname: asterisk
 :artifactid: camel-asterisk
-:description: Interact with Asterisk PBX Server.
+:description: Interact with Asterisk PBX Server (VoIP).
 :since: 2.18
 :supportlevel: Stable
 :tabs-sync-option:

@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
              title = "Google Sheets Stream",
              syntax = "google-sheets-stream:spreadsheetId",
              consumerOnly = true,
-             category = { Category.CLOUD, Category.SHEETS }, headersClass = GoogleSheetsStreamConstants.class)
+             category = { Category.CLOUD, Category.DOCUMENT }, headersClass = GoogleSheetsStreamConstants.class)
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

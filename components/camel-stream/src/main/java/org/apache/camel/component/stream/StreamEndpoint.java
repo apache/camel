@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Read from system-in and write to system-out and system-err streams.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind",
-             category = { Category.FILE, Category.SYSTEM }, headersClass = StreamConstants.class)
+             category = { Category.FILE, Category.CORE }, headersClass = StreamConstants.class)
 public class StreamEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);

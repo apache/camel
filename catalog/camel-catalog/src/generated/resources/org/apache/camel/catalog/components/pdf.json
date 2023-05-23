@@ -6,7 +6,7 @@
     "description": "Create, modify or extract content from PDF documents.",
     "deprecated": false,
     "firstVersion": "2.16.0",
-    "label": "document,transformation,printing",
+    "label": "document,transformation",
     "javaType": "org.apache.camel.component.pdf.PdfComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

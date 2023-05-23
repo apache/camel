@@ -36,7 +36,7 @@ import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_E
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = SCHEME_EMBEDDED, title = "Infinispan Embedded",
              syntax = "infinispan-embedded:cacheName",
-             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING }, headersClass = InfinispanConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = InfinispanConstants.class)
 public class InfinispanEmbeddedEndpoint extends InfinispanEndpoint {
 
     @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")

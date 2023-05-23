@@ -36,7 +36,7 @@ public interface UndertowComponentBuilderFactory {
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
      * servers.
      * 
-     * Category: http,websocket
+     * Category: http,networking
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
      * 

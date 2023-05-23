@@ -1722,7 +1722,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Query Couchbase Views with a poll strategy and/or perform various
          * operations against Couchbase databases.
          * 
-         * Category: database,nosql
+         * Category: database
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-couchbase
          * 
@@ -1736,7 +1736,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Query Couchbase Views with a poll strategy and/or perform various
          * operations against Couchbase databases.
          * 
-         * Category: database,nosql
+         * Category: database
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-couchbase
          * 
@@ -1763,7 +1763,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Query Couchbase Views with a poll strategy and/or perform various
          * operations against Couchbase databases.
          * 
-         * Category: database,nosql
+         * Category: database
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-couchbase
          * 

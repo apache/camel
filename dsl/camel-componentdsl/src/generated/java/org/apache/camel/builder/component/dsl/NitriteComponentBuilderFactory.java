@@ -34,7 +34,7 @@ public interface NitriteComponentBuilderFactory {
      * Nitrite (camel-nitrite)
      * Access Nitrite databases.
      * 
-     * Category: database,nosql
+     * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-nitrite
      * 

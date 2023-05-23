@@ -621,7 +621,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * Hazelcast Topic (camel-hazelcast)
          * Send and receive messages to/from Hazelcast distributed topic.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -634,7 +634,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * Hazelcast Topic (camel-hazelcast)
          * Send and receive messages to/from Hazelcast distributed topic.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -653,7 +653,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * Hazelcast Topic (camel-hazelcast)
          * Send and receive messages to/from Hazelcast distributed topic.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 

@@ -34,7 +34,7 @@ public interface XchangeComponentBuilderFactory {
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
      * 
-     * Category: bitcoin,blockchain
+     * Category: blockchain
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-xchange
      * 

@@ -6,7 +6,7 @@
     "description": "Access databases through SQL and JDBC with Spring Transaction support.",
     "deprecated": false,
     "firstVersion": "3.10.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.spring.jdbc.SpringJdbcComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

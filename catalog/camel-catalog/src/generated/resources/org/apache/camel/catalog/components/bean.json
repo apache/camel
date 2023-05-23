@@ -6,7 +6,7 @@
     "description": "Invoke methods of Java beans stored in Camel registry.",
     "deprecated": false,
     "firstVersion": "1.0.0",
-    "label": "core,java",
+    "label": "core,script",
     "javaType": "org.apache.camel.component.bean.BeanComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

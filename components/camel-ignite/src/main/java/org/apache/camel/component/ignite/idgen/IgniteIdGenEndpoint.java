@@ -42,7 +42,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_IDGEN;
  * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_IDGEN, title = "Ignite ID Generator", syntax = "ignite-idgen:name",
-             category = { Category.COMPUTE }, producerOnly = true, headersClass = IgniteConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);

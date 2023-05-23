@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * printer using the javax printing API under the covers.
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername",
-             producerOnly = true, category = { Category.PRINTING }, headersClass = PrinterEndpoint.class)
+             producerOnly = true, category = { Category.DOCUMENT }, headersClass = PrinterEndpoint.class)
 public class PrinterEndpoint extends DefaultEndpoint {
 
     @Metadata(label = "producer", description = "The name of the job", javaType = "String")

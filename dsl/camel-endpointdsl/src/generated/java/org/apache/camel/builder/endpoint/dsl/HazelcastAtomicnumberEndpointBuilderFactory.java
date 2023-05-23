@@ -196,7 +196,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
          * number).
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -210,7 +210,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
          * number).
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -231,7 +231,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
          * number).
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 

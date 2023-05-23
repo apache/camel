@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
  * Capture changes from a DB2 database.
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-db2", title = "Debezium DB2 Connector",
-             syntax = "debezium-db2:name", category = { Category.DATABASE, Category.SQL }, consumerOnly = true,
+             syntax = "debezium-db2:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
 public final class DebeziumDb2Endpoint extends DebeziumEndpoint<Db2ConnectorEmbeddedDebeziumConfiguration> {
 

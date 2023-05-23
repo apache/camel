@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
  */
 @UriEndpoint(firstVersion = "3.10.0", scheme = "spring-jdbc", title = "Spring JDBC", syntax = "spring-jdbc:dataSourceName",
              producerOnly = true,
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE })
 public class SpringJdbcEndpoint extends JdbcEndpoint {
 
     public SpringJdbcEndpoint() {

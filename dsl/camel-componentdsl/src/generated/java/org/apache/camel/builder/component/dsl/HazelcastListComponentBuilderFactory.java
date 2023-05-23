@@ -34,7 +34,7 @@ public interface HazelcastListComponentBuilderFactory {
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
      * 
-     * Category: cache,datagrid
+     * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 

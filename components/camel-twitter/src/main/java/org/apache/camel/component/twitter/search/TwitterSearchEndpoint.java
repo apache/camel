@@ -34,7 +34,7 @@ import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_SEARCH;
  * Access Twitter Search.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_SEARCH, title = "Twitter Search", syntax = "twitter-search:keywords",
-             category = { Category.CLOUD, Category.API, Category.SEARCH, Category.SOCIAL },
+             category = { Category.SAAS, Category.SOCIAL },
              headersClass = TwitterConstants.class)
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 

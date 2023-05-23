@@ -880,7 +880,7 @@ public interface RssEndpointBuilderFactory {
          * RSS (camel-rss)
          * Poll RSS feeds.
          * 
-         * Category: rss
+         * Category: document
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-rss
          * 
@@ -893,7 +893,7 @@ public interface RssEndpointBuilderFactory {
          * RSS (camel-rss)
          * Poll RSS feeds.
          * 
-         * Category: rss
+         * Category: document
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-rss
          * 
@@ -912,7 +912,7 @@ public interface RssEndpointBuilderFactory {
          * RSS (camel-rss)
          * Poll RSS feeds.
          * 
-         * Category: rss
+         * Category: document
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-rss
          * 

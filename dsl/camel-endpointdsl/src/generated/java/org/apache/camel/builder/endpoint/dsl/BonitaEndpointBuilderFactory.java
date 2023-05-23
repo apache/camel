@@ -180,7 +180,7 @@ public interface BonitaEndpointBuilderFactory {
          * Bonita (camel-bonita)
          * Communicate with a remote Bonita BPM process engine.
          * 
-         * Category: process
+         * Category: workflow
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-bonita
          * 
@@ -200,7 +200,7 @@ public interface BonitaEndpointBuilderFactory {
          * Bonita (camel-bonita)
          * Communicate with a remote Bonita BPM process engine.
          * 
-         * Category: process
+         * Category: workflow
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-bonita
          * 

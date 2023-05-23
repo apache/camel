@@ -34,7 +34,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_INS
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_INSTANCE, title = "Hazelcast Instance",
              syntax = "hazelcast-instance:cacheName",
-             consumerOnly = true, category = { Category.CACHE, Category.DATAGRID }, headersClass = HazelcastConstants.class)
+             consumerOnly = true, category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {

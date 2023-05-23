@@ -195,7 +195,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * Hazelcast Ringbuffer (camel-hazelcast)
          * Perform operations on Hazelcast distributed ringbuffer.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -208,7 +208,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * Hazelcast Ringbuffer (camel-hazelcast)
          * Perform operations on Hazelcast distributed ringbuffer.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -228,7 +228,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * Hazelcast Ringbuffer (camel-hazelcast)
          * Perform operations on Hazelcast distributed ringbuffer.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 

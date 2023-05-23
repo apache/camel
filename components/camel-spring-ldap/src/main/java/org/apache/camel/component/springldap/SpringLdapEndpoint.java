@@ -33,7 +33,7 @@ import org.springframework.ldap.core.LdapTemplate;
  * Perform searches in LDAP servers using filters as the message payload.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName",
-             producerOnly = true, category = { Category.SPRING, Category.LDAP })
+             producerOnly = true, category = { Category.SECURITY })
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";

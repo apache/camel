@@ -230,7 +230,7 @@ public interface WorkdayEndpointBuilderFactory {
          * Workday (camel-workday)
          * Detect and parse documents using Workday.
          * 
-         * Category: cloud,api,hcm
+         * Category: cloud,api,saas
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-workday
          * 
@@ -243,7 +243,7 @@ public interface WorkdayEndpointBuilderFactory {
          * Workday (camel-workday)
          * Detect and parse documents using Workday.
          * 
-         * Category: cloud,api,hcm
+         * Category: cloud,api,saas
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-workday
          * 
@@ -266,7 +266,7 @@ public interface WorkdayEndpointBuilderFactory {
          * Workday (camel-workday)
          * Detect and parse documents using Workday.
          * 
-         * Category: cloud,api,hcm
+         * Category: cloud,api,saas
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-workday
          * 

@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform caching operations against JSR107/JCache.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "jcache", title = "JCache", syntax = "jcache:cacheName",
-             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING }, headersClass = JCacheConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = JCacheConstants.class)
 public class JCacheEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the cache")

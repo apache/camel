@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name",
-             category = { Category.CORE, Category.ENDPOINT })
+             category = { Category.CORE, Category.MESSAGING })
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);

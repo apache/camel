@@ -273,7 +273,7 @@ public interface RefEndpointBuilderFactory {
          * Route messages to an endpoint looked up dynamically by name in the
          * Camel Registry.
          * 
-         * Category: core,endpoint
+         * Category: core
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-ref
          * 
@@ -293,7 +293,7 @@ public interface RefEndpointBuilderFactory {
          * Route messages to an endpoint looked up dynamically by name in the
          * Camel Registry.
          * 
-         * Category: core,endpoint
+         * Category: core
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-ref
          * 

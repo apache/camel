@@ -6,7 +6,7 @@
     "description": "Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.sql.stored.SqlStoredComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

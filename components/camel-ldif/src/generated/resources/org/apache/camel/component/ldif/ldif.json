@@ -6,7 +6,7 @@
     "description": "Perform updates on an LDAP server from an LDIF body content.",
     "deprecated": false,
     "firstVersion": "2.20.0",
-    "label": "ldap",
+    "label": "database,security",
     "javaType": "org.apache.camel.component.ldif.LdifComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

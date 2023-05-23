@@ -526,7 +526,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * Hazelcast Map (camel-hazelcast)
          * Perform operations on Hazelcast distributed map.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -539,7 +539,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * Hazelcast Map (camel-hazelcast)
          * Perform operations on Hazelcast distributed map.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -558,7 +558,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * Hazelcast Map (camel-hazelcast)
          * Perform operations on Hazelcast distributed map.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 

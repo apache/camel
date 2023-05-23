@@ -2495,7 +2495,7 @@ public interface SqlEndpointBuilderFactory {
          * SQL (camel-sql)
          * Perform SQL queries using Spring JDBC.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 1.4
          * Maven coordinates: org.apache.camel:camel-sql
          * 
@@ -2508,7 +2508,7 @@ public interface SqlEndpointBuilderFactory {
          * SQL (camel-sql)
          * Perform SQL queries using Spring JDBC.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 1.4
          * Maven coordinates: org.apache.camel:camel-sql
          * 
@@ -2528,7 +2528,7 @@ public interface SqlEndpointBuilderFactory {
          * SQL (camel-sql)
          * Perform SQL queries using Spring JDBC.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 1.4
          * Maven coordinates: org.apache.camel:camel-sql
          * 

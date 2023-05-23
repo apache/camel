@@ -36,7 +36,7 @@ public interface ArangodbComponentBuilderFactory {
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
      * 
-     * Category: database,nosql
+     * Category: database
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 

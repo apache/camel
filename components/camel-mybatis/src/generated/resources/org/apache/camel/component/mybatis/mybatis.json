@@ -6,7 +6,7 @@
     "description": "Performs a query, poll, insert, update or delete in a relational database using MyBatis.",
     "deprecated": false,
     "firstVersion": "2.7.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.mybatis.MyBatisComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

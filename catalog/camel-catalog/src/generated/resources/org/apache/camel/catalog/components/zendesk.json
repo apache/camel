@@ -6,7 +6,7 @@
     "description": "Manage Zendesk tickets, users, organizations, etc.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "cloud,api,support",
+    "label": "cloud,api,saas",
     "javaType": "org.apache.camel.component.zendesk.ZendeskComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -36,7 +36,7 @@ public interface KubernetesCustomResourcesComponentBuilderFactory {
      * Perform operations on Kubernetes Custom Resources and get notified on
      * Deployment changes.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 3.7
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

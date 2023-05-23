@@ -36,7 +36,7 @@ public interface DynamicRouterComponentBuilderFactory {
      * The Dynamic Router component routes exchanges to recipients, and the
      * recipients (and their rules) may change at runtime.
      * 
-     * Category: endpoint,java
+     * Category: messaging,core
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-dynamic-router
      * 

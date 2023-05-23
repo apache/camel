@@ -29,7 +29,7 @@ import weka.core.Version;
  * Perform machine learning tasks using Weka.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "weka", title = "Weka", syntax = "weka:command", producerOnly = true,
-             category = { Category.DATAMINING })
+             category = { Category.BLOCKCHAIN })
 public class WekaEndpoint extends DefaultEndpoint {
 
     @UriParam

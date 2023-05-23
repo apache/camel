@@ -33,7 +33,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_P
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PERSISTENT_VOLUMES_CLAIMS,
              title = "Kubernetes Persistent Volume Claim",
              syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesPersistentVolumesClaimsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPersistentVolumesClaimsEndpoint(

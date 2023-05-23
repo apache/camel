@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams",
              syntax = "reactive-streams:stream",
-             category = { Category.REACTIVE, Category.STREAMS }, headersClass = ReactiveStreamsConstants.class)
+             category = { Category.MESSAGING }, headersClass = ReactiveStreamsConstants.class)
 @ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 

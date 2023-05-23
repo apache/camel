@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Send requests to SAP NetWeaver Gateway using HTTP.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url",
-             producerOnly = true, category = { Category.SAP, Category.CLOUD, Category.API },
+             producerOnly = true, category = { Category.SAAS },
              headersClass = NetWeaverConstants.class)
 public class NetWeaverEndpoint extends DefaultEndpoint {
 

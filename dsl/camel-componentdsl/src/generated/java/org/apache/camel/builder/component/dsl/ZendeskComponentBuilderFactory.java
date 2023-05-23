@@ -34,7 +34,7 @@ public interface ZendeskComponentBuilderFactory {
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
      * 
-     * Category: cloud,api,support
+     * Category: cloud,api,saas
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
      * 

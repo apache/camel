@@ -312,7 +312,7 @@ public interface StitchEndpointBuilderFactory {
          * Stitch is a cloud ETL service that integrates various data sources
          * into a central data warehouse through various integrations.
          * 
-         * Category: cloud,api,compute,bigdata
+         * Category: cloud,api,saas,bigdata
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-stitch
          * 
@@ -326,7 +326,7 @@ public interface StitchEndpointBuilderFactory {
          * Stitch is a cloud ETL service that integrates various data sources
          * into a central data warehouse through various integrations.
          * 
-         * Category: cloud,api,compute,bigdata
+         * Category: cloud,api,saas,bigdata
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-stitch
          * 
@@ -349,7 +349,7 @@ public interface StitchEndpointBuilderFactory {
          * Stitch is a cloud ETL service that integrates various data sources
          * into a central data warehouse through various integrations.
          * 
-         * Category: cloud,api,compute,bigdata
+         * Category: cloud,api,saas,bigdata
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-stitch
          * 

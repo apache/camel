@@ -34,7 +34,7 @@ public interface GoogleSheetsComponentBuilderFactory {
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
      * 
-     * Category: api,cloud,sheets
+     * Category: cloud,document
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      * 

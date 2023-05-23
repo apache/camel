@@ -228,7 +228,7 @@ public interface GlanceEndpointBuilderFactory {
          * OpenStack Glance (camel-openstack)
          * Manage VM images and metadata definitions in OpenStack Glance.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
@@ -241,7 +241,7 @@ public interface GlanceEndpointBuilderFactory {
          * OpenStack Glance (camel-openstack)
          * Manage VM images and metadata definitions in OpenStack Glance.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
@@ -260,7 +260,7 @@ public interface GlanceEndpointBuilderFactory {
          * OpenStack Glance (camel-openstack)
          * Manage VM images and metadata definitions in OpenStack Glance.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 

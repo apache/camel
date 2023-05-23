@@ -4959,7 +4959,7 @@ public interface NettyEndpointBuilderFactory {
          * Netty (camel-netty)
          * Socket level networking using TCP or UDP with Netty 4.x.
          * 
-         * Category: networking,tcp,udp
+         * Category: networking
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty
          * 
@@ -4972,7 +4972,7 @@ public interface NettyEndpointBuilderFactory {
          * Netty (camel-netty)
          * Socket level networking using TCP or UDP with Netty 4.x.
          * 
-         * Category: networking,tcp,udp
+         * Category: networking
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty
          * 
@@ -4999,7 +4999,7 @@ public interface NettyEndpointBuilderFactory {
          * Netty (camel-netty)
          * Socket level networking using TCP or UDP with Netty 4.x.
          * 
-         * Category: networking,tcp,udp
+         * Category: networking
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-netty
          * 

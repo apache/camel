@@ -33,7 +33,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_LIS
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed list.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_LIST, title = "Hazelcast List", syntax = "hazelcast-list:cacheName",
-             category = { Category.CACHE, Category.DATAGRID }, headersClass = HazelcastConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,

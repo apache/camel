@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Send and receive messages to/from Guava EventBus.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus",
-             syntax = "guava-eventbus:eventBusRef", category = { Category.EVENTBUS })
+             syntax = "guava-eventbus:eventBusRef", category = { Category.MESSAGING })
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;

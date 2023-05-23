@@ -34,7 +34,7 @@ public interface TwitterSearchComponentBuilderFactory {
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
      * 
-     * Category: cloud,api,search,social
+     * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      * 

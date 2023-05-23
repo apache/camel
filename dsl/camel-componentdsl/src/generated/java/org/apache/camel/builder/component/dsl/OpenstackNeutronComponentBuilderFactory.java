@@ -34,7 +34,7 @@ public interface OpenstackNeutronComponentBuilderFactory {
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
      * 
-     * Category: cloud,paas
+     * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      * 

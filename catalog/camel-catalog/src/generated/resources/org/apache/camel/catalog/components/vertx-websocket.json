@@ -6,7 +6,7 @@
     "description": "Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x",
     "deprecated": false,
     "firstVersion": "3.5.0",
-    "label": "websocket",
+    "label": "http,networking",
     "javaType": "org.apache.camel.component.vertx.websocket.VertxWebsocketComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

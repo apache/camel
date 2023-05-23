@@ -6,7 +6,7 @@
     "description": "Poll for changes in Google Sheets.",
     "deprecated": false,
     "firstVersion": "2.23.0",
-    "label": "cloud,sheets",
+    "label": "cloud,document",
     "javaType": "org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

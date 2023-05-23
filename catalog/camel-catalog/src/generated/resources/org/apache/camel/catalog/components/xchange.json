@@ -6,7 +6,7 @@
     "description": "Access market data and trade on Bitcoin and Altcoin exchanges.",
     "deprecated": false,
     "firstVersion": "2.21.0",
-    "label": "bitcoin,blockchain",
+    "label": "blockchain",
     "javaType": "org.apache.camel.component.xchange.XChangeComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

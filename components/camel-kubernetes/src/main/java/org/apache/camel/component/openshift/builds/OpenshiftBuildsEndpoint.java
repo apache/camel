@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_B
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILDS, title = "Openshift Builds",
              syntax = "openshift-builds:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
 

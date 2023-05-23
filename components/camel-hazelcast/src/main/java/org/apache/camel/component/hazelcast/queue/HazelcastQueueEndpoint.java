@@ -37,7 +37,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_QUE
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed queue.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_QUEUE, title = "Hazelcast Queue",
-             syntax = "hazelcast-queue:cacheName", category = { Category.CACHE, Category.DATAGRID, Category.MESSAGING },
+             syntax = "hazelcast-queue:cacheName", category = { Category.CACHE, Category.CLUSTERING, Category.MESSAGING },
              headersClass = HazelcastConstants.class)
 public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
 

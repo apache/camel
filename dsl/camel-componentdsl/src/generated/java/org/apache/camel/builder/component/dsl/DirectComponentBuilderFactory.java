@@ -34,7 +34,7 @@ public interface DirectComponentBuilderFactory {
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
      * 
-     * Category: core,endpoint
+     * Category: core,messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-direct
      * 

@@ -1064,7 +1064,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Receive messages from AWS DynamoDB Stream service using AWS SDK
          * version 2.x.
          * 
-         * Category: cloud,messaging,streams
+         * Category: cloud,messaging
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-ddb
          * 
@@ -1084,7 +1084,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Receive messages from AWS DynamoDB Stream service using AWS SDK
          * version 2.x.
          * 
-         * Category: cloud,messaging,streams
+         * Category: cloud,messaging
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-ddb
          * 

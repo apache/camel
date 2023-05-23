@@ -33,7 +33,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MUL
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MULTIMAP, title = "Hazelcast Multimap",
-             syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.DATAGRID },
+             syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
 

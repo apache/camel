@@ -35,7 +35,7 @@ public interface CaffeineLoadcacheComponentBuilderFactory {
      * Perform caching operations using Caffeine Cache with an attached
      * CacheLoader.
      * 
-     * Category: cache,datagrid,clustering
+     * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
      * 

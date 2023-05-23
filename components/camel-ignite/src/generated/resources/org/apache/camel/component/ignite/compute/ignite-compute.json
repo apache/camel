@@ -6,7 +6,7 @@
     "description": "Run compute operations on an Ignite cluster.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "compute",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.ignite.compute.IgniteComputeComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

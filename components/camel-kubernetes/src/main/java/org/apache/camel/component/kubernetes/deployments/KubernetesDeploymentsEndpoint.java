@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
  * Perform operations on Kubernetes Deployments and get notified on Deployment changes.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_DEPLOYMENTS, title = "Kubernetes Deployments",
-             syntax = "kubernetes-deployments:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "kubernetes-deployments:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 

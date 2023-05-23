@@ -34,7 +34,7 @@ public interface Aws2LambdaComponentBuilderFactory {
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
      * 
-     * Category: cloud,computing,serverless
+     * Category: cloud,serverless
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-lambda
      * 

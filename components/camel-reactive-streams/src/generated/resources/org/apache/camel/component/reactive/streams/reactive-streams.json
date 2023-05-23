@@ -6,7 +6,7 @@
     "description": "Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "reactive,streams",
+    "label": "messaging",
     "javaType": "org.apache.camel.component.reactive.streams.ReactiveStreamsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -34,7 +34,7 @@ public interface MinaComponentBuilderFactory {
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
      * 
-     * Category: networking,tcp,udp
+     * Category: networking
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-mina
      * 

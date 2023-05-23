@@ -34,7 +34,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  * Access OpenStack to manage compute resources.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NOVA, title = "OpenStack Nova", syntax = "openstack-nova:host",
-             category = { Category.CLOUD, Category.PAAS }, producerOnly = true, headersClass = NovaConstants.class)
+             category = { Category.CONTAINER }, producerOnly = true, headersClass = NovaConstants.class)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")

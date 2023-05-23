@@ -6,7 +6,7 @@
     "description": "Perform searches in LDAP servers using filters as the message payload.",
     "deprecated": false,
     "firstVersion": "2.11.0",
-    "label": "spring,ldap",
+    "label": "security",
     "javaType": "org.apache.camel.component.springldap.SpringLdapComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

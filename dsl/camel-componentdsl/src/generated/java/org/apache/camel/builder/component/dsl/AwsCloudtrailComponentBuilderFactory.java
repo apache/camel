@@ -34,7 +34,7 @@ public interface AwsCloudtrailComponentBuilderFactory {
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
      * 
-     * Category: cloud,eventbus
+     * Category: cloud,management,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
      * 

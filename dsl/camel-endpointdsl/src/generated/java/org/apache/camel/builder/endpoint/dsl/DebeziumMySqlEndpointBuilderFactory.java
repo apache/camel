@@ -2468,7 +2468,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * Debezium MySQL Connector (camel-debezium-mysql)
          * Capture changes from a MySQL database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-mysql
          * 
@@ -2481,7 +2481,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * Debezium MySQL Connector (camel-debezium-mysql)
          * Capture changes from a MySQL database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-mysql
          * 
@@ -2501,7 +2501,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * Debezium MySQL Connector (camel-debezium-mysql)
          * Capture changes from a MySQL database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-mysql
          * 

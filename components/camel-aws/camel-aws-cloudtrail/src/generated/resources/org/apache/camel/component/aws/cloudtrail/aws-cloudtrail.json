@@ -6,7 +6,7 @@
     "description": "Consume events from Amazon Cloudtrail using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.19.0",
-    "label": "cloud,eventbus",
+    "label": "cloud,management,monitoring",
     "javaType": "org.apache.camel.component.aws.cloudtrail.CloudtrailComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

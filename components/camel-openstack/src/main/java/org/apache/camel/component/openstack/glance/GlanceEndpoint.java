@@ -31,7 +31,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  * Manage VM images and metadata definitions in OpenStack Glance.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_GLANCE, title = "OpenStack Glance", syntax = "openstack-glance:host",
-             category = { Category.CLOUD, Category.PAAS }, producerOnly = true, headersClass = GlanceConstants.class)
+             category = { Category.CONTAINER }, producerOnly = true, headersClass = GlanceConstants.class)
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

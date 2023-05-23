@@ -34,7 +34,7 @@ public interface SpringBatchComponentBuilderFactory {
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
      * 
-     * Category: spring,batch,scheduling
+     * Category: workflow
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
      * 

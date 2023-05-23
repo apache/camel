@@ -34,7 +34,7 @@ public interface JcacheComponentBuilderFactory {
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 
-     * Category: cache,datagrid,clustering
+     * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
      * 

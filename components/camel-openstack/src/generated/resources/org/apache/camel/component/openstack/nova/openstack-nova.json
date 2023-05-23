@@ -6,7 +6,7 @@
     "description": "Access OpenStack to manage compute resources.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "cloud,paas",
+    "label": "container",
     "javaType": "org.apache.camel.component.openstack.nova.NovaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -49,7 +49,7 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
 
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
-             syntax = "vertx-websocket:host:port/path", category = { Category.WEBSOCKET },
+             syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
              headersClass = VertxWebsocketConstants.class, lenientProperties = true)
 public class VertxWebsocketEndpoint extends DefaultEndpoint {
 

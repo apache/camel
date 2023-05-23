@@ -6,7 +6,7 @@
     "description": "Provides asynchronous SEDA behavior using LMAX Disruptor.",
     "deprecated": false,
     "firstVersion": "2.12.0",
-    "label": "endpoint",
+    "label": "messaging",
     "javaType": "org.apache.camel.component.disruptor.vm.DisruptorVmComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

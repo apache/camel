@@ -1388,7 +1388,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Kubernetes Job (camel-kubernetes)
          * Perform operations on Kubernetes Jobs.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1401,7 +1401,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Kubernetes Job (camel-kubernetes)
          * Perform operations on Kubernetes Jobs.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1420,7 +1420,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Kubernetes Job (camel-kubernetes)
          * Perform operations on Kubernetes Jobs.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

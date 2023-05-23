@@ -6,7 +6,7 @@
     "description": "Receive logs messages using the Lumberjack protocol.",
     "deprecated": false,
     "firstVersion": "2.18.0",
-    "label": "log",
+    "label": "monitoring",
     "javaType": "org.apache.camel.component.lumberjack.LumberjackComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

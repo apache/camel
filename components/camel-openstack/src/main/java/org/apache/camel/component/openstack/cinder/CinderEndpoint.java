@@ -33,7 +33,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  * Access data in OpenStack Cinder block storage.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CINDER, title = "OpenStack Cinder", syntax = "openstack-cinder:host",
-             category = { Category.CLOUD, Category.PAAS }, producerOnly = true, headersClass = CinderConstants.class)
+             category = { Category.CONTAINER }, producerOnly = true, headersClass = CinderConstants.class)
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "snapshots,volumes")

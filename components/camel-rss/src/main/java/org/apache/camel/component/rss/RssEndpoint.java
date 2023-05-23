@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Poll RSS feeds.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
-             syntax = "rss:feedUri", consumerOnly = true, category = { Category.RSS }, lenientProperties = true,
+             syntax = "rss:feedUri", consumerOnly = true, category = { Category.DOCUMENT }, lenientProperties = true,
              headersClass = RssConstants.class)
 public class RssEndpoint extends FeedEndpoint {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);

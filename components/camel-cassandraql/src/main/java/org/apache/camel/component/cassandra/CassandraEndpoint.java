@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * DataStax.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
-             category = { Category.DATABASE, Category.NOSQL }, headersClass = CassandraConstants.class)
+             category = { Category.DATABASE, Category.BIGDATA }, headersClass = CassandraConstants.class)
 public class CassandraEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEndpoint.class);
 

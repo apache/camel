@@ -36,7 +36,7 @@ public interface KubernetesNamespacesComponentBuilderFactory {
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
      * changes.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

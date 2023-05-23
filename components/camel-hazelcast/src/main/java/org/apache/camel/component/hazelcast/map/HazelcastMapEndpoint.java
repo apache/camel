@@ -33,7 +33,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_MAP
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed map.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MAP, title = "Hazelcast Map", syntax = "hazelcast-map:cacheName",
-             category = { Category.CACHE, Category.DATAGRID }, headersClass = HazelcastConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
 
     public HazelcastMapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,

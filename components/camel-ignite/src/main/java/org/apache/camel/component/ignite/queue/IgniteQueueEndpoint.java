@@ -42,7 +42,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_QUEUE;
  * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_QUEUE, title = "Ignite Queues", syntax = "ignite-queue:name",
-             category = { Category.MESSAGING, Category.QUEUE }, producerOnly = true, headersClass = IgniteConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING, Category.MESSAGING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

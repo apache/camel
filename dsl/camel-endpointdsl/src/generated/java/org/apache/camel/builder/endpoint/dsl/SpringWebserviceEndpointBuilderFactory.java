@@ -1091,7 +1091,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Access external web services as a client or expose your own web
          * services.
          * 
-         * Category: spring,soap,webservice
+         * Category: webservice
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-spring-ws
          * 
@@ -1105,7 +1105,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Access external web services as a client or expose your own web
          * services.
          * 
-         * Category: spring,soap,webservice
+         * Category: webservice
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-spring-ws
          * 
@@ -1148,7 +1148,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Access external web services as a client or expose your own web
          * services.
          * 
-         * Category: spring,soap,webservice
+         * Category: webservice
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-spring-ws
          * 

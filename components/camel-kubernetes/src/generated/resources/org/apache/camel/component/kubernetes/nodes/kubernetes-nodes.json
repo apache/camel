@@ -6,7 +6,7 @@
     "description": "Perform operations on Kubernetes Nodes and get notified on Node changes.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "container,cloud,paas",
+    "label": "container,cloud",
     "javaType": "org.apache.camel.component.kubernetes.nodes.KubernetesNodesComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

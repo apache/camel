@@ -34,7 +34,7 @@ public interface PdfComponentBuilderFactory {
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
      * 
-     * Category: document,transformation,printing
+     * Category: document,transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
      * 

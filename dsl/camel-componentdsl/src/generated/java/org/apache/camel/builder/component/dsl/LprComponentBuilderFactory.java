@@ -34,7 +34,7 @@ public interface LprComponentBuilderFactory {
      * Printer (camel-printer)
      * Send print jobs to printers.
      * 
-     * Category: printing
+     * Category: document
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
      * 

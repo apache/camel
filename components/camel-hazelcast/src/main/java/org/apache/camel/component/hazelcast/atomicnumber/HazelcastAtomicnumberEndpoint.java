@@ -33,7 +33,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_ATO
  * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_ATOMIC_VALUE, title = "Hazelcast Atomic Number",
-             syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true, category = { Category.CACHE, Category.DATAGRID },
+             syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true, category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
 public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
 

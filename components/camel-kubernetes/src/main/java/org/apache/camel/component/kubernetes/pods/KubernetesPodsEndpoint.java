@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_P
  * Perform operations on Kubernetes Pods and get notified on Pod changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PODS, title = "Kubernetes Pods",
-             syntax = "kubernetes-pods:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "kubernetes-pods:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 

@@ -495,7 +495,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Exchange messages with reactive stream processing libraries
          * compatible with the reactive streams standard.
          * 
-         * Category: reactive,streams
+         * Category: messaging
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-reactive-streams
          * 
@@ -509,7 +509,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Exchange messages with reactive stream processing libraries
          * compatible with the reactive streams standard.
          * 
-         * Category: reactive,streams
+         * Category: messaging
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-reactive-streams
          * 
@@ -529,7 +529,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Exchange messages with reactive stream processing libraries
          * compatible with the reactive streams standard.
          * 
-         * Category: reactive,streams
+         * Category: messaging
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-reactive-streams
          * 

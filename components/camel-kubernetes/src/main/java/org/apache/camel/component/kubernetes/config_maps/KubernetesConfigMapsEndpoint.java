@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CONFIG_MAPS, title = "Kubernetes ConfigMap",
              syntax = "kubernetes-config-maps:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {

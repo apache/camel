@@ -34,7 +34,7 @@ public interface EhcacheComponentBuilderFactory {
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
      * 
-     * Category: cache,datagrid,clustering
+     * Category: cache,clustering
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
      * 

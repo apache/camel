@@ -34,7 +34,7 @@ public interface HazelcastInstanceComponentBuilderFactory {
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
-     * Category: cache,datagrid
+     * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 

@@ -6,7 +6,7 @@
     "description": "Perform operations on Kubernetes Events and get notified on Events changes.",
     "deprecated": false,
     "firstVersion": "3.20.0",
-    "label": "container,cloud,paas",
+    "label": "container,cloud",
     "javaType": "org.apache.camel.component.kubernetes.events.KubernetesEventsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

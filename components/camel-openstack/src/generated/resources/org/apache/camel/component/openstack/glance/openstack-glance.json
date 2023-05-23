@@ -6,7 +6,7 @@
     "description": "Manage VM images and metadata definitions in OpenStack Glance.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "cloud,paas",
+    "label": "container",
     "javaType": "org.apache.camel.component.openstack.glance.GlanceComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -35,7 +35,7 @@ import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_DIRECT_
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_DIRECT_MESSAGE, title = "Twitter Direct Message",
              syntax = "twitter-directmessage:user",
-             category = { Category.CLOUD, Category.API, Category.SOCIAL, Category.CHAT }, headersClass = TwitterConstants.class)
+             category = { Category.SAAS, Category.SOCIAL }, headersClass = TwitterConstants.class)
 public class TwitterDirectMessageEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The user name to send a direct message. This will be ignored for consumer.")

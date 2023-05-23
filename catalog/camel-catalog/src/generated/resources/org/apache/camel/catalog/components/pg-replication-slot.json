@@ -6,7 +6,7 @@
     "description": "Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.pg.replication.slot.PgReplicationSlotComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

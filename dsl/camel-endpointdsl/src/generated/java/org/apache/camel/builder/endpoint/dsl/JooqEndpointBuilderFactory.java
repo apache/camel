@@ -993,7 +993,7 @@ public interface JooqEndpointBuilderFactory {
          * JOOQ (camel-jooq)
          * Store and retrieve Java objects from an SQL database using JOOQ.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-jooq
          * 
@@ -1012,7 +1012,7 @@ public interface JooqEndpointBuilderFactory {
          * JOOQ (camel-jooq)
          * Store and retrieve Java objects from an SQL database using JOOQ.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-jooq
          * 

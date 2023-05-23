@@ -2250,7 +2250,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Debezium PostgresSQL Connector (camel-debezium-postgres)
          * Capture changes from a PostgresSQL database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-postgres
          * 
@@ -2263,7 +2263,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Debezium PostgresSQL Connector (camel-debezium-postgres)
          * Capture changes from a PostgresSQL database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-postgres
          * 
@@ -2283,7 +2283,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Debezium PostgresSQL Connector (camel-debezium-postgres)
          * Capture changes from a PostgresSQL database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-postgres
          * 

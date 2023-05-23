@@ -34,7 +34,7 @@ public interface JiraComponentBuilderFactory {
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
      * 
-     * Category: api,reporting
+     * Category: document
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jira
      * 

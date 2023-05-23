@@ -36,7 +36,7 @@ public interface KubernetesConfigMapsComponentBuilderFactory {
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

@@ -38,7 +38,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SED
  * Hazelcast {@link BlockingQueue}.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SEDA, title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
-             category = { Category.CACHE, Category.DATAGRID }, headersClass = HazelcastConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;

@@ -40,7 +40,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_SET;
  * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SET, title = "Ignite Sets", syntax = "ignite-set:name",
-             category = { Category.CACHE, Category.COMPUTE }, producerOnly = true, headersClass = IgniteConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

@@ -36,7 +36,7 @@ public interface RestOpenapiComponentBuilderFactory {
      * Configure REST producers based on an OpenAPI specification document
      * delegating to a component implementing the RestProducerFactory interface.
      * 
-     * Category: openapi,rest,api
+     * Category: rest,api
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-rest-openapi
      * 

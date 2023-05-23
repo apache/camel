@@ -35,7 +35,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  * Access OpenStack Neutron for network services.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_NEUTRON, title = "OpenStack Neutron",
-             syntax = "openstack-neutron:host", category = { Category.CLOUD, Category.PAAS }, producerOnly = true,
+             syntax = "openstack-neutron:host", category = { Category.CONTAINER }, producerOnly = true,
              headersClass = NeutronConstants.class)
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 

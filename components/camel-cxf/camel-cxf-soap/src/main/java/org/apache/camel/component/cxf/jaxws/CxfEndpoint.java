@@ -127,7 +127,7 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
  * Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = SCHEME_CXF, title = "CXF", syntax = "cxf:beanId:address",
-             category = { Category.SOAP, Category.WEBSERVICE }, headersClass = CxfConstants.class)
+             category = { Category.HTTP, Category.WEBSERVICE }, headersClass = CxfConstants.class)
 public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);

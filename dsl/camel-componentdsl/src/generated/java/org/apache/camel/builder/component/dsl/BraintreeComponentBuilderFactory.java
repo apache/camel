@@ -34,7 +34,7 @@ public interface BraintreeComponentBuilderFactory {
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
      * 
-     * Category: cloud,payment
+     * Category: saas
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      * 

@@ -74,7 +74,7 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  * publicly accessible where a webhook would fail
  */
 @UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type",
-             category = { Category.API, Category.REPORTING }, headersClass = JiraConstants.class)
+             category = { Category.DOCUMENT }, headersClass = JiraConstants.class)
 public class JiraEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);

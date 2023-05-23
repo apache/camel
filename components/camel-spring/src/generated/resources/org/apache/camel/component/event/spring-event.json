@@ -6,7 +6,7 @@
     "description": "Listen for Spring Application Events.",
     "deprecated": false,
     "firstVersion": "1.4.0",
-    "label": "spring,eventbus",
+    "label": "messaging",
     "javaType": "org.apache.camel.component.event.EventComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -6,7 +6,7 @@
     "description": "Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.",
     "deprecated": false,
     "firstVersion": "3.8.0",
-    "label": "cloud,api,compute,bigdata",
+    "label": "cloud,api,saas,bigdata",
     "javaType": "org.apache.camel.component.stitch.StitchComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

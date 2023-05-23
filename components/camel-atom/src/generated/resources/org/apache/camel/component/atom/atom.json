@@ -6,7 +6,7 @@
     "description": "Poll Atom RSS feeds.",
     "deprecated": false,
     "firstVersion": "1.2.0",
-    "label": "rss",
+    "label": "document",
     "javaType": "org.apache.camel.component.atom.AtomComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

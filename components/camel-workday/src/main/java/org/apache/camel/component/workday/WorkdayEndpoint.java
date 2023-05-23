@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Detect and parse documents using Workday.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true,
-             category = { Category.CLOUD, Category.API, Category.HCM }, headersClass = WorkdayDefaultProducer.class)
+             category = { Category.CLOUD, Category.API, Category.SAAS }, headersClass = WorkdayDefaultProducer.class)
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriParam

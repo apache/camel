@@ -6,7 +6,7 @@
     "description": "Consume join\/leave events of a cache instance in a Hazelcast cluster.",
     "deprecated": false,
     "firstVersion": "2.7.0",
-    "label": "cache,datagrid",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.hazelcast.instance.HazelcastInstanceComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

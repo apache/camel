@@ -48,7 +48,7 @@ import org.slf4j.Logger;
  */
 @ManagedResource(description = "MLLP Endpoint")
 @UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port",
-             category = { Category.NETWORKING, Category.RPC, Category.MLLP }, generateConfigurer = true,
+             category = { Category.HEALTH }, generateConfigurer = true,
              headersClass = MllpConstants.class)
 public class MllpEndpoint extends DefaultEndpoint {
 

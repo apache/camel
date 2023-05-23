@@ -6,7 +6,7 @@
     "description": "Communicate with a remote Bonita BPM process engine.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "process",
+    "label": "workflow",
     "javaType": "org.apache.camel.component.bonita.BonitaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

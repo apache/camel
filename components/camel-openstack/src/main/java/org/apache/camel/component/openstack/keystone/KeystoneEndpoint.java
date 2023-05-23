@@ -37,7 +37,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  * authorization.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_KEYSTONE, title = "OpenStack Keystone",
-             syntax = "openstack-keystone:host", category = { Category.CLOUD, Category.PAAS }, producerOnly = true,
+             syntax = "openstack-keystone:host", category = { Category.CONTAINER }, producerOnly = true,
              headersClass = KeystoneConstants.class)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 

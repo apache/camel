@@ -34,7 +34,7 @@ public interface JdbcComponentBuilderFactory {
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
      * 

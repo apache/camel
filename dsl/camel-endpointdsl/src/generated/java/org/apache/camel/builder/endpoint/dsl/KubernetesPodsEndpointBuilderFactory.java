@@ -1391,7 +1391,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Perform operations on Kubernetes Pods and get notified on Pod
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1405,7 +1405,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Perform operations on Kubernetes Pods and get notified on Pod
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1425,7 +1425,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Perform operations on Kubernetes Pods and get notified on Pod
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

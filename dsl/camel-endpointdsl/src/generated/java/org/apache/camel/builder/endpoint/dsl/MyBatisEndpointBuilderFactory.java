@@ -1121,7 +1121,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Performs a query, poll, insert, update or delete in a relational
          * database using MyBatis.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 
@@ -1135,7 +1135,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Performs a query, poll, insert, update or delete in a relational
          * database using MyBatis.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 
@@ -1156,7 +1156,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Performs a query, poll, insert, update or delete in a relational
          * database using MyBatis.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 

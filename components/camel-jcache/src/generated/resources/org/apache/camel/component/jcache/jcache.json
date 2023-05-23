@@ -6,7 +6,7 @@
     "description": "Perform caching operations against JSR107\/JCache.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "cache,datagrid,clustering",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.jcache.JCacheComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

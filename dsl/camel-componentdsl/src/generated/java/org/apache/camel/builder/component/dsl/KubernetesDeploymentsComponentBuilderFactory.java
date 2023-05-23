@@ -36,7 +36,7 @@ public interface KubernetesDeploymentsComponentBuilderFactory {
      * Perform operations on Kubernetes Deployments and get notified on
      * Deployment changes.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

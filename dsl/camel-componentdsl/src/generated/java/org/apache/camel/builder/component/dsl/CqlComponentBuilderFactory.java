@@ -36,7 +36,7 @@ public interface CqlComponentBuilderFactory {
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
      * 
-     * Category: database,nosql
+     * Category: database,bigdata
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-cassandraql
      * 

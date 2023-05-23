@@ -344,7 +344,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * The splunk component allows to publish events in Splunk using the
          * HTTP Event Collector.
          * 
-         * Category: log,monitoring
+         * Category: monitoring
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 
@@ -358,7 +358,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * The splunk component allows to publish events in Splunk using the
          * HTTP Event Collector.
          * 
-         * Category: log,monitoring
+         * Category: monitoring
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 
@@ -382,7 +382,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * The splunk component allows to publish events in Splunk using the
          * HTTP Event Collector.
          * 
-         * Category: log,monitoring
+         * Category: monitoring
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 

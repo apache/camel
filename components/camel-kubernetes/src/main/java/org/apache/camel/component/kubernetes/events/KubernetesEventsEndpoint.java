@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_E
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = SCHEME_EVENTS, title = "Kubernetes Event",
              syntax = "kubernetes-events:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesEventsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesEventsEndpoint(String uri, KubernetesEventsComponent component, KubernetesConfiguration config) {

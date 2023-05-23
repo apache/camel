@@ -6,7 +6,7 @@
     "description": "Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete documents from a CouchDB database.",
     "deprecated": false,
     "firstVersion": "2.11.0",
-    "label": "database,nosql",
+    "label": "database",
     "javaType": "org.apache.camel.component.couchdb.CouchDbComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

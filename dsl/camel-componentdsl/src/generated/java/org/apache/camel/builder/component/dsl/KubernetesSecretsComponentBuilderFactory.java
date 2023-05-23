@@ -34,7 +34,7 @@ public interface KubernetesSecretsComponentBuilderFactory {
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

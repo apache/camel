@@ -34,7 +34,7 @@ public interface OptaplannerComponentBuilderFactory {
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
      * 
-     * Category: engine,planning
+     * Category: workflow
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-optaplanner
      * 

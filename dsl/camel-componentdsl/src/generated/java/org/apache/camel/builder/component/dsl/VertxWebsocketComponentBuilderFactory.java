@@ -36,7 +36,7 @@ public interface VertxWebsocketComponentBuilderFactory {
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x
      * 
-     * Category: websocket
+     * Category: http,networking
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-websocket
      * 

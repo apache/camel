@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_S
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICE_ACCOUNTS, title = "Kubernetes Service Account",
              syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component,

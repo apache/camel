@@ -6,7 +6,7 @@
     "description": "Camel support for Hyperledger Aries",
     "deprecated": false,
     "firstVersion": "3.19.0",
-    "label": "blockchain,identity",
+    "label": "blockchain,security",
     "javaType": "org.apache.camel.component.aries.HyperledgerAriesComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

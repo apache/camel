@@ -6,7 +6,7 @@
     "description": "Read and write from\/to Infinispan distributed key\/value store and data grid.",
     "deprecated": false,
     "firstVersion": "2.13.0",
-    "label": "cache,datagrid,clustering",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

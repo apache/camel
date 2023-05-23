@@ -218,7 +218,7 @@ public interface ClassEndpointBuilderFactory {
          * Class (camel-bean)
          * Invoke methods of Java beans specified by class name.
          * 
-         * Category: core,java
+         * Category: core,script
          * Since: 2.4
          * Maven coordinates: org.apache.camel:camel-bean
          * 
@@ -231,7 +231,7 @@ public interface ClassEndpointBuilderFactory {
          * Class (camel-bean)
          * Invoke methods of Java beans specified by class name.
          * 
-         * Category: core,java
+         * Category: core,script
          * Since: 2.4
          * Maven coordinates: org.apache.camel:camel-bean
          * 
@@ -250,7 +250,7 @@ public interface ClassEndpointBuilderFactory {
          * Class (camel-bean)
          * Invoke methods of Java beans specified by class name.
          * 
-         * Category: core,java
+         * Category: core,script
          * Since: 2.4
          * Maven coordinates: org.apache.camel:camel-bean
          * 

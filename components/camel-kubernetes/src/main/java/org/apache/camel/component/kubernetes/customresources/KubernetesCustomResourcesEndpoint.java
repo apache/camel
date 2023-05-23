@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_C
  * Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.
  */
 @UriEndpoint(firstVersion = "3.7.0", scheme = SCHEME_CUSTOM_RESOURCES, title = "Kubernetes Custom Resources",
-             syntax = "kubernetes-custom-resources:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "kubernetes-custom-resources:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesCustomResourcesEndpoint extends AbstractKubernetesEndpoint {
 

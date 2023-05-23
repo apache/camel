@@ -36,7 +36,7 @@ public interface IgniteCacheComponentBuilderFactory {
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
      * 
-     * Category: cache,datagrid
+     * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 

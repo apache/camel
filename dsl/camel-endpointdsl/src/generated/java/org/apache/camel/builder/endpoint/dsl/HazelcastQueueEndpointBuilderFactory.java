@@ -624,7 +624,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * Hazelcast Queue (camel-hazelcast)
          * Perform operations on Hazelcast distributed queue.
          * 
-         * Category: cache,datagrid,messaging
+         * Category: cache,clustering,messaging
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -637,7 +637,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * Hazelcast Queue (camel-hazelcast)
          * Perform operations on Hazelcast distributed queue.
          * 
-         * Category: cache,datagrid,messaging
+         * Category: cache,clustering,messaging
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -656,7 +656,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * Hazelcast Queue (camel-hazelcast)
          * Perform operations on Hazelcast distributed queue.
          * 
-         * Category: cache,datagrid,messaging
+         * Category: cache,clustering,messaging
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 

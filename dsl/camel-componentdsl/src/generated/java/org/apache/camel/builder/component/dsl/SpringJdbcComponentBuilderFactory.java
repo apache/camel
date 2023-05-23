@@ -34,7 +34,7 @@ public interface SpringJdbcComponentBuilderFactory {
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-spring-jdbc
      * 

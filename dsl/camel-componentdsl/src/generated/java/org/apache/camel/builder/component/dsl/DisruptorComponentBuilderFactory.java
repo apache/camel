@@ -34,7 +34,7 @@ public interface DisruptorComponentBuilderFactory {
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
      * 
-     * Category: endpoint
+     * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
      * 

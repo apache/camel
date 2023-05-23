@@ -955,7 +955,7 @@ public interface StreamEndpointBuilderFactory {
          * Stream (camel-stream)
          * Read from system-in and write to system-out and system-err streams.
          * 
-         * Category: file,system
+         * Category: file,core
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-stream
          * 
@@ -968,7 +968,7 @@ public interface StreamEndpointBuilderFactory {
          * Stream (camel-stream)
          * Read from system-in and write to system-out and system-err streams.
          * 
-         * Category: file,system
+         * Category: file,core
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-stream
          * 
@@ -990,7 +990,7 @@ public interface StreamEndpointBuilderFactory {
          * Stream (camel-stream)
          * Read from system-in and write to system-out and system-err streams.
          * 
-         * Category: file,system
+         * Category: file,core
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-stream
          * 

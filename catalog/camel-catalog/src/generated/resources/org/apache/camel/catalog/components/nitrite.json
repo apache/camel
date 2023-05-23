@@ -6,7 +6,7 @@
     "description": "Access Nitrite databases.",
     "deprecated": false,
     "firstVersion": "3.0.0",
-    "label": "database,nosql",
+    "label": "database",
     "javaType": "org.apache.camel.component.nitrite.NitriteComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

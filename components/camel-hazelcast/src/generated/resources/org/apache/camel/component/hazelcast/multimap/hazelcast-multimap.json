@@ -6,7 +6,7 @@
     "description": "Perform operations on Hazelcast distributed multimap.",
     "deprecated": false,
     "firstVersion": "2.7.0",
-    "label": "cache,datagrid",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.hazelcast.multimap.HazelcastMultimapComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

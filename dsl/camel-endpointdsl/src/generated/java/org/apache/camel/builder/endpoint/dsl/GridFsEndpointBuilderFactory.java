@@ -771,7 +771,7 @@ public interface GridFsEndpointBuilderFactory {
          * MongoDB GridFS (camel-mongodb-gridfs)
          * Interact with MongoDB GridFS.
          * 
-         * Category: database,nosql
+         * Category: database,file
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
          * 
@@ -784,7 +784,7 @@ public interface GridFsEndpointBuilderFactory {
          * MongoDB GridFS (camel-mongodb-gridfs)
          * Interact with MongoDB GridFS.
          * 
-         * Category: database,nosql
+         * Category: database,file
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
          * 
@@ -803,7 +803,7 @@ public interface GridFsEndpointBuilderFactory {
          * MongoDB GridFS (camel-mongodb-gridfs)
          * Interact with MongoDB GridFS.
          * 
-         * Category: database,nosql
+         * Category: database,file
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
          * 

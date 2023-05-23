@@ -1951,7 +1951,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Debezium SQL Server Connector (camel-debezium-sqlserver)
          * Capture changes from an SQL Server database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
          * 
@@ -1964,7 +1964,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Debezium SQL Server Connector (camel-debezium-sqlserver)
          * Capture changes from an SQL Server database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
          * 
@@ -1984,7 +1984,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Debezium SQL Server Connector (camel-debezium-sqlserver)
          * Capture changes from an SQL Server database.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
          * 

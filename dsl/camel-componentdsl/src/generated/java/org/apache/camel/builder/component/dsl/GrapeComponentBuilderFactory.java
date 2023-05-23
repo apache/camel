@@ -36,7 +36,7 @@ public interface GrapeComponentBuilderFactory {
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.
      * 
-     * Category: management,deployment
+     * Category: management
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-grape
      * 

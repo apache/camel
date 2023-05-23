@@ -1541,7 +1541,7 @@ public interface DockerEndpointBuilderFactory {
          * Docker (camel-docker)
          * Manage Docker containers.
          * 
-         * Category: cloud,container,paas
+         * Category: cloud,container
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-docker
          * 
@@ -1554,7 +1554,7 @@ public interface DockerEndpointBuilderFactory {
          * Docker (camel-docker)
          * Manage Docker containers.
          * 
-         * Category: cloud,container,paas
+         * Category: cloud,container
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-docker
          * 
@@ -1582,7 +1582,7 @@ public interface DockerEndpointBuilderFactory {
          * Docker (camel-docker)
          * Manage Docker containers.
          * 
-         * Category: cloud,container,paas
+         * Category: cloud,container
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-docker
          * 

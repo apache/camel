@@ -1048,7 +1048,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Asynchronously send/receive Exchanges between Camel routes running on
          * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
@@ -1068,7 +1068,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Asynchronously send/receive Exchanges between Camel routes running on
          * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
          * 
-         * Category: cache,datagrid
+         * Category: cache,clustering
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 

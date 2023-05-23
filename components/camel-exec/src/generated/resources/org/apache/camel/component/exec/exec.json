@@ -6,7 +6,7 @@
     "description": "Execute commands on the underlying operating system.",
     "deprecated": false,
     "firstVersion": "2.3.0",
-    "label": "system",
+    "label": "core",
     "javaType": "org.apache.camel.component.exec.ExecComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

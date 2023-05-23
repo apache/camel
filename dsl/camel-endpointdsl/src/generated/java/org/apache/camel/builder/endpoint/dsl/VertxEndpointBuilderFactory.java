@@ -364,7 +364,7 @@ public interface VertxEndpointBuilderFactory {
          * Vert.x (camel-vertx)
          * Send and receive messages to/from Vert.x Event Bus.
          * 
-         * Category: eventbus,reactive
+         * Category: messaging
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-vertx
          * 
@@ -383,7 +383,7 @@ public interface VertxEndpointBuilderFactory {
          * Vert.x (camel-vertx)
          * Send and receive messages to/from Vert.x Event Bus.
          * 
-         * Category: eventbus,reactive
+         * Category: messaging
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-vertx
          * 

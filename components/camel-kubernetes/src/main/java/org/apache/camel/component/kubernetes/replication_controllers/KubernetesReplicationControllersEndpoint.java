@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_R
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_REPLICATION_CONTROLLERS,
              title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component,

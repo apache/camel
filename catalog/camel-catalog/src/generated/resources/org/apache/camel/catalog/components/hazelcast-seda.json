@@ -6,7 +6,7 @@
     "description": "Asynchronously send\/receive Exchanges between Camel routes running on potentially distinct JVMs\/hosts backed by Hazelcast BlockingQueue.",
     "deprecated": false,
     "firstVersion": "2.7.0",
-    "label": "cache,datagrid",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.hazelcast.seda.HazelcastSedaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -36,7 +36,7 @@ public interface DjlComponentBuilderFactory {
      * Infer Deep Learning models from message exchanges data using Deep Java
      * Library (DJL).
      * 
-     * Category: ai,deeplearning
+     * Category: ai
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-djl
      * 

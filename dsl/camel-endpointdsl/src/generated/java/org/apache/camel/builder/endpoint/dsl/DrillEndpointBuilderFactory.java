@@ -203,7 +203,7 @@ public interface DrillEndpointBuilderFactory {
          * Drill (camel-drill)
          * Perform queries against an Apache Drill cluster.
          * 
-         * Category: database,sql
+         * Category: database,bigdata
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-drill
          * 
@@ -216,7 +216,7 @@ public interface DrillEndpointBuilderFactory {
          * Drill (camel-drill)
          * Perform queries against an Apache Drill cluster.
          * 
-         * Category: database,sql
+         * Category: database,bigdata
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-drill
          * 
@@ -235,7 +235,7 @@ public interface DrillEndpointBuilderFactory {
          * Drill (camel-drill)
          * Perform queries against an Apache Drill cluster.
          * 
-         * Category: database,sql
+         * Category: database,bigdata
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-drill
          * 

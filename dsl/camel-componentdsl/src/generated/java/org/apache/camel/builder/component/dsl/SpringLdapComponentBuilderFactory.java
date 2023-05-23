@@ -34,7 +34,7 @@ public interface SpringLdapComponentBuilderFactory {
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
      * 
-     * Category: spring,ldap
+     * Category: security
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-ldap
      * 

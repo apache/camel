@@ -1399,7 +1399,7 @@ public interface KubernetesEventsEndpointBuilderFactory {
          * Perform operations on Kubernetes Events and get notified on Events
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 3.20
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1413,7 +1413,7 @@ public interface KubernetesEventsEndpointBuilderFactory {
          * Perform operations on Kubernetes Events and get notified on Events
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 3.20
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1433,7 +1433,7 @@ public interface KubernetesEventsEndpointBuilderFactory {
          * Perform operations on Kubernetes Events and get notified on Events
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 3.20
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

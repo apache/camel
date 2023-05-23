@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_D
  * Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.
  */
 @UriEndpoint(firstVersion = "3.18.0", scheme = SCHEME_DEPLOYMENT_CONFIGS, title = "Openshift Deployment Configs",
-             syntax = "openshift-deploymentconfigs:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "openshift-deploymentconfigs:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class OpenshiftDeploymentConfigsEndpoint extends AbstractKubernetesEndpoint {
 

@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_S
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SECRETS, title = "Kubernetes Secrets",
              syntax = "kubernetes-secrets:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS }, headersClass = KubernetesConstants.class)
+             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesSecretsEndpoint(String uri, KubernetesSecretsComponent component, KubernetesConfiguration config) {

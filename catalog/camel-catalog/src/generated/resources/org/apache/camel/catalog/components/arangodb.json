@@ -6,7 +6,7 @@
     "description": "Perform operations on ArangoDb when used as a Document Database, or as a Graph Database",
     "deprecated": false,
     "firstVersion": "3.5.0",
-    "label": "database,nosql",
+    "label": "database",
     "javaType": "org.apache.camel.component.arangodb.ArangoDbComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

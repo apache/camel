@@ -34,7 +34,7 @@ public interface SpringEventComponentBuilderFactory {
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
      * 
-     * Category: spring,eventbus
+     * Category: messaging
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-spring
      * 

@@ -1606,7 +1606,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Atmosphere Websocket (camel-atmosphere-websocket)
          * Expose WebSocket endpoints using the Atmosphere framework.
          * 
-         * Category: websocket
+         * Category: http,networking
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
          * 
@@ -1619,7 +1619,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Atmosphere Websocket (camel-atmosphere-websocket)
          * Expose WebSocket endpoints using the Atmosphere framework.
          * 
-         * Category: websocket
+         * Category: http,networking
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
          * 
@@ -1639,7 +1639,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Atmosphere Websocket (camel-atmosphere-websocket)
          * Expose WebSocket endpoints using the Atmosphere framework.
          * 
-         * Category: websocket
+         * Category: http,networking
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
          * 

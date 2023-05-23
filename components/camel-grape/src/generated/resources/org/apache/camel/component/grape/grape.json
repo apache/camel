@@ -6,7 +6,7 @@
     "description": "Fetch, load and manage additional jars dynamically after Camel Context was started.",
     "deprecated": false,
     "firstVersion": "2.16.0",
-    "label": "management,deployment",
+    "label": "management",
     "javaType": "org.apache.camel.component.grape.GrapeComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

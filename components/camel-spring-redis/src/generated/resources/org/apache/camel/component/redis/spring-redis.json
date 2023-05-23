@@ -6,7 +6,7 @@
     "description": "Send and receive messages from Redis.",
     "deprecated": false,
     "firstVersion": "2.11.0",
-    "label": "spring,nosql",
+    "label": "cache",
     "javaType": "org.apache.camel.component.redis.RedisComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

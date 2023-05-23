@@ -34,7 +34,7 @@ public interface IgniteComputeComponentBuilderFactory {
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
      * 
-     * Category: compute
+     * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 

@@ -33,7 +33,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_REP
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> replicated map.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = SCHEME_REPLICATED_MAP, title = "Hazelcast Replicated Map",
-             syntax = "hazelcast-replicatedmap:cacheName", category = { Category.CACHE, Category.DATAGRID },
+             syntax = "hazelcast-replicatedmap:cacheName", category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
 public class HazelcastReplicatedmapEndpoint extends HazelcastDefaultEndpoint {
 

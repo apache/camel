@@ -188,7 +188,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Perform queries, inserts, updates or deletes in a relational database
          * using MyBatis.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 
@@ -202,7 +202,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Perform queries, inserts, updates or deletes in a relational database
          * using MyBatis.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 
@@ -226,7 +226,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Perform queries, inserts, updates or deletes in a relational database
          * using MyBatis.
          * 
-         * Category: database,sql
+         * Category: database
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 

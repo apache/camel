@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Interact with MongoDB GridFS.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS",
-             syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.NOSQL },
+             syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.FILE },
              headersClass = GridFsConstants.class)
 public class GridFsEndpoint extends DefaultEndpoint {
 

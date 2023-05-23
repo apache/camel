@@ -6,7 +6,7 @@
     "description": "Interact with MongoDB GridFS.",
     "deprecated": false,
     "firstVersion": "2.18.0",
-    "label": "database,nosql",
+    "label": "database,file",
     "javaType": "org.apache.camel.component.mongodb.gridfs.GridFsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -42,7 +42,7 @@ import software.amazon.awssdk.utils.AttributeMap;
  * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
-             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING, Category.STREAMS })
+             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING })
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

@@ -34,7 +34,7 @@ public interface IgniteIdgenComponentBuilderFactory {
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
      * 
-     * Category: compute
+     * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 

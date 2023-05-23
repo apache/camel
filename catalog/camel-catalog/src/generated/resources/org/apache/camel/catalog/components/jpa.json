@@ -6,7 +6,7 @@
     "description": "Store and retrieve Java objects from databases using Java Persistence API (JPA).",
     "deprecated": false,
     "firstVersion": "1.0.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.jpa.JpaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

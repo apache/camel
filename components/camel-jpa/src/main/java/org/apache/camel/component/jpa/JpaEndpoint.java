@@ -50,7 +50,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * Store and retrieve Java objects from databases using Java Persistence API (JPA).
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType",
-             category = { Category.DATABASE, Category.SQL }, headersClass = JpaConstants.class)
+             category = { Category.DATABASE }, headersClass = JpaConstants.class)
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;

@@ -34,7 +34,7 @@ import org.jooq.ResultQuery;
  * Store and retrieve Java objects from an SQL database using JOOQ.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ",
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE })
 public class JooqEndpoint extends ScheduledPollEndpoint {
 
     private Expression producerExpression;

@@ -6,7 +6,7 @@
     "description": "Zeebe component which does integrage with Camunda Zeebe to interact with the API.",
     "deprecated": false,
     "firstVersion": "3.21.0",
-    "label": "process",
+    "label": "workflow,saas",
     "javaType": "org.apache.camel.component.zeebe.ZeebeComponent",
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",

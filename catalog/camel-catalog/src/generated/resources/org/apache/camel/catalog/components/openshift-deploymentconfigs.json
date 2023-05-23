@@ -6,7 +6,7 @@
     "description": "Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.",
     "deprecated": false,
     "firstVersion": "3.18.0",
-    "label": "container,cloud,paas",
+    "label": "container,cloud",
     "javaType": "org.apache.camel.component.openshift.deploymentconfigs.OpenshiftDeploymentConfigsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

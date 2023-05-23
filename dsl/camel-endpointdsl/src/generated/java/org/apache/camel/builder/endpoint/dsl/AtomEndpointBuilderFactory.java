@@ -881,7 +881,7 @@ public interface AtomEndpointBuilderFactory {
          * Atom (camel-atom)
          * Poll Atom RSS feeds.
          * 
-         * Category: rss
+         * Category: document
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-atom
          * 
@@ -894,7 +894,7 @@ public interface AtomEndpointBuilderFactory {
          * Atom (camel-atom)
          * Poll Atom RSS feeds.
          * 
-         * Category: rss
+         * Category: document
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-atom
          * 
@@ -913,7 +913,7 @@ public interface AtomEndpointBuilderFactory {
          * Atom (camel-atom)
          * Poll Atom RSS feeds.
          * 
-         * Category: rss
+         * Category: document
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-atom
          * 

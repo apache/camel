@@ -6,7 +6,7 @@
     "description": "Solve planning problems with OptaPlanner.",
     "deprecated": false,
     "firstVersion": "2.13.0",
-    "label": "engine,planning",
+    "label": "workflow",
     "javaType": "org.apache.camel.component.optaplanner.OptaPlannerComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

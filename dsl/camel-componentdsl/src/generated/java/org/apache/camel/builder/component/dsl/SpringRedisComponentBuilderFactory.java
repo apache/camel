@@ -34,7 +34,7 @@ public interface SpringRedisComponentBuilderFactory {
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
      * 
-     * Category: spring,nosql
+     * Category: cache
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-redis
      * 

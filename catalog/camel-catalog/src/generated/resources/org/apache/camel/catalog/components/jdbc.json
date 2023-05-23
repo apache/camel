@@ -6,7 +6,7 @@
     "description": "Access databases through SQL and JDBC.",
     "deprecated": false,
     "firstVersion": "1.2.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.jdbc.JdbcComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

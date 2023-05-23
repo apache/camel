@@ -6,7 +6,7 @@
     "description": "Perform SQL queries using Spring JDBC.",
     "deprecated": false,
     "firstVersion": "1.4.0",
-    "label": "database,sql",
+    "label": "database",
     "javaType": "org.apache.camel.component.sql.SqlComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

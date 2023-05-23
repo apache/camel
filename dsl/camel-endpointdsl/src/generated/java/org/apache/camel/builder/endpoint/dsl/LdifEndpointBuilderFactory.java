@@ -108,7 +108,7 @@ public interface LdifEndpointBuilderFactory {
          * LDIF (camel-ldif)
          * Perform updates on an LDAP server from an LDIF body content.
          * 
-         * Category: ldap
+         * Category: database,security
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-ldif
          * 
@@ -129,7 +129,7 @@ public interface LdifEndpointBuilderFactory {
          * LDIF (camel-ldif)
          * Perform updates on an LDAP server from an LDIF body content.
          * 
-         * Category: ldap
+         * Category: database,security
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-ldif
          * 

@@ -34,7 +34,7 @@ public interface OpenstackSwiftComponentBuilderFactory {
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
      * 
-     * Category: cloud,paas
+     * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      * 

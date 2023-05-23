@@ -451,7 +451,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * Perform operations on Kubernetes Persistent Volumes Claims and get
          * notified on Persistent Volumes Claim changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -465,7 +465,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * Perform operations on Kubernetes Persistent Volumes Claims and get
          * notified on Persistent Volumes Claim changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -486,7 +486,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * Perform operations on Kubernetes Persistent Volumes Claims and get
          * notified on Persistent Volumes Claim changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

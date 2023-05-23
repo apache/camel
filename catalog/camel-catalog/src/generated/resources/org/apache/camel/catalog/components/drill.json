@@ -6,7 +6,7 @@
     "description": "Perform queries against an Apache Drill cluster.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "database,sql",
+    "label": "database,bigdata",
     "javaType": "org.apache.camel.component.drill.DrillComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

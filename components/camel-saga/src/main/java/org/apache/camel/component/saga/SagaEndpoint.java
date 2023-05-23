@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  * Execute custom actions within a route using the Saga EIP.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true,
-             category = { Category.CORE, Category.ENDPOINT }, headersClass = SagaConstants.class)
+             category = { Category.CLUSTERING }, headersClass = SagaConstants.class)
 public class SagaEndpoint extends DefaultEndpoint {
 
     public enum SagaEndpointAction {

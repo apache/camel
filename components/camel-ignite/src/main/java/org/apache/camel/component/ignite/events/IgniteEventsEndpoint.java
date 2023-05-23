@@ -50,7 +50,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
  * body of the IN message.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_EVENTS, title = "Ignite Events", syntax = "ignite-events:endpointId",
-             category = { Category.MESSAGING, Category.EVENTBUS },
+             category = { Category.MESSAGING, Category.CACHE, Category.CLUSTERING },
              consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 

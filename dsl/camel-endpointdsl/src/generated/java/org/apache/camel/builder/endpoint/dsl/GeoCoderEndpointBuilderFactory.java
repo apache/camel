@@ -360,7 +360,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Find geocodes (latitude and longitude) for a given address or the
          * other way round.
          * 
-         * Category: api,location
+         * Category: api,search
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-geocoder
          * 
@@ -374,7 +374,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Find geocodes (latitude and longitude) for a given address or the
          * other way round.
          * 
-         * Category: api,location
+         * Category: api,search
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-geocoder
          * 
@@ -397,7 +397,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Find geocodes (latitude and longitude) for a given address or the
          * other way round.
          * 
-         * Category: api,location
+         * Category: api,search
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-geocoder
          * 

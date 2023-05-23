@@ -37,7 +37,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template",
-             producerOnly = true, category = { Category.DATABASE, Category.SQL }, headersClass = SqlStoredConstants.class)
+             producerOnly = true, category = { Category.DATABASE }, headersClass = SqlStoredConstants.class)
 public class SqlStoredEndpoint extends DefaultEndpoint {
 
     private CallableStatementWrapperFactory wrapperFactory;

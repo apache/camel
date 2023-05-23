@@ -38,7 +38,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets",
              syntax = "google-sheets:apiName/methodName", apiSyntax = "apiName/methodName",
-             category = { Category.API, Category.CLOUD, Category.SHEETS })
+             category = { Category.CLOUD, Category.DOCUMENT })
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     @UriParam

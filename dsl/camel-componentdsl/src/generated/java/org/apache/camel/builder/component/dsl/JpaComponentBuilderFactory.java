@@ -36,7 +36,7 @@ public interface JpaComponentBuilderFactory {
      * Store and retrieve Java objects from databases using Java Persistence API
      * (JPA).
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
      * 

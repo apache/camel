@@ -442,7 +442,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Openshift Build Config (camel-kubernetes)
          * Perform operations on OpenShift Build Configs.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -455,7 +455,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Openshift Build Config (camel-kubernetes)
          * Perform operations on OpenShift Build Configs.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -475,7 +475,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Openshift Build Config (camel-kubernetes)
          * Perform operations on OpenShift Build Configs.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

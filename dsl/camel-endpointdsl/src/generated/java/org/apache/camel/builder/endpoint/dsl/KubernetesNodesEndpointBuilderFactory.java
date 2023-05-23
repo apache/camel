@@ -1399,7 +1399,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Perform operations on Kubernetes Nodes and get notified on Node
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1413,7 +1413,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Perform operations on Kubernetes Nodes and get notified on Node
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1433,7 +1433,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Perform operations on Kubernetes Nodes and get notified on Node
          * changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

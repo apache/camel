@@ -34,7 +34,7 @@ public interface LumberjackComponentBuilderFactory {
      * Lumberjack (camel-lumberjack)
      * Receive logs messages using the Lumberjack protocol.
      * 
-     * Category: log
+     * Category: monitoring
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
      * 

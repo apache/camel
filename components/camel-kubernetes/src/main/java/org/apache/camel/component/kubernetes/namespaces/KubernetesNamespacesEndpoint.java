@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_N
  * Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NAMESPACES, title = "Kubernetes Namespaces",
-             syntax = "kubernetes-namespaces:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "kubernetes-namespaces:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 

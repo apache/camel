@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_N
  * Perform operations on Kubernetes Nodes and get notified on Node changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NODES, title = "Kubernetes Nodes",
-             syntax = "kubernetes-nodes:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "kubernetes-nodes:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
 

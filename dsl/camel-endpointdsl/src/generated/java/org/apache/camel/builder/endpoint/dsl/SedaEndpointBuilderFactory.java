@@ -918,7 +918,7 @@ public interface SedaEndpointBuilderFactory {
          * Asynchronously call another endpoint from any Camel Context in the
          * same JVM.
          * 
-         * Category: core,endpoint
+         * Category: core,messaging
          * Since: 1.1
          * Maven coordinates: org.apache.camel:camel-seda
          * 
@@ -938,7 +938,7 @@ public interface SedaEndpointBuilderFactory {
          * Asynchronously call another endpoint from any Camel Context in the
          * same JVM.
          * 
-         * Category: core,endpoint
+         * Category: core,messaging
          * Since: 1.1
          * Maven coordinates: org.apache.camel:camel-seda
          * 

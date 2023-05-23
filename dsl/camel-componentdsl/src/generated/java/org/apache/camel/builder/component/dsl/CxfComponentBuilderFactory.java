@@ -36,7 +36,7 @@ public interface CxfComponentBuilderFactory {
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
      * 
-     * Category: soap,webservice
+     * Category: http,webservice
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf-soap
      * 

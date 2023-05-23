@@ -283,7 +283,7 @@ public interface WekaEndpointBuilderFactory {
          * Weka (camel-weka)
          * Perform machine learning tasks using Weka.
          * 
-         * Category: datamining
+         * Category: blockchain
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-weka
          * 
@@ -304,7 +304,7 @@ public interface WekaEndpointBuilderFactory {
          * Weka (camel-weka)
          * Perform machine learning tasks using Weka.
          * 
-         * Category: datamining
+         * Category: blockchain
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-weka
          * 

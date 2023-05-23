@@ -31,7 +31,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_S
  * Perform operations on Kubernetes Services and get notified on Service changes.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICES, title = "Kubernetes Services",
-             syntax = "kubernetes-services:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             syntax = "kubernetes-services:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 

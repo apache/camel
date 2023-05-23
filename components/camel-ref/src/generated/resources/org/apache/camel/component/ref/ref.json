@@ -6,7 +6,7 @@
     "description": "Route messages to an endpoint looked up dynamically by name in the Camel Registry.",
     "deprecated": false,
     "firstVersion": "1.2.0",
-    "label": "core,endpoint",
+    "label": "core",
     "javaType": "org.apache.camel.component.ref.RefComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

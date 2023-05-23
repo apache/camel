@@ -34,7 +34,7 @@ public interface IgniteQueueComponentBuilderFactory {
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
      * 
-     * Category: messaging,queue
+     * Category: cache,clustering,messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 

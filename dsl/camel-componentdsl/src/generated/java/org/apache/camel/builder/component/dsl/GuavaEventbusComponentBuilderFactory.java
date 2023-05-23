@@ -34,7 +34,7 @@ public interface GuavaEventbusComponentBuilderFactory {
      * Guava EventBus (camel-guava-eventbus)
      * Send and receive messages to/from Guava EventBus.
      * 
-     * Category: eventbus
+     * Category: messaging
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-guava-eventbus
      * 

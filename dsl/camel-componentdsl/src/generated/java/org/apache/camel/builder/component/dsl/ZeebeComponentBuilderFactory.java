@@ -36,7 +36,7 @@ public interface ZeebeComponentBuilderFactory {
      * Zeebe component which does integrage with Camunda Zeebe to interact with
      * the API.
      * 
-     * Category: process
+     * Category: workflow,saas
      * Since: 3.21
      * Maven coordinates: org.apache.camel:camel-zeebe
      * 

@@ -33,7 +33,7 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
  * Access OpenStack Swift object/blob store.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_SWIFT, title = "OpenStack Swift", syntax = "openstack-swift:host",
-             category = { Category.CLOUD, Category.PAAS }, producerOnly = true, headersClass = SwiftConstants.class)
+             category = { Category.CONTAINER }, producerOnly = true, headersClass = SwiftConstants.class)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "objects,containers")

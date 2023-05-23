@@ -36,7 +36,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_TOP
  * Send and receive messages to/from <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = SCHEME_TOPIC, title = "Hazelcast Topic",
-             syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.DATAGRID },
+             syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 

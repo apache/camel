@@ -448,7 +448,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Kubernetes Service Account (camel-kubernetes)
          * Perform operations on Kubernetes Service Accounts.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -461,7 +461,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Kubernetes Service Account (camel-kubernetes)
          * Perform operations on Kubernetes Service Accounts.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -481,7 +481,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Kubernetes Service Account (camel-kubernetes)
          * Perform operations on Kubernetes Service Accounts.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

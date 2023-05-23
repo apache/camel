@@ -51,7 +51,7 @@ import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.TI
              syntax = SYNTAX,
              alternativeSyntax = CONTROL_SYNTAX,
              producerOnly = true,
-             category = { Category.ENDPOINT, Category.JAVA })
+             category = { Category.MESSAGING, Category.CORE })
 public class DynamicRouterEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DynamicRouterEndpoint.class);

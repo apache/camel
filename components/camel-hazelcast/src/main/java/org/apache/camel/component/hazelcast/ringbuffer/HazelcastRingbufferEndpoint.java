@@ -33,7 +33,7 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_RIN
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = SCHEME_RING_BUFFER, title = "Hazelcast Ringbuffer",
-             syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, category = { Category.CACHE, Category.DATAGRID },
+             syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
 public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {
 

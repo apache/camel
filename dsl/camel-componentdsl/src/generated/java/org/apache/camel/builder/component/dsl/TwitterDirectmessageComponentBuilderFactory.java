@@ -34,7 +34,7 @@ public interface TwitterDirectmessageComponentBuilderFactory {
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
      * 
-     * Category: cloud,api,social,chat
+     * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      * 

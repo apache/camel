@@ -6,7 +6,7 @@
     "description": "Perform operations on Kubernetes Deployments and get notified on Deployment changes.",
     "deprecated": false,
     "firstVersion": "2.20.0",
-    "label": "container,cloud,paas",
+    "label": "container,cloud",
     "javaType": "org.apache.camel.component.kubernetes.deployments.KubernetesDeploymentsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -6,7 +6,7 @@
     "description": "Send and receive messages to\/from Hazelcast distributed topic.",
     "deprecated": false,
     "firstVersion": "2.15.0",
-    "label": "cache,datagrid",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

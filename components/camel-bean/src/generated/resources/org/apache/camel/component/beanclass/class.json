@@ -6,7 +6,7 @@
     "description": "Invoke methods of Java beans specified by class name.",
     "deprecated": false,
     "firstVersion": "2.4.0",
-    "label": "core,java",
+    "label": "core,script",
     "javaType": "org.apache.camel.component.beanclass.ClassComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

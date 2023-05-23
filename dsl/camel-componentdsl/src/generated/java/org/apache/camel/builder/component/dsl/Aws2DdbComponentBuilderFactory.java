@@ -35,7 +35,7 @@ public interface Aws2DdbComponentBuilderFactory {
      * Store and retrieve data from AWS DynamoDB service using AWS SDK version
      * 2.x.
      * 
-     * Category: cloud,database,nosql
+     * Category: cloud,database
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
      * 

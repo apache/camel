@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Access databases through SQL and JDBC.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true,
-             category = { Category.DATABASE, Category.SQL }, headersClass = JdbcConstants.class)
+             category = { Category.DATABASE }, headersClass = JdbcConstants.class)
 public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;

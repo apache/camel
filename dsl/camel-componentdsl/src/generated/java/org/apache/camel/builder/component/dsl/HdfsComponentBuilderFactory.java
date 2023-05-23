@@ -34,7 +34,7 @@ public interface HdfsComponentBuilderFactory {
      * HDFS (camel-hdfs)
      * Read and write from/to an HDFS filesystem using Hadoop 2.x.
      * 
-     * Category: bigdata,hadoop,file
+     * Category: bigdata,file
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-hdfs
      * 

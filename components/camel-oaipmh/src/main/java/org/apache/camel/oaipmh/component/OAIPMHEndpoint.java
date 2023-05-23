@@ -36,7 +36,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * Harvest metadata using OAI-PMH protocol
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
-             category = { Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH }, headersClass = OAIPMHConstants.class)
+             category = { Category.SEARCH }, headersClass = OAIPMHConstants.class)
 public class OAIPMHEndpoint extends ScheduledPollEndpoint {
 
     private transient URI url;

@@ -32,7 +32,7 @@ import org.dizitart.no2.PersistentCollection;
  * Access Nitrite databases.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "nitrite", title = "Nitrite", syntax = "nitrite:database",
-             category = { Category.DATABASE, Category.NOSQL }, headersClass = NitriteConstants.class)
+             category = { Category.DATABASE }, headersClass = NitriteConstants.class)
 public class NitriteEndpoint extends DefaultEndpoint {
     @UriPath(label = "common", description = "Path to database file. Will be created if not exists.")
     @Metadata(required = true)

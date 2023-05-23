@@ -32,7 +32,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_P
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_PERSISTENT_VOLUMES, title = "Kubernetes Persistent Volume",
              syntax = "kubernetes-persistent-volumes:masterUrl",
-             producerOnly = true, category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+             producerOnly = true, category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {
 

@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform searches on LDAP servers.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true,
-             category = { Category.SEARCH, Category.LDAP })
+             category = { Category.DATABASE, Category.SECURITY })
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";

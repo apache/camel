@@ -31,7 +31,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  * Read and write from/to an HDFS filesystem using Hadoop 2.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "hdfs", title = "HDFS", syntax = "hdfs:hostName:port/path",
-             category = { Category.BIGDATA, Category.HADOOP, Category.FILE }, headersClass = HdfsConstants.class)
+             category = { Category.BIGDATA, Category.FILE }, headersClass = HdfsConstants.class)
 public class HdfsEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

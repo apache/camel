@@ -1426,7 +1426,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * Perform operations on Kubernetes Replication Controllers and get
          * notified on Replication Controllers changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1440,7 +1440,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * Perform operations on Kubernetes Replication Controllers and get
          * notified on Replication Controllers changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
@@ -1461,7 +1461,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * Perform operations on Kubernetes Replication Controllers and get
          * notified on Replication Controllers changes.
          * 
-         * Category: container,cloud,paas
+         * Category: container,cloud
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 

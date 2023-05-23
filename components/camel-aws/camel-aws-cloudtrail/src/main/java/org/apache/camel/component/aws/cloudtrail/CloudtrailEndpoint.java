@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
  */
 @UriEndpoint(firstVersion = "3.19.0", scheme = "aws-cloudtrail", title = "AWS Cloudtrail", syntax = "aws-cloudtrail:label",
              consumerOnly = true,
-             category = { Category.CLOUD, Category.EVENTBUS }, headersClass = CloudtrailConstants.class)
+             category = { Category.CLOUD, Category.MANAGEMENT, Category.MONITORING }, headersClass = CloudtrailConstants.class)
 public class CloudtrailEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

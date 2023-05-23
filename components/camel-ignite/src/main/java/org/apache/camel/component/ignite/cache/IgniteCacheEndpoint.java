@@ -43,7 +43,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_CACHE;
  * Perform cache operations on an Ignite cache or consume changes from a continuous query.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CACHE, title = "Ignite Cache", syntax = "ignite-cache:cacheName",
-             category = { Category.CACHE, Category.DATAGRID }, headersClass = IgniteConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = IgniteConstants.class)
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath

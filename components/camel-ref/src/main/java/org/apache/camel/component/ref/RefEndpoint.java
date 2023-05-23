@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Route messages to an endpoint looked up dynamically by name in the Camel Registry.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name",
-             category = { Category.CORE, Category.ENDPOINT })
+             category = { Category.CORE })
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;

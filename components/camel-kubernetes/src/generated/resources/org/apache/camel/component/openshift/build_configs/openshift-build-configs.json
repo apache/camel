@@ -6,7 +6,7 @@
     "description": "Perform operations on OpenShift Build Configs.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "container,cloud,paas",
+    "label": "container,cloud",
     "javaType": "org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

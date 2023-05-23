@@ -6,7 +6,7 @@
     "description": "Harvest metadata using OAI-PMH protocol",
     "deprecated": false,
     "firstVersion": "3.5.0",
-    "label": "endpoint,webservice,batch",
+    "label": "search",
     "javaType": "org.apache.camel.oaipmh.component.OAIPMHComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

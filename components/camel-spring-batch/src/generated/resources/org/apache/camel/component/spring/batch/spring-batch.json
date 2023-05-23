@@ -6,7 +6,7 @@
     "description": "Send messages to Spring Batch for further processing.",
     "deprecated": false,
     "firstVersion": "2.10.0",
-    "label": "spring,batch,scheduling",
+    "label": "workflow",
     "javaType": "org.apache.camel.component.spring.batch.SpringBatchComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

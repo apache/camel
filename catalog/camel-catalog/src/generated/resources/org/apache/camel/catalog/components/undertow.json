@@ -6,7 +6,7 @@
     "description": "Expose HTTP and WebSocket endpoints and access external HTTP\/WebSocket servers.",
     "deprecated": false,
     "firstVersion": "2.16.0",
-    "label": "http,websocket",
+    "label": "http,networking",
     "javaType": "org.apache.camel.component.undertow.UndertowComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

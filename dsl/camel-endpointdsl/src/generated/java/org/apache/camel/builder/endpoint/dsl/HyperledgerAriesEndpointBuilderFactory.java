@@ -184,7 +184,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
          * Hyperledger Aries (camel-hyperledger-aries)
          * Camel support for Hyperledger Aries
          * 
-         * Category: blockchain,identity
+         * Category: blockchain,security
          * Since: 3.19
          * Maven coordinates: org.apache.camel:camel-hyperledger-aries
          * 
@@ -203,7 +203,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
          * Hyperledger Aries (camel-hyperledger-aries)
          * Camel support for Hyperledger Aries
          * 
-         * Category: blockchain,identity
+         * Category: blockchain,security
          * Since: 3.19
          * Maven coordinates: org.apache.camel:camel-hyperledger-aries
          * 

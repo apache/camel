@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event",
              syntax = "pgevent:host:port/database/channel",
-             category = { Category.DATABASE, Category.SQL }, headersClass = PgEventConstants.class)
+             category = { Category.DATABASE }, headersClass = PgEventConstants.class)
 public class PgEventEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);

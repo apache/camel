@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "stitch", title = "Stitch",
              syntax = "stitch:tableName", producerOnly = true, category = {
-                     Category.CLOUD, Category.API, Category.COMPUTE, Category.BIGDATA },
+                     Category.CLOUD, Category.API, Category.SAAS, Category.BIGDATA },
              headersClass = StitchConstants.class)
 public class StitchEndpoint extends DefaultEndpoint {
 

@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriParam;
  * Capture changes from a PostgresSQL database.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-postgres", title = "Debezium PostgresSQL Connector",
-             syntax = "debezium-postgres:name", category = { Category.DATABASE, Category.SQL }, consumerOnly = true,
+             syntax = "debezium-postgres:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
 public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresConnectorEmbeddedDebeziumConfiguration> {
 

@@ -34,7 +34,7 @@ public interface MongodbComponentBuilderFactory {
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
      * 
-     * Category: database,nosql
+     * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
      * 

@@ -6,7 +6,7 @@
     "description": "Manage spreadsheets in Google Sheets.",
     "deprecated": false,
     "firstVersion": "2.23.0",
-    "label": "api,cloud,sheets",
+    "label": "cloud,document",
     "javaType": "org.apache.camel.component.google.sheets.GoogleSheetsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

@@ -34,7 +34,7 @@ import org.lightcouch.CouchDbClient;
  * documents from a CouchDB database.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database",
-             category = { Category.DATABASE, Category.NOSQL }, headersClass = CouchDbConstants.class)
+             category = { Category.DATABASE }, headersClass = CouchDbConstants.class)
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";

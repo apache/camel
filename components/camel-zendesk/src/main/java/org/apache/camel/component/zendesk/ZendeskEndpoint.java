@@ -40,7 +40,7 @@ import org.zendesk.client.v2.Zendesk;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
              apiSyntax = "methodName",
-             consumerPrefix = "consumer", category = { Category.CLOUD, Category.API, Category.SUPPORT })
+             consumerPrefix = "consumer", category = { Category.CLOUD, Category.API, Category.SAAS })
 public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration> {
 
     @UriParam

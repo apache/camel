@@ -4066,7 +4066,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce (camel-salesforce)
          * Communicate with Salesforce using Java DTOs.
          * 
-         * Category: cloud,api,crm
+         * Category: cloud,saas
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-salesforce
          * 
@@ -4079,7 +4079,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce (camel-salesforce)
          * Communicate with Salesforce using Java DTOs.
          * 
-         * Category: cloud,api,crm
+         * Category: cloud,saas
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-salesforce
          * 
@@ -4120,7 +4120,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce (camel-salesforce)
          * Communicate with Salesforce using Java DTOs.
          * 
-         * Category: cloud,api,crm
+         * Category: cloud,saas
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-salesforce
          * 

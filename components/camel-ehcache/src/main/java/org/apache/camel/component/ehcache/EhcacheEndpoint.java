@@ -31,7 +31,7 @@ import org.apache.camel.support.service.ServiceHelper;
  * Perform caching operations using <a href="http://www.ehcache.org">Ehcache</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName",
-             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING }, headersClass = EhcacheConstants.class)
+             category = { Category.CACHE, Category.CLUSTERING }, headersClass = EhcacheConstants.class)
 public class EhcacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)

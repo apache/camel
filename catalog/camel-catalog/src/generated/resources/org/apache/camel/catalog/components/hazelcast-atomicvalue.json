@@ -6,7 +6,7 @@
     "description": "Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).",
     "deprecated": false,
     "firstVersion": "2.7.0",
-    "label": "cache,datagrid",
+    "label": "cache,clustering",
     "javaType": "org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

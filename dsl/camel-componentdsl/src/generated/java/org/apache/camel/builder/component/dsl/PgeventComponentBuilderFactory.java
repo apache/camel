@@ -34,7 +34,7 @@ public interface PgeventComponentBuilderFactory {
      * PostgresSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-pgevent
      * 

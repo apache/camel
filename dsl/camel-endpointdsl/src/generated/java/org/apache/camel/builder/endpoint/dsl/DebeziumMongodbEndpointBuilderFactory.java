@@ -1555,7 +1555,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Debezium MongoDB Connector (camel-debezium-mongodb)
          * Capture changes from a MongoDB database.
          * 
-         * Category: database,nosql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-mongodb
          * 
@@ -1568,7 +1568,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Debezium MongoDB Connector (camel-debezium-mongodb)
          * Capture changes from a MongoDB database.
          * 
-         * Category: database,nosql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-mongodb
          * 
@@ -1588,7 +1588,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Debezium MongoDB Connector (camel-debezium-mongodb)
          * Capture changes from a MongoDB database.
          * 
-         * Category: database,nosql
+         * Category: database
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-mongodb
          * 

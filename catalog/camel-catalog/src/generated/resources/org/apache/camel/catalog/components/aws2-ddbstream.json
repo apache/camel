@@ -6,7 +6,7 @@
     "description": "Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.",
     "deprecated": false,
     "firstVersion": "3.1.0",
-    "label": "cloud,messaging,streams",
+    "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.aws2.ddbstream.Ddb2StreamComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

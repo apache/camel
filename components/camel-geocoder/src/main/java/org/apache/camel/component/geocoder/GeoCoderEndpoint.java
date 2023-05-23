@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Find geocodes (latitude and longitude) for a given address or the other way round.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng",
-             producerOnly = true, category = { Category.API, Category.LOCATION }, headersClass = GeoCoderConstants.class)
+             producerOnly = true, category = { Category.API, Category.SEARCH }, headersClass = GeoCoderConstants.class)
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath

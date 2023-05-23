@@ -6,7 +6,7 @@
     "description": "Receive events from an Ignite cluster by creating a local event listener.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "messaging,eventbus",
+    "label": "messaging,cache,clustering",
     "javaType": "org.apache.camel.component.ignite.events.IgniteEventsComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

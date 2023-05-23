@@ -346,7 +346,7 @@ public interface ExecEndpointBuilderFactory {
          * Exec (camel-exec)
          * Execute commands on the underlying operating system.
          * 
-         * Category: system
+         * Category: core
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-exec
          * 
@@ -359,7 +359,7 @@ public interface ExecEndpointBuilderFactory {
          * Exec (camel-exec)
          * Execute commands on the underlying operating system.
          * 
-         * Category: system
+         * Category: core
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-exec
          * 
@@ -379,7 +379,7 @@ public interface ExecEndpointBuilderFactory {
          * Exec (camel-exec)
          * Execute commands on the underlying operating system.
          * 
-         * Category: system
+         * Category: core
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-exec
          * 

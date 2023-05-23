@@ -28,10 +28,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Interact with Asterisk PBX Server.
+ * Interact with Asterisk PBX Server (VoIP).
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
-             category = { Category.VOIP }, headersClass = AsteriskConstants.class)
+             category = { Category.MOBILE }, headersClass = AsteriskConstants.class)
 public class AsteriskEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of component")
     @Metadata(required = true)

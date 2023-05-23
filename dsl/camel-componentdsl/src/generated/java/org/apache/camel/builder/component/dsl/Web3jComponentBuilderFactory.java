@@ -34,7 +34,7 @@ public interface Web3jComponentBuilderFactory {
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
      * 
-     * Category: bitcoin,blockchain,api
+     * Category: blockchain
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
      * 

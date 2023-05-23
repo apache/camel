@@ -243,7 +243,7 @@ public interface NovaEndpointBuilderFactory {
          * OpenStack Nova (camel-openstack)
          * Access OpenStack to manage compute resources.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
@@ -256,7 +256,7 @@ public interface NovaEndpointBuilderFactory {
          * OpenStack Nova (camel-openstack)
          * Access OpenStack to manage compute resources.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
@@ -275,7 +275,7 @@ public interface NovaEndpointBuilderFactory {
          * OpenStack Nova (camel-openstack)
          * Access OpenStack to manage compute resources.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 

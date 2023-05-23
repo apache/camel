@@ -85,7 +85,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
-             syntax = "rest-openapi:specificationUri#operationId", category = { Category.OPENAPI, Category.REST, Category.API },
+             syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API },
              producerOnly = true)
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 

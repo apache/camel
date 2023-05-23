@@ -6,7 +6,7 @@
     "description": "Perform operations on MongoDB documents and collections.",
     "deprecated": false,
     "firstVersion": "2.19.0",
-    "label": "database,nosql",
+    "label": "database",
     "javaType": "org.apache.camel.component.mongodb.MongoDbComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

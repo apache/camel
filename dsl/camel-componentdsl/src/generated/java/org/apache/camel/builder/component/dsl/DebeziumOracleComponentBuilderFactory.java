@@ -34,7 +34,7 @@ public interface DebeziumOracleComponentBuilderFactory {
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from a Oracle database.
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-oracle
      * 

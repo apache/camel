@@ -6,7 +6,7 @@
     "description": "The Dynamic Router component routes exchanges to recipients, and the recipients (and their rules) may change at runtime.",
     "deprecated": false,
     "firstVersion": "3.15.0",
-    "label": "endpoint,java",
+    "label": "messaging,core",
     "javaType": "org.apache.camel.component.dynamicrouter.DynamicRouterComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

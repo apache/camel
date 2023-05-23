@@ -34,7 +34,7 @@ public interface AtomComponentBuilderFactory {
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
      * 
-     * Category: rss
+     * Category: document
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-atom
      * 

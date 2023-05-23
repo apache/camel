@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  * Socket level networking using TCP or UDP with Netty 4.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol://host:port",
-             category = { Category.NETWORKING, Category.TCP, Category.UDP }, headersClass = NettyConstants.class)
+             category = { Category.NETWORKING }, headersClass = NettyConstants.class)
 public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
     private NettyConfiguration configuration;

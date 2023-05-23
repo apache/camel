@@ -37,7 +37,7 @@ public interface CouchdbComponentBuilderFactory {
      * database, as well as get, save, update and delete documents from a
      * CouchDB database.
      * 
-     * Category: database,nosql
+     * Category: database
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-couchdb
      * 

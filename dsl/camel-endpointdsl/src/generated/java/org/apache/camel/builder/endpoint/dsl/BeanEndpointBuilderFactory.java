@@ -218,7 +218,7 @@ public interface BeanEndpointBuilderFactory {
          * Bean (camel-bean)
          * Invoke methods of Java beans stored in Camel registry.
          * 
-         * Category: core,java
+         * Category: core,script
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-bean
          * 
@@ -231,7 +231,7 @@ public interface BeanEndpointBuilderFactory {
          * Bean (camel-bean)
          * Invoke methods of Java beans stored in Camel registry.
          * 
-         * Category: core,java
+         * Category: core,script
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-bean
          * 
@@ -250,7 +250,7 @@ public interface BeanEndpointBuilderFactory {
          * Bean (camel-bean)
          * Invoke methods of Java beans stored in Camel registry.
          * 
-         * Category: core,java
+         * Category: core,script
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-bean
          * 

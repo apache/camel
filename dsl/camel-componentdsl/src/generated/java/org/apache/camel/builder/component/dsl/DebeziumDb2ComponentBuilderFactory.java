@@ -34,7 +34,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-db2
      * 

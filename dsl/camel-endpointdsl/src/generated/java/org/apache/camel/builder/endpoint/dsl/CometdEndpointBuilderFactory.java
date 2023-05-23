@@ -1173,7 +1173,7 @@ public interface CometdEndpointBuilderFactory {
          * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
          * messaging using the CometD/Bayeux protocol.
          * 
-         * Category: websocket
+         * Category: networking,messaging
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-cometd
          * 
@@ -1187,7 +1187,7 @@ public interface CometdEndpointBuilderFactory {
          * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
          * messaging using the CometD/Bayeux protocol.
          * 
-         * Category: websocket
+         * Category: networking,messaging
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-cometd
          * 
@@ -1214,7 +1214,7 @@ public interface CometdEndpointBuilderFactory {
          * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
          * messaging using the CometD/Bayeux protocol.
          * 
-         * Category: websocket
+         * Category: networking,messaging
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-cometd
          * 
@@ -1243,7 +1243,7 @@ public interface CometdEndpointBuilderFactory {
          * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
          * messaging using the CometD/Bayeux protocol.
          * 
-         * Category: websocket
+         * Category: networking,messaging
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-cometd
          * 

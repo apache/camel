@@ -6,7 +6,7 @@
     "description": "Execute custom actions within a route using the Saga EIP.",
     "deprecated": false,
     "firstVersion": "2.21.0",
-    "label": "core,endpoint",
+    "label": "clustering",
     "javaType": "org.apache.camel.component.saga.SagaComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

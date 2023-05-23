@@ -230,7 +230,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Access OpenStack Keystone for API client authentication, service
          * discovery and distributed multi-tenant authorization.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
@@ -244,7 +244,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Access OpenStack Keystone for API client authentication, service
          * discovery and distributed multi-tenant authorization.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
@@ -264,7 +264,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Access OpenStack Keystone for API client authentication, service
          * discovery and distributed multi-tenant authorization.
          * 
-         * Category: cloud,paas
+         * Category: container
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 

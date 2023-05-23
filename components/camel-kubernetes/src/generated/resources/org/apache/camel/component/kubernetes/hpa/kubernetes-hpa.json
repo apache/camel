@@ -6,7 +6,7 @@
     "description": "Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.",
     "deprecated": false,
     "firstVersion": "2.23.0",
-    "label": "container,cloud,paas",
+    "label": "container,cloud",
     "javaType": "org.apache.camel.component.kubernetes.hpa.KubernetesHPAComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

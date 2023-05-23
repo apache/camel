@@ -34,7 +34,7 @@ public interface SqlStoredComponentBuilderFactory {
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
      * 
-     * Category: database,sql
+     * Category: database
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
      * 

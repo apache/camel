@@ -36,7 +36,7 @@ public interface KubernetesHpaComponentBuilderFactory {
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
      * notified on HPA changes.
      * 
-     * Category: container,cloud,paas
+     * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 

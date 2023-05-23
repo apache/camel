@@ -108,7 +108,7 @@ public interface SagaEndpointBuilderFactory {
          * Saga (camel-saga)
          * Execute custom actions within a route using the Saga EIP.
          * 
-         * Category: core,endpoint
+         * Category: clustering
          * Since: 2.21
          * Maven coordinates: org.apache.camel:camel-saga
          * 
@@ -121,7 +121,7 @@ public interface SagaEndpointBuilderFactory {
          * Saga (camel-saga)
          * Execute custom actions within a route using the Saga EIP.
          * 
-         * Category: core,endpoint
+         * Category: clustering
          * Since: 2.21
          * Maven coordinates: org.apache.camel:camel-saga
          * 
@@ -141,7 +141,7 @@ public interface SagaEndpointBuilderFactory {
          * Saga (camel-saga)
          * Execute custom actions within a route using the Saga EIP.
          * 
-         * Category: core,endpoint
+         * Category: clustering
          * Since: 2.21
          * Maven coordinates: org.apache.camel:camel-saga
          * 

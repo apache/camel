@@ -6,7 +6,7 @@
     "description": "Communicate with Salesforce using Java DTOs.",
     "deprecated": false,
     "firstVersion": "2.12.0",
-    "label": "cloud,api,crm",
+    "label": "cloud,saas",
     "javaType": "org.apache.camel.component.salesforce.SalesforceComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
