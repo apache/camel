@@ -29,9 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
@@ -89,47 +87,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer = new DefaultConsumer(this, processor) {
-            private Consumer delegatedConsumer;
+        Consumer consumer = new PlatformHttpConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+    }
 
-            @Override
-            public PlatformHttpEndpoint getEndpoint() {
-                return (PlatformHttpEndpoint) super.getEndpoint();
-            }
-
-            @Override
-            protected void doInit() throws Exception {
-                super.doInit();
-                delegatedConsumer = getEndpoint().getOrCreateEngine().createConsumer(getEndpoint(), getProcessor());
-                configureConsumer(delegatedConsumer);
-            }
-
-            @Override
-            protected void doStart() throws Exception {
-                super.doStart();
-                ServiceHelper.startService(delegatedConsumer);
-                getComponent().addHttpEndpoint(getPath(), httpMethodRestrict, delegatedConsumer);
-            }
-
-            @Override
-            protected void doStop() throws Exception {
-                super.doStop();
-                getComponent().removeHttpEndpoint(getPath());
-                ServiceHelper.stopAndShutdownServices(delegatedConsumer);
-            }
-
-            @Override
-            protected void doResume() throws Exception {
-                ServiceHelper.resumeService(delegatedConsumer);
-                super.doResume();
-            }
-
-            @Override
-            protected void doSuspend() throws Exception {
-                ServiceHelper.suspendService(delegatedConsumer);
-                super.doSuspend();
-            }
-        };
+    protected Consumer createDelegateConsumer(Processor processor) throws Exception {
+        Consumer consumer = getOrCreateEngine().createConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }

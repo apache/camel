@@ -42,6 +42,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
@@ -60,7 +62,7 @@ import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSu
  * A {@link org.apache.camel.Consumer} for the {@link org.apache.camel.component.platform.http.spi.PlatformHttpEngine}
  * based on Vert.x Web.
  */
-public class VertxPlatformHttpConsumer extends DefaultConsumer {
+public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspendable, SuspendableService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
@@ -142,22 +144,6 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
-        if (route != null) {
-            route.disable();
-        }
-        super.doSuspend();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        if (route != null) {
-            route.enable();
-        }
-        super.doResume();
-    }
-
     private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
         String path = endpoint.getPath();
         if (endpoint.isMatchOnUriPrefix() && !path.endsWith("*")) {
@@ -168,6 +154,12 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     }
 
     protected void handleRequest(RoutingContext ctx) {
+        if (isSuspended()) {
+            ctx.response().setStatusCode(503);
+            ctx.end();
+            return;
+        }
+
         final Vertx vertx = ctx.vertx();
         final Exchange exchange = toExchange(ctx);
 

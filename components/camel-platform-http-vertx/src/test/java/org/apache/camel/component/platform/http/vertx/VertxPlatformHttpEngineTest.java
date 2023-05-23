@@ -743,7 +743,7 @@ public class VertxPlatformHttpEngineTest {
                     .when()
                     .get("/get")
                     .then()
-                    .statusCode(404);
+                    .statusCode(503);
 
         } finally {
             context.stop();
