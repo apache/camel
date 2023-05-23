@@ -42,12 +42,45 @@ public class JsltTemplateFromHeaderTest extends CamelTestSupport {
 
     }
 
+    @Test
+    public void testTemplateInHeaderOverrideUri() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+                "\"foo\"",
+                "\"bar\"");
+
+        template.sendBody("direct:start", TEST_BODY);
+
+        template.sendBodyAndHeader("direct:start", TEST_BODY,
+                JsltConstants.HEADER_JSLT_STRING, ".bar");
+
+        MockEndpoint.assertIsSatisfied(context);
+
+    }
+
+    @Test
+    public void testTemplateInHeaderOverrideUriOnlyWhenSet() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+                "\"bar\"",
+                "\"foo\"");
+
+        template.sendBodyAndHeader("direct:start", TEST_BODY,
+                JsltConstants.HEADER_JSLT_STRING, ".bar");
+
+        template.sendBody("direct:start", TEST_BODY);
+
+        MockEndpoint.assertIsSatisfied(context);
+
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("direct://start")
-                        .to("jslt:dummy?allowTemplateFromHeader=true")
+                        .to("jslt:org/apache/camel/component/jslt/simple/transformation.jslt?allowTemplateFromHeader=true")
                         .to("mock:result");
             }
         };
