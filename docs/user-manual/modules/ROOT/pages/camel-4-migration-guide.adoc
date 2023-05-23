@@ -313,6 +313,10 @@ from("optaplanner:myProblemName?configFile=PATH/TO/CONFIG.FILE.xml")
 
 Solver Daemon solutions should be migrated to use SolverManager.
 
+=== camel-platform-http-vertx
+
+If the route or consumer is suspended then http status 503 is now returned instead of 404.
+
 
 == Camel Spring Boot
 
@@ -350,4 +354,6 @@ Then calling _myservice_ would before require to include the context-path, such 
 Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
 
 NOTE: The `platform-http-starter` can also be used with Rest DSL.
+
+If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
