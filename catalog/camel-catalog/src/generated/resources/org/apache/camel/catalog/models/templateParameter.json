@@ -12,9 +12,9 @@
     "output": false
   },
   "properties": {
-    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter" },
-    "required": { "kind": "attribute", "displayName": "Required", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the parameter is required or not. A parameter is required unless this option is set to false or a default value has been configured." },
-    "defaultValue": { "kind": "attribute", "displayName": "Default Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Default value of the parameter. If a default value is provided then the parameter is implied not to be required." },
-    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Description of the parameter" }
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter" },
+    "required": { "index": 1, "kind": "attribute", "displayName": "Required", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the parameter is required or not. A parameter is required unless this option is set to false or a default value has been configured." },
+    "defaultValue": { "index": 2, "kind": "attribute", "displayName": "Default Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Default value of the parameter. If a default value is provided then the parameter is implied not to be required." },
+    "description": { "index": 3, "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Description of the parameter" }
   }
 }

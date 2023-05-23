@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter" },
-    "value": { "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The value of the parameter." }
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the parameter" },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The value of the parameter." }
   }
 }

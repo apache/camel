@@ -13,9 +13,9 @@
     "output": false
   },
   "properties": {
-    "lineLength": { "kind": "attribute", "displayName": "Line Length", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "76", "description": "To specific a maximum line length for the encoded data. By default 76 is used." },
-    "lineSeparator": { "kind": "attribute", "displayName": "Line Separator", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The line separators to use. Uses new line characters (CRLF) by default." },
-    "urlSafe": { "kind": "attribute", "displayName": "Url Safe", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Instead of emitting '' and '\/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "lineLength": { "index": 0, "kind": "attribute", "displayName": "Line Length", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "76", "description": "To specific a maximum line length for the encoded data. By default 76 is used." },
+    "lineSeparator": { "index": 1, "kind": "attribute", "displayName": "Line Separator", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The line separators to use. Uses new line characters (CRLF) by default." },
+    "urlSafe": { "index": 2, "kind": "attribute", "displayName": "Url Safe", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Instead of emitting '' and '\/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false." },
+    "id": { "index": 3, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

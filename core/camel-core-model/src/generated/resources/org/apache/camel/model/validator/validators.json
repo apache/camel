@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "validators": { "kind": "element", "displayName": "Validators", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.validator.ValidatorDefinition>", "oneOf": [ "customValidator", "endpointValidator", "predicateValidator" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured transformers" }
+    "validators": { "index": 0, "kind": "element", "displayName": "Validators", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.validator.ValidatorDefinition>", "oneOf": [ "customValidator", "endpointValidator", "predicateValidator" ], "deprecated": false, "autowired": false, "secret": false, "description": "The configured transformers" }
   }
 }

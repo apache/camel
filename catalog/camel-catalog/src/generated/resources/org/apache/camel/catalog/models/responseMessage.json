@@ -12,10 +12,10 @@
     "output": false
   },
   "properties": {
-    "code": { "kind": "attribute", "displayName": "Code", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "200", "description": "The response code such as a HTTP status code" },
-    "message": { "kind": "attribute", "displayName": "Message", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The response message (description)" },
-    "responseModel": { "kind": "attribute", "displayName": "Response Model", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The response model" },
-    "header": { "kind": "element", "displayName": "Header", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.ResponseHeaderDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a response header" },
-    "examples": { "kind": "element", "displayName": "Examples", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Examples of response messages" }
+    "code": { "index": 0, "kind": "attribute", "displayName": "Code", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "200", "description": "The response code such as a HTTP status code" },
+    "message": { "index": 1, "kind": "attribute", "displayName": "Message", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The response message (description)" },
+    "responseModel": { "index": 2, "kind": "attribute", "displayName": "Response Model", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The response model" },
+    "header": { "index": 3, "kind": "element", "displayName": "Header", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.ResponseHeaderDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a response header" },
+    "examples": { "index": 4, "kind": "element", "displayName": "Examples", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Examples of response messages" }
   }
 }

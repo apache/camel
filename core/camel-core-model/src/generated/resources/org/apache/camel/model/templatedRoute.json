@@ -12,10 +12,10 @@
     "output": false
   },
   "properties": {
-    "routeTemplateRef": { "kind": "attribute", "displayName": "Route Template Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of the route template to use to build the route." },
-    "routeId": { "kind": "attribute", "displayName": "Route Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of the route built from the route template." },
-    "prefixId": { "kind": "attribute", "displayName": "Prefix Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets a prefix to use for all node ids (not route id)." },
-    "parameter": { "kind": "element", "displayName": "Parameter", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.TemplatedRouteParameterDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds an input parameter of the template to build the route" },
-    "bean": { "kind": "element", "displayName": "Bean", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.TemplatedRouteBeanDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a local bean as input of the template to build the route" }
+    "routeTemplateRef": { "index": 0, "kind": "attribute", "displayName": "Route Template Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of the route template to use to build the route." },
+    "routeId": { "index": 1, "kind": "attribute", "displayName": "Route Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of the route built from the route template." },
+    "prefixId": { "index": 2, "kind": "attribute", "displayName": "Prefix Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets a prefix to use for all node ids (not route id)." },
+    "parameter": { "index": 3, "kind": "element", "displayName": "Parameter", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.TemplatedRouteParameterDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds an input parameter of the template to build the route" },
+    "bean": { "index": 4, "kind": "element", "displayName": "Bean", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.TemplatedRouteBeanDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a local bean as input of the template to build the route" }
   }
 }

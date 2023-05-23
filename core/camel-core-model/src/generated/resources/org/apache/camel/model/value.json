@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "value": { "kind": "value", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property value" }
+    "value": { "index": 0, "kind": "value", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property value" }
   }
 }

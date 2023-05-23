@@ -12,9 +12,9 @@
     "output": false
   },
   "properties": {
-    "defaultEndpoint": { "kind": "attribute", "displayName": "Default Endpoint", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the default endpoint URI used by default for sending message exchanges" },
-    "maximumCacheSize": { "kind": "attribute", "displayName": "Maximum Cache Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Sets a custom maximum cache size to use in the backing cache pools." },
-    "camelContextId": { "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Id of CamelContext to use if there are multiple CamelContexts in the same JVM" },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "defaultEndpoint": { "index": 0, "kind": "attribute", "displayName": "Default Endpoint", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the default endpoint URI used by default for sending message exchanges" },
+    "maximumCacheSize": { "index": 1, "kind": "attribute", "displayName": "Maximum Cache Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Sets a custom maximum cache size to use in the backing cache pools." },
+    "camelContextId": { "index": 2, "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Id of CamelContext to use if there are multiple CamelContexts in the same JVM" },
+    "id": { "index": 3, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

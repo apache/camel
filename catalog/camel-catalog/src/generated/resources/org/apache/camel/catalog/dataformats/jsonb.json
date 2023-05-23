@@ -16,8 +16,8 @@
     "modelJavaType": "org.apache.camel.model.dataformat.JsonDataFormat"
   },
   "properties": {
-    "objectMapper": { "kind": "attribute", "displayName": "Jsonb instance", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Lookup and use the existing Jsonb instance with the given id." },
-    "prettyPrint": { "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." },
-    "unmarshalType": { "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" }
+    "objectMapper": { "index": 0, "kind": "attribute", "displayName": "Jsonb instance", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Lookup and use the existing Jsonb instance with the given id." },
+    "prettyPrint": { "index": 1, "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." },
+    "unmarshalType": { "index": 2, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" }
   }
 }

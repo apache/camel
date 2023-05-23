@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "text": { "kind": "value", "displayName": "Text", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description as human-readable text" }
+    "text": { "index": 0, "kind": "value", "displayName": "Text", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description as human-readable text" }
   }
 }

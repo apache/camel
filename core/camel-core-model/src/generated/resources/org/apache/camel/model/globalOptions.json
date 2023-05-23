@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "globalOption": { "kind": "element", "displayName": "Global Option", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.GlobalOptionDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "A series of global options as key value pairs" }
+    "globalOption": { "index": 0, "kind": "element", "displayName": "Global Option", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.GlobalOptionDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "A series of global options as key value pairs" }
   }
 }

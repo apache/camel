@@ -13,7 +13,7 @@
     "output": false
   },
   "properties": {
-    "compressionLevel": { "kind": "attribute", "displayName": "Compression Level", "required": false, "type": "enum", "javaType": "java.lang.Integer", "enum": [ "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "-1", "description": "To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the best compression." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "compressionLevel": { "index": 0, "kind": "attribute", "displayName": "Compression Level", "required": false, "type": "enum", "javaType": "java.lang.Integer", "enum": [ "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "-1", "description": "To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the best compression." },
+    "id": { "index": 1, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

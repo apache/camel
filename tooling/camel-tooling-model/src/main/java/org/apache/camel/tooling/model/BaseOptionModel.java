@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class BaseOptionModel {
 
     protected String name;
-
+    protected int index;
     protected String kind;
     protected String displayName;
     protected String group;
@@ -58,6 +58,14 @@ public abstract class BaseOptionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getKind() {

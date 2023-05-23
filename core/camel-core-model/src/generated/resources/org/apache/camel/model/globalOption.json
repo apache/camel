@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Global option key" },
-    "value": { "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Global option value" }
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Global option key" },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Global option value" }
   }
 }

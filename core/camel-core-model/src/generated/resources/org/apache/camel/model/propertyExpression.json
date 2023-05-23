@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property key" },
-    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "Property values as an expression" }
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property key" },
+    "expression": { "index": 1, "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "Property values as an expression" }
   }
 }

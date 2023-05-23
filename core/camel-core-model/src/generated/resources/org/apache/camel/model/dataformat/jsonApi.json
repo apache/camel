@@ -13,8 +13,8 @@
     "output": false
   },
   "properties": {
-    "dataFormatTypes": { "kind": "attribute", "displayName": "Data Format Types", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The classes to take into account for the marshalling. Multiple classes can be separated by comma." },
-    "mainFormatType": { "kind": "attribute", "displayName": "Main Format Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The class to take into account while unmarshalling." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "dataFormatTypes": { "index": 0, "kind": "attribute", "displayName": "Data Format Types", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The classes to take into account for the marshalling. Multiple classes can be separated by comma." },
+    "mainFormatType": { "index": 1, "kind": "attribute", "displayName": "Main Format Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The class to take into account while unmarshalling." },
+    "id": { "index": 2, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

@@ -12,6 +12,6 @@
     "output": false
   },
   "properties": {
-    "ref": { "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to the routes in the xml dsl" }
+    "ref": { "index": 0, "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to the routes in the xml dsl" }
   }
 }

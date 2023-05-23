@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "package": { "kind": "element", "displayName": "Package", "required": true, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the java package names to use for scanning for route builder classes" },
-    "excludes": { "kind": "element", "displayName": "Excludes", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
-    "includes": { "kind": "element", "displayName": "Includes", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Include finding route builder from these java package names." }
+    "package": { "index": 0, "kind": "element", "displayName": "Package", "required": true, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the java package names to use for scanning for route builder classes" },
+    "excludes": { "index": 1, "kind": "element", "displayName": "Excludes", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
+    "includes": { "index": 2, "kind": "element", "displayName": "Includes", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Include finding route builder from these java package names." }
   }
 }

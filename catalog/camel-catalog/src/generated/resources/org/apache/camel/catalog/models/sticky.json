@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "correlationExpression": { "kind": "expression", "displayName": "Correlation Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The correlation expression to use to calculate the correlation key" },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "correlationExpression": { "index": 0, "kind": "expression", "displayName": "Correlation Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The correlation expression to use to calculate the correlation key" },
+    "id": { "index": 1, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

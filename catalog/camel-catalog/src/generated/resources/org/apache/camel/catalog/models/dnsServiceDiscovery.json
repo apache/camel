@@ -11,9 +11,9 @@
     "output": false
   },
   "properties": {
-    "proto": { "kind": "attribute", "displayName": "Proto", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "_tcp", "description": "The transport protocol of the desired service." },
-    "domain": { "kind": "attribute", "displayName": "Domain", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The domain name;" },
-    "properties": { "kind": "element", "displayName": "Properties", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using a different one, then the client properties are defined according to the specific service in use." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "proto": { "index": 0, "kind": "attribute", "displayName": "Proto", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "_tcp", "description": "The transport protocol of the desired service." },
+    "domain": { "index": 1, "kind": "attribute", "displayName": "Domain", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The domain name;" },
+    "properties": { "index": 2, "kind": "element", "displayName": "Properties", "label": "advanced", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using a different one, then the client properties are defined according to the specific service in use." },
+    "id": { "index": 3, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

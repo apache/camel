@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
-    "format": { "kind": "attribute", "displayName": "Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A hint to the client to identify how the bearer token is formatted." },
-    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." }
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "format": { "index": 1, "kind": "attribute", "displayName": "Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A hint to the client to identify how the bearer token is formatted." },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." }
   }
 }

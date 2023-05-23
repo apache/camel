@@ -430,6 +430,10 @@ public final class JsonMapper {
 
     private static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
         option.setName(name);
+        Integer idx = mp.getInteger("index");
+        if (idx != null) {
+            option.setIndex(idx);
+        }
         option.setKind(mp.getString("kind"));
         option.setDisplayName(mp.getString("displayName"));
         option.setGroup(mp.getString("group"));
@@ -463,7 +467,11 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
         JsonObject json = new JsonObject();
-        options.forEach(option -> json.put(option.getName(), asJsonObject(option)));
+        for (int i = 0; i < options.size(); i++) {
+            var o = options.get(i);
+            o.setIndex(i);
+            json.put(o.getName(), asJsonObject(o));
+        }
         return json;
     }
 
@@ -507,6 +515,7 @@ public final class JsonMapper {
 
     public static JsonObject asJsonObject(BaseOptionModel option) {
         JsonObject prop = new JsonObject();
+        prop.put("index", option.getIndex());
         prop.put("kind", option.getKind());
         prop.put("displayName", option.getDisplayName());
         prop.put("group", option.getGroup());

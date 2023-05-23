@@ -13,8 +13,8 @@
     "output": false
   },
   "properties": {
-    "dataObjectType": { "kind": "attribute", "displayName": "Data Object Type", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "org.w3c.dom.Node", "java.lang.String" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "org.w3c.dom.Node", "description": "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node" },
-    "omitXmlDeclaration": { "kind": "attribute", "displayName": "Omit Xml Declaration", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "When returning a String, do we omit the XML declaration in the top." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "dataObjectType": { "index": 0, "kind": "attribute", "displayName": "Data Object Type", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "org.w3c.dom.Node", "java.lang.String" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "org.w3c.dom.Node", "description": "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node" },
+    "omitXmlDeclaration": { "index": 1, "kind": "attribute", "displayName": "Omit Xml Declaration", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "When returning a String, do we omit the XML declaration in the top." },
+    "id": { "index": 2, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

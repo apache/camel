@@ -12,11 +12,11 @@
     "output": false
   },
   "properties": {
-    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the header or query parameter to be used." },
-    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
-    "inHeader": { "kind": "attribute", "displayName": "In Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To use header as the location of the API key." },
-    "inQuery": { "kind": "attribute", "displayName": "In Query", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To use query parameter as the location of the API key." },
-    "inCookie": { "kind": "attribute", "displayName": "In Cookie", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To use a cookie as the location of the API key." },
-    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." }
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the header or query parameter to be used." },
+    "key": { "index": 1, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "inHeader": { "index": 2, "kind": "attribute", "displayName": "In Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To use header as the location of the API key." },
+    "inQuery": { "index": 3, "kind": "attribute", "displayName": "In Query", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To use query parameter as the location of the API key." },
+    "inCookie": { "index": 4, "kind": "attribute", "displayName": "In Cookie", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To use a cookie as the location of the API key." },
+    "description": { "index": 5, "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A short description for security scheme." }
   }
 }

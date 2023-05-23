@@ -13,8 +13,8 @@
     "output": false
   },
   "properties": {
-    "unmarshalType": { "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },
-    "usingIterator": { "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the asn1 file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split the data using an iterator in a streaming mode." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "unmarshalType": { "index": 0, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },
+    "usingIterator": { "index": 1, "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the asn1 file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split the data using an iterator in a streaming mode." },
+    "id": { "index": 2, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

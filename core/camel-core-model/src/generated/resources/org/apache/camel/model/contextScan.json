@@ -12,8 +12,8 @@
     "output": false
   },
   "properties": {
-    "includeNonSingletons": { "kind": "attribute", "displayName": "Include Non Singletons", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to include non-singleton beans (prototypes) By default only singleton beans is included in the context scan" },
-    "excludes": { "kind": "element", "displayName": "Excludes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
-    "includes": { "kind": "element", "displayName": "Includes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Include finding route builder from these java package names." }
+    "includeNonSingletons": { "index": 0, "kind": "attribute", "displayName": "Include Non Singletons", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to include non-singleton beans (prototypes) By default only singleton beans is included in the context scan" },
+    "excludes": { "index": 1, "kind": "element", "displayName": "Excludes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
+    "includes": { "index": 2, "kind": "element", "displayName": "Includes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Include finding route builder from these java package names." }
   }
 }

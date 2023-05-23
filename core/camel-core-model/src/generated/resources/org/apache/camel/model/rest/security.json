@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
-    "scopes": { "kind": "attribute", "displayName": "Scopes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The scopes to allow (separate multiple scopes by comma)" }
+    "key": { "index": 0, "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "scopes": { "index": 1, "kind": "attribute", "displayName": "Scopes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The scopes to allow (separate multiple scopes by comma)" }
   }
 }

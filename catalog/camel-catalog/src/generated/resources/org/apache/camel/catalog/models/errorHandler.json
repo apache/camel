@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "errorHandlerType": { "kind": "element", "displayName": "Error Handler Type", "required": true, "type": "object", "javaType": "org.apache.camel.ErrorHandlerFactory", "oneOf": [ "deadLetterChannel", "defaultErrorHandler", "jtaTransactionErrorHandler", "noErrorHandler", "springTransactionErrorHandler" ], "deprecated": false, "autowired": false, "secret": false, "description": "The specific error handler in use." },
-    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "errorHandlerType": { "index": 0, "kind": "element", "displayName": "Error Handler Type", "required": true, "type": "object", "javaType": "org.apache.camel.ErrorHandlerFactory", "oneOf": [ "deadLetterChannel", "defaultErrorHandler", "jtaTransactionErrorHandler", "noErrorHandler", "springTransactionErrorHandler" ], "deprecated": false, "autowired": false, "secret": false, "description": "The specific error handler in use." },
+    "id": { "index": 1, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

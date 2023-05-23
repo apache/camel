@@ -11,7 +11,7 @@
     "output": false
   },
   "properties": {
-    "value": { "kind": "attribute", "displayName": "Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Value of type such as class name or regular expression" },
-    "type": { "kind": "attribute", "displayName": "Type", "required": false, "type": "object", "javaType": "org.apache.camel.model.dataformat.YAMLTypeFilterType", "deprecated": false, "autowired": false, "secret": false, "description": "Whether to filter by class type or regular expression" }
+    "value": { "index": 0, "kind": "attribute", "displayName": "Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Value of type such as class name or regular expression" },
+    "type": { "index": 1, "kind": "attribute", "displayName": "Type", "required": false, "type": "object", "javaType": "org.apache.camel.model.dataformat.YAMLTypeFilterType", "deprecated": false, "autowired": false, "secret": false, "description": "Whether to filter by class type or regular expression" }
   }
 }
