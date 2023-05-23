@@ -292,7 +292,11 @@ public class SpringCamelContext extends DefaultCamelContext
         // (explained in comment in the onApplicationEvent method)
         // we use LOWEST_PRECEDENCE here as this is taken into account
         // only when stopping and then in reversed order
-        return LOWEST_PRECEDENCE;
+        return Integer.MAX_VALUE - 2049;
+        // we need to be less than max value as spring-boot comes with
+        // graceful shutdown services (the http server in spring boot)
+        // that must shutdown before camel, and they have max value - 2048,
+        // so we use 2049 to have a higher gap
     }
 
     @Override
