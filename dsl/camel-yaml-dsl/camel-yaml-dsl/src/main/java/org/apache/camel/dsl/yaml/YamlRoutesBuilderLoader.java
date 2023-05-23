@@ -775,12 +775,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         MappingNode prop = asMappingNode(nodeAt(node, "/properties"));
         Map<String, Object> params = asMap(prop);
         if (params != null && !params.isEmpty()) {
-            try {
-                String query = URISupport.createQueryString(params);
-                uri = uri + "?" + query;
-            } catch (URISyntaxException e) {
-                throw new InvalidEndpointException(node, "Error creating URI query parameters", e);
-            }
+            String query = URISupport.createQueryString(params);
+            uri = uri + "?" + query;
         }
 
         if (kamelet) {
