@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import org.apache.zookeeper.AsyncCallback.StatCallback;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
@@ -33,9 +32,7 @@ public class ExistenceChangedOperation extends FutureEventDrivenOperation<String
 
     @Override
     protected void installWatch() {
-        connection.exists(getNode(), this, new StatCallback() {
-            public void processResult(int rc, String path, Object ctx, Stat stat) {
-            }
+        connection.exists(getNode(), this, (int rc, String path, Object ctx, Stat stat) -> {
         }, null);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Installed exists watch");

@@ -33,12 +33,7 @@ public class OptaPlannerConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.configuration = configuration;
 
-        solverJobListener = new OptaplannerSolutionEventListener() {
-            @Override
-            public void bestSolutionChanged(OptaplannerSolutionEvent event) {
-                processSolverJobEvent(event);
-            }
-        };
+        solverJobListener = this::processSolverJobEvent;
     }
 
     public void processSolverJobEvent(OptaplannerSolutionEvent event) {
