@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -225,7 +226,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (Strings.isNullOrEmpty(eipModel.getTitle())) {
             eipModel.setTitle(Strings.asTitle(eipModel.getName()));
         }
-        if (eipModel.isOutput()) {
+        if (!eipModel.isOutput()) {
             // filter out outputs if we do not support it
             eipModel.getOptions().removeIf(o -> "outputs".equals(o.getName()));
         }
@@ -326,7 +327,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     processRoutes(originalClassType, fieldElement, fieldName, eipOptions);
 
                     // special for outputs
-                    processOutputs(originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
+                    processOutputs(originalClassType, elementRef, fieldElement, null, fieldName, eipOptions, prefix);
 
                     // special for when clauses (choice eip)
                     processRefWhenClauses(originalClassType, elementRef, fieldElement, fieldName, eipOptions, prefix);
@@ -341,6 +342,24 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     processRefExpression(originalClassType, classElement, elementRef, fieldElement, fieldName, eipOptions,
                             prefix);
 
+                }
+            }
+
+            for (Method methodElement : classElement.getDeclaredMethods()) {
+                String methodName = methodElement.getName();
+                if (methodName.startsWith("set")) {
+                    methodName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+                }
+
+                // special for eips which has outputs or requires an expressions
+                XmlElementRef elementRef = methodElement.getAnnotation(XmlElementRef.class);
+                if (elementRef != null) {
+                    if ("RouteDefinition".equals(classElement.getSimpleName())) {
+                        // special for route as we handle this specially
+                        continue;
+                    }
+                    // special for outputs
+                    processOutputs(originalClassType, elementRef, null, methodElement, methodName, eipOptions, prefix);
                 }
             }
 
@@ -843,11 +862,16 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      */
     private void processOutputs(
             Class<?> originalClassType, XmlElementRef elementRef,
-            Field fieldElement, String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
+            Field fieldElement, Method methodElement, String fieldOrMethodName, Set<EipOptionModel> eipOptions, String prefix) {
 
-        if ("outputs".equals(fieldName) && supportOutputs(originalClassType)) {
-            String name = fetchName(elementRef.name(), fieldName, prefix);
-            String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+        if ("outputs".equals(fieldOrMethodName) && supportOutputs(originalClassType)) {
+            String name = fetchName(elementRef.name(), fieldOrMethodName, prefix);
+            String typeName;
+            if (fieldElement != null) {
+                typeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+            } else {
+                typeName = getTypeName(GenericsUtil.resolveSetterType(originalClassType, methodElement));
+            }
 
             // gather oneOf which extends any of the output base classes
             Set<String> oneOfTypes = getOneOfs(ONE_OF_OUTPUTS);
@@ -855,11 +879,18 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             // remove some types which are not intended as an output in eips
             oneOfTypes.remove("route");
             String displayName = null;
-            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            Metadata metadata = fieldElement != null ? fieldElement.getAnnotation(Metadata.class) : null;
+            if (metadata == null) {
+                metadata = methodElement != null ? methodElement.getAnnotation(Metadata.class) : null;
+            }
             if (metadata != null) {
                 displayName = metadata.displayName();
             }
-            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            boolean deprecated = false;
+            if (fieldElement != null && fieldElement.getAnnotation(Deprecated.class) != null
+                    || methodElement != null && methodElement.getAnnotation(Deprecated.class) != null) {
+                deprecated = true;
+            }
             String deprecationNote = null;
             if (metadata != null) {
                 deprecationNote = metadata.deprecationNote();
@@ -871,7 +902,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             String kind = "element";
             EipOptionModel ep
-                    = createOption(name, displayName, kind, fieldTypeName, true, "", label, "", deprecated, deprecationNote,
+                    = createOption(name, displayName, kind, typeName, true, "", label, "", deprecated, deprecationNote,
                             false, null, oneOfTypes, false, false);
             eipOptions.add(ep);
         }

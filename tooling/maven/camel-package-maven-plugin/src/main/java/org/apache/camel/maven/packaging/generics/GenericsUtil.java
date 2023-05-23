@@ -368,6 +368,13 @@ public final class GenericsUtil {
     }
 
     /**
+     * Resolves the actual type of the specified field for the type hierarchy specified by the given subclass
+     */
+    public static Type resolveSetterType(Class<?> subclass, Method method) {
+        return resolveType(method.getParameterTypes()[0], subclass, newSeenList());
+    }
+
+    /**
      * Resolves the actual parameter generics of the specified method for the type hierarchy specified by the given
      * subclass
      */
