@@ -62,17 +62,10 @@ class URIScanner {
         Map<String, Object> answer = new LinkedHashMap<>();
 
         // parse the uri parameters char by char
-        int len = uri.length();
+        final int len = uri.length();
         for (int i = 0; i < len; i++) {
             // current char
-            char ch = uri.charAt(i);
-            // look ahead of the next char
-            char next;
-            if (i <= len - 2) {
-                next = uri.charAt(i + 1);
-            } else {
-                next = END;
-            }
+            final char ch = uri.charAt(i);
 
             if (keyMode) {
                 // if there is a = sign then the key ends and we are in value mode
@@ -93,6 +86,8 @@ class URIScanner {
                 if (isRaw) {
                     value.append(ch);
 
+                    // look ahead of the next char
+                    final char next = i <= len - 2 ? uri.charAt(i + 1) : END;
                     if (isAtEnd(ch, next)) {
                         // raw value end, so add that as a parameter, and reset flags
                         addParameter(answer, useRaw || isRaw);
