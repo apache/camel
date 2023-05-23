@@ -138,20 +138,12 @@ public class DefaultKeySelector extends KeySelector implements CamelContextAware
     }
 
     private KeySelectorResult getKeySelectorResult(final Key key) {
-        return new KeySelectorResult() {
-            public Key getKey() {
-                return key;
-            }
-        };
+        return () -> key;
     }
 
     private KeySelectorResult getNullKeyResult() {
         if (nullKeyResult == null) {
-            nullKeyResult = new KeySelectorResult() {
-                public Key getKey() {
-                    return null;
-                }
-            };
+            nullKeyResult = () -> null;
         }
         return nullKeyResult;
     }
