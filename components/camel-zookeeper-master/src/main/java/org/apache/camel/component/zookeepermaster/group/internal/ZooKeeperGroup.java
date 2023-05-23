@@ -22,7 +22,6 @@ import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -100,37 +99,27 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private final AtomicBoolean unstable = new AtomicBoolean();
     private volatile T state;
 
-    private final Watcher childrenWatcher = new Watcher() {
-        @Override
-        public void process(WatchedEvent event) {
-            if (event.getType() != Event.EventType.None) {
-                // only interested in real change events, eg no refresh on Keeper.Disconnect
-                offerOperation(new RefreshOperation(ZooKeeperGroup.this, RefreshMode.STANDARD));
-            }
+    private final Watcher childrenWatcher = (WatchedEvent event) -> {
+        if (event.getType() != Watcher.Event.EventType.None) {
+            // only interested in real change events, eg no refresh on Keeper.Disconnect
+            offerOperation(new RefreshOperation(ZooKeeperGroup.this, RefreshMode.STANDARD));
         }
     };
 
-    private final Watcher dataWatcher = new Watcher() {
-        @Override
-        public void process(WatchedEvent event) {
-            try {
-                if (event.getType() == Event.EventType.NodeDeleted) {
-                    remove(event.getPath());
-                } else if (event.getType() == Event.EventType.NodeDataChanged) {
-                    offerOperation(new GetDataOperation(ZooKeeperGroup.this, event.getPath()));
-                }
-            } catch (Exception e) {
-                handleException(e);
+    private final Watcher dataWatcher = (WatchedEvent event) -> {
+        try {
+            if (event.getType() == Watcher.Event.EventType.NodeDeleted) {
+                remove(event.getPath());
+            } else if (event.getType() == Watcher.Event.EventType.NodeDataChanged) {
+                offerOperation(new GetDataOperation(ZooKeeperGroup.this, event.getPath()));
             }
+        } catch (Exception e) {
+            handleException(e);
         }
     };
 
-    private final ConnectionStateListener connectionStateListener = new ConnectionStateListener() {
-        @Override
-        public void stateChanged(CuratorFramework client, ConnectionState newState) {
-            handleStateChange(newState);
-        }
-    };
+    private final ConnectionStateListener connectionStateListener
+            = (CuratorFramework client, ConnectionState newState) -> handleStateChange(newState);
 
     /**
      * @param client the client
@@ -177,12 +166,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             }
 
             client.getConnectionStateListenable().addListener(connectionStateListener);
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    mainLoop();
-                }
-            });
+            executorService.execute(this::mainLoop);
         }
     }
 
@@ -470,12 +454,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         try {
             ensurePath.ensure(client.getZookeeperClient());
             List<String> children = client.getChildren().usingWatcher(childrenWatcher).forPath(path);
-            Collections.sort(children, new Comparator<String>() {
-                @Override
-                public int compare(String left, String right) {
-                    return left.compareTo(right);
-                }
-            });
+            Collections.sort(children, (String left, String right) -> left.compareTo(right));
             processChildren(children, mode);
         } catch (Exception e) {
             handleException(e);
