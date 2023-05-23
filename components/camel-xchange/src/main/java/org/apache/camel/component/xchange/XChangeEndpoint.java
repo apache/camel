@@ -18,7 +18,6 @@ package org.apache.camel.component.xchange;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,31 +141,23 @@ public class XChangeEndpoint extends DefaultEndpoint {
                 }
             }
         });
-        return balances.stream().sorted(new Comparator<Balance>() {
-            public int compare(Balance o1, Balance o2) {
-                return o1.getCurrency().compareTo(o2.getCurrency());
-            }
-        }).collect(Collectors.toList());
+        return balances.stream().sorted((Balance o1, Balance o2) -> o1.getCurrency().compareTo(o2.getCurrency()))
+                .collect(Collectors.toList());
     }
 
     public List<FundingRecord> getFundingHistory() throws IOException {
         AccountService accountService = xchange.getAccountService();
         TradeHistoryParams fundingHistoryParams = accountService.createFundingHistoryParams();
-        return accountService.getFundingHistory(fundingHistoryParams).stream().sorted(new Comparator<FundingRecord>() {
-            public int compare(FundingRecord o1, FundingRecord o2) {
-                return o1.getDate().compareTo(o2.getDate());
-            }
-        }).collect(Collectors.toList());
+        return accountService.getFundingHistory(fundingHistoryParams).stream()
+                .sorted((FundingRecord o1, FundingRecord o2) -> o1.getDate().compareTo(o2.getDate()))
+                .collect(Collectors.toList());
     }
 
     public List<Wallet> getWallets() throws IOException {
         AccountService accountService = xchange.getAccountService();
         AccountInfo accountInfo = accountService.getAccountInfo();
-        return accountInfo.getWallets().values().stream().sorted(new Comparator<Wallet>() {
-            public int compare(Wallet o1, Wallet o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        }).collect(Collectors.toList());
+        return accountInfo.getWallets().values().stream().sorted((Wallet o1, Wallet o2) -> o1.getName().compareTo(o2.getName()))
+                .collect(Collectors.toList());
     }
 
     public Ticker getTicker(CurrencyPair pair) throws IOException {
