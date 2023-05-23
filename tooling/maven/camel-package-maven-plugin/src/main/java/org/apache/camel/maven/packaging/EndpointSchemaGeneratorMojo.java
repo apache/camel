@@ -864,10 +864,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         model.setDeprecationNote(deprecationNote);
         model.setDeprecatedSince(project.getProperties().getProperty("deprecatedSince"));
 
-        // these information is not available at compile time and we enrich
+        // this information is not available at compile time, and we enrich
         // these later during the camel-package-maven-plugin
         if (model.getJavaType() == null) {
-            throw new IllegalStateException("Could not find component java type");
+            throw new IllegalStateException("Could not find @Component(\"" + scheme + "\") annotated class.");
         }
 
         // favor to use endpoint class javadoc as description
