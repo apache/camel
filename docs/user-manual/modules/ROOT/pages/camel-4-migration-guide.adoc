@@ -199,6 +199,12 @@ To use attributes instead:
 
 == Component changes
 
+=== Category
+
+The number of enums for `org.apache.camel.Category` has been reduced from 83 to 37, which means custom components
+that are using removed values need to choose one of the remainder values. We have done this to consolidate
+the number of categories of all components in the Camel community.
+
 === camel-azure-cosmosdb
 
 The `itemPartitionKey` has been updated. It's now a String a not a PartitionKey anymore. More details in CAMEL-19222.
@@ -269,7 +275,7 @@ The metrics has been renamed to follow Micrometer naming convention https://micr
 | CamelRoutesRunning | camel.routes.running
 |===
 
-== camel-jbang
+=== camel-jbang
 
 The command `camel dependencies` has been renamed to `camel dependency`.
 
