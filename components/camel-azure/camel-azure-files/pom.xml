@@ -36,6 +36,8 @@
     <description>Camel Azure Files Component</description>
 
     <properties>
+        <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
+
 <!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jdk.version>11</jdk.version

@@ -44,3 +44,44 @@ https://camel.apache.org/manual/what-are-the-dependencies.html
 
 Java 17, and Camel 4 port, might come later after Java 17 and its tools
 chain is approved by our security team.
+
+### Eclipse
+
+Eclipse 2023-03 detects Java version to be used for executing maven from 
+`maven-enforcer-plugin` configuration. 
+          
+https://github.com/eclipse-m2e/m2e-core/blob/master/RELEASE_NOTES.md#220
+
+Investigating the component pom's parents chain, I have found at the top-most parent pom:
+
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>29</version>
+
+    <properties>    
+      <minimalJavaBuildVersion>1.8</minimalJavaBuildVersion>
+
+    <execution>
+      <id>enforce-java-version</id>
+      <goals>
+        <goal>enforce</goal>
+      </goals>
+      <configuration>
+        <rules>
+          <requireJavaVersion>
+            <version>${minimalJavaBuildVersion}</version>
+          </requireJavaVersion>
+        </rules>
+      </configuration>
+    </execution>
+
+consequently it is better to specify in the component pom:
+
+    <properties>
+        <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
+        
+to get a warning if eclipse m2e selected a lower JDK version:
+
+    [[1;34mINFO[m] [1m--- [0;32menforcer:3.0.0:enforce[m [1m(enforce-java-version)[m @ [36mcamel-azure-files[0;1m ---[m
+    [[1;33mWARNING[m] Rule 0: org.apache.maven.plugins.enforcer.RequireJavaVersion failed with message:
+    Detected JDK Version: 1.8.0-271 is not in the allowed range 11.
