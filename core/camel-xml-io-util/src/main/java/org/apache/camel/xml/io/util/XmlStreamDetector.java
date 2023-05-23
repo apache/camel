@@ -66,6 +66,7 @@ public class XmlStreamDetector {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+            factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
             reader = factory.createXMLStreamReader(xmlStream);
         } catch (XMLStreamException e) {
             information.problem = e;
