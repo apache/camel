@@ -58,6 +58,8 @@ public final class URISupport {
 
     private static final String CHARSET = "UTF-8";
 
+    private static final String EMPTY_QUERY_STRING = "";
+
     private URISupport() {
         // Helper class
     }
@@ -450,43 +452,43 @@ public final class URISupport {
 
     public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode)
             throws URISyntaxException {
+        if (options.isEmpty()) {
+            return EMPTY_QUERY_STRING;
+        }
+
         try {
-            if (options.size() > 0) {
-                StringBuilder rc = new StringBuilder();
-                boolean first = true;
-                for (Object o : sortedKeys) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        rc.append("&");
-                    }
-
-                    String key = (String) o;
-                    Object value = options.get(key);
-
-                    // the value may be a list since the same key has multiple
-                    // values
-                    if (value instanceof List) {
-                        List<String> list = (List<String>) value;
-                        for (Iterator<String> it = list.iterator(); it.hasNext();) {
-                            String s = it.next();
-                            appendQueryStringParameter(key, s, rc, encode);
-                            // append & separator if there is more in the list
-                            // to append
-                            if (it.hasNext()) {
-                                rc.append("&");
-                            }
-                        }
-                    } else {
-                        // use the value as a String
-                        String s = value != null ? value.toString() : null;
-                        appendQueryStringParameter(key, s, rc, encode);
-                    }
+            StringBuilder rc = new StringBuilder();
+            boolean first = true;
+            for (Object o : sortedKeys) {
+                if (first) {
+                    first = false;
+                } else {
+                    rc.append("&");
                 }
-                return rc.toString();
-            } else {
-                return "";
+
+                String key = (String) o;
+                Object value = options.get(key);
+
+                // the value may be a list since the same key has multiple
+                // values
+                if (value instanceof List) {
+                    List<String> list = (List<String>) value;
+                    for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                        String s = it.next();
+                        appendQueryStringParameter(key, s, rc, encode);
+                        // append & separator if there is more in the list
+                        // to append
+                        if (it.hasNext()) {
+                            rc.append("&");
+                        }
+                    }
+                } else {
+                    // use the value as a String
+                    String s = value != null ? value.toString() : null;
+                    appendQueryStringParameter(key, s, rc, encode);
+                }
             }
+            return rc.toString();
         } catch (UnsupportedEncodingException e) {
             URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
             se.initCause(e);
