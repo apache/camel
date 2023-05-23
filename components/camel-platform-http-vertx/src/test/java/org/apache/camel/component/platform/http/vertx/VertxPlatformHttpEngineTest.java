@@ -714,6 +714,42 @@ public class VertxPlatformHttpEngineTest {
         }
     }
 
+    @Test
+    public void testConsumerSuspended() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/get")
+                            .routeId("get")
+                            .setBody().constant("get");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("get"));
+
+            context.getRouteController().suspendRoute("get");
+
+            given()
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(404);
+
+        } finally {
+            context.stop();
+        }
+    }
+
     static CamelContext createCamelContext() throws Exception {
         return createCamelContext(null);
     }
