@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,7 +58,7 @@ public final class URISupport {
     // form "user:password").
     private static final Pattern PATH_USERINFO_PASSWORD = Pattern.compile("(.*?:)(.*)(@)");
 
-    private static final String CHARSET = "UTF-8";
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private static final String EMPTY_QUERY_STRING = "";
 
@@ -431,9 +433,8 @@ public final class URISupport {
      * @param  options            the map with the options (eg key/value pairs)
      * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
      *                            is no options.
-     * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
+    public static String createQueryString(Map<String, Object> options) {
         return createQueryString(options.keySet(), options, true);
     }
 
@@ -444,59 +445,50 @@ public final class URISupport {
      * @param  encode             whether to URL encode the query string
      * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
      *                            is no options.
-     * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    public static String createQueryString(Map<String, Object> options, boolean encode) throws URISyntaxException {
+    public static String createQueryString(Map<String, Object> options, boolean encode) {
         return createQueryString(options.keySet(), options, encode);
     }
 
-    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode)
-            throws URISyntaxException {
+    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
         if (options.isEmpty()) {
             return EMPTY_QUERY_STRING;
         }
 
-        try {
-            StringBuilder rc = new StringBuilder();
-            boolean first = true;
-            for (String key : sortedKeys) {
-                if (first) {
-                    first = false;
-                } else {
-                    rc.append("&");
-                }
-
-                Object value = options.get(key);
-
-                // the value may be a list since the same key has multiple
-                // values
-                if (value instanceof List) {
-                    List<String> list = (List<String>) value;
-                    for (Iterator<String> it = list.iterator(); it.hasNext();) {
-                        String s = it.next();
-                        appendQueryStringParameter(key, s, rc, encode);
-                        // append & separator if there is more in the list
-                        // to append
-                        if (it.hasNext()) {
-                            rc.append("&");
-                        }
-                    }
-                } else {
-                    // use the value as a String
-                    String s = value != null ? value.toString() : null;
-                    appendQueryStringParameter(key, s, rc, encode);
-                }
+        StringBuilder rc = new StringBuilder();
+        boolean first = true;
+        for (String key : sortedKeys) {
+            if (first) {
+                first = false;
+            } else {
+                rc.append("&");
             }
-            return rc.toString();
-        } catch (UnsupportedEncodingException e) {
-            URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
-            se.initCause(e);
-            throw se;
+
+            Object value = options.get(key);
+
+            // the value may be a list since the same key has multiple
+            // values
+            if (value instanceof List) {
+                List<String> list = (List<String>) value;
+                for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                    String s = it.next();
+                    appendQueryStringParameter(key, s, rc, encode);
+                    // append & separator if there is more in the list
+                    // to append
+                    if (it.hasNext()) {
+                        rc.append("&");
+                    }
+                }
+            } else {
+                // use the value as a String
+                String s = value != null ? value.toString() : null;
+                appendQueryStringParameter(key, s, rc, encode);
+            }
         }
+        return rc.toString();
     }
 
-    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
-            throws UnsupportedEncodingException {
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) {
         if (encode) {
             String encoded = URLEncoder.encode(key, CHARSET);
             rc.append(encoded);

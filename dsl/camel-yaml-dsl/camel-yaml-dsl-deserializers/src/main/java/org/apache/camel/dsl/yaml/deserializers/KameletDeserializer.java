@@ -94,11 +94,7 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
         }
 
         if (parameters != null) {
-            try {
-                name += "?" + URISupport.createQueryString(parameters, false);
-            } catch (URISyntaxException e) {
-                throw new YamlDeserializationException(node, "Error creating endpoint query string", e);
-            }
+            name += "?" + URISupport.createQueryString(parameters, false);
         }
 
         target.setName(name);
