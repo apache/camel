@@ -512,7 +512,7 @@ public final class URISupport {
         if (raw != null) {
             // do not encode RAW parameters unless it has %
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = value.replace("%", "%25");
+            final String s = URIScanner.replacePercent(value);
             rc.append(s);
         } else {
             if (encode) {

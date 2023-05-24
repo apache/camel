@@ -161,7 +161,8 @@ class URIScanner {
             text = value.toString();
         } else {
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = value.toString().replace("%", "%25");
+            final String s = replacePercent(value.toString());
+
             text = URLDecoder.decode(s, CHARSET);
         }
 
@@ -257,6 +258,14 @@ class URIScanner {
 
         // not RAW value
         return null;
+    }
+
+    public static String replacePercent(String input) {
+        if (input.contains("%")) {
+            return input.replace("%", "%25");
+        }
+
+        return input;
     }
 
 }
