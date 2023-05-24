@@ -300,7 +300,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 500
+         * Default: 10000
          * Group: scheduler
          * 
          * @param delay the value to set
@@ -315,7 +315,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 500
+         * Default: 10000
          * Group: scheduler
          * 
          * @param delay the value to set

@@ -41,6 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
+    public static final long DEFAULT_CONSUMER_DELAY = 10 * 1000L;
+
     private static final int CONVERSATIONS_LIST_LIMIT = 200;
     private final SlackEndpoint slackEndpoint;
     private Slack slack;
