@@ -1115,20 +1115,21 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * Hours to keep long running transactions in transaction buffer between
-         * log mining sessions. By default, all transactions are retained.
+         * Duration in milliseconds to keep long running transactions in
+         * transaction buffer between log mining sessions. By default, all
+         * transactions are retained.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
+         * Default: 0ms
          * Group: oracle
          * 
-         * @param logMiningTransactionRetentionHours the value to set
+         * @param logMiningTransactionRetentionMs the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleComponentBuilder logMiningTransactionRetentionHours(
-                long logMiningTransactionRetentionHours) {
-            doSetProperty("logMiningTransactionRetentionHours", logMiningTransactionRetentionHours);
+        default DebeziumOracleComponentBuilder logMiningTransactionRetentionMs(
+                long logMiningTransactionRetentionMs) {
+            doSetProperty("logMiningTransactionRetentionMs", logMiningTransactionRetentionMs);
             return this;
         }
         /**
@@ -1857,7 +1858,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningSleepTimeMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSleepTimeMaxMs((long) value); return true;
             case "logMiningSleepTimeMinMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSleepTimeMinMs((long) value); return true;
             case "logMiningStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningStrategy((java.lang.String) value); return true;
-            case "logMiningTransactionRetentionHours": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningTransactionRetentionHours((long) value); return true;
+            case "logMiningTransactionRetentionMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningTransactionRetentionMs((long) value); return true;
             case "logMiningUsernameExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningUsernameExcludeList((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxQueueSize((int) value); return true;
