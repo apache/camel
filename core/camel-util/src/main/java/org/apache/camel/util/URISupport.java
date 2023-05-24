@@ -455,7 +455,7 @@ public final class URISupport {
             return EMPTY_QUERY_STRING;
         }
 
-        StringBuilder rc = new StringBuilder();
+        StringBuilder rc = new StringBuilder(128);
         boolean first = true;
         for (String key : sortedKeys) {
             if (first) {
