@@ -1449,6 +1449,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
                                         getExceptionHandler()
                                                 .handleException("Failed to move recovered Exchange to dead letter channel: "
                                                                  + recoverable.getDeadLetterUri(),
+                                                        exchange,
                                                         exchange.getException());
                                     } else {
                                         // it was ok, so confirm after it has been moved to dead letter channel, so we wont recover it again

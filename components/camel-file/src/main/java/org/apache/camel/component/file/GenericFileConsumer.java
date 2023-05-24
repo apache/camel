@@ -407,11 +407,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
             if (beginCause != null) {
                 String msg = endpoint + " cannot begin processing file: " + file + " due to: " + beginCause.getMessage();
-                handleException(msg, beginCause);
+                handleException(msg, exchange, beginCause);
             }
             if (abortCause != null) {
                 String msg2 = endpoint + " cannot abort processing file: " + file + " due to: " + abortCause.getMessage();
-                handleException(msg2, abortCause);
+                handleException(msg2, exchange, abortCause);
             }
             return false;
         }
@@ -503,7 +503,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             endpoint.getInProgressRepository().remove(absoluteFileName);
 
             String msg = "Error processing file " + file + " due to " + e.getMessage();
-            handleException(msg, e);
+            handleException(msg, exchange, e);
         }
 
         return true;
@@ -548,7 +548,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             LOG.debug("{} error custom processing: {} due to: {}. This exception will be ignored.",
                     endpoint, file, e.getMessage(), e);
 
-            handleException(e);
+            handleException("Error during custom processing", exchange, e);
         } finally {
             // always remove file from the in progress list as its no longer in
             // progress
