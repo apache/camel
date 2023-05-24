@@ -322,7 +322,8 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
 
     protected void postProcess(Exchange exchange) {
         if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, exchange.getException());
+            getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, exchange,
+                    exchange.getException());
         }
     }
 
@@ -512,7 +513,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                     } catch (Exception t) {
                         e.setException(t);
                     } catch (Throwable t) {
-                        getExceptionHandler().handleException(t);
+                        getExceptionHandler().handleException("Error adding exchange", e, t);
                     }
                     if (exchangeId != null && exchangeId.equals(e.getExchangeId())) {
                         // this batch is complete so stop draining
