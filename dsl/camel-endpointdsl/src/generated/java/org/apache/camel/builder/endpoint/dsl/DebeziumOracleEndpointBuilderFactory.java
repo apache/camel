@@ -1515,37 +1515,39 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Hours to keep long running transactions in transaction buffer between
-         * log mining sessions. By default, all transactions are retained.
+         * Duration in milliseconds to keep long running transactions in
+         * transaction buffer between log mining sessions. By default, all
+         * transactions are retained.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
+         * Default: 0ms
          * Group: oracle
          * 
-         * @param logMiningTransactionRetentionHours the value to set
+         * @param logMiningTransactionRetentionMs the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleEndpointBuilder logMiningTransactionRetentionHours(
-                long logMiningTransactionRetentionHours) {
-            doSetProperty("logMiningTransactionRetentionHours", logMiningTransactionRetentionHours);
+        default DebeziumOracleEndpointBuilder logMiningTransactionRetentionMs(
+                long logMiningTransactionRetentionMs) {
+            doSetProperty("logMiningTransactionRetentionMs", logMiningTransactionRetentionMs);
             return this;
         }
         /**
-         * Hours to keep long running transactions in transaction buffer between
-         * log mining sessions. By default, all transactions are retained.
+         * Duration in milliseconds to keep long running transactions in
+         * transaction buffer between log mining sessions. By default, all
+         * transactions are retained.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
+         * Default: 0ms
          * Group: oracle
          * 
-         * @param logMiningTransactionRetentionHours the value to set
+         * @param logMiningTransactionRetentionMs the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleEndpointBuilder logMiningTransactionRetentionHours(
-                String logMiningTransactionRetentionHours) {
-            doSetProperty("logMiningTransactionRetentionHours", logMiningTransactionRetentionHours);
+        default DebeziumOracleEndpointBuilder logMiningTransactionRetentionMs(
+                String logMiningTransactionRetentionMs) {
+            doSetProperty("logMiningTransactionRetentionMs", logMiningTransactionRetentionMs);
             return this;
         }
         /**
