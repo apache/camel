@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.file.azure;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -46,6 +48,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +99,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     @UriParam(label = "both", description = "part of SAS token")
     protected String sig;
 
+    private LinkedHashMap<String, Object> tokenParams = new LinkedHashMap<>();
+
     public FilesEndpoint() {
     }
 
@@ -109,6 +114,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSv(String sv) {
+      tokenParams.put("sv", sv);
       this.sv = sv;
     }
 
@@ -117,6 +123,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSs(String ss) {
+      tokenParams.put("ss", ss);
       this.ss = ss;
     }
 
@@ -125,6 +132,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSrt(String srt) {
+      tokenParams.put("srt", srt);
       this.srt = srt;
     }
 
@@ -133,6 +141,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSp(String sp) {
+      tokenParams.put("sp", sp);
       this.sp = sp;
     }
 
@@ -141,6 +150,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSe(String se) {
+      tokenParams.put("se", se);
       this.se = se;
     }
 
@@ -149,6 +159,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSt(String st) {
+      tokenParams.put("st", st);
       this.st = st;
     }
 
@@ -157,6 +168,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSpr(String spr) {
+      tokenParams.put("spr", spr);
       this.spr = spr;
     }
 
@@ -165,6 +177,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSig(String sig) {
+      tokenParams.put("sig", sig);
       this.sig = sig;
     }
 
@@ -252,7 +265,12 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     
     // sv=2021-12-02&ss=f&srt=o&sp=rwdlc&se=2023-05-05T19:27:05Z&st=2023-04-28T11:27:05Z&spr=https&sig=TCU0PcBjrxRbKOW%2FLA7HrPLISin6FXLNkRtLvmxkvhY%3D"
     String token() {
-      return String.format("sv=%s&ss=%s&srt=%s&sp=%s&se=%s&st=%s&spr=%s&sig=%s", sv, ss, srt, sp, se, st, spr, sig);
+      try {
+        return URISupport.createQueryString(tokenParams);
+      }
+      catch (URISyntaxException e) {
+        return null;
+      }
     }
     
     String filesHost() {
