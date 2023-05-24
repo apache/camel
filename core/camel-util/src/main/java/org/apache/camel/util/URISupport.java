@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -210,7 +211,7 @@ public final class URISupport {
     public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
         if (uri == null || uri.isEmpty()) {
             // return an empty map
-            return new LinkedHashMap<>(0);
+            return Collections.emptyMap();
         }
 
         // must check for trailing & as the uri.split("&") will ignore those
