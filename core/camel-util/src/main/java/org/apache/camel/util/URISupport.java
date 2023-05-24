@@ -22,13 +22,14 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
@@ -436,7 +437,8 @@ public final class URISupport {
      *                            is no options.
      */
     public static String createQueryString(Map<String, Object> options) {
-        return createQueryString(options.keySet(), options, true);
+        final Set<String> keySet = options.keySet();
+        return createQueryString(keySet.toArray(new String[keySet.size()]), options, true);
     }
 
     /**
@@ -451,7 +453,7 @@ public final class URISupport {
         return createQueryString(options.keySet(), options, encode);
     }
 
-    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
+    private static String createQueryString(String[] sortedKeys, Map<String, Object> options, boolean encode) {
         if (options.isEmpty()) {
             return EMPTY_QUERY_STRING;
         }
@@ -487,6 +489,11 @@ public final class URISupport {
             }
         }
         return rc.toString();
+    }
+
+    @Deprecated
+    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
+        return createQueryString(sortedKeys.toArray(new String[sortedKeys.size()]), options, encode);
     }
 
     private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) {
@@ -646,11 +653,12 @@ public final class URISupport {
                 return buildUri(scheme, path, query);
             } else {
                 // reorder parameters a..z
-                List<String> keys = new ArrayList<>(parameters.keySet());
-                keys.sort(null);
+                final Set<String> keySet = parameters.keySet();
+                final String[] parametersArray = keySet.toArray(new String[keySet.size()]);
+                Arrays.sort(parametersArray);
 
                 // build uri object with sorted parameters
-                query = URISupport.createQueryString(keys, parameters, true);
+                query = URISupport.createQueryString(parametersArray, parameters, true);
                 return buildUri(scheme, path, query);
             }
         }
@@ -680,14 +688,17 @@ public final class URISupport {
             // only parse if there are parameters
             parameters = URISupport.parseQuery(query, false, false);
         }
+
         if (parameters == null || parameters.size() == 1) {
             return buildUri(scheme, path, query);
         } else {
+            final Set<String> entries = parameters.keySet();
+
             // reorder parameters a..z
             // optimize and only build new query if the keys was resorted
             boolean sort = false;
             String prev = null;
-            for (String key : parameters.keySet()) {
+            for (String key : entries) {
                 if (prev == null) {
                     prev = key;
                 } else {
@@ -700,10 +711,10 @@ public final class URISupport {
                 }
             }
             if (sort) {
-                List<String> keys = new ArrayList<>(parameters.keySet());
-                keys.sort(null);
-                // rebuild query with sorted parameters
-                query = URISupport.createQueryString(keys, parameters, true);
+                final String[] array = entries.toArray(new String[entries.size()]);
+                Arrays.sort(array);
+
+                query = URISupport.createQueryString(array, parameters, true);
             }
 
             return buildUri(scheme, path, query);
