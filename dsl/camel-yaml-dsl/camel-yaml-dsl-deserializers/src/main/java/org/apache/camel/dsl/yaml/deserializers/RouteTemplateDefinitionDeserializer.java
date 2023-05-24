@@ -45,7 +45,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "parameters",
                                 type = "array:org.apache.camel.model.RouteTemplateParameterDefinition"),
                   @YamlProperty(name = "beans",
-                                type = "array:org.apache.camel.model.app.RegistryBeanDefinition")
+                                type = "array:org.apache.camel.model.RouteTemplateBeanDefinition")
           })
 public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateDefinition> {
     public RouteTemplateDefinitionDeserializer() {

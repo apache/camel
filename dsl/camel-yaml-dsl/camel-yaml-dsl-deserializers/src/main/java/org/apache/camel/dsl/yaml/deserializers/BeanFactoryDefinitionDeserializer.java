@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
-import java.util.stream.Collectors;
-
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -52,14 +50,11 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
             case "property": {
                 java.util.List<PropertyDefinition> val
                         = asFlatList(node, PropertyDefinition.class);
-                target.setProperties(val);
+                target.setPropertyDefinitions(val);
                 break;
             }
             case "properties": {
-                target.setProperties(
-                        asMap(node).entrySet().stream()
-                                .map(e -> new PropertyDefinition(e.getKey(), (String) e.getValue()))
-                                .collect(Collectors.toList()));
+                target.setProperties(asMap(node));
                 break;
             }
             case "script": {

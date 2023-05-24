@@ -19,6 +19,7 @@ package org.apache.camel.spring.routebuilder;
 public class MyLocalBean {
 
     private String prefix;
+    private String suffix;
 
     public String getPrefix() {
         return prefix;
@@ -28,7 +29,15 @@ public class MyLocalBean {
         this.prefix = prefix;
     }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
     public String hello(String body) {
-        return prefix + " " + body;
+        return prefix + " " + body + suffix;
     }
 }

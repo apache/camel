@@ -38,10 +38,11 @@ public class SpringRouteTemplateLocalBeanTest extends SpringTestSupport {
         parameters.put("foo", "one");
         parameters.put("bar", "cheese");
         parameters.put("greeting", "Davs");
+        parameters.put("suffix", "!!!");
         context.addRouteFromTemplate("first", "myTemplate", parameters);
 
         MockEndpoint mock = getMockEndpoint("mock:cheese");
-        mock.expectedBodiesReceived("Davs World");
+        mock.expectedBodiesReceived("Davs World!!!");
 
         template.sendBody("direct:one", "World");
 

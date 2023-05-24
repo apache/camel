@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +25,10 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.app.BeanPropertiesAdapter;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -56,7 +58,10 @@ public abstract class BeanFactoryDefinition<
     @Metadata(label = "advanced")
     private String beanType;
     @XmlElement(name = "property")
-    private List<PropertyDefinition> properties;
+    private List<PropertyDefinition> propertyDefinitions;
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
+    private Map<String, Object> properties;
     @XmlElement(name = "script")
     @Metadata(label = "advanced")
     private String script;
@@ -120,15 +125,33 @@ public abstract class BeanFactoryDefinition<
         return beanClass;
     }
 
-    public List<PropertyDefinition> getProperties() {
+    public Map<String, Object> getProperties() {
         return properties;
     }
 
     /**
      * Optional properties to set on the created local bean
      */
-    public void setProperties(List<PropertyDefinition> properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    public List<PropertyDefinition> getPropertyDefinitions() {
+        return propertyDefinitions;
+    }
+
+    /**
+     * Optional properties to set on the created local bean
+     */
+    public void setPropertyDefinitions(List<PropertyDefinition> propertyDefinitions) {
+        this.propertyDefinitions = propertyDefinitions;
+    }
+
+    public void addProperty(PropertyDefinition property) {
+        if (propertyDefinitions == null) {
+            propertyDefinitions = new LinkedList<>();
+        }
+        propertyDefinitions.add(property);
     }
 
     public RouteTemplateContext.BeanSupplier<Object> getBeanSupplier() {
@@ -354,10 +377,10 @@ public abstract class BeanFactoryDefinition<
      */
     @SuppressWarnings("unchecked")
     public T property(String key, String value) {
-        if (properties == null) {
-            properties = new ArrayList<>();
+        if (propertyDefinitions == null) {
+            propertyDefinitions = new LinkedList<>();
         }
-        properties.add(new PropertyDefinition(key, value));
+        propertyDefinitions.add(new PropertyDefinition(key, value));
         return (T) this;
     }
 
@@ -365,11 +388,8 @@ public abstract class BeanFactoryDefinition<
      * Sets properties to set on the created local bean
      */
     @SuppressWarnings("unchecked")
-    public T properties(Map<String, String> properties) {
-        if (this.properties == null) {
-            this.properties = new ArrayList<>();
-        }
-        properties.forEach((k, v) -> this.properties.add(new PropertyDefinition(k, v)));
+    public T properties(Map<String, Object> properties) {
+        this.properties = properties;
         return (T) this;
     }
 
