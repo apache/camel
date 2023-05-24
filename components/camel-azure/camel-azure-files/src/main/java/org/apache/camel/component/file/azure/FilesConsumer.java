@@ -295,10 +295,10 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         file.setLastModified(modified);
         // TODO remove unnecessary conditions?
         if (length >= 0) {
-            message.setHeader(FilesConstants.FILE_LENGTH, length);
+            message.setHeader(FilesHeaders.FILE_LENGTH, length);
         }
         if (modified >= 0) {
-            message.setHeader(FilesConstants.FILE_LAST_MODIFIED, modified);
+            message.setHeader(FilesHeaders.FILE_LAST_MODIFIED, modified);
         }
     }
 

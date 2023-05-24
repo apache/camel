@@ -54,9 +54,9 @@ import com.azure.storage.file.share.ShareServiceClientBuilder;
 import com.azure.storage.file.share.models.ShareFileItem;
 
 // , extendsScheme = "file"   in FTPS but AzureBlob does not have it
-@UriEndpoint(firstVersion = "3.21.0", scheme = "azure-files", title = "Azure Files",
-             syntax = "azure-files:host/share",
-             category = { Category.CLOUD, Category.FILE }, headersClass = FilesConstants.class)
+@UriEndpoint(firstVersion = "3.21.0", scheme = "azure-files", extendsScheme = "file", title = "Azure Files",
+             syntax = "azure-files://host/share",
+             category = { Category.CLOUD, Category.FILE }, headersClass = FilesHeaders.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
@@ -251,13 +251,18 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     
     
     // sv=2021-12-02&ss=f&srt=o&sp=rwdlc&se=2023-05-05T19:27:05Z&st=2023-04-28T11:27:05Z&spr=https&sig=TCU0PcBjrxRbKOW%2FLA7HrPLISin6FXLNkRtLvmxkvhY%3D"
-    private String token() {
+    String token() {
       return String.format("sv=%s&ss=%s&srt=%s&sp=%s&se=%s&st=%s&spr=%s&sig=%s", sv, ss, srt, sp, se, st, spr, sig);
     }
     
-    private String filesHost() {
+    String filesHost() {
       var base = getEndpointBaseUri();
-      return base.substring(base.indexOf(":"), base.indexOf('/'));
+      var schemeAuthSeparator = base.indexOf("://");
+      if (schemeAuthSeparator == -1) {
+        return null;
+      }
+      var from = schemeAuthSeparator + 3;
+      return base.substring(from, base.indexOf('/', from));
     }
 
     @Override

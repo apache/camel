@@ -221,7 +221,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
-        InputStream is = exchange.getIn().getHeader(FilesConstants.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+        InputStream is = exchange.getIn().getHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
         if (is != null) {
             IOHelper.close(is);
@@ -250,7 +250,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             if (endpoint.getConfiguration().isStreamDownload()) {
                 InputStream is = cwd().getFileClient(remoteName).openInputStream();
                 target.setBody(is);
-                exchange.getIn().setHeader(FilesConstants.REMOTE_FILE_INPUT_STREAM, is);
+                exchange.getIn().setHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, is);
             } else {
                 // read the entire file into memory in the byte array
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -328,7 +328,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             os = new FileOutputStream(temp, append);
 
             // set header with the path to the local work file
-            exchange.getIn().setHeader(FilesConstants.FILE_LOCAL_WORK_PATH, local.getPath());
+            exchange.getIn().setHeader(FilesHeaders.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);

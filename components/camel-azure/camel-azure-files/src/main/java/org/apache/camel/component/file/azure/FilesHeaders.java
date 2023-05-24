@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.Metadata;
 
-public final class FilesConstants {
+public final class FilesHeaders {
 
     @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long")
     public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
@@ -45,6 +45,6 @@ public final class FilesConstants {
     @Metadata(description = "The remote hostname.", javaType = "String")
     public static final String FILE_HOST = "CamelFileHost";
 
-    private FilesConstants() {
+    private FilesHeaders() {
     }
 }
