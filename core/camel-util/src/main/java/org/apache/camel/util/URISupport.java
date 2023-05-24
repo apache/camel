@@ -459,14 +459,13 @@ public final class URISupport {
         try {
             StringBuilder rc = new StringBuilder();
             boolean first = true;
-            for (Object o : sortedKeys) {
+            for (String key : sortedKeys) {
                 if (first) {
                     first = false;
                 } else {
                     rc.append("&");
                 }
 
-                String key = (String) o;
                 Object value = options.get(key);
 
                 // the value may be a list since the same key has multiple
