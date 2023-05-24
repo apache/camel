@@ -43,8 +43,12 @@ class URIScanner {
     private char rawTokenEnd;
 
     URIScanner() {
-        this.key = new StringBuilder();
-        this.value = new StringBuilder();
+        /*
+         * By default, StringBuffer has an internal buffer of 16 chars. Our keys and values may usually be larger than,
+         * therefore, start with a value slightly larger than default to avoid resizing the array in most cases.
+         */
+        this.key = new StringBuilder(32);
+        this.value = new StringBuilder(32);
     }
 
     private void initState() {
