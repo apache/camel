@@ -430,9 +430,9 @@ public final class URISupport {
     /**
      * Assembles a query from the given map.
      *
-     * @param  options            the map with the options (eg key/value pairs)
-     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
-     *                            is no options.
+     * @param  options the map with the options (eg key/value pairs)
+     * @return         a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no
+     *                 options.
      */
     public static String createQueryString(Map<String, Object> options) {
         return createQueryString(options.keySet(), options, true);
@@ -441,10 +441,10 @@ public final class URISupport {
     /**
      * Assembles a query from the given map.
      *
-     * @param  options            the map with the options (eg key/value pairs)
-     * @param  encode             whether to URL encode the query string
-     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
-     *                            is no options.
+     * @param  options the map with the options (eg key/value pairs)
+     * @param  encode  whether to URL encode the query string
+     * @return         a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no
+     *                 options.
      */
     public static String createQueryString(Map<String, Object> options, boolean encode) {
         return createQueryString(options.keySet(), options, encode);

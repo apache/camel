@@ -34,7 +34,6 @@ class URIScannerTest {
         Assertions.assertEquals("++?w0rd", resolvedRaw1);
     }
 
-
     @Test
     void testURIScannerType2() {
         final String resolvedRaw1 = URIScanner.resolveRaw("RAW{++?w0rd}");
