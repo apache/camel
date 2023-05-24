@@ -678,39 +678,43 @@ public final class URISupport {
             // no parameters then just return
             return buildUri(scheme, path, null);
         } else {
-            Map<String, Object> parameters = null;
-            if (query.indexOf('&') != -1) {
-                // only parse if there is parameters
-                parameters = URISupport.parseQuery(query, false, false);
-            }
-            if (parameters == null || parameters.size() == 1) {
-                return buildUri(scheme, path, query);
-            } else {
-                // reorder parameters a..z
-                // optimize and only build new query if the keys was resorted
-                boolean sort = false;
-                String prev = null;
-                for (String key : parameters.keySet()) {
-                    if (prev == null) {
-                        prev = key;
-                    } else {
-                        int comp = key.compareTo(prev);
-                        if (comp < 0) {
-                            sort = true;
-                            break;
-                        }
-                        prev = key;
-                    }
-                }
-                if (sort) {
-                    List<String> keys = new ArrayList<>(parameters.keySet());
-                    keys.sort(null);
-                    // rebuild query with sorted parameters
-                    query = URISupport.createQueryString(keys, parameters, true);
-                }
+            return buildReorderingParameters(scheme, path, query);
+        }
+    }
 
-                return buildUri(scheme, path, query);
+    private static String buildReorderingParameters(String scheme, String path, String query) throws URISyntaxException {
+        Map<String, Object> parameters = null;
+        if (query.indexOf('&') != -1) {
+            // only parse if there are parameters
+            parameters = URISupport.parseQuery(query, false, false);
+        }
+        if (parameters == null || parameters.size() == 1) {
+            return buildUri(scheme, path, query);
+        } else {
+            // reorder parameters a..z
+            // optimize and only build new query if the keys was resorted
+            boolean sort = false;
+            String prev = null;
+            for (String key : parameters.keySet()) {
+                if (prev == null) {
+                    prev = key;
+                } else {
+                    int comp = key.compareTo(prev);
+                    if (comp < 0) {
+                        sort = true;
+                        break;
+                    }
+                    prev = key;
+                }
             }
+            if (sort) {
+                List<String> keys = new ArrayList<>(parameters.keySet());
+                keys.sort(null);
+                // rebuild query with sorted parameters
+                query = URISupport.createQueryString(keys, parameters, true);
+            }
+
+            return buildUri(scheme, path, query);
         }
     }
 
