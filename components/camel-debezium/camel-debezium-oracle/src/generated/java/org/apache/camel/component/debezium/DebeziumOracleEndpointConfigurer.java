@@ -124,8 +124,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningSleepTimeMinMs": target.getConfiguration().setLogMiningSleepTimeMinMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingstrategy":
         case "logMiningStrategy": target.getConfiguration().setLogMiningStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "logminingtransactionretentionhours":
-        case "logMiningTransactionRetentionHours": target.getConfiguration().setLogMiningTransactionRetentionHours(property(camelContext, long.class, value)); return true;
+        case "logminingtransactionretentionms":
+        case "logMiningTransactionRetentionMs": target.getConfiguration().setLogMiningTransactionRetentionMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": target.getConfiguration().setLogMiningUsernameExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbatchsize":
@@ -322,8 +322,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningSleepTimeMinMs": return long.class;
         case "logminingstrategy":
         case "logMiningStrategy": return java.lang.String.class;
-        case "logminingtransactionretentionhours":
-        case "logMiningTransactionRetentionHours": return long.class;
+        case "logminingtransactionretentionms":
+        case "logMiningTransactionRetentionMs": return long.class;
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": return java.lang.String.class;
         case "maxbatchsize":
@@ -521,8 +521,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningSleepTimeMinMs": return target.getConfiguration().getLogMiningSleepTimeMinMs();
         case "logminingstrategy":
         case "logMiningStrategy": return target.getConfiguration().getLogMiningStrategy();
-        case "logminingtransactionretentionhours":
-        case "logMiningTransactionRetentionHours": return target.getConfiguration().getLogMiningTransactionRetentionHours();
+        case "logminingtransactionretentionms":
+        case "logMiningTransactionRetentionMs": return target.getConfiguration().getLogMiningTransactionRetentionMs();
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": return target.getConfiguration().getLogMiningUsernameExcludeList();
         case "maxbatchsize":

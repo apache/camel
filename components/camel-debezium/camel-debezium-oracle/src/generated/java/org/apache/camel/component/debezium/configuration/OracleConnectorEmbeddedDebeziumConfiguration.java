@@ -108,6 +108,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long logMiningTransactionRetentionMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "redo_log_catalog")
     private String logMiningStrategy = "redo_log_catalog";
@@ -134,8 +136,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String databaseOutServerName;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long logMiningArchiveLogHours = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private long logMiningTransactionRetentionHours = 0;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "100000")
@@ -816,6 +816,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Duration in milliseconds to keep long running transactions in transaction
+     * buffer between log mining sessions. By default, all transactions are
+     * retained.
+     */
+    public void setLogMiningTransactionRetentionMs(
+            long logMiningTransactionRetentionMs) {
+        this.logMiningTransactionRetentionMs = logMiningTransactionRetentionMs;
+    }
+
+    public long getLogMiningTransactionRetentionMs() {
+        return logMiningTransactionRetentionMs;
+    }
+
+    /**
      * A delay period before a snapshot will begin, given in milliseconds.
      * Defaults to 0 ms.
      */
@@ -991,19 +1005,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public long getLogMiningArchiveLogHours() {
         return logMiningArchiveLogHours;
-    }
-
-    /**
-     * Hours to keep long running transactions in transaction buffer between log
-     * mining sessions. By default, all transactions are retained.
-     */
-    public void setLogMiningTransactionRetentionHours(
-            long logMiningTransactionRetentionHours) {
-        this.logMiningTransactionRetentionHours = logMiningTransactionRetentionHours;
-    }
-
-    public long getLogMiningTransactionRetentionHours() {
-        return logMiningTransactionRetentionHours;
     }
 
     /**
@@ -1337,6 +1338,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "rac.nodes", racNodes);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.transaction.events.threshold", logMiningBufferTransactionEventsThreshold);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
+        addPropertyIfNotNull(configBuilder, "log.mining.transaction.retention.ms", logMiningTransactionRetentionMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "log.mining.strategy", logMiningStrategy);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
@@ -1350,7 +1352,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "database.out.server.name", databaseOutServerName);
         addPropertyIfNotNull(configBuilder, "log.mining.archive.log.hours", logMiningArchiveLogHours);
-        addPropertyIfNotNull(configBuilder, "log.mining.transaction.retention.hours", logMiningTransactionRetentionHours);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.max", logMiningBatchSizeMax);
         addPropertyIfNotNull(configBuilder, "database.pdb.name", databasePdbName);

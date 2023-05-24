@@ -74,7 +74,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningSleepTimeMaxMs");
         props.add("logMiningSleepTimeMinMs");
         props.add("logMiningStrategy");
-        props.add("logMiningTransactionRetentionHours");
+        props.add("logMiningTransactionRetentionMs");
         props.add("logMiningUsernameExcludeList");
         props.add("maxBatchSize");
         props.add("maxQueueSize");
