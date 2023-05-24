@@ -28,7 +28,10 @@ Initially I had hoped, I could reuse some classes as-is but in
 reality a copy-and-paste has been needed because of FTPFile use
 (despite impl needs only: file name, last modified and length). 
 
-A set of problems with mvn generate.
+A set of problems with mvn generate:
+ 
+  - CAMEL-19379
+  - `src/generated/.../component/generate-meta-please` workaround
 
 While cloning the fork in Github Desktop, I had selected "I want to contribute mode",
 and it updated upstream to fork's upstream i.e. https://github.com/apache/camel.git
@@ -48,7 +51,7 @@ chain is approved by our security team.
 ### Eclipse
 
 Eclipse 2023-03 detects Java version to be used for executing maven from 
-`maven-enforcer-plugin` configuration. 
+the `requireJavaVersion` element of the `maven-enforcer-plugin` configuration. 
           
 https://github.com/eclipse-m2e/m2e-core/blob/master/RELEASE_NOTES.md#220
 
@@ -85,3 +88,6 @@ to get a warning if eclipse m2e selected a lower JDK version:
     [[1;34mINFO[m] [1m--- [0;32menforcer:3.0.0:enforce[m [1m(enforce-java-version)[m @ [36mcamel-azure-files[0;1m ---[m
     [[1;33mWARNING[m] Rule 0: org.apache.maven.plugins.enforcer.RequireJavaVersion failed with message:
     Detected JDK Version: 1.8.0-271 is not in the allowed range 11.
+    
+Reported as CAMEL-19384.
+
