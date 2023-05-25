@@ -22,7 +22,6 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
-
 @UriParams
 public class FilesConfiguration extends RemoteFileConfiguration {
 

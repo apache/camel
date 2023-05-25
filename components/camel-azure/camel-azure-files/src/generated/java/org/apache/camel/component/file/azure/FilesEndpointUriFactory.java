@@ -139,9 +139,17 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("useList");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(11);
         secretProps.add("account");
         secretProps.add("password");
+        secretProps.add("se");
+        secretProps.add("sig");
+        secretProps.add("sp");
+        secretProps.add("spr");
+        secretProps.add("srt");
+        secretProps.add("ss");
+        secretProps.add("st");
+        secretProps.add("sv");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);

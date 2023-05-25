@@ -19,6 +19,7 @@ package org.apache.camel.component.file.azure;
 import java.net.URI;
 import java.util.Map;
 
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -26,8 +27,6 @@ import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
-
-import com.azure.storage.file.share.models.ShareFileItem;
 
 /**
  * Azure Files Component

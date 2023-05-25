@@ -25,9 +25,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.EmptyStackException;
-import java.util.Iterator;
 import java.util.Stack;
 
+import com.azure.core.util.Context;
+import com.azure.storage.file.share.ShareDirectoryClient;
+import com.azure.storage.file.share.ShareServiceClient;
+import com.azure.storage.file.share.models.ShareFileItem;
+import com.azure.storage.file.share.models.ShareFileRange;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.FileComponent;
@@ -39,22 +43,12 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.task.BlockingTask;
-import org.apache.camel.support.task.Tasks;
-import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.azure.core.util.Context;
-import com.azure.storage.file.share.ShareClient;
-import com.azure.storage.file.share.ShareDirectoryClient;
-import com.azure.storage.file.share.ShareServiceClient;
-import com.azure.storage.file.share.models.ShareFileItem;
-import com.azure.storage.file.share.models.ShareFileRange;
 
 public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
@@ -144,9 +138,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     private ShareDirectoryClient cwd() {
-      return dirStack.peek();
+        return dirStack.peek();
     }
-    
+
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         log.debug("Renaming file: {} to: {}", from, to);
@@ -169,30 +163,30 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         try {
 
             boolean success;
-        
+
             // maybe the full directory already exists
             try {
-              changeCurrentDirectory(directory);
-              success = true;
+                changeCurrentDirectory(directory);
+                success = true;
             } catch (RuntimeException ex) {
-              success = false;
+                success = false;
             }
             if (!success) {
                 if (absolute) {
-                  changeCurrentDirectory("/");
+                    changeCurrentDirectory("/");
                 }
                 log.trace("Trying to build remote directory: {}", directory);
                 success = buildDirectoryChunks(directory);
             }
 
             return success;
-            
+
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
-          dirStack = (Stack<ShareDirectoryClient>) backup;
+            dirStack = (Stack<ShareDirectoryClient>) backup;
         }
-        
+
     }
 
     @Override
@@ -213,7 +207,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (GenericFileOperationFailedException e) {
             throw e;
         } finally {
-          dirStack = (Stack<ShareDirectoryClient>) backup;
+            dirStack = (Stack<ShareDirectoryClient>) backup;
         }
 
         return answer;
@@ -231,7 +225,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         try {
-            GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            GenericFile<ShareFileItem> target
+                    = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             org.apache.camel.util.ObjectHelper.notNull(target,
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
@@ -264,7 +259,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
-        
+
         return true;
     }
 
@@ -278,7 +273,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
         try {
             // use relative filename in local work directory
-            GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            GenericFile<ShareFileItem> target
+                    = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             org.apache.camel.util.ObjectHelper.notNull(target,
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
@@ -336,7 +332,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
         boolean result;
         try {
-            GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            GenericFile<ShareFileItem> target
+                    = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             // store the java.io.File handle as the body
             target.setBody(local);
 
@@ -359,7 +356,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 range = new ShareFileRange(existingSize);
             }
             log.trace("Client retrieveFile: {}", remoteName);
-            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, false, Duration.ofSeconds(300), Context.NONE);
+            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, false, Duration.ofSeconds(300),
+                    Context.NONE);
             result = ret.getStatusCode() == 200;
 
         } catch (RuntimeException e) {
@@ -415,7 +413,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         String path = FileUtil.onlyPath(name);
         String targetName = name;
         var backup = dirStack.clone();
-        
+
         try {
             if (path != null) {
 
@@ -531,13 +529,13 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         try {
             if (directory != null) {
                 changeCurrentDirectory(directory);
-            } 
+            }
             var file = cwd().getFileClient(onlyName);
             return file.exists();
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
-          dirStack = (Stack<ShareDirectoryClient>) backup;
+            dirStack = (Stack<ShareDirectoryClient>) backup;
         }
     }
 
@@ -598,7 +596,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 var subDir = cwd().getSubdirectoryClient(pathStep);
                 success = subDir != null;
                 if (success) {
-                  dirStack.push(subDir);
+                    dirStack.push(subDir);
                 }
             }
         } catch (RuntimeException e) {
@@ -606,7 +604,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
         if (!success) {
             throw new GenericFileOperationFailedException(
-                     "Cannot change directory to: " + pathStep);
+                    "Cannot change directory to: " + pathStep);
         }
     }
 
@@ -645,7 +643,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
-          dirStack = (Stack<ShareDirectoryClient>) backup;
+            dirStack = (Stack<ShareDirectoryClient>) backup;
         }
     }
 
@@ -683,9 +681,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 var subDir = cwd().createSubdirectoryIfNotExists(directory);
                 success = subDir != null;
                 if (success) {
-                  dirStack.push(subDir);
+                    dirStack.push(subDir);
                 } else {
-                  break;
+                    break;
                 }
             }
         }

@@ -17,11 +17,11 @@
 package org.apache.camel.component.file.azure;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
+import com.azure.storage.file.share.ShareServiceClient;
+import com.azure.storage.file.share.ShareServiceClientBuilder;
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Category;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
@@ -41,21 +41,13 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSepara
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
-import org.apache.camel.component.file.remote.RemoteFileProducer;
-import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.azure.storage.file.share.ShareServiceClient;
-import com.azure.storage.file.share.ShareServiceClientBuilder;
-import com.azure.storage.file.share.models.ShareFileItem;
 
 // , extendsScheme = "file"   in FTPS but AzureBlob does not have it
 @UriEndpoint(firstVersion = "3.21.0", scheme = "azure-files", extendsScheme = "file", title = "Azure Files",
@@ -82,7 +74,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     protected boolean transferLoggingVerbose;
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
-    
+
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sv;
     @UriParam(label = "both", description = "part of SAS token", secret = true)
@@ -102,7 +94,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
 
     private LinkedHashMap<String, Object> tokenParams = new LinkedHashMap<>();
     private Token token = new Token();
-    
+
     public FilesEndpoint() {
     }
 
@@ -112,75 +104,75 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public String getSv() {
-      return sv;
+        return sv;
     }
 
     public void setSv(String sv) {
-      token.setSv(sv);
-      this.sv = sv;
+        token.setSv(sv);
+        this.sv = sv;
     }
 
     public String getSs() {
-      return ss;
+        return ss;
     }
 
     public void setSs(String ss) {
-      token.setSs(ss);
-      this.ss = ss;
+        token.setSs(ss);
+        this.ss = ss;
     }
 
     public String getSrt() {
-      return srt;
+        return srt;
     }
 
     public void setSrt(String srt) {
-      token.setSrt(srt);
-      this.srt = srt;
+        token.setSrt(srt);
+        this.srt = srt;
     }
 
     public String getSp() {
-      return sp;
+        return sp;
     }
 
     public void setSp(String sp) {
-      token.setSp(sp);
-      this.sp = sp;
+        token.setSp(sp);
+        this.sp = sp;
     }
 
     public String getSe() {
-      return se;
+        return se;
     }
 
     public void setSe(String se) {
-      token.setSe(se);
-      this.se = se;
+        token.setSe(se);
+        this.se = se;
     }
 
     public String getSt() {
-      return st;
+        return st;
     }
 
     public void setSt(String st) {
-      token.setSt(st);
-      this.st = st;
+        token.setSt(st);
+        this.st = st;
     }
 
     public String getSpr() {
-      return spr;
+        return spr;
     }
 
     public void setSpr(String spr) {
-      token.setSpr(spr);
-      this.spr = spr;
+        token.setSpr(spr);
+        this.spr = spr;
     }
 
     public String getSig() {
-      return sig;
+        return sig;
     }
 
     public void setSig(String sig) {
-      token.setSig(sig);
-      this.sig = sig;
+        token.setSig(sig);
+        this.sig = sig;
     }
 
     @Override
@@ -198,18 +190,18 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         }
         return super.createConsumer(processor);
     }
-    
+
     public String getShare() {
-      var base = getEndpointBaseUri();
-      var path = URI.create(base).getPath();
-      if (path == null || path.isBlank() || !path.startsWith("/")) {
-        return null;
-      }
-      var share = path.substring(1);
-      if (share.contains("/")) {
-        share = share.substring(0, share.indexOf('/'));
-      }
-      return share;
+        var base = getEndpointBaseUri();
+        var path = URI.create(base).getPath();
+        if (path == null || path.isBlank() || !path.startsWith("/")) {
+            return null;
+        }
+        var share = path.substring(1);
+        if (share.contains("/")) {
+            share = share.substring(0, share.indexOf('/'));
+        }
+        return share;
     }
 
     @Override
@@ -235,16 +227,16 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         }
     }
 
-
     private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
         return new FileMoveExistingStrategy() {
-          @Override
-          public boolean moveExistingFile(GenericFileEndpoint endpoint,
-              GenericFileOperations operations, String fileName)
-              throws GenericFileOperationFailedException {
-            LOG.warn("The fileExist=Move option is not supported.");
-            return false;
-          }
+            @Override
+            public boolean moveExistingFile(
+                    GenericFileEndpoint endpoint,
+                    GenericFileOperations operations, String fileName)
+                    throws GenericFileOperationFailedException {
+                LOG.warn("The fileExist=Move option is not supported.");
+                return false;
+            }
         };
     }
 
@@ -269,23 +261,23 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
      */
     protected ShareServiceClient createClient() throws Exception {
         // TODO take from signed protocol? it would be token only 
-        ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost()).sasToken(token().toURIQuery()).buildClient();
+        ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost())
+                .sasToken(token().toURIQuery()).buildClient();
         return client;
     }
-    
-    
+
     Token token() {
-      return token;
+        return token;
     }
-    
+
     String filesHost() {
-      var base = getEndpointBaseUri();
-      var schemeAuthSeparator = base.indexOf("://");
-      if (schemeAuthSeparator == -1) {
-        return null;
-      }
-      var from = schemeAuthSeparator + 3;
-      return base.substring(from, base.indexOf('/', from));
+        var base = getEndpointBaseUri();
+        var schemeAuthSeparator = base.indexOf("://");
+        if (schemeAuthSeparator == -1) {
+            return null;
+        }
+        var from = schemeAuthSeparator + 3;
+        return base.substring(from, base.indexOf('/', from));
     }
 
     @Override

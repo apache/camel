@@ -18,6 +18,7 @@ package org.apache.camel.component.file.azure.strategy;
 
 import java.time.Duration;
 
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
@@ -31,8 +32,6 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.azure.storage.file.share.models.ShareFileItem;
-
 public class FilesChangedExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<ShareFileItem> {
     private static final Logger LOG = LoggerFactory.getLogger(FilesChangedExclusiveReadLockStrategy.class);
     private long timeout;
@@ -44,7 +43,8 @@ public class FilesChangedExclusiveReadLockStrategy implements GenericFileExclusi
 
     @Override
     public void prepareOnStartup(
-            GenericFileOperations<ShareFileItem> tGenericFileOperations, GenericFileEndpoint<ShareFileItem> tGenericFileEndpoint)
+            GenericFileOperations<ShareFileItem> tGenericFileOperations,
+            GenericFileEndpoint<ShareFileItem> tGenericFileEndpoint)
             throws Exception {
         // noop
     }
@@ -63,7 +63,8 @@ public class FilesChangedExclusiveReadLockStrategy implements GenericFileExclusi
                 .withName("ftp-acquire-exclusive-read-lock")
                 .build();
 
-        FilesExclusiveReadLockCheck exclusiveReadLockCheck = new FilesExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
+        FilesExclusiveReadLockCheck exclusiveReadLockCheck
+                = new FilesExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
 
         if (!task.run(() -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
             CamelLogger.log(LOG, readLockLoggingLevel,

@@ -19,16 +19,15 @@ package org.apache.camel.component.file.azure.strategy;
 
 import java.util.Date;
 
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.azure.storage.file.share.models.ShareFileItem;
-
 public class FilesExclusiveReadLockCheck {
-  // based on misnamed ExclusiveReadLockCheck, in reality it's FTP specific
+    // based on misnamed ExclusiveReadLockCheck, in reality it's FTP specific
     private static final Logger LOG = LoggerFactory.getLogger(FilesExclusiveReadLockCheck.class);
     private final boolean fastExistsCheck;
     private final long startTime;
@@ -50,7 +49,8 @@ public class FilesExclusiveReadLockCheck {
         this.length = Long.MIN_VALUE;
     }
 
-    public boolean tryAcquireExclusiveReadLock(GenericFileOperations<ShareFileItem> operations, GenericFile<ShareFileItem> file) {
+    public boolean tryAcquireExclusiveReadLock(
+            GenericFileOperations<ShareFileItem> operations, GenericFile<ShareFileItem> file) {
         long newLastModified = 0;
         long newLength = 0;
 
@@ -133,8 +133,8 @@ public class FilesExclusiveReadLockCheck {
         return newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
                 || minAge != 0 && newLastModified < newOlderThan);
     }
-    
+
     private static long lastModified(ShareFileItem file) {
-      return file.getProperties().getLastModified().toInstant().toEpochMilli();
+        return file.getProperties().getLastModified().toInstant().toEpochMilli();
     }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.file.azure.strategy;
 
 import java.util.Map;
 
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
@@ -29,9 +30,6 @@ import org.apache.camel.component.file.strategy.GenericFileNoOpProcessStrategy;
 import org.apache.camel.component.file.strategy.GenericFileRenameExclusiveReadLockStrategy;
 import org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.net.ftp.FTPFile;
-
-import com.azure.storage.file.share.models.ShareFileItem;
 
 public final class FilesProcessStrategyFactory implements GenericFileProcessStrategyFactory<ShareFileItem> {
 
@@ -93,7 +91,8 @@ public final class FilesProcessStrategyFactory implements GenericFileProcessStra
     }
 
     @SuppressWarnings("unchecked")
-    private static GenericFileExclusiveReadLockStrategy<ShareFileItem> getExclusiveReadLockStrategy(Map<String, Object> params) {
+    private static GenericFileExclusiveReadLockStrategy<ShareFileItem> getExclusiveReadLockStrategy(
+            Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<ShareFileItem> strategy
                 = (GenericFileExclusiveReadLockStrategy<ShareFileItem>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {

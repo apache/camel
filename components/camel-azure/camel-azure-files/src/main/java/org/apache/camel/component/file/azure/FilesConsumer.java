@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -35,12 +36,9 @@ import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.azure.storage.file.share.models.ShareFileItem;
 
 @ManagedResource(description = "Managed Azure Files Consumer")
 public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
@@ -51,8 +49,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     private transient String toString;
 
-    public FilesConsumer(RemoteFileEndpoint<ShareFileItem> endpoint, Processor processor, RemoteFileOperations<ShareFileItem> fileOperations,
-                       GenericFileProcessStrategy processStrategy) {
+    public FilesConsumer(RemoteFileEndpoint<ShareFileItem> endpoint, Processor processor,
+                         RemoteFileOperations<ShareFileItem> fileOperations,
+                         GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
@@ -109,7 +108,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return answer;
     }
 
-    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ShareFileItem>> fileList, int depth) {
+    protected boolean pollSubDirectory(
+            String absolutePath, String dirName, List<GenericFile<ShareFileItem>> fileList, int depth) {
         boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         operations.changeToParentDirectory();
@@ -117,7 +117,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     @Override
-    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<ShareFileItem>> fileList, int depth) {
+    protected boolean doPollDirectory(
+            String absolutePath, String dirName, List<GenericFile<ShareFileItem>> fileList, int depth) {
         LOG.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 
         depth++;
@@ -153,7 +154,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private boolean handleFtpEntries(
-            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files, ShareFileItem file) {
+            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files,
+            ShareFileItem file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), !file.isDirectory());
         }
@@ -174,7 +176,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private boolean handleDirectory(
-            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files, ShareFileItem file) {
+            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files,
+            ShareFileItem file) {
         RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
             // recursive scan and add the sub files and folders
@@ -189,7 +192,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private void handleFile(
-            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files, ShareFileItem file) {
+            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files,
+            ShareFileItem file) {
         RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
         if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
             // matched file so add
@@ -209,7 +213,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private ShareFileItem[] getFtpFiles(String dir) {
-      ShareFileItem[] files = null;
+        ShareFileItem[] files = null;
         try {
             LOG.trace("Polling directory: {}", dir);
             files = listFiles(dir);
@@ -309,8 +313,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
         return toString;
     }
-    
+
     private static long lastModified(ShareFileItem file) {
-      return file.getProperties().getLastModified().toInstant().toEpochMilli();
+        return file.getProperties().getLastModified().toInstant().toEpochMilli();
     }
 }
