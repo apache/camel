@@ -29,7 +29,7 @@ public class FilesEndpointTests extends CamelTestSupport {
     // using URISupport sig=gj+UKSiCWSHmcubvGhyJhatkP8hkbXkrmV++Zme+CxI=
     //  leads to "Signature size is invalid" response from server
     // likely need to post-process replacing + by %2B 
-    // Camel also sorted params befor calling setters
+    // Camel also sorted params before calling setters
     var endpoint = context.getEndpoint(
         "azure-files://host/share?" + plainToken, FilesEndpoint.class);
     assertEquals(
@@ -40,7 +40,7 @@ public class FilesEndpointTests extends CamelTestSupport {
   
   @Test
   void shareForValidURIShouldBeExtracted() {
-    var endpoint = context.getEndpoint("azure-files://host/share", FilesEndpoint.class);
+    var endpoint = context.getEndpoint("azure-files://host/share?", FilesEndpoint.class);
     assertEquals("share", endpoint.getShare());
   }
   

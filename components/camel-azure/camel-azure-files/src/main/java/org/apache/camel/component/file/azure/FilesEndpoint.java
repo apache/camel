@@ -267,7 +267,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
      * @throws Exception may throw client-specific exceptions if the client cannot be created
      */
     protected ShareServiceClient createClient() throws Exception {
-        ShareServiceClient client = new ShareServiceClientBuilder().endpoint(filesHost()).sasToken(token()).buildClient();
+        // TODO take from signed protocol? it would be token only 
+        ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost()).sasToken(token()).buildClient();
         return client;
     }
     
