@@ -57,11 +57,11 @@ public class FilesConfiguration extends RemoteFileConfiguration {
         var dir = "";
         var separator = path.indexOf('/');
         if (separator > 1) {
-          dir = path.substring(separator);
+            dir = path.substring(separator);
         }
         super.setDirectory(dir);
     }
-    
+
     /**
      * Account to use for login
      */

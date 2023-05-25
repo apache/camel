@@ -38,6 +38,9 @@ and it updated upstream to fork's upstream i.e. https://github.com/apache/camel.
 it's likely at cause of subsequent problems so changing the upstream back
 to https://github.com/pekuz/camel.git
 
+The endpoint path interpretation is specialized
+to non-uniform /share[/directory]. 
+
 ## Deps
 
 At first I want to use the Azure Files component with Camel 3.16+

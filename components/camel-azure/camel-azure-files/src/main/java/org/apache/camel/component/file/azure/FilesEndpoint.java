@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.azure;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
 
 import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.ShareServiceClientBuilder;
@@ -57,7 +56,7 @@ import org.slf4j.LoggerFactory;
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous")
+                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,charset,password,siteCommand")
 @ManagedResource(description = "Managed Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 
@@ -92,7 +91,6 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sig;
 
-    private LinkedHashMap<String, Object> tokenParams = new LinkedHashMap<>();
     private Token token = new Token();
 
     public FilesEndpoint() {

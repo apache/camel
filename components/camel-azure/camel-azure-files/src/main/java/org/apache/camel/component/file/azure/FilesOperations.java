@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.time.Duration;
 import java.util.EmptyStackException;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 import com.azure.core.util.Context;
 import com.azure.storage.file.share.ShareDirectoryClient;
@@ -139,7 +138,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     private ShareDirectoryClient cwd() {
-        var cwd =  dirStack.peek();
+        var cwd = dirStack.peek();
         log.trace("cwd share/dir: {}/{}", cwd.getShareName(), cwd.getDirectoryPath());
         return cwd;
     }
