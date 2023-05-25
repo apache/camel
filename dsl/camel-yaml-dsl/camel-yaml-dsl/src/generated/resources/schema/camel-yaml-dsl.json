@@ -2553,7 +2553,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateBeanDefinition"
             }
           },
           "from" : {
@@ -3022,7 +3022,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteBeanDefinition"
             }
           },
           "parameters" : {

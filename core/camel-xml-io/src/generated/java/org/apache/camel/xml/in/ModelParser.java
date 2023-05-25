@@ -1114,12 +1114,23 @@ public class ModelParser extends BaseParser {
     protected <T extends BeanFactoryDefinition> ElementHandler<T> beanFactoryDefinitionElementHandler() {
         return (def, key) -> {
             switch (key) {
-                case "property": doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties); break;
+                case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); break;
+                case "property": doAdd(doParsePropertyDefinition(), def.getPropertyDefinitions(), def::setPropertyDefinitions); break;
                 case "script": def.setScript(doParseText()); break;
                 default: return false;
             }
             return true;
         };
+    }
+    protected BeanPropertiesDefinition doParseBeanPropertiesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanPropertiesDefinition(),
+            noAttributeHandler(), (def, key) -> {
+            if ("property".equals(key)) {
+                doAdd(doParseBeanPropertyDefinition(), def.getProperties(), def::setProperties);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
     }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> {
@@ -1625,16 +1636,6 @@ public class ModelParser extends BaseParser {
         }, (def, key) -> {
             if ("properties".equals(key)) {
                 def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition()));
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected BeanPropertiesDefinition doParseBeanPropertiesDefinition() throws IOException, XmlPullParserException {
-        return doParse(new BeanPropertiesDefinition(),
-            noAttributeHandler(), (def, key) -> {
-            if ("property".equals(key)) {
-                doAdd(doParseBeanPropertyDefinition(), def.getProperties(), def::setProperties);
                 return true;
             }
             return false;

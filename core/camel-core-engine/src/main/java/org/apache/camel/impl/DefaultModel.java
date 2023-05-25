@@ -540,7 +540,10 @@ public class DefaultModel implements Model {
             throws Exception {
         final Map<String, Object> props = new HashMap<>();
         if (beanFactory.getProperties() != null) {
-            beanFactory.getProperties().forEach(p -> props.put(p.getKey(), p.getValue()));
+            props.putAll(beanFactory.getProperties());
+        }
+        if (beanFactory.getPropertyDefinitions() != null) {
+            beanFactory.getPropertyDefinitions().forEach(p -> props.put(p.getKey(), p.getValue()));
         }
         if (beanFactory.getBeanSupplier() != null) {
             if (props.isEmpty()) {

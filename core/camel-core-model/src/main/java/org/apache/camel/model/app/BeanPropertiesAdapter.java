@@ -26,6 +26,9 @@ public class BeanPropertiesAdapter extends XmlAdapter<BeanPropertiesDefinition, 
 
     @Override
     public Map<String, Object> unmarshal(BeanPropertiesDefinition v) {
+        if (v == null) {
+            return null;
+        }
         Map<String, Object> result = new LinkedHashMap<>();
         for (BeanPropertyDefinition pd : v.getProperties()) {
             if (pd.getProperties() != null) {
@@ -41,6 +44,9 @@ public class BeanPropertiesAdapter extends XmlAdapter<BeanPropertiesDefinition, 
     @Override
     @SuppressWarnings("unchecked")
     public BeanPropertiesDefinition marshal(Map<String, Object> v) {
+        if (v == null) {
+            return null;
+        }
         final BeanPropertyDefinition[] result = new BeanPropertyDefinition[v.size()];
         int pos = 0;
         for (Map.Entry<String, Object> entry : v.entrySet()) {
