@@ -37,4 +37,22 @@ public class FilesEndpointTests extends CamelTestSupport {
         endpoint.token());
   }
 
+  
+  @Test
+  void shareForValidURIShouldBeExtracted() {
+    var endpoint = context.getEndpoint("azure-files://host/share", FilesEndpoint.class);
+    assertEquals("share", endpoint.getShare());
+  }
+  
+  @Test
+  void shareForValidURIShouldBeExtracted2() {
+    var endpoint = context.getEndpoint("azure-files://host/share/", FilesEndpoint.class);
+    assertEquals("share", endpoint.getShare());
+  }
+
+  @Test
+  void shareForValidURIShouldBeExtracted3() {
+    var endpoint = context.getEndpoint("azure-files://host/share/path", FilesEndpoint.class);
+    assertEquals("share", endpoint.getShare());
+  }
 }

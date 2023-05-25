@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.azure;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -198,8 +199,16 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
     
     public String getShare() {
-      var uri = getEndpointBaseUri();
-      return uri.substring(uri.lastIndexOf('/'));
+      var base = getEndpointBaseUri();
+      var path = URI.create(base).getPath();
+      if (path == null || path.isBlank() || !path.startsWith("/")) {
+        return null;
+      }
+      var share = path.substring(1);
+      if (share.contains("/")) {
+        share = share.substring(0, share.indexOf('/'));
+      }
+      return share;
     }
 
     @Override
