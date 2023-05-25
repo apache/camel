@@ -83,25 +83,26 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
     
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sv;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String ss;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String srt;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sp;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String se;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String st;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String spr;
-    @UriParam(label = "both", description = "part of SAS token")
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sig;
 
     private LinkedHashMap<String, Object> tokenParams = new LinkedHashMap<>();
-
+    private Token token = new Token();
+    
     public FilesEndpoint() {
     }
 
@@ -115,7 +116,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSv(String sv) {
-      tokenParams.put("sv", sv);
+      token.setSv(sv);
       this.sv = sv;
     }
 
@@ -124,7 +125,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSs(String ss) {
-      tokenParams.put("ss", ss);
+      token.setSs(ss);
       this.ss = ss;
     }
 
@@ -133,7 +134,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSrt(String srt) {
-      tokenParams.put("srt", srt);
+      token.setSrt(srt);
       this.srt = srt;
     }
 
@@ -142,7 +143,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSp(String sp) {
-      tokenParams.put("sp", sp);
+      token.setSp(sp);
       this.sp = sp;
     }
 
@@ -151,7 +152,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSe(String se) {
-      tokenParams.put("se", se);
+      token.setSe(se);
       this.se = se;
     }
 
@@ -160,7 +161,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSt(String st) {
-      tokenParams.put("st", st);
+      token.setSt(st);
       this.st = st;
     }
 
@@ -169,7 +170,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSpr(String spr) {
-      tokenParams.put("spr", spr);
+      token.setSpr(spr);
       this.spr = spr;
     }
 
@@ -178,7 +179,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     public void setSig(String sig) {
-      tokenParams.put("sig", sig);
+      token.setSig(sig);
       this.sig = sig;
     }
 
@@ -268,19 +269,13 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
      */
     protected ShareServiceClient createClient() throws Exception {
         // TODO take from signed protocol? it would be token only 
-        ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost()).sasToken(token()).buildClient();
+        ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost()).sasToken(token().toURIQuery()).buildClient();
         return client;
     }
     
     
-    // sv=2021-12-02&ss=f&srt=o&sp=rwdlc&se=2023-05-05T19:27:05Z&st=2023-04-28T11:27:05Z&spr=https&sig=TCU0PcBjrxRbKOW%2FLA7HrPLISin6FXLNkRtLvmxkvhY%3D"
-    String token() {
-      try {
-        return URISupport.createQueryString(tokenParams);
-      }
-      catch (URISyntaxException e) {
-        return null;
-      }
+    Token token() {
+      return token;
     }
     
     String filesHost() {
