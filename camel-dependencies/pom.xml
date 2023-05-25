@@ -150,9 +150,9 @@
     <corda-version>4.9.3</corda-version>
     <couchbase-client-version>3.4.1</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
-    <cxf-codegen-plugin-version>3.5.5</cxf-codegen-plugin-version>
-    <cxf-version>3.5.5</cxf-version>
-    <cxf-version-range>[3.5,3.6)</cxf-version-range>
+    <cxf-codegen-plugin-version>3.5.6</cxf-codegen-plugin-version>
+    <cxf-version>3.5.6</cxf-version>
+    <cxf-version-range>[3.5,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.2</cxf-xjc-utils-version>
     <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
