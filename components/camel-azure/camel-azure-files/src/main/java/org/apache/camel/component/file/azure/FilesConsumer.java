@@ -129,7 +129,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         // compute dir depending on stepwise is enabled or not
         final String dir = computeDir(absolutePath, dirName);
 
-        final ShareFileItem[] files = getFtpFiles(dir);
+        final ShareFileItem[] files = listFiles(dir);
 
         if (files == null || files.length == 0) {
             // no files in this directory to poll
@@ -145,7 +145,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
 
         for (ShareFileItem file : files) {
-            if (handleFtpEntries(absolutePath, fileList, depth, files, file)) {
+            if (handleFiles(absolutePath, fileList, depth, files, file)) {
                 return false;
             }
         }
@@ -153,11 +153,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return true;
     }
 
-    private boolean handleFtpEntries(
+    private boolean handleFiles(
             String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files,
             ShareFileItem file) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), !file.isDirectory());
+            LOG.trace("Item[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), !file.isDirectory());
         }
 
         // check if we can continue polling in files
@@ -208,15 +208,15 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return dir;
     }
 
-    private ShareFileItem[] listFiles(String dir) {
+    private ShareFileItem[] listFilesImpl(String dir) {
         return operations.listFiles();
     }
 
-    private ShareFileItem[] getFtpFiles(String dir) {
+    private ShareFileItem[] listFiles(String dir) {
         ShareFileItem[] files = null;
         try {
             LOG.trace("Polling directory: {}", dir);
-            files = listFiles(dir);
+            files = listFilesImpl(dir);
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
                 LOG.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
@@ -256,9 +256,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
-        answer.setFileLength(file.getFileSize());
+        if (file.isDirectory() == false) {
+            answer.setFileLength(file.getFileSize());
+            answer.setLastModified(lastModified(file));
+        }
         answer.setDirectory(file.isDirectory());
-        answer.setLastModified(lastModified(file));
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
 
         // absolute or relative path

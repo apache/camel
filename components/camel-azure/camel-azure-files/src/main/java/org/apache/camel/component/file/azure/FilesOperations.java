@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.time.Duration;
 import java.util.EmptyStackException;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import com.azure.core.util.Context;
 import com.azure.storage.file.share.ShareDirectoryClient;
@@ -138,7 +139,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     private ShareDirectoryClient cwd() {
-        return dirStack.peek();
+        var cwd =  dirStack.peek();
+        log.trace("cwd share/dir: {}/{}", cwd.getShareName(), cwd.getDirectoryPath());
+        return cwd;
     }
 
     @Override
@@ -621,7 +624,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public ShareFileItem[] listFiles() throws GenericFileOperationFailedException {
         log.trace("Listing remote files");
         try {
-            return (ShareFileItem[]) cwd().listFilesAndDirectories().stream().toArray();
+            return cwd().listFilesAndDirectories().stream().toArray(ShareFileItem[]::new);
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }

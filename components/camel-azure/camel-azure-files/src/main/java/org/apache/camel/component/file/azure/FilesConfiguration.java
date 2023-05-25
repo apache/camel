@@ -51,6 +51,17 @@ public class FilesConfiguration extends RemoteFileConfiguration {
         return account;
     }
 
+    @Override
+    public void setDirectory(String path) {
+        // strip share from endpoint path
+        var dir = "";
+        var separator = path.indexOf('/');
+        if (separator > 1) {
+          dir = path.substring(separator);
+        }
+        super.setDirectory(dir);
+    }
+    
     /**
      * Account to use for login
      */
