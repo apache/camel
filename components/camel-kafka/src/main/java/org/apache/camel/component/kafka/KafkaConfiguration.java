@@ -573,7 +573,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     private void applyAdditionalProperties(final Properties props, final Map<String, Object> additionalProperties) {
         if (!ObjectHelper.isEmpty(getAdditionalProperties())) {
-            additionalProperties.forEach((property, value) -> addPropertyIfNotNull(props, property, value));
+            additionalProperties.forEach((property, value) -> {
+                if (value != null) {
+                    // value should be as-is
+                    props.put(property, value);
+                }
+            });
         }
     }
 
