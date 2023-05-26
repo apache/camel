@@ -314,6 +314,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private static long lastModified(ShareFileItem file) {
-        return file.getProperties().getLastModified().toInstant().toEpochMilli();
+        var props = file.getProperties();
+        // TODO properties are nulled, why?
+        if (props.getLastModified() == null) {
+          return -1;
+        }
+        return props.getLastModified().toInstant().toEpochMilli();
     }
 }
