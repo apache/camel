@@ -189,12 +189,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
-        case "transferloggingintervalseconds":
-        case "transferLoggingIntervalSeconds": target.setTransferLoggingIntervalSeconds(property(camelContext, int.class, value)); return true;
-        case "transferlogginglevel":
-        case "transferLoggingLevel": target.setTransferLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "transferloggingverbose":
-        case "transferLoggingVerbose": target.setTransferLoggingVerbose(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -373,12 +367,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "timeout": return int.class;
-        case "transferloggingintervalseconds":
-        case "transferLoggingIntervalSeconds": return int.class;
-        case "transferlogginglevel":
-        case "transferLoggingLevel": return org.apache.camel.LoggingLevel.class;
-        case "transferloggingverbose":
-        case "transferLoggingVerbose": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "username": return java.lang.String.class;
@@ -558,12 +546,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "timeout": return target.getConfiguration().getTimeout();
-        case "transferloggingintervalseconds":
-        case "transferLoggingIntervalSeconds": return target.getTransferLoggingIntervalSeconds();
-        case "transferlogginglevel":
-        case "transferLoggingLevel": return target.getTransferLoggingLevel();
-        case "transferloggingverbose":
-        case "transferLoggingVerbose": return target.isTransferLoggingVerbose();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "username": return target.getConfiguration().getUsername();

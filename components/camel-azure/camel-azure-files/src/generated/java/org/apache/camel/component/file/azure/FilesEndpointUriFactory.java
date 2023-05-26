@@ -21,7 +21,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(105);
+        Set<String> props = new HashSet<>(102);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -122,9 +122,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("throwExceptionOnConnectFailed");
         props.add("timeUnit");
         props.add("timeout");
-        props.add("transferLoggingIntervalSeconds");
-        props.add("transferLoggingLevel");
-        props.add("transferLoggingVerbose");
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

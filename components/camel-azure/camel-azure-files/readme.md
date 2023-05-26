@@ -51,11 +51,18 @@ Endpoint paramaters cleanup, removed those FTP specific:
   - useList
   - binary
   - charset
-  - password
+  - account
   - siteCommand
   - chmod
   - fastExistsCheck
   - handleDirectoryParserAbsoluteResult
+  
+or not implemented:
+
+  - transferLoggingLevel
+  - transferLoggingIntervalSeconds
+  - transferLoggingVerbose
+  - password
 
 ## Deps
 

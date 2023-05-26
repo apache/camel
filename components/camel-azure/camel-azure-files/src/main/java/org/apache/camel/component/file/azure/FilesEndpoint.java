@@ -24,9 +24,7 @@ import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Category;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -65,12 +63,6 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     @UriParam
     protected FilesConfiguration configuration;
 
-    @UriParam(label = "common", defaultValue = "DEBUG")
-    protected LoggingLevel transferLoggingLevel = LoggingLevel.DEBUG;
-    @UriParam(label = "common", defaultValue = "5")
-    protected int transferLoggingIntervalSeconds = 5;
-    @UriParam(label = "common")
-    protected boolean transferLoggingVerbose;
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
 
@@ -294,54 +286,6 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         // need to set on both
         this.configuration = (FilesConfiguration) configuration;
         super.setConfiguration(configuration);
-    }
-
-    public LoggingLevel getTransferLoggingLevel() {
-        return transferLoggingLevel;
-    }
-
-    /**
-     * Configure the logging level to use when logging the progress of upload and download operations.
-     */
-    public void setTransferLoggingLevel(LoggingLevel transferLoggingLevel) {
-        this.transferLoggingLevel = transferLoggingLevel;
-    }
-
-    @ManagedAttribute(description = "Logging level to use when logging the progress of upload and download operations")
-    public void setTransferLoggingLevelName(String transferLoggingLevel) {
-        this.transferLoggingLevel = getCamelContext().getTypeConverter().convertTo(LoggingLevel.class, transferLoggingLevel);
-    }
-
-    @ManagedAttribute
-    public String getTransferLoggingLevelName() {
-        return transferLoggingLevel.name();
-    }
-
-    @ManagedAttribute
-    public int getTransferLoggingIntervalSeconds() {
-        return transferLoggingIntervalSeconds;
-    }
-
-    /**
-     * Configures the interval in seconds to use when logging the progress of upload and download operations that are
-     * in-flight. This is used for logging progress when operations takes longer time.
-     */
-    @ManagedAttribute(description = "Interval in seconds to use when logging the progress of upload and download operations that are in-flight")
-    public void setTransferLoggingIntervalSeconds(int transferLoggingIntervalSeconds) {
-        this.transferLoggingIntervalSeconds = transferLoggingIntervalSeconds;
-    }
-
-    @ManagedAttribute
-    public boolean isTransferLoggingVerbose() {
-        return transferLoggingVerbose;
-    }
-
-    /**
-     * Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations.
-     */
-    @ManagedAttribute(description = "Whether the perform verbose (fine grained) logging of the progress of upload and download operations")
-    public void setTransferLoggingVerbose(boolean transferLoggingVerbose) {
-        this.transferLoggingVerbose = transferLoggingVerbose;
     }
 
     public boolean isResumeDownload() {
