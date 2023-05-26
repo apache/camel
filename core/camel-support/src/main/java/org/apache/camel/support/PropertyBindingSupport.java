@@ -71,6 +71,8 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the instance via
  * constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello World', 5,
  * true)</li>.
+ * <li>valueAs(type):value</li> - To declare that the value should be converted to the given type, such as
+ * #valueAs(int):123 which indicates that the value 123 should be converted to an integer.
  * <li>ignore case - Whether to ignore case for property keys</li>
  * </ul>
  *
@@ -1212,12 +1214,13 @@ public final class PropertyBindingSupport {
         }
 
         // non reference parameters are
-        // #bean: #class: #type: #property: #autowired
+        // #bean: #class: #type: #property: #convert: #autowired
         if (parameter.equals("#autowired")
                 || parameter.startsWith("#bean:")
                 || parameter.startsWith("#class:")
                 || parameter.startsWith("#type:")
-                || parameter.startsWith("#property:")) {
+                || parameter.startsWith("#property:")
+                || parameter.startsWith("#valueAs(:")) {
             return false;
         }
 
@@ -1565,6 +1568,15 @@ public final class PropertyBindingSupport {
         } else if (strval.startsWith("#bean:")) {
             String key = strval.substring(6);
             answer = camelContext.getRegistry().lookupByName(key);
+        } else if (strval.startsWith("#valueAs(")) {
+            String text = strval.substring(8);
+            String typeName = StringHelper.between(text, "(", ")");
+            String constant = StringHelper.after(text, ":");
+            if (typeName == null || constant == null) {
+                throw new IllegalArgumentException("Illegal syntax: " + text + " when using function #valueAs(type):value");
+            }
+            Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            answer = camelContext.getTypeConverter().mandatoryConvertTo(type, constant);
         }
 
         return answer;
