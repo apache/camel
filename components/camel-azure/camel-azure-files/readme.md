@@ -12,7 +12,7 @@ In development since 2023-05, so far experimental.
 
 Formulated requirement in https://issues.apache.org/jira/browse/CAMEL-19279.
 
-Forked Git as https://github.com/pekuz/camel/tree/camel-3.x
+Forked Git as https://github.com/pekuz/camel/tree/camel-3.x/components/camel-azure/camel-azure-files
 and started blending camel-ftp, camel-azure-storage-blob
 with intent to support Azure Files. 
 
@@ -30,8 +30,8 @@ reality a copy-and-paste has been needed because of FTPFile use
 
 A set of problems with mvn generate:
  
-  - CAMEL-19379 unclear error message
-  - CAMEL-19385 `src/generated/.../component/generate-meta-please` workaround
+  - CAMEL-19379 unclear error message (Resolved & closed)
+  - CAMEL-19385 [Windows] generate Error loading other model. Reason: FirstVersion is not specified.
 
 While cloning the fork in Github Desktop, I had selected "I want to contribute mode",
 and it updated upstream to fork's upstream i.e. https://github.com/apache/camel.git
