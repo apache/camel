@@ -21,7 +21,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FilesEndpoint target = (FilesEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "account": target.getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "antexclude":
@@ -38,13 +37,10 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "binary": target.getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
         case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
-        case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
-        case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -68,8 +64,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "excludeExt": target.setExcludeExt(property(camelContext, java.lang.String.class, value)); return true;
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": target.setExclusiveReadLockStrategy(property(camelContext, org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class, value)); return true;
-        case "fastexistscheck":
-        case "fastExistsCheck": target.setFastExistsCheck(property(camelContext, boolean.class, value)); return true;
         case "fileexist":
         case "fileExist": target.setFileExist(property(camelContext, org.apache.camel.component.file.GenericFileExist.class, value)); return true;
         case "filename":
@@ -81,8 +75,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "filterFile": target.setFilterFile(property(camelContext, java.lang.String.class, value)); return true;
         case "flatten": target.setFlatten(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "handledirectoryparserabsoluteresult":
-        case "handleDirectoryParserAbsoluteResult": target.getConfiguration().setHandleDirectoryParserAbsoluteResult(property(camelContext, boolean.class, value)); return true;
         case "idempotent": target.setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "idempotentkey":
         case "idempotentKey": target.setIdempotentKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -123,9 +115,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "noop": target.setNoop(property(camelContext, boolean.class, value)); return true;
         case "oncompletionexceptionhandler":
         case "onCompletionExceptionHandler": target.setOnCompletionExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "passivemode":
-        case "passiveMode": target.getConfiguration().setPassiveMode(property(camelContext, boolean.class, value)); return true;
-        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "premove":
@@ -176,8 +165,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "separator": target.getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
-        case "sitecommand":
-        case "siteCommand": target.getConfiguration().setSiteCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "sotimeout":
         case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
         case "sortby":
@@ -190,7 +177,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "st": target.setSt(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "stepwise": target.getConfiguration().setStepwise(property(camelContext, boolean.class, value)); return true;
         case "streamdownload":
         case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
         case "sv": target.setSv(property(camelContext, java.lang.String.class, value)); return true;
@@ -211,8 +197,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "transferLoggingVerbose": target.setTransferLoggingVerbose(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "uselist":
-        case "useList": target.getConfiguration().setUseList(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -221,7 +205,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "account": return java.lang.String.class;
         case "allownullbody":
         case "allowNullBody": return boolean.class;
         case "antexclude":
@@ -238,13 +221,10 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "binary": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "buffersize":
         case "bufferSize": return int.class;
-        case "charset": return java.lang.String.class;
-        case "chmod": return java.lang.String.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "delay": return long.class;
@@ -268,8 +248,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "excludeExt": return java.lang.String.class;
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class;
-        case "fastexistscheck":
-        case "fastExistsCheck": return boolean.class;
         case "fileexist":
         case "fileExist": return org.apache.camel.component.file.GenericFileExist.class;
         case "filename":
@@ -281,8 +259,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "filterFile": return java.lang.String.class;
         case "flatten": return boolean.class;
         case "greedy": return boolean.class;
-        case "handledirectoryparserabsoluteresult":
-        case "handleDirectoryParserAbsoluteResult": return boolean.class;
         case "idempotent": return java.lang.Boolean.class;
         case "idempotentkey":
         case "idempotentKey": return java.lang.String.class;
@@ -323,9 +299,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "noop": return boolean.class;
         case "oncompletionexceptionhandler":
         case "onCompletionExceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "passivemode":
-        case "passiveMode": return boolean.class;
-        case "password": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "premove":
@@ -376,8 +349,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "separator": return org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class;
         case "shuffle": return boolean.class;
         case "sig": return java.lang.String.class;
-        case "sitecommand":
-        case "siteCommand": return java.lang.String.class;
         case "sotimeout":
         case "soTimeout": return int.class;
         case "sortby":
@@ -390,7 +361,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "st": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
-        case "stepwise": return boolean.class;
         case "streamdownload":
         case "streamDownload": return boolean.class;
         case "sv": return java.lang.String.class;
@@ -411,8 +381,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "transferLoggingVerbose": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "uselist":
-        case "useList": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -422,7 +390,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FilesEndpoint target = (FilesEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "account": return target.getConfiguration().getAccount();
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
         case "antexclude":
@@ -439,13 +406,10 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "binary": return target.getConfiguration().isBinary();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":
         case "bufferSize": return target.getBufferSize();
-        case "charset": return target.getCharset();
-        case "chmod": return target.getConfiguration().getChmod();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "delay": return target.getDelay();
@@ -469,8 +433,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "excludeExt": return target.getExcludeExt();
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return target.getExclusiveReadLockStrategy();
-        case "fastexistscheck":
-        case "fastExistsCheck": return target.isFastExistsCheck();
         case "fileexist":
         case "fileExist": return target.getFileExist();
         case "filename":
@@ -482,8 +444,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "filterFile": return target.getFilterFile();
         case "flatten": return target.isFlatten();
         case "greedy": return target.isGreedy();
-        case "handledirectoryparserabsoluteresult":
-        case "handleDirectoryParserAbsoluteResult": return target.getConfiguration().isHandleDirectoryParserAbsoluteResult();
         case "idempotent": return target.getIdempotent();
         case "idempotentkey":
         case "idempotentKey": return target.getIdempotentKey();
@@ -524,9 +484,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "noop": return target.isNoop();
         case "oncompletionexceptionhandler":
         case "onCompletionExceptionHandler": return target.getOnCompletionExceptionHandler();
-        case "passivemode":
-        case "passiveMode": return target.getConfiguration().isPassiveMode();
-        case "password": return target.getConfiguration().getPassword();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "premove":
@@ -577,8 +534,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "separator": return target.getConfiguration().getSeparator();
         case "shuffle": return target.isShuffle();
         case "sig": return target.getSig();
-        case "sitecommand":
-        case "siteCommand": return target.getConfiguration().getSiteCommand();
         case "sotimeout":
         case "soTimeout": return target.getConfiguration().getSoTimeout();
         case "sortby":
@@ -591,7 +546,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "st": return target.getSt();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
-        case "stepwise": return target.getConfiguration().isStepwise();
         case "streamdownload":
         case "streamDownload": return target.getConfiguration().isStreamDownload();
         case "sv": return target.getSv();
@@ -612,8 +566,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "transferLoggingVerbose": return target.isTransferLoggingVerbose();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "uselist":
-        case "useList": return target.getConfiguration().isUseList();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

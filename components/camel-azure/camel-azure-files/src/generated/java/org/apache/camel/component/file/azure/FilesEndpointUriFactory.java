@@ -21,8 +21,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(116);
-        props.add("account");
+        Set<String> props = new HashSet<>(105);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -31,11 +30,8 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
-        props.add("binary");
         props.add("bridgeErrorHandler");
         props.add("bufferSize");
-        props.add("charset");
-        props.add("chmod");
         props.add("connectTimeout");
         props.add("delay");
         props.add("delete");
@@ -51,7 +47,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("exclude");
         props.add("excludeExt");
         props.add("exclusiveReadLockStrategy");
-        props.add("fastExistsCheck");
         props.add("fileExist");
         props.add("fileName");
         props.add("filter");
@@ -59,7 +54,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("filterFile");
         props.add("flatten");
         props.add("greedy");
-        props.add("handleDirectoryParserAbsoluteResult");
         props.add("host");
         props.add("idempotent");
         props.add("idempotentKey");
@@ -83,8 +77,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("moveFailed");
         props.add("noop");
         props.add("onCompletionExceptionHandler");
-        props.add("passiveMode");
-        props.add("password");
         props.add("pollStrategy");
         props.add("port");
         props.add("preMove");
@@ -114,7 +106,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("separator");
         props.add("shuffle");
         props.add("sig");
-        props.add("siteCommand");
         props.add("soTimeout");
         props.add("sortBy");
         props.add("sorter");
@@ -124,7 +115,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("ss");
         props.add("st");
         props.add("startScheduler");
-        props.add("stepwise");
         props.add("streamDownload");
         props.add("sv");
         props.add("tempFileName");
@@ -136,12 +126,9 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("transferLoggingLevel");
         props.add("transferLoggingVerbose");
         props.add("useFixedDelay");
-        props.add("useList");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(11);
-        secretProps.add("account");
-        secretProps.add("password");
+        Set<String> secretProps = new HashSet<>(9);
         secretProps.add("se");
         secretProps.add("sig");
         secretProps.add("sp");

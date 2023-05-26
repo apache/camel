@@ -19,7 +19,6 @@ package org.apache.camel.component.file.azure;
 import java.net.URI;
 
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
@@ -27,15 +26,8 @@ public class FilesConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_HTTPS_PORT = 443;
 
-    @UriParam(label = "security", secret = true)
-    private String account;
-    @UriParam(label = "producer,advanced")
-    private String chmod;
-    @UriParam(label = "consumer,advanced")
-    private boolean handleDirectoryParserAbsoluteResult;
-
     public FilesConfiguration() {
-        setProtocol("ftp");
+        setProtocol("https");  // TODO
     }
 
     public FilesConfiguration(URI uri) {
@@ -47,10 +39,6 @@ public class FilesConfiguration extends RemoteFileConfiguration {
         setPort(DEFAULT_HTTPS_PORT);
     }
 
-    public String getAccount() {
-        return account;
-    }
-
     @Override
     public void setDirectory(String path) {
         // strip share from endpoint path
@@ -60,36 +48,5 @@ public class FilesConfiguration extends RemoteFileConfiguration {
             dir = path.substring(separator);
         }
         super.setDirectory(dir);
-    }
-
-    /**
-     * Account to use for login
-     */
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    /**
-     * Allows you to set chmod on the stored file. For example chmod=640.
-     */
-    public void setChmod(String chmod) {
-        this.chmod = chmod;
-    }
-
-    public String getChmod() {
-        return chmod;
-    }
-
-    public boolean isHandleDirectoryParserAbsoluteResult() {
-        return handleDirectoryParserAbsoluteResult;
-    }
-
-    /**
-     * Allows you to set how the consumer will handle subfolders and files in the path if the directory parser results
-     * in with absolute paths The reason for this is that some FTP servers may return file names with absolute paths,
-     * and if so then the FTP component needs to handle this by converting the returned path into a relative path.
-     */
-    public void setHandleDirectoryParserAbsoluteResult(boolean handleDirectoryParserAbsoluteResult) {
-        this.handleDirectoryParserAbsoluteResult = handleDirectoryParserAbsoluteResult;
     }
 }

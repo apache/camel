@@ -41,6 +41,22 @@ to https://github.com/pekuz/camel.git
 The endpoint path interpretation is specialized
 to non-uniform /share[/directory]. 
 
+Endpoint paramaters cleanup, removed those FTP specific:
+
+  - ftpClient
+  - ftpClientConfig
+  - passive
+  - passiveMode
+  - stepwise
+  - useList
+  - binary
+  - charset
+  - password
+  - siteCommand
+  - chmod
+  - fastExistsCheck
+  - handleDirectoryParserAbsoluteResult
+
 ## Deps
 
 At first I want to use the Azure Files component with Camel 3.16+
