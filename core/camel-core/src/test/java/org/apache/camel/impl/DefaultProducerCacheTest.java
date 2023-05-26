@@ -189,8 +189,8 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         // nothing has stopped yet even we have 3 producers and a cache limit of 2
         assertEquals(0, stopCounter.get());
 
-        // force evict p1 while its in use (eg simulate someone else grabbing it while evicting race condition)
-        cache.forceEvict(p1);
+        // force evict p2 while its in use (eg simulate someone else grabbing it while evicting race condition)
+        cache.forceEvict(p2);
 
         // and should still not be stopped
         assertEquals(0, stopCounter.get());
