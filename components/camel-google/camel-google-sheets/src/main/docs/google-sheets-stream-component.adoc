@@ -74,6 +74,18 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== ValueInputOption
+
+Many of the APIs with Google sheets requires to include the following header,
+with one of the enum value:
+
+|====
+| *Header* | *Enum* | *Description*
+| `CamelGoogleSheets.ValueInputOption` | `RAW` | The values the user has entered will not be parsed and will be stored as-is.
+| `CamelGoogleSheets.ValueInputOption` | `USER_ENTERED` | The values will be parsed as if the user typed them into the UI. Numbers will stay as numbers, but strings may be converted to numbers, dates, etc. following the same rules that are applied when entering text into a cell via the Google Sheets UI.
+|====
+
+
 == More information
 
 For more information on the endpoints and options see API documentation
