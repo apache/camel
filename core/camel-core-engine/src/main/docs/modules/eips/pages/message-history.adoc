@@ -153,8 +153,8 @@ Stacktrace
 
 java.lang.IllegalArgumentException: The number is too low
 	at sample.camel.MyJavaRouteBuilder.configure(MyJavaRouteBuilder.java:34) ~[classes/:na]
-	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.20.5-SNAPSHOT.jar:3.20.5-SNAPSHOT]
-	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.5-SNAPSHOT.jar:3.20.5-SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.20.6.SNAPSHOT.jar:3.20.6.SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.6.SNAPSHOT.jar:3.20.6.SNAPSHOT]
 ----
 
 When Message History is enabled then the full history is logged as shown above. Here we can see the full path
@@ -179,8 +179,8 @@ Stacktrace
 
 java.lang.IllegalArgumentException: The number is too low
 	at sample.camel.MyJavaRouteBuilder.configure(MyJavaRouteBuilder.java:34) ~[classes/:na]
-	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.20.5-SNAPSHOT.jar:3.20.5-SNAPSHOT]
-	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.5-SNAPSHOT.jar:3.20.5-SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.20.6.SNAPSHOT.jar:3.20.6.SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.6.SNAPSHOT.jar:3.20.6.SNAPSHOT]
 ----
 
 Here you can see the Message History only outputs the input (route1) and the last step
@@ -207,8 +207,8 @@ Stacktrace
 
 java.lang.IllegalArgumentException: The number is too low
 	at sample.camel.MyJavaRouteBuilder.configure(MyJavaRouteBuilder.java:34) ~[classes/:na]
-	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.20.5-SNAPSHOT.jar:3.20.5-SNAPSHOT]
-	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.5-SNAPSHOT.jar:3.20.5-SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.checkInitialized(RouteBuilder.java:607) ~[camel-core-model-3.20.6.SNAPSHOT.jar:3.20.6.SNAPSHOT]
+	at org.apache.camel.builder.RouteBuilder.configureRoutes(RouteBuilder.java:553) ~[camel-core-model-3.20.6.SNAPSHOT.jar:3.20.6.SNAPSHOT]
 ----
 
 In this case we can see its the `MyJavaRouteBuilder` class on line 35 that is the problem.

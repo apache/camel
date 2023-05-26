@@ -58,14 +58,14 @@ The maven coordinates for these archetypes is the following:
 If you would like to use an archetype from an unreleased version of
 Camel, you just need to let the maven-archetype-plugin know where to
 look for it. For example, say someone wanted to create a Java based
-project based on Camel 3.20.5-SNAPSHOT. He'd need to use the following command
+project based on Camel 3.20.6.SNAPSHOT. He'd need to use the following command
 
 [source,bash]
 ----
 mvn archetype:generate \
   -DarchetypeGroupId=org.apache.camel.archetypes \
   -DarchetypeArtifactId=camel-archetype-java \
-  -DarchetypeVersion=3.20.5-SNAPSHOT
+  -DarchetypeVersion=3.20.6.SNAPSHOT
 ----
 
 When the project is created, you may need to add another repository to

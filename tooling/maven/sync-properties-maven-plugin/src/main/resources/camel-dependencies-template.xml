@@ -30,7 +30,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-dependencies</artifactId>
-    <version>3.20.5-SNAPSHOT</version>
+    <version>3.20.6.SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>Camel :: Dependencies</name>

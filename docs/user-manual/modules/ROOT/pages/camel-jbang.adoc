@@ -667,7 +667,7 @@ And you can also try bleeding edge development by using SNAPSHOT such as:
 
 [source,bash]
 ----
-jbang run --fresh -Dcamel.jbang.version=3.20.5-SNAPSHOT camel@apache/camel [command]
+jbang run --fresh -Dcamel.jbang.version=3.20.6.SNAPSHOT camel@apache/camel [command]
 ----
 
 
@@ -819,9 +819,9 @@ To display the status of the running Camel integrations:
 ----
 camel get
   PID   NAME      CAMEL            PLATFORM            READY  STATUS    AGE    TOTAL  FAILED  INFLIGHT  SINCE-LAST
- 61818  MyCamel   3.20.5-SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0     0s/0s/-
- 63051  dude      3.20.5-SNAPSHOT  JBang                1/1   Running     18s     14       0         0     0s/0s/-
- 63068  mygroovy  3.20.5-SNAPSHOT  JBang                1/1   Running      5s      2       0         0     0s/0s/-
+ 61818  MyCamel   3.20.6.SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0     0s/0s/-
+ 63051  dude      3.20.6.SNAPSHOT  JBang                1/1   Running     18s     14       0         0     0s/0s/-
+ 63068  mygroovy  3.20.6.SNAPSHOT  JBang                1/1   Running      5s      2       0         0     0s/0s/-
 ----
 
 The `camel get` command will default display integrations, which is equivalent to
@@ -857,9 +857,9 @@ of the running Camel integrations.
 ----
 camel top
   PID   NAME     JAVA     CAMEL            PLATFORM            STATUS    AGE         HEAP        NON-HEAP     GC     THREADS   CLASSES
- 22104  chuck    11.0.13  3.20.5-SNAPSHOT  JBang               Running   2m10s  131/322/4294 MB  70/73 MB  17ms (6)      7/8  7456/7456
- 14242  MyCamel  11.0.13  3.20.5-SNAPSHOT  Spring Boot v2.7.3  Running  33m40s  115/332/4294 MB  62/66 MB  37ms (6)    16/16  8428/8428
- 22116  bar      11.0.13  3.20.5-SNAPSHOT  JBang               Running    2m7s   33/268/4294 MB  54/58 MB  20ms (4)      7/8  6104/6104
+ 22104  chuck    11.0.13  3.20.6.SNAPSHOT  JBang               Running   2m10s  131/322/4294 MB  70/73 MB  17ms (6)      7/8  7456/7456
+ 14242  MyCamel  11.0.13  3.20.6.SNAPSHOT  Spring Boot v2.7.3  Running  33m40s  115/332/4294 MB  62/66 MB  37ms (6)    16/16  8428/8428
+ 22116  bar      11.0.13  3.20.6.SNAPSHOT  JBang               Running    2m7s   33/268/4294 MB  54/58 MB  20ms (4)      7/8  6104/6104
 ----
 
 The _HEAP_ column shows the heap memory (used/committed/max) and the non-heap (used/committed).
