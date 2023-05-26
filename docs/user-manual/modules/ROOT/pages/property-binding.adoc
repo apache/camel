@@ -28,6 +28,8 @@ The `PropertyBindingSupport` class supports binding String valued properties to 
        `#class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true)`.
        Or if you need to create the instance via constructor parameters then you can specify the parameters as shown:
        `#class:com.foo.MyClass('Hello World', 5, true)`.
+- _valueAs(type):value_ - To declare that the value should be converted to the given type, such as `#valueAs(int):123`
+       which indicates that the value 123 should be converted to an integer.
 - _ignore case_ - Whether to ignore case for property keys (will ignore by default)
 
 == Property binding basics
@@ -43,7 +45,7 @@ For example to set brokers on the Kafka component you can do:
 camel.component.kafka.brokers = mykafka1,mykafka2
 ----
 
-This will essentially be equivavlent to configuring Kafka component in regular Java code via setters:
+This will essentially be equivalent to configuring Kafka component in regular Java code via setters:
 
 [source,java]
 ----
@@ -190,7 +192,7 @@ PropertyBindingSupport.build().withCamelContext(context).withTarget(foo)
 
 == More details
 
-Property binding is noteably used when running Camel in standalone mode with Camel Main, or using Camel Spring Boot, Camel K,
+Property binding is notably used when running Camel in standalone mode with Camel Main, or using Camel Spring Boot, Camel K,
 Camel Kafka Connector, or Camel Quarkus. All these runtimes have a similar way of configuring via property bindings such
 as from `application.properties` files.
 
