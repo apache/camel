@@ -75,6 +75,12 @@
         </dependency>
 
         <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>${jakarta-xml-soap-api-version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>

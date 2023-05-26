@@ -81,7 +81,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
                 from("direct:start")
                         .doTry()
                         .to("cxf://http://localhost:10000/false?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService")
-                        .doCatch(org.apache.cxf.interceptor.Fault.class)
+                        .doCatch(java.net.ConnectException.class)
                         .to("mock:error");
             }
         };
