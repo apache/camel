@@ -549,7 +549,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         if (keyManagers != null) {
             addPropertyIfNotNull(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, keyManagers.getAlgorithm());
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, keyManagers.getKeyPassword());
-
             KeyStoreParameters keyStore = keyManagers.getKeyStore();
             if (keyStore != null) {
                 addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, keyStore.getType());
@@ -561,7 +560,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
         if (trustManagers != null) {
             addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, trustManagers.getAlgorithm());
-
             KeyStoreParameters keyStore = trustManagers.getKeyStore();
             if (keyStore != null) {
                 addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, keyStore.getType());
@@ -573,28 +571,33 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     private void applyAdditionalProperties(final Properties props, final Map<String, Object> additionalProperties) {
         if (!ObjectHelper.isEmpty(getAdditionalProperties())) {
-            additionalProperties.forEach((property, value) -> addPropertyIfNotNull(props, property, value));
+            additionalProperties.forEach((property, value) -> {
+                if (value != null) {
+                    // value should be as-is
+                    props.put(property, value);
+                }
+            });
         }
     }
 
     private static void addPropertyIfNotFalse(Properties props, String key, boolean value) {
         if (value) {
-            // Kafka expects all properties as String
+            // value should be as-is
             props.put(key, value);
         }
     }
 
     private static <T> void addPropertyIfNotEmpty(Properties props, String key, T value) {
         if (ObjectHelper.isNotEmpty(value)) {
-            // Kafka expects all properties as String
-            props.put(key, value.toString());
+            // value should be as-is
+            props.put(key, value);
         }
     }
 
     private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
-            // Kafka expects all properties as String
-            props.put(key, value.toString());
+            // value should be as-is
+            props.put(key, value);
         }
     }
 
