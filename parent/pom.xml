@@ -403,8 +403,8 @@
         <optaplanner-version>9.37.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
-		<parquet-common-version>1.12.0</parquet-common-version>
-		<parquet-avro-version>1.12.3</parquet-avro-version>
+	<parquet-common-version>1.12.0</parquet-common-version>
+	<parquet-avro-version>1.12.3</parquet-avro-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.28</pdfbox-version>
         <pgjdbc-driver-version>42.5.1</pgjdbc-driver-version>
