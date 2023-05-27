@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import java.util.Map;
 
-import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -46,6 +45,7 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
