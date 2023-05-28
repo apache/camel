@@ -61,6 +61,6 @@ public class CamelSagaStep {
     }
 
     public boolean isEmpty() {
-        return !compensation.isPresent() && !completion.isPresent() && options.isEmpty() && !timeoutInMilliseconds.isPresent();
+        return compensation.isEmpty() && completion.isEmpty() && options.isEmpty() && timeoutInMilliseconds.isEmpty();
     }
 }
