@@ -338,7 +338,7 @@
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.5.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
-        <maven-version>3.8.7</maven-version>
+        <maven-version>3.8.8</maven-version>
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
