@@ -26,6 +26,8 @@ import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 
 public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
@@ -34,7 +36,7 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
     }
 
     @Override
-    public CatchProcessor createProcessor() throws Exception {
+    public Processor createProcessor() throws Exception {
         // create and load exceptions if not done
         if (definition.getExceptionClasses() == null) {
             definition.setExceptionClasses(createExceptionClasses());
@@ -58,7 +60,17 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
             when = createPredicate(definition.getOnWhen().getExpression());
         }
 
-        return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when);
+        CatchProcessor processor
+                = new CatchProcessor(getCamelContext(), definition.getExceptionClasses(), childProcessor, when);
+        // inject id
+        if (processor instanceof IdAware) {
+            String id = getId(definition);
+            ((IdAware) processor).setId(id);
+        }
+        if (processor instanceof RouteIdAware) {
+            ((RouteIdAware) processor).setRouteId(route.getRouteId());
+        }
+        return wrapProcessor(processor);
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses() throws ClassNotFoundException {

@@ -14,16 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.management.mbean;
 
-import javax.management.openmbean.TabularData;
+import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedDoFinallyMBean;
+import org.apache.camel.model.FinallyDefinition;
+import org.apache.camel.processor.FinallyProcessor;
 
-import org.apache.camel.api.management.ManagedOperation;
+@ManagedResource(description = "Managed DoFinally")
+public class ManagedDoFinally extends ManagedProcessor implements ManagedDoFinallyMBean {
 
-public interface ManagedChoiceMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+    private final FinallyProcessor processor;
+
+    public ManagedDoFinally(CamelContext context, FinallyProcessor processor, FinallyDefinition definition) {
+        super(context, processor, definition);
+        this.processor = processor;
+    }
 
     @Override
-    @ManagedOperation(description = "Statistics of the content based router for each predicate")
-    TabularData extendedInformation();
+    public FinallyDefinition getDefinition() {
+        return (FinallyDefinition) super.getDefinition();
+    }
 
 }

@@ -143,6 +143,14 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
         ServiceHelper.stopService(tryProcessor, catchClauses, finallyProcessor);
     }
 
+    public List<Processor> getCatchClauses() {
+        return catchClauses;
+    }
+
+    public Processor getFinallyProcessor() {
+        return finallyProcessor;
+    }
+
     @Override
     public List<Processor> next() {
         if (!hasNext()) {

@@ -16,14 +16,24 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedChoiceMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+public interface ManagedDoCatchMBean extends ManagedProcessorMBean {
 
-    @Override
-    @ManagedOperation(description = "Statistics of the content based router for each predicate")
-    TabularData extendedInformation();
+    @ManagedAttribute(description = "Predicate that should be true before the onCatch is triggered")
+    String getOnWhen();
+
+    @ManagedAttribute(description = "The language for the predicate")
+    String getOnWhenLanguage();
+
+    @ManagedAttribute(description = "Gets the number of Exchanges that was caught (matches onWhen)")
+    Long getCaughtCount();
+
+    @ManagedOperation(description = "Gets the number of Exchanges that was caught (matches onWhen)")
+    Long getCaughtCount(String className);
+
+    @ManagedAttribute(description = "The class of the exception to catch")
+    String[] getExceptionTypes();
 
 }

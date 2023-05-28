@@ -84,7 +84,7 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         String id = (String) mbeanServer.getAttribute(on, "LastGoodProcessorId");
         assertEquals("bar", id);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "exceptionStatistics", null, null);
+        TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
     }

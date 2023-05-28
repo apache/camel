@@ -16,10 +16,14 @@
  */
 package org.apache.camel.management;
 
+import java.io.IOException;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -31,24 +35,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
-public class ManagedChoiceTest extends ManagementTestSupport {
+public class ManagedDoTryCatchFinallyTest extends ManagementTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
+        return context;
+    }
 
     @Test
-    public void testManageChoice() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(2);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
+    public void testManageTryCatchFinally() throws Exception {
+        getMockEndpoint("mock:start").expectedMessageCount(1);
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
-        template.sendBodyAndHeader("direct:start", "Bye World", "foo", "456");
-        template.sendBodyAndHeader("direct:start", "Hi World", "bar", "789");
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
-        // get the object name for choice
-        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "mysend");
+        // get the object name for the delayer
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "myDoCatch2");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
@@ -60,17 +69,18 @@ public class ManagedChoiceTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        int level = (Integer) mbeanServer.getAttribute(on, "Level");
-        assertEquals(1, level);
+        Long count = (Long) mbeanServer.getAttribute(on, "CaughtCount");
+        assertEquals(1, count.longValue());
 
+        // the 1st doCatch should not catch anything
+        on = getCamelObjectName(TYPE_PROCESSOR, "myDoCatch1");
+        count = (Long) mbeanServer.getAttribute(on, "CaughtCount");
+        assertEquals(0, count.longValue());
+
+        on = getCamelObjectName(TYPE_PROCESSOR, "myDoTry1");
         TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
-        assertEquals(2, data.size());
-
-        // get the object name for mock:bar
-        on = getCamelObjectName(TYPE_PROCESSOR, "bar");
-        level = (Integer) mbeanServer.getAttribute(on, "Level");
-        assertEquals(2, level);
+        assertEquals(1, data.size());
     }
 
     @Override
@@ -79,11 +89,16 @@ public class ManagedChoiceTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .choice().id("mysend")
-                        .when(header("foo"))
-                        .to("mock:foo")
-                        .otherwise()
-                        .to("mock:bar").id("bar");
+                    .doTry().id("myDoTry1")
+                        .to("mock:start")
+                        .throwException(new IllegalArgumentException("Forced"))
+                    .doCatch(IOException.class).id("myDoCatch1")
+                        .to("mock:io")
+                    .doCatch(IllegalArgumentException.class).id("myDoCatch2")
+                        .to("mock:iae")
+                    .doFinally()
+                        .to("mock:finally")
+                    .end();
             }
         };
     }

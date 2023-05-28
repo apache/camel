@@ -831,7 +831,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (processor == null) {
             processor = reifier(route, output).createProcessor();
         }
-
         camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
         return processor;
     }

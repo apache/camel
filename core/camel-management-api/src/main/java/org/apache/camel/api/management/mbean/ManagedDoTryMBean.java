@@ -20,10 +20,10 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedChoiceMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+public interface ManagedDoTryMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
 
     @Override
-    @ManagedOperation(description = "Statistics of the content based router for each predicate")
+    @ManagedOperation(description = "Statistics of the doTry for each caught exception")
     TabularData extendedInformation();
 
 }
