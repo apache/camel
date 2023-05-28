@@ -52,7 +52,7 @@ public final class AdapterHelper {
         Optional<ResumeAdapter> adapterOptional
                 = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
 
-        if (!adapterOptional.isPresent()) {
+        if (adapterOptional.isEmpty()) {
             throw new RuntimeCamelException("Cannot find a resume adapter class in the consumer classpath or in the registry");
         }
 
