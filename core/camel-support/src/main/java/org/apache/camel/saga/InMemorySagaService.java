@@ -36,7 +36,7 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
 
     private CamelContext camelContext;
 
-    private Map<String, CamelSagaCoordinator> coordinators = new ConcurrentHashMap<>();
+    private final Map<String, CamelSagaCoordinator> coordinators = new ConcurrentHashMap<>();
 
     private ScheduledExecutorService executorService;
 

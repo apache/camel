@@ -28,13 +28,13 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CamelSagaStep {
 
-    private Optional<Endpoint> compensation;
+    private final Optional<Endpoint> compensation;
 
-    private Optional<Endpoint> completion;
+    private final Optional<Endpoint> completion;
 
-    private Map<String, Expression> options;
+    private final Map<String, Expression> options;
 
-    private Optional<Long> timeoutInMilliseconds;
+    private final Optional<Long> timeoutInMilliseconds;
 
     public CamelSagaStep(Optional<Endpoint> compensation, Optional<Endpoint> completion,
                          Map<String, Expression> options, Optional<Long> timeoutInMilliseconds) {

@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
  * This class is used internally by the tokenizer to extract data while reading from the stream.
  */
 class RecordableInputStream extends FilterInputStream {
-    private TrimmableByteArrayOutputStream buf;
+    private final TrimmableByteArrayOutputStream buf;
     private String charset;
     private boolean recording;
 

@@ -25,7 +25,7 @@ import org.apache.camel.component.extension.MetaDataExtension;
 public class DefaultMetaData implements MetaDataExtension.MetaData {
     private final Map<String, Object> attributes;
     private final Object payload;
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
 
     public DefaultMetaData(CamelContext camelContext, Map<String, Object> attributes, Object payload) {
         this.camelContext = camelContext;
