@@ -1730,14 +1730,12 @@ public final class PropertyBindingSupport {
          * The properties to use for binding
          */
         public Builder withProperties(Map<String, Object> properties) {
-            if (this.properties == null) {
-                this.properties = properties;
-            } else {
+            if (this.properties != null) {
                 // there may be existing options so add those if missing
                 // we need to mutate existing as we are may be removing bound properties
                 this.properties.forEach(properties::putIfAbsent);
-                this.properties = properties;
             }
+            this.properties = properties;
             return this;
         }
 
