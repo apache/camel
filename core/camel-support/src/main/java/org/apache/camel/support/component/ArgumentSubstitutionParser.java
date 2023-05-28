@@ -154,10 +154,10 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
     public static class Substitution {
 
-        private String method;
-        private String argName;
+        private final String method;
+        private final String argName;
         private String argType;
-        private String replacement;
+        private final String replacement;
         private boolean replaceWithType;
 
         /**

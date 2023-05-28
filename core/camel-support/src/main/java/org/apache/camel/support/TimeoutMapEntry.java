@@ -24,7 +24,7 @@ import org.apache.camel.TimeoutMap;
  * Represents an entry in a {@link TimeoutMap}
  */
 public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V> {
-    private K key;
+    private final K key;
     private V value;
     private long timeout;
     private long expireTime;

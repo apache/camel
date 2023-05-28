@@ -166,8 +166,8 @@ public class CachedOutputStream extends OutputStream {
 
     // This class will close the CachedOutputStream when it is closed
     private static class WrappedInputStream extends InputStream {
-        private CachedOutputStream cachedOutputStream;
-        private InputStream inputStream;
+        private final CachedOutputStream cachedOutputStream;
+        private final InputStream inputStream;
 
         WrappedInputStream(CachedOutputStream cos, InputStream is) {
             cachedOutputStream = cos;
