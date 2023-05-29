@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.common.services;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,12 @@ public final class TestServiceUtil {
      * @throws Exception        exception thrown while initializing (if any)
      */
     public static void tryInitialize(TestService service, ExtensionContext extensionContext) throws Exception {
-        try {
-            service.initialize();
-        } catch (Exception e) {
-            logAndRethrow(service, extensionContext, e);
+        if (isOuterTestClass(extensionContext)) {
+            try {
+                service.initialize();
+            } catch (Exception e) {
+                logAndRethrow(service, extensionContext, e);
+            }
         }
     }
 
@@ -54,10 +57,12 @@ public final class TestServiceUtil {
      * @throws Exception        exception thrown while initializing (if any)
      */
     public static void tryShutdown(TestService service, ExtensionContext extensionContext) throws Exception {
-        try {
-            service.shutdown();
-        } catch (Exception e) {
-            logAndRethrow(service, extensionContext, e);
+        if (isOuterTestClass(extensionContext)) {
+            try {
+                service.shutdown();
+            } catch (Exception e) {
+                logAndRethrow(service, extensionContext, e);
+            }
         }
     }
 
@@ -75,5 +80,15 @@ public final class TestServiceUtil {
         LOG.error("Failed to initialize service {} for test {} on ({})", service.getClass().getSimpleName(),
                 extensionContext.getDisplayName(), o.getClass().getName());
         throw exception;
+    }
+
+    /**
+     * Indicates whether the test class called is an outer class.
+     *
+     * @param  extensionContext JUnit's extension context
+     * @return                  {@code true} if the test class called is an outer class, {@code false} otherwise.
+     */
+    private static boolean isOuterTestClass(ExtensionContext extensionContext) {
+        return extensionContext.getTestClass().map(aClass -> aClass.getAnnotation(Nested.class) == null).orElse(true);
     }
 }
