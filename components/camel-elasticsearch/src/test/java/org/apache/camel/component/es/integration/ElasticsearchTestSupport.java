@@ -33,7 +33,6 @@ import org.apache.camel.component.es.ElasticsearchComponent;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerService;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchService;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -41,15 +40,15 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.Base58;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ElasticsearchTestSupport extends CamelTestSupport {
+public class ElasticsearchTestSupport {
 
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
@@ -101,9 +100,8 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
         return ret;
     }
 
-    @Override
-    protected void setupResources() throws Exception {
-        super.setupResources();
+    @BeforeAll
+    static void init() {
         HttpHost host
                 = new HttpHost(service.getElasticSearchHost(), service.getPort(), "https");
         final RestClientBuilder builder = RestClient.builder(host);
@@ -119,27 +117,21 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
         client = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
     }
 
-    @Override
-    protected void cleanupResources() throws Exception {
-        super.cleanupResources();
+    @AfterAll
+    static void destroy() throws Exception {
         if (restClient != null) {
             restClient.close();
         }
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected void addElasticsearchComponent(CamelContext context) {
         final ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
         elasticsearchComponent.setEnableSSL(true);
         elasticsearchComponent.setHostAddresses(service.getHttpHostAddress());
         elasticsearchComponent.setUser(USER_NAME);
         elasticsearchComponent.setPassword(PASSWORD);
         elasticsearchComponent.setCertificatePath("file:" + certPath.toString());
-
-        CamelContext context = super.createCamelContext();
         context.addComponent("elasticsearch", elasticsearchComponent);
-
-        return context;
     }
 
     /**
@@ -169,7 +161,8 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
 
     String createPrefix() {
         // make use of the test method name to avoid collision
-        return getCurrentTestName().toLowerCase() + "-";
+        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        return String.format("%s_%s-", element.getClassName(), element.getMethodName()).toLowerCase();
     }
 
     RestClient getClient() {
