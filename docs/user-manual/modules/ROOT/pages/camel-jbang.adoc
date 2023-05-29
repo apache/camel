@@ -32,49 +32,49 @@ There is also a container image availabe in https://hub.docker.com/r/apache/came
 
 [source,bash]
 ----
-docker pull apache/camel-jbang:3.20.4
+docker pull apache/camel-jbang:3.20.5
 ----
 
 or
 
 [source,bash]
 ----
-podman pull apache/camel-jbang:3.20.4
+podman pull apache/camel-jbang:3.20.5
 ----
 
 Once you have the image in your local registry you can run all the command listed below by simple doing:
 
 [source,bash]
 ----
-docker run apache/camel-jbang:3.20.4 version
+docker run apache/camel-jbang:3.20.5 version
 ----
 
 or
 
 [source,bash]
 ----
-podman run apache/camel-jbang:3.20.4 version
+podman run apache/camel-jbang:3.20.5 version
 ----
 
 This will print the following result:
 
 [source,bash]
 ----
-Camel JBang version: 3.20.4
+Camel JBang version: 3.20.5
 ----
 
 So running a simple route will be as easy as doing the following:
 
 [source,bash]
 ----
-docker run apache/camel-jbang:3.20.4 run example.yaml
+docker run apache/camel-jbang:3.20.5 run example.yaml
 ----
 
 or 
 
 [source,bash]
 ----
-podman run apache/camel-jbang:3.20.4 run example.yaml
+podman run apache/camel-jbang:3.20.5 run example.yaml
 ----
 
 == Using Camel JBang
