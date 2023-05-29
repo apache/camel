@@ -21,6 +21,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
+import org.apache.camel.converter.TypeConvertable;
 
 /**
  * Registry for type converters.
@@ -186,5 +187,9 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * The default behavior is to ignore the duplicate.
      */
     void setTypeConverterExists(TypeConverterExists typeConverterExists);
+
+    default void addConverter(TypeConvertable<?, ?> typeConvertable, TypeConverter typeConverter) {
+
+    }
 
 }

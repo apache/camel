@@ -16,8 +16,10 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,12 +30,12 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.converter.TypeConvertable;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Injector;
@@ -41,7 +43,6 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.DoubleMap;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,10 +58,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreTypeConverterRegistry.class);
 
-    // built-in core type converters that are bulked together in a few classes for optimal performance
-    protected final List<BulkTypeConverters> bulkTypeConverters = new ArrayList<>();
-    // custom type converters (from camel components and end users)
-    protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(16);
     // fallback converters
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
     // special enum converter for optional performance
@@ -76,24 +73,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Ignore;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.DEBUG;
 
-    // to keep track of number of converters in the bulked classes
-    private int sumBulkTypeConverters;
-
-    public CoreTypeConverterRegistry() {
-    }
-
-    public CoreTypeConverterRegistry(TypeConverterRegistry registry) {
-        if (registry instanceof CoreTypeConverterRegistry) {
-            CoreTypeConverterRegistry reg = (CoreTypeConverterRegistry) registry;
-            reg.getTypeMappings().forEach(typeMappings::put);
-            this.bulkTypeConverters.addAll(reg.getBulkTypeConverters());
-            this.fallbackConverters.addAll(reg.getFallbackConverters());
-        } else {
-            throw new UnsupportedOperationException();
-        }
-        this.typeConverterExistsLoggingLevel = registry.getTypeConverterExistsLoggingLevel();
-        this.typeConverterExists = registry.getTypeConverterExists();
-    }
+    // Why 256: as of Camel 4, we have about 230 type converters. Therefore, set the capacity to a few more to provide
+    // space for others added during runtime
+    private final Map<TypeConvertable<?, ?>, TypeConverter> converters = new ConcurrentHashMap<>(256);
 
     @Override
     public boolean allowNull() {
@@ -120,16 +102,8 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         throw new UnsupportedOperationException();
     }
 
-    public DoubleMap<Class<?>, Class<?>, TypeConverter> getTypeMappings() {
-        return typeMappings;
-    }
-
     public List<FallbackTypeConverter> getFallbackConverters() {
         return fallbackConverters;
-    }
-
-    public List<BulkTypeConverters> getBulkTypeConverters() {
-        return bulkTypeConverters;
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
@@ -437,28 +411,39 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             return value;
         }
 
-        // okay we need to attempt to convert
         if (statisticsEnabled) {
             attemptCounter.increment();
         }
 
         // attempt bulk first which is the fastest
-        for (BulkTypeConverters bulk : bulkTypeConverters) {
-            Object rc = bulk.convertTo(value.getClass(), type, exchange, value);
-            if (rc != null) {
-                return rc;
-            }
+        final TypeConvertable<?, ?> typeConvertable = new TypeConvertable<>(value.getClass(), type);
+        final TypeConverter typeConverter = tryDirectMatchConverters(typeConvertable, converters);
+        if (typeConverter != null) {
+            return typeConverter.convertTo(type, exchange, value);
         }
 
-        // try to find a suitable type converter
-        TypeConverter converter = getOrFindTypeConverter(type, value.getClass());
-        if (converter != null) {
-            Object rc = doConvert(type, exchange, value, tryConvert, converter);
-            if (rc != null) {
-                return rc;
-            } else if (converter.allowNull()) {
-                return null;
-            }
+        /*
+         We usually define our converters are receiving an object array (Object[]), however, this won't easily match:
+         because an object array is not an interface or a super class of other array types (i.e.: not a super class
+         of String[]). So, we take the direct road here and try check for an object array converter right away.
+         */
+        final TypeConverter arrayConverterTc = tryNativeArrayConverters(value.getClass(), type, converters);
+        if (arrayConverterTc != null) {
+            converters.put(typeConvertable, arrayConverterTc);
+            return arrayConverterTc.convertTo(type, exchange, value);
+        }
+
+        // Couldn't find an easy conversion ... Now try to find one using the slower type hierarchies
+        final TypeConverter fromSuperTc = trySuperConverters(value.getClass(), type, converters);
+        if (fromSuperTc != null) {
+            converters.put(typeConvertable, fromSuperTc);
+            return fromSuperTc.convertTo(type, exchange, value);
+        }
+
+        final TypeConverter interfaceConverter = tryInterfaceConverters(value.getClass(), type, converters);
+        if (interfaceConverter != null) {
+            converters.put(typeConvertable, interfaceConverter);
+            return interfaceConverter.convertTo(type, exchange, value);
         }
 
         // not found with that type then if it was a primitive type then try again with the wrapper type
@@ -504,10 +489,17 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             }
         }
 
+        // This is the last resort: if nothing else works, try to find something that converts from an Object to the target type
+        final TypeConverter objConverter = converters.get(new TypeConvertable<>(Object.class, type));
+        if (objConverter != null) {
+            converters.put(typeConvertable, objConverter);
+            return objConverter.convertTo(type, exchange, value);
+        }
+
         if (!tryConvert) {
             // Could not find suitable conversion, so remember it
             // do not register misses for try conversions
-            typeMappings.put(type, value.getClass(), MISS_CONVERTER);
+            converters.put(typeConvertable, MISS_CONVERTER);
         }
 
         // Could not find suitable conversion, so return Void to indicate not found
@@ -525,6 +517,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     private static Object doConvert(
             Class<?> type, Exchange exchange, Object value, boolean tryConvert, TypeConverter converter) {
+
         if (tryConvert) {
             return converter.tryConvertTo(type, exchange, value);
         } else {
@@ -533,30 +526,27 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     }
 
     public TypeConverter getTypeConverter(Class<?> toType, Class<?> fromType) {
-        return typeMappings.get(toType, fromType);
+        return converters.get(new TypeConvertable<>(fromType, toType));
+    }
+
+    @Override
+    public void addConverter(TypeConvertable<?, ?> typeConvertable, TypeConverter typeConverter) {
+        converters.put(typeConvertable, typeConverter);
     }
 
     @Override
     public void addBulkTypeConverters(BulkTypeConverters bulkTypeConverters) {
-        // guard against adding duplicates
-        boolean exists = this.bulkTypeConverters.contains(bulkTypeConverters);
-        if (!exists) {
-            if (bulkTypeConverters.getOrder() == Ordered.HIGHEST) {
-                this.bulkTypeConverters.add(0, bulkTypeConverters);
-            } else {
-                this.bulkTypeConverters.add(bulkTypeConverters);
-            }
-            sumBulkTypeConverters += bulkTypeConverters.size();
-        }
+        // NO-OP
     }
 
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         LOG.trace("Adding type converter: {}", typeConverter);
-        TypeConverter converter = typeMappings.get(toType, fromType);
+        final TypeConvertable<?, ?> typeConvertable = new TypeConvertable<>(fromType, toType);
+        TypeConverter converter = converters.get(typeConvertable);
 
         if (converter == MISS_CONVERTER) {
-            // we have previously attempted to convert but missed so add this converter
-            typeMappings.put(toType, fromType, typeConverter);
+            // we have previously attempted to convert but missed, so add this converter
+            converters.put(typeConvertable, typeConverter);
             return;
         }
 
@@ -583,14 +573,15 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             }
 
             if (add) {
-                typeMappings.put(toType, fromType, typeConverter);
+                converters.put(typeConvertable, typeConverter);
             }
         }
     }
 
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         LOG.trace("Removing type converter from: {} to: {}", fromType, toType);
-        return typeMappings.remove(toType, fromType);
+        final TypeConverter removed = converters.remove(new TypeConvertable<>(fromType, toType));
+        return removed != null;
     }
 
     @Override
@@ -610,42 +601,45 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         return doLookup(toType, fromType, false);
     }
 
+    @Deprecated
     protected TypeConverter getOrFindTypeConverter(Class<?> toType, Class<?> fromType) {
-        TypeConverter converter = typeMappings.get(toType, fromType);
+        TypeConvertable<?, ?> typeConvertable = new TypeConvertable<>(fromType, toType);
+
+        TypeConverter converter = converters.get(typeConvertable);
         if (converter == null) {
             // converter not found, try to lookup then
             converter = lookup(toType, fromType);
             if (converter != null) {
-                typeMappings.put(toType, fromType, converter);
+                converters.put(typeConvertable, converter);
             }
         }
         return converter;
     }
 
-    protected TypeConverter doLookup(Class<?> toType, Class<?> fromType, boolean isSuper) {
-
+    private static TypeConverter doLookup(
+            Class<?> toType, Class<?> fromType, boolean isSuper, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
         if (fromType != null) {
 
             // try with base converters first
-            final TypeConverter baseConverters = tryBaseConverters(toType, fromType);
+            final TypeConverter baseConverters = tryBaseConverters(fromType, toType, converters);
             if (baseConverters != null) {
                 return baseConverters;
             }
 
             // lets try if there is a direct match
-            final TypeConverter directMatchConverter = tryDirectMatchConverters(toType, fromType);
+            final TypeConverter directMatchConverter = tryDirectMatchConverters(fromType, toType, converters);
             if (directMatchConverter != null) {
                 return directMatchConverter;
             }
 
             // try the interfaces
-            final TypeConverter interfaceConverter = tryInterfaceConverters(toType, fromType);
+            final TypeConverter interfaceConverter = tryInterfaceConverters(fromType, toType, converters);
             if (interfaceConverter != null) {
                 return interfaceConverter;
             }
 
             // try super then
-            final TypeConverter superConverter = trySuperConverters(toType, fromType);
+            final TypeConverter superConverter = trySuperConverters(fromType, toType, converters);
             if (superConverter != null) {
                 return superConverter;
             }
@@ -655,19 +649,14 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         if (!isSuper) {
             if (fromType != null && !fromType.equals(Object.class)) {
 
-                // lets try classes derived from this toType
-                TypeConverter converter = typeMappings.getFirst(
-                        toType::isAssignableFrom,
-                        // skip Object based we do them last
-                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
-                if (converter != null) {
-                    return converter;
+                final TypeConverter assignableConverter = tryAssignableFrom(fromType, toType, converters);
+                if (assignableConverter != null) {
+                    return assignableConverter;
                 }
 
-                // lets test for Object based converters as last resort
-                converter = getTypeConverter(toType, Object.class);
-                if (converter != null) {
-                    return converter;
+                final TypeConverter objConverter = converters.get(new TypeConvertable<>(Object.class, toType));
+                if (objConverter != null) {
+                    return objConverter;
                 }
             }
         }
@@ -676,38 +665,127 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         return null;
     }
 
-    private TypeConverter trySuperConverters(Class<?> toType, Class<?> fromType) {
-        Class<?> fromSuperClass = fromType.getSuperclass();
-        if (fromSuperClass != null && !fromSuperClass.equals(Object.class)) {
-            final TypeConverter converter = doLookup(toType, fromSuperClass, true);
-            if (converter != null) {
-                return converter;
-            }
+    protected TypeConverter doLookup(Class<?> toType, Class<?> fromType, boolean isSuper) {
+        return doLookup(toType, fromType, isSuper, converters);
+    }
+
+    private static Class<?> getWrapperForPrimitive(Class<?> primitive) {
+        if (primitive == int.class) {
+            return Integer.class;
         }
+
+        if (primitive == long.class) {
+            return Long.class;
+        }
+
+        if (primitive == boolean.class) {
+            return Boolean.class;
+        }
+
+        if (primitive == short.class) {
+            return Short.class;
+        }
+
+        if (primitive == byte.class) {
+            return Byte.class;
+        }
+
+        if (primitive == float.class) {
+            return Float.class;
+        }
+
+        if (primitive == char.class) {
+            return Character.class;
+        }
+
         return null;
     }
 
-    private TypeConverter tryInterfaceConverters(Class<?> toType, Class<?> fromType) {
-        for (Class<?> type : fromType.getInterfaces()) {
-            TypeConverter converter = getTypeConverter(toType, type);
-            if (converter != null) {
-                return converter;
-            }
+    private static TypeConverter tryBaseConverters(
+            Class<?> fromType, Class<?> toType, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+
+        TypeConverter tc = converters.get(new TypeConvertable<>(fromType, toType));
+        if (tc == null && toType.isPrimitive()) {
+            tc = converters.get(new TypeConvertable<>(fromType, getWrapperForPrimitive(toType)));
         }
+
+        return tc;
+    }
+
+    private static TypeConverter tryAssignableFrom(
+            Class<?> fromType, Class<?> toType, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+        /*
+         Let's try classes derived from this toType: basically it traverses the entries looking for assignable types
+         matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
+         */
+        final Optional<Map.Entry<TypeConvertable<?, ?>, TypeConverter>> first = converters.entrySet().stream()
+                .filter(v -> v.getKey().getTo().isAssignableFrom(toType))
+                .filter(v -> !v.getKey().getFrom().equals(Object.class) && v.getKey().getFrom().isAssignableFrom(fromType))
+                .findFirst();
+
+        return first.map(Map.Entry::getValue).orElse(null);
+
+    }
+
+    private static TypeConverter tryDirectMatchConverters(
+            Class<?> fromType, Class<?> toType, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+        final TypeConvertable<?, ?> typeConvertable = new TypeConvertable<>(fromType, toType);
+
+        return tryDirectMatchConverters(typeConvertable, converters);
+    }
+
+    private static TypeConverter tryDirectMatchConverters(
+            TypeConvertable<?, ?> typeConvertable, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+        final TypeConverter typeConverter = converters.get(typeConvertable);
+        if (typeConverter != null) {
+            return typeConverter;
+        }
+
         return null;
     }
 
-    private TypeConverter tryDirectMatchConverters(Class<?> toType, Class<?> fromType) {
-        return getTypeConverter(toType, fromType);
+    private static TypeConverter trySuperConverters(
+            Class<?> fromType, Class<?> toType, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+        Class<?> superClass = fromType.getSuperclass();
+
+        return doLookup(toType, superClass, true, converters);
     }
 
-    private TypeConverter tryBaseConverters(Class<?> toType, Class<?> fromType) {
-        for (BulkTypeConverters base : bulkTypeConverters) {
-            TypeConverter converter = base.lookup(toType, fromType);
-            if (converter != null) {
-                return converter;
+    private static TypeConverter tryInterfaceConverters(
+            Class<?> fromType, Class<?> toType, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+        Class<?>[] interfaceTypes = fromType.getInterfaces();
+
+        for (Class<?> interfaceType : interfaceTypes) {
+            TypeConverter typeConverter = tryBaseConverters(interfaceType, toType, converters);
+            if (typeConverter != null) {
+                return typeConverter;
+            } else {
+                if (fromType.isArray()) {
+                    typeConverter = tryNativeArrayConverters(interfaceType, toType, converters);
+                    if (typeConverter != null) {
+                        return typeConverter;
+                    }
+                } else {
+                    typeConverter = tryInterfaceConverters(interfaceType, toType, converters);
+                    if (typeConverter != null) {
+                        return typeConverter;
+                    }
+                }
             }
         }
+
+        return null;
+    }
+
+    private static TypeConverter tryNativeArrayConverters(
+            Class<?> fromType, Class<?> toType, Map<TypeConvertable<?, ?>, TypeConverter> converters) {
+        if (fromType.isArray()) {
+            // Let the fallback converters handle the primitive arrays
+            if (!fromType.getComponentType().isPrimitive()) {
+                return converters.get(new TypeConvertable<>(Object[].class, toType));
+            }
+        }
+
         return null;
     }
 
@@ -734,7 +812,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     }
 
     public int size() {
-        return typeMappings.size() + sumBulkTypeConverters;
+        return converters.size();
     }
 
     public LoggingLevel getTypeConverterExistsLoggingLevel() {
@@ -760,7 +838,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         if (statistics.isStatisticsEnabled()) {
             String info = statistics.toString();
             AtomicInteger misses = new AtomicInteger();
-            typeMappings.forEach((k1, k2, v) -> {
+            converters.forEach((k, v) -> {
                 if (v == MISS_CONVERTER) {
                     misses.incrementAndGet();
                 }
@@ -769,7 +847,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             LOG.info(info);
         }
 
-        typeMappings.clear();
         statistics.reset();
     }
 

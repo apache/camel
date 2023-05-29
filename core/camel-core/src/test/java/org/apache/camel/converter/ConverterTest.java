@@ -113,6 +113,7 @@ public class ConverterTest extends TestSupport {
         assertEquals(2, list.size(), "List size: " + list);
 
         Collection<?> collection = converter.convertTo(Collection.class, array);
+        assertNotNull(collection, "Returned object must not be null");
         assertEquals(2, collection.size(), "Collection size: " + collection);
 
         Set<?> set = converter.convertTo(Set.class, array);

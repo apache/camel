@@ -66,7 +66,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
         loadCoreAndFastTypeConverters();
 
         String time = TimeUtils.printDuration(watch.taken(), true);
-        LOG.debug("Loaded {} type converters in {}", typeMappings.size(), time);
+        LOG.debug("Loaded {} type converters in {}", size(), time);
 
         if (!loadTypeConvertersDone && isLoadTypeConverters()) {
             scanTypeConverters();
@@ -94,18 +94,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
                 typeConverterLoaders.add(createScanTypeConverterLoader());
             }
 
-            int fast = typeMappings.size();
             // load type converters up front
             loadTypeConverters();
-            int additional = typeMappings.size() - fast;
-
-            // report how many type converters we have loaded
-            if (additional > 0) {
-                LOG.debug("Type converters loaded (fast: {}, scanned: {})", fast, additional);
-                LOG.warn(
-                        "Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.",
-                        additional);
-            }
 
             // lets clear the cache from the resolver as its often only used during startup
             if (resolver != null) {
@@ -114,7 +104,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
         }
 
         String time = TimeUtils.printDuration(watch.taken(), true);
-        LOG.debug("Scanned {} type converters in {}", typeMappings.size(), time);
+        LOG.debug("Loaded {} type converters in {}", size(), time);
     }
 
     /**

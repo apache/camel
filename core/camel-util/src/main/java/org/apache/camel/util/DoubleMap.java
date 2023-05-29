@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.util.function.TriConsumer;
 
+@Deprecated
 @SuppressWarnings("unchecked")
 public class DoubleMap<K1, K2, V> {
 
