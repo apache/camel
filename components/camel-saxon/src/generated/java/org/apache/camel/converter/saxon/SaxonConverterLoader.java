@@ -44,10 +44,18 @@ public final class SaxonConverterLoader implements TypeConverterLoader, CamelCon
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, javax.xml.transform.dom.DOMSource.class, net.sf.saxon.om.NodeInfo.class, false,
             (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMSourceFromNodeInfo((net.sf.saxon.om.NodeInfo) value));
+        addTypeConverter(registry, javax.xml.transform.dom.DOMSource.class, net.sf.saxon.tree.tiny.TinyDocumentImpl.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMSourceFromNodeInfo((net.sf.saxon.tree.tiny.TinyDocumentImpl) value));
         addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.saxon.om.NodeInfo.class, false,
             (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.om.NodeInfo) value));
+        addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.saxon.tree.tiny.TinyDocumentImpl.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.tree.tiny.TinyDocumentImpl) value));
+        addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.saxon.tree.tiny.TinyElementImpl.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.tree.tiny.TinyElementImpl) value));
         addTypeConverter(registry, org.w3c.dom.Node.class, net.sf.saxon.om.NodeInfo.class, false,
             (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMNode((net.sf.saxon.om.NodeInfo) value));
+        addTypeConverter(registry, org.w3c.dom.Node.class, net.sf.saxon.tree.tiny.TinyDocumentImpl.class, false,
+            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMNode((net.sf.saxon.tree.tiny.TinyDocumentImpl) value));
         addTypeConverter(registry, org.w3c.dom.NodeList.class, java.util.List.class, false,
             (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMNodeList((java.util.List) value));
     }

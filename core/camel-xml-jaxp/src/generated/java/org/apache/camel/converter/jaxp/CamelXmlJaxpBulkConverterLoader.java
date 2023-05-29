@@ -9,6 +9,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -43,6 +44,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
     @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
         registry.addBulkTypeConverters(this);
+        doRegistration(registry);
     }
 
     @Override
@@ -390,6 +392,106 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             }
         }
         return null;
+    }
+
+    private void doRegistration(TypeConverterRegistry registry) {
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.stream.XMLStreamReader.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.dom.DOMSource.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Document.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.stream.XMLStreamReader.class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, java.io.Serializable.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, java.lang.Boolean.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, java.lang.Integer.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Node.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, java.util.List.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.namespace.QName.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.stream.XMLEventReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.stream.XMLEventReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, javax.xml.stream.XMLEventReader.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.stream.XMLStreamReader.class, javax.xml.stream.XMLEventReader.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, javax.xml.stream.XMLEventReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.OutputStream.class, javax.xml.stream.XMLEventWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Writer.class, javax.xml.stream.XMLEventWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Result.class, javax.xml.stream.XMLEventWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.stream.XMLStreamReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.stream.XMLStreamReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, javax.xml.stream.XMLStreamReader.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, javax.xml.stream.XMLStreamReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.stream.XMLStreamReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.OutputStream.class, javax.xml.stream.XMLStreamWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Writer.class, javax.xml.stream.XMLStreamWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Result.class, javax.xml.stream.XMLStreamWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.transform.Source.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.Source.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Document.class, javax.xml.transform.Source.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, javax.xml.transform.Source.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Document.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Node.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.sax.SAXSource.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stax.StAXSource.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.dom.DOMSource.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stax.StAXSource.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.transform.stax.StAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.stax.StAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.stax.StAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.stax.StAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.sax.SAXSource.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.dom.DOMSource.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stax.StAXSource.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.util.xml.BytesSource.class, org.apache.camel.StreamCache.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, org.apache.camel.StreamCache.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.sax.SAXSource.class, org.apache.camel.StreamCache.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, org.apache.camel.util.xml.BytesSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.apache.camel.util.xml.StringSource.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Node.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(org.xml.sax.InputSource.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, org.w3c.dom.Element.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.Node.class, org.w3c.dom.Element.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.sax.SAXSource.class, org.w3c.dom.Node.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.stax.StAXSource.class, org.w3c.dom.Node.class), this);
+        registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, org.w3c.dom.Node.class), this);
+        registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, org.w3c.dom.Node.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, org.xml.sax.InputSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, org.xml.sax.InputSource.class), this);
+        
+        
     }
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {

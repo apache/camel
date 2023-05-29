@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,13 @@ public class CustomBulkTypeConvertersTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getTypeConverterRegistry().addBulkTypeConverters(new CustomBulkTypeConverters());
+
+        final CustomBulkTypeConverters customBulkTypeConverters = new CustomBulkTypeConverters();
+        context.getTypeConverterRegistry().addBulkTypeConverters(customBulkTypeConverters);
+        context.getTypeConverterRegistry().addConverter(new TypeConvertible<>(String.class, MyOrder.class),
+                customBulkTypeConverters);
+        context.getTypeConverterRegistry().addConverter(new TypeConvertible<>(Integer.class, MyOrder.class),
+                customBulkTypeConverters);
         return context;
     }
 
