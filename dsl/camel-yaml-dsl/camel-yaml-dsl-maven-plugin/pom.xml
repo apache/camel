@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-parent</artifactId>
-        <version>3.14.8-SNAPSHOT</version>
+        <version>3.14.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
@@ -154,6 +154,7 @@
                     </mojoDependencies>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
@@ -161,6 +162,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            -->
         </plugins>
     </build>
 
