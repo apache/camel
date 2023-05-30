@@ -41,9 +41,6 @@ public final class CouchDbServiceFactory {
         }
     }
 
-    private static SimpleTestServiceBuilder<CouchDbService> instance;
-    private static CouchDbService service;
-
     private CouchDbServiceFactory() {
 
     }
@@ -60,18 +57,18 @@ public final class CouchDbServiceFactory {
     }
 
     public static CouchDbService createSingletonService() {
-        if (service == null) {
-            if (instance == null) {
-                instance = builder();
+        return SingletonServiceHolder.INSTANCE;
+    }
 
-                instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerService(), "couchdb"))
-                        .addRemoteMapping(CouchDbRemoteService::new);
+    private static class SingletonServiceHolder {
+        static final CouchDbService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<CouchDbService> instance = builder();
 
-            }
+            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerService(), "couchdb"))
+                    .addRemoteMapping(CouchDbRemoteService::new);
 
-            service = instance.build();
+            INSTANCE = instance.build();
         }
-
-        return service;
     }
 }

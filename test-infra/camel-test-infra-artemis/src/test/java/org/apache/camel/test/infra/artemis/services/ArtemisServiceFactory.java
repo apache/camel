@@ -23,16 +23,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class ArtemisServiceFactory {
 
-    private static SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder;
-    private static SimpleTestServiceBuilder<ArtemisService> persistentInstanceBuilder;
-    private static SimpleTestServiceBuilder<ArtemisService> amqpInstanceBuilder;
-    private static SimpleTestServiceBuilder<ArtemisService> mqttInstanceBuilder;
-
-    private static ArtemisService persistentService;
-    private static ArtemisService nonPersistentService;
-    private static ArtemisService amqpService;
-    private static ArtemisService mqttService;
-
     public static class SingletonArtemisService extends SingletonService<ArtemisService> implements ArtemisService {
 
         public SingletonArtemisService(ArtemisService service, String name) {
@@ -106,67 +96,71 @@ public final class ArtemisServiceFactory {
         return new ArtemisAMQPService();
     }
 
-    public static synchronized ArtemisService createSingletonVMService() {
-        if (nonPersistentService == null) {
-            if (nonPersistentInstanceBuilder == null) {
-                nonPersistentInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
-
-                nonPersistentInstanceBuilder
-                        .addLocalMapping(() -> new SingletonArtemisService(new ArtemisVMService(), "artemis"));
-            }
-
-            nonPersistentService = nonPersistentInstanceBuilder.build();
-        }
-
-        return nonPersistentService;
+    public static ArtemisService createSingletonVMService() {
+        return SingletonVMServiceHolder.INSTANCE;
     }
 
-    public static synchronized ArtemisService createSingletonPersistentVMService() {
-        if (persistentService == null) {
-            if (persistentInstanceBuilder == null) {
-                persistentInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
-
-                persistentInstanceBuilder.addLocalMapping(
-                        () -> new SingletonArtemisService(new ArtemisPersistentVMService(), "artemis-persistent"));
-            }
-
-            persistentService = persistentInstanceBuilder.build();
-        }
-
-        return persistentService;
+    public static ArtemisService createSingletonPersistentVMService() {
+        return SingletonPersistentVMServiceHolder.INSTANCE;
     }
 
-    public static synchronized ArtemisService createSingletonAMQPService() {
-        if (amqpService == null) {
-            if (amqpInstanceBuilder == null) {
-                amqpInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
-
-                amqpInstanceBuilder
-                        .addLocalMapping(() -> new SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqp"));
-            }
-
-            amqpService = amqpInstanceBuilder.build();
-        }
-
-        return amqpService;
+    public static ArtemisService createSingletonAMQPService() {
+        return SingletonAMQPServiceHolder.INSTANCE;
     }
 
-    public static synchronized ArtemisService createSingletonMQTTService() {
-        if (mqttService == null) {
-            if (mqttInstanceBuilder == null) {
-                mqttInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
-
-                mqttInstanceBuilder
-                        .addLocalMapping(() -> new SingletonArtemisService(new ArtemisMQTTService(), "artemis-mqtt"));
-            }
-
-            mqttService = mqttInstanceBuilder.build();
-        }
-
-        return mqttService;
+    public static ArtemisService createSingletonMQTTService() {
+        return SingletonMQTTServiceHolder.INSTANCE;
     }
 
     public static ArtemisService createTCPAllProtocolsService() {
         return new ArtemisTCPAllProtocolsService();
+    }
+
+    private static class SingletonVMServiceHolder {
+        static final ArtemisService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+
+            nonPersistentInstanceBuilder
+                    .addLocalMapping(() -> new SingletonArtemisService(new ArtemisVMService(), "artemis"));
+
+            INSTANCE = nonPersistentInstanceBuilder.build();
+        }
+    }
+
+    private static class SingletonPersistentVMServiceHolder {
+        static final ArtemisService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ArtemisService> persistentInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+
+            persistentInstanceBuilder.addLocalMapping(
+                    () -> new SingletonArtemisService(new ArtemisPersistentVMService(), "artemis-persistent"));
+
+            INSTANCE = persistentInstanceBuilder.build();
+        }
+    }
+
+    private static class SingletonAMQPServiceHolder {
+        static final ArtemisService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ArtemisService> amqpInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+
+            amqpInstanceBuilder
+                    .addLocalMapping(() -> new SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqp"));
+
+            INSTANCE = amqpInstanceBuilder.build();
+        }
+    }
+
+    private static class SingletonMQTTServiceHolder {
+        static final ArtemisService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ArtemisService> mqttInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+
+            mqttInstanceBuilder
+                    .addLocalMapping(() -> new SingletonArtemisService(new ArtemisMQTTService(), "artemis-mqtt"));
+
+            INSTANCE = mqttInstanceBuilder.build();
+        }
     }
 }

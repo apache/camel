@@ -38,9 +38,6 @@ public final class HDFSServiceFactory {
         }
     }
 
-    private static SimpleTestServiceBuilder<HDFSService> instance;
-    private static HDFSService service;
-
     private HDFSServiceFactory() {
 
     }
@@ -50,13 +47,15 @@ public final class HDFSServiceFactory {
     }
 
     public static HDFSService createSingletonService() {
-        if (service == null) {
-            if (instance == null) {
-                instance = builder();
-                instance.addLocalMapping(() -> new SingletonHDFSService(new ContainerLocalHDFSService(), "hdfs"));
-            }
-            service = instance.build();
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final HDFSService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<HDFSService> instance = builder();
+            instance.addLocalMapping(() -> new SingletonHDFSService(new ContainerLocalHDFSService(), "hdfs"));
+            INSTANCE = instance.build();
         }
-        return service;
     }
 }

@@ -36,9 +36,6 @@ public final class ArangoDBServiceFactory {
         }
     }
 
-    private static SimpleTestServiceBuilder<ArangoDBService> instance;
-    private static ArangoDBService arangoDBService;
-
     private ArangoDBServiceFactory() {
 
     }
@@ -55,19 +52,18 @@ public final class ArangoDBServiceFactory {
     }
 
     public static ArangoDBService createSingletonService() {
-        if (arangoDBService == null) {
+        return SingletonServiceHolder.INSTANCE;
+    }
 
-            if (instance == null) {
-                instance = builder();
+    private static class SingletonServiceHolder {
+        static final ArangoDBService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ArangoDBService> instance = builder();
+            instance.addLocalMapping(() -> new SingletonArangoDBService(new ArangoDBLocalContainerService(), "arangoDB"))
+                    .addRemoteMapping(ArangoDBRemoteService::new)
+                    .build();
 
-                instance.addLocalMapping(() -> new SingletonArangoDBService(new ArangoDBLocalContainerService(), "arangoDB"))
-                        .addRemoteMapping(ArangoDBRemoteService::new)
-                        .build();
-            }
-
-            arangoDBService = instance.build();
+            INSTANCE = instance.build();
         }
-
-        return arangoDBService;
     }
 }
