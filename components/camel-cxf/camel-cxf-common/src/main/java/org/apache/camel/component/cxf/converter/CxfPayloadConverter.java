@@ -179,9 +179,10 @@ public final class CxfPayloadConverter {
             } catch (RuntimeCamelException e) {
                 // the internal conversion to XML can throw an exception if the content is not XML
                 // ignore this and return MISS_VALUE to indicate that we cannot convert this
+                return (T) MISS_VALUE;
             }
-            // no we could not do it currently
-            return (T) MISS_VALUE;
+            // Let other fallback converter try
+            return null;
         }
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
