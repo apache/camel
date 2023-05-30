@@ -31,9 +31,11 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - name: check for component tests
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
-          echo Component tests have been requested
+          echo "$GITHUB_CONTEXT"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.issue.pull_request.head.ref}}
