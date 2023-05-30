@@ -31,33 +31,20 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
-      - name: Retrieve REF
+      - name: Retrieve sha
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          retries: 3
-          retry-exempt-status-codes: 400,401
           script: |
             const pr = await github.rest.pulls.get({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   pull_number: context.issue.number
             });
-            console.log(pr)
-            core.exportVariable('pr_ref', pr.data.head.ref)
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
+            core.exportVariable('pr_sha', pr.data.head.sha)
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.pr_ref }}
+          ref: ${{ vars.sha }}
           repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
       - id: install-packages
         uses: ./.github/actions/install-packages
