@@ -36,7 +36,8 @@ jobs:
           echo Component tests have been requested
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.event.issue.pull_request.head.ref}}
+          repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
@@ -50,3 +51,21 @@ jobs:
         uses: ./.github/actions/component-test
         with:
           comment-body: ${{ github.event.comment.body }}
+      - name: Success comment
+        if: success()
+        uses: peter-evans/create-or-update-comment@v3.0.1
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            ${{ github.event.comment.body }}
+            The tests passed successfully
+          reactions: hooray
+      - name: Failure comment
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v3.0.1
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            ${{ github.event.comment.body }}
+            The tests failed
+          reactions: confused
