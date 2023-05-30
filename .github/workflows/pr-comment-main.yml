@@ -49,7 +49,7 @@ jobs:
                   pull_number: context.issue.number
             });
             console.log(pr)
-            core.exportVariable('pr_ref', pr.data.ref)
+            core.exportVariable('pr_ref', pr.data.head.ref)
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
