@@ -53,19 +53,27 @@ jobs:
           comment-body: ${{ github.event.comment.body }}
       - name: Success comment
         if: success()
-        uses: peter-evans/create-or-update-comment@v3.0.1
+        uses: actions/github-script@v6
         with:
-          comment-id: ${{ github.event.comment.id }}
-          body: |
-            ${{ github.event.comment.body }}
-            The tests passed successfully
-          reactions: hooray
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  comment_id: ${{ github.event.comment.id }},
+                  body: "${{ github.event.comment.body }}\n :hooray: The tests passed successfully"
+            });
       - name: Failure comment
         if: failure()
-        uses: peter-evans/create-or-update-comment@v3.0.1
+        uses: actions/github-script@v6
         with:
-          comment-id: ${{ github.event.comment.id }}
-          body: |
-            ${{ github.event.comment.body }}
-            The tests failed
-          reactions: confused
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  comment_id: ${{ github.event.comment.id }},
+                  body: "${{ github.event.comment.body }}\n :confused: The tests failed please check the logs"
+            });
