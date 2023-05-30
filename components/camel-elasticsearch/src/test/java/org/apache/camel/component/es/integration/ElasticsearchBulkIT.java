@@ -72,7 +72,7 @@ class ElasticsearchBulkIT extends ElasticsearchTestSupport {
                 "{\"testBulkWithString1\": \"some-value\"}", "{\"testBulkWithString2\": \"some-value\"}");
 
         List<?> indexIds = template.requestBody("direct:bulk", documents, List.class);
-        assertNotNull(indexIds, "indexIds should be set");
+        assertNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
 
