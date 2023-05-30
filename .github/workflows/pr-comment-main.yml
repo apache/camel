@@ -44,8 +44,7 @@ jobs:
             core.exportVariable('pr_sha', pr.data.head.sha)
       - uses: actions/checkout@v3
         with:
-          ref: ${{ vars.sha }}
-          repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
+          ref: ${{ env.pr_sha }}
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
