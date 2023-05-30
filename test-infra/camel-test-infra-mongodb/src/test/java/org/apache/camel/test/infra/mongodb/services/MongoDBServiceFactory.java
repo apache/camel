@@ -19,22 +19,11 @@ package org.apache.camel.test.infra.mongodb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class MongoDBServiceFactory {
     static class SingletonMongoDBService extends SingletonService<MongoDBService> implements MongoDBService {
         public SingletonMongoDBService(MongoDBService service, String name) {
             super(service, name);
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) {
-            addToStore(extensionContext);
-        }
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) {
-            // NO-OP
         }
 
         @Override

@@ -19,7 +19,6 @@ package org.apache.camel.test.infra.hdfs.v2.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class HDFSServiceFactory {
 
@@ -36,16 +35,6 @@ public final class HDFSServiceFactory {
         @Override
         public int getPort() {
             return getService().getPort();
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) {
-            addToStore(extensionContext);
-        }
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) {
-            // NO-OP
         }
     }
 

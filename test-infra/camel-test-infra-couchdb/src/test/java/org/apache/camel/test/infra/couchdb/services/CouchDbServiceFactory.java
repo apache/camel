@@ -18,22 +18,11 @@ package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class CouchDbServiceFactory {
     static class SingletonCouchDbService extends SingletonService<CouchDbService> implements CouchDbService {
         public SingletonCouchDbService(CouchDbService service, String name) {
             super(service, name);
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) {
-            addToStore(extensionContext);
-        }
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) {
-            // NO-OP
         }
 
         @Override

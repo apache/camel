@@ -19,7 +19,6 @@ package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class KafkaServiceFactory {
     static class SingletonKafkaService extends SingletonService<KafkaService> implements KafkaService {
@@ -30,16 +29,6 @@ public final class KafkaServiceFactory {
         @Override
         public String getBootstrapServers() {
             return getService().getBootstrapServers();
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) {
-            addToStore(extensionContext);
-        }
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) {
-            // NO-OP
         }
     }
 

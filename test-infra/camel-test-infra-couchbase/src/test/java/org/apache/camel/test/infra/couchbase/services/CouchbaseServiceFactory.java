@@ -19,17 +19,11 @@ package org.apache.camel.test.infra.couchbase.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class CouchbaseServiceFactory {
     static class SingletonCouchbaseService extends SingletonService<CouchbaseService> implements CouchbaseService {
         public SingletonCouchbaseService(CouchbaseService service, String name) {
             super(service, name);
-        }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) {
-            addToStore(extensionContext);
         }
 
         @Override
@@ -55,11 +49,6 @@ public final class CouchbaseServiceFactory {
         @Override
         public int getPort() {
             return getService().getPort();
-        }
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) {
-            // NO-OP
         }
     }
 
