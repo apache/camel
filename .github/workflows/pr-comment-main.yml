@@ -23,7 +23,7 @@ on:
 jobs:
   pr_commented:
     name: PR comment
-    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/component-test')
+    if: github.repository == 'apache/camel' && ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/component-test')
     permissions:
       issues: write
     runs-on: ubuntu-latest
@@ -36,9 +36,23 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           echo "$GITHUB_CONTEXT"
+      - name: Retrieve REF
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          retries: 3
+          retry-exempt-status-codes: 400,401
+          script: |
+            const pr = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.issue.number
+            });
+            console.log(pr)
+            core.exportVariable('pr_ref', pr.data.head.ref)
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.issue.pull_request.head.ref}}
+          ref: ${{ pr_ref }}
           repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
       - id: install-packages
         uses: ./.github/actions/install-packages
@@ -59,12 +73,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.issues.updateComment({
+            await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
-                  comment_id: ${{ github.event.comment.id }},
-                  body: "${{ github.event.comment.body }}\n :hooray: The tests passed successfully"
+                  body: `**Result of** ${{ github.event.comment.body }}
+            :hooray: The tests passed successfully`
             });
       - name: Failure comment
         if: failure()
@@ -72,10 +86,11 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.issues.updateComment({
+            await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
-                  comment_id: ${{ github.event.comment.id }},
-                  body: "${{ github.event.comment.body }}\n :confused: The tests failed please check the logs"
+                  body: `**Result of** ${{ github.event.comment.body }}
+            :confused: The tests failed please check the logs`
             });
+
