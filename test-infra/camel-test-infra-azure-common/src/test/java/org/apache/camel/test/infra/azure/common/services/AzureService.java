@@ -19,12 +19,8 @@ package org.apache.camel.test.infra.azure.common.services;
 
 import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
 import org.apache.camel.test.infra.common.services.TestService;
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface AzureService extends TestService, BeforeAllCallback, AfterAllCallback {
+public interface AzureService extends TestService {
 
     /**
      * Gets the credentials for the test service
@@ -32,14 +28,4 @@ public interface AzureService extends TestService, BeforeAllCallback, AfterAllCa
      * @return
      */
     AzureCredentialsHolder azureCredentials();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
-    }
 }

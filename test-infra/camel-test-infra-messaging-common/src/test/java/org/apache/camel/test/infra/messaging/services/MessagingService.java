@@ -18,12 +18,8 @@
 package org.apache.camel.test.infra.messaging.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface MessagingService extends TestService, BeforeAllCallback, AfterAllCallback {
+public interface MessagingService extends TestService {
 
     /**
      * Gets the default endpoint for the messaging service (ie.: amqp://host:port, or tcp://host:port, etc)
@@ -31,14 +27,4 @@ public interface MessagingService extends TestService, BeforeAllCallback, AfterA
      * @return the endpoint URL as a string in the specific format used by the service
      */
     String defaultEndpoint();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
-    }
 }
