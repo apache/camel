@@ -27,6 +27,7 @@ function main() {
 
   if [[ ${commentBody} = /component-test* ]] ; then
     local componentList="${commentBody:16}"
+    echo "The list of components to test is ${componentList}"
   else
     echo "No components has been detected, the expected format is '/component-test (camel-)component-name1 (camel-)component-name2...'"
     exit 1
@@ -43,8 +44,10 @@ function main() {
   pl="${pl:1}"
 
   if [[ ${fastBuild} = "true" ]] ; then
+    echo "Launching a fast build against the projects ${pl} and their dependencies"
     $mavenBinary -l $log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pfastinstall install -pl "$pl" -am
   else
+    echo "Launching tests of the projects ${pl}"
     $mavenBinary -l $log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e install -pl "$pl"
   fi
 }
