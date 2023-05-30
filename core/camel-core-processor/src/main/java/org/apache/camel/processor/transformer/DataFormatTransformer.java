@@ -83,7 +83,7 @@ public class DataFormatTransformer extends Transformer {
             }
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
             LOG.debug("Marshaling with: {}", dataFormat);
-            dataFormat.marshal(exchange, message.getBody(), osb);
+            dataFormat.marshal(exchange, input, osb);
             message.setBody(osb.build());
 
         } else {
