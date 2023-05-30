@@ -49,10 +49,15 @@ jobs:
                   pull_number: context.issue.number
             });
             console.log(pr)
-            core.exportVariable('pr_ref', pr.data.head.ref)
+            core.exportVariable('pr_ref', pr.data.ref)
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
       - uses: actions/checkout@v3
         with:
-          ref: $pr_ref
+          ref: ${{ github.pr_ref }}
           repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
       - id: install-packages
         uses: ./.github/actions/install-packages
