@@ -62,20 +62,6 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
-          var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-             owner: context.repo.owner,
-             repo: context.repo.repo,
-             run_id: ${{ inputs.run-id }}
-          });
-          console.log(artifacts)
-          artifacts = github.rest.actions.listWorkflowRunArtifacts({
-             owner: context.repo.owner,
-             repo: context.repo.repo,
-             run_id: ${{ inputs.run-id }}
-          });
-          console.log(artifacts)
-          console.log(artifacts.data)
-          console.log(artifacts.data.artifacts)
           await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -96,6 +82,19 @@ runs:
              repo: context.repo.repo,
              run_id: ${{ inputs.run-id }}
           });
+          console.log("########")
+          console.log(artifacts)
+          console.log(artifacts.data)
+          console.log(artifacts.data.artifacts)
+          artifacts = github.rest.actions.listWorkflowRunArtifacts({
+             owner: context.repo.owner,
+             repo: context.repo.repo,
+             run_id: ${{ inputs.run-id }}
+          });
+          console.log("########")
+          console.log(artifacts)
+          console.log(artifacts.data)
+          console.log(artifacts.data.artifacts)
           var message = `${{ inputs.comment-body }}
 
           **Result** :x: The tests failed please check the logs below:
