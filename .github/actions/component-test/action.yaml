@@ -18,6 +18,12 @@
 name: "Component Test Runner"
 description: "Runs tests of corresponding to the given comment"
 inputs:
+  pr-id:
+    description: 'Id of the pull request to update'
+    required: true
+  comment-id:
+    description: 'Id of the comment to process'
+    required: true
   comment-body:
     description: 'Body of the comment to process'
     required: true
@@ -28,7 +34,7 @@ runs:
       uses: ./.github/actions/install-mvnd
     - name: maven build
       shell: bash
-      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd true "${{ inputs.comment-body }}" build.log
+      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" true build.log
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -37,11 +43,53 @@ runs:
         path: build.log
     - name: maven test
       shell: bash
-      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd false "${{ inputs.comment-body }}" tests.log
+      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: tests.log
         path: tests.log
-
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
+    - name: Success comment
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ inputs.pr-id }},
+                comment_id: ${{ inputs.comment-id }},
+                body: `${{ inputs.comment-body }}
+          **Result** :white_check_mark: The tests passed successfully`
+          });
+    - name: Failure comment
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+             owner: context.repo.owner,
+             repo: context.repo.repo,
+             run_id: ${{ github.event.workflow_run.id }}
+          });
+          var message = `${{ inputs.comment-body }}
+          **Result** :x: The tests failed please check the logs below:
+          `
+          for (const artifact in artifacts.data.artifacts) {
+            message += `* [*${artifact.name}*](${artifact.url})`
+          }
+          await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ inputs.pr-id }},
+                comment_id: ${{ inputs.comment-id }},
+                body: message
+          });

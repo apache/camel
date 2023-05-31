@@ -54,47 +54,15 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
       - id: test
         name: Component test execution
         uses: ./.github/actions/component-test
         with:
+          pr-id: ${{ github.event.issue.number.id }}
+          comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ github.event.comment.body }}
-      - name: Success comment
-        if: success()
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  comment_id: ${{ github.event.comment.id }},
-                  body: `${{ github.event.comment.body }}
-            **Result** :white_check_mark: The tests passed successfully`
-            });
-      - name: Failure comment
-        if: failure()
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var message = `${{ github.event.comment.body }}
-            **Result** :x: The tests failed please check the logs below:
-            `
-            for (artifact in artifacts.data.artifacts) {
-              message += `* [*${artifact.name}*](${artifact.url})`
-            }
-            await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  comment_id: ${{ github.event.comment.id }},
-                  body: message
-            });
-
