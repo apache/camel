@@ -79,7 +79,7 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
         } else if (definition instanceof DataFormatTransformerDefinition) {
             return new DataFormatTransformerReifier(camelContext, definition);
         } else if (definition instanceof EndpointTransformerDefinition) {
-            return new EndpointTransformeReifier(camelContext, definition);
+            return new EndpointTransformerReifier(camelContext, definition);
         }
         return null;
     }
