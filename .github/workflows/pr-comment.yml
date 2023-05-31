@@ -54,16 +54,12 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
       - id: test
         name: Component test execution
         uses: ./.github/actions/component-test
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.run_id }}
           pr-id: ${{ github.event.issue.number.id }}
           comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ github.event.comment.body }}

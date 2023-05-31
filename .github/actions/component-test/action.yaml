@@ -21,6 +21,9 @@ inputs:
   github-token:
     description: 'GitHub token to use to update the comment'
     required: true
+  run-id:
+    description: 'Id of the job'
+    required: true
   pr-id:
     description: 'Id of the pull request to update'
     required: true
@@ -73,13 +76,10 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
-          console.log(context)
-          console.log(toJson(context))
-          console.log(toJson(github))
           var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
              owner: context.repo.owner,
              repo: context.repo.repo,
-             run_id: ${{ github.event.workflow_run.id }}
+             run_id: ${{ inputs.run-id }}
           });
           var message = `${{ inputs.comment-body }}
           **Result** :x: The tests failed please check the logs below:
