@@ -47,15 +47,15 @@ runs:
       with:
         name: build.log
         path: build.log
-#    - name: maven test
-#      shell: bash
-#      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
-#    - name: archive logs
-#      uses: actions/upload-artifact@v3
-#      if: always()
-#      with:
-#        name: tests.log
-#        path: tests.log
+    - name: maven test
+      shell: bash
+      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
+    - name: archive logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: tests.log
+        path: tests.log
     - name: Success comment
       if: success()
       uses: actions/github-script@v6
@@ -68,6 +68,7 @@ runs:
                 issue_number: ${{ inputs.pr-id }},
                 comment_id: ${{ inputs.comment-id }},
                 body: `${{ inputs.comment-body }}
+
           **Result** :white_check_mark: The tests passed successfully`
           });
     - name: Failure comment
@@ -82,10 +83,13 @@ runs:
              run_id: ${{ inputs.run-id }}
           });
           var message = `${{ inputs.comment-body }}
+
           **Result** :x: The tests failed please check the logs below:
+
           `
           for (const artifact in artifacts.data.artifacts) {
-            message += `* [*${artifact.name}*](${artifact.url})`
+            message += `* [*${artifact.name}*](${artifact.url})
+          `
           }
           await github.rest.issues.updateComment({
                 owner: context.repo.owner,
