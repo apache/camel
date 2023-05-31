@@ -90,6 +90,7 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
 
         private Class<?> unmarshalType;
         private String unmarshalTypeName;
+
         /**
          * Class to use when unmarshalling.
          */
