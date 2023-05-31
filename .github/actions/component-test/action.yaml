@@ -86,17 +86,19 @@ runs:
           console.log(artifacts)
           console.log(artifacts.data)
           console.log(artifacts.data.artifacts)
-          artifacts = github.rest.actions.listWorkflowRunArtifacts({
-             owner: context.repo.owner,
-             repo: context.repo.repo,
-             run_id: ${{ inputs.run-id }}
-          });
-          console.log("########")
-          console.log(artifacts)
-          console.log(artifacts.data)
-          console.log(artifacts.data.artifacts)
-          var message = `${{ inputs.comment-body }}
-
+          for (int i = 0; i < 30 && artifacts.data.artifacts.length == 0; i++) {
+            console.log("No artifacts yet, let's try again")
+            await setTimeout(1000);
+            artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{ inputs.run-id }}
+            });
+            console.log("########")
+            console.log(artifacts)
+            console.log(artifacts.data)
+            console.log(artifacts.data.artifacts)
+          }
           **Result** :x: The tests failed please check the logs below:
 
           `
