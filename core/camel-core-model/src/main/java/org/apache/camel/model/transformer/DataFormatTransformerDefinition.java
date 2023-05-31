@@ -46,6 +46,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
@@ -97,6 +98,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(name = "jsonApi", type = JsonApiDataFormat.class),
             @XmlElement(name = "lzf", type = LZFDataFormat.class),
             @XmlElement(name = "mimeMultipart", type = MimeMultipartDataFormat.class),
+            @XmlElement(name = "parquetAvro", type = ParquetAvroDataFormat.class),
             @XmlElement(name = "protobuf", type = ProtobufDataFormat.class),
             @XmlElement(name = "rss", type = RssDataFormat.class),
             @XmlElement(name = "soap", type = SoapDataFormat.class),

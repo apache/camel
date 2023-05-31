@@ -49,6 +49,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
@@ -221,6 +222,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new LZFDataFormatReifier(camelContext, definition);
         } else if (definition instanceof MimeMultipartDataFormat) {
             return new MimeMultipartDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ParquetAvroDataFormat) {
+            return new ParquetAvroDataFormatReifier(camelContext, definition);
         } else if (definition instanceof PGPDataFormat) {
             return new PGPDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ProtobufDataFormat) {

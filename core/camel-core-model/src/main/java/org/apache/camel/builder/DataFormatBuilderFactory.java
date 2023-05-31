@@ -39,6 +39,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
@@ -213,6 +214,13 @@ public final class DataFormatBuilderFactory {
      */
     public MimeMultipartDataFormat.Builder mimeMultipart() {
         return new MimeMultipartDataFormat.Builder();
+    }
+
+    /**
+     * Uses the protobuf data format
+     */
+    public ParquetAvroDataFormat.Builder parquetAvro() {
+        return new ParquetAvroDataFormat.Builder();
     }
 
     /**

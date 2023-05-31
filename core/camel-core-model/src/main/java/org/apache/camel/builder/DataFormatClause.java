@@ -45,6 +45,7 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -1249,6 +1250,28 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T asn1(Boolean usingIterator) {
         return dataFormat(new ASN1DataFormat(usingIterator));
+    }
+
+    /**
+     * Uses the parquet-avro file data format
+     */
+    public T parquetAvro() {
+        ParquetAvroDataFormat parquetAvroDataFormat = new ParquetAvroDataFormat();
+        return dataFormat(parquetAvroDataFormat);
+    }
+
+    /**
+     * Uses the parquet-avro file data format
+     */
+    public T parquetAvro(String unmarshalType) {
+        return dataFormat(new ParquetAvroDataFormat(unmarshalType));
+    }
+
+    /**
+     * Uses the parquet-avro file data format
+     */
+    public T parquetAvro(Class<?> unmarshalType) {
+        return dataFormat(new ParquetAvroDataFormat(unmarshalType));
     }
 
     /**

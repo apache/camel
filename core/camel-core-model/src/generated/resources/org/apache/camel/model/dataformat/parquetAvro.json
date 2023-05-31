@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "parquetAvro",
+    "title": "Parquet File",
+    "deprecated": false,
+    "firstVersion": "4.0.0",
+    "label": "dataformat,transformation,file",
+    "javaType": "org.apache.camel.model.dataformat.ParquetAvroDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "unmarshalType": { "index": 0, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },
+    "id": { "index": 1, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

@@ -403,6 +403,8 @@
         <optaplanner-version>9.37.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
+        <parquet-common-version>1.12.0</parquet-common-version>
+        <parquet-avro-version>1.12.3</parquet-avro-version>
         <pdfbox-version>2.0.28</pdfbox-version>
         <pgjdbc-driver-version>42.6.0</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
@@ -2453,6 +2455,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>dummy-component</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel.dataformat.parquet.avro</groupId>
+                <artifactId>camel-parquet-avro</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

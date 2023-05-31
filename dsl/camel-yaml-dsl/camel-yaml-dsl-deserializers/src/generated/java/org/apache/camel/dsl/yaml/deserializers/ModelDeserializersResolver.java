@@ -281,6 +281,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.PackageScanDefinition": return new ModelDeserializers.PackageScanDefinitionDeserializer();
             case "param": return new ModelDeserializers.ParamDefinitionDeserializer();
             case "org.apache.camel.model.rest.ParamDefinition": return new ModelDeserializers.ParamDefinitionDeserializer();
+            case "parquet-avro": return new ModelDeserializers.ParquetAvroDataFormatDeserializer();
+            case "parquetAvro": return new ModelDeserializers.ParquetAvroDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.ParquetAvroDataFormat": return new ModelDeserializers.ParquetAvroDataFormatDeserializer();
             case "pass-through-service-filter": return new ModelDeserializers.PassThroughServiceCallServiceFilterConfigurationDeserializer();
             case "passThroughServiceFilter": return new ModelDeserializers.PassThroughServiceCallServiceFilterConfigurationDeserializer();
             case "org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration": return new ModelDeserializers.PassThroughServiceCallServiceFilterConfigurationDeserializer();
