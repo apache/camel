@@ -3,6 +3,7 @@
     "kind": "model",
     "name": "parquetAvro",
     "title": "Parquet File",
+    "description": "Parquet Avro serialization and de-serialization.",
     "deprecated": false,
     "firstVersion": "4.0.0",
     "label": "dataformat,transformation,file",

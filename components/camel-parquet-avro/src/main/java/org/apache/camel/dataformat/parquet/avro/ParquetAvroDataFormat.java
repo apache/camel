@@ -47,7 +47,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     private Class<?> unmarshalType;
 
     public String getDataFormatName() {
-        return "parquet-avro";
+        return "parquetAvro";
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -118,6 +118,9 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
         return unmarshalType;
     }
 
+    /**
+     * Class to use when unmarshalling.
+     */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }

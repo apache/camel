@@ -1,16 +1,19 @@
 {
-  "model": {
-    "kind": "model",
+  "dataformat": {
+    "kind": "dataformat",
     "name": "parquetAvro",
     "title": "Parquet File",
     "description": "Parquet Avro serialization and de-serialization.",
     "deprecated": false,
     "firstVersion": "4.0.0",
     "label": "dataformat,transformation,file",
-    "javaType": "org.apache.camel.model.dataformat.ParquetAvroDataFormat",
-    "abstract": false,
-    "input": false,
-    "output": false
+    "javaType": "org.apache.camel.dataformat.parquet.avro.ParquetAvroDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-parquet-avro",
+    "version": "4.0.0-SNAPSHOT",
+    "modelName": "parquetAvro",
+    "modelJavaType": "org.apache.camel.model.dataformat.ParquetAvroDataFormat"
   },
   "properties": {
     "unmarshalType": { "index": 0, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },

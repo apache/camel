@@ -26,6 +26,9 @@ import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
+/**
+ * Parquet Avro serialization and de-serialization.
+ */
 @Metadata(firstVersion = "4.0.0", label = "dataformat,transformation,file", title = "Parquet File")
 @XmlRootElement(name = "parquetAvro")
 @XmlAccessorType(XmlAccessType.FIELD)
