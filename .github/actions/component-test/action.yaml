@@ -47,15 +47,15 @@ runs:
       with:
         name: build.log
         path: build.log
-#    - name: maven test
-#      shell: bash
-#      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
-#    - name: archive logs
-#      uses: actions/upload-artifact@v3
-#      if: always()
-#      with:
-#        name: tests.log
-#        path: tests.log
+    - name: maven test
+      shell: bash
+      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
+    - name: archive logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: tests.log
+        path: tests.log
     - name: Success comment
       if: success()
       uses: actions/github-script@v6

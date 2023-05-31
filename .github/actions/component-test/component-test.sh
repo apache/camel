@@ -48,7 +48,7 @@ function main() {
     $mavenBinary -l $log -Pfastinstall installo -pl "$pl" -am
   else
     echo "Launching tests of the projects ${pl}"
-    $mavenBinary -l $log install -pl "$pl"
+    $mavenBinary -l $log installo -pl "$pl"
   fi
 }
 
