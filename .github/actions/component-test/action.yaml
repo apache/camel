@@ -44,21 +44,15 @@ runs:
       with:
         name: build.log
         path: build.log
-    - name: maven test
-      shell: bash
-      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
-    - name: archive logs
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: tests.log
-        path: tests.log
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      shell: bash
-      run: |
-        echo "$GITHUB_CONTEXT"
+#    - name: maven test
+#      shell: bash
+#      run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" false tests.log
+#    - name: archive logs
+#      uses: actions/upload-artifact@v3
+#      if: always()
+#      with:
+#        name: tests.log
+#        path: tests.log
     - name: Success comment
       if: success()
       uses: actions/github-script@v6
@@ -79,6 +73,9 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
+          console.log(context)
+          console.log(toJson(context))
+          console.log(toJson(github))
           var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
              owner: context.repo.owner,
              repo: context.repo.repo,
