@@ -19,11 +19,12 @@ package org.apache.camel.console;
 import java.util.Optional;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 
 /**
  * A pluggable strategy for resolving dev consoles in a loosely coupled manner
  */
-public interface DevConsoleResolver extends CamelContextAware {
+public interface DevConsoleResolver extends CamelContextAware, StaticService {
 
     /**
      * Resolves the given {@link DevConsole}.

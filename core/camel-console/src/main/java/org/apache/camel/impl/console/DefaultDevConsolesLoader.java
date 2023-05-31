@@ -25,6 +25,7 @@ import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +49,19 @@ public class DefaultDevConsolesLoader {
     }
 
     public Collection<DevConsole> loadDevConsoles() {
+        return loadDevConsoles(false);
+    }
+
+    public Collection<DevConsole> loadDevConsoles(boolean force) {
         Collection<DevConsole> answer = new ArrayList<>();
 
-        LOG.trace("Searching for {} dev consoles", META_INF_SERVICES);
-
+        if (force) {
+            // when forcing then restart resolver, so we can do a re-scan
+            ServiceHelper.stopService(devConsoleResolver);
+            ServiceHelper.startService(devConsoleResolver);
+        }
         try {
+            LOG.trace("Searching for {} dev consoles", META_INF_SERVICES);
             Collection<Resource> resources = resolver.findResources(META_INF_SERVICES + "/*");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Discovered {} dev consoles from classpath scanning", resources.size());

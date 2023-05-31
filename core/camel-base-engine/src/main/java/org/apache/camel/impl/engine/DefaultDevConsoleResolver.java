@@ -25,12 +25,13 @@ import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Default dev console resolver that looks for dev consoles factories in
  * <b>META-INF/services/org/apache/camel/dev-console/</b>.
  */
-public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelContextAware {
+public class DefaultDevConsoleResolver extends ServiceSupport implements DevConsoleResolver, CamelContextAware {
 
     public static final String DEV_CONSOLE_RESOURCE_PATH = "META-INF/services/org/apache/camel/dev-console/";
 
@@ -95,6 +96,18 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
             return dcr.getConsole(id);
         } else {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (devConsoleFactory != null) {
+            devConsoleFactory.clear();
         }
     }
 }
