@@ -45,10 +45,10 @@ function main() {
 
   if [[ ${fastBuild} = "true" ]] ; then
     echo "Launching a fast build against the projects ${pl} and their dependencies"
-    $mavenBinary -l $log -Pfastinstall installo -pl "$pl" -am
+    $mavenBinary -l $log -Pfastinstall install -pl "$pl" -am
   else
     echo "Launching tests of the projects ${pl}"
-    $mavenBinary -l $log installo -pl "$pl"
+    $mavenBinary -l $log install -pl "$pl"
   fi
 }
 

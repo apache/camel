@@ -77,39 +77,12 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
-          var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-             owner: context.repo.owner,
-             repo: context.repo.repo,
-             run_id: ${{ inputs.run-id }}
-          });
-          console.log("########")
-          console.log(artifacts)
-          console.log(artifacts.data)
-          console.log(artifacts.data.artifacts)
-          for (int i = 0; i < 30 && artifacts.data.artifacts.length == 0; i++) {
-            console.log("No artifacts yet, let's try again")
-            await setTimeout(1000);
-            artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{ inputs.run-id }}
-            });
-            console.log("########")
-            console.log(artifacts)
-            console.log(artifacts.data)
-            console.log(artifacts.data.artifacts)
-          }
-          **Result** :x: The tests failed please check the logs below:
-
-          `
-          for (const artifact in artifacts.data.artifacts) {
-            message += `* [*${artifact.name}*](${artifact.url})
-          `
-          }
           await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: ${{ inputs.pr-id }},
                 comment_id: ${{ inputs.comment-id }},
-                body: message
+                body: `${{ inputs.comment-body }}
+
+          **Result** :x: The tests failed please [check the logs](https://github.com/apache/camel/actions/runs/${{ inputs.run-id }})`
           });
