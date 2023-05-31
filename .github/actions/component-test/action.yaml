@@ -36,8 +36,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-#    - id: install-mvnd
-#      uses: ./.github/actions/install-mvnd
+    - id: install-mvnd
+      uses: ./.github/actions/install-mvnd
     - name: maven build
       shell: bash
       run: ${{ github.action_path }}/component-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "${{ inputs.comment-body }}" true build.log
