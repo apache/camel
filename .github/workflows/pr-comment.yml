@@ -25,7 +25,8 @@ jobs:
     name: PR comment
     if: github.repository == 'apache/camel' && ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/component-test')
     permissions:
-      issues: write
+      pull-requests: write # to comment on a pull request
+      actions: read # to download artifact
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -64,12 +65,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.issues.createComment({
+            await github.rest.issues.updateComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
-                  body: `**Result of** ${{ github.event.comment.body }}
-            :hooray: The tests passed successfully`
+                  comment_id: ${{ github.event.comment.id }},
+                  body: `${{ github.event.comment.body }}
+            **Result** :white_check_mark: The tests passed successfully`
             });
       - name: Failure comment
         if: failure()
@@ -77,11 +79,22 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.issues.createComment({
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var message = `${{ github.event.comment.body }}
+            **Result** :x: The tests failed please check the logs below:
+            `
+            for (artifact in artifacts.data.artifacts) {
+              message += `* [*${artifact.name}*](${artifact.url})`
+            }
+            await github.rest.issues.updateComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
-                  body: `**Result of** ${{ github.event.comment.body }}
-            :confused: The tests failed please check the logs`
+                  comment_id: ${{ github.event.comment.id }},
+                  body: message
             });
 
