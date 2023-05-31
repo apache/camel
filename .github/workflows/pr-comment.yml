@@ -43,17 +43,17 @@ jobs:
                   pull_number: context.issue.number
             });
             core.exportVariable('pr_sha', pr.data.head.sha)
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ env.pr_sha }}
-      - id: install-packages
-        uses: ./.github/actions/install-packages
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.java }}
-          cache: 'maven'
+#      - uses: actions/checkout@v3
+#        with:
+#          ref: ${{ env.pr_sha }}
+#      - id: install-packages
+#        uses: ./.github/actions/install-packages
+#      - name: Set up JDK ${{ matrix.java }}
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: ${{ matrix.java }}
+#          cache: 'maven'
       - id: test
         name: Component test execution
         uses: ./.github/actions/component-test
