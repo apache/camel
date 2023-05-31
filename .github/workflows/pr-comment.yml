@@ -60,6 +60,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.run_id }}
-          pr-id: ${{ github.event.issue.number.id }}
+          pr-id: ${{ github.event.issue.number }}
           comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ github.event.comment.body }}
