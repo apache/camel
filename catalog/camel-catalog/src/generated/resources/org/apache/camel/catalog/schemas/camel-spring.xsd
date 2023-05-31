@@ -947,7 +947,7 @@ To specify the rest operation parameters.
   <xs:element name="parquetAvro" type="tns:parquetAvroDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-null
+Parquet Avro serialization and de-serialization.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
