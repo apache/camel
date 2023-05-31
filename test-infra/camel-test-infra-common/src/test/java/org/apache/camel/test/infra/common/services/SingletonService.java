@@ -54,6 +54,16 @@ public class SingletonService<T extends TestService> implements ExtensionContext
     }
 
     @Override
+    public void beforeAll(ExtensionContext extensionContext) {
+        addToStore(extensionContext);
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) {
+        // NO-OP
+    }
+
+    @Override
     public void registerProperties() {
         service.registerProperties();
     }

@@ -18,12 +18,8 @@
 package org.apache.camel.test.infra.couchbase.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface CouchbaseService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface CouchbaseService extends TestService {
 
     String getConnectionString();
 
@@ -34,14 +30,4 @@ public interface CouchbaseService extends BeforeAllCallback, AfterAllCallback, T
     String getHostname();
 
     int getPort();
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
-    }
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
-    }
 }

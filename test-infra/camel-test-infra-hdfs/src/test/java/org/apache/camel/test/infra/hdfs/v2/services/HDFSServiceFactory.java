@@ -19,7 +19,6 @@ package org.apache.camel.test.infra.hdfs.v2.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class HDFSServiceFactory {
 
@@ -37,20 +36,7 @@ public final class HDFSServiceFactory {
         public int getPort() {
             return getService().getPort();
         }
-
-        @Override
-        public void beforeAll(ExtensionContext extensionContext) {
-            addToStore(extensionContext);
-        }
-
-        @Override
-        public void afterAll(ExtensionContext extensionContext) {
-            // NO-OP
-        }
     }
-
-    private static SimpleTestServiceBuilder<HDFSService> instance;
-    private static HDFSService service;
 
     private HDFSServiceFactory() {
 
@@ -61,13 +47,15 @@ public final class HDFSServiceFactory {
     }
 
     public static HDFSService createSingletonService() {
-        if (service == null) {
-            if (instance == null) {
-                instance = builder();
-                instance.addLocalMapping(() -> new SingletonHDFSService(new ContainerLocalHDFSService(), "hdfs"));
-            }
-            service = instance.build();
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final HDFSService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<HDFSService> instance = builder();
+            instance.addLocalMapping(() -> new SingletonHDFSService(new ContainerLocalHDFSService(), "hdfs"));
+            INSTANCE = instance.build();
         }
-        return service;
     }
 }

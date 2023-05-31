@@ -17,15 +17,11 @@
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Test infra service for Microprofile LRA
  */
-public interface MicroprofileLRAService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface MicroprofileLRAService extends TestService {
 
     String host();
 
@@ -35,15 +31,5 @@ public interface MicroprofileLRAService extends BeforeAllCallback, AfterAllCallb
 
     default String getServiceAddress() {
         return String.format("http://%s:%d", host(), port());
-    }
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }
