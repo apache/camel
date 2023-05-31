@@ -335,11 +335,20 @@ public final class ProcessorDefinitionHelper {
 
                     List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
                     for (CatchDefinition doCatch : doTryCatch) {
+                        // ensure to add ourself if we match also
+                        if (type.isInstance(doCatch)) {
+                            found.add((T) doCatch);
+                        }
                         doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
                     }
 
                     if (doTry.getFinallyClause() != null) {
-                        doFindType(doTry.getFinallyClause().getOutputs(), type, found, ++current, maxDeep);
+                        // ensure to add ourself if we match also
+                        FinallyDefinition doFinally = doTry.getFinallyClause();
+                        if (type.isInstance(doFinally)) {
+                            found.add((T) doFinally);
+                        }
+                        doFindType(doFinally.getOutputs(), type, found, ++current, maxDeep);
                     }
                 }
 

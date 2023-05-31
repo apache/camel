@@ -42,7 +42,7 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public class DelegateSyncProcessor extends ServiceSupport
         implements org.apache.camel.DelegateProcessor, AsyncProcessor, Navigate<Processor> {
-    protected Processor processor;
+    protected final Processor processor;
 
     public DelegateSyncProcessor(Processor processor) {
         this.processor = processor;

@@ -48,6 +48,9 @@ import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDisabled;
+import org.apache.camel.management.mbean.ManagedDoCatch;
+import org.apache.camel.management.mbean.ManagedDoFinally;
+import org.apache.camel.management.mbean.ManagedDoTry;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
@@ -103,9 +106,11 @@ import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LoopDefinition;
@@ -121,9 +126,11 @@ import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.TransformDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
+import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.Delayer;
@@ -132,6 +139,7 @@ import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.FinallyProcessor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.processor.MulticastProcessor;
@@ -160,6 +168,7 @@ import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
+import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -348,6 +357,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof DisabledProcessor) {
                 answer = new ManagedDisabled(context, (DisabledProcessor) target, definition);
+            } else if (target instanceof TryProcessor) {
+                answer = new ManagedDoTry(context, (TryProcessor) target, (TryDefinition) definition);
+            } else if (target instanceof CatchProcessor) {
+                answer = new ManagedDoCatch(context, (CatchProcessor) target, (CatchDefinition) definition);
+            } else if (target instanceof FinallyProcessor) {
+                answer = new ManagedDoFinally(context, (FinallyProcessor) target, (FinallyDefinition) definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {

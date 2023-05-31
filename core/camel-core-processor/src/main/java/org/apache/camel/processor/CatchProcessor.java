@@ -17,8 +17,13 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
@@ -41,15 +46,38 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
     private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
+    private final CamelContext camelContext;
     private String id;
     private String routeId;
     private final List<Class<? extends Throwable>> exceptions;
+    private boolean extendedStatistics;
+    // to capture how many different exceptions has been caught
+    private ConcurrentMap<String, AtomicLong> exceptionMatches;
     private final Predicate onWhen;
+    private transient long matches;
 
-    public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen) {
+    public CatchProcessor(CamelContext camelContext, List<Class<? extends Throwable>> exceptions, Processor processor,
+                          Predicate onWhen) {
         super(processor);
+        this.camelContext = camelContext;
         this.exceptions = exceptions;
         this.onWhen = onWhen;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (onWhen != null) {
+            onWhen.init(camelContext);
+        }
+        // only if JMX is enabled
+        if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics
+                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            this.exceptionMatches = new ConcurrentHashMap<>();
+        } else {
+            this.extendedStatistics = false;
+        }
     }
 
     @Override
@@ -169,6 +197,12 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             // see if we catch this type
             for (final Class<?> type : exceptions) {
                 if (type.isInstance(e) && matchesWhen(exchange)) {
+                    if (extendedStatistics) {
+                        String fqn = exception.getClass().getName();
+                        AtomicLong match = exceptionMatches.computeIfAbsent(fqn, k -> new AtomicLong());
+                        match.incrementAndGet();
+                    }
+                    matches++;
                     return e;
                 }
             }
@@ -178,8 +212,35 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         return null;
     }
 
-    public List<Class<? extends Throwable>> getExceptions() {
-        return exceptions;
+    /**
+     * Gets the total number of Exchanges that was caught (also matched the onWhen predicate).
+     */
+    public long getCaughtCount() {
+        return matches;
+    }
+
+    /**
+     * Gets the number of Exchanges that was caught by the given exception class name (also matched the onWhen
+     * predicate). This requires to have extended statistics enabled on management statistics level.
+     */
+    public long getCaughtCount(String className) {
+        AtomicLong cnt = exceptionMatches.get(className);
+        return cnt != null ? cnt.get() : 0;
+    }
+
+    /**
+     * Reset counters.
+     */
+    public void reset() {
+        matches = 0;
+        exceptionMatches.values().forEach(c -> c.set(0));
+    }
+
+    /**
+     * Set of the caught exception fully qualified class names
+     */
+    public Set<String> getCaughtExceptionClassNames() {
+        return exceptionMatches.keySet();
     }
 
     /**

@@ -45,7 +45,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
 
     private String id;
     private String routeId;
-    private CamelLogger logger;
+    private final CamelLogger logger;
     private ExchangeFormatter formatter;
     private MaskingFormatter maskingFormatter;
     private final Set<LogListener> listeners;

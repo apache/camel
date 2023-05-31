@@ -74,17 +74,18 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     private void replacePlaceholders() throws Exception {
-        for (CommandLine.Model.ArgSpec argSpec : spec.args()) {
-            var provider = spec.defaultValueProvider();
-            String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
-
-            if (defaultValue != null &&
-                    argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
-                for (String name : optionSpec.names()) {
-                    String placeholder = "$" + StringHelper.after(name, "--");
-                    if (argSpec.getValue() != null &&
-                            argSpec.getValue().toString().contains(placeholder)) {
-                        argSpec.setValue(argSpec.getValue().toString().replace(placeholder, defaultValue));
+        if (spec != null) {
+            for (CommandLine.Model.ArgSpec argSpec : spec.args()) {
+                var provider = spec.defaultValueProvider();
+                String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
+                if (defaultValue != null &&
+                        argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
+                    for (String name : optionSpec.names()) {
+                        String placeholder = "$" + StringHelper.after(name, "--");
+                        if (argSpec.getValue() != null &&
+                                argSpec.getValue().toString().contains(placeholder)) {
+                            argSpec.setValue(argSpec.getValue().toString().replace(placeholder, defaultValue));
+                        }
                     }
                 }
             }

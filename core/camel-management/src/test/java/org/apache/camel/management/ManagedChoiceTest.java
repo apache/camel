@@ -63,7 +63,7 @@ public class ManagedChoiceTest extends ManagementTestSupport {
         int level = (Integer) mbeanServer.getAttribute(on, "Level");
         assertEquals(1, level);
 
-        TabularData data = (TabularData) mbeanServer.invoke(on, "choiceStatistics", null, null);
+        TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
 

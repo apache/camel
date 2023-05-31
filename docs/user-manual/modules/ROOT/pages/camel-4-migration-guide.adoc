@@ -115,6 +115,13 @@ Health checks are now by default only readiness checks out of the box.
 Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
 one of each out of the box.
 
+== JMX
+
+Camel now also include MBeans for `doCatch` and `doFinally` in the tree of processor MBeans.
+
+The `ManagedChoiceMBean` have renamed `choiceStatistics` to `extendedInformation`.
+The `ManagedFailoverLoadBalancerMBean` have renamed `exceptionStatistics` to `extendedInformation`.
+
 == YAML DSL
 
 The backwards compatible mode Camel 3.14 or older, which allowed to have _steps_ as child to _route_ has been removed.

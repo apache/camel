@@ -27,7 +27,7 @@ if (mr == null) {
     rpf.setMeterRegistry(mr);
     context.addRoutePolicyFactory(rpf);
     // and setup dev console
-    var dcr = context.getExtension(org.apache.camel.console.DevConsoleRegistry.class);
+    var dcr = context.getCamelContextExtension().getContextPlugin(org.apache.camel.console.DevConsoleRegistry.class);
     if (dcr != null) {
         dcr.register(new org.apache.camel.component.micrometer.MicrometerConsole());
     }

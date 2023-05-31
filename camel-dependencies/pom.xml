@@ -74,10 +74,10 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.73</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.75</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
-        <azure-sdk-bom-version>1.2.11</azure-sdk-bom-version>
+        <azure-sdk-bom-version>1.2.13</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
         <bouncycastle-version>1.73</bouncycastle-version>
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
@@ -150,7 +150,7 @@
         <elytron-web>1.10.2.Final</elytron-web>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
-        <fastjson-version>2.0.28</fastjson-version>
+        <fastjson-version>2.0.33</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.5</flatpack-version>
@@ -315,7 +315,7 @@
         <json-schema-validator-version>2.2.14</json-schema-validator-version>
         <json-unit-version>2.32.0</json-unit-version>
         <jsoup-version>1.15.3</jsoup-version>
-        <jt400-version>11.0</jt400-version>
+        <jt400-version>11.2</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-version>4.13.2</junit-version>
         <junit-jupiter-version>5.9.2</junit-jupiter-version>
@@ -343,7 +343,7 @@
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.5.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
-        <maven-version>3.8.7</maven-version>
+        <maven-version>3.8.8</maven-version>
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
@@ -410,9 +410,8 @@
         <paho-version>1.2.5</paho-version>
         <parquet-common-version>1.12.0</parquet-common-version>
         <parquet-avro-version>1.12.3</parquet-avro-version>
-        <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.28</pdfbox-version>
-        <pgjdbc-driver-version>42.5.1</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.6.0</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.3</picocli-version>
         <plc4x-version>0.10.0</plc4x-version>
@@ -422,7 +421,7 @@
         <protobuf-version>3.19.6</protobuf-version>
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
-        <protostream-version>4.5.0.Final</protostream-version>
+        <protostream-version>4.6.2.Final</protostream-version>
         <prowide-version>SRU2022-9.3.2</prowide-version>
         <pubnub-version>6.3.1</pubnub-version>
         <pulsar-version>2.11.1</pulsar-version>

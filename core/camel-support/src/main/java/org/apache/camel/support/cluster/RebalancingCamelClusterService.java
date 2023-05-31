@@ -51,7 +51,7 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
 
     protected CamelContext camelContext;
 
-    protected long periodMillis;
+    protected final long periodMillis;
 
     public RebalancingCamelClusterService(CamelPreemptiveClusterService delegate, long periodMillis) {
         this.delegate = ObjectHelper.notNull(delegate, "delegate");

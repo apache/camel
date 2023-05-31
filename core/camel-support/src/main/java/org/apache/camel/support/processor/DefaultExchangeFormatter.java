@@ -226,20 +226,16 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             sb = answer;
         }
 
-        if (multiline) {
-            sb.insert(0, "Exchange[");
-            sb.append("]");
-            return sb.toString();
-        } else {
+        if (!multiline) {
             // get rid of the leading comma space if needed
             if (sb.length() > 1 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
                 sb.replace(0, 2, "");
             }
-            sb.insert(0, "Exchange[");
-            sb.append("]");
 
-            return sb.toString();
         }
+        sb.insert(0, "Exchange[");
+        sb.append("]");
+        return sb.toString();
     }
 
     /**
