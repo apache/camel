@@ -18,6 +18,9 @@
 name: "Component Test Runner"
 description: "Runs tests of corresponding to the given comment"
 inputs:
+  github-token:
+    description: 'GitHub token to use to update the comment'
+    required: true
   pr-id:
     description: 'Id of the pull request to update'
     required: true
@@ -53,13 +56,14 @@ runs:
     - name: Dump GitHub context
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
+      shell: bash
       run: |
         echo "$GITHUB_CONTEXT"
     - name: Success comment
       if: success()
       uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ inputs.github-token }}
         script: |
           await github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -73,7 +77,7 @@ runs:
       if: failure()
       uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ inputs.github-token }}
         script: |
           var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
              owner: context.repo.owner,

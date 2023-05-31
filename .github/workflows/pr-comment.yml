@@ -63,6 +63,7 @@ jobs:
         name: Component test execution
         uses: ./.github/actions/component-test
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           pr-id: ${{ github.event.issue.number.id }}
           comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ github.event.comment.body }}
