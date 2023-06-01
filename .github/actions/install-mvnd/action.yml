@@ -22,6 +22,10 @@ inputs:
     description: 'The version of the maven daemon to install'
     required: true
     default: '0.8.2'
+  distribution:
+    description: 'The maven distribution to use'
+    required: true
+    default: 'linux-amd64'
 outputs:
   mvnd-dir:
     description: "The directory where the command mvnd is located"
@@ -29,9 +33,9 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: curl -fsSL -o mvnd.zip https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-linux-amd64.zip
+    - run: curl -fsSL -o mvnd.zip https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip
       shell: bash
-    - run: curl -fsSL -o mvnd.zip.sha256 https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-linux-amd64.zip.sha256
+    - run: curl -fsSL -o mvnd.zip.sha256 https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip.sha256
       shell: bash
     - id: integrity-check
       run: echo "$(cat mvnd.zip.sha256) mvnd.zip" | sha256sum --check
@@ -39,5 +43,5 @@ runs:
     - run: unzip mvnd.zip -d /tmp/
       shell: bash
     - id: mvnd-location
-      run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-linux-amd64/bin" >> $GITHUB_OUTPUT
+      run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}/bin" >> $GITHUB_OUTPUT
       shell: bash

@@ -32,6 +32,9 @@ runs:
   steps:
     - id: install-mvnd
       uses: ./.github/actions/install-mvnd
+      with:
+        version: 1.0-m6
+        distribution: m39-linux-amd64
     - name: maven build
       shell: bash
       run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.checkstyle }} ${{ inputs.log }} ${{ inputs.pr-id }}
