@@ -50,6 +50,9 @@ import org.apache.camel.util.ObjectHelper;
                               "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
+    /**
+     * Bla bla
+     */
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
     private CamelContext camelContext;
     private Object schema;
