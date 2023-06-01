@@ -23,7 +23,7 @@ on:
 jobs:
   pr_commented:
     name: PR comment
-    if: github.repository == 'apache/camel' && ${{ github.event.issue.pull_request }} && startsWith(github.event.comment.body, '/component-test')
+    if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/component-test') }}
     permissions:
       pull-requests: write # to comment on a pull request
       actions: read # to download artifact
