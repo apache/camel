@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElasticsearchScrollSearchIT extends ElasticsearchTestSupport {
 
-    private static final String TWITTER_ES_INDEX_NAME = "twitter";
+    private static final String TWITTER_ES_INDEX_NAME = "scroll-search";
     private static final String SPLIT_TWITTER_ES_INDEX_NAME = "split-" + TWITTER_ES_INDEX_NAME;
 
     @Test

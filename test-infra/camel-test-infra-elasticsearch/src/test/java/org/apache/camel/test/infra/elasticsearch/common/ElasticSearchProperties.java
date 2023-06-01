@@ -22,6 +22,9 @@ import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 public final class ElasticSearchProperties {
     public static final String ELASTIC_SEARCH_HOST = "elasticsearch.host";
     public static final String ELASTIC_SEARCH_PORT = "elasticsearch.port";
+    public static final String ELASTIC_SEARCH_CERTIFICATE_PATH = "elasticsearch.certificate.path";
+    public static final String ELASTIC_SEARCH_USERNAME = "elasticsearch.username";
+    public static final String ELASTIC_SEARCH_PASSWORD = "elasticsearch.password";
     public static final String ELASTIC_SEARCH_CONTAINER = "elasticsearch.container";
     public static final String ELASTIC_SEARCH_CONTAINER_STARTUP
             = ELASTIC_SEARCH_CONTAINER + ContainerEnvironmentUtil.STARTUP_ATTEMPTS_PROPERTY;

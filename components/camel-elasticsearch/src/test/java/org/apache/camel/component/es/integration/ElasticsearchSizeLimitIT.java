@@ -51,11 +51,11 @@ class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
             @Override
             public void configure() {
                 from("direct:index")
-                        .to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch://elasticsearch?operation=Index&indexName=size-limit");
                 from("direct:searchWithSizeTwo")
-                        .to("elasticsearch://elasticsearch?operation=Search&indexName=twitter&size=2");
+                        .to("elasticsearch://elasticsearch?operation=Search&indexName=size-limit&size=2");
                 from("direct:searchFrom3")
-                        .to("elasticsearch://elasticsearch?operation=Search&indexName=twitter&from=3");
+                        .to("elasticsearch://elasticsearch?operation=Search&indexName=size-limit&from=3");
             }
         };
     }
