@@ -418,7 +418,7 @@
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>4.6.2.Final</protostream-version>
         <prowide-version>SRU2022-9.3.2</prowide-version>
-        <pubnub-version>6.3.1</pubnub-version>
+        <pubnub-version>6.3.5</pubnub-version>
         <pulsar-version>2.11.1</pulsar-version>
         <qpid-broker-version>9.0.0</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
