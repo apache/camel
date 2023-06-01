@@ -79,7 +79,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         static {
             // initialize velocity to load resources from class loader and use Log4J
             Properties velocityProperties = new Properties();
-            velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
+            velocityProperties.setProperty("resource.loaders", "cloader");
             velocityProperties.setProperty("resource.loader.cloader.class", ClasspathResourceLoader.class.getName());
             Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
