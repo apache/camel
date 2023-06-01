@@ -94,6 +94,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Add it explicitly to prevent parallel build failures -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
