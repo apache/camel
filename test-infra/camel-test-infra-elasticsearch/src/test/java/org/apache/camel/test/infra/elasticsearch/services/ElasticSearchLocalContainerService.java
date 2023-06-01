@@ -17,19 +17,31 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
-    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2";
-
+    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch:8.6.2";
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
-
+    private static final String USER_NAME = "elastic";
+    private static final String PASSWORD = "s3cret";
+    private Path certPath;
+    private SSLContext sslContext;
     private final ElasticsearchContainer container;
 
     public ElasticSearchLocalContainerService() {
@@ -45,7 +57,16 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     }
 
     protected ElasticsearchContainer initContainer(String imageName) {
-        return new ElasticsearchContainer(imageName);
+        ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(imageName)
+                .withPassword(PASSWORD);
+        // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
+        // on the build pipeline
+        elasticsearchContainer.setWaitStrategy(
+                new LogMessageWaitStrategy()
+                        .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
+                        .withStartupTimeout(Duration.ofSeconds(90)));
+        return elasticsearchContainer;
+
     }
 
     @Override
@@ -67,6 +88,15 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     public void registerProperties() {
         System.setProperty(ElasticSearchProperties.ELASTIC_SEARCH_HOST, getElasticSearchHost());
         System.setProperty(ElasticSearchProperties.ELASTIC_SEARCH_PORT, String.valueOf(getPort()));
+        getContainer().caCertAsBytes().ifPresent(content -> {
+            try {
+                certPath = Files.createTempFile("http_ca", ".crt");
+                Files.write(certPath, content);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        sslContext = getContainer().createSslContextFromCa();
     }
 
     @Override
@@ -90,5 +120,25 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     @Override
     public ElasticsearchContainer getContainer() {
         return container;
+    }
+
+    @Override
+    public Optional<String> getCertificatePath() {
+        return Optional.ofNullable(certPath).map(Objects::toString);
+    }
+
+    @Override
+    public Optional<SSLContext> getSslContext() {
+        return Optional.ofNullable(sslContext);
+    }
+
+    @Override
+    public String getUsername() {
+        return USER_NAME;
+    }
+
+    @Override
+    public String getPassword() {
+        return PASSWORD;
     }
 }
