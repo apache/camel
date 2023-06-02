@@ -3415,6 +3415,61 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * DHIS2 (camel-dhis2)
+     * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
+     * API.
+     * 
+     * Category: api
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-dhis2
+     * 
+     * Syntax: <code>dhis2:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * API operation (e.g., get)
+     * There are 5 enums and the value can be one of: POST, RESOURCE_TABLES,
+     * GET, DELETE, PUT
+     * 
+     * Path parameter: methodName (required)
+     * Subject of the API operation (e.g., resource)
+     * 
+     * @param path apiName/methodName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Dhis2EndpointBuilderFactory.Dhis2EndpointBuilder dhis2(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Dhis2EndpointBuilderFactory.endpointBuilder("dhis2", path);
+    }
+    /**
+     * DHIS2 (camel-dhis2)
+     * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
+     * API.
+     * 
+     * Category: api
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-dhis2
+     * 
+     * Syntax: <code>dhis2:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * API operation (e.g., get)
+     * There are 5 enums and the value can be one of: POST, RESOURCE_TABLES,
+     * GET, DELETE, PUT
+     * 
+     * Path parameter: methodName (required)
+     * Subject of the API operation (e.g., resource)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path apiName/methodName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Dhis2EndpointBuilderFactory.Dhis2EndpointBuilder dhis2(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Dhis2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * DigitalOcean (camel-digitalocean)
      * Manage Droplets and resources within the DigitalOcean cloud.
      * 

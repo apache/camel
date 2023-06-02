@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":methodName";
+    private static final String BASE = ":apiName/methodName";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;

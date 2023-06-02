@@ -40,9 +40,8 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 
 /**
  * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web API.
- * <p>
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "dhis2", title = "DHIS2", syntax = "dhis2:methodName",
+@UriEndpoint(firstVersion = "4.0.0", scheme = "dhis2", title = "DHIS2", syntax = "dhis2:apiName/methodName",
              apiSyntax = "apiName/methodName", category = { Category.API })
 public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Configuration> {
 

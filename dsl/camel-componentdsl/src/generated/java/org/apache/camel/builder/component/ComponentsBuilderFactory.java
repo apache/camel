@@ -1041,6 +1041,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DebeziumSqlserverComponentBuilderFactory.debeziumSqlserver();
     }
     /**
+     * DHIS2 (camel-dhis2)
+     * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
+     * API.
+     * 
+     * Category: api
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-dhis2
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Dhis2ComponentBuilderFactory.Dhis2ComponentBuilder dhis2() {
+        return org.apache.camel.builder.component.dsl.Dhis2ComponentBuilderFactory.dhis2();
+    }
+    /**
      * DigitalOcean (camel-digitalocean)
      * Manage Droplets and resources within the DigitalOcean cloud.
      * 
