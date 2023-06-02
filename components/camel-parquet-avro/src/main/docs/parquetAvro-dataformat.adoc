@@ -1,10 +1,10 @@
-= ParquetAvro File DataFormat
-:doctitle: ParquetAvro Format
+= Parquet File DataFormat
+:doctitle: Parquet File
 :shortname: parquetAvro
 :artifactid: camel-parquet-avro
-:description: Unmarshal and marshal parquet format using avro (de)/serializers
+:description: Parquet Avro serialization and de-serialization.
 :since: 4.0
-:supportlevel: Unstable
+:supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: parquet-avro
