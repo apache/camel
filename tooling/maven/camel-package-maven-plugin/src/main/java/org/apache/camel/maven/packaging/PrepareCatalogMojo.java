@@ -731,6 +731,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                 boolean isDir = dir.toFile().isDirectory();
                                 boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common") && !n.equals("src");
                                 if (valid) {
+                                    // the dir must be active (inactive can be removed component from old branch)
+                                    String[] poms = dir.toFile().list((dir1, name) -> "pom.xml".equals(name));
+                                    valid = poms != null && poms.length == 1;
+                                }
+                                if (valid) {
                                     missingAdocFiles.add(dir);
                                 }
                             } else {
