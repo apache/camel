@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<Doc:Document xmlns:Doc="urn:swift:xsd:xsys.011.001.02" xmlns:Sw="urn:swift:snl:ns.Sw"
+              xmlns:SwInt="urn:swift:snl:ns.SwInt" xmlns:SwGbl="urn:swift:snl:ns.SwGbl">
+    <Doc:xsys.011.001.02>
+        <Doc:DlvryNtfctn>
+            <Sw:SnFRef>swf00000-2020-07-28T15:11:11.123456Z</Sw:SnFRef>
+            <Sw:SnFRefType>InterAct</Sw:SnFRefType>
+            <Sw:AcceptStatus>Accepted</Sw:AcceptStatus>
+            <Sw:DeliveryTime>2020-07-28T15:11:08Z</Sw:DeliveryTime>
+            <Sw:AckSwiftTime>2020-07-28T15:11:08Z</Sw:AckSwiftTime>
+            <Sw:FileRequestHeader>
+                <SwInt:Requestor>cn=gtxdev,o=rtbsgb2l,o=swift</SwInt:Requestor>
+                <SwInt:Responder>cn=gtxdev,o=rtbsgb2l,o=swift</SwInt:Responder>
+                <SwInt:Service>swift.finplus!pc</SwInt:Service>
+                <SwInt:RequestType>seev.047.001.01</SwInt:RequestType>
+                <SwInt:Priority>Normal</SwInt:Priority>
+                <SwInt:RequestRef>FOO123456</SwInt:RequestRef>
+            </Sw:FileRequestHeader>
+            <Doc:Xtnsn>
+                <Doc:PlcAndNm>PlaceAndName</Doc:PlcAndNm>
+                <Doc:XtnsnEnvlp>XtnsnEnvlp</Doc:XtnsnEnvlp>
+            </Doc:Xtnsn>
+        </Doc:DlvryNtfctn>
+    </Doc:xsys.011.001.02>
+</Doc:Document>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<message>
+    <AppHdr xmlns='urn:iso:std:iso:20022:tech:xsd:head.001.001.01'
+            xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+        <Fr>
+            <FIId>
+                <FinInstnId>
+                    <BICFI>ABCDUS33XXX</BICFI>
+                </FinInstnId>
+            </FIId>
+        </Fr>
+        <To>
+            <FIId>
+                <FinInstnId>
+                    <BICFI>EFGHUS33XXX</BICFI>
+                </FinInstnId>
+            </FIId>
+        </To>
+        <BizMsgIdr>12312312312</BizMsgIdr>
+        <MsgDefIdr>pacs.008.001.07</MsgDefIdr>
+        <CreDt>2019-10-19T20:53:13Z</CreDt>
+        <PssblDplct>false</PssblDplct>
+    </AppHdr>
+    <Document xmlns='urn:iso:std:iso:20022:tech:xsd:pacs.008.001.07'
+              xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+        <FIToFICstmrCdtTrf>
+            <GrpHdr>
+                <MsgId>823823423</MsgId>
+                <CreDtTm>2019-10-19T21:00:45Z</CreDtTm>
+                <BtchBookg>false</BtchBookg>
+                <NbOfTxs>1</NbOfTxs>
+                <CtrlSum>10000</CtrlSum>
+                <TtlIntrBkSttlmAmt Ccy='USD'>10000</TtlIntrBkSttlmAmt>
+                <IntrBkSttlmDt>2019-10-28</IntrBkSttlmDt>
+                <SttlmInf>
+                    <SttlmMtd>INDA</SttlmMtd>
+                </SttlmInf>
+                <InstgAgt>
+                    <FinInstnId>
+                        <BICFI>CITTGB2LPBG</BICFI>
+                        <Nm>Lionel Messi</Nm>
+                        <Othr>
+                            <Id>2342342342</Id>
+                            <Issr>FOOISSUER</Issr>
+                        </Othr>
+                    </FinInstnId>
+                </InstgAgt>
+                <InstdAgt>
+                    <FinInstnId>
+                        <BICFI>ICBCUS4CXXX</BICFI>
+                        <Nm>Manu Ginobili</Nm>
+                        <PstlAdr>
+                            <AdrTp>PBOX</AdrTp>
+                            <Dept>1</Dept>
+                            <SubDept>DFGH</SubDept>
+                            <StrtNm>My Street</StrtNm>
+                            <BldgNb>1122</BldgNb>
+                            <PstCd>10002</PstCd>
+                            <TwnNm>Los Angeles</TwnNm>
+                            <CtrySubDvsn>ABCD</CtrySubDvsn>
+                        </PstlAdr>
+                    </FinInstnId>
+                </InstdAgt>
+            </GrpHdr>
+            <CdtTrfTxInf>
+                <PmtId>
+                    <InstrId>2233445566</InstrId>
+                    <EndToEndId>987654321987654321</EndToEndId>
+                    <TxId>123456789</TxId>
+                    <ClrSysRef>SDSDS333</ClrSysRef>
+                </PmtId>
+                <IntrBkSttlmAmt Ccy='USD'>5000</IntrBkSttlmAmt>
+                <IntrBkSttlmDt>2019-07-31</IntrBkSttlmDt>
+                <SttlmPrty>URGT</SttlmPrty>
+                <AccptncDtTm>2019-04-28T20:54:39Z</AccptncDtTm>
+                <PoolgAdjstmntDt>2019-04-29</PoolgAdjstmntDt>
+                <InstdAmt Ccy='USD'>5000</InstdAmt>
+                <ChrgBr>SHAR</ChrgBr>
+                <Dbtr>
+                    <Nm>Jhon Doe</Nm>
+                    <PstlAdr>
+                        <AdrTp>HOME</AdrTp>
+                        <Dept>ABCD</Dept>
+                        <SubDept>1</SubDept>
+                        <StrtNm>Foo Street</StrtNm>
+                        <BldgNb>1</BldgNb>
+                        <PstCd>1234</PstCd>
+                        <TwnNm>Buenos Aires</TwnNm>
+                        <CtrySubDvsn>CABA</CtrySubDvsn>
+                        <Ctry>AR</Ctry>
+                    </PstlAdr>
+                    <CtryOfRes>AR</CtryOfRes>
+                </Dbtr>
+                <DbtrAgt>
+                    <FinInstnId>
+                        <BICFI>ITUSUSP1XXX</BICFI>
+                        <Nm>Foo Corp</Nm>
+                    </FinInstnId>
+                </DbtrAgt>
+                <CdtrAgt>
+                    <FinInstnId>
+                        <BICFI>USTBUS31XXX</BICFI>
+                    </FinInstnId>
+                </CdtrAgt>
+                <Cdtr>
+                    <Nm>Mike Smith</Nm>
+                </Cdtr>
+            </CdtTrfTxInf>
+        </FIToFICstmrCdtTrf>
+    </Document>
+</message>

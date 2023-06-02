@@ -1,0 +1,124 @@
+= SWIFT MT DataFormat
+:doctitle: SWIFT MT
+:shortname: swiftMt
+:artifactid: camel-swift
+:description: Encode and decode SWIFT MT messages.
+:since: 3.20
+:supportlevel: Stable
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: swift
+
+*Since Camel {since}*
+
+The SWIFT MT data format is used to encode and decode SWIFT MT messages. The data format leverages the library https://github.com/prowide/prowide-core[Prowide Core] to encode and decode SWIFT MT messages.
+
+== Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+In Spring DSL, you configure the data format using this tag:
+
+[source,xml]
+----
+<camelContext>
+    <dataFormats>
+        <swiftMt id="swiftInJson" writeInJson="true"/>
+    </dataFormats>
+    ...
+</camelContext>
+----
+
+Then you can use it later by its reference:
+
+[source,xml]
+----
+<route>
+     <from uri="direct:startEncode" />
+     <marshal ref="swiftInJson" />
+     <to uri="mock:result" />
+</route>
+----
+
+Most of the time, you won't need to declare the data format if you use
+the default options. In that case, you can declare the data format
+inline as shown below:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:startEncode" />
+    <marshal>
+        <swiftMt />
+    </marshal>
+    <to uri="mock:result" />
+</route>
+----
+
+== Marshal
+
+In this example, we marshal the messages read from a JMS queue in SWIFT format before storing the result into a file.
+
+[source,java]
+----
+from("jms://myqueue")
+    .marshal().swiftMt()
+    .to("file://data.bin");
+----
+
+In Spring DSL:
+
+[source,xml]
+----
+ <from uri="jms://myqueue">
+ <marshal>
+     <swiftMt/>
+ </marshal>
+ <to uri="file://data.bin"/>
+----
+
+== Unmarshal
+
+The unmarshaller converts the input data into the concrete class of type `com.prowidesoftware.swift.model.mt.AbstractMT` that best matches with the content of the message.
+
+In this example, we unmarshal the content of a file to get SWIFT MT
+objects before processing them with the `newOrder` processor.
+
+[source,java]
+----
+from("file://data.bin")
+    .unmarshal().swiftMt()
+    .process("newOrder");
+----
+
+In Spring DSL:
+
+[source,xml]
+----
+ <from uri="file://data.bin">
+ <unmarshal>
+     <swiftMt/>
+ </unmarshal>
+ <to uri="bean:newOrder"/> 
+----
+
+== Dependencies
+
+To use SWIFT MT in your Camel routes you need to add a dependency on
+*camel-swift* which implements this data format.
+
+If you use Maven you can just add the following to your pom.xml:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-swift</artifactId>
+  <version>x.x.x</version>  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+include::spring-boot:partial$starter.adoc[]
