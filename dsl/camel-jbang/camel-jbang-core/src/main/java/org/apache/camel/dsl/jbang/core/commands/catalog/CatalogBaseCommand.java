@@ -46,7 +46,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     String runtime;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "2.16.6.Final")
+                        defaultValue = "2.16.7.Final")
     String quarkusVersion;
 
     @CommandLine.Option(names = { "--repos" },
