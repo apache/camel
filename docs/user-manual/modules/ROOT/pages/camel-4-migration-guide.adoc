@@ -44,7 +44,6 @@ The following components has been removed:
 | camel-solr                           | none
 | camel-spark                          | none
 | camel-spring-integration             | none
-| camel-swift                          | none
 | camel-swagger-java                   | camel-openapi-java
 | camel-websocket                      | camel-vertx-websocket
 | camel-websocket-jsr356               | camel-vertx-websocket
