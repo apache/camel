@@ -556,10 +556,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             return;
         }
 
-        // must compact path so FTP server can traverse correctly
-        // use the ftp utils implementation of the compact path
-        path = FtpUtils.compactPath(path);
-
         // if it starts with the root path then a little special handling for
         // that
         if (FileUtil.hasLeadingSeparator(path)) {

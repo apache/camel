@@ -25,11 +25,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
- * Azure Files Component
+ * Azure Files component
  */
 @Component("azure-files")
 public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
@@ -51,8 +49,6 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
         // must pass on baseUri to the configuration (see above)
         FilesConfiguration config = new FilesConfiguration(new URI(baseUri));
 
-        FtpUtils.ensureRelativeFtpDirectory(this, config);
-
         FilesEndpoint<ShareFileItem> answer = new FilesEndpoint<>(uri, this, config);
 
         return answer;
@@ -73,14 +69,7 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
 
     @Override
     protected void setProperties(Endpoint endpoint, Map<String, Object> parameters) throws Exception {
-        Object siteCommand = parameters.remove("siteCommand");
-        if (siteCommand != null) {
-            String cmd = PropertyConfigurerSupport.property(getCamelContext(), String.class, siteCommand);
-            if (EndpointHelper.isReferenceParameter(cmd)) {
-                cmd = EndpointHelper.resolveReferenceParameter(getCamelContext(), cmd, String.class);
-            }
-            ((FilesEndpoint) endpoint).getConfiguration().setSiteCommand(cmd);
-        }
+        // TODO remove directory (as we take it from the endpoint base URI)? or hide param
         super.setProperties(endpoint, parameters);
     }
 

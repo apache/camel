@@ -317,10 +317,10 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
                 return super.getFileSeparator();
         }
     }
-    
+
     @Override
     public String getCharset() {
-      // unlike FTP, always binary
-      return null;
+        // unlike FTP, always binary
+        return null;
     }
 }
