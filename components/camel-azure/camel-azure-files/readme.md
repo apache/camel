@@ -64,6 +64,8 @@ or not implemented:
   - transferLoggingVerbose
   - password
 
+Basic `to("azure-files://...")` does not crash. 
+
 ## Deps
 
 At first I want to use the Azure Files component with Camel 3.16+

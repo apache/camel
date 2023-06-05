@@ -157,6 +157,18 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+
+        reconnectIfNecessary(null);
+
+        // otherwise to() fails:
+        //      org.apache.camel.component.file.GenericFileOperationFailedException: Cannot cd to the share root: not connected
+        //        at org.apache.camel.component.file.azure.FilesOperations.cd(FilesOperations.java:605) ~[classes/:na]
+        //        at org.apache.camel.component.file.azure.FilesOperations.changeCurrentDirectory(FilesOperations.java:563) ~[classes/:na]
+        //        at org.apache.camel.component.file.azure.FilesOperations.buildDirectory(FilesOperations.java:178) ~[classes/:na]
+        //        at org.apache.camel.component.file.GenericFileProducer.writeFile(GenericFileProducer.java:279) ~[camel-file-3.20.0.jar:3.20.0]
+        //        at org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173) ~[camel-file-3.20.0.jar:3.20.0]
+        //        at org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61) ~[classes/:na]
+
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
 
@@ -176,6 +188,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             if (!success) {
                 if (absolute) {
                     changeCurrentDirectory("/");
+                    directory = directory.substring(1);
                 }
                 log.trace("Trying to build remote directory: {}", directory);
                 success = buildDirectoryChunks(directory);
@@ -560,7 +573,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
-            cd(path.substring(0, 1));
+            trivialCd(path.substring(0, 1));
             path = path.substring(1);
         }
 
@@ -569,17 +582,17 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
         if (dirs == null || dirs.length == 0) {
             // path was just a relative single path
-            cd(path);
+            trivialCd(path);
             return;
         }
 
         // there are multiple dirs so do this in chunks
         for (String dir : dirs) {
-            cd(dir);
+            trivialCd(dir);
         }
     }
 
-    private void cd(String pathStep) {
+    private void trivialCd(String pathStep) {
         // TODO blank step like " " could be valid, but Windows trims trailing spaces
         if (pathStep == null || SharePath.CWD.equals(pathStep) || pathStep.isBlank()) {
             return;
@@ -596,7 +609,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 success = true;
             } else {
                 var subDir = cwd().getSubdirectoryClient(pathStep);
-                success = subDir != null;
+                success = Boolean.TRUE.equals(subDir.exists());
                 if (success) {
                     dirStack.push(subDir);
                 }
