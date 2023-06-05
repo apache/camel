@@ -304,6 +304,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
 
     @Override
     public char getFileSeparator() {
+        // TODO
         // the regular ftp component should use the configured separator
         // as FTP servers may require you to use windows or unix style
         // and therefore you need to be able to control that

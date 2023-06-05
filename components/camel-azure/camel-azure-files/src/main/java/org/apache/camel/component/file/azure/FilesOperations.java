@@ -42,7 +42,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
@@ -76,6 +75,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
             throws GenericFileOperationFailedException {
         root = client.getShareClient(endpoint.getShare()).getRootDirectoryClient();
+        // TODO what about (starting) directory as the root? 
         dirStack.push(root);
         // TODO translate runtime exception to Camel one?
         return true;
@@ -552,7 +552,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
+        if (SharePath.isEmpty(path)) {
             return;
         }
 
@@ -560,7 +560,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
-            doChangeDirectory(path.substring(0, 1));
+            cd(path.substring(0, 1));
             path = path.substring(1);
         }
 
@@ -569,25 +569,29 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
         if (dirs == null || dirs.length == 0) {
             // path was just a relative single path
-            doChangeDirectory(path);
+            cd(path);
             return;
         }
 
         // there are multiple dirs so do this in chunks
         for (String dir : dirs) {
-            doChangeDirectory(dir);
+            cd(dir);
         }
     }
 
-    private void doChangeDirectory(String pathStep) {
-        if (pathStep == null || ".".equals(pathStep) || org.apache.camel.util.ObjectHelper.isEmpty(pathStep)) {
+    private void cd(String pathStep) {
+        // TODO blank step like " " could be valid, but Windows trims trailing spaces
+        if (pathStep == null || SharePath.CWD.equals(pathStep) || pathStep.isBlank()) {
             return;
         }
 
-        log.trace("Changing directory: {}", pathStep);
+        log.trace("cd({})", pathStep);
         boolean success;
         try {
-            if ("..".equals(pathStep)) {
+            if (SharePath.SHARE_ROOT.equals(pathStep)) {
+                changeToRoot();
+                success = true;
+            } else if (SharePath.PARENT.equals(pathStep)) {
                 changeToParentDirectory();
                 success = true;
             } else {
@@ -602,7 +606,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
         if (!success) {
             throw new GenericFileOperationFailedException(
-                    "Cannot change directory to: " + pathStep);
+                    "Cannot cd(" + pathStep + ").");
         }
     }
 
@@ -615,9 +619,17 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
     }
 
+    void changeToRoot() {
+        if (!isConnected()) {
+            throw new GenericFileOperationFailedException("Cannot cd to the share root: not connected");
+        }
+        dirStack.empty();
+        dirStack.push(root);
+    }
+
     @Override
     public ShareFileItem[] listFiles() throws GenericFileOperationFailedException {
-        log.trace("Listing remote files");
+        log.trace("ls");
         try {
             return cwd().listFilesAndDirectories().stream().toArray(ShareFileItem[]::new);
         } catch (RuntimeException e) {
@@ -627,11 +639,11 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public ShareFileItem[] listFiles(String path) throws GenericFileOperationFailedException {
-        log.trace("Listing remote files from path {}", path);
+        log.trace("ls {}", path);
 
         // use current directory if path not given
-        if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
-            path = ".";
+        if (SharePath.isEmpty(path)) {
+            path = SharePath.CWD;
         }
 
         var backup = dirStack.clone();
