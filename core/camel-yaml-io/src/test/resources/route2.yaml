@@ -1,0 +1,15 @@
+- route:
+    id: myRoute2
+    from:
+      uri: direct:start2
+      steps:
+        - split:
+            streaming: "true"
+            simple:
+              resultType: int.class
+              expression: "${body}"
+            steps:
+              - to:
+                  uri: kafka:line
+        - to:
+            uri: mock:result2

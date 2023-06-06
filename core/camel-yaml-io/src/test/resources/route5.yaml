@@ -1,0 +1,13 @@
+- route:
+    id: myRoute5
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            logName: myLogger
+            loggingLevel: WARN
+        - setBody:
+            simple:
+              expression: "${body}"
+        - to:
+            uri: mock:result

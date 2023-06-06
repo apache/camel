@@ -13322,7 +13322,7 @@ Set whether recursive keys are allowed. Default value: false
       
   </xs:complexType>
     
-  <xs:complexType final="extension restriction" name="yamlTypeFilterDefinition">
+  <xs:complexType name="yamlTypeFilterDefinition">
         
     <xs:sequence/>
         

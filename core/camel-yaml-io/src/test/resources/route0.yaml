@@ -1,0 +1,10 @@
+- route:
+    id: myRoute0
+    from:
+      uri: timer:yaml?period=1000
+      steps:
+        - setBody:
+            constant:
+              expression: Hello from yaml
+        - log:
+            message: "${body}"

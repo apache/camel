@@ -2353,6 +2353,10 @@
           "intermittent" : {
             "type" : "boolean"
           },
+          "logging-level" : {
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
+          },
           "resume-strategy" : {
             "type" : "string"
           }

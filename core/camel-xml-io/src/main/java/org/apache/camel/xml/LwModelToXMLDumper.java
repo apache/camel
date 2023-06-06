@@ -120,30 +120,35 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             @Override
             protected void doWriteValue(String value) throws IOException {
                 if (value != null && !value.isEmpty()) {
+                    if (resolvePlaceholders) {
+                        value = resolve(value, properties);
+                    }
                     super.doWriteValue(value);
                 }
             }
 
             @Override
-            protected void text(String text) throws IOException {
+            protected void text(String name, String text) throws IOException {
                 if (resolvePlaceholders) {
                     text = resolve(text, properties);
                 }
-                super.text(text);
+                super.text(name, text);
             }
 
             @Override
-            protected void attribute(String name, String value) throws IOException {
-                if (resolveDelegateEndpoints && "uri".equals(name)) {
-                    String uri = resolve(value, properties);
-                    Endpoint endpoint = context.hasEndpoint(uri);
-                    if (endpoint instanceof DelegateEndpoint) {
-                        endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
-                        value = endpoint.getEndpointUri();
+            protected void attribute(String name, Object value) throws IOException {
+                if (value != null) {
+                    if (resolveDelegateEndpoints && "uri".equals(name)) {
+                        String uri = resolve(value.toString(), properties);
+                        Endpoint endpoint = context.hasEndpoint(uri);
+                        if (endpoint instanceof DelegateEndpoint) {
+                            endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
+                            value = endpoint.getEndpointUri();
+                        }
                     }
-                }
-                if (resolvePlaceholders) {
-                    value = resolve(value, properties);
+                    if (resolvePlaceholders) {
+                        value = resolve(value.toString(), properties);
+                    }
                 }
                 super.attribute(name, value);
             }

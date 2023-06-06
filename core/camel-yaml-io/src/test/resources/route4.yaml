@@ -1,0 +1,13 @@
+- route:
+    id: myRoute4
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            constant:
+              expression: |-
+                {
+                 key: '123'
+                }
+        - to:
+            uri: mock:result

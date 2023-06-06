@@ -201,7 +201,7 @@ public class XMLWriter {
     /**
      * {@inheritDoc}
      */
-    public void endElement() throws IOException {
+    public void endElement(String name) throws IOException {
         depth--;
 
         if (tagIsEmpty) {

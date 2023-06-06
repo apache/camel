@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -52,12 +51,11 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     }
 
     public CatchDefinition(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptionClasses = exceptionClasses;
+        exception(exceptionClasses);
     }
 
     public CatchDefinition(Class<? extends Throwable> exceptionType) {
-        exceptionClasses = new ArrayList<>();
-        exceptionClasses.add(exceptionType);
+        exception(exceptionType);
     }
 
     @Override
@@ -104,11 +102,22 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
      * @return            the builder
      */
     public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
+        return exception(List.of(exceptions));
+    }
+
+    /**
+     * The exception(s) to catch.
+     *
+     * @param  exceptions one or more exceptions
+     * @return            the builder
+     */
+    public CatchDefinition exception(List<Class<? extends Throwable>> exceptions) {
         if (exceptionClasses == null) {
             exceptionClasses = new ArrayList<>();
         }
-        if (exceptions != null) {
-            exceptionClasses.addAll(Arrays.asList(exceptions));
+        for (Class<? extends Throwable> c : exceptions) {
+            this.exceptionClasses.add(c);
+            this.exceptions.add(c.getName());
         }
         return this;
     }

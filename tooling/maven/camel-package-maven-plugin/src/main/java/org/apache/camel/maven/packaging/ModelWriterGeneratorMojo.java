@@ -16,7 +16,6 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -30,7 +29,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,54 +67,32 @@ import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
-/**
- * Generate Model lightweight XML Writer source code.
- */
-@Mojo(name = "generate-xml-writer", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
-public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
+public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
-    public static final String XML_SERIALIZER_PACKAGE = "org.apache.camel.xml.io";
-    public static final String WRITER_PACKAGE = "org.apache.camel.xml.out";
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
-    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
-    protected File sourcesOutputDir;
+    private Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
+    private Map<Class<?>, List<Member>> members = new ConcurrentHashMap<>();
 
-    @Parameter(defaultValue = "${camel-generate-xml-writer}")
-    protected boolean generateXmlWriter;
-
-    @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
-            throws MojoFailureException, MojoExecutionException {
-        sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
-        generateXmlWriter = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-writer", "false"));
-        super.execute(project, projectHelper, buildContext);
+    private static Type type(Member member) {
+        return member instanceof Method
+                ? member.getName().startsWith("set")
+                        ? ((Method) member).getGenericParameterTypes()[0]
+                        : ((Method) member).getGenericReturnType()
+                : ((Field) member).getGenericType();
     }
 
-    @Override
-    public void execute() throws MojoExecutionException {
-        if (!generateXmlWriter) {
-            return;
-        }
-        Path javaDir = sourcesOutputDir.toPath();
-        String parser = generateWriter();
-        updateResource(javaDir, (WRITER_PACKAGE + ".ModelWriter").replace('.', '/') + ".java", parser);
+    String getModelPackage() {
+        return MODEL_PACKAGE;
     }
 
-    public String generateWriter() throws MojoExecutionException {
+    abstract String getWriterPackage();
+
+    protected String generateWriter() throws MojoExecutionException {
         ClassLoader classLoader;
         try {
             classLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
@@ -124,7 +100,8 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
             throw new MojoExecutionException("DependencyResolutionRequiredException: " + e.getMessage(), e);
         }
 
-        Class<?> routesDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".RoutesDefinition");
+        Class<?> routesDefinitionClass
+                = loadClass(classLoader, XmlModelWriterGeneratorMojo.MODEL_PACKAGE + ".RoutesDefinition");
         String resName = routesDefinitionClass.getName().replace('.', '/') + ".class";
         String url = classLoader.getResource(resName).toExternalForm().replace(resName, JandexStore.DEFAULT_NAME);
         Index index;
@@ -206,14 +183,15 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
     private JavaClass generateWriter(List<Class<?>> model, ClassLoader classLoader) {
         JavaClass writer = new JavaClass(classLoader);
         writer.setMaxImportPerPackage(4);
-        writer.setPackage(WRITER_PACKAGE);
+        writer.setPackage(getWriterPackage());
         writer.setName("ModelWriter");
         writer.extendSuperType("BaseWriter");
-        writer.addImport(MODEL_PACKAGE + ".OptionalIdentifiedDefinition");
+        writer.addImport(XmlModelWriterGeneratorMojo.MODEL_PACKAGE + ".OptionalIdentifiedDefinition");
         writer.addImport(IOException.class);
         writer.addImport(Array.class);
         writer.addImport(List.class);
         writer.addImport(ArrayList.class);
+        writer.addImport("org.apache.camel.Expression");
         writer.addAnnotation(SuppressWarnings.class).setLiteralValue("\"all\"");
 
         writer.addMethod()
@@ -305,7 +283,14 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
             getClassAndSuper(clazz.getSuperclass())
                     .filter(c -> getProperties(c).anyMatch(Property::isElement))
                     .findFirst()
-                    .ifPresent(cl -> elements.add("doWrite" + cl.getSimpleName() + "Elements(def);"));
+                    .ifPresent(cl -> {
+                        // special for namespace
+                        if ("NamespaceAwareExpression".equals(cl.getSimpleName())) {
+                            attributes.add("doWriteNamespaces(def);");
+                        } else {
+                            elements.add("doWrite" + cl.getSimpleName() + "Elements(def);");
+                        }
+                    });
             // Loop through elements
             List<Property> elementMembers = members.stream().filter(Property::isElement).toList();
             elementMembers.forEach(member -> {
@@ -363,7 +348,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         String w = member.getAnnotation(XmlElementWrapper.class) != null
                                 ? member.getAnnotation(XmlElementWrapper.class).name() : null;
                         elements.add("doWriteList(" + (w != null ? "\"" + w + "\"" : "null") + ", " +
-                                "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
+                                     "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
                     } else {
                         XmlJavaTypeAdapter adapter = member.getAnnotation(XmlJavaTypeAdapter.class);
                         if (adapter != null) {
@@ -398,7 +383,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                     // elements.add("// " + member);
                     if (list) {
                         elements.add("doWriteList(\"" + pn + "\", " +
-                                "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
+                                     "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
                     } else {
                         elements.add("doWriteElement(\"" + pn + "\", def." + gn + "(), this::doWrite" + t + ");");
                     }
@@ -409,8 +394,8 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
             List<String> value =
                     getClassAndSuper(clazz).flatMap(this::getProperties)
                             .filter(Property::isValue).findFirst()
-                    .map(member -> "doWriteValue(def." + member.getGetter() + "());")
-                    .stream().toList();
+                            .map(member -> "doWriteValue(def." + member.getGetter() + "());")
+                            .stream().toList();
 
             String qgname = qname;
             if (clazz.getTypeParameters().length > 0) {
@@ -418,9 +403,13 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         .collect(Collectors.joining(", ")) + ">";
             }
             if (!attributeMembers.isEmpty() || !elementMembers.isEmpty() || isRootElement(clazz)
-                    || isReferenced(clazz, model)) {
+                || isReferenced(clazz, model)) {
                 List<String> statements = new ArrayList<>();
-                statements.add("startElement(name);");
+                if ("ExpressionSubElementDefinition".equals(name)) {
+                    statements.add("startExpressionElement(name);");
+                } else {
+                    statements.add("startElement(name);");
+                }
                 // Attributes
                 if (hasDerived && !attributes.isEmpty()) {
                     writer.addMethod()
@@ -437,6 +426,12 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 // Value
                 statements.addAll(value);
                 // Elements
+                elements.sort((e1, e2) -> {
+                    // sort so output is last
+                    boolean l1 = e1.startsWith("doWriteList(null, null, def.getOutputs()");
+                    boolean l2 = e2.startsWith("doWriteList(null, null, def.getOutputs()");
+                    return Boolean.compare(l1, l2);
+                });
                 if (hasDerived && !elements.isEmpty()) {
                     writer.addMethod()
                             .setProtected()
@@ -449,7 +444,11 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 } else {
                     statements.addAll(elements);
                 }
-                statements.add("endElement();");
+                if ("ExpressionSubElementDefinition".equals(name)) {
+                    statements.add("endExpressionElement(name);");
+                } else {
+                    statements.add("endElement(name);");
+                }
                 writer.addMethod()
                         .setProtected()
                         .setReturnType(Void.TYPE)
@@ -498,7 +497,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 .setReturnType(Void.TYPE)
                 .setName("doWriteAttribute")
                 .addParameter(String.class, "attribute")
-                .addParameter(String.class, "value")
+                .addParameter(Object.class, "value")
                 .addThrows(IOException.class)
                 .setBody("if (value != null) {",
                         "    attribute(attribute, value);",
@@ -510,35 +509,35 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 .addParameter(String.class, "value")
                 .addThrows(IOException.class)
                 .setBody("if (value != null) {",
-                        "    text(value);",
+                        "    value(value);",
                         "}");
         writer.addMethod()
                 .setSignature("protected <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
-                            if (list != null) {
-                                if (wrapperName != null) {
-                                    startElement(wrapperName);
-                                }
-                                for (T v : list) {
-                                    elementSerializer.doWriteElement(name, v);
-                                }
-                                if (wrapperName != null) {
-                                    endElement();
-                                }
-                            }""");
+                        if (list != null) {
+                            if (wrapperName != null) {
+                                startElement(wrapperName);
+                            }
+                            for (T v : list) {
+                                elementSerializer.doWriteElement(name, v);
+                            }
+                            if (wrapperName != null) {
+                                endElement(wrapperName);
+                            }
+                        }""");
         writer.addMethod()
                 .setSignature("protected <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
-                            if (v != null) {
-                                elementSerializer.doWriteElement(name, v);
-                            }""");
+                        if (v != null) {
+                            elementSerializer.doWriteElement(name, v);
+                        }""");
         writer.addNestedType()
                 .setClass(false)
                 .setAbstract(true)
                 .setName("ElementSerializer<T>")
                 .addMethod()
-                        .setAbstract()
-                        .setSignature("void doWriteElement(String name, T value) throws IOException");
+                .setAbstract()
+                .setSignature("void doWriteElement(String name, T value) throws IOException");
 
         writer.addMethod()
                 .setProtected()
@@ -575,8 +574,20 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 .addThrows(IOException.class)
                 .setBody("if (value != null) {",
                         "    startElement(name);",
-                        "    text(value);",
-                        "    endElement();",
+                        "    text(name, value);",
+                        "    endElement(name);",
+                        "}");
+
+        writer.addMethod()
+                .setProtected()
+                .setReturnType(Void.TYPE)
+                .setName("doWriteNamespaces")
+                .addParameter("NamespaceAwareExpression", "def")
+                .addThrows(IOException.class)
+                .setBody("if (def.getNamespaceAsMap() != null) {",
+                        "    for (var e : def.getNamespaceAsMap().entrySet()) {",
+                        "        doWriteAttribute(\"xmlns:\" + e.getKey(), e.getValue());",
+                        "    }",
                         "}");
 
         return writer;
@@ -597,8 +608,8 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         if (rawClass == String.class) {
             return val;
         } else if (rawClass.isEnum()
-                || rawClass == Integer.class || rawClass == Long.class || rawClass == Boolean.class
-                || rawClass == Float.class) {
+                   || rawClass == Integer.class || rawClass == Long.class || rawClass == Boolean.class
+                   || rawClass == Float.class) {
             writer.addImport(rawClass);
             return "toString(" + val + ")";
         } else if (rawClass == byte[].class) {
@@ -608,108 +619,10 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    class Property {
-        private final Member field;
-        private final Member getter;
-        private final Member setter;
-        private final String name;
-        private final Type type;
-
-        public Property(Member field, Member getter, Member setter, String name, Type type) {
-            this.field = field;
-            this.getter = getter;
-            this.setter = setter;
-            this.name = name;
-            this.type = type;
-        }
-
-        @Override
-        public String toString() {
-            return "Property{" +
-                    "name='" + name + '\'' +
-                    ", type=" + type +
-                    ", field=" + field +
-                    ", getter=" + getter +
-                    ", setter=" + setter +
-                    '}';
-        }
-
-        private Stream<Member> members() {
-            return Stream.of(field, getter, setter).filter(Objects::nonNull);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Type getType() {
-            return type;
-        }
-
-        public String getGetter() {
-            return Optional.ofNullable(getter)
-                    .orElseThrow(() -> new IllegalArgumentException("No getter for property defined by " + members().toList()))
-                    .getName();
-        }
-
-        public String getSetter() {
-            return Optional.ofNullable(setter)
-                    .orElseThrow(() -> new IllegalArgumentException("No setter for property defined by " + members().toList()))
-                    .getName();
-        }
-
-        @SuppressWarnings("unchecked")
-        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-            return (T) annotations().filter(annotationClass::isInstance).findFirst().orElse(null);
-        }
-
-        public <T extends Annotation> boolean hasAnnotation(Class<T> annotationClass) {
-            return getAnnotation(annotationClass) != null;
-        }
-
-        private Stream<? extends Annotation> annotations() {
-            return members().flatMap(m -> Stream.of(((AnnotatedElement) m).getAnnotations()));
-
-        }
-
-        public boolean isAttribute() {
-            return hasAnnotation(XmlAttribute.class);
-        }
-
-        public boolean isAnyAttribute() {
-            return hasAnnotation(XmlAnyAttribute.class);
-        }
-
-        public boolean isValue() {
-            return hasAnnotation(XmlValue.class);
-        }
-
-        public boolean isElement() {
-            return !isAttribute() && !isAnyAttribute() && !isValue();
-        }
-
-        public boolean isElementRefs() {
-            return hasAnnotation(XmlElementRefs.class);
-        }
-
-        public boolean isElementRef() {
-            return hasAnnotation(XmlElementRef.class);
-            // || member.getDeclaringClass() == outputDefinitionClass && "setOutputs".equals(member.getName());
-        }
-    }
-
-    private static Type type(Member member) {
-        return member instanceof Method
-                ? member.getName().startsWith("set")
-                        ? ((Method) member).getGenericParameterTypes()[0]
-                        : ((Method) member).getGenericReturnType()
-                : ((Field) member).getGenericType();
-    }
-
-    private Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
     private Stream<Property> getProperties(Class<?> clazz) {
         return properties.computeIfAbsent(clazz, cl -> doGetProperties(cl)).stream();
     }
+
     private List<Property> doGetProperties(Class<?> clazz) {
         List<Member> allMembers = getClassAndSuper(clazz)
                 .flatMap(cl -> getMembers(clazz).stream())
@@ -725,29 +638,29 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         return null;
                     }
                     String name = l.getKey();
-                    Type type = type(members.get(0));
+                    Type type = ModelWriterGeneratorMojo.type(members.get(0));
                     Member field = members.stream()
                             .filter(this::isField)
                             .findFirst().or(() -> allMembers.stream()
                                     .filter(m -> isField(m)
-                                            && Objects.equals(propname(m), name)
-                                            && Objects.equals(type(m), type))
+                                                 && Objects.equals(propname(m), name)
+                                                 && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
                                     .findFirst())
                             .orElse(null);
                     Member getter = members.stream()
                             .filter(this::isGetter)
                             .findFirst().or(() -> allMembers.stream()
                                     .filter(m -> isGetter(m)
-                                            && Objects.equals(propname(m), name)
-                                            && Objects.equals(type(m), type))
+                                                 && Objects.equals(propname(m), name)
+                                                 && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
                                     .findFirst())
                             .orElse(null);
                     Member setter = members.stream()
                             .filter(this::isSetter)
                             .findFirst().or(() -> allMembers.stream()
                                     .filter(m -> isSetter(m)
-                                            && Objects.equals(propname(m), name)
-                                            && Objects.equals(type(m), type))
+                                                 && Objects.equals(propname(m), name)
+                                                 && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
                                     .findFirst())
                             .orElse(null);
                     if (getter != null && setter != null) {
@@ -777,13 +690,12 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         return properties.toList();
     }
 
-    private Map<Class<?>, List<Member>> members = new ConcurrentHashMap<>();
     private List<Member> getMembers(Class<?> clazz) {
         return members.computeIfAbsent(clazz, cl -> Stream.<Member>concat(
-                    Arrays.stream(cl.getDeclaredMethods())
-                        .filter(m -> isSetter(m) || isGetter(m))
-                        .filter(m -> !m.isSynthetic()),
-                    Arrays.stream(cl.getDeclaredFields()))
+                        Arrays.stream(cl.getDeclaredMethods())
+                                .filter(m -> isSetter(m) || isGetter(m))
+                                .filter(m -> !m.isSynthetic()),
+                        Arrays.stream(cl.getDeclaredFields()))
                 .toList());
     }
 
@@ -796,17 +708,17 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         }
         if (accessType == XmlAccessType.PROPERTY) {
             return m -> m.getDeclaringClass() == clazz
-                    && isSetter(m) || isGetter(m) || (isField(m) && isXmlBindAnnotated(m));
+                        && isSetter(m) || isGetter(m) || (isField(m) && isXmlBindAnnotated(m));
         } else if (accessType == XmlAccessType.FIELD) {
             return m -> m.getDeclaringClass() == clazz
-                    && ((isSetter(m) || isGetter(m)) && isXmlBindAnnotated(m)
+                        && ((isSetter(m) || isGetter(m)) && isXmlBindAnnotated(m)
                             || isField(m) && !Modifier.isStatic(m.getModifiers()) && !Modifier.isTransient(m.getModifiers()));
         } else if (accessType == XmlAccessType.PUBLIC_MEMBER) {
             return m -> m.getDeclaringClass() == clazz
-                    && (Modifier.isPublic(m.getModifiers()) || isXmlBindAnnotated(m));
+                        && (Modifier.isPublic(m.getModifiers()) || isXmlBindAnnotated(m));
         } else /* if (accessType == XmlAccessType.NONE) */ {
             return m -> m.getDeclaringClass() == clazz
-                    && isXmlBindAnnotated(m);
+                        && isXmlBindAnnotated(m);
         }
     }
 
@@ -821,19 +733,19 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     private boolean isSetter(Member member) {
         return (member instanceof Method m)
-                && !Modifier.isStatic(m.getModifiers())
-                && m.getName().startsWith("set") && m.getName().length() > 3
-                && m.getParameterCount() == 1
-                && m.getReturnType() == Void.TYPE;
+               && !Modifier.isStatic(m.getModifiers())
+               && m.getName().startsWith("set") && m.getName().length() > 3
+               && m.getParameterCount() == 1
+               && m.getReturnType() == Void.TYPE;
     }
 
     private boolean isGetter(Member member) {
         return (member instanceof Method m)
-                && !Modifier.isStatic(m.getModifiers())
-                && m.getParameterCount() == 0
-                && (m.getName().startsWith("get") && m.getName().length() > 3
-                        || m.getName().startsWith("is") && m.getName().length() > 2
-                                && (m.getReturnType() == Boolean.TYPE || m.getReturnType() == Boolean.class));
+               && !Modifier.isStatic(m.getModifiers())
+               && m.getParameterCount() == 0
+               && (m.getName().startsWith("get") && m.getName().length() > 3
+                   || m.getName().startsWith("is") && m.getName().length() > 2
+                      && (m.getReturnType() == Boolean.TYPE || m.getReturnType() == Boolean.class));
     }
 
     private Stream<Class<?>> getClassAndSuper(Class<?> clazz) {
@@ -868,8 +780,86 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         return fn.substring(0, 1).toLowerCase() + fn.substring(1);
     }
 
-    private String uppercase(String fn) {
-        return fn.substring(0, 1).toUpperCase() + fn.substring(1);
-    }
+    class Property {
+        private final Member field;
+        private final Member getter;
+        private final Member setter;
+        private final String name;
+        private final Type type;
 
+        public Property(Member field, Member getter, Member setter, String name, Type type) {
+            this.field = field;
+            this.getter = getter;
+            this.setter = setter;
+            this.name = name;
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return "Property{" +
+                   "name='" + name + '\'' +
+                   ", type=" + type +
+                   ", field=" + field +
+                   ", getter=" + getter +
+                   ", setter=" + setter +
+                   '}';
+        }
+
+        private Stream<Member> members() {
+            return Stream.of(field, getter, setter).filter(Objects::nonNull);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public String getGetter() {
+            return Optional.ofNullable(getter)
+                    .orElseThrow(() -> new IllegalArgumentException("No getter for property defined by " + members().toList()))
+                    .getName();
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+            return (T) annotations().filter(annotationClass::isInstance).findFirst().orElse(null);
+        }
+
+        public <T extends Annotation> boolean hasAnnotation(Class<T> annotationClass) {
+            return getAnnotation(annotationClass) != null;
+        }
+
+        private Stream<? extends Annotation> annotations() {
+            return members().flatMap(m -> Stream.of(((AnnotatedElement) m).getAnnotations()));
+        }
+
+        public boolean isAttribute() {
+            return hasAnnotation(XmlAttribute.class);
+        }
+
+        public boolean isAnyAttribute() {
+            return hasAnnotation(XmlAnyAttribute.class);
+        }
+
+        public boolean isValue() {
+            return hasAnnotation(XmlValue.class);
+        }
+
+        public boolean isElement() {
+            return !isAttribute() && !isAnyAttribute() && !isValue();
+        }
+
+        public boolean isElementRefs() {
+            return hasAnnotation(XmlElementRefs.class);
+        }
+
+        public boolean isElementRef() {
+            return hasAnnotation(XmlElementRef.class);
+            // || member.getDeclaringClass() == outputDefinitionClass && "setOutputs".equals(member.getName());
+        }
+    }
 }

@@ -141,32 +141,29 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     }
 
     /**
-     * @return {@code true} if the part represented by this model supports compilation to native code; {@code false}
-     *         otherwise
+     * True if the part represented by this model supports compilation to native code.
      */
     public boolean isNativeSupported() {
         return nativeSupported;
     }
 
-    /**
-     * @param nativeSupported see {@link #isNativeSupported()}
-     */
     public void setNativeSupported(boolean nativeSupported) {
         this.nativeSupported = nativeSupported;
     }
 
     /**
-     * @return a free form map of key value pair representing this {@link BaseModel}'s metadata
+     * A free form map of key value pair representing this {@link BaseModel}'s metadata
      */
     public Map<String, Object> getMetadata() {
         return metadata;
     }
 
-    /**
-     * @param metadata
-     */
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

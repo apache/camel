@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,14 +40,16 @@ public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
         assertNotNull(xml);
 
         Document dom = context.getTypeConverter().convertTo(Document.class, xml);
-        Element rootNode = dom.getDocumentElement();
-        assertNotNull(rootNode);
+        NodeList nl = dom.getElementsByTagName("xpath");
+        assertEquals(2, nl.getLength());
 
-        String attributeFoo = rootNode.getAttribute("xmlns:foo");
+        Element n1 = (Element) nl.item(0);
+        String attributeFoo = n1.getAttribute("xmlns:foo");
         assertNotNull(attributeFoo);
         assertEquals(URL_FOO, attributeFoo);
 
-        String attributeBar = rootNode.getAttribute("xmlns:bar");
+        Element n2 = (Element) nl.item(1);
+        String attributeBar = n2.getAttribute("xmlns:bar");
         assertNotNull(attributeBar);
         assertEquals(URL_BAR, attributeBar);
     }

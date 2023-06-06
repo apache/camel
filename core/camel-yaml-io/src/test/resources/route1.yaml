@@ -1,0 +1,10 @@
+- route:
+    id: myRoute1
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: log:input
+        - to:
+            uri: mock:result
+            pattern: InOut
