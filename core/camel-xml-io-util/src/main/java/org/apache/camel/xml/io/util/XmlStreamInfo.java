@@ -58,6 +58,10 @@ public class XmlStreamInfo {
         return problem;
     }
 
+    public void setProblem(Throwable problem) {
+        this.problem = problem;
+    }
+
     public String getRootElementName() {
         return rootElementName;
     }
