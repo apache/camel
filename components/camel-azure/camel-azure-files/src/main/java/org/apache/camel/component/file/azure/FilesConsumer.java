@@ -93,8 +93,6 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     @Override
     protected boolean pollDirectory(String fileName, List<GenericFile<ShareFileItem>> fileList, int depth) {
         String currentDir = null;
-        // must remember current dir so we stay in that directory after the
-        // poll
         currentDir = operations.getCurrentDirectory();
 
         // strip trailing slash
@@ -102,7 +100,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
         boolean answer = doPollDirectory(fileName, null, fileList, depth);
         if (currentDir != null) {
-            operations.changeCurrentDirectory(currentDir);
+            operations.changeCurrentDirectory(FilesPath.SHARE_ROOT + currentDir);
         }
 
         return answer;

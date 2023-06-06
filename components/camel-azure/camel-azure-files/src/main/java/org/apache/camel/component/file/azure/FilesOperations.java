@@ -145,13 +145,19 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+        // by observation both paths are absolute paths on the share
         log.debug("Renaming file: {} to: {}", from, to);
+        var shareRelativeTo = FilesPath.ensureRelative(to);
+        // by observation the from dir matches cwd
+        var fileName = FilesPath.trimParentPath(from);
+        var cwd = cwd();
         try {
-            var file = cwd().getFileClient(from);
-            file.rename(to);
+            log.debug("{}> mv {} {}", cwd.getDirectoryPath(), fileName, shareRelativeTo);
+            var file = cwd.getFileClient(fileName);
+            file.rename(shareRelativeTo);
             return true;
         } catch (RuntimeException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
+            throw new GenericFileOperationFailedException("Cannot rename: " + from + " to: " + to, e);
         }
     }
 
@@ -554,6 +560,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
     }
 
+    /**
+     * @return a relative path, from the share root, of the current directory
+     */
     @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         log.trace("getCurrentDirectory()");
@@ -565,7 +574,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (SharePath.isEmpty(path)) {
+        if (FilesPath.isEmpty(path)) {
             return;
         }
 
@@ -594,21 +603,22 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     private void trivialCd(String pathStep) {
         // TODO blank step like " " could be valid, but Windows trims trailing spaces
-        if (pathStep == null || SharePath.CWD.equals(pathStep) || pathStep.isBlank()) {
+        if (pathStep == null || FilesPath.CWD.equals(pathStep) || pathStep.isBlank()) {
             return;
         }
 
-        log.trace("cd({})", pathStep);
+        var cwd = cwd();
+        log.trace("{}> cd {}", cwd.getDirectoryPath(), pathStep);
         boolean success;
         try {
-            if (SharePath.SHARE_ROOT.equals(pathStep)) {
+            if (FilesPath.SHARE_ROOT.equals(pathStep)) {
                 changeToRoot();
                 success = true;
-            } else if (SharePath.PARENT.equals(pathStep)) {
+            } else if (FilesPath.PARENT.equals(pathStep)) {
                 changeToParentDirectory();
                 success = true;
             } else {
-                var subDir = cwd().getSubdirectoryClient(pathStep);
+                var subDir = cwd.getSubdirectoryClient(pathStep);
                 success = Boolean.TRUE.equals(subDir.exists());
                 if (success) {
                     dirStack.push(subDir);
@@ -655,8 +665,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         log.trace("ls {}", path);
 
         // use current directory if path not given
-        if (SharePath.isEmpty(path)) {
-            path = SharePath.CWD;
+        if (FilesPath.isEmpty(path)) {
+            path = FilesPath.CWD;
         }
 
         var backup = dirStack.clone();
@@ -695,14 +705,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
             // do not try to build root folder (/ or \)
             if (!(directory.equals("/") || directory.equals("\\"))) {
-                log.trace("Trying to build remote directory by chunk: {}", directory);
+                log.trace("Trying to build remote directory by chunk: {}", dir);
 
-                // while creating directory string if directory results in
-                // trailing slash, remove it not necessary
-                directory = FileUtil.stripTrailingSeparator(directory);
+                dir = FileUtil.stripTrailingSeparator(dir);
 
-                var subDir = cwd().createSubdirectoryIfNotExists(directory);
-                success = subDir != null;
+                var subDir = cwd().createSubdirectoryIfNotExists(dir);
+                success = Boolean.TRUE.equals(subDir.exists());
                 if (success) {
                     dirStack.push(subDir);
                 } else {
