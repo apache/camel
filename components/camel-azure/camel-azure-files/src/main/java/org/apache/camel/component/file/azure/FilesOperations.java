@@ -109,25 +109,24 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         try {
             reconnectIfNecessary(null);
 
-            // remember current directory
-            currentDir = getCurrentDirectory();
-            target = FileUtil.stripPath(name);
-
+            var backup = backup();
             try {
-                changeCurrentDirectory(FileUtil.onlyPath(name));
-            } catch (GenericFileOperationFailedException e) {
-                // we could not change directory, try to change back before
-                changeCurrentDirectory(currentDir);
-                throw e;
-            }
+                target = FileUtil.stripPath(name);
 
-            // delete the file
-            log.trace("Client deleteFile: {}", target);
-            result = cwd().deleteFileIfExists(target);
+                try {
+                    changeCurrentDirectory(FileUtil.onlyPath(name));
+                } catch (GenericFileOperationFailedException e) {
+                    // we could not change directory, try to change back before
+                    changeCurrentDirectory(currentDir);
+                    throw e;
+                }
 
-            // change back to previous directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
+                // delete the file
+                log.trace("Client deleteFile: {}", target);
+                result = cwd().deleteFileIfExists(target);
+
+            } finally {
+                restore(backup);
             }
 
         } catch (RuntimeException e) {
@@ -137,9 +136,16 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         return result;
     }
 
+    void restore(Object backup) {
+        dirStack = (Stack<ShareDirectoryClient>) backup;
+    }
+
+    Object backup() {
+        return dirStack.clone();
+    }
+
     private ShareDirectoryClient cwd() {
         var cwd = dirStack.peek();
-        log.trace("cwd share/dir: {}/{}", cwd.getShareName(), cwd.getDirectoryPath());
         return cwd;
     }
 
@@ -179,7 +185,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         directory = endpoint.getConfiguration().normalizePath(directory);
 
         log.trace("buildDirectory({})", directory);
-        var backup = dirStack.clone();
+        var backup = backup();
         try {
 
             boolean success;
@@ -205,7 +211,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
-            dirStack = (Stack<ShareDirectoryClient>) backup;
+            restore(backup);
         }
 
     }
@@ -213,8 +219,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         boolean answer;
-        var backup = dirStack.clone();
-
+        var backup = backup();
         try {
             log.trace("retrieveFile({})", name);
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
@@ -228,7 +233,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (GenericFileOperationFailedException e) {
             throw e;
         } finally {
-            dirStack = (Stack<ShareDirectoryClient>) backup;
+            restore(backup);
         }
 
         return answer;
@@ -433,7 +438,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         boolean answer;
         String path = FileUtil.onlyPath(name);
         String targetName = name;
-        var backup = dirStack.clone();
+        var backup = backup();
 
         try {
             if (path != null) {
@@ -451,7 +456,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (GenericFileOperationFailedException e) {
             throw e;
         } finally {
-            dirStack = (Stack<ShareDirectoryClient>) backup;
+            restore(backup);
         }
 
         return answer;
@@ -546,7 +551,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
         String onlyName = FileUtil.stripPath(name);
-        var backup = dirStack.clone();
+        var backup = backup();
         try {
             if (directory != null) {
                 changeCurrentDirectory(directory);
@@ -556,7 +561,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
-            dirStack = (Stack<ShareDirectoryClient>) backup;
+            restore(backup);
         }
     }
 
@@ -565,16 +570,15 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
      */
     @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
-        log.trace("getCurrentDirectory()");
         String answer = cwd().getDirectoryPath();
-        log.trace("Current dir: {}", answer);
+        log.trace("{}>", answer);
         return answer;
     }
 
     @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (FilesPath.isEmpty(path)) {
+        if (FilesPath.isEmpty(path) || path.equals(FilesPath.CWD)) {
             return;
         }
 
@@ -662,28 +666,28 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public ShareFileItem[] listFiles(String path) throws GenericFileOperationFailedException {
-        log.trace("ls {}", path);
+        log.trace("{}> ls {}", cwd().getDirectoryPath(), path);
 
         // use current directory if path not given
         if (FilesPath.isEmpty(path)) {
             path = FilesPath.CWD;
         }
 
-        var backup = dirStack.clone();
+        var backup = backup();
         try {
             changeCurrentDirectory(path);
             return listFiles();
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
-            dirStack = (Stack<ShareDirectoryClient>) backup;
+            restore(backup);
         }
     }
 
     @Override
     public boolean sendNoop() throws GenericFileOperationFailedException {
-        log.trace("sendNoOp");
-        return root.exists();
+        log.trace("sendNoOp()");
+        return Boolean.TRUE.equals(root.exists());
     }
 
     @Override

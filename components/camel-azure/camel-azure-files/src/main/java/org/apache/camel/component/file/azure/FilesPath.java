@@ -7,7 +7,7 @@ public class FilesPath {
     public static final String CWD = ".";
 
     public static final String SHARE_ROOT = "/";
-    
+
     public static final char PATH_SEPARATOR = '/';
 
     private FilesPath() {

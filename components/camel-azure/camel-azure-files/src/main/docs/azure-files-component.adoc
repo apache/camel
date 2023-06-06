@@ -104,16 +104,10 @@ explicitly if you want it to delete the files or move them to another
 location. For example you can use `delete=true` to delete the files, or
 use `move=.done` to move the files into a hidden done sub directory.
 
-TODO test delete
-
 The regular File consumer is different as it will by
 default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the remote consumer is that it may lack
 permissions by default to be able to move or delete files.
-
-
-TODO below is not yet adapted FTP doc 
-
 
 === limitations
 
@@ -123,13 +117,16 @@ is turned off by default, as it requires that the user has write access.
 See the options table at File2 for more details about
 read locks. +
  There are other solutions to avoid consuming files that are currently
-being written over FTP; for instance, you can write to a temporary
+being written; for instance, you can write to a temporary
 destination and move the file after it has been written.
 
 When moving files using `move` or `preMove` option the files are
-restricted to the FTP_ROOT folder. That prevents you from moving files
-outside the FTP area. If you want to move files to another area you can
-use soft links and move files into a soft linked folder.
+restricted to the share. That prevents you from moving files
+outside the share.
+
+
+TODO below is not yet adapted FTP doc 
+
 
 == Exchange Properties
 
@@ -186,174 +183,6 @@ The `java.io.File` handle is then used as the Exchange body. The file producer l
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
 ====
 
-== Stepwise changing directories
-
-Camel FTP can operate in two modes in terms of
-traversing directories when consuming files (eg downloading) or
-producing files (eg uploading)
-
-* stepwise
-* not stepwise
-
-You may want to pick either one depending on your situation and security
-issues. Some Camel end users can only download files if they use
-stepwise, while others can only download if they do not.
-
-You can use the `stepwise` option to control the behavior.
-
-Note that stepwise changing of directory will in most cases only work
-when the user is confined to it's home directory and when the home
-directory is reported as `"/"`.
-
-The difference between the two of them is best illustrated with an
-example. Suppose we have the following directory structure on the remote
-FTP server we need to traverse and download files:
-
-----
-/
-/one
-/one/two
-/one/two/sub-a
-/one/two/sub-b
-----
-
-And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
-folder.
-
-== Using stepwise=true (default mode)
-
-----
-TYPE A
-200 Type set to A
-PWD
-257 "/" is current directory.
-CWD one
-250 CWD successful. "/one" is current directory.
-CWD two
-250 CWD successful. "/one/two" is current directory.
-SYST
-215 UNIX emulated by FileZilla
-PORT 127,0,0,1,17,94
-200 Port command successful
-LIST
-150 Opening data channel for directory list.
-226 Transfer OK
-CWD sub-a
-250 CWD successful. "/one/two/sub-a" is current directory.
-PORT 127,0,0,1,17,95
-200 Port command successful
-LIST
-150 Opening data channel for directory list.
-226 Transfer OK
-CDUP
-200 CDUP successful. "/one/two" is current directory.
-CWD sub-b
-250 CWD successful. "/one/two/sub-b" is current directory.
-PORT 127,0,0,1,17,96
-200 Port command successful
-LIST
-150 Opening data channel for directory list.
-226 Transfer OK
-CDUP
-200 CDUP successful. "/one/two" is current directory.
-CWD /
-250 CWD successful. "/" is current directory.
-PWD
-257 "/" is current directory.
-CWD one
-250 CWD successful. "/one" is current directory.
-CWD two
-250 CWD successful. "/one/two" is current directory.
-PORT 127,0,0,1,17,97
-200 Port command successful
-RETR foo.txt
-150 Opening data channel for file transfer.
-226 Transfer OK
-CWD /
-250 CWD successful. "/" is current directory.
-PWD
-257 "/" is current directory.
-CWD one
-250 CWD successful. "/one" is current directory.
-CWD two
-250 CWD successful. "/one/two" is current directory.
-CWD sub-a
-250 CWD successful. "/one/two/sub-a" is current directory.
-PORT 127,0,0,1,17,98
-200 Port command successful
-RETR a.txt
-150 Opening data channel for file transfer.
-226 Transfer OK
-CWD /
-250 CWD successful. "/" is current directory.
-PWD
-257 "/" is current directory.
-CWD one
-250 CWD successful. "/one" is current directory.
-CWD two
-250 CWD successful. "/one/two" is current directory.
-CWD sub-b
-250 CWD successful. "/one/two/sub-b" is current directory.
-PORT 127,0,0,1,17,99
-200 Port command successful
-RETR b.txt
-150 Opening data channel for file transfer.
-226 Transfer OK
-CWD /
-250 CWD successful. "/" is current directory.
-QUIT
-221 Goodbye
-disconnected.
-----
-
-As you can see when stepwise is enabled, it will traverse the directory
-structure using CD xxx.
-
-== Using stepwise=false
-
-----
-230 Logged on
-TYPE A
-200 Type set to A
-SYST
-215 UNIX emulated by FileZilla
-PORT 127,0,0,1,4,122
-200 Port command successful
-LIST one/two
-150 Opening data channel for directory list
-226 Transfer OK
-PORT 127,0,0,1,4,123
-200 Port command successful
-LIST one/two/sub-a
-150 Opening data channel for directory list
-226 Transfer OK
-PORT 127,0,0,1,4,124
-200 Port command successful
-LIST one/two/sub-b
-150 Opening data channel for directory list
-226 Transfer OK
-PORT 127,0,0,1,4,125
-200 Port command successful
-RETR one/two/foo.txt
-150 Opening data channel for file transfer.
-226 Transfer OK
-PORT 127,0,0,1,4,126
-200 Port command successful
-RETR one/two/sub-a/a.txt
-150 Opening data channel for file transfer.
-226 Transfer OK
-PORT 127,0,0,1,4,127
-200 Port command successful
-RETR one/two/sub-b/b.txt
-150 Opening data channel for file transfer.
-226 Transfer OK
-QUIT
-221 Goodbye
-disconnected.
-----
-
-As you can see when not using stepwise, there are no CD operation
-invoked at all.
 
 == Samples
 
