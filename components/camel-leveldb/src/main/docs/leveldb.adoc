@@ -25,7 +25,7 @@ Current features it provides:
 
 `LevelDBAggregationRepository` is an `AggregationRepository` which on
 the fly persists the aggregated messages. This ensures that you will not
-loose messages, as the default aggregator will use an in memory only
+lose messages, as the default aggregator will use an in memory only
 `AggregationRepository`.
 
 It has the following options:
