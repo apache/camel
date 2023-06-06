@@ -35,7 +35,7 @@ public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
 
         configuration.setPersistenceEnabled(true);
         configuration.setJournalType(JournalType.NIO);
-
+        configuration.setMaxDiskUsage(98);
 
         try {
             configuration.addAcceptorConfiguration("in-vm", brokerURL);
