@@ -302,12 +302,14 @@ public class RoutesConfigurer {
 
     protected void doConfigureModeline(CamelContext camelContext, Collection<Resource> resources, boolean optional)
             throws Exception {
-        ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
         RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
 
-        for (Resource resource : resources) {
-            LOG.debug("Parsing modeline: {}", resource);
-            factory.parseModeline(resource);
+        if (camelContext.isModeline()) {
+            ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
+            for (Resource resource : resources) {
+                LOG.debug("Parsing modeline: {}", resource);
+                factory.parseModeline(resource);
+            }
         }
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Resource resource : resources) {

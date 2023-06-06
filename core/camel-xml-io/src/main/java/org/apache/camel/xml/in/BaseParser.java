@@ -386,7 +386,8 @@ public class BaseParser {
 
     protected AttributeHandler<Element> domAttributeHandler() {
         return (el, name, value) -> {
-            el.setAttribute(name, value);
+            // for now, handle only XMLs where schema declares attributeFormDefault="unqualified"
+            el.setAttributeNS(null, name, value);
             return true;
         };
     }
