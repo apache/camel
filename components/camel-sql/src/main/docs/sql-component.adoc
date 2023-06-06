@@ -471,7 +471,7 @@ be made with regard to stale data and your specific usage.
 
 `JdbcAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
-loose messages, as the default aggregator will use an in memory only
+lose messages, as the default aggregator will use an in memory only
 `AggregationRepository`. The `JdbcAggregationRepository` allows together with Camel to provide
 persistent support for the Aggregator.
 
