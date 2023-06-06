@@ -585,8 +585,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // if it starts with the root path then a little special handling for
         // that
         if (FileUtil.hasLeadingSeparator(path)) {
-            // change to root path
-            trivialCd(path.substring(0, 1));
+            trivialCd(FilesPath.SHARE_ROOT);
             path = path.substring(1);
         }
 

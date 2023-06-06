@@ -102,7 +102,12 @@ The remote consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
 explicitly if you want it to delete the files or move them to another
 location. For example you can use `delete=true` to delete the files, or
-use `move=.done` to move the files into a hidden done sub directory.
+use `move=.done` to move the files into `.done` sub directory.
+
+*WARNING* `.`-prefixed folders are not implicitly hidden from
+recursive polling.
+
+TODO test
 
 The regular File consumer is different as it will by
 default move files to a `.camel` sub directory. The reason Camel does
