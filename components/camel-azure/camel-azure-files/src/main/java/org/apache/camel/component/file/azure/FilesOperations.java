@@ -32,6 +32,7 @@ import com.azure.storage.file.share.ShareDirectoryClient;
 import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.models.ShareFileItem;
 import com.azure.storage.file.share.models.ShareFileRange;
+import com.azure.storage.file.share.options.ShareListFilesAndDirectoriesOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.FileComponent;
@@ -657,7 +658,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public ShareFileItem[] listFiles() throws GenericFileOperationFailedException {
         log.trace("ls");
         try {
-            return cwd().listFilesAndDirectories().stream().toArray(ShareFileItem[]::new);
+            var withTS = new ShareListFilesAndDirectoriesOptions().setIncludeTimestamps(true);
+            // TODO configured timeout from poll interval
+            return cwd().listFilesAndDirectories(withTS, Duration.ofSeconds(20), null).stream().toArray(ShareFileItem[]::new);
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }

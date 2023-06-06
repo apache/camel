@@ -176,7 +176,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     private boolean handleDirectory(
             String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files,
             ShareFileItem file) {
-        RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+        RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file);
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
             // recursive scan and add the sub files and folders
             String subDirectory = file.getName();
@@ -192,7 +192,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     private void handleFile(
             String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth, ShareFileItem[] files,
             ShareFileItem file) {
-        RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+        RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file);
         if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
             // matched file so add
             fileList.add(remote);
@@ -247,10 +247,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<ShareFileItem> asRemoteFile(String absolutePath, ShareFileItem file, String charset) {
+    private RemoteFile<ShareFileItem> asRemoteFile(String absolutePath, ShareFileItem file) {
         RemoteFile<ShareFileItem> answer = new RemoteFile<>();
 
-        answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
