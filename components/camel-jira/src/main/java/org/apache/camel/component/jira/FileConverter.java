@@ -39,7 +39,7 @@ public final class FileConverter {
         Path path;
         if (body instanceof byte[]) {
             byte[] bos = (byte[]) body;
-            path = Files.createTempFile(genericFile.getFileName(), null, null);
+            path = Files.createTempFile(genericFile.getFileName(), null);
             Files.write(path, bos, StandardOpenOption.CREATE);
             path.toFile().deleteOnExit();
         } else {
