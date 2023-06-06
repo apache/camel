@@ -766,7 +766,7 @@ following is an example.
 </cxf:cxfEndpoint>
 -------------------------------------------------------------------------------------------------------
 
-=== Description of relayHeaders option
+== Description of CxfHeaderFilterStrategy options
 
 There are _in-band_ and _out-of-band_ on-the-wire headers from the
 perspective of a JAXWS WSDL-first developer.
@@ -781,54 +781,29 @@ Headers relaying/filtering is bi-directional.
 
 When a route has a CXF endpoint and the developer needs to have
 on-the-wire headers, such as SOAP headers, be relayed along the route to
-be consumed say by another JAXWS endpoint, then `relayHeaders` should be
-set to `true`, which is the default value.
+be consumed say by another JAXWS endpoint, a `CxfHeaderFilterStrategy` 
+instance should be set on the CXF endpoint, then `relayHeaders` property
+of the `CxfHeaderFilterStrategy` instance should be set to `true`, which 
+is the default value. Plus, the `CxfHeaderFilterStrategy` instance also 
+holds a list of `MessageHeaderFilter` interface, which decides if a specific
+header will be relayed or not.
 
 
-=== Available only in POJO mode
 
-The `relayHeaders=true` expresses an intent to relay the headers. The
-actual decision on whether a given header is relayed is delegated to a
-pluggable instance that implements the `MessageHeadersRelay` interface.
-A concrete implementation of `MessageHeadersRelay` will be consulted to
-decide if a header needs to be relayed or not. There is already an
-implementation of `SoapMessageHeadersRelay` which binds itself to
-well-known SOAP name spaces. Currently only out-of-band headers are
-filtered, and in-band headers will always be relayed when
-`relayHeaders=true`. If there is a header on the wire whose name space
-is unknown to the runtime, then a fall back `DefaultMessageHeadersRelay`
-will be used, which simply allows all headers to be relayed.
-
-The `relayHeaders=false` setting specifies that all headers in-band and
-out-of-band should be dropped.
-
-You can plugin your own `MessageHeadersRelay` implementations overriding
-or adding additional ones to the list of relays. In order to override a
-preloaded relay instance just make sure that your `MessageHeadersRelay`
-implementation services the same name spaces as the one you looking to
-override. Also note, that the overriding relay has to service all of the
-name spaces as the one you looking to override, or else a runtime
-exception on route start up will be thrown as this would introduce an
-ambiguity in name spaces to relay instance mappings.
-
-[source,xml]
--------------------------------------------------------------------------------------------------------
-<cxf:cxfEndpoint ...>
-   <cxf:properties>
-     <entry key="org.apache.camel.cxf.message.headers.relays">
-       <list>
-         <ref bean="customHeadersRelay"/>
-       </list>
-     </entry>
-   </cxf:properties>
- </cxf:cxfEndpoint>
- <bean id="customHeadersRelay" class="org.apache.camel.component.cxf.soap.headers.CustomHeadersRelay"/>
--------------------------------------------------------------------------------------------------------
 
 Take a look at the tests that show how you'd be able to relay/drop
 headers here:
 
 https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-soap/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[CxfMessageHeadersRelayTest]
+
+* The `relayHeaders=true` expresses an intent to relay the headers. The
+actual decision on whether a given header is relayed is delegated to a
+pluggable instance that implements the `MessageHeaderFilter` interface.
+A concrete implementation of `MessageHeaderFilter` will be consulted to
+decide if a header needs to be relayed or not. There is already an
+implementation of `SoapMessageHeaderFilter` which binds itself to
+well-known SOAP name spaces.  If there is a header on the wire whose name space
+is unknown to the runtime, the header will be simply relayed.
 
 * `POJO` and `PAYLOAD` modes are supported. In `POJO` mode, only
 out-of-band message headers are available for filtering as the in-band
@@ -838,11 +813,8 @@ mode. The `camel-cxf` component does make any attempt to remove the
 in-band headers from the `MessageContentList`. If filtering of in-band
 headers is required, please use `PAYLOAD` mode or plug in a (pretty
 straightforward) CXF interceptor/JAXWS Handler to the CXF endpoint.
-* The Message Header Relay mechanism has been merged into
-`CxfHeaderFilterStrategy`. The `relayHeaders` option, its semantics, and
-default value remain the same, but it is a property of
-`CxfHeaderFilterStrategy`.
- Here is an example of configuring it.
+ Here is an example of configuring CxfHeaderFilterStrategy.
+
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------
@@ -864,10 +836,13 @@ Then, your endpoint can reference the `CxfHeaderFilterStrategy`.
 </route>
 -------------------------------------------------------------------------------------------------------
 
-* The `MessageHeadersRelay` interface has changed slightly and has been
-renamed to `MessageHeaderFilter`. It is a property of
-`CxfHeaderFilterStrategy`. Here is an example of configuring user
-defined Message Header Filters:
+* You can plugin your own `MessageHeaderFilter` implementations overriding
+or adding additional ones to the list of relays. In order to override a
+preloaded relay instance just make sure that your `MessageHeaderFilter`
+implementation services the same name spaces as the one you are looking to
+override.
+
+Here is an example of configuring user defined Message Header Filters:
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------
