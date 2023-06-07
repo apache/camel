@@ -66,12 +66,12 @@ public class FilesPath {
         return splitToSteps(path, false);
     }
 
-    public static String[] splitToSteps(String path, boolean preserveRoot) {
+    public static String[] splitToSteps(String path, boolean preserveRootAsStep) {
         if (path == null) {
             return null;
         }
 
-        var includeRoot = preserveRoot && path.startsWith(SHARE_ROOT);
+        var includeRoot = preserveRootAsStep && path.startsWith(SHARE_ROOT);
         if (!(includeRoot)) {
             path = ensureRelative(path);
         }

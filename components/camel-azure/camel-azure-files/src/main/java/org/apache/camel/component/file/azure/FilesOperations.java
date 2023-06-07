@@ -542,9 +542,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         String onlyName = FileUtil.stripPath(name);
         var backup = backup();
         try {
-            if (directory != null) {
-                changeCurrentDirectory(directory);
-            }
+            changeCurrentDirectory(directory);
             var file = cwd().getFileClient(onlyName);
             return Boolean.TRUE.equals(file.exists());
         } catch (RuntimeException e) {
