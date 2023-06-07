@@ -54,6 +54,22 @@ public class KameletMainTest {
         });
     }
 
+    @Test
+    public void testRouteWithSpringBeansAndCamelDependencies() throws Exception {
+        doTestMain("classpath:org/apache/camel/main/xml/spring-camel2.xml", (main, camelContext) -> {
+            try {
+                MockEndpoint endpoint = camelContext.getEndpoint("mock:finish", MockEndpoint.class);
+                endpoint.expectedBodiesReceived("Hello World (" + System.identityHashCode(camelContext) + ")");
+
+                main.getCamelTemplate().sendBody("direct:start", "I'm World");
+
+                endpoint.assertIsSatisfied();
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
+        });
+    }
+
     protected void doTestMain(String includes, BiConsumer<KameletMain, CamelContext> consumer) throws Exception {
         KameletMain main = new KameletMain();
 

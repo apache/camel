@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.app;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.StringHelper;
@@ -27,6 +28,8 @@ public class Greeter implements Processor {
     private GreeterMessage message;
 
     private Integer number;
+
+    private CamelContext camelContext;
 
     public void setMessage(GreeterMessage message) {
         this.message = message;
@@ -40,10 +43,20 @@ public class Greeter implements Processor {
         this.bean = bean;
     }
 
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     @Override
     public void process(Exchange exchange) throws Exception {
         String msg = exchange.getIn().getBody(String.class);
-        exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ") + " (" + number + ")");
+        if (camelContext != null) {
+            exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ")
+                                     + " (" + System.identityHashCode(camelContext) + ")");
+        } else {
+            exchange.getIn().setBody(message.getMsg() + " " + StringHelper.after(msg, "I'm ")
+                                     + " (" + number + ")");
+        }
     }
 
 }
