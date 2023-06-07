@@ -71,6 +71,10 @@ public class FilesPath {
             return null;
         }
 
+        if (preserveRootAsStep && path.equals(SHARE_ROOT)) {
+            return new String[] { SHARE_ROOT };
+        }
+
         var includeRoot = preserveRootAsStep && path.startsWith(SHARE_ROOT);
         if (!(includeRoot)) {
             path = ensureRelative(path);

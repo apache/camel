@@ -372,7 +372,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 range = new ShareFileRange(existingSize);
             }
             log.trace("Client retrieveFile: {}", remoteName);
-            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, false, Duration.ofSeconds(300),
+            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null, Duration.ofSeconds(300),
                     Context.NONE);
             result = ret.getStatusCode() == 200;
 

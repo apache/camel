@@ -135,10 +135,6 @@ When moving files using `move` or `preMove` option the files are
 restricted to the share. That prevents you from moving files
 outside the share.
 
-
-TODO below is not yet adapted FTP doc 
-
-
 == Exchange Properties
 
 Camel sets the following exchange properties
@@ -156,6 +152,8 @@ Camel sets the following exchange properties
 
 == About timeouts
 
+TODO rework
+
 The two set of libraries (see top) has different API for setting
 timeout. You can use the `connectTimeout` option for both of them to set
 a timeout in millis to establish a network connection. An individual
@@ -167,7 +165,7 @@ for FTP/FTPS as the data timeout, which corresponds to the
 
 == Using Local Work Directory
 
-Camel supports consuming from remote FTP servers and downloading the
+Camel supports consuming from remote files servers and downloading the
 files directly into a local work directory. This avoids reading the
 entire remote file content into memory as it is streamed directly into
 the local file using `FileOutputStream`.
@@ -178,12 +176,12 @@ downloaded. Afterwards, the file is renamed to remove the `.inprogress`
 suffix. And finally, when the Exchange is complete
 the local file is deleted.
 
-So if you want to download files from a remote FTP server and store it
-as files then you need to route to a file endpoint such as:
+So if you want to download files from a remote files server and store it
+as local files then you need to route to a file endpoint such as:
 
 [source,java]
 ----
-from("ftp://someone@someserver.com?password=secret&localWorkDirectory=/tmp").to("file://inbox");
+from("azure-files://...&localWorkDirectory=/tmp").to("file://inbox");
 ----
 
 [TIP]
@@ -193,6 +191,11 @@ It will download the remote file directly to a local file stream.
 The `java.io.File` handle is then used as the Exchange body. The file producer leverages this fact and can work directly on the work file `java.io.File` handle and perform a `java.io.File.rename` to the target filename.
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
 ====
+
+
+
+
+TODO below is not yet adapted FTP doc 
 
 
 == Samples

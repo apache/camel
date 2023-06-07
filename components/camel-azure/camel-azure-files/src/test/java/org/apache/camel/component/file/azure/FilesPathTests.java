@@ -24,6 +24,11 @@ public class FilesPathTests extends CamelTestSupport {
     }
 
     @Test
+    void splitRootPreservingRootShouldReturnRoot() {
+        assertArrayEquals(new String[] { "/" }, FilesPath.splitToSteps("/", true));
+    }
+
+    @Test
     void splitWithoutSeparatorShouldReturnInput() {
         // by observation, Camel devs were uncertain what is returned ...
         assertArrayEquals(new String[] { "a path" }, FilesPath.split("a path"));
