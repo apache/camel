@@ -18,6 +18,7 @@ package org.apache.camel.impl.console;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -33,6 +34,9 @@ public class ReloadDevConsole extends AbstractDevConsole {
      */
     public static final String RELOAD = "reload";
 
+    // reload on demand should run async to avoid blocking
+    private volatile ExecutorService reloadThread;
+
     public ReloadDevConsole() {
         super("camel", "reload", "Reload", "Console for reloading running Camel");
     }
@@ -44,11 +48,12 @@ public class ReloadDevConsole extends AbstractDevConsole {
         Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
         for (ReloadStrategy r : rs) {
             if ("true".equals(trigger)) {
-                r.onReload("ReloadDevConsole");
+                getOrCreateReloadTask().submit(() -> r.onReload("ReloadDevConsole"));
+            } else {
+                sb.append(String.format("\nReloadStrategy: %s", r.getClass().getName()));
+                sb.append(String.format("\n    Reloaded: %s", r.getReloadCounter()));
+                sb.append(String.format("\n    Failed: %s", r.getFailedCounter()));
             }
-            sb.append(String.format("\nReloadStrategy: %s", r.getClass().getName()));
-            sb.append(String.format("\n    Reloaded: %s", r.getReloadCounter()));
-            sb.append(String.format("\n    Failed: %s", r.getFailedCounter()));
         }
         sb.append("\n");
 
@@ -60,20 +65,37 @@ public class ReloadDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
 
         JsonArray arr = new JsonArray();
-        root.put("reloadStrategies", arr);
         Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
         for (ReloadStrategy r : rs) {
             if ("true".equals(trigger)) {
-                r.onReload("ReloadDevConsole");
+                getOrCreateReloadTask().submit(() -> r.onReload("ReloadDevConsole"));
+            } else {
+                if (root.isEmpty()) {
+                    root.put("reloadStrategies", arr);
+                }
+                JsonObject jo = new JsonObject();
+                arr.add(jo);
+                jo.put("className", r.getClass().getName());
+                jo.put("reloaded", r.getReloadCounter());
+                jo.put("failed", r.getFailedCounter());
             }
-            JsonObject jo = new JsonObject();
-            arr.add(jo);
-            jo.put("className", r.getClass().getName());
-            jo.put("reloadCounter", r.getReloadCounter());
-            jo.put("failedCounter", r.getFailedCounter());
         }
 
         return root;
     }
 
+    protected ExecutorService getOrCreateReloadTask() {
+        if (reloadThread == null) {
+            reloadThread = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "ReloadOnDemand");
+        }
+        return reloadThread;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (reloadThread != null) {
+            getCamelContext().getExecutorServiceManager().shutdown(reloadThread);
+            reloadThread = null;
+        }
+    }
 }

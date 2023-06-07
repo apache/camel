@@ -104,6 +104,15 @@ For example as shown below for the context health check:
 }
 ----
 
+=== Graceful Shutdown
+
+Camel now shutdowns a bit later during Spring Boot shutdown. This allows Spring Boot graceful shutdown
+to complete first (stopping Spring Boot HTTP server gracefully),
+and then afterward Camel is doing its own xref:graceful-shutdown.adoc[].
+
+Technically `camel-spring` has changed `getPhase()` from returning `Integer.MAX_VALUE` to
+`Integer.MAX_VALUE - 2049`. This gives room for Spring Boot services to shut down first.
+
 === camel-java-joor-dsl
 
 The `camel-java-joor-dsl` cannot anymore load routes defined in class files as we consider it no more needed, consequently the ability to configure the compile directory and the compile load first flag using the corresponding `camel-main` properties is no longer possible.

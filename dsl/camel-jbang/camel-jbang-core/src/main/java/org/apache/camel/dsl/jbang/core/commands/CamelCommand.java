@@ -26,6 +26,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.IParameterConsumer;
 import picocli.CommandLine.Model.ArgSpec;
@@ -67,7 +68,29 @@ public abstract class CamelCommand implements Callable<Integer> {
             configureLoggingOff();
         }
 
+        replacePlaceholders();
+
         return doCall();
+    }
+
+    private void replacePlaceholders() throws Exception {
+        if (spec != null) {
+            for (CommandLine.Model.ArgSpec argSpec : spec.args()) {
+                var provider = spec.defaultValueProvider();
+                String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
+                if (defaultValue != null &&
+                        argSpec instanceof CommandLine.Model.OptionSpec) {
+                    CommandLine.Model.OptionSpec optionSpec = (CommandLine.Model.OptionSpec) argSpec;
+                    for (String name : optionSpec.names()) {
+                        String placeholder = "$" + StringHelper.after(name, "--");
+                        if (argSpec.getValue() != null &&
+                                argSpec.getValue().toString().contains(placeholder)) {
+                            argSpec.setValue(argSpec.getValue().toString().replace(placeholder, defaultValue));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public abstract Integer doCall() throws Exception;

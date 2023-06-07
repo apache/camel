@@ -65,6 +65,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": target.setNamedQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "nativequery":
         case "nativeQuery": target.setNativeQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputtarget":
+        case "outputTarget": target.setOutputTarget(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "persistenceunit":
         case "persistenceUnit": target.setPersistenceUnit(property(camelContext, java.lang.String.class, value)); return true;
@@ -157,6 +159,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": return java.lang.String.class;
         case "nativequery":
         case "nativeQuery": return java.lang.String.class;
+        case "outputtarget":
+        case "outputTarget": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "persistenceunit":
         case "persistenceUnit": return java.lang.String.class;
@@ -250,6 +254,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "namedQuery": return target.getNamedQuery();
         case "nativequery":
         case "nativeQuery": return target.getNativeQuery();
+        case "outputtarget":
+        case "outputTarget": return target.getOutputTarget();
         case "parameters": return target.getParameters();
         case "persistenceunit":
         case "persistenceUnit": return target.getPersistenceUnit();

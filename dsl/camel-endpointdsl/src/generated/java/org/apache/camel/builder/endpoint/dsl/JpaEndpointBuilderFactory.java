@@ -1571,6 +1571,22 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * To put the query (or find) result in a header or property instead of
+         * the body. If the value starts with the prefix property:, put the
+         * result into the so named property, otherwise into the header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputTarget the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder outputTarget(String outputTarget) {
+            doSetProperty("outputTarget", outputTarget);
+            return this;
+        }
+        /**
          * Indicates to use entityManager.remove(entity).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

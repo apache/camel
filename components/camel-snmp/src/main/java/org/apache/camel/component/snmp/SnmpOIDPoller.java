@@ -23,32 +23,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
-import org.snmp4j.ScopedPDU;
 import org.snmp4j.Snmp;
 import org.snmp4j.Target;
 import org.snmp4j.TransportMapping;
-import org.snmp4j.UserTarget;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.event.ResponseListener;
-import org.snmp4j.mp.MPv3;
-import org.snmp4j.mp.SnmpConstants;
-import org.snmp4j.security.AuthMD5;
-import org.snmp4j.security.AuthSHA;
-import org.snmp4j.security.Priv3DES;
-import org.snmp4j.security.PrivAES128;
-import org.snmp4j.security.PrivAES192;
-import org.snmp4j.security.PrivAES256;
-import org.snmp4j.security.PrivDES;
-import org.snmp4j.security.SecurityModels;
-import org.snmp4j.security.SecurityProtocols;
-import org.snmp4j.security.USM;
-import org.snmp4j.security.UsmUser;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.GenericAddress;
 import org.snmp4j.smi.OID;
-import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultTcpTransportMapping;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
@@ -89,59 +72,9 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         }
 
         this.snmp = new Snmp(this.transport);
-
-        if (SnmpConstants.version3 == endpoint.getSnmpVersion()) {
-            UserTarget userTarget = new UserTarget();
-
-            userTarget.setSecurityLevel(endpoint.getSecurityLevel());
-            userTarget.setSecurityName(convertToOctetString(endpoint.getSecurityName()));
-            userTarget.setAddress(targetAddress);
-            userTarget.setRetries(endpoint.getRetries());
-            userTarget.setTimeout(endpoint.getTimeout());
-            userTarget.setVersion(endpoint.getSnmpVersion());
-
-            this.target = userTarget;
-
-            USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
-            SecurityModels.getInstance().addSecurityModel(usm);
-
-            OID authProtocol = convertAuthenticationProtocol(endpoint.getAuthenticationProtocol());
-
-            OctetString authPwd = convertToOctetString(endpoint.getAuthenticationPassphrase());
-
-            OID privProtocol = convertPrivacyProtocol(endpoint.getPrivacyProtocol());
-
-            OctetString privPwd = convertToOctetString(endpoint.getPrivacyPassphrase());
-
-            UsmUser user = new UsmUser(
-                    convertToOctetString(endpoint.getSecurityName()), authProtocol, authPwd, privProtocol, privPwd);
-
-            usm.addUser(convertToOctetString(endpoint.getSecurityName()), user);
-
-            ScopedPDU scopedPDU = new ScopedPDU();
-
-            if (endpoint.getSnmpContextEngineId() != null) {
-                scopedPDU.setContextEngineID(new OctetString(endpoint.getSnmpContextEngineId()));
-            }
-
-            if (endpoint.getSnmpContextName() != null) {
-                scopedPDU.setContextName(new OctetString(endpoint.getSnmpContextName()));
-            }
-
-            this.pdu = scopedPDU;
-        } else {
-            CommunityTarget communityTarget = new CommunityTarget();
-
-            communityTarget.setCommunity(convertToOctetString(endpoint.getSnmpCommunity()));
-            communityTarget.setAddress(targetAddress);
-            communityTarget.setRetries(endpoint.getRetries());
-            communityTarget.setTimeout(endpoint.getTimeout());
-            communityTarget.setVersion(endpoint.getSnmpVersion());
-
-            this.target = communityTarget;
-
-            this.pdu = new PDU();
-        }
+        SnmpHelper.createAndSetUSM(endpoint);
+        this.pdu = SnmpHelper.createPDU(endpoint);
+        this.target = SnmpHelper.createTarget(endpoint);
 
         // listen to the transport
         if (LOG.isDebugEnabled()) {
@@ -244,59 +177,6 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
             getProcessor().process(exchange);
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
-        }
-    }
-
-    /**
-     * * @return Returns the target.
-     */
-    public Target getTarget() {
-        return this.target;
-    }
-
-    /**
-     * @param target The target to set.
-     */
-    public void setTarget(Target target) {
-        this.target = target;
-    }
-
-    private OctetString convertToOctetString(String value) {
-        if (value == null) {
-            return null;
-        }
-        return new OctetString(value);
-    }
-
-    private OID convertAuthenticationProtocol(String authenticationProtocol) {
-        if (authenticationProtocol == null) {
-            return null;
-        }
-        if ("MD5".equals(authenticationProtocol)) {
-            return AuthMD5.ID;
-        } else if ("SHA1".equals(authenticationProtocol)) {
-            return AuthSHA.ID;
-        } else {
-            throw new IllegalArgumentException("Unknown authentication protocol: " + authenticationProtocol);
-        }
-    }
-
-    private OID convertPrivacyProtocol(String privacyProtocol) {
-        if (privacyProtocol == null) {
-            return null;
-        }
-        if ("DES".equals(privacyProtocol)) {
-            return PrivDES.ID;
-        } else if ("TRIDES".equals(privacyProtocol)) {
-            return Priv3DES.ID;
-        } else if ("AES128".equals(privacyProtocol)) {
-            return PrivAES128.ID;
-        } else if ("AES192".equals(privacyProtocol)) {
-            return PrivAES192.ID;
-        } else if ("AES256".equals(privacyProtocol)) {
-            return PrivAES256.ID;
-        } else {
-            throw new IllegalArgumentException("Unknown privacy protocol: " + privacyProtocol);
         }
     }
 

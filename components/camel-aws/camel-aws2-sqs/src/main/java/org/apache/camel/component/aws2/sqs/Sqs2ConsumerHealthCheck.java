@@ -38,8 +38,8 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (SqsClient client = sqs2Consumer.getClient()) {
-            Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
+        Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
+        try {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                     builder.message("The service is not supported in this region");
@@ -47,7 +47,7 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-
+            SqsClient client = sqs2Consumer.getClient();
             client.listQueues(ListQueuesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -70,4 +70,5 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
         builder.up();
 
     }
+
 }

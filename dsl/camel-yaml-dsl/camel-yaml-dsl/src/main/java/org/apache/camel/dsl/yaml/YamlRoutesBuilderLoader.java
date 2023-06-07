@@ -66,6 +66,7 @@ import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,9 +306,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     anyTupleMatches(mn.getValue(), "kind", "KameletBinding");
             if (integration) {
                 target = preConfigureIntegration(root, ctx, target, preParse);
-            } else if (binding && !preParse) {
-                // kamelet binding does not take part in pre-parse phase
-                target = preConfigureKameletBinding(root, ctx, target);
+            } else if (binding) {
+                target = preConfigureKameletBinding(root, ctx, target, preParse);
             }
         }
 
@@ -538,6 +538,84 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return answer;
     }
 
+    private List<CamelContextCustomizer> preConfigureTraitConfigurationBinding(Resource resource, Map<String, Object> map) {
+        List<CamelContextCustomizer> answer = new ArrayList<>();
+
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        Object value = map.get("trait.camel.apache.org/camel.properties");
+        if (value == null || value.toString().isEmpty()) {
+            return null;
+        }
+        final String[] properties = StringQuoteHelper.splitSafeQuote(value.toString(), ',', true);
+
+        answer.add(new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                try {
+                    org.apache.camel.component.properties.PropertiesComponent pc
+                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
+                    IntegrationConfigurationPropertiesSource ps
+                            = (IntegrationConfigurationPropertiesSource) pc
+                                    .getPropertiesSource("binding-trait-configuration");
+                    if (ps == null) {
+                        ps = new IntegrationConfigurationPropertiesSource(
+                                pc, new PropertiesLocation(resource.getLocation()), "binding-trait-configuration");
+                        pc.addPropertiesSource(ps);
+                    }
+
+                    for (String line : properties) {
+                        ps.parseConfigurationValue(line);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Error adding properties from metadata/annotations/", e);
+                }
+            }
+        });
+
+        return answer;
+    }
+
+    private List<CamelContextCustomizer> preConfigureTraitEnvironmentBinding(Resource resource, Map<String, Object> map) {
+        List<CamelContextCustomizer> answer = new ArrayList<>();
+
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        Object value = map.get("trait.camel.apache.org/environment.vars");
+        if (value == null || value.toString().isEmpty()) {
+            return null;
+        }
+        final String[] properties = StringQuoteHelper.splitSafeQuote(value.toString(), ',', true);
+
+        answer.add(new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                try {
+                    org.apache.camel.component.properties.PropertiesComponent pc
+                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
+                    IntegrationConfigurationPropertiesSource ps
+                            = (IntegrationConfigurationPropertiesSource) pc
+                                    .getPropertiesSource("environment-trait-configuration");
+                    if (ps == null) {
+                        ps = new IntegrationConfigurationPropertiesSource(
+                                pc, new PropertiesLocation(resource.getLocation()), "environment-trait-configuration");
+                        pc.addPropertiesSource(ps);
+                    }
+
+                    for (String line : properties) {
+                        ps.parseConfigurationValue(line);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Error adding properties from metadata/annotations/", e);
+                }
+            }
+        });
+
+        return answer;
+    }
+
     private List<CamelContextCustomizer> preConfigureSources(Node node) {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
@@ -571,132 +649,151 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     /**
      * Camel K Kamelet Binding file
      */
-    private Object preConfigureKameletBinding(Node root, YamlDeserializationContext ctx, Object target) {
-        // start with a route
-        final RouteDefinition route = new RouteDefinition();
-        String routeId = asText(nodeAt(root, "/metadata/name"));
-        if (routeId != null) {
-            route.routeId(routeId);
+    private Object preConfigureKameletBinding(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
+        // when in pre-parse phase then we only want to gather /metadata/annotations
+
+        List<Object> answer = new ArrayList<>();
+
+        MappingNode ann = asMappingNode(nodeAt(root, "/metadata/annotations"));
+        Map<String, Object> params = asMap(ann);
+        if (params != null) {
+            var list = preConfigureTraitConfigurationBinding(ctx.getResource(), params);
+            if (list != null) {
+                answer.addAll(list);
+            }
+            list = preConfigureTraitEnvironmentBinding(ctx.getResource(), params);
+            if (list != null) {
+                answer.addAll(list);
+            }
         }
 
-        // kamelet binding is a bit more complex, so grab the source and sink
-        // and map those to Camel route definitions
-        MappingNode source = asMappingNode(nodeAt(root, "/spec/source"));
-        MappingNode sink = asMappingNode(nodeAt(root, "/spec/sink"));
-        if (source != null && sink != null) {
-            int line = -1;
-            if (source.getStartMark().isPresent()) {
-                line = source.getStartMark().get().getLine();
+        if (!preParse) {
+            // start with a route
+            final RouteDefinition route = new RouteDefinition();
+            String routeId = asText(nodeAt(root, "/metadata/name"));
+            if (routeId != null) {
+                route.routeId(routeId);
             }
 
-            // source at the beginning (mandatory)
-            String uri = extractCamelEndpointUri(source);
-            route.from(uri);
-
-            // enrich model with line number
-            if (line != -1) {
-                route.getInput().setLineNumber(line);
-                if (ctx != null) {
-                    route.getInput().setLocation(ctx.getResource().getLocation());
+            // kamelet binding is a bit more complex, so grab the source and sink
+            // and map those to Camel route definitions
+            MappingNode source = asMappingNode(nodeAt(root, "/spec/source"));
+            MappingNode sink = asMappingNode(nodeAt(root, "/spec/sink"));
+            if (source != null && sink != null) {
+                int line = -1;
+                if (source.getStartMark().isPresent()) {
+                    line = source.getStartMark().get().getLine();
                 }
-            }
 
-            // steps in the middle (optional)
-            Node steps = nodeAt(root, "/spec/steps");
-            if (steps != null) {
-                SequenceNode sn = asSequenceNode(steps);
-                for (Node node : sn.getValue()) {
-                    MappingNode step = asMappingNode(node);
-                    uri = extractCamelEndpointUri(step);
-                    if (uri != null) {
-                        line = -1;
-                        if (node.getStartMark().isPresent()) {
-                            line = node.getStartMark().get().getLine();
-                        }
+                // source at the beginning (mandatory)
+                String uri = extractCamelEndpointUri(source);
+                route.from(uri);
 
-                        ProcessorDefinition<?> out;
-                        // if kamelet then use kamelet eip instead of to
-                        boolean kamelet = uri.startsWith("kamelet:");
-                        if (kamelet) {
-                            uri = uri.substring(8);
-                            out = new KameletDefinition(uri);
-                        } else {
-                            out = new ToDefinition(uri);
-                        }
-                        route.addOutput(out);
-                        // enrich model with line number
-                        if (line != -1) {
-                            out.setLineNumber(line);
-                            if (ctx != null) {
-                                out.setLocation(ctx.getResource().getLocation());
+                // enrich model with line number
+                if (line != -1) {
+                    route.getInput().setLineNumber(line);
+                    if (ctx != null) {
+                        route.getInput().setLocation(ctx.getResource().getLocation());
+                    }
+                }
+
+                // steps in the middle (optional)
+                Node steps = nodeAt(root, "/spec/steps");
+                if (steps != null) {
+                    SequenceNode sn = asSequenceNode(steps);
+                    for (Node node : sn.getValue()) {
+                        MappingNode step = asMappingNode(node);
+                        uri = extractCamelEndpointUri(step);
+                        if (uri != null) {
+                            line = -1;
+                            if (node.getStartMark().isPresent()) {
+                                line = node.getStartMark().get().getLine();
+                            }
+
+                            ProcessorDefinition<?> out;
+                            // if kamelet then use kamelet eip instead of to
+                            boolean kamelet = uri.startsWith("kamelet:");
+                            if (kamelet) {
+                                uri = uri.substring(8);
+                                out = new KameletDefinition(uri);
+                            } else {
+                                out = new ToDefinition(uri);
+                            }
+                            route.addOutput(out);
+                            // enrich model with line number
+                            if (line != -1) {
+                                out.setLineNumber(line);
+                                if (ctx != null) {
+                                    out.setLocation(ctx.getResource().getLocation());
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            // sink is at the end (mandatory)
-            line = -1;
-            if (sink.getStartMark().isPresent()) {
-                line = sink.getStartMark().get().getLine();
-            }
-            uri = extractCamelEndpointUri(sink);
-            ToDefinition to = new ToDefinition(uri);
-            route.addOutput(to);
-
-            // enrich model with line number
-            if (line != -1) {
-                to.setLineNumber(line);
-                if (ctx != null) {
-                    to.setLocation(ctx.getResource().getLocation());
+                // sink is at the end (mandatory)
+                line = -1;
+                if (sink.getStartMark().isPresent()) {
+                    line = sink.getStartMark().get().getLine();
                 }
-            }
+                uri = extractCamelEndpointUri(sink);
+                ToDefinition to = new ToDefinition(uri);
+                route.addOutput(to);
 
-            // is there any error handler?
-            MappingNode errorHandler = asMappingNode(nodeAt(root, "/spec/errorHandler"));
-            if (errorHandler != null) {
-                // there are 5 different error handlers, which one is it
-                NodeTuple nt = errorHandler.getValue().get(0);
-                String ehName = asText(nt.getKeyNode());
-
-                ErrorHandlerFactory ehf = null;
-                if ("sink".equals(ehName)) {
-                    // a sink is a dead letter queue
-                    DeadLetterChannelDefinition dlcd = new DeadLetterChannelDefinition();
-                    MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
-                    String dlq = extractCamelEndpointUri(endpoint);
-                    dlcd.setDeadLetterUri(dlq);
-                    ehf = dlcd;
-                } else if ("log".equals(ehName)) {
-                    // log is the default error handler
-                    ehf = new DefaultErrorHandlerDefinition();
-                } else if ("none".equals(ehName)) {
-                    route.errorHandler(new NoErrorHandlerDefinition());
-                }
-
-                // some error handlers support additional parameters
-                if (ehf != null) {
-                    // properties that are general for all kind of error handlers
-                    MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
-                    Map<String, Object> params = asMap(prop);
-                    if (params != null) {
-                        PropertyBindingSupport.build()
-                                .withIgnoreCase(true)
-                                .withFluentBuilder(true)
-                                .withRemoveParameters(true)
-                                .withCamelContext(getCamelContext())
-                                .withTarget(ehf)
-                                .withProperties(params)
-                                .bind();
+                // enrich model with line number
+                if (line != -1) {
+                    to.setLineNumber(line);
+                    if (ctx != null) {
+                        to.setLocation(ctx.getResource().getLocation());
                     }
-                    route.errorHandler(ehf);
+                }
+
+                // is there any error handler?
+                MappingNode errorHandler = asMappingNode(nodeAt(root, "/spec/errorHandler"));
+                if (errorHandler != null) {
+                    // there are 5 different error handlers, which one is it
+                    NodeTuple nt = errorHandler.getValue().get(0);
+                    String ehName = asText(nt.getKeyNode());
+
+                    ErrorHandlerFactory ehf = null;
+                    if ("sink".equals(ehName)) {
+                        // a sink is a dead letter queue
+                        DeadLetterChannelDefinition dlcd = new DeadLetterChannelDefinition();
+                        MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
+                        String dlq = extractCamelEndpointUri(endpoint);
+                        dlcd.setDeadLetterUri(dlq);
+                        ehf = dlcd;
+                    } else if ("log".equals(ehName)) {
+                        // log is the default error handler
+                        ehf = new DefaultErrorHandlerDefinition();
+                    } else if ("none".equals(ehName)) {
+                        route.errorHandler(new NoErrorHandlerDefinition());
+                    }
+
+                    // some error handlers support additional parameters
+                    if (ehf != null) {
+                        // properties that are general for all kind of error handlers
+                        MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
+                        params = asMap(prop);
+                        if (params != null) {
+                            PropertyBindingSupport.build()
+                                    .withIgnoreCase(true)
+                                    .withFluentBuilder(true)
+                                    .withRemoveParameters(true)
+                                    .withCamelContext(getCamelContext())
+                                    .withTarget(ehf)
+                                    .withProperties(params)
+                                    .bind();
+                        }
+                        route.errorHandler(ehf);
+                    }
                 }
             }
 
-            target = route;
+            answer.add(route);
         }
 
-        return target;
+        return answer;
     }
 
     private String extractCamelEndpointUri(MappingNode node) {

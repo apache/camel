@@ -112,6 +112,20 @@ include::partial$component-endpoint-headers.adoc[]
 The most basic way to sign and verify an exchange is with a
 KeyPair as follows.
 
+[source,java]
+----
+KeyPair keyPair = KeyGenerator.getInstance("RSA").generateKeyPair();
+
+from("direct:sign")
+    .setHeader(DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY, constant(keys.getPrivate()))
+    .to("crypto:sign:message")
+    .to("direct:verify");
+
+from("direct:verify")
+    .setHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, constant(keys.getPublic()))
+    .to("crypto:verify:check");
+----
+
 The same can be achieved with the xref:manual::spring-xml-extensions.adoc[Spring
 XML Extensions] using references to keys
 
@@ -123,15 +137,42 @@ protected. They can be retrieved by applying an alias to the retrieval
 APIs. There are a number of ways to get keys and Certificates into a
 keystore, most often this is done with the external 'keytool'
 application.
-http://www.exampledepot.com/egs/java.security.cert/CreateCert.html[This]
-is a good example of using keytool to create a KeyStore with a self
-signed Cert and Private key.
 
-The examples use a Keystore with a key and cert aliased by 'bob'. The
-password for the keystore and the key is 'letmein'
+The following command will create a keystore containing a key and certificate aliased by `bob`, which can be used in the following examples. The password for the keystore and the key is `letmein`.
 
-The following shows how to use a Keystore via the Fluent builders, it
-also shows how to load and initialize the keystore.
+[source,sh]
+----
+keytool -genkey -keyalg RSA -keysize 2048 -keystore keystore.jks -storepass letmein -alias bob -dname "CN=Bob,OU=IT,O=Camel" -noprompt
+----
+
+The following route first signs an exchange using Bob's alias from the KeyStore bound into the Camel Registry, and then verifies it using the same alias.
+
+[source,java]
+----
+from("direct:sign")
+    .to("crypto:sign:keystoreSign?alias=bob&keystoreName=myKeystore&password=letmein")
+    .log("Signature: ${header.CamelDigitalSignature}")
+    .to("crypto:verify:keystoreVerify?alias=bob&keystoreName=myKeystore&password=letmein")
+    .log("Verified: ${body}");
+----
+
+The following code shows how to load the keystore created using the above `keytool` command and bind it into the registry with the name `myKeystore` for use in the above route. The example makes use of the `@Configuration` and `@BindToRegistry` annotations introduced in Camel 3 to instantiate the KeyStore and register it with the name `myKeyStore`.
+
+[source,java]
+----
+@Configuration
+public class KeystoreConfig {
+    
+    @BindToRegistry
+    public KeyStore myKeystore() throws Exception {
+        KeyStore store = KeyStore.getInstance("JKS");
+        try (FileInputStream fis = new FileInputStream("keystore.jks")) {
+            store.load(fis, "letmein".toCharArray());
+        }
+        return store;
+    }
+}
+----
 
 Again in Spring a ref is used to lookup an actual keystore instance.
 
@@ -141,21 +182,23 @@ Changing the Signature algorithm or the Security provider is a simple
 matter of specifying their names. You will need to also use Keys that
 are compatible with the algorithm you choose.
 
-or
-
 === Changing the Signature Message Header
 
 It may be desirable to change the message header used to store the
 signature. A different header name can be specified in the route
 definition as follows
 
-or
+[source,java]
+----
+from("direct:sign")
+    .to("crypto:sign:keystoreSign?alias=bob&keystoreName=myKeystore&password=letmein&signatureHeaderName=mySignature")
+    .log("Signature: ${header.mySignature}")
+    .to("crypto:verify:keystoreVerify?alias=bob&keystoreName=myKeystore&password=letmein&signatureHeaderName=mySignature");
+----
 
 === Changing the bufferSize
 
 In case you need to update the size of the buffer...
-
-or
 
 === Supplying Keys dynamically.
 
@@ -167,19 +210,15 @@ then be dynamically enriched with the key of its target recipient prior
 to signing. To facilitate this the signature mechanisms allow for keys
 to be supplied dynamically via the message headers below
 
-* `Exchange.SIGNATURE_PRIVATE_KEY`, `"CamelSignaturePrivateKey"`
-* `Exchange.SIGNATURE_PUBLIC_KEY_OR_CERT`, `"CamelSignaturePublicKeyOrCert"`
-
-or
+* `DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY`, `"CamelSignaturePrivateKey"`
+* `DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT`, `"CamelSignaturePublicKeyOrCert"`
 
 Even better would be to dynamically supply a keystore alias. Again the
 alias can be supplied in a message header
 
-* `Exchange.KEYSTORE_ALIAS`, `"CamelSignatureKeyStoreAlias"`
+* `DigitalSignatureConstants.KEYSTORE_ALIAS`, `"CamelSignatureKeyStoreAlias"`
 
-or
-
-The header would be set as follows
+The header would be set as follows:
 
 [source,java]
 -------------------------------------------------------------------------------------------------
@@ -189,8 +228,8 @@ unsigned.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, "bob");
 unsigned.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_PASSWORD, "letmein".toCharArray());
 template.send("direct:alias-sign", unsigned);
 Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-signed.getIn().copyFrom(unsigned.getOut());
-signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
+signed.getIn().copyFrom(unsigned.getMessage());
+signed.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, "bob");
 template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 

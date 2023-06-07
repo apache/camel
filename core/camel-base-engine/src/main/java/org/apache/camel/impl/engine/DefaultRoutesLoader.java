@@ -96,14 +96,12 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         if (camelContext.isModeline()) {
             ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
             for (Resource resource : resources) {
-                if (resource.exists()) {
-                    try (RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional)) {
-                        if (loader != null) {
-                            // gather resources for modeline
-                            factory.parseModeline(resource);
-                            // pre-parse before loading
-                            loader.preParseRoute(resource);
-                        }
+                try (RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional)) {
+                    if (loader != null) {
+                        // gather resources for modeline
+                        factory.parseModeline(resource);
+                        // pre-parse before loading
+                        loader.preParseRoute(resource);
                     }
                 }
             }
@@ -112,13 +110,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         // now group resources by loader
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
         for (Resource resource : resources) {
-            if (resource.exists()) {
-                RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
-                if (loader != null) {
-                    List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
-                    list.add(resource);
-                    groups.put(loader, list);
-                }
+            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
+            if (loader != null) {
+                List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
+                list.add(resource);
+                groups.put(loader, list);
             }
         }
 

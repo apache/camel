@@ -38,7 +38,7 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (Ec2Client client = aws2EC2Endpoint.getEc2Client()) {
+        try {
             AWS2EC2Configuration configuration = aws2EC2Endpoint.getConfiguration();
             if (!Ec2Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
@@ -46,6 +46,7 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
                 return;
             }
 
+            Ec2Client client = aws2EC2Endpoint.getEc2Client();
             client.describeInstances();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -65,4 +66,5 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
+
 }

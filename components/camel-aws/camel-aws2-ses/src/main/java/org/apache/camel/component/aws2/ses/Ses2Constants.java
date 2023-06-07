@@ -27,7 +27,8 @@ public interface Ses2Constants {
     String FROM = "CamelAwsSesFrom";
     @Metadata(description = "The Amazon SES message ID.", javaType = "String")
     String MESSAGE_ID = "CamelAwsSesMessageId";
-    @Metadata(description = "The reply-to email address(es) for the message.", javaType = "List<String>")
+    @Metadata(description = "The reply-to email address(es) for the message. Use comma to separate multiple values.",
+              javaType = "String")
     String REPLY_TO_ADDRESSES = "CamelAwsSesReplyToAddresses";
     @Metadata(description = "The email address to which bounce notifications are to be forwarded.", javaType = "String")
     String RETURN_PATH = "CamelAwsSesReturnPath";

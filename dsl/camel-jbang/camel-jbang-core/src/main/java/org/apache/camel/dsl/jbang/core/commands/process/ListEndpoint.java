@@ -63,6 +63,10 @@ public class ListEndpoint extends ProcessWatchCommand {
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
+    @CommandLine.Option(names = { "--wide-uri" },
+                        description = "List endpoint URI in full details")
+    boolean wideUri;
+
     public ListEndpoint(CamelJBangMain main) {
         super(main);
     }
@@ -149,7 +153,11 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("DIR").with(r -> r.direction),
                 new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getUri),
+                new Column().header("URI").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(140, OverflowBehaviour.NEWLINE)
                         .with(this::getUri))));
     }
 

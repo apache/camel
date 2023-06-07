@@ -595,6 +595,10 @@ public class SimpleCamelContext extends AbstractCamelContext {
             tracer = new DefaultTracer();
             tracer.setEnabled(isTracing());
             tracer.setStandby(isTracingStandby());
+            // enable both rest/templates if templates is enabled (we only want 1 public option)
+            boolean restOrTemplates = isTracingTemplates();
+            tracer.setTraceTemplates(restOrTemplates);
+            tracer.setTraceRests(restOrTemplates);
             setExtension(Tracer.class, tracer);
         }
         return tracer;

@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -58,7 +57,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
         StopWatch watch = new StopWatch();
-        long startTime = (new Date()).getTime();
+        long startTime = System.currentTimeMillis();
 
         while (!exclusive) {
             // timeout check
@@ -81,16 +80,15 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
 
             long newLastModified = target.lastModified();
             long newLength = target.length();
-            long newOlderThan = startTime + watch.taken() - minAge;
+            long minTriggerTime = startTime + minAge;
+            long currentTime = System.currentTimeMillis();
 
             LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
-            LOG.trace("New older than threshold: {}", newOlderThan);
+            LOG.trace("Min File Trigger Time: {}", minTriggerTime);
 
-            // CHECKSTYLE:OFF
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
-                    || (minAge != 0 && newLastModified < newOlderThan))) {
-            // CHECKSTYLE:ON
+            if (newLength >= minLength && currentTime >= minTriggerTime
+                    && newLastModified == lastModified && newLength == length) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {

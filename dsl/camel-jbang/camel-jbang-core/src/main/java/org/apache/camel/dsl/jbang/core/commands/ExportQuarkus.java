@@ -61,7 +61,7 @@ class ExportQuarkus extends Export {
 
         // the settings file has information what to export
         File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
-        if (fresh || !settings.exists()) {
+        if (fresh || files != null || !settings.exists()) {
             // allow to automatic build
             if (!quiet) {
                 System.out.println("Generating fresh run data");

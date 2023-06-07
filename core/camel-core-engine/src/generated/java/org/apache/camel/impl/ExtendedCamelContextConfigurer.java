@@ -37,6 +37,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracingstandby":
         case "BacklogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "backlogtracingtemplates":
+        case "BacklogTracingTemplates": target.setBacklogTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "beanintrospection":
@@ -207,6 +209,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
         case "TracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "tracingtemplates":
+        case "TracingTemplates": target.setTracingTemplates(property(camelContext, boolean.class, value)); return true;
         case "typeconverterregistry":
         case "TypeConverterRegistry": target.setTypeConverterRegistry(property(camelContext, org.apache.camel.spi.TypeConverterRegistry.class, value)); return true;
         case "typeconverterstatisticsenabled":
@@ -250,6 +254,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": return java.lang.Boolean.class;
         case "backlogtracingstandby":
         case "BacklogTracingStandby": return boolean.class;
+        case "backlogtracingtemplates":
+        case "BacklogTracingTemplates": return boolean.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "beanintrospection":
@@ -420,6 +426,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
         case "TracingStandby": return boolean.class;
+        case "tracingtemplates":
+        case "TracingTemplates": return boolean.class;
         case "typeconverterregistry":
         case "TypeConverterRegistry": return org.apache.camel.spi.TypeConverterRegistry.class;
         case "typeconverterstatisticsenabled":
@@ -464,6 +472,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BacklogTracing": return target.isBacklogTracing();
         case "backlogtracingstandby":
         case "BacklogTracingStandby": return target.isBacklogTracingStandby();
+        case "backlogtracingtemplates":
+        case "BacklogTracingTemplates": return target.isBacklogTracingTemplates();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "beanintrospection":
@@ -634,6 +644,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":
         case "TracingStandby": return target.isTracingStandby();
+        case "tracingtemplates":
+        case "TracingTemplates": return target.isTracingTemplates();
         case "typeconverterregistry":
         case "TypeConverterRegistry": return target.getTypeConverterRegistry();
         case "typeconverterstatisticsenabled":

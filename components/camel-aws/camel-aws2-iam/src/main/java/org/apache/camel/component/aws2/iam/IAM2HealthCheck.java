@@ -35,14 +35,14 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        try (IamClient client = endpoint.getIamClient()) {
+        try {
             IAM2Configuration configuration = endpoint.getConfiguration();
             if (!IamClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-
+            IamClient client = endpoint.getIamClient();
             client.listAccessKeys(ListAccessKeysRequest.builder().maxItems(1).build());
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
@@ -55,4 +55,5 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
+
 }

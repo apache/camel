@@ -90,6 +90,12 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
+    @ManagedAttribute(description = "Whether tracing routes created from Rest DSL.")
+    boolean isTraceRests();
+
+    @ManagedAttribute(description = "Whether tracing routes created from route templates or kamelets.")
+    boolean isTraceTemplates();
+
     @ManagedOperation(description = "Dumps the traced messages for the given node or route")
     List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId);
 

@@ -324,7 +324,7 @@
         <jool-version>0.9.14</jool-version>
         <jooq-version>3.16.11</jooq-version>
         <joor-version>0.9.14</joor-version>
-        <johnzon-version>1.2.19</johnzon-version>
+        <johnzon-version>1.2.20</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jslt-version>0.1.11</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
@@ -386,15 +386,15 @@
         <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
         <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
         <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
-        <maven-resolver-version>1.9.7</maven-resolver-version>
+        <maven-resolver-version>1.9.10</maven-resolver-version>
         <maven-shade-plugin-version>3.4.1</maven-shade-plugin-version>
         <maven-shared-utils-plugin-version>3.3.4</maven-shared-utils-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.15</metrics-version>
-        <micrometer-version>1.10.5</micrometer-version>
-        <micrometer-tracing-version>1.0.3</micrometer-tracing-version>
+        <micrometer-version>1.10.7</micrometer-version>
+        <micrometer-tracing-version>1.0.6</micrometer-tracing-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
@@ -418,7 +418,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.91.Final</netty-version>
+        <netty-version>4.1.92.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>

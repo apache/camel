@@ -16,49 +16,48 @@
  */
 package org.apache.camel.component.snmp;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WalkOIDTest extends CamelTestSupport {
+public class WalkOIDTest extends SnmpRespondTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
 
-    // a disabled test... before enabling you must fill in a working IP, Port
-    // and maybe oids in the route below
-    @Disabled
-    @Test
-    public void testOIDWalk() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    @ParameterizedTest
+    @MethodSource("supportedVersions")
+    public void testOIDWalk(int version) throws Exception {
+        template.sendBody("direct:inV" + version, "");
+
+        MockEndpoint mock = getMockEndpoint("mock:resultV" + version);
         mock.expectedMinimumMessageCount(1);
         mock.assertIsSatisfied();
-        List<Exchange> oids = mock.getExchanges();
-        if (LOG.isInfoEnabled()) {
-            for (Exchange e : oids) {
-                LOG.info("OID: " + e.getIn().getBody(String.class));
-            }
-        }
-    }
 
-    @Test
-    public void testStartRoute() {
-        // do nothing here , just make sure the camel route can started.
+        String msg = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String pattern = ".*<value>ether1</value>.*<value>ether2</value>.*<value>ether3</value>.*<value>ether4</value>.*";
+        Assertions.assertTrue(msg.matches(pattern), "Expected string matching '" + pattern + "'. Got: " + msg);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: e1
-                from("timer:foo?repeatCount=1")
-                        .to("snmp:10.211.55.6:161?protocol=udp&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2,1.3.6.1.2.1.25.3.3.1.2")
-                        .transform(body().convertToString()).to("mock:result");
-                // END SNIPPET: e1
+
+                from("direct:inV0")
+                        .to("snmp:" + getListeningAddress() + "?protocol=udp&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2")
+                        .transform(body().convertToString()).to("mock:resultV0");
+
+                from("direct:inV1")
+                        .to("snmp:" + getListeningAddress()
+                            + "?protocol=udp&snmpVersion=1&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2")
+                        .transform(body().convertToString()).to("mock:resultV1");
+
+                from("direct:inV3")
+                        .to("snmp:" + getListeningAddress()
+                            + "?protocol=udp&snmpVersion=3&type=GET_NEXT&securityName=test&securityLevel=1&oids=1.3.6.1.2.1.2.2.1.2")
+                        .transform(body().convertToString()).to("mock:resultV3");
             }
         };
     }

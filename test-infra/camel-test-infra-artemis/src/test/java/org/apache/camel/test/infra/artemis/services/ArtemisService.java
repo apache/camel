@@ -41,7 +41,7 @@ public interface ArtemisService
         System.setProperty(ArtemisProperties.SERVICE_ADDRESS, serviceAddress());
         System.setProperty(ArtemisProperties.ARTEMIS_EXTERNAL, serviceAddress());
         System.setProperty(ArtemisProperties.ARTEMIS_USERNAME, userName());
-        System.setProperty(ArtemisProperties.ARTEMIS_PASSWORD, userName());
+        System.setProperty(ArtemisProperties.ARTEMIS_PASSWORD, password());
     }
 
     @Override

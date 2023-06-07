@@ -114,6 +114,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean findEntity;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean singleResult;
+    @UriParam(label = "producer")
+    private String outputTarget;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -569,6 +571,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setSingleResult(boolean singleResult) {
         this.singleResult = singleResult;
+    }
+
+    public String getOutputTarget() {
+        return outputTarget;
+    }
+
+    /**
+     * To put the query (or find) result in a header or property instead of the body. If the value starts with the
+     * prefix "property:", put the result into the so named property, otherwise into the header.
+     */
+    public void setOutputTarget(String outputTarget) {
+        this.outputTarget = outputTarget;
     }
 
     // Implementation methods

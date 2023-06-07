@@ -18,16 +18,15 @@ package org.apache.camel.component.jpa;
 
 import java.util.List;
 
+import org.apache.camel.component.jpa.JpaWithOptionsTestSupport.Query;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Query("select c from Customer c order by c.name")
 public class JpaPagingTest extends JpaWithOptionsTestSupport {
-
-    private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName() +
-                                               "?query=select c from Customer c order by c.name";
 
     // both should be less than JpaWithOptionsTestSupport.ENTRIES_COUNT / 2
     private static final int FIRST_RESULT = 5;
@@ -41,7 +40,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + FIRST_RESULT)
+    @AdditionalEndpointParameters("firstResult=" + FIRST_RESULT)
     public void testFirstResultInUri() throws Exception {
         final List<Customer> customers = runQueryTest();
 
@@ -57,7 +56,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("maximumResults=" + MAXIMUM_RESULTS)
+    @AdditionalEndpointParameters("maximumResults=" + MAXIMUM_RESULTS)
     public void testFirstInHeaderMaxInUri() throws Exception {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT));
@@ -67,7 +66,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("maximumResults=" + MAXIMUM_RESULTS)
+    @AdditionalEndpointParameters("maximumResults=" + MAXIMUM_RESULTS)
     public void testMaxHeaderPrevailsOverUri() throws Exception {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS * 2));
@@ -76,7 +75,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + FIRST_RESULT)
+    @AdditionalEndpointParameters("firstResult=" + FIRST_RESULT)
     public void testFirstHeaderPrevailsOverUri() throws Exception {
         final List<Customer> customers = runQueryTest(
                 withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT * 2));
@@ -96,7 +95,7 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     }
 
     @Test
-    @AdditionalQueryParameters("firstResult=" + JpaWithOptionsTestSupport.ENTRIES_COUNT)
+    @AdditionalEndpointParameters("firstResult=" + JpaWithOptionsTestSupport.ENTRIES_COUNT)
     public void testFirstResultAfterTheEnd() throws Exception {
         final List<Customer> customers = runQueryTest();
 
@@ -106,11 +105,6 @@ public class JpaPagingTest extends JpaWithOptionsTestSupport {
     private static void assertFirstCustomerSequence(final List<Customer> customers, final int firstResult) {
         assertTrue(customers.get(0).getName().endsWith(
                 String.format(JpaWithOptionsTestSupport.ENTRY_SEQ_FORMAT, firstResult)));
-    }
-
-    protected String getEndpointUri() {
-        return ENDPOINT_URI +
-               createAdditionalQueryParameters();
     }
 
 }

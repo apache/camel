@@ -2528,7 +2528,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateBeanDefinition"
             }
           },
           "from" : {
@@ -2997,7 +2997,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteBeanDefinition"
             }
           },
           "parameters" : {

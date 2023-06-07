@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jpa;
+package org.apache.camel.component.snmp;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.stream.Stream;
 
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.METHOD })
-@interface AdditionalQueryParameters {
+import org.apache.camel.test.junit5.CamelTestSupport;
 
-    String value();
+public class SnmpTestSupport extends CamelTestSupport {
+
+    static Stream<Integer> supportedVersions() {
+        return Stream.of(0, 1, 3);
+    }
 
 }

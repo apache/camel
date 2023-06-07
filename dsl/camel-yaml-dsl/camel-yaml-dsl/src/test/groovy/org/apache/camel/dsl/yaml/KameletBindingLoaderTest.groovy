@@ -589,4 +589,36 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         }
     }
 
+    def "kamelet binding with trait properties"() {
+        when:
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source
+                  annotations:
+                    trait.camel.apache.org/camel.properties: "foo=howdy,bar=123"                  
+                    trait.camel.apache.org/environment.vars: "MY_ENV=cheese"                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+            ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        context.resolvePropertyPlaceholders("{{foo}}") == "howdy"
+        context.resolvePropertyPlaceholders("{{bar}}") == "123"
+        context.resolvePropertyPlaceholders("{{MY_ENV}}") == "cheese"
+    }
+
 }

@@ -42,6 +42,12 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "To filter tracing by nodes (pattern)")
     String getTracePattern();
 
+    @ManagedAttribute(description = "Whether tracing routes created from Rest DSL.")
+    boolean isTraceRests();
+
+    @ManagedAttribute(description = "Whether tracing routes created from route templates or kamelets.")
+    boolean isTraceTemplates();
+
     @ManagedAttribute(description = "Number of total traced messages")
     long getTraceCounter();
 

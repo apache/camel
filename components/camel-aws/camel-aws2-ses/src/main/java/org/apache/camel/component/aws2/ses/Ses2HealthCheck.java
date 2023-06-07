@@ -36,13 +36,14 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try (SesClient client = ses2Endpoint.getSESClient()) {
-            Ses2Configuration configuration = ses2Endpoint.getConfiguration();
+        Ses2Configuration configuration = ses2Endpoint.getConfiguration();
+        try {
             if (!SesClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
+            SesClient client = ses2Endpoint.getSESClient();
             client.getSendStatistics();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -56,4 +57,5 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
         builder.up();
 
     }
+
 }

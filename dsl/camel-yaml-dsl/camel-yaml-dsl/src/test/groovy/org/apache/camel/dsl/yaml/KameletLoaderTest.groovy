@@ -63,6 +63,16 @@ class KameletLoaderTest extends YamlTestSupport {
                         x-descriptors:
                         - 'urn:alm:descriptor:com.tectonic.ui:checkbox'
                   template:
+                    beans:
+                      - name: kameletBean
+                        type: org.apache.camel.dsl.yaml.KameletBean
+                        property:
+                          - key: kbProp
+                            value: kbValue
+                      - name: kameletBean2
+                        type: org.apache.camel.dsl.yaml.KameletBean
+                        properties:
+                          kbProp2: kbValue2
                     from:
                       uri: "kamelet:source"
                       steps:
@@ -93,11 +103,11 @@ class KameletLoaderTest extends YamlTestSupport {
 
                 with(route) {
                     input.endpointUri == 'kamelet:source'
-                    input.lineNumber == 35
+                    input.lineNumber == 45
                     outputs.size() == 1
                     with (outputs[0], ToDefinition) {
                         endpointUri ==~ /aws2-s3:.*/
-                        lineNumber == 38
+                        lineNumber == 48
                     }
                 }
             }

@@ -46,7 +46,8 @@ public class Ddb2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try (DynamoDbClient ddbClient = ddb2Endpoint.getDdbClient()) {
+        try {
+            DynamoDbClient ddbClient = ddb2Endpoint.getDdbClient();
             ddbClient.listTables(ListTablesRequest.builder().limit(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

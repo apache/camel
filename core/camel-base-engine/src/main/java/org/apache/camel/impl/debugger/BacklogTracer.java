@@ -60,6 +60,8 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
+    private boolean traceRests;
+    private boolean traceTemplates;
     // a pattern to filter tracing nodes
     private String tracePattern;
     private String[] patterns;
@@ -220,6 +222,26 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         this.bodyIncludeFiles = bodyIncludeFiles;
+    }
+
+    @Override
+    public boolean isTraceRests() {
+        return traceRests;
+    }
+
+    @Override
+    public void setTraceRests(boolean traceRests) {
+        this.traceRests = traceRests;
+    }
+
+    @Override
+    public boolean isTraceTemplates() {
+        return traceTemplates;
+    }
+
+    @Override
+    public void setTraceTemplates(boolean traceTemplates) {
+        this.traceTemplates = traceTemplates;
     }
 
     @Override

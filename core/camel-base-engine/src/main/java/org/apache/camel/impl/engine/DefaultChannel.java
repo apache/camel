@@ -282,6 +282,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             tracer = BacklogTracer.createTracer(camelContext);
             tracer.setEnabled(camelContext.isBacklogTracing() != null && camelContext.isBacklogTracing());
             tracer.setStandby(camelContext.isBacklogTracingStandby());
+            // enable both rest/templates if templates is enabled (we only want 1 public option)
+            boolean restOrTemplates = camelContext.isTracingTemplates();
+            tracer.setTraceTemplates(restOrTemplates);
+            tracer.setTraceRests(restOrTemplates);
             camelContext.setExtension(BacklogTracer.class, tracer);
         }
         return tracer;

@@ -64,7 +64,13 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
      */
     @Override
     public void onReload(Object source) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
+            // use bootstrap classloader from camel so its consistent
+            ClassLoader acl = getCamelContext().getApplicationContextClassLoader();
+            if (acl != null) {
+                Thread.currentThread().setContextClassLoader(acl);
+            }
             doOnReload(source);
             incSucceededCounter();
         } catch (Exception e) {
@@ -72,6 +78,10 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
             LOG.warn("Error reloading routes due " + e.getMessage()
                      + ". This exception is ignored.",
                     e);
+        } finally {
+            if (cl != null) {
+                Thread.currentThread().setContextClassLoader(cl);
+            }
         }
     }
 

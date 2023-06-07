@@ -34,16 +34,21 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String routeId;
     private final String toNode;
     private final String exchangeId;
+    private final boolean rest;
+    private final boolean template;
     private final String messageAsXml;
     private final String messageAsJSon;
 
     public DefaultBacklogTracerEventMessage(long uid, long timestamp, String routeId, String toNode, String exchangeId,
+                                            boolean rest, boolean template,
                                             String messageAsXml, String messageAsJSon) {
         this.uid = uid;
         this.timestamp = timestamp;
         this.routeId = routeId;
         this.toNode = toNode;
         this.exchangeId = exchangeId;
+        this.rest = rest;
+        this.template = template;
         this.messageAsXml = messageAsXml;
         this.messageAsJSon = messageAsJSon;
     }
@@ -61,6 +66,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getRouteId() {
         return routeId;
+    }
+
+    @Override
+    public boolean isRest() {
+        return rest;
+    }
+
+    @Override
+    public boolean isTemplate() {
+        return template;
     }
 
     @Override
@@ -105,6 +120,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         StringBuilder sb = new StringBuilder();
         sb.append(prefix).append("<").append(ROOT_TAG).append(">\n");
         sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
+        sb.append(prefix).append("  <rest>").append(rest).append("</rest>\n");
+        sb.append(prefix).append("  <template>").append(template).append("</template>\n");
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
         // route id is optional and we then use an empty value for no route id
@@ -135,6 +152,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     public Map<String, Object> asJSon() {
         JsonObject jo = new JsonObject();
         jo.put("uid", uid);
+        jo.put("rest", rest);
+        jo.put("template", template);
         if (routeId != null) {
             jo.put("routeId", routeId);
         }

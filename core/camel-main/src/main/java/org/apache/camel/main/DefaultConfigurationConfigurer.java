@@ -300,10 +300,12 @@ public final class DefaultConfigurationConfigurer {
 
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setBacklogTracingStandby(config.isBacklogTracingStandby());
+        camelContext.setBacklogTracingTemplates(config.isBacklogTracingTemplates());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
         camelContext.setTracingPattern(config.getTracingPattern());
         camelContext.setTracingLoggingFormat(config.getTracingLoggingFormat());
+        camelContext.setTracingTemplates(config.isTracingTemplates());
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
@@ -465,6 +467,10 @@ public final class DefaultConfigurationConfigurer {
         Set<TypeConverters> tcs = registry.findByType(TypeConverters.class);
         if (!tcs.isEmpty()) {
             tcs.forEach(t -> camelContext.getTypeConverterRegistry().addTypeConverters(t));
+        }
+        Set<EventNotifier> ens = registry.findByType(EventNotifier.class);
+        if (!ens.isEmpty()) {
+            ens.forEach(n -> camelContext.getManagementStrategy().addEventNotifier(n));
         }
         Set<EndpointStrategy> ess = registry.findByType(EndpointStrategy.class);
         if (!ess.isEmpty()) {
