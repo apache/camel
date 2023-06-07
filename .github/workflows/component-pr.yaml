@@ -59,6 +59,8 @@ jobs:
             
             :warning: Please note that the changes on this PR may be **tested automatically** if they change components.
             
+            :robot: use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot.
+            
             If necessary Apache Camel Committers may access logs and test results in the job summaries!`
             
             })
