@@ -445,7 +445,7 @@
         <slf4j-version>2.0.6</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.2.1</smallrye-config-version>
-        <smallrye-health-version>4.0.1</smallrye-health-version>
+        <smallrye-health-version>4.0.2</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.2.3</smallrye-fault-tolerance-version>
         <snakeyaml-version>2.0</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
