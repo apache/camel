@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>${kafka-debezium-version}</version>
+            <version>${kafka-version}</version>
         </dependency>
 
         <!-- test -->
