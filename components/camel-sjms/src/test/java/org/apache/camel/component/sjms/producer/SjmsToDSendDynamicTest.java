@@ -26,17 +26,17 @@ public class SjmsToDSendDynamicTest extends JmsTestSupport {
 
     @Test
     public void testToD() {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar.SjmsToDSendDynamicTest");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer.SjmsToDSendDynamicTest");
 
         // there should only be one sjms endpoint
         long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("sjms:")).count();
         assertEquals(1, count, "There should only be 1 sjms endpoint");
 
         // and the messages should be in the queues
-        String out = consumer.receiveBody("sjms:queue:bar", 2000, String.class);
+        String out = consumer.receiveBody("sjms:queue:bar.SjmsToDSendDynamicTest", 2000, String.class);
         assertEquals("Hello bar", out);
-        out = consumer.receiveBody("sjms:queue:beer", 2000, String.class);
+        out = consumer.receiveBody("sjms:queue:beer.SjmsToDSendDynamicTest", 2000, String.class);
         assertEquals("Hello beer", out);
     }
 
