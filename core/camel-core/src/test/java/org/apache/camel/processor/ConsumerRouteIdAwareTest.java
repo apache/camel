@@ -31,7 +31,9 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated
 public class ConsumerRouteIdAwareTest extends ContextTestSupport {
 
     @Override

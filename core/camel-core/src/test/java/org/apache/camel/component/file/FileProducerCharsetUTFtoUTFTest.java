@@ -24,12 +24,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
+@Isolated
 class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
