@@ -370,7 +370,7 @@
         <metrics-version>4.2.17</metrics-version>
         <micrometer-version>1.11.0</micrometer-version>
         <micrometer-tracing-version>1.1.1</micrometer-tracing-version>
-        <microprofile-config-version>3.0.2</microprofile-config-version>
+        <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milo-version>0.6.8</milo-version>
         <milo-guava-version>31.1-jre</milo-guava-version>
