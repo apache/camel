@@ -616,6 +616,7 @@ public class KameletMain extends MainCommandLineSupport {
         beanFactory.setAllowCircularReferences(true); // for now
 
         // register some existing beans (the list may change)
+        // would be nice to keep the documentation up to date: docs/user-manual/modules/ROOT/pages/camel-jbang.adoc
         Set<String> infraBeanNames = Set.of("CamelContext", "MainConfiguration");
         beanFactory.registerSingleton("CamelContext", camelContext);
         beanFactory.registerSingleton("MainConfiguration", config);
