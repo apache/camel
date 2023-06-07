@@ -1,5 +1,11 @@
 package org.apache.camel.component.file.azure;
 
+/**
+ * The path separator is {@code /}.
+ * <p>
+ * The absolute paths start with the path separator, they do not include the share name and they are relative to the
+ * share root rather than to the endpoint starting directory.
+ */
 public class FilesPath {
 
     public static final String PARENT = "..";
@@ -16,6 +22,11 @@ public class FilesPath {
 
     public static boolean isEmpty(String path) {
         return path == null || path.isBlank();
+    }
+
+    public static boolean isRoot(String path) {
+        // no ambiguity such as / or \
+        return path != null && path.equals(SHARE_ROOT);
     }
 
     public static String ensureRelative(String path) {
@@ -37,7 +48,7 @@ public class FilesPath {
         return path;
     }
 
-    public static String onlyParentPath(String path) {
+    public static String extractParentPath(String path) {
         if (path == null) {
             return null;
         }
@@ -49,6 +60,14 @@ public class FilesPath {
             return path.substring(0, lastSeparator);
         }
         return null;
+    }
+
+    public static String[] split(String path) {
+        if (path == null) {
+            return null;
+        }
+        // no ambiguity such as "/|\\\\"
+        return path.split("/");
     }
 
 }

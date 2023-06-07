@@ -82,6 +82,18 @@ include::partial$component-endpoint-headers.adoc[]
 azure-files://camelazurefiles.file.core.windows.net/samples?sv=2022-11-02&ss=f&srt=sco&sp=rwdlc&se=2023-06-18T22:29:13Z&st=2023-06-05T14:29:13Z&spr=https&sig=MPsMh8zci0v3To7IT9SKdaFGZV8ezno63m9C8s9bdVQ%3D
 ----
 
+== Paths
+
+The path separator is `/`. +
+ The absolute paths start with the path separator, they do not include
+the share name and they are relative to the share root rather than
+to the endpoint starting directory.
+ 
+*NOTE:* At some places, namely logs of the more abstract Camel component
+classes, OS-specific path separator appears and the relative paths are
+relative to the share root (rather than to the current working directory
+or to the endpoint starting directory) so interpret them with a grain of salt.
+
 == Concurrency
 
 The component does not support concurrency on its endpoints.

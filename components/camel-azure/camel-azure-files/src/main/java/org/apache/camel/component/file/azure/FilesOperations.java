@@ -84,7 +84,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // TODO what about (starting) directory as the root? 
         dirStack.push(root);
         // TODO translate runtime exception to Camel one?
-        return true;
+        return Boolean.TRUE.equals(root.exists());
     }
 
     @Override
@@ -154,9 +154,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             var shareRelativeTo = FilesPath.ensureRelative(to);
             var fileName = FilesPath.trimParentPath(from);
 
-            changeCurrentDirectory(FilesPath.onlyParentPath(from));
+            changeCurrentDirectory(FilesPath.extractParentPath(from));
             var cwd = cwd();
-            log.debug("{}> mv {} /{}", cwd.getDirectoryPath(), fileName, shareRelativeTo);
+            log.debug("{}> mv {} {}", cwd.getDirectoryPath(), fileName, FilesPath.SHARE_ROOT + shareRelativeTo);
             var file = cwd.getFileClient(fileName);
             file.rename(shareRelativeTo);
             return true;
@@ -199,7 +199,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             }
             if (!success) {
                 if (absolute) {
-                    changeCurrentDirectory("/");
+                    changeCurrentDirectory(FilesPath.SHARE_ROOT);
                     directory = directory.substring(1);
                 }
                 log.trace("Trying to build remote directory: {}", directory);
@@ -560,7 +560,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         String answer = cwd().getDirectoryPath();
-        log.trace("{}>", answer);
+        log.trace("getCurrentDirectory(): {}", answer);
         return answer;
     }
 
@@ -572,21 +572,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
 
         if (FileUtil.hasLeadingSeparator(path)) {
-            // TODO optimize if cwd and path has common prefix
-            trivialCd(FilesPath.SHARE_ROOT);
+            // TODO optimize if cwd and path has a common prefix
+            changeToRoot();
             path = path.substring(1);
         }
 
-        // split into multiple dirs
-        final String[] dirs = path.split("/|\\\\");
-
-        if (dirs == null || dirs.length == 0) {
-            // path was just a relative single path
-            trivialCd(path);
-            return;
-        }
-
-        // there are multiple dirs so do this in chunks
+        var dirs = FilesPath.split(path);
         for (String dir : dirs) {
             trivialCd(dir);
         }
@@ -680,17 +671,16 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     private boolean buildDirectoryChunks(String dirName) throws IOException {
-        final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("/|\\\\");
+        var sb = new StringBuilder(dirName.length());
+        var dirs = FilesPath.split(dirName);
 
         boolean success = false;
         for (String dir : dirs) {
-            sb.append(dir).append('/');
+            sb.append(dir).append(FilesPath.PATH_SEPARATOR);
             // must normalize the directory name
             String directory = endpoint.getConfiguration().normalizePath(sb.toString());
 
-            // do not try to build root folder (/ or \)
-            if (!(directory.equals("/") || directory.equals("\\"))) {
+            if (!(FilesPath.isRoot(directory))) {
                 log.trace("Trying to build remote directory by chunk: {}", dir);
 
                 dir = FileUtil.stripTrailingSeparator(dir);
@@ -726,7 +716,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             reconnectRequired = true;
         }
         if (reconnectRequired) {
-            log.trace("Client is not connected anymore, try to reconnect");
+            log.trace("Probing if the service share is connectible ...");
             connect(endpoint.getConfiguration(), exchange);
         }
     }
