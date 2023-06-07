@@ -200,8 +200,13 @@ class AbstractExchange implements Exchange {
     @Override
     public <T> T getProperty(ExchangePropertyKey key, Class<T> type) {
         Object value = getProperty(key);
+        return evalPropertyValue(type, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T evalPropertyValue(final Class<T> type, final Object value) {
         if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
+            // let's avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
@@ -209,7 +214,30 @@ class AbstractExchange implements Exchange {
         }
 
         // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
+        // if already is the same type
+        if (type.isInstance(value)) {
+            return (T) value;
+        }
+
+        return ExchangeHelper.convertToType(this, type, value);
+    }
+
+    // TODO: fix re-assignment of the value instance here.
+    @SuppressWarnings("unchecked")
+    private <T> T evalPropertyValue(final Object defaultValue, final Class<T> type, Object value) {
+        if (value == null) {
+            value = defaultValue;
+        }
+        if (value == null) {
+            // let's avoid NullPointerException when converting to boolean for null values
+            if (boolean.class == type) {
+                return (T) Boolean.FALSE;
+            }
+            return null;
+        }
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already is the same type
         if (type.isInstance(value)) {
             return (T) value;
         }
@@ -220,24 +248,7 @@ class AbstractExchange implements Exchange {
     @Override
     public <T> T getProperty(ExchangePropertyKey key, Object defaultValue, Class<T> type) {
         Object value = getProperty(key);
-        if (value == null) {
-            value = defaultValue;
-        }
-        if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type) {
-                return (T) Boolean.FALSE;
-            }
-            return null;
-        }
-
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(value)) {
-            return (T) value;
-        }
-
-        return ExchangeHelper.convertToType(this, type, value);
+        return evalPropertyValue(defaultValue, type, value);
     }
 
     @Override
@@ -268,45 +279,14 @@ class AbstractExchange implements Exchange {
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
-        if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type) {
-                return (T) Boolean.FALSE;
-            }
-            return null;
-        }
-
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(value)) {
-            return (T) value;
-        }
-
-        return ExchangeHelper.convertToType(this, type, value);
+        return evalPropertyValue(type, value);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
         Object value = getProperty(name);
-        if (value == null) {
-            value = defaultValue;
-        }
-        if (value == null) {
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type) {
-                return (T) Boolean.FALSE;
-            }
-            return null;
-        }
-
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(value)) {
-            return (T) value;
-        }
-
-        return ExchangeHelper.convertToType(this, type, value);
+        return evalPropertyValue(defaultValue, type, value);
     }
 
     @Override
