@@ -571,13 +571,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             return;
         }
 
-        if (FileUtil.hasLeadingSeparator(path)) {
-            // TODO optimize if cwd and path has a common prefix
-            changeToRoot();
-            path = path.substring(1);
-        }
-
-        var dirs = FilesPath.split(path);
+        var dirs = FilesPath.splitToSteps(path, true);
         for (String dir : dirs) {
             trivialCd(dir);
         }

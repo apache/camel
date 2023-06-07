@@ -63,11 +63,26 @@ public class FilesPath {
     }
 
     public static String[] split(String path) {
+        return splitToSteps(path, false);
+    }
+
+    public static String[] splitToSteps(String path, boolean preserveRoot) {
         if (path == null) {
             return null;
         }
+
+        var includeRoot = preserveRoot && path.startsWith(SHARE_ROOT);
+        if (!(includeRoot)) {
+            path = ensureRelative(path);
+        }
+
         // no ambiguity such as "/|\\\\"
-        return path.split("/");
+        var pathSteps = path.split("" + PATH_SEPARATOR);
+
+        if (includeRoot) {
+            pathSteps[0] = SHARE_ROOT; // replace leading ""
+        }
+        return pathSteps;
     }
 
 }
