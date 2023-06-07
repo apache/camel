@@ -50,6 +50,11 @@ import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Operations with locally tracked cwd state.
+ * <p>
+ * The state limits thread safety.
+ */
 public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -101,42 +106,31 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        log.debug("Deleting file: {}", name);
+        log.debug("deleteFile({})", name);
 
         boolean result;
         String target = name;
-        String currentDir = null;
 
+        reconnectIfNecessary(null);
+
+        var backup = backup();
         try {
-            reconnectIfNecessary(null);
+            target = FileUtil.stripPath(name);
 
-            var backup = backup();
-            try {
-                target = FileUtil.stripPath(name);
+            changeCurrentDirectory(FileUtil.onlyPath(name));
 
-                try {
-                    changeCurrentDirectory(FileUtil.onlyPath(name));
-                } catch (GenericFileOperationFailedException e) {
-                    // we could not change directory, try to change back before
-                    changeCurrentDirectory(currentDir);
-                    throw e;
-                }
+            var cwd = cwd();
+            log.trace("{}> rm {}", cwd.getDirectoryPath(), target);
+            result = cwd.deleteFileIfExists(target);
 
-                // delete the file
-                log.trace("Client deleteFile: {}", target);
-                result = cwd().deleteFileIfExists(target);
-
-            } finally {
-                restore(backup);
-            }
-
-        } catch (RuntimeException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        } finally {
+            restore(backup);
         }
 
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     void restore(Object backup) {
         dirStack = (Stack<ShareDirectoryClient>) backup;
     }
@@ -154,17 +148,22 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         // by observation both paths are absolute paths on the share
         log.debug("Renaming file: {} to: {}", from, to);
-        var shareRelativeTo = FilesPath.ensureRelative(to);
-        // by observation the from dir matches cwd
-        var fileName = FilesPath.trimParentPath(from);
-        var cwd = cwd();
+
+        var backup = backup();
         try {
-            log.debug("{}> mv {} {}", cwd.getDirectoryPath(), fileName, shareRelativeTo);
+            var shareRelativeTo = FilesPath.ensureRelative(to);
+            var fileName = FilesPath.trimParentPath(from);
+
+            changeCurrentDirectory(FilesPath.onlyParentPath(from));
+            var cwd = cwd();
+            log.debug("{}> mv {} /{}", cwd.getDirectoryPath(), fileName, shareRelativeTo);
             var file = cwd.getFileClient(fileName);
             file.rename(shareRelativeTo);
             return true;
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException("Cannot rename: " + from + " to: " + to, e);
+        } finally {
+            restore(backup);
         }
     }
 
@@ -229,10 +228,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 answer = retrieveFileToFileInLocalWorkDirectory(name, exchange, endpoint.isResumeDownload());
             } else {
                 // store file content directory as stream on the body
-                answer = retrieveFileToStreamInBody(name, exchange);
+                answer = retrieveFileToBody(name, exchange);
             }
-        } catch (GenericFileOperationFailedException e) {
-            throw e;
         } finally {
             restore(backup);
         }
@@ -249,42 +246,34 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        try {
-            GenericFile<ShareFileItem> target
-                    = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            org.apache.camel.util.ObjectHelper.notNull(target,
-                    "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+    @SuppressWarnings({ "unchecked", "resource" })
+    private boolean retrieveFileToBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        GenericFile<ShareFileItem> target
+                = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        org.apache.camel.util.ObjectHelper.notNull(target,
+                "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
-            // change directory to path where the file is to be retrieved
-            // (must do this as some FTP servers cannot retrieve using
-            // absolute path)
-            String path = FileUtil.onlyPath(name);
-            if (path != null) {
-                changeCurrentDirectory(path);
-            }
-            // remote name is now only the file name as we just changed
-            // directory
-            String remoteName = FileUtil.stripPath(name);
+        // change directory to path where the file is to be retrieved
+        // (must do this as some FTP servers cannot retrieve using
+        // absolute path)
+        String path = FileUtil.onlyPath(name);
+        if (path != null) {
+            changeCurrentDirectory(path);
+        }
+        // remote name is now only the file name as we just changed
+        // directory
+        String remoteName = FileUtil.stripPath(name);
 
-            log.trace("Client retrieveFile: {}", remoteName);
-            if (endpoint.getConfiguration().isStreamDownload()) {
-                InputStream is = cwd().getFileClient(remoteName).openInputStream();
-                target.setBody(is);
-                exchange.getIn().setHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, is);
-            } else {
-                // read the entire file into memory in the byte array
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                cwd().getFileClient(remoteName).download(bos);
-                // close the stream after done
-                IOHelper.close(bos);
-
-                target.setBody(bos.toByteArray());
-            }
-
-        } catch (RuntimeException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        log.trace("Client retrieveFile: {}", remoteName);
+        if (endpoint.getConfiguration().isStreamDownload()) {
+            InputStream is = cwd().getFileClient(remoteName).openInputStream();
+            target.setBody(is);
+            exchange.getIn().setHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, is);
+        } else {
+            var bos = new ByteArrayOutputStream();
+            cwd().getFileClient(remoteName).download(bos);
+            IOHelper.close(bos);
+            target.setBody(bos.toByteArray());
         }
 
         return true;
@@ -549,7 +538,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
-        // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
         String onlyName = FileUtil.stripPath(name);
         var backup = backup();
@@ -558,7 +546,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 changeCurrentDirectory(directory);
             }
             var file = cwd().getFileClient(onlyName);
-            return file.exists();
+            return Boolean.TRUE.equals(file.exists());
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
@@ -583,9 +571,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             return;
         }
 
-        // if it starts with the root path then a little special handling for
-        // that
         if (FileUtil.hasLeadingSeparator(path)) {
+            // TODO optimize if cwd and path has common prefix
             trivialCd(FilesPath.SHARE_ROOT);
             path = path.substring(1);
         }
@@ -656,7 +643,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public ShareFileItem[] listFiles() throws GenericFileOperationFailedException {
-        log.trace("ls");
+        log.trace("{}> ls -a", cwd().getDirectoryPath());
         try {
             var withTS = new ShareListFilesAndDirectoriesOptions().setIncludeTimestamps(true);
             // TODO configured timeout from poll interval
@@ -668,19 +655,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public ShareFileItem[] listFiles(String path) throws GenericFileOperationFailedException {
-        log.trace("{}> ls {}", cwd().getDirectoryPath(), path);
-
-        // use current directory if path not given
-        if (FilesPath.isEmpty(path)) {
-            path = FilesPath.CWD;
-        }
+        log.trace("listFiles({})", path);
 
         var backup = backup();
         try {
             changeCurrentDirectory(path);
             return listFiles();
-        } catch (RuntimeException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
             restore(backup);
         }

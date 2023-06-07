@@ -36,4 +36,19 @@ public class FilesPath {
         }
         return path;
     }
+
+    public static String onlyParentPath(String path) {
+        if (path == null) {
+            return null;
+        }
+
+        var lastSeparator = path.lastIndexOf(PATH_SEPARATOR);
+        if (lastSeparator == 0) {
+            return SHARE_ROOT;
+        } else if (lastSeparator > 0) {
+            return path.substring(0, lastSeparator);
+        }
+        return null;
+    }
+
 }

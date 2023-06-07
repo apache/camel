@@ -84,11 +84,7 @@ azure-files://camelazurefiles.file.core.windows.net/samples?sv=2022-11-02&ss=f&s
 
 == Concurrency
 
-TODO investigate, below is a placeholder based on FTP adoc.
-
-Consumer does not support concurrency.
-
-The producer supports concurrency.
+The component does not support concurrency on its endpoints.
 
 == More information
 
@@ -104,10 +100,8 @@ explicitly if you want it to delete the files or move them to another
 location. For example you can use `delete=true` to delete the files, or
 use `move=.done` to move the files into `.done` sub directory.
 
-*WARNING* `.`-prefixed folders are not implicitly hidden from
+In Camel, the `.`-prefixed folders are excluded from
 recursive polling.
-
-TODO test
 
 The regular File consumer is different as it will by
 default move files to a `.camel` sub directory. The reason Camel does
