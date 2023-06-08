@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedTopicProducerTest extends JmsTestSupport {
 
-    private static final String CONNECTION_ID = "test-connection-1";
+    private static final String CONNECTION_ID = "TransactedTopicProducerTest-connection";
 
     @Produce
     protected ProducerTemplate template;
