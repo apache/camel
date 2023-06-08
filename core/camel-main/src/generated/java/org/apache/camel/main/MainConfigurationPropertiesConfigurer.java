@@ -72,9 +72,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "devconsoleenabled":
         case "DevConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
         case "dumproutes":
-        case "DumpRoutes": target.setDumpRoutes(property(camelContext, boolean.class, value)); return true;
-        case "dumproutesformat":
-        case "DumpRoutesFormat": target.setDumpRoutesFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "durationhitexitcode":
         case "DurationHitExitCode": target.setDurationHitExitCode(property(camelContext, int.class, value)); return true;
         case "durationmaxaction":
@@ -317,9 +315,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "devconsoleenabled":
         case "DevConsoleEnabled": return boolean.class;
         case "dumproutes":
-        case "DumpRoutes": return boolean.class;
-        case "dumproutesformat":
-        case "DumpRoutesFormat": return java.lang.String.class;
+        case "DumpRoutes": return java.lang.String.class;
         case "durationhitexitcode":
         case "DurationHitExitCode": return int.class;
         case "durationmaxaction":
@@ -563,9 +559,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "devconsoleenabled":
         case "DevConsoleEnabled": return target.isDevConsoleEnabled();
         case "dumproutes":
-        case "DumpRoutes": return target.isDumpRoutes();
-        case "dumproutesformat":
-        case "DumpRoutesFormat": return target.getDumpRoutesFormat();
+        case "DumpRoutes": return target.getDumpRoutes();
         case "durationhitexitcode":
         case "DurationHitExitCode": return target.getDurationHitExitCode();
         case "durationmaxaction":

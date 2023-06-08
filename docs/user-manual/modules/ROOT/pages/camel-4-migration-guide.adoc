@@ -87,6 +87,7 @@ We have removed deprecated APIs such as the following:
 - Added `position` method to `org.apache.camel.StreamCache`.
 - The method `configure` from the interface `org.apache.camel.main.Listener` was removed
 - The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`.
+- The type for `dumpRoutes` on `CamelContext` has changed from `boolean` to `String` to allow specifying either xml or yaml.
 
 == EIP Changes
 

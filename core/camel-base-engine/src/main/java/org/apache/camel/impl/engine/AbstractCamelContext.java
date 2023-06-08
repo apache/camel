@@ -252,8 +252,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean devConsole = Boolean.FALSE;
     private Boolean sourceLocationEnabled = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
-    private Boolean dumpRoutes = Boolean.FALSE;
-    private String dumpRoutesFormat = "xml";
+    private String dumpRoutes;
     private Boolean useMDCLogging = Boolean.FALSE;
     private String mdcLoggingKeysPattern;
     private Boolean useDataType = Boolean.FALSE;
@@ -2788,7 +2787,7 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
-        if (isDumpRoutes() != null && isDumpRoutes()) {
+        if (getDumpRoutes() != null && !"false".equals(getDumpRoutes())) {
             doDumpRoutes();
         }
 
@@ -3472,23 +3471,13 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Boolean isDumpRoutes() {
+    public String getDumpRoutes() {
         return dumpRoutes;
     }
 
     @Override
-    public void setDumpRoutes(Boolean dumpRoutes) {
+    public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
-    }
-
-    @Override
-    public String getDumpRoutesFormat() {
-        return dumpRoutesFormat;
-    }
-
-    @Override
-    public void setDumpRoutesFormat(String dumpRoutesFormat) {
-        this.dumpRoutesFormat = dumpRoutesFormat;
     }
 
     @Override

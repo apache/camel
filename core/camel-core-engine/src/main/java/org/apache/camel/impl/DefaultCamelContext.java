@@ -154,10 +154,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     protected void doDumpRoutes() {
-        if ("xml".equalsIgnoreCase(getDumpRoutesFormat())) {
-            doDumpRoutesAsXml();
-        } else if ("yaml".equalsIgnoreCase(getDumpRoutesFormat())) {
+        if ("yaml".equalsIgnoreCase(getDumpRoutes())) {
             doDumpRoutesAsYaml();
+        } else {
+            // xml is default
+            doDumpRoutesAsXml();
         }
     }
 
