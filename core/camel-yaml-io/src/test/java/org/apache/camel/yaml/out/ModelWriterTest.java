@@ -52,7 +52,7 @@ public class ModelWriterTest {
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute0");
-        route.setInput(new FromDefinition("timer:yaml?period=1000"));
+        route.setInput(new FromDefinition("timer:yaml?period=1234&includeMetadata=true"));
         SetBodyDefinition sb = new SetBodyDefinition();
         sb.setExpression(new ConstantExpression("Hello from yaml"));
         route.addOutput(sb);
@@ -252,7 +252,7 @@ public class ModelWriterTest {
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute0");
-        route.setInput(new FromDefinition("timer:yaml?period=1000"));
+        route.setInput(new FromDefinition("timer:yaml?period=1234"));
         SetBodyDefinition sb = new SetBodyDefinition();
         sb.setExpression(new ConstantExpression("Hello from yaml"));
         route.addOutput(sb);

@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
+import org.apache.camel.catalog.impl.URISupport;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
@@ -47,7 +48,6 @@ import org.apache.camel.util.json.JsonObject;
  * runtime catalog ({@link EipModel}). We then abuse the {@link EipModel} and store the route details in its metadata.
  * After this we transform from {@link EipModel} to {@link EipNode} to have a List/Map structure that we then transform
  * to JSon, and then from JSon to YAML.
- *
  */
 public class YamlWriter {
 
@@ -58,7 +58,7 @@ public class YamlWriter {
     private final Stack<EipModel> models = new Stack<>();
     private String expression;
 
-    public YamlWriter(Writer writer) throws IOException {
+    public YamlWriter(Writer writer) {
         this.writer = writer;
         this.catalog = new DefaultRuntimeCamelCatalog();
         this.catalog.setCaching(false); // turn cache off as we store state per node
@@ -179,6 +179,24 @@ public class YamlWriter {
     public void addAttribute(String name, Object value) throws IOException {
         EipModel last = models.isEmpty() ? null : models.peek();
         if (last != null) {
+            // uri should be expanded into more human-readable with parameters
+            if ("uri".equals(name) && value != null) {
+                try {
+                    String base = URISupport.stripQuery(value.toString());
+                    String query = URISupport.extractQuery(value.toString());
+                    if (base != null && query != null) {
+                        Map<String, Object> parameters = URISupport.parseQuery(query);
+                        if (!parameters.isEmpty()) {
+                            last.getMetadata().put("uri", base);
+                            last.getMetadata().put("parameters", parameters);
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+
             last.getMetadata().put(name, value);
         }
     }
@@ -256,12 +274,12 @@ public class YamlWriter {
     }
 
     public String toYaml() {
-        JsonArray arr = transformToJson(roots);
-
-        // parse JSON
         try {
+            // model to json
+            JsonArray arr = transformToJson(roots);
+            // load into jackson
             JsonNode jsonNodeTree = new ObjectMapper().readTree(arr.toJson());
-            // save it as YAML
+            // map to yaml via jackson
             YAMLMapper mapper = new YAMLMapper();
             mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
             mapper.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);

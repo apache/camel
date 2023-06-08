@@ -1,7 +1,9 @@
 - route:
     id: myRoute0
     from:
-      uri: timer:yaml?period=1000
+      uri: timer:yaml
+      parameters:
+        period: 1234
       steps:
         - setBody:
             constant:
