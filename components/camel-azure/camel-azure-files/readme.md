@@ -56,6 +56,7 @@ Endpoint paramaters cleanup, removed those FTP specific:
   - chmod
   - fastExistsCheck
   - handleDirectoryParserAbsoluteResult
+  - separator
   
 or not implemented:
 

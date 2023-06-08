@@ -35,7 +35,6 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.azure.strategy.FilesProcessStrategyFactory;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
-import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
@@ -56,7 +55,7 @@ import org.slf4j.LoggerFactory;
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,siteCommand,fastExistsCheck,soTimeout")
+                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,siteCommand,fastExistsCheck,soTimeout,separator")
 @ManagedResource(description = "Managed Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 
@@ -310,19 +309,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
 
     @Override
     public char getFileSeparator() {
-        // TODO
-        // the regular ftp component should use the configured separator
-        // as FTP servers may require you to use windows or unix style
-        // and therefore you need to be able to control that
-        PathSeparator pathSeparator = getConfiguration().getSeparator();
-        switch (pathSeparator) {
-            case Windows:
-                return '\\';
-            case UNIX:
-                return '/';
-            default:
-                return super.getFileSeparator();
-        }
+        return FilesPath.PATH_SEPARATOR;
     }
 
     @Override

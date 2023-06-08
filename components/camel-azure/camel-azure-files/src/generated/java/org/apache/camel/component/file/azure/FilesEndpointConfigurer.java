@@ -162,7 +162,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sendnoop":
         case "sendNoop": target.getConfiguration().setSendNoop(property(camelContext, boolean.class, value)); return true;
-        case "separator": target.getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
         case "sortby":
@@ -338,7 +337,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "sendnoop":
         case "sendNoop": return boolean.class;
-        case "separator": return org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class;
         case "shuffle": return boolean.class;
         case "sig": return java.lang.String.class;
         case "sortby":
@@ -515,7 +513,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sendnoop":
         case "sendNoop": return target.getConfiguration().isSendNoop();
-        case "separator": return target.getConfiguration().getSeparator();
         case "shuffle": return target.isShuffle();
         case "sig": return target.getSig();
         case "sortby":
