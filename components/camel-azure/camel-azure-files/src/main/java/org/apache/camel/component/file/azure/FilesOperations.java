@@ -58,6 +58,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
+    static final int HTTP_OK = 200;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final ShareServiceClient client;
     protected FilesEndpoint<ShareFileItem> endpoint;
@@ -110,26 +112,22 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         log.debug("deleteFile({})", name);
 
-        boolean result;
-        String target = name;
-
         reconnectIfNecessary(null);
 
         var backup = backup();
         try {
-            target = FileUtil.stripPath(name);
-
             changeCurrentDirectory(FileUtil.onlyPath(name));
-
-            var cwd = cwd();
-            log.trace("{}> rm {}", cwd.getDirectoryPath(), target);
-            result = cwd.deleteFileIfExists(target);
-
+            return deleteInCloud(cwd(), FileUtil.stripPath(name));
         } finally {
             restore(backup);
         }
+    }
 
-        return result;
+    boolean deleteInCloud(ShareDirectoryClient dirClient, String fileName) {
+        log.trace("{}> rm {}", dirClient.getDirectoryPath(), fileName);
+        return Boolean.TRUE.equals(dirClient
+                .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE)
+                .getValue());
     }
 
     @SuppressWarnings("unchecked")
@@ -399,7 +397,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             log.trace("Client retrieveFile: {}", remoteName);
             var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null,
                     endpoint.getDataTimeout(), Context.NONE);
-            result = ret.getStatusCode() == 200;
+            result = ret.getStatusCode() == HTTP_OK;
 
         } catch (RuntimeException e) {
             log.trace("Error occurred during retrieving file: {} to local directory.", name);
@@ -469,7 +467,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             }
 
             // store the file
-            answer = doStoreFile(name, targetName, exchange);
+            answer = storeFile(name, targetName, exchange);
         } catch (GenericFileOperationFailedException e) {
             throw e;
         } finally {
@@ -479,7 +477,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         return answer;
     }
 
-    private boolean doStoreFile(String name, String targetName, Exchange exchange)
+    private boolean storeFile(String name, String targetName, Exchange exchange)
             throws GenericFileOperationFailedException {
         log.trace("doStoreFile({})", targetName);
 
@@ -517,16 +515,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
         try {
             if (is == null) {
-                String charset = endpoint.getCharset();
-                if (charset != null) {
-                    // charset configured so we must convert to the desired
-                    // charset so we can write with encoding
-                    is = new ByteArrayInputStream(
-                            exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
-                    log.trace("Using InputStream {} with charset {}.", is, charset);
+                var knownLength = exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
+                if (knownLength != null) {
+                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                    length = knownLength.intValue();
                 } else {
-                    // is = exchange.getIn().getMandatoryBody(InputStream.class);
-                    // because we need length
+                    log.warn("No file length header, so converting body to byte[].  It might be memory intensive.");
                     var bytes = exchange.getIn().getMandatoryBody(byte[].class);
                     length = bytes.length;
                     is = new ByteArrayInputStream(bytes);
@@ -535,17 +529,21 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
             final StopWatch watch = new StopWatch();
             boolean answer;
-            log.debug("About to store file: {} using stream: {}", targetName, is);
+            log.debug("About to store file: {} length: {} using stream: {}", targetName, length, is);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Append) {
                 log.trace("Client appendFile: {}", targetName);
                 // TODO
                 answer = false;
             } else {
                 log.trace("Client storeFile: {}", targetName);
-                var file = cwd().getFileClient(targetName);
-                file.deleteIfExists();
+                var cwd = cwd();
+                var file = cwd.getFileClient(targetName);
+                deleteInCloud(cwd, targetName);
                 file.create(length);
-                is.transferTo(file.getFileOutputStream());
+                try (var os = file.getFileOutputStream()) {
+                    // TODO add data timeout
+                    is.transferTo(os);
+                }
                 answer = true;
             }
             if (log.isDebugEnabled()) {
@@ -553,8 +551,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
                         TimeUtils.printDuration(time, true), time, targetName, answer);
             }
-
-            // after storing file, we may set chmod on the file
 
             return answer;
 

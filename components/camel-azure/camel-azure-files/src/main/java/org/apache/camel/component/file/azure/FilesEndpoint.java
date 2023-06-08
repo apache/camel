@@ -298,10 +298,9 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     /**
-     * Configures whether resume download is enabled. This must be supported by the FTP server (almost all FTP servers
-     * support it). In addition the options <tt>localWorkDirectory</tt> must be configured so downloaded files are
-     * stored in a local directory, and the option <tt>binary</tt> must be enabled, which is required to support
-     * resuming of downloads.
+     * Configures whether resume download is enabled. In addition the options <tt>localWorkDirectory</tt> must be
+     * configured so downloaded files are stored in a local directory, which is required to support resuming of
+     * downloads.
      */
     public void setResumeDownload(boolean resumeDownload) {
         this.resumeDownload = resumeDownload;

@@ -22,7 +22,10 @@ import org.apache.camel.spi.Metadata;
 
 public final class FilesHeaders {
 
-    @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long")
+    @Metadata(label = "both", description = "A `long` value containing the file size. For producer,"
+                                            + " known length helps if the body converts to InputStream"
+                                            + " more efficiently than to bytes array.",
+              javaType = "long")
     public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
     @Metadata(label = "consumer", description = "A `Long` value containing the last modified timestamp of the file.",
               javaType = "long")
