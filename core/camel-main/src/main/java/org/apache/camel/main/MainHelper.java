@@ -440,11 +440,13 @@ public final class MainHelper {
      * Warning, don't use for crazy big streams :)
      */
     private static void loadLines(InputStream in, Set<String> lines, Function<String, String> func) throws IOException {
-        try (final InputStreamReader isr = new InputStreamReader(in);
-             final BufferedReader reader = new LineNumberReader(isr)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lines.add(func.apply(line));
+        if (in != null) {
+            try (final InputStreamReader isr = new InputStreamReader(in);
+                 final BufferedReader reader = new LineNumberReader(isr)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    lines.add(func.apply(line));
+                }
             }
         }
     }

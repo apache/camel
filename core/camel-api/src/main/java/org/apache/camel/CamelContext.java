@@ -1388,7 +1388,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
      *
-     * @return  <tt>xml</tt>, or <tt>yaml</tt> if dumping is enabled
+     * @return <tt>xml</tt>, or <tt>yaml</tt> if dumping is enabled
      */
     String getDumpRoutes();
 
