@@ -4,7 +4,7 @@
       uri: direct:start
       steps:
         - split:
-            id: split1
+            id: split
             simple:
               expression: "${body}"
             steps:
@@ -12,30 +12,30 @@
                   id: myMock
                   uri: mock:sub
               - choice:
-                  id: choice1
+                  id: choice
                   steps:
                     - when:
-                        id: when1
+                        id: when
                         header:
                           expression: foo
                         steps:
                           - to:
-                              id: to1
+                              id: to
                               uri: mock:foo
                     - when:
-                        id: when2
+                        id: when
                         header:
                           expression: bar
                         steps:
                           - to:
-                              id: to2
+                              id: to
                               uri: mock:bar
                     - otherwise:
-                        id: otherwise1
+                        id: otherwise
                         steps:
                           - to:
-                              id: to3
+                              id: to
                               uri: mock:other
         - to:
-            id: to4
+            id: to
             uri: mock:last

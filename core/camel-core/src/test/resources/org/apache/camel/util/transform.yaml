@@ -4,7 +4,7 @@
       uri: direct:start
       steps:
         - transform:
-            id: transform1
+            id: transform
             simple:
               expression: "Hello ${body}"
         - to:

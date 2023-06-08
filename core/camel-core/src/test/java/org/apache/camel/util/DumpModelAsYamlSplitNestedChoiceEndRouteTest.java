@@ -18,7 +18,6 @@ package org.apache.camel.util;
 
 import java.io.FileInputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
@@ -26,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends ContextTestSupport {
+public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends DumpModelAsYamlTestSupport {
 
     @Test
     public void testDumpModelAsYaml() throws Exception {
