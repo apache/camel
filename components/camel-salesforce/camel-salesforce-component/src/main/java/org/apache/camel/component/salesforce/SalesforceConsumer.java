@@ -307,7 +307,7 @@ public class SalesforceConsumer extends DefaultConsumer {
             try {
                 subscriptionHelper.stop();
             } catch (Exception e) {
-                LOG.warn("Failed to stop subscription due to: " + e.getMessage());
+                LOG.warn("Failed to stop subscription due to: " + e.getMessage(), e);
             }
         }
     }
