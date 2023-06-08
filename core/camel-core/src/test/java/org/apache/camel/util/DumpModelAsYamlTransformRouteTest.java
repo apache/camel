@@ -22,12 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled
 public class DumpModelAsYamlTransformRouteTest extends ContextTestSupport {
 
     @Test

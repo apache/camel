@@ -1,0 +1,41 @@
+- route:
+    id: myRoute
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            id: split1
+            simple:
+              expression: "${body}"
+            steps:
+              - to:
+                  id: myMock
+                  uri: mock:sub
+              - choice:
+                  id: choice1
+                  steps:
+                    - when:
+                        id: when1
+                        header:
+                          expression: foo
+                        steps:
+                          - to:
+                              id: to1
+                              uri: mock:foo
+                    - when:
+                        id: when2
+                        header:
+                          expression: bar
+                        steps:
+                          - to:
+                              id: to2
+                              uri: mock:bar
+                    - otherwise:
+                        id: otherwise1
+                        steps:
+                          - to:
+                              id: to3
+                              uri: mock:other
+        - to:
+            id: to4
+            uri: mock:last

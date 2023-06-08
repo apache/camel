@@ -4,10 +4,9 @@
       uri: direct:start
       steps:
         - transform:
-            expression:
-              simple:
-                expression: 'Hello ${body}'
             id: transform1
+            simple:
+              expression: "Hello ${body}"
         - to:
             id: myMock
             uri: mock:result

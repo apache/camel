@@ -22,15 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- *
- */
-@Disabled
 public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends ContextTestSupport {
 
     @Test
@@ -39,7 +34,6 @@ public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends ContextTestSup
         assertNotNull(out);
         log.info(out);
 
-        // TODO: fix choice in yaml dumper
         String expected = IOHelper.loadText(new FileInputStream("src/test/resources/org/apache/camel/util/split-choice.yaml"));
         Assertions.assertEquals(expected, out);
     }
