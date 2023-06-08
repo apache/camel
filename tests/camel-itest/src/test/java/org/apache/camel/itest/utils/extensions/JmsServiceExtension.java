@@ -29,37 +29,30 @@ import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public final class JmsServiceExtension implements BeforeAllCallback, AfterAllCallback {
+public final class JmsServiceExtension implements Extension {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsServiceExtension.class);
 
     private static JmsServiceExtension instance;
 
-    private JmsComponent amq;
-
-    private EmbeddedActiveMQ embeddedBrokerService;
-
-    private Configuration artemisConfiguration;
-    private String brokerURL;
+    private final JmsComponent amq;
 
     private JmsServiceExtension() throws JMSException {
-        embeddedBrokerService = new EmbeddedActiveMQ();
+        EmbeddedActiveMQ embeddedBrokerService = new EmbeddedActiveMQ();
 
-        artemisConfiguration = new ConfigurationImpl();
+        Configuration artemisConfiguration = new ConfigurationImpl();
         artemisConfiguration.setSecurityEnabled(false);
         artemisConfiguration.setBrokerInstance(new File("target", "artemis-itest-jms"));
         artemisConfiguration.setJMXManagementEnabled(false);
         artemisConfiguration.setPersistenceEnabled(false);
-        brokerURL = "vm://itest-jms";
+        String brokerURL = "vm://itest-jms";
         try {
             artemisConfiguration.addAcceptorConfiguration("in-vm", brokerURL);
         } catch (Exception e) {
@@ -85,15 +78,6 @@ public final class JmsServiceExtension implements BeforeAllCallback, AfterAllCal
         amq = jmsComponentAutoAcknowledge(connectionFactory);
 
         connectionFactory.createConnection();
-    }
-
-    @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
-    }
-
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
-
     }
 
     public JmsComponent getComponent() {
