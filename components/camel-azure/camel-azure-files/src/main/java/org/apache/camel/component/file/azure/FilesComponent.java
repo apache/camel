@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.annotations.Component;
@@ -43,15 +42,8 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
     protected GenericFileEndpoint<ShareFileItem> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         String baseUri = getBaseUri(uri);
-
-        // lets make sure we create a new configuration as each endpoint can
-        // customize its own version
-        // must pass on baseUri to the configuration (see above)
-        FilesConfiguration config = new FilesConfiguration(new URI(baseUri));
-
-        FilesEndpoint<ShareFileItem> answer = new FilesEndpoint<>(uri, this, config);
-
-        return answer;
+        var config = new FilesConfiguration(new URI(baseUri));
+        return new FilesEndpoint<>(uri, this, config);
     }
 
     /**
@@ -68,13 +60,7 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
     }
 
     @Override
-    protected void setProperties(Endpoint endpoint, Map<String, Object> parameters) throws Exception {
-        // TODO remove directory (as we take it from the endpoint base URI)? or hide param
-        super.setProperties(endpoint, parameters);
-    }
-
-    @Override
     protected void afterPropertiesSet(GenericFileEndpoint<ShareFileItem> endpoint) throws Exception {
-        // noop
+        // no specific validation
     }
 }

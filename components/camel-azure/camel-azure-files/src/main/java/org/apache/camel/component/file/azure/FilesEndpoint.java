@@ -178,10 +178,6 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
             throw new IllegalArgumentException(
                     "The option localWorkDirectory must be configured when resumeDownload=true");
         }
-        if (isResumeDownload() && !getConfiguration().isBinary()) {
-            throw new IllegalArgumentException(
-                    "The option binary must be enabled when resumeDownload=true");
-        }
         return super.createConsumer(processor);
     }
 

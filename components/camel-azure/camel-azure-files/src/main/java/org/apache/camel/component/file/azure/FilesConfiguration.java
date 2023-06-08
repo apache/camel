@@ -27,7 +27,7 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     public static final int DEFAULT_HTTPS_PORT = 443;
 
     public FilesConfiguration() {
-        setProtocol("https");  // TODO
+        setProtocol("azure-files");
     }
 
     public FilesConfiguration(URI uri) {
@@ -43,7 +43,7 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     public void setDirectory(String path) {
         // strip share from endpoint path
         var dir = "";
-        var separator = path.indexOf('/');
+        var separator = path.indexOf(FilesPath.PATH_SEPARATOR);
         if (separator > 1) {
             dir = path.substring(separator);
         }
