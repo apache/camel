@@ -37,57 +37,32 @@ import org.apache.camel.util.json.JsonObject;
 
 public class NewJacksonYamlWriter {
 
-    // doTry / doCatch (special)
-    // circuitBreaker (special)
-
     private final Writer writer;
-    private final int spaces;
-    private final String lineSeparator;
     private final DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private final Stack<EipModel> models = new Stack<>();
     private String expression;
 
-    /**
-     * @param writer not null
-     */
     public NewJacksonYamlWriter(Writer writer) throws IOException {
-        this(writer, 2, null);
-    }
-
-    /**
-     * @param writer        not null
-     * @param spaces        number of spaces to indent
-     * @param lineSeparator could be null, but the normal way is valid line separator ("\n" on UNIX).
-     */
-    public NewJacksonYamlWriter(Writer writer, int spaces, String lineSeparator) throws IOException {
         this.writer = writer;
-        this.spaces = spaces;
-        this.lineSeparator = validateLineSeparator(lineSeparator);
         this.catalog = new DefaultRuntimeCamelCatalog();
         this.catalog.setCaching(false); // turn cache off as we store state per node
         this.catalog.setJSonSchemaResolver(new ModelJSonSchemaResolver());
         this.catalog.start();
     }
 
-    private static String validateLineSeparator(String lineSeparator) {
-        String ls = lineSeparator != null ? lineSeparator : System.lineSeparator();
-        if (!(ls.equals("\n") || ls.equals("\r") || ls.equals("\r\n"))) {
-            throw new IllegalArgumentException("Requested line separator is invalid.");
-        }
-        return ls;
-    }
-
     public void startElement(String name) throws IOException {
         EipModel model = catalog.eipModel(name);
-        if (model != null) {
-            EipModel parent = models.isEmpty() ? null : models.peek();
-            model.getMetadata().put("_parent", parent);
-            models.push(model);
-            if (parent == null) {
-                // its a root element
-                roots.add(model);
-            }
+        if (model == null) {
+            // not an EIP model
+            return;
+        }
+        EipModel parent = models.isEmpty() ? null : models.peek();
+        model.getMetadata().put("_parent", parent);
+        models.push(model);
+        if (parent == null) {
+            // its a root element
+            roots.add(model);
         }
     }
 
@@ -102,6 +77,12 @@ public class NewJacksonYamlWriter {
     }
 
     public void endElement(String name) throws IOException {
+        EipModel model = catalog.eipModel(name);
+        if (model == null) {
+            // not an EIP model
+            return;
+        }
+
         EipModel last = models.isEmpty() ? null : models.peek();
         if (last != null && isLanguage(last)) {
             if (!models.isEmpty()) {
@@ -178,7 +159,7 @@ public class NewJacksonYamlWriter {
         // special for choice
         boolean array = isArray(model, name);
         if (array) {
-            List list = (List<EipModel>) model.getMetadata().get(name);
+            List list = (List) model.getMetadata().get(name);
             if (list == null) {
                 list = new ArrayList<>();
                 model.getMetadata().put(name, list);
@@ -213,15 +194,6 @@ public class NewJacksonYamlWriter {
 
     private static boolean isLanguage(EipModel model) {
         return model.getJavaType().startsWith("org.apache.camel.model.language");
-    }
-
-    protected List<EipNode> transformToNodes(List<EipModel> models) {
-        List<EipNode> nodes = new ArrayList<>();
-        for (EipModel model : models) {
-            EipNode node = asNode(model);
-            nodes.add(node);
-        }
-        return nodes;
     }
 
     protected EipNode asExpressionNode(EipModel model, String name) {
@@ -329,6 +301,7 @@ public class NewJacksonYamlWriter {
         return arr;
     }
 
+    @SuppressWarnings("unchecked")
     protected JsonObject asJSonNode(EipModel model) {
         JsonObject answer = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -344,7 +317,7 @@ public class NewJacksonYamlWriter {
             if (value != null) {
                 if (value instanceof Collection<?>) {
                     Collection<?> col = (Collection<?>) value;
-                    List list = new ArrayList();
+                    List list = new ArrayList<>();
                     for (Object v : col) {
                         Object r = v;
                         if (r instanceof EipModel) {

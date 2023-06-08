@@ -38,10 +38,8 @@ import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 public class ModelWriterTest {
 
     @Test
@@ -211,7 +209,6 @@ public class ModelWriterTest {
     }
 
     @Test
-    @Disabled("TODO: https://issues.apache.org/jira/browse/CAMEL-19337")
     public void testFromTryCatch() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
