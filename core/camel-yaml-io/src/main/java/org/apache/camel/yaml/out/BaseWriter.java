@@ -22,14 +22,14 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import org.apache.camel.yaml.io.NewJacksonYamlWriter;
+import org.apache.camel.yaml.io.YamlWriter;
 
 public class BaseWriter {
 
-    protected final NewJacksonYamlWriter writer;
+    protected final YamlWriter writer;
 
     public BaseWriter(Writer writer, String namespace) throws IOException {
-        this.writer = new NewJacksonYamlWriter(writer);
+        this.writer = new YamlWriter(writer);
         // namespace is only for XML
     }
 

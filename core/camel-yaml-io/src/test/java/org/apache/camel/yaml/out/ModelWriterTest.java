@@ -28,11 +28,14 @@ import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.LogDefinition;
+import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -237,6 +240,59 @@ public class ModelWriterTest {
 
         String out = sw.toString();
         String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route7.yaml"));
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testTwoRoutes() throws Exception {
+        StringWriter sw = new StringWriter();
+        ModelWriter writer = new ModelWriter(sw);
+
+        RoutesDefinition routes = new RoutesDefinition();
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute0");
+        route.setInput(new FromDefinition("timer:yaml?period=1000"));
+        SetBodyDefinition sb = new SetBodyDefinition();
+        sb.setExpression(new ConstantExpression("Hello from yaml"));
+        route.addOutput(sb);
+        route.addOutput(new LogDefinition("${body}"));
+        routes.getRoutes().add(route);
+
+        route = new RouteDefinition();
+        route.setId("myRoute1");
+        route.setInput(new FromDefinition("direct:start"));
+        ToDefinition to = new ToDefinition("log:input");
+        route.addOutput(to);
+        ToDefinition to2 = new ToDefinition("mock:result");
+        to2.setPattern("InOut");
+        route.addOutput(to2);
+        routes.getRoutes().add(route);
+
+        writer.writeRoutesDefinition(routes);
+
+        String out = sw.toString();
+        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route8.yaml"));
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testMarshal() throws Exception {
+        StringWriter sw = new StringWriter();
+        ModelWriter writer = new ModelWriter(sw);
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute9");
+        route.setInput(new FromDefinition("timer:foo"));
+        MarshalDefinition mar = new MarshalDefinition();
+        mar.setDataFormatType(new CsvDataFormat());
+        route.addOutput(mar);
+        route.addOutput(new LogDefinition("${body}"));
+
+        writer.writeRouteDefinition(route);
+
+        String out = sw.toString();
+        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route9.yaml"));
         Assertions.assertEquals(expected, out);
     }
 

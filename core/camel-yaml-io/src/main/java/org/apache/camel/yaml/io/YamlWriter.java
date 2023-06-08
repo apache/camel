@@ -18,184 +18,371 @@ package org.apache.camel.yaml.io;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.StringJoiner;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 /**
- * YAML writer which emits nicely formatted documents.
+ * YAML writer which uses Jackson to dump to yaml format.
+ *
+ * Implementation notes:
+ *
+ * This writer is based on the same principle for the XML writer which parses the Camel routes (model classes) and emit
+ * a StAX based events for start/end elements.
+ *
+ * However since the YAML DSL is not as easy to dump as XML, then we need to enrich with additional metadata from the
+ * runtime catalog ({@link EipModel}). We then abuse the {@link EipModel} and store the route details in its metadata.
+ * After this we transform from {@link EipModel} to {@link EipNode} to have a List/Map structure that we then transform
+ * to JSon, and then from JSon to YAML.
+ *
  */
 public class YamlWriter {
 
     private final Writer writer;
-    private final int spaces;
-    private final String lineSeparator;
+    private final DefaultRuntimeCamelCatalog catalog;
+    private final List<EipModel> roots = new ArrayList<>();
+    private boolean routesIsRoot;
+    private final Stack<EipModel> models = new Stack<>();
+    private String expression;
 
-    private final List<EipNode> root = new ArrayList<>();
-    private final Deque<EipNode> stack = new ArrayDeque<>();
-
-    /**
-     * @param writer not null
-     */
     public YamlWriter(Writer writer) throws IOException {
-        this(writer, 2, null);
-    }
-
-    /**
-     * @param writer        not null
-     * @param spaces        number of spaces to indent
-     * @param lineSeparator could be null, but the normal way is valid line separator ("\n" on UNIX).
-     */
-    public YamlWriter(Writer writer, int spaces, String lineSeparator) throws IOException {
         this.writer = writer;
-        this.spaces = spaces;
-        this.lineSeparator = validateLineSeparator(lineSeparator);
+        this.catalog = new DefaultRuntimeCamelCatalog();
+        this.catalog.setCaching(false); // turn cache off as we store state per node
+        this.catalog.setJSonSchemaResolver(new ModelJSonSchemaResolver());
+        this.catalog.start();
     }
 
-    private static String validateLineSeparator(String lineSeparator) {
-        String ls = lineSeparator != null ? lineSeparator : System.lineSeparator();
-        if (!(ls.equals("\n") || ls.equals("\r") || ls.equals("\r\n"))) {
-            throw new IllegalArgumentException("Requested line separator is invalid.");
-        }
-        return ls;
-    }
-
-    private EipNode getParent() {
-        for (EipNode node : stack) {
-            if (node.isOutput()) {
-                return node;
-            }
-        }
-        return null;
-    }
-
-    public void startElement(String name)
-            throws IOException {
-
-        //    public void startElement(String name, boolean supportOutput, boolean supportExpression, boolean language)
-        //            throws IOException {
-        //        EipNode parent = getParent();
-        //        EipNode node = new EipNode(name, parent, supportOutput, supportExpression);
-
-        /*
-        if (parent != null && "from".equals(name)) {
-            parent.setInput(node);
-        } else {
-            EipNode last = !stack.isEmpty() ? stack.peek() : null;
-            if (last != null && language) {
-                last.addExpression(node);
-            } else if (last != null && last.isOutput()) {
-                last.addOutput(node);
-            } else {
-                boolean added = addOutput(node, parent);
-                if (!added) {
-                    root.add(node);
-                }
-            }
-            //        } else if (language) {
-            //            addExpression(node, parent);
-            //        } else {
-            //            boolean added = addOutput(node, parent);
-            //            if (!added) {
-            //                root.add(node);
-            //            }
-        }
-        stack.push(node);
-        */
-    }
-
-    private void addExpression(EipNode node, EipNode parent) {
-        EipNode last = !stack.isEmpty() ? stack.peek() : null;
-        if (last != null && last.isExpression()) {
-            last.addExpression(node);
-        } else if (parent != null) {
-            parent.addExpression(node);
-            //            if (parent.isExpression()) {
-            //                parent.addExpression(node);
-            //            } else if (parent.isOutput()) {
-            //                parent.addOutput(node);
-            //            } else {
-            //                addExpression(node, parent.getParent());
-            //            }
-        }
-    }
-
-    private boolean addOutput(EipNode node, EipNode parent) {
-        if (parent == null) {
-            return false;
-        }
-        if (parent.isOutput()) {
-            parent.addOutput(node);
-            return true;
-        } else {
-            return addOutput(node, parent.getParent());
-        }
-    }
-
-    public void writeText(String text) throws IOException {
-        EipNode node = stack.peek();
-        if (node != null) {
-            node.setText(text);
-        }
-    }
-
-    public void addAttribute(String key, Object value) throws IOException {
-        // skip unwanted IDs
-        if ("customId".equals(key)) {
+    public void startElement(String name) throws IOException {
+        if ("routes".equals(name)) {
+            routesIsRoot = true;
             return;
         }
 
-        EipNode node = stack.peek();
-        if (node != null) {
-            node.addProperty(key, value);
+        EipModel model = catalog.eipModel(name);
+        if (model == null) {
+            // not an EIP model
+            return;
+        }
+
+        EipModel parent = models.isEmpty() ? null : models.peek();
+        model.getMetadata().put("_parent", parent);
+        models.push(model);
+        if (parent == null) {
+            // its a root element
+            roots.add(model);
         }
     }
 
-    public void endElement() throws IOException {
-        if (!stack.isEmpty()) {
-            stack.pop();
+    public void startExpressionElement(String name) throws IOException {
+        // currently building an expression
+        this.expression = name;
+    }
+
+    public void endExpressionElement(String name) throws IOException {
+        // expression complete, back to normal mode
+        this.expression = null;
+    }
+
+    public void endElement(String name) throws IOException {
+        if ("routes".equals(name)) {
+            // we are done
+            writer.write(toYaml());
+            return;
         }
-        if (stack.isEmpty()) {
+
+        EipModel model = catalog.eipModel(name);
+        if (model == null) {
+            // not an EIP model
+            return;
+        }
+
+        EipModel last = models.isEmpty() ? null : models.peek();
+        if (last != null && isLanguage(last)) {
+            if (!models.isEmpty()) {
+                models.pop();
+            }
+            // okay we ended a language which we need to set on a parent EIP
+            EipModel parent = models.isEmpty() ? null : models.peek();
+            if (parent != null) {
+                String key = expressionName(parent, expression);
+                if (key != null) {
+                    parent.getMetadata().put(key, last);
+                }
+            }
+            return;
+        }
+
+        if (last != null) {
+            if (!models.isEmpty()) {
+                models.pop();
+            }
+            // is this input/output on the parent
+            EipModel parent = models.isEmpty() ? null : models.peek();
+            if (parent != null) {
+                if ("from".equals(name) && parent.isInput()) {
+                    // only set input once
+                    parent.getMetadata().put("_input", last);
+                } else if ("choice".equals(parent.getName())) {
+                    // special for choice/doCatch/doFinally
+                    setMetadata(parent, name, last);
+                } else if (parent.isOutput()) {
+                    List<EipModel> list = (List<EipModel>) parent.getMetadata().get("_output");
+                    if (list == null) {
+                        list = new ArrayList<>();
+                        parent.getMetadata().put("_output", list);
+                    }
+                    list.add(last);
+                } else if ("marshal".equals(parent.getName()) || "unmarshal".equals(parent.getName())) {
+                    parent.getMetadata().put("_dataFormatType", last);
+                }
+            }
+        }
+
+        if (models.isEmpty() && !routesIsRoot) {
             // we are done
             writer.write(toYaml());
         }
     }
 
-    /**
-     * Write a string to the underlying writer
-     */
-    private void write(String str) throws IOException {
-        getWriter().write(str);
+    public void writeText(String name, String text) throws IOException {
+        EipModel last = models.isEmpty() ? null : models.peek();
+        if (last != null) {
+            // special as writeText can be used for list of string values
+            setMetadata(last, name, text);
+        }
     }
 
-    /**
-     * Get the string used as line separator or LS if not set.
-     *
-     * @return the line separator
-     * @see    System#lineSeparator()
-     */
-    protected String getLineSeparator() {
-        return lineSeparator;
+    public void writeValue(String value) throws IOException {
+        EipModel last = models.isEmpty() ? null : models.peek();
+        if (last != null) {
+            String key = valueName(last);
+            if (key != null) {
+                last.getMetadata().put(key, value);
+            }
+        }
     }
 
-    /**
-     * Get the underlying writer
-     *
-     * @return the underlying writer
-     */
-    protected Writer getWriter() {
-        return writer;
+    public void addAttribute(String name, Object value) throws IOException {
+        EipModel last = models.isEmpty() ? null : models.peek();
+        if (last != null) {
+            last.getMetadata().put(name, value);
+        }
+    }
+
+    private EipNode asExpressionNode(EipModel model, String name) {
+        EipNode node = new EipNode(name, null, false, true);
+        doAsNode(model, node);
+        return node;
+    }
+
+    private EipNode asNode(EipModel model) {
+        EipNode node = new EipNode(model.getName(), null, false, false);
+        doAsNode(model, node);
+        return node;
+    }
+
+    private void doAsNode(EipModel model, EipNode node) {
+        for (Map.Entry<String, Object> entry : model.getMetadata().entrySet()) {
+            String key = entry.getKey();
+            if ("_input".equals(key)) {
+                EipModel m = (EipModel) entry.getValue();
+                node.setInput(asNode(m));
+            } else if ("_output".equals(key)) {
+                List<EipModel> list = (List) entry.getValue();
+                for (EipModel m : list) {
+                    node.addOutput(asNode(m));
+                }
+            } else if ("choice".equals(node.getName()) && "otherwise".equals(key)) {
+                EipModel other = (EipModel) entry.getValue();
+                node.addOutput(asNode(other));
+            } else if ("choice".equals(node.getName()) && "when".equals(key)) {
+                Object v = entry.getValue();
+                if (v instanceof List) {
+                    // can be a list in choice
+                    List<EipModel> list = (List) v;
+                    for (EipModel m : list) {
+                        node.addOutput(asNode(m));
+                    }
+                } else {
+                    node.addOutput(asNode((EipModel) v));
+                }
+            } else if (("marshal".equals(node.getName()) || "unmarshal".equals(node.getName()))
+                    && "_dataFormatType".equals(key)) {
+                EipModel other = (EipModel) entry.getValue();
+                node.addOutput(asNode(other));
+            } else {
+                boolean skip = key.startsWith("_") || key.equals("customId");
+                if (skip) {
+                    continue;
+                }
+                String exp = null;
+                if (!isLanguage(model)) {
+                    // special for expressions that are a property where we need to use expression name as key
+                    exp = expressionName(model, key);
+                }
+                Object v = entry.getValue();
+                if (v instanceof EipModel) {
+                    EipModel m = (EipModel) entry.getValue();
+                    if (exp == null || "expression".equals(exp)) {
+                        v = asExpressionNode(m, m.getName());
+                    } else {
+                        v = asExpressionNode(m, exp);
+                    }
+                }
+                if (exp != null && v instanceof EipNode) {
+                    node.addExpression((EipNode) v);
+                } else {
+                    node.addProperty(key, v);
+                    if ("expression".equals(key)) {
+                        node.addProperty("language", model.getName());
+                    }
+                }
+            }
+        }
     }
 
     public String toYaml() {
-        StringBuilder sb = new StringBuilder();
-        for (EipNode node : root) {
-            String s = node.dump(0, spaces, lineSeparator, true);
-            sb.append(s);
-            sb.append(lineSeparator);
+        JsonArray arr = transformToJson(roots);
+
+        // parse JSON
+        try {
+            JsonNode jsonNodeTree = new ObjectMapper().readTree(arr.toJson());
+            // save it as YAML
+            YAMLMapper mapper = new YAMLMapper();
+            mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+            mapper.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+            mapper.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
+            String jsonAsYaml = mapper.writeValueAsString(jsonNodeTree);
+            // strip leading yaml indent of 2 spaces (because INDENT_ARRAYS_WITH_INDICATOR is enabled)
+            StringJoiner sj = new StringJoiner("\n");
+            for (String line : jsonAsYaml.split("\n")) {
+                if (line.startsWith("  ")) {
+                    line = line.substring(2);
+                }
+                sj.add(line);
+            }
+            sj.add(""); // end with empty line
+            jsonAsYaml = sj.toString();
+            return jsonAsYaml;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return sb.toString();
+    }
+
+    private JsonArray transformToJson(List<EipModel> models) {
+        JsonArray arr = new JsonArray();
+        for (EipModel model : models) {
+            JsonObject jo = asJSonNode(model);
+            arr.add(jo);
+        }
+        return arr;
+    }
+
+    @SuppressWarnings("unchecked")
+    private JsonObject asJSonNode(EipModel model) {
+        JsonObject answer = new JsonObject();
+        JsonObject jo = new JsonObject();
+        answer.put(model.getName(), jo);
+
+        for (Map.Entry<String, Object> entry : model.getMetadata().entrySet()) {
+            String key = entry.getKey();
+            boolean skip = key.equals("customId");
+            if (skip) {
+                continue;
+            }
+            Object value = entry.getValue();
+            if (value != null) {
+                if (value instanceof Collection<?>) {
+                    Collection<?> col = (Collection<?>) value;
+                    List list = new ArrayList<>();
+                    for (Object v : col) {
+                        Object r = v;
+                        if (r instanceof EipModel) {
+                            EipNode en = asNode((EipModel) r);
+                            value = en.asJsonObject();
+                            JsonObject wrap = new JsonObject();
+                            wrap.put(en.getName(), value);
+                            r = wrap;
+                        }
+                        list.add(r);
+                    }
+                    if ("_output".equals(key)) {
+                        key = "steps";
+                    }
+                    // special with "from" where outputs needs to be embedded
+                    if (jo.containsKey("from")) {
+                        jo = jo.getMap("from");
+                    }
+                    jo.put(key, list);
+                } else {
+                    if (value instanceof EipModel) {
+                        EipNode r = asNode((EipModel) value);
+                        value = r.asJsonObject();
+                        jo.put(r.getName(), value);
+                    } else {
+                        jo.put(key, value);
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void setMetadata(EipModel model, String name, Object value) {
+        // special for choice
+        boolean array = isArray(model, name);
+        if (array) {
+            List list = (List) model.getMetadata().get(name);
+            if (list == null) {
+                list = new ArrayList<>();
+                model.getMetadata().put(name, list);
+            }
+            list.add(value);
+        } else {
+            model.getMetadata().put(name, value);
+        }
+    }
+
+    private static String valueName(EipModel model) {
+        return model.getOptions().stream()
+                .filter(o -> "value".equals(o.getKind()))
+                .map(BaseOptionModel::getName)
+                .findFirst().orElse(null);
+    }
+
+    private static String expressionName(EipModel model, String name) {
+        return model.getOptions().stream()
+                .filter(o -> "expression".equals(o.getKind()))
+                .map(BaseOptionModel::getName)
+                .filter(oName -> name == null || oName.equalsIgnoreCase(name))
+                .findFirst().orElse(null);
+    }
+
+    private static boolean isArray(EipModel model, String name) {
+        return model.getOptions().stream()
+                .filter(o -> o.getName().equalsIgnoreCase(name))
+                .map(o -> "array".equals(o.getType()))
+                .findFirst().orElse(false);
+    }
+
+    private static boolean isLanguage(EipModel model) {
+        return model.getJavaType().startsWith("org.apache.camel.model.language");
     }
 
 }

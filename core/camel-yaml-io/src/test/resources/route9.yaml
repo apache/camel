@@ -1,0 +1,9 @@
+- route:
+    id: myRoute9
+    from:
+      uri: timer:foo
+      steps:
+        - marshal:
+            csv: {}
+        - log:
+            message: "${body}"

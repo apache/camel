@@ -53,6 +53,7 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  */
 @JdkService(ModelToYAMLDumper.FACTORY)
 public class LwModelToYAMLDumper implements ModelToYAMLDumper {
+
     @Override
     public String dumpModelAsYaml(CamelContext context, NamedNode definition) throws Exception {
         return dumpModelAsYaml(context, definition, false, false);
@@ -208,7 +209,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
     /**
      * If the route has been built with endpoint-dsl, then the model will not have uri set which then cannot be included
-     * in the JAXB model dump
+     * in the model dump
      */
     @SuppressWarnings("rawtypes")
     private static void resolveEndpointDslUris(RouteDefinition route) {
