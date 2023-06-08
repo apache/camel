@@ -165,8 +165,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "separator": target.getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
-        case "sotimeout":
-        case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
         case "sortby":
         case "sortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
         case "sorter": target.setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
@@ -343,8 +341,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "separator": return org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class;
         case "shuffle": return boolean.class;
         case "sig": return java.lang.String.class;
-        case "sotimeout":
-        case "soTimeout": return int.class;
         case "sortby":
         case "sortBy": return java.lang.String.class;
         case "sorter": return java.util.Comparator.class;
@@ -522,8 +518,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "separator": return target.getConfiguration().getSeparator();
         case "shuffle": return target.isShuffle();
         case "sig": return target.getSig();
-        case "sotimeout":
-        case "soTimeout": return target.getConfiguration().getSoTimeout();
         case "sortby":
         case "sortBy": return target.getSortBy();
         case "sorter": return target.getSorter();

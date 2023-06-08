@@ -35,7 +35,7 @@ for this component:
 == URI format
 
 ----
-azure-files://host[:port]/share/directoryname[?options]
+azure-files://hostname[:port]/share/directoryname?token[&options]
 ----
 
 Where *directoryname* represents the underlying directory. The directory
@@ -150,18 +150,15 @@ Camel sets the following exchange properties
 |`CamelBatchComplete` |True if there are no more files in this batch.
 |=======================================================================
 
-== About timeouts
+== About Timeouts
 
-TODO rework
+You can use the `connectTimeout` option to set
+a timeout in millis to connect or disconnect. 
 
-The two set of libraries (see top) has different API for setting
-timeout. You can use the `connectTimeout` option for both of them to set
-a timeout in millis to establish a network connection. An individual
-`soTimeout` can also be set on the FTP/FTPS, which corresponds to using
-`ftpClient.soTimeout`. Notice SFTP will automatically use
-`connectTimeout` as its `soTimeout`. The `timeout` option only applies
-for FTP/FTPS as the data timeout, which corresponds to the
-`ftpClient.dataTimeout` value. All timeout values are in millis.
+The `timeout` option only applies as the data timeout in millis.
+
+The meta-data operations timeout is minimum of:
+`readLockCheckInterval`, `timeout` and 20_000 millis.
 
 == Using Local Work Directory
 
@@ -279,43 +276,11 @@ The sample below demonstrates how to use it:
 from("ftp://admin@localhost:2222/public/camel?antInclude=**/*.txt").to("...");
 ----
 
-== Using a proxy with SFTP
+== Using a proxy
 
-To use an HTTP proxy to connect to your remote host, you can configure
-your route in the following way:
+Consult the https://learn.microsoft.com/en-us/azure/developer/java/sdk/proxying[underlying library]
+documentation.
 
-[source,xml]
-----
-<!-- define our sorter as a plain spring bean -->
-<bean id="proxy" class="com.jcraft.jsch.ProxyHTTP">
-  <constructor-arg value="localhost"/>
-  <constructor-arg value="7777"/>
-</bean>
-
-<route>
-  <from uri="sftp://localhost:9999/root?username=admin&password=admin&proxy=#proxy"/>
-  <to uri="bean:processFile"/>
-</route>
-----
-
-You can also assign a user name and password to the proxy, if necessary.
-Please consult the documentation for `com.jcraft.jsch.Proxy` to discover
-all options.
-
-== Setting preferred SFTP authentication method
-
-If you want to explicitly specify the list of authentication methods
-that should be used by `sftp` component, use `preferredAuthentications`
-option. If for example you would like Camel to attempt to authenticate
-with private/public SSH key and fallback to user/password authentication
-in the case when no public key is available, use the following route
-configuration:
-
-[source,java]
-----
-from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthentications=publickey,password").
-  to("bean:processFile");
-----
 
 == Consuming a single file using a fixed name
 

@@ -63,6 +63,7 @@ or not implemented:
   - transferLoggingIntervalSeconds
   - transferLoggingVerbose
   - password
+  - soTimeout
 
 Basic `to("azure-files://...")` does not crash. 
 

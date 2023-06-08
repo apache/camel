@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.azure;
 
 import java.net.URI;
+import java.time.Duration;
 
 import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.ShareServiceClientBuilder;
@@ -48,13 +49,14 @@ import org.slf4j.LoggerFactory;
 
 // , extendsScheme = "file"   in FTPS but AzureBlob does not have it
 @UriEndpoint(firstVersion = "3.21.0", scheme = "azure-files", extendsScheme = "file", title = "Azure Files",
-             syntax = "azure-files://host/share",
-             category = { Category.CLOUD, Category.FILE }, headersClass = FilesHeaders.class)
+             syntax = "azure-files://host/share", category = {
+                     Category.CLOUD, Category.FILE },
+             headersClass = FilesHeaders.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,siteCommand,fastExistsCheck")
+                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,siteCommand,fastExistsCheck,soTimeout")
 @ManagedResource(description = "Managed Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 
@@ -88,7 +90,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     public FilesEndpoint() {
     }
 
-    public FilesEndpoint(String uri, RemoteFileComponent<ShareFileItem> component, FilesConfiguration configuration) {
+    public FilesEndpoint(String uri, RemoteFileComponent<ShareFileItem> component,
+                         FilesConfiguration configuration) {
         super(uri, component, configuration);
         this.configuration = configuration;
     }
@@ -173,10 +176,12 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     @Override
     public RemoteFileConsumer<ShareFileItem> createConsumer(Processor processor) throws Exception {
         if (isResumeDownload() && ObjectHelper.isEmpty(getLocalWorkDirectory())) {
-            throw new IllegalArgumentException("The option localWorkDirectory must be configured when resumeDownload=true");
+            throw new IllegalArgumentException(
+                    "The option localWorkDirectory must be configured when resumeDownload=true");
         }
         if (isResumeDownload() && !getConfiguration().isBinary()) {
-            throw new IllegalArgumentException("The option binary must be enabled when resumeDownload=true");
+            throw new IllegalArgumentException(
+                    "The option binary must be enabled when resumeDownload=true");
         }
         return super.createConsumer(processor);
     }
@@ -232,7 +237,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
 
     @Override
     protected GenericFileProcessStrategy<ShareFileItem> createGenericFileStrategy() {
-        return new FilesProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
+        return new FilesProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(),
+                getParamsAsMap());
     }
 
     @Override
@@ -250,7 +256,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
      * @throws Exception may throw client-specific exceptions if the client cannot be created
      */
     protected ShareServiceClient createClient() throws Exception {
-        // TODO take from signed protocol? it would be token only 
+        // TODO take from signed protocol? it would be token only
         ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost())
                 .sasToken(token().toURIQuery()).buildClient();
         return client;
@@ -324,4 +330,25 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         // unlike FTP, always binary
         return null;
     }
+
+    Duration getMetadataTimeout() {
+        var t1 = configuration.getTimeout();
+        var t2 = getReadLockCheckInterval();
+        if (t2 > 0 && t2 < t1) {
+            return Duration.ofMillis(t2);
+        }
+        if (t1 > 0) {
+            return Duration.ofMillis(t1);
+        }
+        return Duration.ofSeconds(20);
+    }
+
+    Duration getDataTimeout() {
+        var t1 = configuration.getTimeout();
+        if (t1 > 0) {
+            return Duration.ofMillis(t1);
+        }
+        return Duration.ofDays(10); // block
+    }
+
 }

@@ -29,6 +29,7 @@ import java.util.Stack;
 
 import com.azure.core.util.Context;
 import com.azure.storage.file.share.ShareDirectoryClient;
+import com.azure.storage.file.share.ShareFileClient;
 import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.models.ShareFileItem;
 import com.azure.storage.file.share.models.ShareFileRange;
@@ -81,10 +82,10 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
             throws GenericFileOperationFailedException {
         root = client.getShareClient(endpoint.getShare()).getRootDirectoryClient();
-        // TODO what about (starting) directory as the root? 
+        // TODO what about (starting) directory as the root?
         dirStack.push(root);
         // TODO translate runtime exception to Camel one?
-        return Boolean.TRUE.equals(root.exists());
+        return existsInCloud(root);
     }
 
     @Override
@@ -99,7 +100,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
-        root.forceCloseAllHandles(true, Duration.ofSeconds(3), Context.NONE);
+        var ms = endpoint.configuration.getConnectTimeout();
+        root.forceCloseAllHandles(true, Duration.ofMillis(ms), Context.NONE);
         root = null;
         dirStack = new Stack<>();
     }
@@ -156,7 +158,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
             changeCurrentDirectory(FilesPath.extractParentPath(from));
             var cwd = cwd();
-            log.debug("{}> mv {} {}", cwd.getDirectoryPath(), fileName, FilesPath.SHARE_ROOT + shareRelativeTo);
+            log.debug("{}> mv {} {}", cwd.getDirectoryPath(), fileName,
+                    FilesPath.SHARE_ROOT + shareRelativeTo);
             var file = cwd.getFileClient(fileName);
             file.rename(shareRelativeTo);
             return true;
@@ -168,18 +171,31 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @Override
-    public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+    public boolean buildDirectory(String directory, boolean absolute)
+            throws GenericFileOperationFailedException {
 
         reconnectIfNecessary(null);
 
         // otherwise to() fails:
-        //      org.apache.camel.component.file.GenericFileOperationFailedException: Cannot cd to the share root: not connected
-        //        at org.apache.camel.component.file.azure.FilesOperations.cd(FilesOperations.java:605) ~[classes/:na]
-        //        at org.apache.camel.component.file.azure.FilesOperations.changeCurrentDirectory(FilesOperations.java:563) ~[classes/:na]
-        //        at org.apache.camel.component.file.azure.FilesOperations.buildDirectory(FilesOperations.java:178) ~[classes/:na]
-        //        at org.apache.camel.component.file.GenericFileProducer.writeFile(GenericFileProducer.java:279) ~[camel-file-3.20.0.jar:3.20.0]
-        //        at org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173) ~[camel-file-3.20.0.jar:3.20.0]
-        //        at org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61) ~[classes/:na]
+        // org.apache.camel.component.file.GenericFileOperationFailedException: Cannot cd to the share
+        // root: not connected
+        // at org.apache.camel.component.file.azure.FilesOperations.cd(FilesOperations.java:605)
+        // ~[classes/:na]
+        // at
+        // org.apache.camel.component.file.azure.FilesOperations.changeCurrentDirectory(FilesOperations.java:563)
+        // ~[classes/:na]
+        // at
+        // org.apache.camel.component.file.azure.FilesOperations.buildDirectory(FilesOperations.java:178)
+        // ~[classes/:na]
+        // at
+        // org.apache.camel.component.file.GenericFileProducer.writeFile(GenericFileProducer.java:279)
+        // ~[camel-file-3.20.0.jar:3.20.0]
+        // at
+        // org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173)
+        // ~[camel-file-3.20.0.jar:3.20.0]
+        // at
+        // org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61)
+        // ~[classes/:na]
 
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
@@ -217,7 +233,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @Override
-    public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, Exchange exchange, long size)
+            throws GenericFileOperationFailedException {
         boolean answer;
         var backup = backup();
         try {
@@ -238,7 +255,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @Override
-    public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+    public void releaseRetrievedFileResources(Exchange exchange)
+            throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
         if (is != null) {
@@ -247,9 +265,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @SuppressWarnings({ "unchecked", "resource" })
-    private boolean retrieveFileToBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        GenericFile<ShareFileItem> target
-                = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+    private boolean retrieveFileToBody(String name, Exchange exchange)
+            throws GenericFileOperationFailedException {
+        GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         org.apache.camel.util.ObjectHelper.notNull(target,
                 "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
@@ -280,7 +298,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange, boolean resumeDownload)
+    private boolean retrieveFileToFileInLocalWorkDirectory(
+            String name, Exchange exchange,
+            boolean resumeDownload)
             throws GenericFileOperationFailedException {
         File temp;
         File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
@@ -310,7 +330,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             // in-progress download)
             if (local.exists()) {
                 if (!FileUtil.deleteFile(local)) {
-                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot delete existing local work file: " + local);
                 }
             }
 
@@ -326,11 +347,13 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             if (!resumeDownload) {
                 // delete any existing files
                 if (exists && !FileUtil.deleteFile(temp)) {
-                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot delete existing local work file: " + temp);
                 }
                 // create new temp local work file
                 if (!temp.createNewFile()) {
-                    throw new GenericFileOperationFailedException("Cannot create new local work file: " + temp);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot create new local work file: " + temp);
                 }
             }
 
@@ -343,7 +366,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             exchange.getIn().setHeader(FilesHeaders.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {
-            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
+            throw new GenericFileOperationFailedException(
+                    "Cannot create new local work file: " + local,
+                    e);
         }
 
         boolean result;
@@ -372,8 +397,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 range = new ShareFileRange(existingSize);
             }
             log.trace("Client retrieveFile: {}", remoteName);
-            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null, Duration.ofSeconds(300),
-                    Context.NONE);
+            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null,
+                    endpoint.getDataTimeout(), Context.NONE);
             result = ret.getStatusCode() == 200;
 
         } catch (RuntimeException e) {
@@ -388,7 +413,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 IOHelper.close(os, "retrieve: " + name, log);
                 boolean deleted = FileUtil.deleteFile(temp);
                 if (!deleted) {
-                    log.warn("Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
+                    log.warn(
+                            "Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
                             temp, name);
                 }
             }
@@ -419,7 +445,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @Override
-    public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, Exchange exchange, long size)
+            throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
@@ -452,20 +479,24 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         return answer;
     }
 
-    private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
+    private boolean doStoreFile(String name, String targetName, Exchange exchange)
+            throws GenericFileOperationFailedException {
         log.trace("doStoreFile({})", targetName);
 
         boolean existFile = false;
         // if an existing file already exists what should we do?
-        if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail
-                || endpoint.getFileExist() == GenericFileExist.Move || endpoint.getFileExist() == GenericFileExist.Append) {
+        if (endpoint.getFileExist() == GenericFileExist.Ignore
+                || endpoint.getFileExist() == GenericFileExist.Fail
+                || endpoint.getFileExist() == GenericFileExist.Move
+                || endpoint.getFileExist() == GenericFileExist.Append) {
             existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
                 log.trace("An existing file already exists: {}. Ignore and do not override it.", name);
                 return true;
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Fail) {
-                throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
+                throw new GenericFileOperationFailedException(
+                        "File already exist: " + name + ". Cannot write new file.");
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Move) {
                 // move any existing file first
                 this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, this, targetName);
@@ -490,7 +521,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 if (charset != null) {
                     // charset configured so we must convert to the desired
                     // charset so we can write with encoding
-                    is = new ByteArrayInputStream(exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
+                    is = new ByteArrayInputStream(
+                            exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
                     log.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
                     // is = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -544,12 +576,22 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         try {
             changeCurrentDirectory(directory);
             var file = cwd().getFileClient(onlyName);
-            return Boolean.TRUE.equals(file.exists());
+            return existsInCloud(file);
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
             restore(backup);
         }
+    }
+
+    private boolean existsInCloud(ShareDirectoryClient dirClient) {
+        return Boolean.TRUE.equals(
+                dirClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
+    }
+
+    private boolean existsInCloud(ShareFileClient fileClient) {
+        return Boolean.TRUE.equals(
+                fileClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
     }
 
     /**
@@ -593,7 +635,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 success = true;
             } else {
                 var subDir = cwd.getSubdirectoryClient(pathStep);
-                success = Boolean.TRUE.equals(subDir.exists());
+                success = existsInCloud(subDir);
                 if (success) {
                     dirStack.push(subDir);
                 }
@@ -602,8 +644,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
         if (!success) {
-            throw new GenericFileOperationFailedException(
-                    "Cannot cd(" + pathStep + ").");
+            throw new GenericFileOperationFailedException("Cannot cd(" + pathStep + ").");
         }
     }
 
@@ -629,8 +670,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         log.trace("{}> ls -a", cwd().getDirectoryPath());
         try {
             var withTS = new ShareListFilesAndDirectoriesOptions().setIncludeTimestamps(true);
-            // TODO configured timeout from poll interval
-            return cwd().listFilesAndDirectories(withTS, Duration.ofSeconds(20), null).stream().toArray(ShareFileItem[]::new);
+            return cwd().listFilesAndDirectories(withTS, endpoint.getMetadataTimeout(), Context.NONE)
+                    .stream().toArray(ShareFileItem[]::new);
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
@@ -652,7 +693,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean sendNoop() throws GenericFileOperationFailedException {
         log.trace("sendNoOp()");
-        return Boolean.TRUE.equals(root.exists());
+        return existsInCloud(root);
     }
 
     @Override
@@ -678,7 +719,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 dir = FileUtil.stripTrailingSeparator(dir);
 
                 var subDir = cwd().createSubdirectoryIfNotExists(dir);
-                success = Boolean.TRUE.equals(subDir.exists());
+                success = existsInCloud(subDir);
                 if (success) {
                     dirStack.push(subDir);
                 } else {
