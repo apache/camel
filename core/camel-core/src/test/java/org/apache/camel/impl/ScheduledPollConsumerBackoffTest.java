@@ -26,7 +26,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 @Isolated
 public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
 
