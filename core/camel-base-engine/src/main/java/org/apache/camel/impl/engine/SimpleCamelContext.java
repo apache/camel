@@ -547,7 +547,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. Add camel-xml-jaxb to classpath.");
+            throw new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. Add camel-xml-io to classpath.");
         }
     }
 

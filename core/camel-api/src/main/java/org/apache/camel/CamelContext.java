@@ -1394,16 +1394,38 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
-     * output and is therefore not recommended to be used for production usage.
+     * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
-     *
-     * @param dumpRoutes <tt>true</tt> to enable dumping routes.
+     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
      */
     void setDumpRoutes(Boolean dumpRoutes);
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended being used for production usage.
+     *
+     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     */
+    String getDumpRoutesFormat();
+
+    /**
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
+     *
+     * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
+     * output and is therefore not recommended being used for production usage.
+     *
+     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     *
+     * @param dumpRoutesFormat xml or yaml
+     */
+    void setDumpRoutesFormat(String dumpRoutesFormat);
 
     /**
      * Whether to enable using data type on Camel messages.

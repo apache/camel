@@ -253,6 +253,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean sourceLocationEnabled = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean dumpRoutes = Boolean.FALSE;
+    private String dumpRoutesFormat = "xml";
     private Boolean useMDCLogging = Boolean.FALSE;
     private String mdcLoggingKeysPattern;
     private Boolean useDataType = Boolean.FALSE;
@@ -3478,6 +3479,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setDumpRoutes(Boolean dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
+    }
+
+    @Override
+    public String getDumpRoutesFormat() {
+        return dumpRoutesFormat;
+    }
+
+    @Override
+    public void setDumpRoutesFormat(String dumpRoutesFormat) {
+        this.dumpRoutesFormat = dumpRoutesFormat;
     }
 
     @Override

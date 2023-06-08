@@ -49,6 +49,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "DevConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "dumproutes":
         case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "dumproutesformat":
+        case "DumpRoutesFormat": target.setDumpRoutesFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "executorservicemanager":
         case "ExecutorServiceManager": target.setExecutorServiceManager(property(camelContext, org.apache.camel.spi.ExecutorServiceManager.class, value)); return true;
         case "globaloptions":
@@ -168,6 +170,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "DevConsole": return java.lang.Boolean.class;
         case "dumproutes":
         case "DumpRoutes": return java.lang.Boolean.class;
+        case "dumproutesformat":
+        case "DumpRoutesFormat": return java.lang.String.class;
         case "executorservicemanager":
         case "ExecutorServiceManager": return org.apache.camel.spi.ExecutorServiceManager.class;
         case "globaloptions":
@@ -288,6 +292,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "DevConsole": return target.isDevConsole();
         case "dumproutes":
         case "DumpRoutes": return target.isDumpRoutes();
+        case "dumproutesformat":
+        case "DumpRoutesFormat": return target.getDumpRoutesFormat();
         case "executorservicemanager":
         case "ExecutorServiceManager": return target.getExecutorServiceManager();
         case "globaloptions":

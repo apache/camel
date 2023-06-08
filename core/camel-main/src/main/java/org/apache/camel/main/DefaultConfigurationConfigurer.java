@@ -239,6 +239,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setDumpRoutes(config.isDumpRoutes());
+        camelContext.setDumpRoutesFormat(config.getDumpRoutesFormat());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());

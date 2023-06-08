@@ -336,6 +336,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public void setDefaultFactoryFinder(FactoryFinder factoryFinder) {
+        factories.put(FactoryFinder.DEFAULT_PATH, factoryFinder);
+    }
+
+    @Override
     public FactoryFinder getBootstrapFactoryFinder() {
         if (bootstrapFactoryFinder == null) {
             synchronized (lock) {

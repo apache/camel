@@ -25,6 +25,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
+        case "defaultfactoryfinder":
+        case "DefaultFactoryFinder": target.setDefaultFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "errorhandlerfactory":
@@ -58,6 +60,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": return java.lang.String.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
+        case "defaultfactoryfinder":
+        case "DefaultFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
         case "description":
         case "Description": return java.lang.String.class;
         case "errorhandlerfactory":
@@ -92,6 +96,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": return target.getBasePackageScan();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
+        case "defaultfactoryfinder":
+        case "DefaultFactoryFinder": return target.getDefaultFactoryFinder();
         case "description":
         case "Description": return target.getDescription();
         case "errorhandlerfactory":
