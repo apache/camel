@@ -475,7 +475,7 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
                 ff = ffr.resolveDefaultFactoryFinder(classResolver);
                 answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
-              
+
                 answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                         new DependencyDownloaderComponentResolver(answer, stub));
                 answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
