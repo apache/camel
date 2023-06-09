@@ -49,7 +49,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         implements ApiEndpoint, PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
-    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());

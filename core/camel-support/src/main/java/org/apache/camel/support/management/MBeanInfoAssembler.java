@@ -338,8 +338,8 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private static final class ManagedAttributeInfo {
-        private String key;
-        private String description;
+        private final String key;
+        private final String description;
         private Method getter;
         private Method setter;
         private boolean mask;

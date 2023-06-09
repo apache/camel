@@ -27,7 +27,7 @@ import java.io.UnsupportedEncodingException;
  */
 class RecordableInputStream extends FilterInputStream {
     private final TrimmableByteArrayOutputStream buf;
-    private String charset;
+    private final String charset;
     private boolean recording;
 
     RecordableInputStream(InputStream in, String charset) {
