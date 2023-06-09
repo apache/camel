@@ -310,16 +310,18 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
         for (ApiMethod method : methods) {
             final List<String> methodArgs = method.getArgNames();
+            final HashSet<String> stringHashSet = new HashSet<>(methodArgs);
+
             switch (matchType) {
                 case EXACT:
                     // method must take all args, and no more
-                    if (methodArgs.containsAll(argNames) && argNames.containsAll(methodArgs)) {
+                    if (stringHashSet.containsAll(argNames) && argNames.containsAll(methodArgs)) {
                         result.add(method);
                     }
                     break;
                 case SUBSET:
                     // all args are required, method may take more
-                    if (methodArgs.containsAll(argNames)) {
+                    if (stringHashSet.containsAll(argNames)) {
                         result.add(method);
                     }
                     break;
@@ -327,7 +329,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 case SUPER_SET:
                     // all method args must be present
                     if (argNames.containsAll(methodArgs)) {
-                        if (methodArgs.containsAll(argNames)) {
+                        if (stringHashSet.containsAll(argNames)) {
                             // prefer exact match to avoid unused args
                             result.add(method);
                         } else if (result.isEmpty()) {
@@ -340,7 +342,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                         }
                     } else if (result.isEmpty() && extraArgs == null) {
                         // avoid looking for nullable args by checking for empty result and extraArgs
-                        if (withNullableArgsList != null && withNullableArgsList.containsAll(methodArgs)) {
+                        if (withNullableArgsList != null && new HashSet<>(withNullableArgsList).containsAll(methodArgs)) {
                             if (nullArgs == null) {
                                 nullArgs = new ArrayList<>();
                             }
