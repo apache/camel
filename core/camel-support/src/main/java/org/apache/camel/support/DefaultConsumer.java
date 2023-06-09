@@ -272,13 +272,11 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
         private final DefaultConsumer consumer;
         private final Exchange exchange;
-        private final boolean pooled;
         private final boolean autoRelease;
 
         public DefaultConsumerCallback(DefaultConsumer consumer, Exchange exchange, boolean autoRelease) {
             this.consumer = consumer;
             this.exchange = exchange;
-            this.pooled = exchange instanceof PooledExchange;
             this.autoRelease = autoRelease;
         }
 
