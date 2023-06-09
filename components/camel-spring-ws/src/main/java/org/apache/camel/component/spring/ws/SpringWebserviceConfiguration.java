@@ -81,7 +81,7 @@ public class SpringWebserviceConfiguration {
     private EndpointMappingType endpointMappingType;
     @UriPath(label = "consumer", name = "lookupKey")
     private String endpointMappingLookupKey;
-    @UriPath(label = "consumer")
+    @UriParam(label = "consumer")
     private String expression;
     private transient XPathExpression xPathExpression;
     @UriParam(label = "consumer")
