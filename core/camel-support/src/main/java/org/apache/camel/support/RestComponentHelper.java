@@ -101,8 +101,7 @@ public final class RestComponentHelper {
      * @return                    a string of the component route url
      * @throws URISyntaxException - is thrown if uri has invalid syntax.
      */
-    public static String createRestConsumerUrl(String componentName, String verb, String path, Map<String, Object> queryMap)
-            throws URISyntaxException {
+    public static String createRestConsumerUrl(String componentName, String verb, String path, Map<String, Object> queryMap) {
         String query = URISupport.createQueryString(queryMap);
         return applyFormatAndQuery("%s:%s:%s", query, componentName, verb, path);
     }
@@ -117,8 +116,7 @@ public final class RestComponentHelper {
      * @return                    a string of the component route url
      * @throws URISyntaxException - is thrown if uri has invalid syntax.
      */
-    public static String createRestConsumerUrl(String componentName, String path, Map<String, Object> queryMap)
-            throws URISyntaxException {
+    public static String createRestConsumerUrl(String componentName, String path, Map<String, Object> queryMap) {
         String query = URISupport.createQueryString(queryMap);
         return applyFormatAndQuery("%s:/%s", query, componentName, path);
     }
@@ -137,8 +135,7 @@ public final class RestComponentHelper {
      * @throws URISyntaxException - is thrown if uri has invalid syntax.
      */
     public static String createRestConsumerUrl(
-            String componentName, String scheme, String host, int port, String path, Map<String, Object> queryMap)
-            throws URISyntaxException {
+            String componentName, String scheme, String host, int port, String path, Map<String, Object> queryMap) {
 
         String query = URISupport.createQueryString(queryMap);
 
