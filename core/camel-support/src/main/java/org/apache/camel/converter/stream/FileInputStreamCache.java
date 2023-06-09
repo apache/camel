@@ -165,7 +165,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         return getInputStream().transferTo(out);
     }
 
-    protected InputStream getInputStream() throws IOException {
+    private InputStream getInputStream() throws IOException {
         if (stream == null) {
             stream = createInputStream(file);
         }
