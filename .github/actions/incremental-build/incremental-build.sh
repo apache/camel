@@ -18,7 +18,7 @@ set -e
 #
 
 # Modify maven options here if needed
-MVN_DEFAULT_OPTS="-Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Dmaven.artifact.threads=25 -Daether.dependencyCollector.impl=bf"
+MVN_DEFAULT_OPTS="-Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -e -Dmaven.artifact.threads=25 -Daether.dependencyCollector.impl=bf"
 MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
 
 maxNumberOfBuildableProjects=100
