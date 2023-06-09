@@ -499,7 +499,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
                     length = knownLength.intValue();
                 } else {
-                    log.warn("No file length header, so converting body to byte[].  It might be memory intensive.");
+                    log.warn(
+                            "No file length header, so converting body to byte[].  It might be memory intensive.");
                     var bytes = exchange.getIn().getMandatoryBody(byte[].class);
                     length = bytes.length;
                     is = new ByteArrayInputStream(bytes);
@@ -582,7 +583,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (FilesPath.isEmpty(path) || path.equals(FilesPath.CWD)) {
+        if (FilesPath.isEmpty(path) || path.equals(FilesPath.CWD)
+                || path.equals(FilesPath.SHARE_ROOT + getCurrentDirectory())) {
             return;
         }
 
@@ -593,8 +595,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     private void trivialCd(String pathStep) {
-        // TODO blank step like " " could be valid, but Windows trims trailing spaces
-        if (pathStep == null || FilesPath.CWD.equals(pathStep) || pathStep.isBlank()) {
+        if (FilesPath.isEmptyStep(pathStep)) {
             return;
         }
 

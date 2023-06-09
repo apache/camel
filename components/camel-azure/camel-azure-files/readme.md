@@ -66,6 +66,7 @@ or not implemented:
   - transferLoggingVerbose
   - password
   - soTimeout
+  - ignoreFileNotFoundOrPermissionError
 
 Basic `to("azure-files://...")` does not crash. 
 

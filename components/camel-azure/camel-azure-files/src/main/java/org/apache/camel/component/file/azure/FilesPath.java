@@ -25,6 +25,7 @@ public class FilesPath {
     }
 
     public static boolean isEmptyStep(String path) {
+        // TODO blank step like " " could be valid, but Windows trims trailing spaces
         return isEmpty(path) || path.equals(CWD);
     }
 

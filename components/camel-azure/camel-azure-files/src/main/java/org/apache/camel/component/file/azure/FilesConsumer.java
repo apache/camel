@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.azure.storage.file.share.models.ShareFileItem;
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedResource;
@@ -92,16 +91,15 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected boolean pollDirectory(
-            String fileName, List<GenericFile<ShareFileItem>> fileList,
+            String path, List<GenericFile<ShareFileItem>> fileList,
             int depth) {
-        String currentDir = null;
-        currentDir = operations.getCurrentDirectory();
+        LOG.trace("pollDirectory({},,{})", path, depth);
 
-        fileName = FileUtil.stripTrailingSeparator(fileName);
+        String backup = operations.getCurrentDirectory();
 
-        boolean answer = doPollDirectory(fileName, null, fileList, depth);
-        if (currentDir != null) {
-            operations.changeCurrentDirectory(FilesPath.SHARE_ROOT + currentDir);
+        boolean answer = doPollDirectory(FileUtil.stripTrailingSeparator(path), null, fileList, depth);
+        if (backup != null) {
+            operations.changeCurrentDirectory(FilesPath.SHARE_ROOT + backup);
         }
 
         return answer;
@@ -118,12 +116,12 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected boolean doPollDirectory(
-            String absolutePath, String dirName,
+            String path, String dirName,
             List<GenericFile<ShareFileItem>> fileList, int depth) {
-        LOG.trace("doPollDirectory({},{},,{}", absolutePath, dirName, depth);
+        LOG.trace("doPollDirectory({},{},,{})", path, dirName, depth);
 
         dirName = FileUtil.stripTrailingSeparator(dirName);
-        var dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+        var dir = ObjectHelper.isNotEmpty(dirName) ? dirName : path;
         operations.changeCurrentDirectory(dir);
 
         var files = listFiles(dir);
@@ -140,7 +138,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
 
         for (var file : files) {
-            if (handleFiles(absolutePath, fileList, depth + 1, files, file)) {
+            if (handleFiles(path, fileList, depth + 1, files, file)) {
                 return false;
             }
         }
@@ -149,7 +147,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private boolean handleFiles(
-            String absolutePath, List<GenericFile<ShareFileItem>> fileList,
+            String path, List<GenericFile<ShareFileItem>> fileList,
             int depth, ShareFileItem[] files, ShareFileItem file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Item[name={}, dir={}, file={}]", file.getName(), file.isDirectory(),
@@ -162,11 +160,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
 
         if (file.isDirectory()) {
-            if (handleDirectory(absolutePath, fileList, depth, files, file)) {
+            if (handleDirectory(path, fileList, depth, files, file)) {
                 return true;
             }
         } else {
-            handleFile(absolutePath, fileList, depth, files, file);
+            handleFile(path, fileList, depth, files, file);
         }
         return false;
     }
@@ -189,9 +187,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private void handleFile(
-            String absolutePath, List<GenericFile<ShareFileItem>> fileList, int depth,
+            String path, List<GenericFile<ShareFileItem>> fileList, int depth,
             ShareFileItem[] files, ShareFileItem file) {
-        RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file);
+        RemoteFile<ShareFileItem> remote = asRemoteFile(path, file);
         if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
             // matched file so add
             fileList.add(remote);
@@ -199,9 +197,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private ShareFileItem[] listFiles(String dir) {
-        // unused param
+        // TODO unused param
         try {
-            LOG.trace("Polling directory: {}", dir);
             return operations.listFiles();
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
@@ -231,15 +228,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return false;
     }
 
-    @Override
-    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
-        if (getEndpoint().getConfiguration().isIgnoreFileNotFoundOrPermissionError()) {
-            LOG.warn("The IgnoreFileNotFoundOrPermissionError option is not supported.");
-        }
-        return super.ignoreCannotRetrieveFile(name, exchange, cause);
-    }
-
-    private RemoteFile<ShareFileItem> asRemoteFile(String absolutePath, ShareFileItem file) {
+    private RemoteFile<ShareFileItem> asRemoteFile(String path, ShareFileItem file) {
         RemoteFile<ShareFileItem> answer = new RemoteFile<>();
 
         answer.setEndpointPath(endpointPath);
@@ -252,15 +241,10 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         answer.setDirectory(file.isDirectory());
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
 
-        boolean absolute = FilesPath.isAbsolute(absolutePath);
+        boolean absolute = FilesPath.isAbsolute(path);
         answer.setAbsolute(absolute);
 
-        String pseudoAbsoluteFileName = FilesPath.concat(absolutePath, file.getName());
-        if (absolute) {
-            // a gem from FTP component, if absolute start with a leading separator otherwise let it be
-            // relative
-            pseudoAbsoluteFileName = FilesPath.SHARE_ROOT + pseudoAbsoluteFileName;
-        }
+        String pseudoAbsoluteFileName = FilesPath.concat(path, file.getName());
         answer.setAbsoluteFilePath(pseudoAbsoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path
@@ -268,9 +252,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         String relativePath = StringHelper.after(pseudoAbsoluteFileName, endpointPath);
         relativePath = FilesPath.ensureRelative(relativePath);
         answer.setRelativeFilePath(relativePath);
-
-        // the file name should be the relative path
-        answer.setFileName(answer.getRelativeFilePath());
+        answer.setFileName(relativePath);
 
         return answer;
     }
