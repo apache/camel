@@ -26,9 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.ITestSupport;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
-import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +49,6 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    // this logger is used both by this class as well as FromJmsToJdbcIdempotentConsumerToJmsXaTest, so why not static
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private JdbcTemplate jdbcTemplate;
@@ -64,7 +61,6 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        ITestSupport.getPort2();
         return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsTest.xml");
     }
 
@@ -83,7 +79,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     }
 
     @Test
-    void testJmsToJdbcJmsCommit() throws Exception {
+    void testJmsToJdbcJmsCommit() {
         checkInitialState();
 
         mockA.expectedMessageCount(1);
@@ -104,7 +100,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     }
 
     @Test
-    void testJmsToJdbcJmsRollbackAtA() throws Exception {
+    void testJmsToJdbcJmsRollbackAtA() {
         checkInitialState();
 
         mockA.expectedMessageCount(7);
@@ -121,16 +117,18 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
-        // check that there is no message in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
-        assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
+        // Start by checking the DLQ queue to prevent a mix-up between client and server resources being part of the same transaction
 
         // the message should have been moved to the AMQ DLQ queue
         assertEquals("A", consumer.receiveBody("activemq2:queue:DLQ", 3000));
+
+        // check that there is no message in the database and JMS queue
+        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
+        assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
     }
 
     @Test
-    void testJmsToJdbcJmsRollbackAtB() throws Exception {
+    void testJmsToJdbcJmsRollbackAtB() {
         checkInitialState();
 
         mockA.expectedMessageCount(7);
@@ -147,16 +145,18 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
-        // check that there is no message in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
-        assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
+        // Start by checking the DLQ queue to prevent a mix-up between client and server resources being part of the same transaction
 
         // the message should have been moved to the AMQ DLQ queue
         assertEquals("B", consumer.receiveBody("activemq2:queue:DLQ", 3000));
+
+        // check that there is no message in the database and JMS queue
+        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
+        assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
     }
 
     @Test
-    void testFilterIdempotent() throws Exception {
+    void testFilterIdempotent() {
         checkInitialState();
 
         mockA.expectedMessageCount(3);
@@ -179,7 +179,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     }
 
     @Test
-    void testRetryAfterException() throws Exception {
+    void testRetryAfterException() {
         checkInitialState();
 
         mockA.expectedMessageCount(4);
@@ -226,13 +226,11 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                IdempotentRepository repository
-                        = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
-
                 from("activemq2:queue:inbox")
                         .transacted("required")
                         .to(mockA)
-                        .idempotentConsumer(header("uid"), repository)
+                        .idempotentConsumer(header("uid"))
+                        .idempotentRepository("messageIdRepository")
                         .to(mockB)
                         .transform(simple("DONE-${body}"))
                         .to("activemq2:queue:outbox");

@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class JmsPollingConsumerTest extends JmsTestSupport {
 
     @Test
@@ -36,7 +34,8 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
+
+        CompletableFuture.runAsync(() -> {
             String body = consumer.receiveBody("sjms:queue.start", String.class);
             template.sendBody("sjms:queue.foo", body + " Claus");
         });
@@ -56,7 +55,7 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
+        CompletableFuture.runAsync(() -> {
             String body = consumer.receiveBodyNoWait("sjms:queue.start", String.class);
             assertNull(body, "Should be null");
 
@@ -69,6 +68,9 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
         template.sendBody("direct:start", "Hello");
 
         MockEndpoint.assertIsSatisfied(context);
+
+        // Consume the message
+        consumer.receiveBody("sjms:queue.start", String.class);
     }
 
     @Test
@@ -78,7 +80,7 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
+        CompletableFuture.runAsync(() -> {
             String body = consumer.receiveBody("sjms:queue.start", 100, String.class);
             assertNull(body, "Should be null");
 
@@ -91,6 +93,9 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
         template.sendBody("direct:start", "Hello");
 
         MockEndpoint.assertIsSatisfied(context);
+
+        // Consume the message
+        consumer.receiveBody("sjms:queue.start", String.class);
     }
 
     @Test
@@ -100,7 +105,7 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
+        CompletableFuture.runAsync(() -> {
             String body = consumer.receiveBody("sjms:queue.start", 3000, String.class);
             template.sendBody("sjms:queue.foo", body + " Claus");
         });
@@ -124,5 +129,4 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
             }
         };
     }
-
 }

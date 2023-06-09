@@ -53,7 +53,7 @@
         <activemq-artemis-version>2.28.0</activemq-artemis-version>
         <angus-mail-version>2.0.1</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
-        <apache-drill-version>1.21.0</apache-drill-version>
+        <apache-drill-version>1.21.1</apache-drill-version>
         <apicurio-version>1.1.27</apicurio-version>
         <arangodb-java-version>6.20.0</arangodb-java-version>
         <as2-lib-version>4.11.0</as2-lib-version>
@@ -69,14 +69,14 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.75</aws-java-sdk2-version>
-        <aws-xray-version>2.6.1</aws-xray-version>
+        <aws-java-sdk2-version>2.20.82</aws-java-sdk2-version>
+        <aws-xray-version>2.14.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.13</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
         <bouncycastle-version>1.73</bouncycastle-version>
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
-        <braintree-gateway-version>3.23.0</braintree-gateway-version>
+        <braintree-gateway-version>3.24.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.6</caffeine-version>
@@ -102,7 +102,7 @@
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.9.0</commons-dbcp2-version>
         <commons-exec-version>1.3</commons-exec-version>
-        <commons-io-version>2.11.0</commons-io-version>
+        <commons-io-version>2.13.0</commons-io-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.12.0</commons-lang3-version>
         <commons-logging-version>1.2</commons-logging-version>
@@ -222,7 +222,7 @@
         <huaweicloud-obs-version>3.23.3</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.38</huaweicloud-sdk-version>
         <ical4j-version>1.0.7</ical4j-version>
-        <icu4j-version>72.1</icu4j-version>
+        <icu4j-version>73.1</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
         <infinispan-version>14.0.9.Final</infinispan-version>
@@ -320,10 +320,9 @@
         <jython-standalone-version>2.7.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <kafka-version>3.4.0</kafka-version>
-        <kafka-debezium-version>3.3.1</kafka-debezium-version>
         <kotlin-version>1.8.21</kotlin-version>
-        <kubernetes-client-version>6.7.0</kubernetes-client-version>
-        <kubernetes-model-version>6.7.0</kubernetes-model-version>
+        <kubernetes-client-version>6.7.1</kubernetes-client-version>
+        <kubernetes-model-version>6.7.1</kubernetes-model-version>
         <kudu-version>1.16.0</kudu-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
@@ -365,7 +364,7 @@
         <metrics-version>4.2.17</metrics-version>
         <micrometer-version>1.11.0</micrometer-version>
         <micrometer-tracing-version>1.1.1</micrometer-tracing-version>
-        <microprofile-config-version>3.0.2</microprofile-config-version>
+        <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milo-version>0.6.8</milo-version>
         <milo-guava-version>31.1-jre</milo-guava-version>
@@ -398,7 +397,7 @@
         <openapi-generator>6.2.1</openapi-generator>
         <openjpa-version>3.2.2</openjpa-version>
         <openstack4j-version>3.10</openstack4j-version>
-        <opentelemetry-version>1.23.1</opentelemetry-version>
+        <opentelemetry-version>1.26.0</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.37.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
@@ -445,9 +444,9 @@
         <slf4j-api-version>2.0.6</slf4j-api-version>
         <slf4j-version>2.0.6</slf4j-version>
         <smack-version>4.3.5</smack-version>
-        <smallrye-config-version>3.1.1</smallrye-config-version>
-        <smallrye-health-version>4.0.1</smallrye-health-version>
-        <smallrye-fault-tolerance-version>6.1.0</smallrye-fault-tolerance-version>
+        <smallrye-config-version>3.2.1</smallrye-config-version>
+        <smallrye-health-version>4.0.2</smallrye-health-version>
+        <smallrye-fault-tolerance-version>6.2.3</smallrye-fault-tolerance-version>
         <snakeyaml-version>2.0</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
         <snmp4j-version>2.8.15</snmp4j-version>

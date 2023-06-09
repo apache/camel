@@ -75,7 +75,8 @@ public class BeansDefinition {
 
     // this is the only way I found to generate usable Schema without imports, while allowing elements
     // from different namespaces
-    @ExternalSchemaElement(names = { "bean", "alias" }, namespace = "http://www.springframework.org/schema/beans",
+    @ExternalSchemaElement(names = { "beans", "bean", "alias" },
+                           namespace = "http://www.springframework.org/schema/beans",
                            documentElement = "beans")
     @XmlAnyElement
     private List<Element> springBeans = new ArrayList<>();

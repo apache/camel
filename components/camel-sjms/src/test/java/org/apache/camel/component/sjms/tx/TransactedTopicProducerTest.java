@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedTopicProducerTest extends JmsTestSupport {
 
-    private static final String CONNECTION_ID = "test-connection-1";
+    private static final String CONNECTION_ID = "TransactedTopicProducerTest-connection";
 
     @Produce
     protected ProducerTemplate template;
@@ -71,7 +71,7 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
             public void configure() {
 
                 from("direct:start")
-                        .to("sjms:topic:test.topic?transacted=true")
+                        .to("sjms:topic:test.TransactedTopicProducerTest.topic?transacted=true")
                         .process(
                                 new Processor() {
                                     @Override
@@ -85,7 +85,7 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
                                     }
                                 });
 
-                from("sjms:topic:test.topic?durableSubscriptionName=bar&transacted=true")
+                from("sjms:topic:test.TransactedTopicProducerTest.topic?durableSubscriptionName=bar&transacted=true")
                         .to("mock:result");
 
             }

@@ -438,6 +438,13 @@ If you do not want Camel JBang to download over the internet, you can turn this 
 camel run foo.java --download=false
 ----
 
+If you do not want Camel JBang to use your existing Maven settings file, you can use:
+
+[source,bash]
+----
+camel run foo.java --maven-settings=false
+----
+
 [#_adding_custom_jars]
 === Adding custom JARs
 
@@ -1589,6 +1596,8 @@ And these annotations should work on all runtimes
 - `@org.apache.camel.BindToRegistry` on a method to create a bean by invoking the method.
 - `@org.apache.camel.Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
 
+IMPORTANT: You can use `@BeanInject` annotation to refer to existing bean annotated with `@BindToRegistry`, however this is possibe if the dependency is registered before the dependant.
+
 ==== Using Spring Boot dependency injection
 
 You can use the following Spring Boot annotations:
@@ -1606,6 +1615,146 @@ You can use the following Quarkus annotations:
 - `@javax.inject.Inject` to dependency inject a bean on a class field. `@javax.inject.Named` can be used to specify the bean id.
 - `@org.eclipse.microprofile.config.inject.ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
 - `@javax.enterprise.inject.Produces` on a method to create a bean by invoking the method. `@javax.inject.Named` can be used to specify the bean id.
+
+==== Using beans in Camel XML DSL
+
+Since Camel *4.0.0*, when using xref:components:others:java-xml-io-dsl.adoc[XML DSL] we can declare additional beans in similar way as in xref:components:others:yaml-dsl.adoc[YAML DSL]. Such beans will be added to xref:registry.adoc[Registry] and can be referred to for example from routes.
+
+[source,xml]
+----
+<camel>
+
+	<bean name="beanFromMap" type="com.acme.MyBean">
+		<properties>
+			<property key="foo" value="bar" />
+		</properties>
+	</bean>
+
+</camel>
+----
+
+The properties of the bean can be defined using either nested `<property>` and `<properties>` elements or using dotted properties style, as shown in the example below:
+
+[source,xml]
+----
+<camel>
+
+    <!-- nested properties style -->
+	<bean name="beanFromMap" type="com.acme.MyBean">
+		<properties>
+			<property key="field1" value="f1_p" />
+			<property key="field2" value="f2_p" />
+			<property key="nested">
+				<properties>
+					<property key="field1" value="nf1_p" />
+					<property key="field2" value="nf2_p" />
+				</properties>
+			</property>
+		</properties>
+	</bean>
+
+    <!-- dotted properties style -->
+	<bean name="beanFromProps" type="com.acme.MyBean">
+		<properties>
+			<property key="field1" value="f1_p" />
+			<property key="field2" value="f2_p" />
+			<property key="nested.field1" value="nf1_p" />
+			<property key="nested.field2" value="nf2_p" />
+		</properties>
+	</bean>
+
+</camel>
+----
+
+==== Using Spring beans in Camel XML DSL
+
+Since Camel *4.0.0*, when using xref:components:others:java-xml-io-dsl.adoc[XML DSL], we can also declare _beans_ using Spring Beans XML namespace. All these beans will be added to xref:registry.adoc[Registry].
+
+This will not make the application managed by Spring Framework / Spring Boot. Simply Camel will leverage existing support for generic bean definition including:
+
+* dependency injection
+* constructor injection
+* dependency cycles
+* wiring existing Camel objects (like `org.apache.camel.CamelContext`)
+
+xref:components:others:java-xml-io-dsl.adoc[XML DSL] allows to use XML documents that define routes, rests and route templates. Since Camel *4.0.0* these documents may use new root XML element (either `<camel>` or `<beans>` to resemble Spring XML DSL), where other Camel elements (like `<routes>`) are contained.
+
+Here's an example `camel.xml` file, which defines both the routes and beans used (referred to) by the route definition:
+
+.camel.xml
+[source,xml]
+----
+<camel>
+
+    <beans xmlns="http://www.springframework.org/schema/beans">
+        <bean id="messageString" class="java.lang.String">
+            <constructor-arg index="0" value="Hello"/>
+        </bean>
+
+        <bean id="greeter" class="org.apache.camel.main.app.Greeter">
+            <description>Spring Bean</description>
+            <property name="message">
+                <bean class="org.apache.camel.main.app.GreeterMessage">
+                    <property name="msg" ref="messageString"/>
+                </bean>
+            </property>
+        </bean>
+    </beans>
+
+    <route id="my-route">
+        <from uri="direct:start"/>
+        <bean ref="greeter"/>
+        <to uri="mock:finish"/>
+    </route>
+
+</camel>
+----
+
+This document contains embedded `<beans>` element using Spring Beans XML namespace (`http://www.springframework.org/schema/beans`) - Camel passes this element directly to Spring `org.springframework.beans.factory.xml.XmlBeanDefinitionReader` and all read beans are used to populate xref:registry.adoc[Camel Registry].
+
+The beans declared this way may use references to some predefined Camel beans. Currently these are handled:
+
+* "CamelContext" - an instance of current `org.apache.camel.CamelContext`
+* "MainConfiguration" - an instance of `org.apache.camel.main.MainConfigurationProperties` used for `org.apache.camel.main.KameletMain`
+
+So we can use this XML fragment without actually defining what `CamelContext` is.
+
+[source,xml]
+----
+<camel>
+
+    <beans xmlns="http://www.springframework.org/schema/beans">
+        <bean id="greeter" class="org.apache.camel.main.app.Greeter">
+            <property name="camelContext" ref="CamelContext"/>
+            <!-- ... -->
+        </bean>
+    </beans>
+
+    <route id="my-route">
+        <from uri="direct:start"/>
+        <bean ref="greeter"/>
+        <to uri="mock:finish"/>
+    </route>
+
+</camel>
+----
+
+What's more, we can declare some additional beans that can affect internal mechanics of `CamelContext` being run. `org.apache.camel.main.DefaultConfigurationConfigurer` is used by xref:components:others:main.adoc[Camel Main] to configure `CamelContext` using beans found in xref:registry.adoc[Camel Registry].
+
+For example we can customize used `org.apache.camel.spi.UuidGenerator` with this XML fragment to replace UUID generator used by Camel (which defaults to `org.apache.camel.support.DefaultUuidGenerator`):
+
+[source,xml]
+----
+<camel>
+
+    <beans xmlns="http://www.springframework.org/schema/beans">
+        <bean id="customUUIDGenerator" class="org.apache.camel.support.ShortUuidGenerator" />
+    </beans>
+
+</camel>
+----
+
+That's it - Camel context will then look up for the instances of `org.apache.camel.spi.UuidGenerator` and if one is found, it'll be used by Camel.
 
 === Debugging
 

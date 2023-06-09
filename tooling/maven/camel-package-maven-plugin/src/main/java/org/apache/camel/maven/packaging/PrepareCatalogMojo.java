@@ -18,6 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -56,6 +59,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
 
 import static org.apache.camel.maven.packaging.MojoHelper.getComponentPath;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
@@ -183,6 +192,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
     @Component
     protected MavenProjectHelper projectHelper;
 
+    @Component
+    private RepositorySystem repoSystem;
+
+    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
+    private RepositorySystemSession repoSession;
+
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true)
+    private List<RemoteRepository> repositories;
+
     private Collection<Path> allJsonFiles;
     private Collection<Path> allPropertiesFiles;
     private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
@@ -195,6 +213,67 @@ public class PrepareCatalogMojo extends AbstractMojo {
             return name.substring(0, name.length() - ".adoc".length());
         }
         return name;
+    }
+
+    /**
+     * Gives the {@code target/classes} directory if it already exists, otherwise downloads the corresponding artifact
+     * and unzips its content into the {@code target/classes} directory to support incremental build.
+     *
+     * @param  componentRootDirectory the root directory of a given component
+     * @return                        the path to the {@code target/classes} directory.
+     */
+    private Path getComponentClassesDirectory(Path componentRootDirectory) {
+        Path result = componentRootDirectory.resolve("target/classes");
+        if (Files.exists(result)) {
+            return result;
+        }
+        String artifactId = componentRootDirectory.getFileName().toString();
+        ArtifactRequest req = new ArtifactRequest()
+                .setRepositories(this.repositories)
+                .setArtifact(new DefaultArtifact("org.apache.camel", artifactId, "jar", project.getVersion()));
+        try {
+            ArtifactResult resolutionResult = this.repoSystem.resolveArtifact(this.repoSession, req);
+            File file = resolutionResult.getArtifact().getFile();
+            if (file != null && file.exists()) {
+                unzipArtifact(result, file);
+            }
+        } catch (Exception e) {
+            getLog().warn("Artifact %s could not be resolved.".formatted(artifactId), e);
+        }
+
+        return result;
+    }
+
+    /**
+     * Unzips the given jar file into the given target directory.
+     *
+     * @param  targetDirectory the target directory
+     * @param  jarFile         the jar file to unzip
+     * @throws IOException     if an error occurs while unzipping the file.
+     */
+    private void unzipArtifact(Path targetDirectory, File jarFile) throws IOException {
+        Path targetRoot = targetDirectory.normalize();
+        try (FileSystem fs = FileSystems.newFileSystem(URI.create("jar:%s".formatted(jarFile.toURI())), Map.of())) {
+            for (Path root : fs.getRootDirectories()) {
+                try (Stream<Path> walk = Files.walk(root)) {
+                    walk.forEach(
+                            source -> {
+                                Path target = targetRoot.resolve(root.relativize(source).toString()).normalize();
+                                if (target.startsWith(targetRoot)) {
+                                    try {
+                                        if (Files.isDirectory(source)) {
+                                            Files.createDirectories(target);
+                                        } else {
+                                            Files.copy(source, target);
+                                        }
+                                    } catch (IOException e) {
+                                        getLog().warn("Could not copy %s to %s.".formatted(source, target), e);
+                                    }
+                                }
+                            });
+                }
+            }
+        }
     }
 
     /**
@@ -217,7 +296,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                          .filter(dir -> !"target".equals(dir.getFileName().toString()))
                          .flatMap(p -> getComponentPath(p).stream())
                          .filter(dir -> Files.isDirectory(dir.resolve("src")))
-                         .map(p -> p.resolve("target/classes"))
+                         .map(this::getComponentClassesDirectory)
                          .flatMap(PackageHelper::walk)
                          .filter(Files::isRegularFile)) {
                 stream

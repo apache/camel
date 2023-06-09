@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.artemis.services;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.server.JournalType;
+import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -34,6 +35,7 @@ public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
 
         configuration.setPersistenceEnabled(true);
         configuration.setJournalType(JournalType.NIO);
+        configuration.setMaxDiskUsage(98);
 
         try {
             configuration.addAcceptorConfiguration("in-vm", brokerURL);
@@ -43,6 +45,7 @@ public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
         }
         configuration.addAddressSetting("#",
                 new AddressSettings()
+                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
                         .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
                         .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 

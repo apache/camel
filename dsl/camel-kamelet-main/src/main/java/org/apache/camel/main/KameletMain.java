@@ -16,12 +16,20 @@
  */
 package org.apache.camel.main;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.Supplier;
+
+import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
@@ -71,6 +79,10 @@ import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.AbstractResource;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -446,37 +458,41 @@ public class KameletMain extends MainCommandLineSupport {
 
             KnownDependenciesResolver known = new KnownDependenciesResolver(answer);
             known.loadKnownDependencies();
-            DependencyDownloaderPropertyBindingListener listener
-                    = new DependencyDownloaderPropertyBindingListener(answer, known);
-            answer.getCamelContextExtension().getRegistry()
-                    .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
-            answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
-                    new DependencyDownloaderStrategy(answer));
+            if (download) {
+                DependencyDownloaderPropertyBindingListener listener
+                        = new DependencyDownloaderPropertyBindingListener(answer, known);
+                answer.getCamelContextExtension().getRegistry()
+                        .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
+                answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
+                        new DependencyDownloaderStrategy(answer));
 
-            // download class-resolver
-            ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, known);
-            answer.setClassResolver(classResolver);
-            // re-create factory finder with download class-resolver
-            FactoryFinderResolver ffr = PluginHelper.getFactoryFinderResolver(answer);
-            FactoryFinder ff = ffr.resolveBootstrapFactoryFinder(classResolver);
-            answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
-            ff = ffr.resolveDefaultFactoryFinder(classResolver);
-            answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
-
-            answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
-                    new DependencyDownloaderComponentResolver(answer, stub));
-            answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
-                    new DependencyDownloaderUriFactoryResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
-                    new DependencyDownloaderDataFormatResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
-                    new DependencyDownloaderLanguageResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
-                    new DependencyDownloaderResourceLoader(answer));
+                // download class-resolver
+                ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, known);
+                answer.setClassResolver(classResolver);
+                // re-create factory finder with download class-resolver
+                FactoryFinderResolver ffr = PluginHelper.getFactoryFinderResolver(answer);
+                FactoryFinder ff = ffr.resolveBootstrapFactoryFinder(classResolver);
+                answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
+                ff = ffr.resolveDefaultFactoryFinder(classResolver);
+                answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
+              
+                answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
+                        new DependencyDownloaderComponentResolver(answer, stub));
+                answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
+                        new DependencyDownloaderUriFactoryResolver(answer));
+                answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
+                        new DependencyDownloaderDataFormatResolver(answer));
+                answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
+                        new DependencyDownloaderLanguageResolver(answer));
+                answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
+                        new DependencyDownloaderResourceLoader(answer));
+            }
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
-            answer.addService(new DependencyDownloaderKamelet(answer));
-            answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
-                    new DownloadModelineParser(answer));
+            if (download) {
+                answer.addService(new DependencyDownloaderKamelet(answer));
+                answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
+                        new DownloadModelineParser(answer));
+            }
 
             // reloader
             String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
@@ -588,6 +604,80 @@ public class KameletMain extends MainCommandLineSupport {
         sb.append(" in ").append(System.getProperty("user.dir"));
 
         return sb.toString();
+    }
+
+    @Override
+    protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config, Registry registry) {
+        // camel-kamelet-main has access to Spring libraries, so we can grab XML documents representing
+        // actual Spring Beans and read them using Spring's BeanFactory to populate Camel registry
+        final Map<String, Document> xmls = new TreeMap<>();
+
+        Map<String, Document> springBeansDocs = registry.findByTypeWithName(Document.class);
+        if (springBeansDocs != null) {
+            springBeansDocs.forEach((id, doc) -> {
+                if (id.startsWith("spring-document:")) {
+                    xmls.put(id, doc);
+                }
+            });
+        }
+
+        // we _could_ create something like org.apache.camel.spring.spi.ApplicationContextBeanRepository, but
+        // wrapping DefaultListableBeanFactory and use it as one of the
+        // org.apache.camel.support.DefaultRegistry.repositories, but for now let's use it to populate
+        // Spring registry and then copy the beans (whether the scope is)
+        final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        beanFactory.setAllowCircularReferences(true); // for now
+
+        // register some existing beans (the list may change)
+        // would be nice to keep the documentation up to date: docs/user-manual/modules/ROOT/pages/camel-jbang.adoc
+        Set<String> infraBeanNames = Set.of("CamelContext", "MainConfiguration");
+        beanFactory.registerSingleton("CamelContext", camelContext);
+        beanFactory.registerSingleton("MainConfiguration", config);
+        // ...
+
+        // instead of generating an MX parser for spring-beans.xsd and use it to read the docs, we can simply
+        // pass w3c Documents directly to Spring
+        final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        xmls.forEach((id, doc) -> {
+            reader.registerBeanDefinitions(doc, new AbstractResource() {
+                @Override
+                public String getDescription() {
+                    return id;
+                }
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    return new ByteArrayInputStream(new byte[0]);
+                }
+            });
+        });
+
+        // for full interaction between Spring ApplicationContext and its BeanFactory see
+        // org.springframework.context.support.AbstractApplicationContext.refresh()
+        // see org.springframework.context.support.AbstractApplicationContext.prepareBeanFactory() to check
+        // which extra/infra beans are added
+
+        beanFactory.freezeConfiguration();
+        beanFactory.preInstantiateSingletons();
+
+        for (String name : beanFactory.getBeanDefinitionNames()) {
+            if (infraBeanNames.contains(name)) {
+                continue;
+            }
+            BeanDefinition def = beanFactory.getBeanDefinition(name);
+            if (def.isSingleton()) {
+                // just grab the singleton and put into registry
+                registry.bind(name, beanFactory.getBean(name));
+            } else {
+                // rely on the bean factory to implement prototype scope
+                registry.bind(name, (Supplier<Object>) () -> beanFactory.getBean(name));
+            }
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // TODO: manage BeanFactory as a field and clear the beans here
     }
 
     private static String getPid() {

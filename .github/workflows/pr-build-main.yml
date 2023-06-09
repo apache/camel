@@ -100,3 +100,50 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           start-commit: ${{ github.event.pull_request.base.sha }}
           end-commit: ${{ github.event.after }}
+  incremental-checkstyle:
+    if: github.repository == 'apache/camel'
+    # Mark as optional since it is experimental
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+      - name: mvn checkstyle
+        uses: ./.github/actions/incremental-build
+        with:
+          checkstyle: true
+          log: incremental-checkstyle.log
+          pr-id: ${{ github.event.number }}
+  incremental-build:
+    if: github.repository == 'apache/camel'
+    # Mark as optional since it is experimental
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17' ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - id: install-packages
+        uses: ./.github/actions/install-packages
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+      - name: maven build
+        uses: ./.github/actions/incremental-build
+        with:
+          checkstyle: false
+          log: incremental-build.log
+          pr-id: ${{ github.event.number }}

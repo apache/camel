@@ -19,6 +19,7 @@ package org.apache.camel.component.jira;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 import org.apache.camel.Converter;
@@ -34,20 +35,13 @@ public final class FileConverter {
     @Converter
     public static File genericToFile(GenericFile<File> genericFile, Exchange exchange) throws IOException {
         Object body = genericFile.getBody();
-        File file;
+        File file = null;
+        Path path;
         if (body instanceof byte[]) {
             byte[] bos = (byte[]) body;
-            String destDir = System.getProperty("java.io.tmpdir");
-            if (destDir != null && !destDir.endsWith(File.separator)) {
-                destDir += File.separator;
-            }
-            file = new File(destDir, genericFile.getFileName());
-            if (!file.getCanonicalPath().startsWith(destDir)) {
-                throw new IOException("File is not jailed to the destination directory");
-            }
-            Files.write(file.toPath(), bos, StandardOpenOption.CREATE);
-            // delete the temporary file on exit, as other routing may need the file for post processing
-            file.deleteOnExit();
+            path = Files.createTempFile(genericFile.getFileName(), null);
+            Files.write(path, bos, StandardOpenOption.CREATE);
+            path.toFile().deleteOnExit();
         } else {
             file = (File) body;
         }

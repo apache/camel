@@ -36,12 +36,12 @@ public class PahoToDTest extends PahoTestSupport {
     @Test
     public void testToD() throws Exception {
         MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedBodiesReceived("Hello bar", null); // issue with Artemis
+        bar.expectedBodiesReceived("Hello bar");
         MockEndpoint beer = getMockEndpoint("mock:beer");
         beer.expectedBodiesReceived("Hello beer");
 
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar.PahoToDTest");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer.PahoToDTest");
 
         bar.assertIsSatisfied();
         beer.assertIsSatisfied();
@@ -58,8 +58,8 @@ public class PahoToDTest extends PahoTestSupport {
                 // route message dynamic using toD
                 from("direct:start").toD("paho:${header.where}");
 
-                from("paho:bar").to("mock:bar");
-                from("paho:beer").to("mock:beer");
+                from("paho:bar.PahoToDTest").to("mock:bar");
+                from("paho:beer.PahoToDTest").to("mock:beer");
             }
         };
     }

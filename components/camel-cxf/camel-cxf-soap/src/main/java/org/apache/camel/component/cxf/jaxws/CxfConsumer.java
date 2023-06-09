@@ -91,7 +91,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         ret.getEndpoint().getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));
         // close the UnitOfWork normally
         ret.getEndpoint().getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
-
+        // close the UnitOfWork in case of Fault
+        ret.getEndpoint().getOutFaultInterceptors().add(new UnitOfWorkCloserInterceptor());
         return ret;
     }
 
