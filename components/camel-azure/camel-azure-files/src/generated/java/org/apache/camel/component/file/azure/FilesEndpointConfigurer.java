@@ -80,8 +80,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "idempotentKey": target.setIdempotentKey(property(camelContext, java.lang.String.class, value)); return true;
         case "idempotentrepository":
         case "idempotentRepository": target.setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
-        case "ignorefilenotfoundorpermissionerror":
-        case "ignoreFileNotFoundOrPermissionError": target.getConfiguration().setIgnoreFileNotFoundOrPermissionError(property(camelContext, boolean.class, value)); return true;
         case "inprogressrepository":
         case "inProgressRepository": target.setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
@@ -253,8 +251,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "idempotentKey": return java.lang.String.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
-        case "ignorefilenotfoundorpermissionerror":
-        case "ignoreFileNotFoundOrPermissionError": return boolean.class;
         case "inprogressrepository":
         case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "include": return java.lang.String.class;
@@ -427,8 +423,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "idempotentKey": return target.getIdempotentKey();
         case "idempotentrepository":
         case "idempotentRepository": return target.getIdempotentRepository();
-        case "ignorefilenotfoundorpermissionerror":
-        case "ignoreFileNotFoundOrPermissionError": return target.getConfiguration().isIgnoreFileNotFoundOrPermissionError();
         case "inprogressrepository":
         case "inProgressRepository": return target.getInProgressRepository();
         case "include": return target.getInclude();

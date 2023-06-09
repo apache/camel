@@ -584,7 +584,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
         if (FilesPath.isEmpty(path) || path.equals(FilesPath.CWD)
-                || path.equals(FilesPath.SHARE_ROOT + getCurrentDirectory())) {
+                || path.equals(FilesPath.SHARE_ROOT + cwd().getDirectoryPath())) {
             return;
         }
 
