@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -99,7 +99,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
 
             CachedOutputStream cos = new CachedOutputStream(exchange);
             String s = "Test Message " + number;
-            cos.write(s.getBytes(Charset.forName("UTF-8")));
+            cos.write(s.getBytes(StandardCharsets.UTF_8));
             cos.close();
             InputStream is = (InputStream) cos.newStreamCache();
 
