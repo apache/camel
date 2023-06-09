@@ -11575,7 +11575,7 @@ Set whether recursive keys are allowed. Default value: false
       
   </xs:complexType>
     
-  <xs:complexType name="yamlTypeFilterDefinition">
+  <xs:complexType final="extension restriction" name="yamlTypeFilterDefinition">
         
     <xs:sequence/>
         
@@ -13834,7 +13834,11 @@ Reference to the rest-dsl.
             
       <xs:extension base="tns:noOutputDefinition">
                 
-        <xs:sequence/>
+        <xs:sequence>
+                    
+          <xs:element minOccurs="0" name="loggingLevel" type="xs:string"/>
+                  
+        </xs:sequence>
                 
         <xs:attribute name="resumeStrategy" type="xs:string" use="required">
           <xs:annotation>
@@ -13843,8 +13847,6 @@ Sets the resume strategy to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-                
-        <xs:attribute name="loggingLevel" type="xs:string"/>
                 
         <xs:attribute name="intermittent" type="xs:string">
           <xs:annotation>
