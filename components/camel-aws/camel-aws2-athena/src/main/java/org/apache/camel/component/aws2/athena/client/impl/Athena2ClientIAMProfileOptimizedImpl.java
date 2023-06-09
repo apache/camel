@@ -16,22 +16,18 @@
  */
 package org.apache.camel.component.aws2.athena.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.athena.Athena2Configuration;
 import org.apache.camel.component.aws2.athena.client.Athena2InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.athena.AthenaClient;
 import software.amazon.awssdk.services.athena.AthenaClientBuilder;
-import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS Athena client for all users to use. This implementation is for local instances to use a static and
@@ -63,14 +59,14 @@ public class Athena2ClientIAMProfileOptimizedImpl implements Athena2InternalClie
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (configuration.getProfileCredentialsName() != null) {
-                clientBuilder = clientBuilder
-                        .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            clientBuilder = clientBuilder
+                    .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         }
         client = clientBuilder.build();
         return client;
