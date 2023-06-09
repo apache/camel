@@ -303,6 +303,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
+            } else if ("route-dump".equals(action)) {
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                        .resolveById("route-dump");
+                if (dc != null) {
+                    String filter = root.getString("filter");
+                    String format = root.getString("format");
+                    JsonObject json
+                            = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "format", format));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             } else if ("route-controller".equals(action)) {
                 DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("route-controller");

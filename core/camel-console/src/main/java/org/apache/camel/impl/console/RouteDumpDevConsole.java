@@ -116,7 +116,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 if (dump != null) {
                     List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new StringReader(dump), null);
                     if (code != null) {
-                        jo.put("dump", code);
+                        jo.put("code", code);
                     }
                 }
             } catch (Exception e) {
