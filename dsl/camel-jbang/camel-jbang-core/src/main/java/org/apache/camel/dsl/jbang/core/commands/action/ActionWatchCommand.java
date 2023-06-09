@@ -36,7 +36,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
         int exit;
         if (watch) {
             do {
-                exit = doCall();
+                exit = doWatchCall();
                 if (exit == 0) {
                     // use 2-sec delay in watch mode
                     Thread.sleep(2000);

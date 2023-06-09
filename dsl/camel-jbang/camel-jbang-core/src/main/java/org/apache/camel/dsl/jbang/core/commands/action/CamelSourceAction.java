@@ -39,8 +39,8 @@ public class CamelSourceAction extends ActionBaseCommand {
 
     // TODO: strip license header
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
-    String name;
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    String name = "*";
 
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter source by filename (multiple names can be separated by comma)")
