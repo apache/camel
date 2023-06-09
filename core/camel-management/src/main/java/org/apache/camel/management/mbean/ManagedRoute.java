@@ -404,6 +404,28 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public String dumpRouteAsYaml() throws Exception {
+        return dumpRouteAsYaml(false, false);
+    }
+
+    @Override
+    public String dumpRouteAsYaml(boolean resolvePlaceholders) throws Exception {
+        return dumpRouteAsYaml(resolvePlaceholders, false);
+    }
+
+    @Override
+    public String dumpRouteAsYaml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
+        String id = route.getId();
+        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
+        if (def != null) {
+            return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders,
+                    resolveDelegateEndpoints);
+        }
+
+        return null;
+    }
+
+    @Override
     public String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         // in this logic we need to calculate the accumulated processing time for the processor in the route
         // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
