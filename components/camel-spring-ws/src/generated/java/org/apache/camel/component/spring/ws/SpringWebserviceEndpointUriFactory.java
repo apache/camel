@@ -67,7 +67,6 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         uri = buildPathParameter(syntax, uri, "type", null, false, copy);
         uri = buildPathParameter(syntax, uri, "lookupKey", null, false, copy);
         uri = buildPathParameter(syntax, uri, "webServiceEndpointUri", null, false, copy);
-        uri = buildPathParameter(syntax, uri, "expression", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
