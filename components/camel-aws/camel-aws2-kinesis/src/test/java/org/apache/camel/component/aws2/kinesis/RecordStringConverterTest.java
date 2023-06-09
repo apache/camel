@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.SdkBytes;
@@ -31,7 +31,7 @@ public class RecordStringConverterTest {
     @Test
     public void convertRecordToString() {
         Record record = Record.builder().sequenceNumber("1")
-                .data(SdkBytes.fromByteBuffer(ByteBuffer.wrap("this is a String".getBytes(Charset.forName("UTF-8"))))).build();
+                .data(SdkBytes.fromByteBuffer(ByteBuffer.wrap("this is a String".getBytes(StandardCharsets.UTF_8)))).build();
 
         String result = RecordStringConverter.toString(record);
         assertThat(result, is("this is a String"));
