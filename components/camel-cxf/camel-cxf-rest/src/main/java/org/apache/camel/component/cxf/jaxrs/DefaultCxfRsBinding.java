@@ -17,7 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -184,7 +184,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         String contentTypeHeader = ExchangeHelper.getContentType(camelExchange);
         if (contentTypeHeader != null) {
             String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
-            String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
+            String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, StandardCharsets.UTF_8.name());
             if (normalizedEncoding != null) {
                 camelExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedEncoding);
             }
