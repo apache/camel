@@ -49,38 +49,23 @@ public class Lambda2ClientIAMProfileOptimizedImpl implements Lambda2InternalClie
         this.configuration = configuration;
     }
 
-    /**
-     * Getting the Lambda aws client that is used.
-     *
-     * @return Amazon Lambda Client.
-     */
     @Override
     public LambdaClient getLambdaClient() {
         LambdaClient client = null;
         LambdaClientBuilder clientBuilder = LambdaClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
+            clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (configuration.getProfileCredentialsName() != null) {
-            if (isClientConfigFound) {
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
                         .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
-            } else {
-                clientBuilder = clientBuilder
-                        .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
