@@ -13151,10 +13151,6 @@ public class StaticEndpointBuilders {
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
      * 
-     * Path parameter: expression
-     * The XPath expression to use when option type=xpathresult. Then this
-     * option is required to be configured.
-     * 
      * @param path type:lookupKey:webServiceEndpointUri
      * @return the dsl builder
      */
@@ -13193,10 +13189,6 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
-     * 
-     * Path parameter: expression
-     * The XPath expression to use when option type=xpathresult. Then this
-     * option is required to be configured.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
