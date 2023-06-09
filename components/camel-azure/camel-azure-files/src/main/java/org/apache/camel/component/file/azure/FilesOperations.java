@@ -172,33 +172,28 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public boolean buildDirectory(String directory, boolean absolute)
             throws GenericFileOperationFailedException {
 
+        log.trace("buildDirectory({})", directory);
+
         reconnectIfNecessary(null);
 
         // otherwise to() fails:
         // org.apache.camel.component.file.GenericFileOperationFailedException: Cannot cd to the share
         // root: not connected
         // at org.apache.camel.component.file.azure.FilesOperations.cd(FilesOperations.java:605)
-        // ~[classes/:na]
         // at
         // org.apache.camel.component.file.azure.FilesOperations.changeCurrentDirectory(FilesOperations.java:563)
-        // ~[classes/:na]
         // at
         // org.apache.camel.component.file.azure.FilesOperations.buildDirectory(FilesOperations.java:178)
-        // ~[classes/:na]
         // at
         // org.apache.camel.component.file.GenericFileProducer.writeFile(GenericFileProducer.java:279)
-        // ~[camel-file-3.20.0.jar:3.20.0]
         // at
         // org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173)
-        // ~[camel-file-3.20.0.jar:3.20.0]
         // at
         // org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61)
-        // ~[classes/:na]
 
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
 
-        log.trace("buildDirectory({})", directory);
         var backup = backup();
         try {
 
@@ -233,16 +228,13 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean retrieveFile(String name, Exchange exchange, long size)
             throws GenericFileOperationFailedException {
+        log.trace("retrieveFile({})", name);
         boolean answer;
         var backup = backup();
         try {
-            log.trace("retrieveFile({})", name);
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
-                // local work directory is configured so we should store file
-                // content as files in this local directory
+            if (endpoint.getLocalWorkDirectory() != null) {
                 answer = retrieveFileToFileInLocalWorkDirectory(name, exchange, endpoint.isResumeDownload());
             } else {
-                // store file content directory as stream on the body
                 answer = retrieveFileToBody(name, exchange);
             }
         } finally {
@@ -255,7 +247,8 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public void releaseRetrievedFileResources(Exchange exchange)
             throws GenericFileOperationFailedException {
-        InputStream is = exchange.getIn().getHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+        log.trace("releaseRetrievedFileResources({})", exchange.getExchangeId());
+        var is = exchange.getIn().getHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
         if (is != null) {
             IOHelper.close(is);
@@ -265,13 +258,11 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @SuppressWarnings({ "unchecked", "resource" })
     private boolean retrieveFileToBody(String name, Exchange exchange)
             throws GenericFileOperationFailedException {
+        boolean success = false;
         GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         org.apache.camel.util.ObjectHelper.notNull(target,
                 "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
-        // change directory to path where the file is to be retrieved
-        // (must do this as some FTP servers cannot retrieve using
-        // absolute path)
         String path = FileUtil.onlyPath(name);
         if (path != null) {
             changeCurrentDirectory(path);
@@ -280,19 +271,24 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // directory
         String remoteName = FileUtil.stripPath(name);
 
-        log.trace("Client retrieveFile: {}", remoteName);
         if (endpoint.getConfiguration().isStreamDownload()) {
+            log.trace("Prepared {} for download as opened input stream.", remoteName);
             InputStream is = cwd().getFileClient(remoteName).openInputStream();
             target.setBody(is);
             exchange.getIn().setHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, is);
+            success = true;
         } else {
-            var bos = new ByteArrayOutputStream();
-            cwd().getFileClient(remoteName).download(bos);
-            IOHelper.close(bos);
-            target.setBody(bos.toByteArray());
+            log.trace("Downloading {} to byte[] body.", remoteName);
+            var os = new ByteArrayOutputStream();
+            ShareFileRange range = new ShareFileRange(0);
+            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null,
+                    endpoint.getDataTimeout(), Context.NONE);
+            success = ret.getStatusCode() == HTTP_OK;
+            IOHelper.close(os);
+            target.setBody(os.toByteArray());
         }
 
-        return true;
+        return success;
     }
 
     @SuppressWarnings("unchecked")
@@ -300,7 +296,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             String name, Exchange exchange,
             boolean resumeDownload)
             throws GenericFileOperationFailedException {
-        File temp;
+        File inProgress;
         File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
         OutputStream os;
         long existingSize = -1;
@@ -313,7 +309,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 
-            temp = new File(local, relativeName + ".inprogress");
+            inProgress = new File(local, relativeName + ".inprogress");
             local = new File(local, relativeName);
 
             // create directory to local work file
@@ -335,30 +331,28 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
             // if a previous file exists then store its current size as its a
             // partial download
-            boolean exists = temp.exists();
+            boolean exists = inProgress.exists();
             if (exists) {
-                existingSize = temp.length();
+                existingSize = inProgress.length();
             }
 
             // if we do not resume download, then delete any existing temp file
             // and create a new to use for in-progress download
             if (!resumeDownload) {
-                // delete any existing files
-                if (exists && !FileUtil.deleteFile(temp)) {
+                if (exists && !FileUtil.deleteFile(inProgress)) {
                     throw new GenericFileOperationFailedException(
-                            "Cannot delete existing local work file: " + temp);
+                            "Cannot delete existing local work file: " + inProgress);
                 }
-                // create new temp local work file
-                if (!temp.createNewFile()) {
+                if (!inProgress.createNewFile()) {
                     throw new GenericFileOperationFailedException(
-                            "Cannot create new local work file: " + temp);
+                            "Cannot create new local work file: " + inProgress);
                 }
             }
 
             // store content as a file in the local work directory in the temp
             // handle
             boolean append = resumeDownload && existingSize > 0;
-            os = new FileOutputStream(temp, append);
+            os = new FileOutputStream(inProgress, append);
 
             // set header with the path to the local work file
             exchange.getIn().setHeader(FilesHeaders.FILE_LOCAL_WORK_PATH, local.getPath());
@@ -376,15 +370,10 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             // store the java.io.File handle as the body
             target.setBody(local);
 
-            // change directory to path where the file is to be retrieved
-            // (must do this as some FTP servers cannot retrieve using
-            // absolute path)
             String path = FileUtil.onlyPath(name);
             if (path != null) {
                 changeCurrentDirectory(path);
             }
-            // remote name is now only the file name as we just changed
-            // directory
             String remoteName = FileUtil.stripPath(name);
 
             ShareFileRange range = new ShareFileRange(0);
@@ -394,7 +383,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 log.debug("Resuming download of file: {} at position: {}", remoteName, existingSize);
                 range = new ShareFileRange(existingSize);
             }
-            log.trace("Client retrieveFile: {}", remoteName);
+            log.trace("Downloading {} to local work directory.", remoteName);
             var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null,
                     endpoint.getDataTimeout(), Context.NONE);
             result = ret.getStatusCode() == HTTP_OK;
@@ -409,11 +398,11 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 // delete in progress file
                 // must close stream before deleting file
                 IOHelper.close(os, "retrieve: " + name, log);
-                boolean deleted = FileUtil.deleteFile(temp);
+                boolean deleted = FileUtil.deleteFile(inProgress);
                 if (!deleted) {
                     log.warn(
                             "Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
-                            temp, name);
+                            inProgress, name);
                 }
             }
             throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -425,17 +414,17 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         log.debug("Retrieve file to local work file result: {}", result);
 
         if (result) {
-            log.trace("Renaming local in progress file from: {} to: {}", temp, local);
+            log.trace("Renaming local in progress file from: {} to: {}", inProgress, local);
             // operation went okay so rename temp to local after we have
             // retrieved the data
             try {
-                if (!FileUtil.renameFile(temp, local, false)) {
+                if (!FileUtil.renameFile(inProgress, local, false)) {
                     throw new GenericFileOperationFailedException(
-                            "Cannot rename local work file from: " + temp + " to: " + local);
+                            "Cannot rename local work file from: " + inProgress + " to: " + local);
                 }
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(
-                        "Cannot rename local work file from: " + temp + " to: " + local, e);
+                        "Cannot rename local work file from: " + inProgress + " to: " + local, e);
             }
         }
 
