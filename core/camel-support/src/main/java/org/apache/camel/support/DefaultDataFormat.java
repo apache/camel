@@ -24,13 +24,4 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public abstract class DefaultDataFormat extends ServiceSupport implements DataFormat {
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

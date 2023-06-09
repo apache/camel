@@ -390,16 +390,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         ObjectHelper.notNull(getCamelContext(), "camelContext");
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
     /**
      * A factory method allowing derived components to create a new endpoint from the given URI, remaining path and
      * optional parameters
