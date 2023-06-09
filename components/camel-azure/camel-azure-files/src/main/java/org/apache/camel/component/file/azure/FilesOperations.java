@@ -87,7 +87,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // TODO what about (starting) directory as the root?
         dirStack.push(root);
         // TODO translate runtime exception to Camel one?
-        return existsInCloud(root);
+        return existsRemote(root);
     }
 
     @Override
@@ -117,13 +117,13 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         var backup = backup();
         try {
             changeCurrentDirectory(FileUtil.onlyPath(name));
-            return deleteInCloud(cwd(), FileUtil.stripPath(name));
+            return deleteRemote(cwd(), FileUtil.stripPath(name));
         } finally {
             restore(backup);
         }
     }
 
-    boolean deleteInCloud(ShareDirectoryClient dirClient, String fileName) {
+    boolean deleteRemote(ShareDirectoryClient dirClient, String fileName) {
         log.trace("{}> rm {}", dirClient.getDirectoryPath(), fileName);
         return Boolean.TRUE.equals(dirClient
                 .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE)
@@ -517,7 +517,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 log.trace("Client storeFile: {}", targetName);
                 var cwd = cwd();
                 var file = cwd.getFileClient(targetName);
-                deleteInCloud(cwd, targetName);
+                deleteRemote(cwd, targetName);
                 file.create(length);
                 try (var os = file.getFileOutputStream()) {
                     // TODO add data timeout
@@ -551,7 +551,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         try {
             changeCurrentDirectory(directory);
             var file = cwd().getFileClient(onlyName);
-            return existsInCloud(file);
+            return existsRemote(file);
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } finally {
@@ -559,12 +559,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
     }
 
-    private boolean existsInCloud(ShareDirectoryClient dirClient) {
+    private boolean existsRemote(ShareDirectoryClient dirClient) {
         return Boolean.TRUE.equals(
                 dirClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
     }
 
-    private boolean existsInCloud(ShareFileClient fileClient) {
+    private boolean existsRemote(ShareFileClient fileClient) {
         return Boolean.TRUE.equals(
                 fileClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
     }
@@ -610,7 +610,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 success = true;
             } else {
                 var subDir = cwd.getSubdirectoryClient(pathStep);
-                success = existsInCloud(subDir);
+                success = existsRemote(subDir);
                 if (success) {
                     dirStack.push(subDir);
                 }
@@ -668,13 +668,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean sendNoop() throws GenericFileOperationFailedException {
         log.trace("sendNoOp()");
-        return existsInCloud(root);
+        return existsRemote(root);
     }
 
     @Override
     public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         log.trace("sendSiteCommand({})", command);
-        // TODO any use
         return true;
     }
 
@@ -685,7 +684,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         boolean success = false;
         for (String dir : dirs) {
             sb.append(dir).append(FilesPath.PATH_SEPARATOR);
-            // must normalize the directory name
             String directory = endpoint.getConfiguration().normalizePath(sb.toString());
 
             if (!(FilesPath.isRoot(directory))) {
@@ -694,7 +692,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 dir = FileUtil.stripTrailingSeparator(dir);
 
                 var subDir = cwd().createSubdirectoryIfNotExists(dir);
-                success = existsInCloud(subDir);
+                success = existsRemote(subDir);
                 if (success) {
                     dirStack.push(subDir);
                 } else {
@@ -719,7 +717,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             reconnectRequired = true;
         }
         if (reconnectRequired) {
-            log.trace("Probing if the service share is connectible ...");
+            log.trace("Probing if the file service is connectible ...");
             connect(endpoint.getConfiguration(), exchange);
         }
     }

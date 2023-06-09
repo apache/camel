@@ -24,9 +24,18 @@ public class FilesPath {
         return path == null || path.isBlank();
     }
 
+    public static boolean isEmptyStep(String path) {
+        return isEmpty(path) || path.equals(CWD);
+    }
+
     public static boolean isRoot(String path) {
         // no ambiguity such as / or \
         return path != null && path.equals(SHARE_ROOT);
+    }
+
+    public static boolean isAbsolute(String path) {
+        // no ambiguity such as / or \
+        return path != null && path.startsWith(SHARE_ROOT);
     }
 
     public static String ensureRelative(String path) {
@@ -34,6 +43,30 @@ public class FilesPath {
             return path.substring(1);
         }
         return path;
+    }
+
+    public static String concat(String dir, String subPath) {
+        if (isEmptyStep(dir)) {
+            return subPath;
+        }
+        if (isEmptyStep(subPath)) {
+            return dir;
+        }
+        return hasTrailingSeparator(dir) ? dir + subPath : dir + PATH_SEPARATOR + subPath;
+    }
+
+    public static String trimTrailingSeparator(String path) {
+        if (path == null) {
+            return null;
+        }
+        if (hasTrailingSeparator(path)) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
+    }
+
+    public static boolean hasTrailingSeparator(String path) {
+        return path.charAt(path.length() - 1) == PATH_SEPARATOR;
     }
 
     public static String trimParentPath(String path) {
