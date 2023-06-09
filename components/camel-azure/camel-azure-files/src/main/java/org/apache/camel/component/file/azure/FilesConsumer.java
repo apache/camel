@@ -170,15 +170,15 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private boolean handleDirectory(
-            String absolutePath, List<GenericFile<ShareFileItem>> fileList,
+            String path, List<GenericFile<ShareFileItem>> fileList,
             int depth, ShareFileItem[] files, ShareFileItem file) {
-        RemoteFile<ShareFileItem> remote = asRemoteFile(absolutePath, file);
+        RemoteFile<ShareFileItem> remote = asRemoteFile(path, file);
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()
                 && isValidFile(remote, true, files)) {
             // recursive scan and add the sub files and folders
-            String subDirectory = file.getName();
-            String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
-            boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
+            String dirName = file.getName();
+            String dirPath = FilesPath.concat(path, dirName);
+            boolean canPollMore = pollSubDirectory(dirPath, dirName, fileList, depth);
             if (!canPollMore) {
                 return true;
             }
