@@ -42,7 +42,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 120;
+        return 121;
     }
 
     @Override
@@ -405,6 +405,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.io.InputStream) {
                 return org.apache.camel.converter.IOConverter.covertToByteBuffer((java.io.InputStream) value);
+            }
+        } else if (to == java.nio.file.Path.class) {
+            if (value instanceof java.io.File) {
+                return org.apache.camel.converter.IOConverter.toPath((java.io.File) value);
             }
         } else if (to == java.sql.Timestamp.class) {
             if (value instanceof java.lang.Long) {
@@ -812,6 +816,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.io.InputStream.class) {
+                return this;
+            }
+        } else if (to == java.nio.file.Path.class) {
+            if (from == java.io.File.class) {
                 return this;
             }
         } else if (to == java.sql.Timestamp.class) {

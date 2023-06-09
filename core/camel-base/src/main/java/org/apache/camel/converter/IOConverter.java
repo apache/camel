@@ -39,6 +39,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -307,6 +308,11 @@ public final class IOConverter {
             IOHelper.close(reader);
         }
         return prop;
+    }
+
+    @Converter(order = 37)
+    public static Path toPath(File file) {
+        return file.toPath();
     }
 
 }
