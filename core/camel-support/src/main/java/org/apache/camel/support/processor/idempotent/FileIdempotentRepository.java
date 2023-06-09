@@ -88,7 +88,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param fileStore the file store
      * @param cacheSize the cache size
      */
-    @SuppressWarnings("unchecked")
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize) {
         return fileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
     }
@@ -100,7 +99,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param cacheSize        the cache size
      * @param maxFileStoreSize the max size in bytes for the filestore file
      */
-    @SuppressWarnings("unchecked")
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
         FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
@@ -248,8 +246,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      *
      * Setting cache size is only possible when using the default {@link LRUCache} cache implementation.
      */
-    @SuppressWarnings("unchecked")
-    public void setCacheSize(int size) {
+        public void setCacheSize(int size) {
         if (cache != null && !(cache instanceof LRUCache)) {
             throw new IllegalArgumentException(
                     "Setting cache size is only possible when using the default LRUCache cache implementation");
@@ -489,7 +486,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ObjectHelper.notNull(fileStore, "fileStore", this);
 
