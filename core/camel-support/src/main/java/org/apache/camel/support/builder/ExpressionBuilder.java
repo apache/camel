@@ -1418,7 +1418,7 @@ public class ExpressionBuilder {
                 if (token != null) {
                     return new GroupTokenIterator(exchange, it, token, parts, skipFirst);
                 } else {
-                    return new GroupIterator(exchange, it, parts, skipFirst);
+                    return new GroupIterator(it, parts);
                 }
             }
 
