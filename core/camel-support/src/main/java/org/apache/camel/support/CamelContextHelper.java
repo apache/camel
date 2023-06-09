@@ -333,7 +333,7 @@ public final class CamelContextHelper {
                     if (size <= 0) {
                         throw new IllegalArgumentException(
                                 "Property " + property + " must be a positive number, was: "
-                                        + s);
+                                                           + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
