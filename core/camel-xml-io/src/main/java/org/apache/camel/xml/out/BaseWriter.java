@@ -58,8 +58,20 @@ public class BaseWriter {
         }
     }
 
+    protected void startOutputElement(String name) throws IOException {
+        startElement(name);
+    }
+
+    protected void startExpressionElement(String name) throws IOException {
+        startElement(name);
+    }
+
+    protected void endExpressionElement(String name) throws IOException {
+        writer.endElement(name);
+    }
+
     protected void endElement() throws IOException {
-        writer.endElement();
+        writer.endElement(null);
     }
 
     protected void endElement(String namespace) throws IOException {
@@ -73,8 +85,18 @@ public class BaseWriter {
         writer.writeText(text);
     }
 
-    protected void attribute(String name, String value) throws IOException {
-        writer.addAttribute(name, value);
+    protected void text(String name, String text) throws IOException {
+        writer.writeText(text);
+    }
+
+    protected void value(String value) throws IOException {
+        writer.writeText(value);
+    }
+
+    protected void attribute(String name, Object value) throws IOException {
+        if (value != null) {
+            writer.addAttribute(name, value.toString());
+        }
     }
 
     protected void domElements(List<Element> elements) throws IOException {

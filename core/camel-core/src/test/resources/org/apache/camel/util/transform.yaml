@@ -1,0 +1,12 @@
+- route:
+    id: myRoute
+    from:
+      uri: direct:start
+      steps:
+        - transform:
+            id: transform
+            simple:
+              expression: "Hello ${body}"
+        - to:
+            id: myMock
+            uri: mock:result

@@ -13266,6 +13266,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "intermittent", type = "boolean"),
+                    @YamlProperty(name = "logging-level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "resume-strategy", type = "string", required = true)
             }
     )
@@ -13296,6 +13297,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "intermittent": {
                     String val = asText(node);
                     target.setIntermittent(val);
+                    break;
+                }
+                case "logging-level": {
+                    String val = asText(node);
+                    target.setLoggingLevel(val);
                     break;
                 }
                 case "resume-strategy": {

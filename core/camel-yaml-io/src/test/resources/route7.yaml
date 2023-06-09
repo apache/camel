@@ -1,0 +1,27 @@
+- route:
+    id: myRoute7
+    from:
+      uri: direct:start7
+      steps:
+        - doTry:
+            steps:
+              - to:
+                  uri: mock:try1
+              - to:
+                  uri: mock:try2
+              - doCatch:
+                  exception:
+                    - java.io.IOException
+                  steps:
+                    - to:
+                        uri: mock:io1
+                    - to:
+                        uri: mock:io2
+              - doFinally:
+                  steps:
+                    - to:
+                        uri: mock:finally1
+                    - to:
+                        uri: mock:finally2
+        - to:
+            uri: mock:result

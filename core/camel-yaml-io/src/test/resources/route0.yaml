@@ -1,0 +1,13 @@
+- route:
+    id: myRoute0
+    from:
+      uri: timer:yaml
+      parameters:
+        period: 1234
+        includeMetadata: true
+      steps:
+        - setBody:
+            constant:
+              expression: Hello from yaml
+        - log:
+            message: "${body}"

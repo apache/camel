@@ -168,6 +168,16 @@ public final class StringHelper {
      * @return   <tt>true</tt> if the string starts and ends with either single or double quotes.
      */
     public static boolean isQuoted(String s) {
+        return isSingleQuoted(s) || isDoubleQuoted(s);
+    }
+
+    /**
+     * Whether the string starts and ends with single quotes.
+     *
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with single quotes.
+     */
+    public static boolean isSingleQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
         }
@@ -175,6 +185,21 @@ public final class StringHelper {
         if (s.startsWith("'") && s.endsWith("'")) {
             return true;
         }
+
+        return false;
+    }
+
+    /**
+     * Whether the string starts and ends with double quotes.
+     *
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with double quotes.
+     */
+    public static boolean isDoubleQuoted(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return false;
+        }
+
         if (s.startsWith("\"") && s.endsWith("\"")) {
             return true;
         }

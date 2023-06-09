@@ -1,0 +1,21 @@
+- route:
+    id: myRoute3
+    from:
+      uri: direct:start2
+      steps:
+        - aggregate:
+            correlationExpression:
+              header:
+                expression: myHeader
+            completionSizeExpression:
+              constant:
+                resultType: int.class
+                expression: 5
+            completionTimeoutExpression:
+              constant:
+                expression: 4000
+            steps:
+              - to:
+                  uri: kafka:line
+        - to:
+            uri: mock:result2

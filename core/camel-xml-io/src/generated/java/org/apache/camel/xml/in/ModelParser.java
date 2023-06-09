@@ -911,17 +911,12 @@ public class ModelParser extends BaseParser {
         return doParse(new ResumableDefinition(), (def, key, val) -> {
             switch (key) {
                 case "intermittent": def.setIntermittent(val); break;
+                case "loggingLevel": def.setLoggingLevel(val); break;
                 case "resumeStrategy": def.setResumeStrategy(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, (def, key) -> {
-            if ("loggingLevel".equals(key)) {
-                def.setLoggingLevel(doParseText());
-                return true;
-            }
-            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
-        }, noValueHandler());
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected RollbackDefinition doParseRollbackDefinition() throws IOException, XmlPullParserException {
         return doParse(new RollbackDefinition(), (def, key, val) -> {

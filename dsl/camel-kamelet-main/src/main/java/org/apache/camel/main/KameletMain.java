@@ -62,10 +62,13 @@ import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
@@ -462,7 +465,17 @@ public class KameletMain extends MainCommandLineSupport {
                         .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
                 answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
                         new DependencyDownloaderStrategy(answer));
-                answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
+
+                // download class-resolver
+                ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, known);
+                answer.setClassResolver(classResolver);
+                // re-create factory finder with download class-resolver
+                FactoryFinderResolver ffr = PluginHelper.getFactoryFinderResolver(answer);
+                FactoryFinder ff = ffr.resolveBootstrapFactoryFinder(classResolver);
+                answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
+                ff = ffr.resolveDefaultFactoryFinder(classResolver);
+                answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
+              
                 answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                         new DependencyDownloaderComponentResolver(answer, stub));
                 answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,

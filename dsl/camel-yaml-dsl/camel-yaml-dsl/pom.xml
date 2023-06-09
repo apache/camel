@@ -42,6 +42,7 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <camel-generate-yaml-writer>true</camel-generate-yaml-writer>
     </properties>
 
     <dependencies>

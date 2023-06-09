@@ -88,6 +88,20 @@ public final class URISupport {
     }
 
     /**
+     * Extracts the query parameters from the uri
+     *
+     * @param  uri the uri
+     * @return     query parameters, or <tt>null</tt> if no parameters
+     */
+    public static String extractQuery(String uri) {
+        int idx = uri.indexOf('?');
+        if (idx > -1) {
+            return uri.substring(idx + 1);
+        }
+        return null;
+    }
+
+    /**
      * Parses the query parameters of the uri (eg the query part).
      *
      * @param  uri                the uri

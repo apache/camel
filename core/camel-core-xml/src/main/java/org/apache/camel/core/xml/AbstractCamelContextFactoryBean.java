@@ -1215,7 +1215,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setMDCLoggingKeysPattern(CamelContextHelper.parseText(context, getMDCLoggingKeysPattern()));
         }
         if (getDumpRoutes() != null) {
-            context.setDumpRoutes(CamelContextHelper.parseBoolean(context, getDumpRoutes()));
+            context.setDumpRoutes(CamelContextHelper.parseText(context, getDumpRoutes()));
         }
         if (getUseDataType() != null) {
             context.setUseDataType(CamelContextHelper.parseBoolean(context, getUseDataType()));

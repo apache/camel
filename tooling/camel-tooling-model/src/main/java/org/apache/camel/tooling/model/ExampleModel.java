@@ -86,7 +86,6 @@ public class ExampleModel {
         if (middleFolder == null) {
             return fileName + "/" + readmeFileName;
         }
-
         return middleFolder + "/" + fileName + "/" + readmeFileName;
     }
 }

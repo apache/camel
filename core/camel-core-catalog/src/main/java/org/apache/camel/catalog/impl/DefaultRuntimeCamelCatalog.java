@@ -52,6 +52,20 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
         this.setJSonSchemaResolver(new CamelContextJSonSchemaResolver(camelContext));
     }
 
+    /**
+     * To turn caching on or off
+     */
+    public boolean isCaching() {
+        return caching;
+    }
+
+    /**
+     * To turn caching on or off
+     */
+    public void setCaching(boolean caching) {
+        this.caching = caching;
+    }
+
     @Override
     public void start() {
         // noop

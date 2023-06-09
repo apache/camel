@@ -42,6 +42,7 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     @Metadata(required = true, javaType = "org.apache.camel.resume.ResumeStrategy")
     private String resumeStrategy;
 
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
               enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;

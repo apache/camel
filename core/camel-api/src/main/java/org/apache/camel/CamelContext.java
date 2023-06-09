@@ -1388,22 +1388,22 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
      *
-     * @return <tt>true</tt> if dumping is enabled
+     * @return <tt>xml</tt>, or <tt>yaml</tt> if dumping is enabled
      */
-    Boolean isDumpRoutes();
+    String getDumpRoutes();
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
-     * output and is therefore not recommended to be used for production usage.
+     * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
      *
-     * @param dumpRoutes <tt>true</tt> to enable dumping routes.
+     * @param format xml or yaml
      */
-    void setDumpRoutes(Boolean dumpRoutes);
+    void setDumpRoutes(String format);
 
     /**
      * Whether to enable using data type on Camel messages.

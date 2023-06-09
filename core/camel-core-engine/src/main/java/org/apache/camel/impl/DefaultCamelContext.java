@@ -71,6 +71,7 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
@@ -153,6 +154,15 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     protected void doDumpRoutes() {
+        if ("yaml".equalsIgnoreCase(getDumpRoutes())) {
+            doDumpRoutesAsYaml();
+        } else {
+            // xml is default
+            doDumpRoutesAsXml();
+        }
+    }
+
+    protected void doDumpRoutesAsXml() {
         final ModelToXMLDumper dumper = PluginHelper.getModelToXMLDumper(this);
 
         int size = getRouteDefinitions().size();
@@ -206,6 +216,49 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 LOG.info("\n\n{}\n", xml);
             } catch (Exception e) {
                 LOG.warn("Error dumping route-templates to XML due to {}. This exception is ignored.", e.getMessage(), e);
+            }
+        }
+    }
+
+    protected void doDumpRoutesAsYaml() {
+        final ModelToYAMLDumper dumper = PluginHelper.getModelToYAMLDumper(this);
+
+        int size = getRouteDefinitions().size();
+        if (size > 0) {
+            LOG.info("Dumping {} routes as YAML", size);
+            RoutesDefinition def = new RoutesDefinition();
+            def.setRoutes(getRouteDefinitions());
+            try {
+                String yaml = dumper.dumpModelAsYaml(this, def, true, true);
+                LOG.info("\n\n{}\n", yaml);
+            } catch (Exception e) {
+                LOG.warn("Error dumping routes to YAML due to {}. This exception is ignored.", e.getMessage(), e);
+            }
+        }
+
+        size = getRestDefinitions().size();
+        if (size > 0) {
+            LOG.info("Dumping {} rests as YAML", size);
+            RestsDefinition def = new RestsDefinition();
+            def.setRests(getRestDefinitions());
+            try {
+                String taml = dumper.dumpModelAsYaml(this, def, true, true);
+                LOG.info("\n\n{}\n", taml);
+            } catch (Exception e) {
+                LOG.warn("Error dumping rests to YAML due to {}. This exception is ignored.", e.getMessage(), e);
+            }
+        }
+
+        size = getRouteTemplateDefinitions().size();
+        if (size > 0) {
+            LOG.info("Dumping {} route templates as YAML", size);
+            RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+            def.setRouteTemplates(getRouteTemplateDefinitions());
+            try {
+                String yaml = dumper.dumpModelAsYaml(this, def, true, true);
+                LOG.info("\n\n{}\n", yaml);
+            } catch (Exception e) {
+                LOG.warn("Error dumping route-templates to YAML due to {}. This exception is ignored.", e.getMessage(), e);
             }
         }
     }

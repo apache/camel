@@ -660,6 +660,11 @@
                 <artifactId>camel-xml-jaxp</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-yaml-io</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- NOTE: auto-generated list of components when building camel catalog -->
             <!-- camel components: START -->

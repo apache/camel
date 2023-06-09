@@ -29,7 +29,7 @@ public class KameletRouteDumpTest extends CamelTestSupport {
 
     @Override
     protected void postProcessTest() throws Exception {
-        context().setDumpRoutes(true);
+        context().setDumpRoutes("xml");
         super.postProcessTest();
     }
 

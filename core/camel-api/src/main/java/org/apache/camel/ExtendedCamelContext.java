@@ -268,6 +268,11 @@ public interface ExtendedCamelContext {
     FactoryFinder getDefaultFactoryFinder();
 
     /**
+     * Sets the default FactoryFinder which will be used for the loading the factory class from META-INF
+     */
+    void setDefaultFactoryFinder(FactoryFinder factoryFinder);
+
+    /**
      * Gets the bootstrap FactoryFinder which will be used for the loading the factory class from META-INF. This
      * bootstrap factory finder is only intended to be used during bootstrap (starting) CamelContext.
      *
