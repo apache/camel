@@ -358,6 +358,10 @@ public class KafkaFetchRecords implements Runnable {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("The kafka consumer was woken up while polling on thread {} for {}", threadId, getPrintableTopic());
             }
+        } catch (Error e) { // NOSONAR - rethrown
+            LOG.error("Error {} while consuming from topic : {}", e.getMessage(), getPrintableTopic(), e);
+            safeUnsubscribe();
+            throw e;
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
                 LOG.warn("Exception {} caught by thread {} while polling {} from kafka: {}",
