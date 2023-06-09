@@ -577,7 +577,7 @@ public class Run extends CamelCommand {
         // okay we have validated all input and are ready to run
         if (camelVersion != null) {
             // run in another JVM with different camel version (foreground or background)
-            boolean custom = camelVersion.contains("-");
+            boolean custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
             if (custom) {
                 // custom camel distribution
                 return runCustomCamelVersion(main);
