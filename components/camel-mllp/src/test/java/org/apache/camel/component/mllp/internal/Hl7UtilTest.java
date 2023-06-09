@@ -18,6 +18,7 @@ package org.apache.camel.component.mllp.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
@@ -104,7 +105,7 @@ public class Hl7UtilTest {
 
     private final Hl7Util hl7util = new Hl7Util(5120, LOG_PHI_TRUE);
 
-    private Charset charset = Charset.forName("ISO_8859_1");
+    private final Charset charset = StandardCharsets.ISO_8859_1;
 
     @Test
     public void testGenerateInvalidPayloadExceptionMessage() {
