@@ -58,14 +58,14 @@ public class Lambda2ClientIAMProfileOptimizedImpl implements Lambda2InternalClie
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                    + configuration.getProxyPort());
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (configuration.getProfileCredentialsName() != null) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                    .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
