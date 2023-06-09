@@ -141,6 +141,22 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * The region in which Lambda client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -206,6 +222,23 @@ public interface Aws2LambdaComponentBuilderFactory {
         default Aws2LambdaComponentBuilder useDefaultCredentialsProvider(
                 boolean useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -347,10 +380,12 @@ public interface Aws2LambdaComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Lambda2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Lambda2Component) component).setPojoRequest((boolean) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Lambda2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Lambda2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Lambda2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Lambda2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((Lambda2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((Lambda2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "proxyHost": getOrCreateConfiguration((Lambda2Component) component).setProxyHost((java.lang.String) value); return true;
