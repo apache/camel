@@ -19,7 +19,6 @@ package org.apache.camel.converter.stream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,11 +57,11 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     private final CipherPair ciphers;
 
     /** Only for testing purposes. */
-    public FileInputStreamCache(File file) throws FileNotFoundException {
+    public FileInputStreamCache(File file) {
         this(new TempFileManager(file, true));
     }
 
-    FileInputStreamCache(TempFileManager closer) throws FileNotFoundException {
+    FileInputStreamCache(TempFileManager closer) {
         this.file = closer.getTempFile();
         this.stream = null;
         this.ciphers = closer.getCiphers();
@@ -332,12 +331,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             return out;
         }
 
-        FileInputStreamCache newStreamCache() throws IOException {
-            try {
-                return new FileInputStreamCache(this);
-            } catch (FileNotFoundException e) {
-                throw new IOException("Cached file " + tempFile + " not found", e);
-            }
+        FileInputStreamCache newStreamCache() {
+            return new FileInputStreamCache(this);
         }
 
         void closeFileInputStreams() {
