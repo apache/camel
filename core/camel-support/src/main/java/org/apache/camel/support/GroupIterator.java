@@ -112,7 +112,7 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
         }
     }
 
-    private Object doNext() throws IOException {
+    private Object doNext() {
         List<Object> list = new ArrayList<>();
         int count = 0;
         while (count < group && it.hasNext()) {

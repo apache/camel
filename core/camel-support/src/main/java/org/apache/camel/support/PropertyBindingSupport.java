@@ -703,8 +703,7 @@ public final class PropertyBindingSupport {
 
     private static boolean setPropertyCollectionViaConfigurer(
             CamelContext camelContext, Object target, String name, Object value,
-            boolean ignoreCase, PropertyConfigurer configurer)
-            throws Exception {
+            boolean ignoreCase, PropertyConfigurer configurer) {
 
         final Object originalTarget = target;
 
@@ -833,8 +832,7 @@ public final class PropertyBindingSupport {
     private static Object resolveAutowired(
             CamelContext context, Object target, String name, Object value,
             boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter,
-            boolean reflection, PropertyConfigurer configurer)
-            throws Exception {
+            boolean reflection, PropertyConfigurer configurer) {
 
         String undashKey = undashKey(name);
 
