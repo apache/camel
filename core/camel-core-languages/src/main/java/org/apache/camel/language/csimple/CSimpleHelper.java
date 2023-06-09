@@ -470,7 +470,7 @@ public final class CSimpleHelper {
     public static GroupIterator collate(Exchange exchange, Object group) {
         int num = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, group);
         Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(exchange.getMessage().getBody());
-        return new GroupIterator(exchange, it, num);
+        return new GroupIterator(it, num);
     }
 
     public static String messageHistory(Exchange exchange, boolean detailed) {
