@@ -18,6 +18,7 @@ package org.apache.camel.yaml.io;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -185,7 +186,7 @@ public class YamlWriter {
                     String base = URISupport.stripQuery(value.toString());
                     String query = URISupport.extractQuery(value.toString());
                     if (base != null && query != null) {
-                        Map<String, Object> parameters = URISupport.parseQuery(query);
+                        Map<String, Object> parameters = parseQuery(query);
                         if (!parameters.isEmpty()) {
                             last.getMetadata().put("uri", base);
                             last.getMetadata().put("parameters", parameters);
@@ -199,6 +200,17 @@ public class YamlWriter {
 
             last.getMetadata().put(name, value);
         }
+    }
+
+    private static Map<String, Object> parseQuery(String query) throws URISyntaxException {
+        Map<String, Object> parameters = URISupport.parseQuery(query);
+        // convert "true" / "false" to boolean values
+        parameters.forEach((k, v) -> {
+            if ("true".equals(v) || "false".equals(v)) {
+                parameters.replace(k, Boolean.valueOf(v.toString()));
+            }
+        });
+        return parameters;
     }
 
     private EipNode asExpressionNode(EipModel model, String name) {

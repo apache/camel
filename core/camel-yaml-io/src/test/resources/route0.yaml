@@ -4,7 +4,7 @@
       uri: timer:yaml
       parameters:
         period: 1234
-        includeMetadata: "true"
+        includeMetadata: true
       steps:
         - setBody:
             constant:
