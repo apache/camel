@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyHttpContentTypeTest extends BaseJettyTest {
 
-    private static final String CHARSET = "ISO-8859-1";
+    private static final String CHARSET = StandardCharsets.ISO_8859_1.name();
 
     @Test
     public void testContentType() throws Exception {
@@ -37,7 +37,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://127.0.0.1:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, CHARSET);
 
-        byte[] data = "Hello World".getBytes(Charset.forName(CHARSET));
+        byte[] data = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
         String out = template.requestBodyAndHeader("http://127.0.0.1:{{port}}/foo", data, "content-type",
                 "text/plain; charset=\"" + CHARSET + "\"", String.class);
         assertEquals("Bye World", out);
@@ -54,7 +54,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://127.0.0.1:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
-        byte[] data = "Hello World".getBytes(Charset.forName(CHARSET));
+        byte[] data = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
         String out = template.requestBodyAndHeader("http://127.0.0.1:{{port}}/foo", data, "content-type",
                 "text/plain;charset=\"" + CHARSET + "\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
