@@ -1834,7 +1834,6 @@ public class ExpressionBuilder {
         if (LanguageSupport.hasSimpleFunction(expression)) {
             return new ExpressionAdapter() {
                 private Expression exp;
-                private Language language;
 
                 @Override
                 public Object evaluate(Exchange exchange) {
@@ -1843,7 +1842,7 @@ public class ExpressionBuilder {
 
                 @Override
                 public void init(CamelContext context) {
-                    this.language = context.resolveLanguage("simple");
+                    final Language language = context.resolveLanguage("simple");
                     this.exp = language.createExpression(expression);
                     this.exp.init(context);
                 }
@@ -1861,7 +1860,6 @@ public class ExpressionBuilder {
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
             private Expression exp;
-            private Language language;
 
             @Override
             public Object evaluate(Exchange exchange) {
@@ -1872,7 +1870,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                this.language = context.resolveLanguage("bean");
+                final Language language = context.resolveLanguage("bean");
                 this.exp = language.createExpression(expression);
                 this.exp.init(context);
             }
@@ -1886,7 +1884,6 @@ public class ExpressionBuilder {
 
     public static Expression beanExpression(final Object bean, final String method) {
         return new ExpressionAdapter() {
-            private Language language;
             private Expression exp;
 
             @Override
@@ -1896,7 +1893,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                this.language = context.resolveLanguage("bean");
+                final Language language = context.resolveLanguage("bean");
                 this.exp = language.createExpression(null, new Object[]{bean, method});
                 this.exp.init(context);
             }
@@ -2020,7 +2017,6 @@ public class ExpressionBuilder {
     public static Expression tokenizeXMLAwareExpression(String headerName, String path, char mode, int group, Namespaces namespaces) {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
-            private Language language;
             private Expression exp;
 
             @Override
@@ -2030,7 +2026,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                this.language = context.resolveLanguage("xtokenize");
+                final Language language = context.resolveLanguage("xtokenize");
                 this.exp = language.createExpression(path, new Object[]{headerName, mode, group, namespaces});
                 this.exp.init(context);
             }
