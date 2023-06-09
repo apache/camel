@@ -32,6 +32,9 @@ public class FilesConfiguration extends RemoteFileConfiguration {
 
     public FilesConfiguration(URI uri) {
         super(uri);
+        setSendNoop(false);
+        setBinary(true);
+        setPassiveMode(true);
     }
 
     @Override
@@ -48,5 +51,10 @@ public class FilesConfiguration extends RemoteFileConfiguration {
             dir = path.substring(separator);
         }
         super.setDirectory(dir);
+    }
+
+    @Override
+    public String remoteServerInformation() {
+        return "https://" + getHost();
     }
 }

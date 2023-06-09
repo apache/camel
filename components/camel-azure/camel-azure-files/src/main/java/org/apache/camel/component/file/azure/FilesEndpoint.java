@@ -55,7 +55,8 @@ import org.slf4j.LoggerFactory;
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,siteCommand,fastExistsCheck,soTimeout,separator")
+                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
+                              + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop")
 @ManagedResource(description = "Managed Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 

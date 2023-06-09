@@ -445,10 +445,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean storeFile(String name, Exchange exchange, long size)
             throws GenericFileOperationFailedException {
-        // must normalize name first
-        name = endpoint.getConfiguration().normalizePath(name);
-
         log.trace("storeFile({})", name);
+
+        name = endpoint.getConfiguration().normalizePath(name);
 
         boolean answer;
         String path = FileUtil.onlyPath(name);
@@ -457,16 +456,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
         try {
             if (path != null) {
-
-                // change to path of name
                 changeCurrentDirectory(path);
-
-                // the target name should be without path, as we have changed
-                // directory
                 targetName = FileUtil.stripPath(name);
             }
-
-            // store the file
             answer = storeFile(name, targetName, exchange);
         } catch (GenericFileOperationFailedException e) {
             throw e;
@@ -479,8 +471,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     private boolean storeFile(String name, String targetName, Exchange exchange)
             throws GenericFileOperationFailedException {
-        log.trace("doStoreFile({})", targetName);
-
         boolean existFile = false;
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore
@@ -734,14 +724,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
         boolean reconnectRequired;
         try {
-            boolean connected = isConnected();
-            if (connected && !sendNoop()) {
-                reconnectRequired = true;
-            } else {
-                reconnectRequired = !connected;
-            }
+            reconnectRequired = !isConnected();
         } catch (GenericFileOperationFailedException e) {
-            // Ignore Exception and reconnect the client
+            log.trace("Going to reconnect because of: ", e);
             reconnectRequired = true;
         }
         if (reconnectRequired) {

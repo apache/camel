@@ -160,8 +160,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "se": target.setSe(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "sendnoop":
-        case "sendNoop": target.getConfiguration().setSendNoop(property(camelContext, boolean.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
         case "sortby":
@@ -335,8 +333,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "se": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
-        case "sendnoop":
-        case "sendNoop": return boolean.class;
         case "shuffle": return boolean.class;
         case "sig": return java.lang.String.class;
         case "sortby":
@@ -511,8 +507,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "se": return target.getSe();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
-        case "sendnoop":
-        case "sendNoop": return target.getConfiguration().isSendNoop();
         case "shuffle": return target.isShuffle();
         case "sig": return target.getSig();
         case "sortby":
