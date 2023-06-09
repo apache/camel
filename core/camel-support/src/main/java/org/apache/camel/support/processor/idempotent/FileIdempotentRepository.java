@@ -246,7 +246,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      *
      * Setting cache size is only possible when using the default {@link LRUCache} cache implementation.
      */
-        public void setCacheSize(int size) {
+    public void setCacheSize(int size) {
         if (cache != null && !(cache instanceof LRUCache)) {
             throw new IllegalArgumentException(
                     "Setting cache size is only possible when using the default LRUCache cache implementation");
