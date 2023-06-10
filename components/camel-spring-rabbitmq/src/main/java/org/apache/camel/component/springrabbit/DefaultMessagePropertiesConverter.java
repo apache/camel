@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +24,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.support.ExchangeHelper;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
 
 public class DefaultMessagePropertiesConverter implements MessagePropertiesConverter {
@@ -39,9 +40,64 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
     @Override
     public MessageProperties toMessageProperties(Exchange exchange) {
         MessageProperties answer = new MessageProperties();
-        String contentType = ExchangeHelper.getContentType(exchange);
+
+        Object deliveryMode = exchange.getMessage().removeHeader(SpringRabbitMQConstants.DELIVERY_MODE);
+        if (deliveryMode != null) {
+            answer.setDeliveryMode(deliveryMode instanceof MessageDeliveryMode ? (MessageDeliveryMode) deliveryMode
+                    : MessageDeliveryMode.fromInt(Integer.parseInt(deliveryMode.toString())));
+        }
+        Object type = exchange.getMessage().removeHeader(SpringRabbitMQConstants.TYPE);
+        if (type != null) {
+            answer.setType(type.toString());
+        }
+        Object contentType = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CONTENT_TYPE);
         if (contentType != null) {
-            answer.setContentType(contentType);
+            answer.setContentType(contentType.toString());
+        }
+        Object contentLength = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CONTENT_LENGTH);
+        if (contentLength != null) {
+            answer.setContentLength(Long.parseLong(contentLength.toString()));
+        }
+        Object contentEncoding = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CONTENT_ENCODING);
+        if (contentEncoding != null) {
+            answer.setContentEncoding(contentEncoding.toString());
+        }
+        Object messageId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.MESSAGE_ID);
+        if (messageId != null) {
+            answer.setMessageId(messageId.toString());
+        }
+        Object correlationId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CORRELATION_ID);
+        if (correlationId != null) {
+            answer.setCorrelationId(correlationId.toString());
+        }
+        Object replyTo = exchange.getMessage().removeHeader(SpringRabbitMQConstants.REPLY_TO);
+        if (replyTo != null) {
+            answer.setReplyTo(replyTo.toString());
+        }
+        Object expiration = exchange.getMessage().removeHeader(SpringRabbitMQConstants.EXPIRATION);
+        if (expiration != null) {
+            answer.setExpiration(expiration.toString());
+        }
+        Object timestamp = exchange.getMessage().removeHeader(SpringRabbitMQConstants.TIMESTAMP);
+        if (timestamp != null) {
+            answer.setTimestamp(timestamp instanceof Date ? (Date) timestamp
+                    : new Date(Long.parseLong(timestamp.toString())));
+        }
+        Object userId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.USER_ID);
+        if (userId != null) {
+            answer.setUserId(userId.toString());
+        }
+        Object appId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.APP_ID);
+        if (appId != null) {
+            answer.setAppId(appId.toString());
+        }
+        Object priority = exchange.getMessage().removeHeader(SpringRabbitMQConstants.PRIORITY);
+        if (priority != null) {
+            answer.setPriority(Integer.parseInt(priority.toString()));
+        }
+        Object clusterId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CLUSTER_ID);
+        if (clusterId != null) {
+            answer.setClusterId(clusterId.toString());
         }
 
         Set<Map.Entry<String, Object>> entries = exchange.getMessage().getHeaders().entrySet();
@@ -65,15 +121,61 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
                 Object headerValue = entry.getValue();
                 appendInputHeader(answer, headerName, headerValue, exchange);
             }
+
+            if (messageProperties.getRedelivered() != null) {
+                answer.put(SpringRabbitMQConstants.REDELIVERED, messageProperties.getRedelivered());
+            }
+            if (messageProperties.getDeliveryTag() > 0) {
+                answer.put(SpringRabbitMQConstants.DELIVERY_TAG, messageProperties.getDeliveryTag());
+            }
+            if (messageProperties.getReceivedExchange() != null) {
+                answer.put(SpringRabbitMQConstants.EXCHANGE_NAME, messageProperties.getReceivedExchange());
+            }
+            if (messageProperties.getReceivedRoutingKey() != null) {
+                answer.put(SpringRabbitMQConstants.ROUTING_KEY, messageProperties.getReceivedRoutingKey());
+            }
+            if (messageProperties.getReceivedDeliveryMode() != null) {
+                answer.put(SpringRabbitMQConstants.DELIVERY_MODE, messageProperties.getReceivedDeliveryMode());
+            }
+            if (messageProperties.getType() != null) {
+                answer.put(SpringRabbitMQConstants.TYPE, messageProperties.getType());
+            }
             if (messageProperties.getContentType() != null) {
-                answer.put(Exchange.CONTENT_TYPE, messageProperties.getContentType());
+                answer.put(SpringRabbitMQConstants.CONTENT_TYPE, messageProperties.getContentType());
+            }
+            if (messageProperties.getContentLength() > 0) {
+                answer.put(SpringRabbitMQConstants.CONTENT_LENGTH, messageProperties.getContentLength());
+            }
+            if (messageProperties.getContentEncoding() != null) {
+                answer.put(SpringRabbitMQConstants.CONTENT_ENCODING, messageProperties.getContentEncoding());
+            }
+            if (messageProperties.getMessageId() != null) {
+                answer.put(SpringRabbitMQConstants.MESSAGE_ID, messageProperties.getMessageId());
+            }
+            if (messageProperties.getCorrelationId() != null) {
+                answer.put(SpringRabbitMQConstants.CORRELATION_ID, messageProperties.getCorrelationId());
+            }
+            if (messageProperties.getReplyTo() != null) {
+                answer.put(SpringRabbitMQConstants.REPLY_TO, messageProperties.getReplyTo());
+            }
+            if (messageProperties.getExpiration() != null) {
+                answer.put(SpringRabbitMQConstants.EXPIRATION, messageProperties.getExpiration());
             }
             if (messageProperties.getTimestamp() != null) {
-                answer.put(Exchange.MESSAGE_TIMESTAMP, messageProperties.getTimestamp().getTime());
+                answer.put(SpringRabbitMQConstants.TIMESTAMP, messageProperties.getTimestamp());
             }
-
-            // Helps in getting to acknowledge manually
-            answer.put(SpringRabbitMQConstants.DELIVERY_TAG, messageProperties.getDeliveryTag());
+            if (messageProperties.getReceivedUserId() != null) {
+                answer.put(SpringRabbitMQConstants.USER_ID, messageProperties.getReceivedUserId());
+            }
+            if (messageProperties.getAppId() != null) {
+                answer.put(SpringRabbitMQConstants.APP_ID, messageProperties.getAppId());
+            }
+            if (messageProperties.getPriority() != null) {
+                answer.put(SpringRabbitMQConstants.PRIORITY, messageProperties.getPriority());
+            }
+            if (messageProperties.getClusterId() != null) {
+                answer.put(SpringRabbitMQConstants.CLUSTER_ID, messageProperties.getClusterId());
+            }
         }
 
         return answer;
@@ -86,7 +188,7 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
     }
 
     private void appendInputHeader(Map<String, Object> answer, String headerName, Object headerValue, Exchange ex) {
-        if (shouldOutputHeader(headerName, headerValue, ex)) {
+        if (shouldInputHeader(headerName, headerValue, ex)) {
             answer.put(headerName, headerValue);
         }
     }
@@ -106,5 +208,4 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
         return headerFilterStrategy == null
                 || !headerFilterStrategy.applyFilterToExternalHeaders(headerName, headerValue, exchange);
     }
-
 }
