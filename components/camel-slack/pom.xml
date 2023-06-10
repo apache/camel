@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.18.8</version>
+        <version>3.18.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-slack</artifactId>
