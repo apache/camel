@@ -63,7 +63,8 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE,
+                MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
 
         template.sendBody("direct:start", body);
 
@@ -86,9 +87,11 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT);
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.DELIVERY_MODE,
+                MessageDeliveryMode.PERSISTENT);
         getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.TYPE, "price");
-        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE,
+                MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
         getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.MESSAGE_ID, "123");
         getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.PRIORITY, 1);
 

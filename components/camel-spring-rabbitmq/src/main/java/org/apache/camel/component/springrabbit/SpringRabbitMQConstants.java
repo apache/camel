@@ -27,13 +27,16 @@ public final class SpringRabbitMQConstants {
     public static final String ROUTING_OVERRIDE_KEY = "CamelSpringRabbitmqRoutingOverrideKey";
     @Metadata(description = "To override the endpoint configuration's exchange name.", javaType = "String", label = "producer")
     public static final String EXCHANGE_OVERRIDE_NAME = "CamelSpringRabbitmqExchangeOverrideName";
-    @Metadata(description = "Whether the message was previously delivered and requeued.", javaType = "Boolean", label = "consumer")
+    @Metadata(description = "Whether the message was previously delivered and requeued.", javaType = "Boolean",
+              label = "consumer")
     public static final String REDELIVERED = "CamelSpringRabbitmqRedelivered";
     @Metadata(description = "Delivery tag for manual acknowledge mode.", javaType = "long", label = "consumer")
     public static final String DELIVERY_TAG = "CamelSpringRabbitmqDeliveryTag";
-    @Metadata(description = "The exchange name that was used when publishing the message.", javaType = "String", label = "consumer")
+    @Metadata(description = "The exchange name that was used when publishing the message.", javaType = "String",
+              label = "consumer")
     public static final String EXCHANGE_NAME = "CamelSpringRabbitmqExchangeName";
-    @Metadata(description = "The routing key that was used when publishing the message.", javaType = "String", label = "consumer")
+    @Metadata(description = "The routing key that was used when publishing the message.", javaType = "String",
+              label = "consumer")
     public static final String ROUTING_KEY = "CamelSpringRabbitmqRoutingKey";
     @Metadata(description = "The message delivery mode.", javaType = "MessageDeliveryMode", enums = "NON_PERSISTENT,PERSISTENT")
     public static final String DELIVERY_MODE = "CamelSpringRabbitmqDeliveryMode";

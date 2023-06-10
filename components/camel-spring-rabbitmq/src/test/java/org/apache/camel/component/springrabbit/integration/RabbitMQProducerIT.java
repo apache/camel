@@ -122,10 +122,10 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
 
         template.sendBodyAndHeaders("direct:start", "<price>123</price>",
                 Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
-                                SpringRabbitMQConstants.TYPE, "price",
-                                SpringRabbitMQConstants.CONTENT_TYPE, "application/xml",
-                                SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
-                                SpringRabbitMQConstants.PRIORITY, 1));
+                        SpringRabbitMQConstants.TYPE, "price",
+                        SpringRabbitMQConstants.CONTENT_TYPE, "application/xml",
+                        SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
+                        SpringRabbitMQConstants.PRIORITY, 1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
