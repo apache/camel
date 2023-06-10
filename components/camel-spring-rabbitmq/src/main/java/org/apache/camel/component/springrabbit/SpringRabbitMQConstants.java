@@ -23,17 +23,17 @@ public final class SpringRabbitMQConstants {
     public static final String DEFAULT_EXCHANGE_NAME = "default";
 
     public static final String CHANNEL = "CamelSpringRabbitmqChannel";
-    @Metadata(description = "Producer: To override the endpoint configuration's routing key.", javaType = "String")
+    @Metadata(description = "To override the endpoint configuration's routing key.", javaType = "String", label = "producer")
     public static final String ROUTING_OVERRIDE_KEY = "CamelSpringRabbitmqRoutingOverrideKey";
-    @Metadata(description = "Producer: To override the endpoint configuration's exchange name.", javaType = "String")
+    @Metadata(description = "To override the endpoint configuration's exchange name.", javaType = "String", label = "producer")
     public static final String EXCHANGE_OVERRIDE_NAME = "CamelSpringRabbitmqExchangeOverrideName";
-    @Metadata(description = "Consumer: Whether the message was previously delivered and requeued.", javaType = "Boolean")
+    @Metadata(description = "Whether the message was previously delivered and requeued.", javaType = "Boolean", label = "consumer")
     public static final String REDELIVERED = "CamelSpringRabbitmqRedelivered";
-    @Metadata(description = "Consumer: Delivery tag for manual acknowledge mode.", javaType = "long")
+    @Metadata(description = "Delivery tag for manual acknowledge mode.", javaType = "long", label = "consumer")
     public static final String DELIVERY_TAG = "CamelSpringRabbitmqDeliveryTag";
-    @Metadata(description = "Consumer: The exchange name that was used when publishing the message.", javaType = "String")
+    @Metadata(description = "The exchange name that was used when publishing the message.", javaType = "String", label = "consumer")
     public static final String EXCHANGE_NAME = "CamelSpringRabbitmqExchangeName";
-    @Metadata(description = "Consumer: The routing key that was used when publishing the message.", javaType = "String")
+    @Metadata(description = "The routing key that was used when publishing the message.", javaType = "String", label = "consumer")
     public static final String ROUTING_KEY = "CamelSpringRabbitmqRoutingKey";
     @Metadata(description = "The message delivery mode.", javaType = "MessageDeliveryMode")
     public static final String DELIVERY_MODE = "CamelSpringRabbitmqDeliveryMode";

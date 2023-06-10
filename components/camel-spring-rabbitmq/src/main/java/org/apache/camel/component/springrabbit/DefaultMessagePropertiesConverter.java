@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
@@ -40,67 +41,68 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
     @Override
     public MessageProperties toMessageProperties(Exchange exchange) {
         MessageProperties answer = new MessageProperties();
+        Message message = exchange.getMessage();
 
-        Object deliveryMode = exchange.getMessage().removeHeader(SpringRabbitMQConstants.DELIVERY_MODE);
+        Object deliveryMode = message.removeHeader(SpringRabbitMQConstants.DELIVERY_MODE);
         if (deliveryMode != null) {
             answer.setDeliveryMode(deliveryMode instanceof MessageDeliveryMode ? (MessageDeliveryMode) deliveryMode
                     : MessageDeliveryMode.fromInt(Integer.parseInt(deliveryMode.toString())));
         }
-        Object type = exchange.getMessage().removeHeader(SpringRabbitMQConstants.TYPE);
+        Object type = message.removeHeader(SpringRabbitMQConstants.TYPE);
         if (type != null) {
             answer.setType(type.toString());
         }
-        Object contentType = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CONTENT_TYPE);
+        Object contentType = message.removeHeader(SpringRabbitMQConstants.CONTENT_TYPE);
         if (contentType != null) {
             answer.setContentType(contentType.toString());
         }
-        Object contentLength = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CONTENT_LENGTH);
+        Object contentLength = message.removeHeader(SpringRabbitMQConstants.CONTENT_LENGTH);
         if (contentLength != null) {
             answer.setContentLength(Long.parseLong(contentLength.toString()));
         }
-        Object contentEncoding = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CONTENT_ENCODING);
+        Object contentEncoding = message.removeHeader(SpringRabbitMQConstants.CONTENT_ENCODING);
         if (contentEncoding != null) {
             answer.setContentEncoding(contentEncoding.toString());
         }
-        Object messageId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.MESSAGE_ID);
+        Object messageId = message.removeHeader(SpringRabbitMQConstants.MESSAGE_ID);
         if (messageId != null) {
             answer.setMessageId(messageId.toString());
         }
-        Object correlationId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CORRELATION_ID);
+        Object correlationId = message.removeHeader(SpringRabbitMQConstants.CORRELATION_ID);
         if (correlationId != null) {
             answer.setCorrelationId(correlationId.toString());
         }
-        Object replyTo = exchange.getMessage().removeHeader(SpringRabbitMQConstants.REPLY_TO);
+        Object replyTo = message.removeHeader(SpringRabbitMQConstants.REPLY_TO);
         if (replyTo != null) {
             answer.setReplyTo(replyTo.toString());
         }
-        Object expiration = exchange.getMessage().removeHeader(SpringRabbitMQConstants.EXPIRATION);
+        Object expiration = message.removeHeader(SpringRabbitMQConstants.EXPIRATION);
         if (expiration != null) {
             answer.setExpiration(expiration.toString());
         }
-        Object timestamp = exchange.getMessage().removeHeader(SpringRabbitMQConstants.TIMESTAMP);
+        Object timestamp = message.removeHeader(SpringRabbitMQConstants.TIMESTAMP);
         if (timestamp != null) {
             answer.setTimestamp(timestamp instanceof Date ? (Date) timestamp
                     : new Date(Long.parseLong(timestamp.toString())));
         }
-        Object userId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.USER_ID);
+        Object userId = message.removeHeader(SpringRabbitMQConstants.USER_ID);
         if (userId != null) {
             answer.setUserId(userId.toString());
         }
-        Object appId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.APP_ID);
+        Object appId = message.removeHeader(SpringRabbitMQConstants.APP_ID);
         if (appId != null) {
             answer.setAppId(appId.toString());
         }
-        Object priority = exchange.getMessage().removeHeader(SpringRabbitMQConstants.PRIORITY);
+        Object priority = message.removeHeader(SpringRabbitMQConstants.PRIORITY);
         if (priority != null) {
             answer.setPriority(Integer.parseInt(priority.toString()));
         }
-        Object clusterId = exchange.getMessage().removeHeader(SpringRabbitMQConstants.CLUSTER_ID);
+        Object clusterId = message.removeHeader(SpringRabbitMQConstants.CLUSTER_ID);
         if (clusterId != null) {
             answer.setClusterId(clusterId.toString());
         }
 
-        Set<Map.Entry<String, Object>> entries = exchange.getMessage().getHeaders().entrySet();
+        Set<Map.Entry<String, Object>> entries = message.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();

@@ -17,8 +17,8 @@
 package org.apache.camel.component.springrabbit.integration;
 
 import java.nio.charset.Charset;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.springrabbit.SpringRabbitMQConstants;
@@ -121,13 +121,11 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
         template.sendBodyAndHeaders("direct:start", "<price>123</price>",
-                ImmutableMap.<String, Object>builder()
-                        .put(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT)
-                        .put(SpringRabbitMQConstants.TYPE, "price")
-                        .put(SpringRabbitMQConstants.CONTENT_TYPE, "application/xml")
-                        .put(SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae")
-                        .put(SpringRabbitMQConstants.PRIORITY, 1)
-                        .build());
+                Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
+                                SpringRabbitMQConstants.TYPE, "price",
+                                SpringRabbitMQConstants.CONTENT_TYPE, "application/xml",
+                                SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
+                                SpringRabbitMQConstants.PRIORITY, 1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
