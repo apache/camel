@@ -1,5 +1,3 @@
-#!/bin/bash
-set -e
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -32,14 +30,25 @@ function findProjectRoot () {
   echo "$path"
 }
 
+function hasLabel() {
+    local issueNumber=${1}
+    local label="incremental-${2}"
+    curl -s \
+      -H "Accept: application/vnd.github+json" \
+      -H "Authorization: Bearer ${GITHUB_TOKEN}"\
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      "https://api.github.com/repos/apache/camel/issues/${issueNumber}/labels" | jq -r '.[].name' | grep -c "$label"
+}
+
 function main() {
   local mavenBinary=${1}
-  local checkstyle=${2}
-  local log=${3}
-  local prId=${4}
+  local mode=${2}
+  local log="incremental-${mode}.log"
+  local prId=${3}
 
   echo "Searching for affected projects"
-  local projects=$(curl -s "https://patch-diff.githubusercontent.com/raw/apache/camel/pull/${prId}.diff" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3- | sed 's|\(.*\)/.*|\1|' | uniq | sort)
+  local projects
+  projects=$(curl -s "https://patch-diff.githubusercontent.com/raw/apache/camel/pull/${prId}.diff" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3- | sed 's|\(.*\)/.*|\1|' | uniq | sort)
   local pl=""
   local lastProjectRoot=""
   local buildAll=false
@@ -47,6 +56,7 @@ function main() {
   for project in ${projects}
   do
     if [[ ${project} != .* ]] ; then
+      local projectRoot
       projectRoot=$(findProjectRoot ${project})
       if [[ ${projectRoot} = "." ]] ; then
         echo "There root project is affected, so a complete build is triggered"
@@ -54,6 +64,7 @@ function main() {
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]] ; then
         (( totalAffected ++ ))
         pl="$pl,${projectRoot}"
+        lastProjectRoot=${projectRoot}
       fi
     fi
   done
@@ -66,7 +77,7 @@ function main() {
   fi
   pl="${pl:1}"
 
-  if [[ ${checkstyle} = "true" ]] ; then
+  if [[ ${mode} = "checkstyle" ]] ; then
     if [[ ${buildAll} = "true" ]] ; then
       echo "Launching checkstyle command against all projects"
       $mavenBinary -l $log $MVN_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
@@ -74,23 +85,58 @@ function main() {
       echo "Launching checkstyle command against the projects ${pl}"
       $mavenBinary -l $log $MVN_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle -pl "$pl"
     fi
-  else
+  elif [[ ${mode} = "build" ]] ; then
+    local mustBuildAll
+    mustBuildAll=$(hasLabel ${prId} "build-all")
+    if [[ ${mustBuildAll} = "1" ]] ; then
+      echo "The build-all label has been detected thus all projects must be built"
+      buildAll=true
+    fi
     if [[ ${buildAll} = "true" ]] ; then
       echo "Launching fast build command against all projects"
       $mavenBinary -l $log $MVN_OPTS -Pfastinstall install
-      echo "Cannot launch the tests of all projects, so no test will be launched"
     else
-      local totalTestableProjects=$(mvn -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+      local buildDependents
+      buildDependents=$(hasLabel ${prId} "build-dependents")
+      local totalTestableProjects
+      if [[ ${buildDependents} = "1" ]] ; then
+        echo "The build-dependents label has been detected thus the projects that depend on the affected projects will be built"
+        totalTestableProjects=0
+      else
+        totalTestableProjects=$(mvn -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+      fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
-        $mavenBinary $MVN_OPTS -Pfastinstall install -pl "$pl" -amd -am >> $log
-        echo "There are too many projects to test so only the affected projects are tested"
-        $mavenBinary $MVN_OPTS install -pl "$pl" >> $log
+        $mavenBinary -l $log $MVN_OPTS -Pfastinstall install -pl "$pl" -amd -am
       else
         echo "Launching fast build command against the projects ${pl} and their dependencies"
-        $mavenBinary $MVN_OPTS -Pfastinstall install -pl "$pl" -am >> $log
+        $mavenBinary -l $log $MVN_OPTS -Pfastinstall install -pl "$pl" -am
+      fi
+    fi
+  else
+    local mustSkipTests
+    mustSkipTests=$(hasLabel ${prId} "skip-tests")
+    if [[ ${mustSkipTests} = "1" ]] ; then
+      echo "The skip-tests label has been detected thus no test will be launched"
+      buildAll=true
+    elif [[ ${buildAll} = "true" ]] ; then
+      echo "Cannot launch the tests of all projects, so no test will be launched"
+    else
+      local testDependents
+      testDependents=$(hasLabel ${prId} "test-dependents")
+      local totalTestableProjects
+      if [[ ${testDependents} = "1" ]] ; then
+        echo "The test-dependents label has been detected thus the projects that depend on affected projects will be tested"
+        totalTestableProjects=0
+      else
+        totalTestableProjects=$(mvn -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+      fi
+      if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
+        echo "There are too many projects to test so only the affected projects are tested"
+        $mavenBinary -l $log $MVN_OPTS install -pl "$pl"
+      else
         echo "Testing the affected projects and the projects that depend on them"
-        $mavenBinary $MVN_OPTS install -pl "$pl" -amd >> $log
+        $mavenBinary -l $log $MVN_OPTS install -pl "$pl" -amd
       fi
     fi
   fi

@@ -118,7 +118,7 @@ jobs:
       - name: mvn checkstyle
         uses: ./.github/actions/incremental-build
         with:
-          checkstyle: true
+          mode: checkstyle
           log: incremental-checkstyle.log
           pr-id: ${{ github.event.number }}
   incremental-build:
@@ -141,9 +141,15 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: maven build
+      - name: fast build
         uses: ./.github/actions/incremental-build
         with:
-          checkstyle: false
-          log: incremental-build.log
+          mode: build
           pr-id: ${{ github.event.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: tests
+        uses: ./.github/actions/incremental-build
+        with:
+          mode: test
+          pr-id: ${{ github.event.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
