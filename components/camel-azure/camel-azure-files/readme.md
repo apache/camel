@@ -70,6 +70,8 @@ or not implemented:
 
 Basic `to("azure-files://...")` does not crash. 
 
+Tested with 1 GiB upload (it took 2h47m47s over 1 Mbit/s uplink).
+
 ## Deps
 
 At first I want to use the Azure Files component with Camel 3.16+

@@ -548,29 +548,27 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             }
 
             final StopWatch watch = new StopWatch();
-            boolean answer;
+            boolean answer = false;
             log.debug("About to store file: {} length: {} using stream: {}", targetName, length, is);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Append) {
-                log.trace("Client appendFile: {}", targetName);
-                // TODO
-                answer = false;
+                assert false; // rejected by options validation
             } else {
-                log.trace("Client storeFile: {}", targetName);
                 var cwd = cwd();
                 var file = cwd.getFileClient(targetName);
                 // TODO check return values?
                 deleteRemote(cwd, targetName);
                 createRemote(file, length);
-                // TODO >4MiB possible? (see upload limitation)
+                log.trace("{}> put {}", cwd.getDirectoryPath(), targetName);
+                // NOTE: here >4MiB is possible (unlike upload limitation)
                 try (var os = file.getFileOutputStream()) {
-                    // TODO add data timeout
+                    // TODO add data timeout?
                     is.transferTo(os);
                 }
                 answer = true;
             }
             if (log.isDebugEnabled()) {
                 long time = watch.taken();
-                log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
+                log.debug("Took {} ({} millis) to store: {} and files client returned: {}",
                         TimeUtils.printDuration(time, true), time, targetName, answer);
             }
 

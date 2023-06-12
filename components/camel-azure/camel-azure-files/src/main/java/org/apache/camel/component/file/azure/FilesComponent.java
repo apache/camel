@@ -22,6 +22,7 @@ import java.util.Map;
 import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.annotations.Component;
 
@@ -39,7 +40,9 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
     }
 
     @Override
-    protected GenericFileEndpoint<ShareFileItem> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+    protected GenericFileEndpoint<ShareFileItem> buildFileEndpoint(
+            String uri, String remaining,
+            Map<String, Object> parameters)
             throws Exception {
         String baseUri = getBaseUri(uri);
         var config = new FilesConfiguration(new URI(baseUri));
@@ -61,6 +64,9 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
 
     @Override
     protected void afterPropertiesSet(GenericFileEndpoint<ShareFileItem> endpoint) throws Exception {
-        // no specific validation
+        if (endpoint.getFileExist() == GenericFileExist.Append) {
+            throw new IllegalArgumentException(
+                    "Appending to remote files is not supported.");
+        }
     }
 }

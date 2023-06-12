@@ -160,6 +160,9 @@ The `timeout` option only applies as the data timeout in millis.
 The meta-data operations timeout is minimum of:
 `readLockCheckInterval`, `timeout` and 20_000 millis.
 
+During upload, the underlying library could log timeout
+warnings. They are recoverable and upload could continue.   
+
 == Using Local Work Directory
 
 Camel supports consuming from remote files servers and downloading the
