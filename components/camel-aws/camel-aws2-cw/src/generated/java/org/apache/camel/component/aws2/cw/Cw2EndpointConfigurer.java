@@ -30,6 +30,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "name": target.getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
+        case "profilecredentialsname":
+        case "profileCredentialsName": target.getConfiguration().setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -47,6 +49,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Double.class, value)); return true;
         default: return false;
         }
@@ -69,6 +73,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "name": return java.lang.String.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
+        case "profilecredentialsname":
+        case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -86,6 +92,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return boolean.class;
         case "value": return java.lang.Double.class;
         default: return null;
         }
@@ -104,6 +112,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "name": return target.getConfiguration().getName();
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
+        case "profilecredentialsname":
+        case "profileCredentialsName": return target.getConfiguration().getProfileCredentialsName();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -121,6 +131,8 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         case "value": return target.getConfiguration().getValue();
         default: return null;
         }
