@@ -123,8 +123,8 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return org.apache.camel.converter.IOConverter.toWriter((java.io.File) value, exchange);
             }
         } else if (to == java.io.File.class) {
-            if (value instanceof java.lang.String) {
-                return org.apache.camel.converter.IOConverter.toFile((java.lang.String) value);
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toFile((java.nio.file.Path) value);
             }
         } else if (to == java.io.InputStream.class) {
             if (value instanceof java.util.stream.Stream) {
@@ -142,11 +142,11 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.lang.String) value, exchange);
             }
-            if (value instanceof java.nio.ByteBuffer) {
-                return org.apache.camel.converter.NIOConverter.toInputStream((java.nio.ByteBuffer) value);
-            }
             if (value instanceof java.lang.StringBuffer) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.lang.StringBuffer) value, exchange);
+            }
+            if (value instanceof java.nio.ByteBuffer) {
+                return org.apache.camel.converter.NIOConverter.toInputStream((java.nio.ByteBuffer) value);
             }
             if (value instanceof java.lang.StringBuilder) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.lang.StringBuilder) value, exchange);
@@ -560,7 +560,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
         } else if (to == java.io.File.class) {
-            if (from == java.lang.String.class) {
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
         } else if (to == java.io.InputStream.class) {
@@ -579,10 +579,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.lang.String.class) {
                 return this;
             }
-            if (from == java.nio.ByteBuffer.class) {
+            if (from == java.lang.StringBuffer.class) {
                 return this;
             }
-            if (from == java.lang.StringBuffer.class) {
+            if (from == java.nio.ByteBuffer.class) {
                 return this;
             }
             if (from == java.lang.StringBuilder.class) {
