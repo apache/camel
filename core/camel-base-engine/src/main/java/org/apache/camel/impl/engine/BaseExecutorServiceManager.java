@@ -345,6 +345,12 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             }
         }
 
+        doRemove(executorService, failSafe);
+
+        return warned;
+    }
+
+    private void doRemove(ExecutorService executorService, boolean failSafe) {
         // let lifecycle strategy be notified as well which can let it be managed in JMX as well
         ThreadPoolExecutor threadPool = null;
         if (executorService instanceof ThreadPoolExecutor) {
@@ -362,8 +368,6 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         if (!failSafe) {
             executorServices.remove(executorService);
         }
-
-        return warned;
     }
 
     @Override
@@ -389,23 +393,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             }
         }
 
-        // let lifecycle strategy be notified as well which can let it be managed in JMX as well
-        ThreadPoolExecutor threadPool = null;
-        if (executorService instanceof ThreadPoolExecutor) {
-            threadPool = (ThreadPoolExecutor) executorService;
-        } else if (executorService instanceof SizedScheduledExecutorService) {
-            threadPool = ((SizedScheduledExecutorService) executorService).getScheduledThreadPoolExecutor();
-        }
-        if (threadPool != null) {
-            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
-                lifecycle.onThreadPoolRemove(camelContext, threadPool);
-            }
-        }
-
-        // remove reference as its shutdown (do not remove if fail-safe)
-        if (!failSafe) {
-            executorServices.remove(executorService);
-        }
+        doRemove(executorService, failSafe);
 
         return answer;
     }
