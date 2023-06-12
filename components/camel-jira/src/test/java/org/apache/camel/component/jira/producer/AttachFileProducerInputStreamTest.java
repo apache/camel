@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.jira.producer;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -57,7 +54,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AttachFileProducerTest extends CamelTestSupport {
+public class AttachFileProducerInputStreamTest extends CamelTestSupport {
 
     @Mock
     private JiraRestClient jiraClient;
@@ -75,7 +72,8 @@ public class AttachFileProducerTest extends CamelTestSupport {
     private MockEndpoint mockResult;
 
     private Issue issue;
-    private File attachedFile;
+    private String attachedName;
+    private int attachedSize;
 
     @Override
     protected void bindToRegistry(Registry registry) {
@@ -92,29 +90,20 @@ public class AttachFileProducerTest extends CamelTestSupport {
             }
             return Promises.promise(issue);
         });
-        when(issueRestClient.addAttachments(any(URI.class), any(File.class))).then(inv -> {
-            File attachedFileTmp = inv.getArgument(1);
-            // create a temp destiny file as the attached file is marked for removal on AttachFileProducer
-            attachedFile = File.createTempFile("camel-jira-test-", null);
-            Files.copy(attachedFileTmp.toPath(), attachedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            attachedFile.deleteOnExit();
+        when(issueRestClient.addAttachment(any(URI.class), any(InputStream.class), any(String.class))).then(inv -> {
+            InputStream is = inv.getArgument(1);
+            attachedName = inv.getArgument(2);
+            attachedSize = is.readAllBytes().length;
+
             Collection<Attachment> attachments = new ArrayList<>();
             attachments.add(new Attachment(
-                    issue.getAttachmentsUri(), attachedFile.getName(), null, null,
-                    Long.valueOf(attachedFile.length()).intValue(), null, null, null));
+                    issue.getAttachmentsUri(), attachedName, null, null,
+                    attachedSize, null, null, null));
             // re-create the issue with the attachment sent by the route
             issue = createIssueWithAttachment(issue.getId(), issue.getSummary(), issue.getKey(), issue.getIssueType(),
                     issue.getDescription(), issue.getPriority(), issue.getAssignee(), attachments);
             return null;
         });
-    }
-
-    private File generateSampleFile() throws IOException {
-        File sampleRandomFile = File.createTempFile("attach-test", null);
-        sampleRandomFile.deleteOnExit();
-        String text = "A random text to use on the AttachFileProducerTest.java of camel-jira component.";
-        Files.write(sampleRandomFile.toPath(), text.getBytes(), StandardOpenOption.CREATE);
-        return sampleRandomFile;
     }
 
     @Override
@@ -144,7 +133,8 @@ public class AttachFileProducerTest extends CamelTestSupport {
     public void verifyAttachment() throws InterruptedException, IOException {
         mockResult.expectedMessageCount(1);
 
-        template.sendBody(generateSampleFile());
+        String text = "A random text to use on the AttachFileProducerTest.java of camel-jira component.";
+        template.sendBody("direct:start", text);
 
         mockResult.assertIsSatisfied();
 
@@ -152,7 +142,7 @@ public class AttachFileProducerTest extends CamelTestSupport {
         assertEquals(issue, retrievedIssue);
         // there is only one attachment
         Attachment attachFile = retrievedIssue.getAttachments().iterator().next();
-        assertEquals(attachFile.getFilename(), attachedFile.getName());
-        assertEquals(attachFile.getSize(), attachedFile.length());
+        assertEquals(attachFile.getFilename(), attachedName);
+        assertEquals(attachFile.getSize(), attachedSize);
     }
 }

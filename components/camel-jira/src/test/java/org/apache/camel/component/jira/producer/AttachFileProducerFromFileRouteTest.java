@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -33,6 +32,7 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import io.atlassian.util.concurrent.Promises;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,6 +40,7 @@ import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -57,7 +58,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AttachFileProducerTest extends CamelTestSupport {
+public class AttachFileProducerFromFileRouteTest extends CamelTestSupport {
 
     @Mock
     private JiraRestClient jiraClient;
@@ -109,16 +110,9 @@ public class AttachFileProducerTest extends CamelTestSupport {
         });
     }
 
-    private File generateSampleFile() throws IOException {
-        File sampleRandomFile = File.createTempFile("attach-test", null);
-        sampleRandomFile.deleteOnExit();
-        String text = "A random text to use on the AttachFileProducerTest.java of camel-jira component.";
-        Files.write(sampleRandomFile.toPath(), text.getBytes(), StandardOpenOption.CREATE);
-        return sampleRandomFile;
-    }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        FileUtil.removeDir(new File("target/attach"));
         setMocks();
         CamelContext camelContext = super.createCamelContext();
         camelContext.disableJMX();
@@ -132,7 +126,7 @@ public class AttachFileProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
+                from("file:target/attach")
                         .setHeader(ISSUE_KEY, () -> KEY + "-1")
                         .to("jira://attach?jiraUrl=" + JIRA_CREDENTIALS)
                         .to(mockResult);
@@ -144,7 +138,8 @@ public class AttachFileProducerTest extends CamelTestSupport {
     public void verifyAttachment() throws InterruptedException, IOException {
         mockResult.expectedMessageCount(1);
 
-        template.sendBody(generateSampleFile());
+        String text = "A random text to use on the AttachFileProducerTest.java of camel-jira component.";
+        template.sendBodyAndHeader("file:target/attach", text, Exchange.FILE_NAME, "hello.txt");
 
         mockResult.assertIsSatisfied();
 
