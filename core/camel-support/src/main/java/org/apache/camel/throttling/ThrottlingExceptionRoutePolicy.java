@@ -100,6 +100,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return camelContext;
     }
 
+    public List<Class<?>> getThrottledExceptions() {
+        return throttledExceptions;
+    }
+
     @Override
     public void onInit(Route route) {
         LOG.debug("Initializing ThrottlingExceptionRoutePolicy route policy");
