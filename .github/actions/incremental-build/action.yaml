@@ -27,6 +27,10 @@ inputs:
   github-token:
     description: 'The github token to access to the API'
     required: false
+  skip-mvnd-install:
+    description: 'Flag indicating whether the installation of mvnd should be skipped'
+    required: false
+    default: 'false'
 runs:
   using: "composite"
   steps:
@@ -35,6 +39,7 @@ runs:
       with:
         version: 1.0-m6
         distribution: m39-linux-amd64
+        dry-run: ${{ inputs.skip-mvnd-install }}
     - name: maven build
       shell: bash
       run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.mode }} ${{ inputs.pr-id }}

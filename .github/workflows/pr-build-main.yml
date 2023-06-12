@@ -141,15 +141,16 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: fast build
+      - name: mvn build
         uses: ./.github/actions/incremental-build
         with:
           mode: build
           pr-id: ${{ github.event.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: tests
+      - name: mvn test
         uses: ./.github/actions/incremental-build
         with:
           mode: test
           pr-id: ${{ github.event.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-mvnd-install: 'true'
