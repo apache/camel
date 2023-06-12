@@ -148,7 +148,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(10, 1000, 5000,
+        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(
+                10, 1000, 5000,
                 List.of(IOException.class, UnsupportedOperationException.class));
         policy.setHalfOpenHandler(new DummyHandler());
 
