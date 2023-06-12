@@ -47,7 +47,8 @@ public class RouteCircuitBreakerDevConsole extends AbstractDevConsole {
                     int sc = cb.getSuccess();
                     int fc = cb.getFailures();
                     String lastFailure = cb.getLastFailure() > 0 ? TimeUtils.printSince(cb.getLastFailure()) : "n/a";
-                    sb.append(String.format("    %s: %s (success: %d failure: %d last-failure: %s)\n", rid, state, sc, fc, lastFailure));
+                    sb.append(String.format("    %s: %s (success: %d failure: %d last-failure: %s)\n", rid, state, sc, fc,
+                            lastFailure));
                 }
             }
         }
