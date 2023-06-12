@@ -280,7 +280,7 @@
         <jcache-version>1.1.1</jcache-version>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
-        <jedis-client-version>4.3.2</jedis-client-version>
+        <jedis-client-version>4.4.2</jedis-client-version>
         <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
         <jetcd-guava-version>31.1-jre</jetcd-guava-version>
         <jetcd-version>0.7.5</jetcd-version>
