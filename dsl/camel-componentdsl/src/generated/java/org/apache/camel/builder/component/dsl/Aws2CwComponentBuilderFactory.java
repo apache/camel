@@ -135,6 +135,22 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2CwComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the CW client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -276,6 +292,23 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Cloudwatch client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2CwComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
          * The metric value.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -366,6 +399,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "lazyStartProducer": ((Cw2Component) component).setLazyStartProducer((boolean) value); return true;
             case "name": getOrCreateConfiguration((Cw2Component) component).setName((java.lang.String) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Cw2Component) component).setOverrideEndpoint((boolean) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Cw2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Cw2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Cw2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Cw2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -375,6 +409,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "unit": getOrCreateConfiguration((Cw2Component) component).setUnit((java.lang.String) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Cw2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Cw2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((Cw2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "value": getOrCreateConfiguration((Cw2Component) component).setValue((java.lang.Double) value); return true;
             case "autowiredEnabled": ((Cw2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Cw2Component) component).setAccessKey((java.lang.String) value); return true;
