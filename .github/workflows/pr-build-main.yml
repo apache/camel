@@ -153,3 +153,4 @@ jobs:
           mode: test
           pr-id: ${{ github.event.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-mvnd-install: 'true'
