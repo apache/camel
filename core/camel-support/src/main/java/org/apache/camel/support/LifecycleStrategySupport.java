@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 
@@ -34,11 +35,16 @@ import org.apache.camel.spi.OnCamelContextStarted;
 import org.apache.camel.spi.OnCamelContextStarting;
 import org.apache.camel.spi.OnCamelContextStopped;
 import org.apache.camel.spi.OnCamelContextStopping;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for {@link LifecycleStrategy} implementations.
  */
 public abstract class LifecycleStrategySupport implements LifecycleStrategy {
+    private static final Logger LOG = LoggerFactory.getLogger(LifecycleStrategySupport.class);
 
     // *******************************
     //
@@ -237,5 +243,37 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     @Override
     public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
         // noop
+    }
+
+    protected static void doAutoWire(String name, String kind, Object target, CamelContext camelContext) {
+        PropertyConfigurer pc = PluginHelper.getConfigurerResolver(camelContext)
+                .resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        if (pc instanceof PropertyConfigurerGetter) {
+            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
+            String[] names = getter.getAutowiredNames();
+            if (names != null) {
+                for (String option : names) {
+                    // is there already a configured value?
+                    Object value = getter.getOptionValue(target, option, true);
+                    if (value == null) {
+                        Class<?> type = getter.getOptionType(option, true);
+                        if (type != null) {
+                            Set<?> set = camelContext.getRegistry().findByType(type);
+                            if (set.size() == 1) {
+                                value = set.iterator().next();
+                            }
+                        }
+                        if (value != null) {
+                            boolean hit = pc.configure(camelContext, target, option, value, true);
+                            if (hit) {
+                                LOG.info(
+                                        "Autowired property: {} on {}: {} as exactly one instance of type: {} ({}) found in the registry",
+                                        option, kind, name, type.getName(), value.getClass().getName());
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

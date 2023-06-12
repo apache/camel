@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -27,10 +26,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,35 +125,7 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     }
 
     private void autwire(String name, String kind, Object target) {
-        PropertyConfigurer pc = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer(name + "-" + kind, camelContext);
-        if (pc instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
-            String[] names = getter.getAutowiredNames();
-            if (names != null) {
-                for (String option : names) {
-                    // is there already a configured value?
-                    Object value = getter.getOptionValue(target, option, true);
-                    if (value == null) {
-                        Class<?> type = getter.getOptionType(option, true);
-                        if (type != null) {
-                            Set<?> set = camelContext.getRegistry().findByType(type);
-                            if (set.size() == 1) {
-                                value = set.iterator().next();
-                            }
-                        }
-                        if (value != null) {
-                            boolean hit = pc.configure(camelContext, target, option, value, true);
-                            if (hit) {
-                                LOG.info(
-                                        "Autowired property: {} on {}: {} as exactly one instance of type: {} ({}) found in the registry",
-                                        option, kind, name, type.getName(), value.getClass().getName());
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        doAutoWire(name, kind, target, camelContext);
     }
 
 }
