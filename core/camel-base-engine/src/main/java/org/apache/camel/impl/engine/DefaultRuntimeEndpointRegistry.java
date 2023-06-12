@@ -102,16 +102,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue()) {
-                Long hits = 0L;
-                if (extended) {
-                    String key = asUtilizationKey(routeId, uri);
-                    if (key != null) {
-                        hits = inputUtilization.getStatistics().get(key);
-                        if (hits == null) {
-                            hits = 0L;
-                        }
-                    }
-                }
+                Long hits = getHits(routeId, uri, inputUtilization);
                 answer.add(new EndpointRuntimeStatistics(uri, routeId, "in", hits));
             }
         }
@@ -120,21 +111,26 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         for (Map.Entry<String, Map<String, String>> entry : outputs.entrySet()) {
             String routeId = entry.getKey();
             for (String uri : entry.getValue().keySet()) {
-                Long hits = 0L;
-                if (extended) {
-                    String key = asUtilizationKey(routeId, uri);
-                    if (key != null) {
-                        hits = outputUtilization.getStatistics().get(key);
-                        if (hits == null) {
-                            hits = 0L;
-                        }
-                    }
-                }
+                Long hits = getHits(routeId, uri, outputUtilization);
                 answer.add(new EndpointRuntimeStatistics(uri, routeId, "out", hits));
             }
         }
 
         return answer;
+    }
+
+    private Long getHits(String routeId, String uri, EndpointUtilizationStatistics statistics) {
+        Long hits = 0L;
+        if (extended) {
+            String key = asUtilizationKey(routeId, uri);
+            if (key != null) {
+                hits = statistics.getStatistics().get(key);
+                if (hits == null) {
+                    hits = 0L;
+                }
+            }
+        }
+        return hits;
     }
 
     @Override
