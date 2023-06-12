@@ -67,7 +67,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
-    private ThreadPoolProfile defaultProfile;
+    private final ThreadPoolProfile defaultProfile;
 
     public BaseExecutorServiceManager(CamelContext camelContext) {
         this.camelContext = camelContext;
