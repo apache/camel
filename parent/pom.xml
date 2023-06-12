@@ -232,7 +232,6 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.1</ivy-version>
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
-        <jackson-version>1.9.12</jackson-version>
         <jackson2-version>2.15.1</jackson2-version>
         <!-- For projects not yet compatible with Jackson 2.15 -->
         <jackson2.14-version>2.14.3</jackson2.14-version>
@@ -2711,6 +2710,14 @@
                 <version>${netty-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson2-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <dependency>
