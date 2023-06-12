@@ -893,10 +893,10 @@ Headers relaying/filtering is bi-directional.
 
 When a route has a CXF endpoint and the developer needs to have
 on-the-wire headers, such as SOAP headers, be relayed along the route to
-be consumed say by another JAXWS endpoint, a `CxfHeaderFilterStrategy` 
+be consumed say by another JAXWS endpoint, a `CxfHeaderFilterStrategy`
 instance should be set on the CXF endpoint, then `relayHeaders` property
-of the `CxfHeaderFilterStrategy` instance should be set to `true`, which 
-is the default value. Plus, the `CxfHeaderFilterStrategy` instance also 
+of the `CxfHeaderFilterStrategy` instance should be set to `true`, which
+is the default value. Plus, the `CxfHeaderFilterStrategy` instance also
 holds a list of `MessageHeaderFilter` interface, which decides if a specific
 header will be relayed or not.
 
@@ -1153,37 +1153,7 @@ Configuration page].
 ====
 You can use cxf:properties to set the camel-cxf endpoint's dataFormat
 and setDefaultBus properties from spring configuration file.
-====
 
-[tabs]
-====
-Java (Quarkus)::
-+
-[source,java]
-----
-import org.apache.camel.component.cxf.common.DataFormat;
-import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Named;
-
-...
-
-@Produces
-@SessionScoped
-@Named
-CxfEndpoint testEndpoint() {
-    final CxfEndpoint result = new CxfEndpoint();
-    result.setServiceClass(HelloService.class);
-    result.setDataFormat(DataFormat.RAW);
-    result.setDefaultBus(true);
-    result.setAddress("/hello");
-    return result;
-}
-----
-
-XML (Spring)::
-+
 [source,xml]
 ----
 <cxf:cxfEndpoint id="testEndpoint" address="http://localhost:9000/router"
