@@ -264,16 +264,14 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
 
             JarEntry entry;
             while ((entry = jarStream.getNextJarEntry()) != null) {
-                String name = entry.getName();
-                if (name != null) {
-                    name = name.trim();
-                    if (!entry.isDirectory() && !name.endsWith(".class")) {
-                        // name is FQN so it must start with package name
-                        if (name.startsWith(packageName)) {
-                            entries.add(name);
-                        }
+                final String name = entry.getName().trim();
+                if (!entry.isDirectory() && !name.endsWith(".class")) {
+                    // name is FQN so it must start with package name
+                    if (name.startsWith(packageName)) {
+                        entries.add(name);
                     }
                 }
+
             }
         } catch (IOException ioe) {
             log.warn("Cannot search jar file '" + urlPath + " due to an IOException: " + ioe.getMessage(), ioe);

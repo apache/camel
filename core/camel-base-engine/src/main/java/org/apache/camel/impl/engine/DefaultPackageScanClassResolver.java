@@ -302,17 +302,14 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
 
         for (File file : files) {
             builder = new StringBuilder(100);
-            String name = file.getName();
-            if (name != null) {
-                name = name.trim();
-                builder.append(parent).append("/").append(name);
-                String packageOrClass = parent == null ? name : builder.toString();
+            final String name = file.getName().trim();
+            builder.append(parent).append("/").append(name);
+            String packageOrClass = parent == null ? name : builder.toString();
 
-                if (file.isDirectory()) {
-                    loadImplementationsInDirectory(test, packageOrClass, file, classes);
-                } else if (name.endsWith(".class")) {
-                    addIfMatching(test, packageOrClass, classes);
-                }
+            if (file.isDirectory()) {
+                loadImplementationsInDirectory(test, packageOrClass, file, classes);
+            } else if (name.endsWith(".class")) {
+                addIfMatching(test, packageOrClass, classes);
             }
         }
     }
@@ -363,12 +360,9 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
 
             JarEntry entry;
             while ((entry = jarStream.getNextJarEntry()) != null) {
-                String name = entry.getName();
-                if (name != null) {
-                    name = name.trim();
-                    if (!entry.isDirectory() && name.endsWith(".class")) {
-                        entries.add(name);
-                    }
+                final String name = entry.getName().trim();
+                if (!entry.isDirectory() && name.endsWith(".class")) {
+                    entries.add(name);
                 }
             }
         } catch (IOException ioe) {
