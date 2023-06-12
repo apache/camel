@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.net.SocketTimeoutException;
+import java.net.http.HttpTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +96,7 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
         assertNotNull(e, "We should get the exception cause here");
-        assertTrue(e instanceof SocketTimeoutException, "We should get the socket time out exception here");
+        assertTrue(e instanceof HttpTimeoutException, "We should get a http time out exception here");
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {
