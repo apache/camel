@@ -157,13 +157,6 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testStringToFile() {
-        File file = converter.convertTo(File.class, "foo.txt");
-        assertNotNull("Should have converted to a file!");
-        assertEquals("foo.txt", file.getName(), "file name");
-    }
-
-    @Test
     public void testFileToString() throws Exception {
         URL resource = getClass().getResource("dummy.txt");
         assertNotNull(resource, "Cannot find resource!");

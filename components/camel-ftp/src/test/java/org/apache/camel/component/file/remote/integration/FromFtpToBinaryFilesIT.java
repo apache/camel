@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,7 +79,7 @@ public class FromFtpToBinaryFilesIT extends FtpServerTestSupport {
                   + "&delay=2000&recursive=false";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));
+        exchange.getIn().setBody(new File("src/test/data/ftpbinarytest/logo.jpeg"));
         exchange.getIn().setHeader(Exchange.FILE_NAME, "logo.jpeg");
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -91,7 +90,7 @@ public class FromFtpToBinaryFilesIT extends FtpServerTestSupport {
                  + "&delay=2000&recursive=false";
         endpoint = context.getEndpoint(ftpUrl);
         exchange = endpoint.createExchange();
-        exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));
+        exchange.getIn().setBody(new File("src/test/data/ftpbinarytest/logo1.jpeg"));
         exchange.getIn().setHeader(Exchange.FILE_NAME, "logo1.jpeg");
         producer = endpoint.createProducer();
         producer.start();

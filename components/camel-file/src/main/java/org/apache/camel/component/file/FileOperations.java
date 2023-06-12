@@ -321,30 +321,33 @@ public class FileOperations implements GenericFileOperations<File> {
                 // a full file to file copy, as the local work copy is to be
                 // deleted afterwards anyway
                 // local work path
-                File local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, File.class);
-                if (local != null && local.exists()) {
-                    boolean renamed = writeFileByLocalWorkPath(local, file);
-                    if (renamed) {
-                        // try to keep last modified timestamp if configured to
-                        // do so
-                        keepLastModified(exchange, file);
-                        // set permissions if the chmod option was set
-                        if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
-                            Set<PosixFilePermission> permissions = endpoint.getPermissions();
-                            if (!permissions.isEmpty()) {
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions),
-                                            file);
+                String local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, String.class);
+                if (local != null) {
+                    File f = new File(local);
+                    if (f.exists()) {
+                        boolean renamed = writeFileByLocalWorkPath(f, file);
+                        if (renamed) {
+                            // try to keep last modified timestamp if configured to
+                            // do so
+                            keepLastModified(exchange, file);
+                            // set permissions if the chmod option was set
+                            if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                                Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                                if (!permissions.isEmpty()) {
+                                    if (LOG.isTraceEnabled()) {
+                                        LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions),
+                                                file);
+                                    }
+                                    Files.setPosixFilePermissions(file.toPath(), permissions);
                                 }
-                                Files.setPosixFilePermissions(file.toPath(), permissions);
                             }
+                            // clear header as we have renamed the file
+                            exchange.getIn().setHeader(FileConstants.FILE_LOCAL_WORK_PATH, null);
+                            // return as the operation is complete, we just renamed
+                            // the local work file
+                            // to the target.
+                            return true;
                         }
-                        // clear header as we have renamed the file
-                        exchange.getIn().setHeader(FileConstants.FILE_LOCAL_WORK_PATH, null);
-                        // return as the operation is complete, we just renamed
-                        // the local work file
-                        // to the target.
-                        return true;
                     }
                 } else if (source != null && source.exists()) {
                     // no there is no local work file so use file to file copy

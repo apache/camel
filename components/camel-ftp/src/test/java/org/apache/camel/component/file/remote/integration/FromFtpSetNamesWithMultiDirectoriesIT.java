@@ -25,7 +25,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -80,7 +79,7 @@ public class FromFtpSetNamesWithMultiDirectoriesIT extends FtpServerTestSupport 
         String ftpUrl = "ftp://admin@localhost:{{ftp.server.port}}/incoming/data1/?password=admin&binary=true";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));
+        exchange.getIn().setBody(new File("src/test/data/ftpbinarytest/logo1.jpeg"));
         exchange.getIn().setHeader(Exchange.FILE_NAME, "logo1.jpeg");
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -90,7 +89,7 @@ public class FromFtpSetNamesWithMultiDirectoriesIT extends FtpServerTestSupport 
         ftpUrl = "ftp://admin@localhost:{{ftp.server.port}}/incoming/data2/?password=admin&binary=true";
         endpoint = context.getEndpoint(ftpUrl);
         exchange = endpoint.createExchange();
-        exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo2.png"));
+        exchange.getIn().setBody(new File("src/test/data/ftpbinarytest/logo2.png"));
         exchange.getIn().setHeader(Exchange.FILE_NAME, "logo2.png");
         producer = endpoint.createProducer();
         producer.start();

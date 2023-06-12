@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,10 +51,10 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
 
     @BeforeAll
     public static void gatherFileInfo() {
-        logoFile = IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg");
+        logoFile = new File("src/test/data/ftpbinarytest/logo.jpeg");
         logoFileSize = logoFile.length();
 
-        logo1File = IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg");
+        logo1File = new File("src/test/data/ftpbinarytest/logo1.jpeg");
         logo1FileSize = logo1File.length();
     }
 
