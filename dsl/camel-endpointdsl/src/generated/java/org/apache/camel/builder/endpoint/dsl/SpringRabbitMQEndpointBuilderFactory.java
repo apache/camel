@@ -1906,11 +1906,11 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         private static final SpringRabbitMQHeaderNameBuilder INSTANCE = new SpringRabbitMQHeaderNameBuilder();
 
         /**
-         * The exchange key.
+         * To override the endpoint configuration's routing key.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code
          * SpringRabbitmqRoutingOverrideKey}.
@@ -1920,11 +1920,11 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         }
 
         /**
-         * The exchange name.
+         * To override the endpoint configuration's exchange name.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code
          * SpringRabbitmqExchangeOverrideName}.
@@ -1934,16 +1934,237 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         }
 
         /**
+         * Whether the message was previously delivered and requeued.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SpringRabbitmqRedelivered}.
+         */
+        public String springRabbitmqRedelivered() {
+            return "SpringRabbitmqRedelivered";
+        }
+
+        /**
          * Delivery tag for manual acknowledge mode.
          * 
          * The option is a: {@code long} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code SpringRabbitmqDeliveryTag}.
          */
         public String springRabbitmqDeliveryTag() {
             return "SpringRabbitmqDeliveryTag";
+        }
+
+        /**
+         * The exchange name that was used when publishing the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SpringRabbitmqExchangeName}.
+         */
+        public String springRabbitmqExchangeName() {
+            return "SpringRabbitmqExchangeName";
+        }
+
+        /**
+         * The routing key that was used when publishing the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SpringRabbitmqRoutingKey}.
+         */
+        public String springRabbitmqRoutingKey() {
+            return "SpringRabbitmqRoutingKey";
+        }
+
+        /**
+         * The message delivery mode.
+         * 
+         * The option is a: {@code MessageDeliveryMode} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqDeliveryMode}.
+         */
+        public String springRabbitmqDeliveryMode() {
+            return "SpringRabbitmqDeliveryMode";
+        }
+
+        /**
+         * Application-specific message type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqType}.
+         */
+        public String springRabbitmqType() {
+            return "SpringRabbitmqType";
+        }
+
+        /**
+         * The message content type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqContentType}.
+         */
+        public String springRabbitmqContentType() {
+            return "SpringRabbitmqContentType";
+        }
+
+        /**
+         * The message content length.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqContentLength}.
+         */
+        public String springRabbitmqContentLength() {
+            return "SpringRabbitmqContentLength";
+        }
+
+        /**
+         * Content encoding used by applications.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqContentEncoding}.
+         */
+        public String springRabbitmqContentEncoding() {
+            return "SpringRabbitmqContentEncoding";
+        }
+
+        /**
+         * Arbitrary message id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqMessageId}.
+         */
+        public String springRabbitmqMessageId() {
+            return "SpringRabbitmqMessageId";
+        }
+
+        /**
+         * Identifier to correlate RPC responses with requests.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqCorrelationId}.
+         */
+        public String springRabbitmqCorrelationId() {
+            return "SpringRabbitmqCorrelationId";
+        }
+
+        /**
+         * Commonly used to name a callback queue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqReplyTo}.
+         */
+        public String springRabbitmqReplyTo() {
+            return "SpringRabbitmqReplyTo";
+        }
+
+        /**
+         * Per-message TTL.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqExpiration}.
+         */
+        public String springRabbitmqExpiration() {
+            return "SpringRabbitmqExpiration";
+        }
+
+        /**
+         * Application-provided timestamp.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqTimestamp}.
+         */
+        public String springRabbitmqTimestamp() {
+            return "SpringRabbitmqTimestamp";
+        }
+
+        /**
+         * Validated user id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqUserId}.
+         */
+        public String springRabbitmqUserId() {
+            return "SpringRabbitmqUserId";
+        }
+
+        /**
+         * The application name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqAppId}.
+         */
+        public String springRabbitmqAppId() {
+            return "SpringRabbitmqAppId";
+        }
+
+        /**
+         * The message priority.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqPriority}.
+         */
+        public String springRabbitmqPriority() {
+            return "SpringRabbitmqPriority";
+        }
+
+        /**
+         * The cluster id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqClusterId}.
+         */
+        public String springRabbitmqClusterId() {
+            return "SpringRabbitmqClusterId";
         }
     }
     static SpringRabbitMQEndpointBuilder endpointBuilder(
