@@ -49,6 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -563,10 +564,20 @@ public class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
+        // if we have a specific camel version then make sure we really need to switch
+        if (camelVersion != null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String v = catalog.getCatalogVersion();
+            if (camelVersion.equals(v)) {
+                // same version, so we use current
+                camelVersion = null;
+            }
+        }
+
         // okay we have validated all input and are ready to run
         if (camelVersion != null) {
             // run in another JVM with different camel version (foreground or background)
-            boolean custom = camelVersion.contains("-");
+            boolean custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
             if (custom) {
                 // custom camel distribution
                 return runCustomCamelVersion(main);
