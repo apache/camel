@@ -104,7 +104,7 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
         // autowiring can be turned off on context level and per component
         boolean enabled = camelContext.isAutowiredEnabled() && component.isAutowiredEnabled();
         if (enabled) {
-            autwire(name, "component", component);
+            autowire(name, "component", component);
         }
     }
 
@@ -112,7 +112,7 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
         // autowiring can be turned off on context level
         boolean enabled = camelContext.isAutowiredEnabled();
         if (enabled) {
-            autwire(name, "dataformat", dataFormat);
+            autowire(name, "dataformat", dataFormat);
         }
     }
 
@@ -120,11 +120,11 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
         // autowiring can be turned off on context level
         boolean enabled = camelContext.isAutowiredEnabled();
         if (enabled) {
-            autwire(name, "language", language);
+            autowire(name, "language", language);
         }
     }
 
-    private void autwire(String name, String kind, Object target) {
+    private void autowire(String name, String kind, Object target) {
         doAutoWire(name, kind, target, camelContext);
     }
 
