@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.cw.client;
 
 import org.apache.camel.component.aws2.cw.Cw2Configuration;
 import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class Cw2ClientFactory {
      * @return               CloudWatchClient
      */
     public static Cw2InternalClient getCloudWatchClient(Cw2Configuration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new Cw2ClientIAMOptimizedImpl(configuration) : new Cw2ClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new Cw2ClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new Cw2ClientIAMProfileOptimizedImpl(configuration);
+        } else {
+            return new Cw2ClientStandardImpl(configuration);
+        }
     }
 }
