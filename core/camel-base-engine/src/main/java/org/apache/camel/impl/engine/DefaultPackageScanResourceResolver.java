@@ -21,12 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,14 +125,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             Set<Resource> resources,
             String subPattern) {
 
-        Enumeration<URL> urls;
-        try {
-            urls = getResources(classLoader, packageName);
-            if (!urls.hasMoreElements()) {
-                log.trace("No URLs returned by classloader");
-            }
-        } catch (IOException ioe) {
-            log.warn("Cannot read package: {}", packageName, ioe);
+        Enumeration<URL> urls = getUrls(packageName, classLoader);
+        if (urls == null) {
             return;
         }
 
@@ -148,44 +138,9 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
 
                 url = customResourceLocator(url);
 
-                String urlPath = url.getFile();
-                urlPath = URLDecoder.decode(urlPath, StandardCharsets.UTF_8);
-                if (log.isTraceEnabled()) {
-                    log.trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
-                }
-
-                // If it's a file in a directory, trim the stupid file: spec
-                if (urlPath.startsWith("file:")) {
-                    // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
-                    // for example + being decoded to something else (+ can be used in temp folders on Mac OS)
-                    // to remedy this then create new path without using the URLDecoder
-                    try {
-                        urlPath = new URI(url.getFile()).getPath();
-                    } catch (URISyntaxException e) {
-                        // fallback to use as it was given from the URLDecoder
-                        // this allows us to work on Windows if users have spaces in paths
-                    }
-
-                    if (urlPath.startsWith("file:")) {
-                        urlPath = urlPath.substring(5);
-                    }
-                }
-
-                // osgi bundles should be skipped
-                if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
-                    log.trace("Skipping OSGi bundle: {}", url);
+                String urlPath = parseUrlPath(url);
+                if (urlPath == null) {
                     continue;
-                }
-
-                // bundle resource should be skipped
-                if (url.toString().startsWith("bundleresource:") || urlPath.startsWith("bundleresource:")) {
-                    log.trace("Skipping bundleresource: {}", url);
-                    continue;
-                }
-
-                // Else it's in a JAR, grab the path to the jar
-                if (urlPath.indexOf('!') > 0) {
-                    urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
                 log.trace("Scanning for resources in: {} matching pattern: {}", urlPath, subPattern);
