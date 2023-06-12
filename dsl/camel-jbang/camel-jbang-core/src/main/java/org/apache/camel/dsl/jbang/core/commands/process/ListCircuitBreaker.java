@@ -108,6 +108,23 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                                 }
                             }
                         }
+                        mo = (JsonObject) root.get("route-circuit-breaker");
+                        if (mo != null) {
+                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                            if (arr != null) {
+                                for (int i = 0; i < arr.size(); i++) {
+                                    row = baseRow.copy();
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.component = "core";
+                                    row.id = jo.getString("routeId");
+                                    row.routeId = jo.getString("routeId");
+                                    row.state = jo.getString("state");
+                                    row.successfulCalls = jo.getInteger("successfulCalls");
+                                    row.failedCalls = jo.getInteger("failedCalls");
+                                    rows.add(row);
+                                }
+                            }
+                        }
                     }
                 });
 
@@ -173,7 +190,7 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
     }
 
     private String getSuccess(Row r) {
-        if ("resilience4j".equals(r.component)) {
+        if ("resilience4j".equals(r.component) || "core".equals(r.component)) {
             return Integer.toString(r.successfulCalls);
         }
         return "";

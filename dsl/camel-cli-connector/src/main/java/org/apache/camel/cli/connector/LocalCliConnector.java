@@ -582,6 +582,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("fault-tolerance", json);
                     }
                 }
+                DevConsole dc12a = dcr.resolveById("route-circuit-breaker");
+                if (dc12a != null) {
+                    JsonObject json = (JsonObject) dc12a.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("route-circuit-breaker", json);
+                    }
+                }
                 DevConsole dc12 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("trace");
                 if (dc12 != null) {
