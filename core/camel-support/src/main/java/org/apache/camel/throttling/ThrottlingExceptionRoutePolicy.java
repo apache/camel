@@ -127,7 +127,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     public void onExchangeDone(Route route, Exchange exchange) {
         if (keepOpen.get()) {
             if (state.get() != STATE_OPEN) {
-                LOG.debug("opening circuit b/c keepOpen is on");
+                LOG.debug("Opening circuit (keepOpen is true)");
                 openCircuit(route);
             }
         } else {
@@ -143,7 +143,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     /**
-     * uses similar approach as circuit breaker if the exchange has an exception that we are watching then we count that
+     * Uses similar approach as circuit breaker if the exchange has an exception that we are watching then we count that
      * as a failure otherwise we ignore it
      */
     private boolean hasFailed(Exchange exchange) {
@@ -214,10 +214,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                         halfOpenCircuit(route);
                     }
                 } else {
-                    LOG.debug("keeping circuit open (time not elapsed)...");
+                    LOG.debug("Keeping circuit open (time not elapsed)...");
                 }
             } else {
-                LOG.debug("keeping circuit open (keepOpen is true)...");
+                LOG.debug("Keeping circuit open (keepOpen is true)...");
                 this.addHalfOpenTimer(route);
             }
         }
@@ -339,7 +339,6 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     public void setKeepOpen(boolean keepOpen) {
-        LOG.debug("keep open: {}", keepOpen);
         this.keepOpen.set(keepOpen);
     }
 
