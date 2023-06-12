@@ -18,13 +18,14 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.springrabbit.SpringRabbitMQConstants;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 
@@ -62,7 +63,37 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
-        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.CONTENT_TYPE, MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE,
+                MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+
+        template.sendBody("direct:start", body);
+
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConsumerWithMessageProperties() throws Exception {
+        MessageProperties props = MessagePropertiesBuilder.newInstance()
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .setType("price")
+                .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
+                .setMessageId("123")
+                .setPriority(1)
+                .setHeader("bar", "baz")
+                .build();
+        Message body = MessageBuilder.withBody("foo".getBytes())
+                .andProperties(props)
+                .build();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("foo");
+        getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.DELIVERY_MODE,
+                MessageDeliveryMode.PERSISTENT);
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.TYPE, "price");
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.CONTENT_TYPE,
+                MessageProperties.CONTENT_TYPE_TEXT_PLAIN);
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.MESSAGE_ID, "123");
+        getMockEndpoint("mock:result").expectedHeaderReceived(SpringRabbitMQConstants.PRIORITY, 1);
 
         template.sendBody("direct:start", body);
 
