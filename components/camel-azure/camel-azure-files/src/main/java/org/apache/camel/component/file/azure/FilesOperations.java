@@ -33,6 +33,8 @@ import com.azure.storage.file.share.ShareFileClient;
 import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.models.ShareFileItem;
 import com.azure.storage.file.share.models.ShareFileRange;
+import com.azure.storage.file.share.options.ShareDirectoryCreateOptions;
+import com.azure.storage.file.share.options.ShareFileRenameOptions;
 import com.azure.storage.file.share.options.ShareListFilesAndDirectoriesOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -123,7 +125,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
     }
 
-    boolean deleteRemote(ShareDirectoryClient dirClient, String fileName) {
+    private boolean deleteRemote(ShareDirectoryClient dirClient, String fileName) {
         log.trace("{}> rm {}", dirClient.getDirectoryPath(), fileName);
         return Boolean.TRUE.equals(dirClient
                 .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE)
@@ -156,16 +158,22 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
             changeCurrentDirectory(FilesPath.extractParentPath(from));
             var cwd = cwd();
-            log.debug("{}> mv {} {}", cwd.getDirectoryPath(), fileName,
+            log.trace("{}> mv {} {}", cwd.getDirectoryPath(), fileName,
                     FilesPath.SHARE_ROOT + shareRelativeTo);
-            var file = cwd.getFileClient(fileName);
-            file.rename(shareRelativeTo);
-            return true;
+            return renameRemote(cwd.getFileClient(fileName), shareRelativeTo);
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException("Cannot rename: " + from + " to: " + to, e);
         } finally {
             restore(backup);
         }
+    }
+
+    private boolean renameRemote(ShareFileClient fileClient, String shareRelativeTo) {
+        // TODO replace existing?
+        var options = new ShareFileRenameOptions(shareRelativeTo);
+        var renamed = fileClient
+                .renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE).getValue();
+        return existsRemote(renamed);
     }
 
     @Override
@@ -222,7 +230,39 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } finally {
             restore(backup);
         }
+    }
 
+    private boolean buildDirectoryChunks(String dirName) throws IOException {
+        var sb = new StringBuilder(dirName.length());
+        var dirs = FilesPath.split(dirName);
+
+        boolean success = false;
+        for (String dir : dirs) {
+            sb.append(dir).append(FilesPath.PATH_SEPARATOR);
+            String directory = endpoint.getConfiguration().normalizePath(sb.toString());
+
+            if (!(FilesPath.isRoot(directory))) {
+                log.trace("Trying to build remote directory by chunk: {}", dir);
+
+                dir = FileUtil.stripTrailingSeparator(dir);
+                var subDir = buildDirectoryRemote(cwd(), dir);
+                success = existsRemote(subDir);
+                if (success) {
+                    dirStack.push(subDir);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return success;
+    }
+
+    private ShareDirectoryClient buildDirectoryRemote(ShareDirectoryClient dirClient, String name) {
+        log.trace("{}> mkdir {}", dirClient.getDirectoryPath(), name);
+        var options = new ShareDirectoryCreateOptions();
+        return dirClient.createSubdirectoryIfNotExistsWithResponse(name, options,
+                endpoint.getMetadataTimeout(), Context.NONE).getValue();
     }
 
     @Override
@@ -518,8 +558,10 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 log.trace("Client storeFile: {}", targetName);
                 var cwd = cwd();
                 var file = cwd.getFileClient(targetName);
+                // TODO check return values?
                 deleteRemote(cwd, targetName);
-                file.create(length);
+                createRemote(file, length);
+                // TODO >4MiB possible? (see upload limitation)
                 try (var os = file.getFileOutputStream()) {
                     // TODO add data timeout
                     is.transferTo(os);
@@ -541,6 +583,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         } finally {
             IOHelper.close(is, "store: " + name, log);
         }
+    }
+
+    private boolean createRemote(ShareFileClient fileClient, int length) {
+        var createResponse = fileClient
+                .createWithResponse(length, null, null, null, null, endpoint.getMetadataTimeout(), Context.NONE);
+        return createResponse.getStatusCode() == HTTP_OK;
     }
 
     @Override
@@ -676,33 +724,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         log.trace("sendSiteCommand({})", command);
         return true;
-    }
-
-    private boolean buildDirectoryChunks(String dirName) throws IOException {
-        var sb = new StringBuilder(dirName.length());
-        var dirs = FilesPath.split(dirName);
-
-        boolean success = false;
-        for (String dir : dirs) {
-            sb.append(dir).append(FilesPath.PATH_SEPARATOR);
-            String directory = endpoint.getConfiguration().normalizePath(sb.toString());
-
-            if (!(FilesPath.isRoot(directory))) {
-                log.trace("Trying to build remote directory by chunk: {}", dir);
-
-                dir = FileUtil.stripTrailingSeparator(dir);
-
-                var subDir = cwd().createSubdirectoryIfNotExists(dir);
-                success = existsRemote(subDir);
-                if (success) {
-                    dirStack.push(subDir);
-                } else {
-                    break;
-                }
-            }
-        }
-
-        return success;
     }
 
     public ShareServiceClient getClient() {
