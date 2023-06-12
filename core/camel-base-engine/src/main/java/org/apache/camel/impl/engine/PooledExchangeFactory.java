@@ -133,7 +133,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         }
     }
 
-    protected PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
+    private PooledExchange createPooledExchange(Endpoint fromEndpoint, boolean autoRelease) {
         PooledExchange answer;
         if (fromEndpoint != null) {
             answer = new DefaultPooledExchange(fromEndpoint);
