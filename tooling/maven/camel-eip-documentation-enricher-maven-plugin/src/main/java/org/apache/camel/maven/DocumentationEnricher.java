@@ -143,9 +143,9 @@ public class DocumentationEnricher {
 
     private String formatTextContent(Element item, String textContent) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("\n")
                 .append(WordUtils.wrap(textContent, Constants.WRAP_LENGTH))
-                .append(System.lineSeparator());
+                .append("\n");
         // Fix closing tag intention.
         stringBuilder.append(Constants.DEFAULT_XML_INTENTION);
         for (Node parent = item.getParentNode(); parent != null; parent = parent.getParentNode()) {
