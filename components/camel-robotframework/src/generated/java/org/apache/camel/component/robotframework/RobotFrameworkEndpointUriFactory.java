@@ -24,7 +24,7 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
         Set<String> props = new HashSet<>(69);
         props.add("allowContextMapAll");
         props.add("allowTemplateFromHeader");
-        props.add("argumentFile");
+        props.add("argumentFiles");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
