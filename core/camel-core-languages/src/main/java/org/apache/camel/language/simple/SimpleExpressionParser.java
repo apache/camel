@@ -33,6 +33,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.StringHelper;
 
@@ -223,7 +224,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                     exp = StringHelper.removeLeadingAndEndingQuotes(exp);
                     sb.append("\"");
                     // " should be escaped to \"
-                    exp = escapeQuotes(exp);
+                    exp = LanguageHelper.escapeQuotes(exp);
                     // \n \t \r should be escaped
                     exp = exp.replaceAll("\n", "\\\\n");
                     exp = exp.replaceAll("\t", "\\\\t");
@@ -237,22 +238,6 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 } else {
                     sb.append(exp);
                 }
-            }
-        }
-        return sb.toString();
-    }
-
-    private static String escapeQuotes(String text) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < text.length(); i++) {
-            char prev = i > 0 ? text.charAt(i - 1) : 0;
-            char ch = text.charAt(i);
-
-            if (ch == '"' && (i == 0 || prev != '\\')) {
-                sb.append('\\');
-                sb.append('"');
-            } else {
-                sb.append(ch);
             }
         }
         return sb.toString();
