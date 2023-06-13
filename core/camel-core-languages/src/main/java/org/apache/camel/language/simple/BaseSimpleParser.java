@@ -133,36 +133,30 @@ public abstract class BaseSimpleParser {
 
                 Block top = stack.pop();
                 // if there is a block on the stack then it should accept the child token
-                Block block = stack.isEmpty() ? null : stack.peek();
-                if (block != null) {
-                    if (!block.acceptAndAddNode(top)) {
-                        throw new SimpleParserException(
-                                block.getToken().getType() + " cannot accept " + token.getToken().getType(),
-                                token.getToken().getIndex());
-                    }
-                } else {
-                    // no block, so add to answer
-                    answer.add(top);
-                }
+                acceptOrAdd(answer, stack, top);
             } else {
                 // if there is a block on the stack then it should accept the child token
-                Block block = stack.isEmpty() ? null : stack.peek();
-                if (block != null) {
-                    if (!block.acceptAndAddNode(token)) {
-                        throw new SimpleParserException(
-                                block.getToken().getType() + " cannot accept " + token.getToken().getType(),
-                                token.getToken().getIndex());
-                    }
-                } else {
-                    // no block, so add to answer
-                    answer.add(token);
-                }
+                acceptOrAdd(answer, stack, token);
             }
         }
 
         // replace nodes from the stack
         nodes.clear();
         nodes.addAll(answer);
+    }
+
+    private static void acceptOrAdd(List<SimpleNode> answer, Deque<Block> stack, SimpleNode token) {
+        Block block = stack.isEmpty() ? null : stack.peek();
+        if (block != null) {
+            if (!block.acceptAndAddNode(token)) {
+                throw new SimpleParserException(
+                        block.getToken().getType() + " cannot accept " + token.getToken().getType(),
+                        token.getToken().getIndex());
+            }
+        } else {
+            // no block, so add to answer
+            answer.add(token);
+        }
     }
 
     /**
