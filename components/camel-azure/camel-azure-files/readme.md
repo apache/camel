@@ -49,7 +49,7 @@ to https://github.com/pekuz/camel.git
 The endpoint path interpretation is specialized
 to non-uniform /share[/directory]. 
 
-Endpoint paramaters cleanup, removed those FTP specific:
+Endpoint parameters cleanup, removed those FTP specific:
 
   - ftpClient
   - ftpClientConfig
