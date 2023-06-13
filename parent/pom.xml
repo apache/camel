@@ -232,7 +232,7 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.1</ivy-version>
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
-        <jackson2-version>2.15.1</jackson2-version>
+        <jackson2-version>2.15.2</jackson2-version>
         <!-- For projects not yet compatible with Jackson 2.15 -->
         <jackson2.14-version>2.14.3</jackson2.14-version>
         <jackson2-module-scala-version>2.15.1</jackson2-module-scala-version>
