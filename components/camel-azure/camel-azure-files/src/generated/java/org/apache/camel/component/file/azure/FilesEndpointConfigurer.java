@@ -39,8 +39,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "buffersize":
-        case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -210,8 +208,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "buffersize":
-        case "bufferSize": return int.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "delay": return long.class;
@@ -382,8 +378,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "buffersize":
-        case "bufferSize": return target.getBufferSize();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "delay": return target.getDelay();

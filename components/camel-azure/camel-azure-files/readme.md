@@ -48,7 +48,6 @@ Endpoint paramaters cleanup, removed those FTP specific:
   - passive
   - passiveMode
   - stepwise
-  - useList
   - binary
   - charset
   - account
@@ -58,6 +57,7 @@ Endpoint paramaters cleanup, removed those FTP specific:
   - handleDirectoryParserAbsoluteResult
   - separator
   - sendNoop
+  - bufferSize
   
 or not implemented:
 
@@ -66,11 +66,14 @@ or not implemented:
   - transferLoggingVerbose
   - password
   - soTimeout
+  - useList
   - ignoreFileNotFoundOrPermissionError
 
 Basic `to("azure-files://...")` does not crash. 
 
-Tested with 1 GiB upload (it took 2h47m47s over 1 Mbit/s uplink).
+The component is tested with 1 GiB upload
+(it took 2h47m47s over 1 Mbit/s uplink)
+and download.
 
 ## Deps
 
