@@ -26,7 +26,7 @@ for this component:
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-files</artifactId>
-    <version>x.x.x</version>
+    <version>x.y.z</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
 ----
@@ -135,6 +135,20 @@ When moving files using `move` or `preMove` option the files are
 restricted to the share. That prevents you from moving files
 outside the share.
 
+== Producing Files
+
+Azure Files service does not allow to grow files. The file
+length must be known ahead.
+
+Consequently:
+
+  - `CamelFileLength` header has important
+    meaning even for producers.
+  - No append mode is supported.
+  - For the `change` read lock, only the last modified
+    can be relied on, furthermore a precision better than
+    30 seconds being problematic.
+
 == Exchange Properties
 
 Camel sets the following exchange properties
@@ -197,40 +211,6 @@ As Camel knows it's a local work file, it can optimize and use a rename instead 
 
 TODO below is not yet adapted FTP doc 
 
-
-== Samples
-
-In the sample below we set up Camel to download all the reports from the
-FTP server once every hour (60 min) as BINARY content and store it as
-files on the local file system.
-
-And the route using XML DSL:
-
-[source,xml]
-----
-  <route>
-     <from uri="ftp://scott@localhost/public/reports?password=tiger&amp;binary=true&amp;delay=60000"/>
-     <to uri="file://target/test-reports"/>
-  </route>
-----
-
-=== Consuming a remote FTPS server (implicit SSL) and client authentication
-
-[source,java]
-----
-from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=SSL&implicit=true
-      &ftpClient.keyStore.file=./src/test/resources/server.jks
-      &ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password")
-  .to("bean:foo");
-----
-
-=== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
-
-[source,java]
-----
-from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustStore.file=./src/test/resources/server.jks&ftpClient.trustStore.password=password")
-  .to("bean:foo");
-----
 
 == Custom filtering
 
@@ -312,13 +292,6 @@ from("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=fal
 
 Notice that we have used all the options we talked above.
 
-You can also use this with `ConsumerTemplate`. For example to download a
-single file (if it exists) and grab the file content as a String type:
-
-[source,java]
-----
-String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true", String.class);
-----
 
 == Debug logging
 
