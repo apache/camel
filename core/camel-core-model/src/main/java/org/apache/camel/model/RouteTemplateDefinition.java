@@ -389,7 +389,10 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
         // must set these first in this order
         copy.setErrorHandlerRef(route.getErrorHandlerRef());
-        copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
+        if (route.isErrorHandlerFactorySet()) {
+            // only set factory if not already set
+            copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
+        }
 
         // and then copy over the rest
         // (do not copy id as it is used for route template id)
