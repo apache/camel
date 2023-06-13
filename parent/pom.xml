@@ -273,8 +273,6 @@
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>4.4.2</jedis-client-version>
-        <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
-        <jetcd-guava-version>32.0.0-jre</jetcd-guava-version>
         <jetcd-version>0.7.5</jetcd-version>
         <jetty-version>11.0.15</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
@@ -2717,6 +2715,14 @@
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson2-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc-version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

@@ -127,7 +127,7 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb-impl-version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -138,17 +138,14 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
-            <version>${grpc-version}</version>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
-            <version>${grpc-version}</version>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
-            <version>${grpc-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -332,7 +329,7 @@
                                             </files>
                                             <message><![CDATA[Salesforce Migration Tool required
 
-You need to download the Salesforce Migration Tool (ZIP file) and 
+You need to download the Salesforce Migration Tool (ZIP file) and
 extract the `ant-salesforce.jar` out of it to:
 
 ${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar
