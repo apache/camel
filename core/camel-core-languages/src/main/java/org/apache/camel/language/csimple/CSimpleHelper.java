@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.csimple;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,10 +43,10 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -171,11 +169,7 @@ public final class CSimpleHelper {
     }
 
     public static Exception exception(Exchange exchange) {
-        Exception exception = exchange.getException();
-        if (exception == null) {
-            exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
-        }
-        return exception;
+        return LanguageHelper.exception(exchange);
     }
 
     public static <T> T exceptionAs(Exchange exchange, Class<T> type) {
@@ -191,25 +185,11 @@ public final class CSimpleHelper {
     }
 
     public static String exceptionMessage(Exchange exchange) {
-        Exception exception = exception(exchange);
-        if (exception != null) {
-            return exception.getMessage();
-        } else {
-            return null;
-        }
+        return LanguageHelper.exceptionMessage(exchange);
     }
 
     public static String exceptionStacktrace(Exchange exchange) {
-        Exception exception = exception(exchange);
-        if (exception != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            exception.printStackTrace(pw);
-            IOHelper.close(pw, sw);
-            return sw.toString();
-        } else {
-            return null;
-        }
+        return LanguageHelper.exceptionStacktrace(exchange);
     }
 
     public static String threadName() {
