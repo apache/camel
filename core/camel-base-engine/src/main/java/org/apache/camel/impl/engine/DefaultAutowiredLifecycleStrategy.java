@@ -85,6 +85,4 @@ class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport impleme
         doAutoWire(name, kind, target, camelContext);
     }
 
-
-
 }
