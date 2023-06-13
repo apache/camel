@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support.builder;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -51,8 +49,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -452,19 +450,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                Exception exception = exchange.getException();
-                if (exception == null) {
-                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
-                }
-                if (exception != null) {
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    exception.printStackTrace(pw);
-                    IOHelper.close(pw, sw);
-                    return sw.toString();
-                } else {
-                    return null;
-                }
+                return LanguageHelper.exceptionStacktrace(exchange);
             }
 
             @Override
