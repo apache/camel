@@ -210,7 +210,7 @@ public class Lambda2Configuration implements Cloneable {
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
-    
+
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }
