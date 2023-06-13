@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://camel.apache.org/schema/spring" elementFormDefault="qualified" targetNamespace="http://camel.apache.org/schema/spring" version="1.0">
+
+    <xs:element name="aggregate" type="tns:aggregateDefinition">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Aggregates many messages into a single message
+      ]]></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="any23" type="tns:any23DataFormat">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Extract RDF data from HTML documents.
+      ]]></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:simpleType name="springErrorHandlerType">
+
+        <xs:restriction base="xs:string">
+
+            <xs:enumeration value="DefaultErrorHandler"/>
+
+            <xs:enumeration value="DeadLetterChannel"/>
+
+            <xs:enumeration value="NoErrorHandler"/>
+
+            <xs:enumeration value="TransactionErrorHandler"/>
+
+        </xs:restriction>
+
+    </xs:simpleType>
+
+</xs:schema>
