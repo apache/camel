@@ -8,6 +8,14 @@ It uses Azure Java SDK.
 
 In development since 2023-05, so far experimental.
 
+## Component Documentation
+
+The source of [the component doc fragment](src/main/docs/azure-files-component.adoc)
+is somehow usable as is. 
+
+The missing fragments can be deducted by `@UriParam` in java source,
+the File component doc (many options are inherited), etc.  
+
 ## History
 
 Formulated requirement in https://issues.apache.org/jira/browse/CAMEL-19279.
