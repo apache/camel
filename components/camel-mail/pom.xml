@@ -34,17 +34,6 @@
     <properties>
     </properties>
 
-            <repositories>
-                <repository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2/</url>
-                </repository>
-                <repository>
-                    <id>jenkinsci-releases</id>
-                    <url>https://repo.jenkins-ci.org/releases/</url>
-                </repository>
-            </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
