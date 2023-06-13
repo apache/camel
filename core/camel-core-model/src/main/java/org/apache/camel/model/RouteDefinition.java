@@ -1121,6 +1121,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
+     * Is a custom error handler been set
+     */
+    boolean isErrorHandlerFactorySet() {
+        return errorHandlerFactory != null;
+    }
+
+    /**
      * Sets the error handler to use with processors created by this builder
      */
     @XmlTransient
