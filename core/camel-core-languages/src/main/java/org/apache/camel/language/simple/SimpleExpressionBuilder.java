@@ -34,7 +34,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -43,11 +42,11 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -102,28 +101,7 @@ public final class SimpleExpressionBuilder {
             }
 
             private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
-                if (formatter == null) {
-                    formatter = camelContext.getRegistry().findSingleByType(ExchangeFormatter.class);
-                    if (formatter == null) {
-                        // setup exchange formatter to be used for message history dump
-                        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-                        def.setShowExchangeId(true);
-                        def.setMultiline(true);
-                        def.setShowHeaders(true);
-                        def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
-                        try {
-                            Integer maxChars = CamelContextHelper.parseInteger(camelContext,
-                                    camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
-                            if (maxChars != null) {
-                                def.setMaxChars(maxChars);
-                            }
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
-                        formatter = def;
-                    }
-                }
-                return formatter;
+                return LanguageHelper.getOrCreateExchangeFormatter(camelContext, formatter);
             }
 
             @Override

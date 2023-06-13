@@ -40,12 +40,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -478,28 +476,7 @@ public final class CSimpleHelper {
     }
 
     private static ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
-        if (exchangeFormatter == null) {
-            exchangeFormatter = camelContext.getRegistry().findSingleByType(ExchangeFormatter.class);
-            if (exchangeFormatter == null) {
-                // setup exchange formatter to be used for message history dump
-                DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-                def.setShowExchangeId(true);
-                def.setMultiline(true);
-                def.setShowHeaders(true);
-                def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
-                try {
-                    Integer maxChars = CamelContextHelper.parseInteger(camelContext,
-                            camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
-                    if (maxChars != null) {
-                        def.setMaxChars(maxChars);
-                    }
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                }
-                exchangeFormatter = def;
-            }
-        }
-        return exchangeFormatter;
+        return LanguageHelper.getOrCreateExchangeFormatter(camelContext, exchangeFormatter);
     }
 
     public static boolean isEqualTo(Exchange exchange, Object leftValue, Object rightValue) {

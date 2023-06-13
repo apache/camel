@@ -20,8 +20,12 @@ package org.apache.camel.support;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.IOHelper;
 
 public final class LanguageHelper {
@@ -125,5 +129,38 @@ public final class LanguageHelper {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Gets the exchange formatter or creates one if unset
+     *
+     * @param  camelContext      the Camel context
+     * @param  exchangeFormatter the exchange formatter
+     * @return                   the exchange formatter or the newly created one if previously unset
+     */
+    public static ExchangeFormatter getOrCreateExchangeFormatter(
+            CamelContext camelContext, ExchangeFormatter exchangeFormatter) {
+        if (exchangeFormatter == null) {
+            exchangeFormatter = camelContext.getRegistry().findSingleByType(ExchangeFormatter.class);
+            if (exchangeFormatter == null) {
+                // setup exchange formatter to be used for message history dump
+                DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                def.setShowExchangeId(true);
+                def.setMultiline(true);
+                def.setShowHeaders(true);
+                def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+                try {
+                    Integer maxChars = CamelContextHelper.parseInteger(camelContext,
+                            camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                    if (maxChars != null) {
+                        def.setMaxChars(maxChars);
+                    }
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+                exchangeFormatter = def;
+            }
+        }
+        return exchangeFormatter;
     }
 }
