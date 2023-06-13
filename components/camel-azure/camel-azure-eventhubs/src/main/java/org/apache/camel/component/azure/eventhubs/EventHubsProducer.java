@@ -37,8 +37,12 @@ public class EventHubsProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // create the client
-        producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(getEndpoint().getConfiguration());
+        EventHubsConfiguration configuration = getConfiguration();
+        producerAsyncClient = configuration.getProducerAsyncClient();
+        if (producerAsyncClient == null) {
+            // create the client
+            producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        }
 
         // create our operations
         producerOperations = new EventHubsProducerOperations(producerAsyncClient, getConfiguration());
