@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -295,19 +296,23 @@ public class SalesforceConsumer extends DefaultConsumer {
     }
 
     /**
-     * If alsoStopSubscription is added, any underlying subscriptions will be stopped as well.
+     * Stops this consumer.
      *
+     * If alsoStopSubscription=true, any underlying subscriptions will be stopped as well.
      * SubscriptionHelper also logs out, so this will terminate the salesforce session as well.
      *
-     * @param alsoStopSubscription
+     * @param alsoStopSubscription to also stop subscription
      */
     public void stop(boolean alsoStopSubscription) {
+        if (alsoStopSubscription) {
+            LOG.info("Force stopping Consumer and SubscriptionHelper");
+        }
         stop();
         if (alsoStopSubscription) {
             try {
-                subscriptionHelper.stop();
+                ServiceHelper.stopService(subscriptionHelper);
             } catch (Exception e) {
-                LOG.warn("Failed to stop subscription due to: {}", e.getMessage(), e);
+                LOG.warn("Failed to stop subscription due to: {}. This exception is ignored.", e.getMessage(), e);
             }
         }
     }
