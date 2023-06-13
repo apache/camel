@@ -145,7 +145,7 @@ Consequently:
   - `CamelFileLength` header has important
     meaning even for producers.
   - No append mode is supported.
-  - For the `change` read lock, only the last modified
+  - For the `changed` read lock, only the last modified
     can be relied on, furthermore a precision better than
     30 seconds being problematic.
 
@@ -247,10 +247,10 @@ The sample below demonstrates how to use it:
 
 [source,java]
 ----
-from("ftp://admin@localhost:2222/public/camel?antInclude=**/*.txt").to("...");
+from("azure-files://...&antInclude=**/*.txt").to("...");
 ----
 
-== Using a proxy
+== Using a Proxy
 
 Consult the https://learn.microsoft.com/en-us/azure/developer/java/sdk/proxying[underlying library]
 documentation.
