@@ -206,13 +206,7 @@ The `java.io.File` handle is then used as the Exchange body. The file producer l
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
 ====
 
-
-
-
-TODO below is not yet adapted FTP doc 
-
-
-== Custom filtering
+== Custom Filtering
 
 Camel supports pluggable filtering strategies. This strategy it to use
 the build in `org.apache.camel.component.file.GenericFileFilter` in
@@ -226,16 +220,13 @@ And then we can configure our route using the *filter* attribute to
 reference our filter (using `#` notation) that we have defined in the
 spring XML file:
 
-[source,xml]
-----
-   <!-- define our sorter as a plain spring bean -->
-   <bean id="myFilter" class="com.mycompany.MyFileFilter"/>
+The accept(file) file argument has properties:
 
-  <route>
-    <from uri="ftp://someuser@someftpserver.com?password=secret&amp;filter=#myFilter"/>
-    <to uri="bean:processInbox"/>
-  </route>
-----
+  - endpoint path: the share name such as `/samples`
+  - relative path: a path to the file such as `subdir/a file`
+  - directory: `true` if a directory
+  - file length: if not a directory then a length of the file in bytes
+
 
 == Filtering using ANT path matcher
 
@@ -267,30 +258,15 @@ documentation.
 
 == Consuming a single file using a fixed name
 
-When you want to download a single file and knows the file name, you can
-use `fileName=myFileName.txt` to tell Camel the name of the file to
-download. By default the consumer will still do a FTP LIST command to do
-a directory listing and then filter these files based on the `fileName`
-option. Though in this use-case it may be desirable to turn off the
-directory listing by setting `useList=false`. For example the user
-account used to login to the FTP server may not have permission to do a
-FTP LIST command. So you can turn off this with `useList=false`, and
-then provide the fixed name of the file to download with
-`fileName=myFileName.txt`, then the FTP consumer can still download the
-file. If the file for some reason does not exist, then Camel will by
-default throw an exception, you can turn this off and ignore this by
-setting `ignoreFileNotFoundOrPermissionError=true`.
+Unlike FTP component that features special combination of options:
+  
+  - `useList=false`
+  - `fileName=myFileName.txt`
+  - `ignoreFileNotFoundOrPermissionError=true`.
 
-For example to have a Camel route that pickup a single file, and delete
-it after use you can do
-
-[source,java]
-----
-from("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true")
-  .to("activemq:queue:report");
-----
-
-Notice that we have used all the options we talked above.
+to optimize _the single file using a fixed name_ use case
+it is necessary to fallback to regular filters (i.e. the list
+permission is needed). 
 
 
 == Debug logging
