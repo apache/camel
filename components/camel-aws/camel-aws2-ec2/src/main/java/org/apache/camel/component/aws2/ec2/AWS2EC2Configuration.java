@@ -58,6 +58,10 @@ public class AWS2EC2Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam(defaultValue = "false")
+    private boolean useProfileCredentialsProvider;
+    @UriParam
+    private String profileCredentialsName;
 
     public Ec2Client getAmazonEc2Client() {
         return amazonEc2Client;
@@ -205,6 +209,29 @@ public class AWS2EC2Configuration implements Cloneable {
 
     public Boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
+    }
+
+
+    public boolean isUseProfileCredentialsProvider() {
+        return useProfileCredentialsProvider;
+    }
+
+    /**
+     * Set whether the EC2 client should expect to load credentials through a profile credentials provider.
+     */
+    public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
+        this.useProfileCredentialsProvider = useProfileCredentialsProvider;
+    }
+
+    public String getProfileCredentialsName() {
+        return profileCredentialsName;
+    }
+
+    /**
+     * If using a profile credentials provider this parameter will set the profile name
+     */
+    public void setProfileCredentialsName(String profileCredentialsName) {
+        this.profileCredentialsName = profileCredentialsName;
     }
 
     // *************************************************
