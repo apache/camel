@@ -462,15 +462,16 @@ public class Athena2Configuration implements Cloneable {
         return useDefaultCredentialsProvider;
     }
 
+
+    public boolean isUseProfileCredentialsProvider() {
+        return useProfileCredentialsProvider;
+    }
+
     /**
      * Set whether the Athena client should expect to load credentials through a profile credentials provider.
      */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
-    }
-    
-    public boolean isUseProfileCredentialsProvider() {
-        return useProfileCredentialsProvider;
     }
 
     public String getProfileCredentialsName() {
