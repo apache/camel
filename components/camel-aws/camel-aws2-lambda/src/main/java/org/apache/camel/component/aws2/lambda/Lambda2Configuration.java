@@ -210,6 +210,10 @@ public class Lambda2Configuration implements Cloneable {
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
+    
+    public boolean isUseProfileCredentialsProvider() {
+        return useProfileCredentialsProvider;
+    }
 
     public String getProfileCredentialsName() {
         return profileCredentialsName;
@@ -220,10 +224,6 @@ public class Lambda2Configuration implements Cloneable {
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
-    }
-
-    public boolean isUseProfileCredentialsProvider() {
-        return useProfileCredentialsProvider;
     }
 
     // *************************************************
