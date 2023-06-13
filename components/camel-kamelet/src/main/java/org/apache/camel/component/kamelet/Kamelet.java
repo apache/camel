@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -43,6 +44,7 @@ public final class Kamelet {
     public static final String PARAM_TEMPLATE_ID = "templateId";
     public static final String PARAM_LOCATION = "location";
     public static final String DEFAULT_LOCATION = "classpath:/kamelets";
+    public static final String NO_ERROR_HANDLER = "noErrorHandler";
 
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
@@ -123,6 +125,7 @@ public final class Kamelet {
 
     public static RouteDefinition templateToRoute(RouteTemplateDefinition in, Map<String, Object> parameters) {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
+        final boolean noErrorHandler = (boolean) parameters.get(NO_ERROR_HANDLER);
 
         ObjectHelper.notNull(rid, PARAM_ROUTE_ID);
 
@@ -130,6 +133,9 @@ public final class Kamelet {
         def.setLocation(in.getLocation());
         def.setLineNumber(in.getLineNumber());
         def.setId(rid);
+        if (noErrorHandler) {
+            def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
+        }
 
         if (def.getInput() == null) {
             throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");

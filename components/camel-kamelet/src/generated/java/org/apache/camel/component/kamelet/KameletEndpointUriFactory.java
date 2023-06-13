@@ -21,7 +21,7 @@ public class KameletEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(11);
         props.add("block");
         props.add("bridgeErrorHandler");
         props.add("exceptionHandler");
@@ -29,6 +29,7 @@ public class KameletEndpointUriFactory extends org.apache.camel.support.componen
         props.add("failIfNoConsumers");
         props.add("lazyStartProducer");
         props.add("location");
+        props.add("noErrorHandler");
         props.add("routeId");
         props.add("templateId");
         props.add("timeout");
