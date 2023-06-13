@@ -462,7 +462,6 @@ public class Athena2Configuration implements Cloneable {
         return useDefaultCredentialsProvider;
     }
 
-
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }
