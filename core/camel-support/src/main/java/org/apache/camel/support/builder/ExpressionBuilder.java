@@ -668,17 +668,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 String text = propertyName.evaluate(exchange, String.class);
-                String answer = null;
-                if (text != null) {
-                    // lookup OS env with upper case key
-                    text = text.toUpperCase();
-                    answer = System.getenv(text);
-                    // some OS do not support dashes in keys, so replace with underscore
-                    if (answer == null) {
-                        String noDashKey = text.replace('-', '_');
-                        answer = System.getenv(noDashKey);
-                    }
-                }
+                String answer = LanguageHelper.sysenv(text);
 
                 if (answer == null) {
                     answer = defaultValue.evaluate(exchange, String.class);

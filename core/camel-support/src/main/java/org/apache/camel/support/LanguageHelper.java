@@ -163,4 +163,25 @@ public final class LanguageHelper {
         }
         return exchangeFormatter;
     }
+
+    /**
+     * Gets an environment variable from the system (parsing and adjusting the name according to the OS)
+     *
+     * @param  name the environment variable name
+     * @return      the environment variable value
+     */
+    public static String sysenv(String name) {
+        String answer = null;
+        if (name != null) {
+            // lookup OS env with upper case key
+            name = name.toUpperCase();
+            answer = System.getenv(name);
+            // some OS do not support dashes in keys, so replace with underscore
+            if (answer == null) {
+                String noDashKey = name.replace('-', '_');
+                answer = System.getenv(noDashKey);
+            }
+        }
+        return answer;
+    }
 }

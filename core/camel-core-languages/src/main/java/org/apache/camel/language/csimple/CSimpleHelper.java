@@ -461,18 +461,7 @@ public final class CSimpleHelper {
     }
 
     public static String sysenv(String name) {
-        String answer = null;
-        if (name != null) {
-            // lookup OS env with upper case key
-            name = name.toUpperCase();
-            answer = System.getenv(name);
-            // some OS do not support dashes in keys, so replace with underscore
-            if (answer == null) {
-                String noDashKey = name.replace('-', '_');
-                answer = System.getenv(noDashKey);
-            }
-        }
-        return answer;
+        return LanguageHelper.sysenv(name);
     }
 
     private static ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
