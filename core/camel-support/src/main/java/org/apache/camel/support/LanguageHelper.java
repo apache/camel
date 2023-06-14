@@ -18,8 +18,12 @@
 package org.apache.camel.support;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
@@ -254,5 +258,32 @@ public final class LanguageHelper {
         long num = exchange.getCreated();
         date = new Date(num);
         return date;
+    }
+
+    /**
+     * For the given offsets to a given Date instance and, optionally, convert it to a pattern. NOTE: this is for
+     * internal use of Camel
+     * @param date the date to apply the offset
+     * @param offsets the numeric offset as a milliseconds from epoch
+     * @param pattern the (optional) date pattern to convert the given date to
+     * @param timezone the timezone for the pattern
+     * @return A new Date instance with the offsets applied to it *or* a String-based if a pattern is provided
+     */
+    public static Object applyDateOffsets(final Date date, List<Long> offsets, String pattern, String timezone) {
+        // Apply offsets
+        long dateAsLong = date.getTime();
+        for (long offset : offsets) {
+            dateAsLong += offset;
+        }
+
+        if (pattern != null && !pattern.isEmpty()) {
+            SimpleDateFormat df = new SimpleDateFormat(pattern);
+            if (timezone != null && !timezone.isEmpty()) {
+                df.setTimeZone(TimeZone.getTimeZone(timezone));
+            }
+            return df.format(new Date(dateAsLong));
+        } else {
+            return new Date(dateAsLong);
+        }
     }
 }

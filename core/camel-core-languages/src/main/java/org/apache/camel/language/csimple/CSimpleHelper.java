@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.csimple;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -294,23 +295,9 @@ public final class CSimpleHelper {
 
         Date date = evalDate(exchange, command);
 
-        // Apply offsets
-        long dateAsLong = date.getTime();
-        for (long offset : offsets) {
-            dateAsLong += offset;
-        }
-        date = new Date(dateAsLong);
-
-        if (pattern != null && !pattern.isEmpty()) {
-            SimpleDateFormat df = new SimpleDateFormat(pattern);
-            if (timezone != null && !timezone.isEmpty()) {
-                df.setTimeZone(TimeZone.getTimeZone(timezone));
-            }
-            return df.format(date);
-        } else {
-            return date;
-        }
+        return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
     }
+
 
     private static Date evalDate(Exchange exchange, String command) {
         Date date;
