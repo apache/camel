@@ -210,7 +210,6 @@
         <hapi-version>2.3</hapi-version>
         <hapi-base-version>2.3</hapi-base-version>
         <hapi-fhir-version>6.4.2</hapi-fhir-version>
-        <hawtbuf-version>1.11</hawtbuf-version>
         <hazelcast-version>5.3.1</hazelcast-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>8.0.0.Final</hibernate-validator-version>
