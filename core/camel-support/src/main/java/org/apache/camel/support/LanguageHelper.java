@@ -19,6 +19,8 @@ package org.apache.camel.support;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
+import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -199,5 +201,58 @@ public final class LanguageHelper {
             }
         }
         return sb.toString();
+    }
+
+    public static Date dateFromFileLastModified(Exchange exchange, String command) {
+        Date date;
+        Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
+        if (num != null && num > 0) {
+            date = new Date(num);
+        } else {
+            date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+            if (date == null) {
+                throw new IllegalArgumentException(
+                        "Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
+            }
+        }
+        return date;
+    }
+
+    public static Date dateFromExchangeProperty(
+            Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
+        final String key = command.substring(command.lastIndexOf('.') + 1);
+        final Object obj = exchange.getProperty(key);
+        if (obj instanceof Date) {
+            return (Date) obj;
+        } else if (obj instanceof Long) {
+            return new Date((Long) obj);
+        } else {
+            if (orElseFunction != null) {
+                return orElseFunction.apply(exchange, obj);
+            }
+        }
+        return null;
+    }
+
+    public static Date dateFromHeader(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
+        final String key = command.substring(command.lastIndexOf('.') + 1);
+        final Object obj = exchange.getMessage().getHeader(key);
+        if (obj instanceof Date) {
+            return (Date) obj;
+        } else if (obj instanceof Long) {
+            return new Date((Long) obj);
+        } else {
+            if (orElseFunction != null) {
+                return orElseFunction.apply(exchange, obj);
+            }
+        }
+        return null;
+    }
+
+    public static Date dateFromExchangeCreated(Exchange exchange) {
+        Date date;
+        long num = exchange.getCreated();
+        date = new Date(num);
+        return date;
     }
 }
