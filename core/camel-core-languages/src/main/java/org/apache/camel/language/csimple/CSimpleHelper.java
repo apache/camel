@@ -284,20 +284,12 @@ public final class CSimpleHelper {
 
     private static Object doDate(Exchange exchange, String commandWithOffsets, String timezone, String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
-        // Capture optional time offsets
-        final List<Long> offsets = new ArrayList<>();
-        Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
-        while (offsetMatcher.find()) {
-            String time = offsetMatcher.group(2).trim();
-            long value = TimeUtils.toMilliSeconds(time);
-            offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
-        }
+        final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
 
         Date date = evalDate(exchange, command);
 
         return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
     }
-
 
     private static Date evalDate(Exchange exchange, String command) {
         Date date;

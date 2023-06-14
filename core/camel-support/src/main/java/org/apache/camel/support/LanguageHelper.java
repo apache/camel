@@ -21,10 +21,13 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -33,6 +36,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.TimeUtils;
 
 public final class LanguageHelper {
     private LanguageHelper() {
@@ -288,5 +292,17 @@ public final class LanguageHelper {
         } else {
             return new Date(dateAsLong);
         }
+    }
+
+    public static List<Long> captureOffsets(String commandWithOffsets, Pattern offsetPattern) {
+        // Capture optional time offsets
+        final List<Long> offsets = new ArrayList<>();
+        Matcher offsetMatcher = offsetPattern.matcher(commandWithOffsets);
+        while (offsetMatcher.find()) {
+            String time = offsetMatcher.group(2).trim();
+            long value = TimeUtils.toMilliSeconds(time);
+            offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
+        }
+        return offsets;
     }
 }
