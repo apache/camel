@@ -60,7 +60,7 @@
         <!-- jakarta mime types for upload support -->
         <dependency>
             <groupId>org.eclipse.angus</groupId>
-            <artifactId>angus-activation</artifactId>
+            <artifactId>angus-mail</artifactId>
             <version>${angus-mail-version}</version>
             <scope>test</scope>
         </dependency>
