@@ -51,6 +51,10 @@ public final class RuntimeUtil {
             }
         }
 
+        setRootLoggingLevel(level);
+    }
+
+    public static void setRootLoggingLevel(String level) {
         level = level.toLowerCase();
 
         switch (level) {

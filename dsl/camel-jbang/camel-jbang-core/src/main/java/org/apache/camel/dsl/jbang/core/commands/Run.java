@@ -66,8 +66,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -961,10 +959,14 @@ public class Run extends CamelCommand {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
         OasDocument document = (OasDocument) Library.readDocument(node);
-        Configurator.setRootLevel(Level.OFF);
-        try (CamelContext context = new DefaultCamelContext()) {
-            String out = RestDslGenerator.toYaml(document).generate(context, false);
-            Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
+        RuntimeUtil.setRootLoggingLevel("off");
+        try {
+            try (CamelContext context = new DefaultCamelContext()) {
+                String out = RestDslGenerator.toYaml(document).generate(context, false);
+                Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
+            }
+        } finally {
+            RuntimeUtil.setRootLoggingLevel(loggingLevel);
         }
     }
 
