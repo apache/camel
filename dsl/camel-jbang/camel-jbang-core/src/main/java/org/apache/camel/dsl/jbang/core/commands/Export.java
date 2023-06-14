@@ -66,6 +66,7 @@ public class Export extends ExportBaseCommand {
                     = "true".equals(prop.getProperty("camel.jbang.secretsRefresh", this.secretsRefresh ? "true" : "false"));
             this.secretsRefreshProviders
                     = prop.getProperty("camel.jbang.secretsRefreshProviders", this.secretsRefreshProviders);
+            this.openapi = prop.getProperty("camel.jbang.openApi", this.openapi);
         }
 
         if (runtime == null) {
@@ -118,6 +119,7 @@ public class Export extends ExportBaseCommand {
         cmd.additionalProperties = this.additionalProperties;
         cmd.secretsRefresh = this.secretsRefresh;
         cmd.secretsRefreshProviders = this.secretsRefreshProviders;
+        cmd.openapi = this.openapi;
         // run export
         return cmd.export();
     }

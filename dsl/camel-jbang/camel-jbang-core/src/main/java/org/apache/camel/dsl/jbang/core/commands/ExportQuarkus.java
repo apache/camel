@@ -210,8 +210,9 @@ class ExportQuarkus extends Export {
 
     private static String removeScheme(String s) {
         if (s.contains(":")) {
-            return StringHelper.after(s, ":");
+            s = StringHelper.after(s, ":");
         }
+        s = s.replace(".camel-jbang/", "");
         return s;
     }
 
