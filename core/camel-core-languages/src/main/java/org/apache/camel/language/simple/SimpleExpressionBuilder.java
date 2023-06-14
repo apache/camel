@@ -16,17 +16,13 @@
  */
 package org.apache.camel.language.simple;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -53,7 +49,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 
 /**
  * Expression builder used by the simple language.
@@ -556,8 +551,6 @@ public final class SimpleExpressionBuilder {
             }
         };
     }
-
-
 
     private static Date evalDate(Exchange exchange, String command) {
         Date date;
