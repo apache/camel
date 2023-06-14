@@ -948,11 +948,12 @@ public class Run extends CamelCommand {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
         OasDocument document = (OasDocument) Library.readDocument(node);
-        Configurator.setRootLevel(Level.OFF);
+        RuntimeUtil.setRootLoggingLevel("off");
         try (CamelContext context = new LightweightCamelContext()) {
             String out = RestDslGenerator.toYaml(document).generate(context, false);
             Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
         }
+        RuntimeUtil.setRootLoggingLevel(loggingLevel);
     }
 
     private boolean knownFile(String file) throws Exception {
