@@ -22,6 +22,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
@@ -63,8 +65,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -202,7 +202,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
     boolean modeline = true;
 
-    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file")
+    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     String openapi;
 
     @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
@@ -945,14 +945,26 @@ public class Run extends CamelCommand {
     }
 
     private void generateOpenApi() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
+        File file = Paths.get(openapi).toFile();
+        if (!file.exists() && !file.isFile()) {
+            throw new FileNotFoundException("Cannot find file: " + file);
+        }
+
+        ObjectMapper mapper;
+        boolean yaml = file.getName().endsWith(".yaml") || file.getName().endsWith(".yml");
+        if (yaml) {
+            mapper = new YAMLMapper();
+        } else {
+            mapper = new ObjectMapper();
+        }
+        JsonNode node = mapper.readTree(file);
         OasDocument document = (OasDocument) Library.readDocument(node);
-        Configurator.setRootLevel(Level.OFF);
+        RuntimeUtil.setRootLoggingLevel("off");
         try (CamelContext context = new LightweightCamelContext()) {
             String out = RestDslGenerator.toYaml(document).generate(context, false);
             Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
         }
+        RuntimeUtil.setRootLoggingLevel(loggingLevel);
     }
 
     private boolean knownFile(String file) throws Exception {

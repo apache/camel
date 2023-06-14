@@ -108,6 +108,10 @@ public class SalesforceConsumer extends DefaultConsumer {
         return topicName;
     }
 
+    public SubscriptionHelper getSubscriptionHelper() {
+        return subscriptionHelper;
+    }
+
     @Override
     public void handleException(String message, Throwable t) {
         super.handleException(message, t);
@@ -288,6 +292,28 @@ public class SalesforceConsumer extends DefaultConsumer {
         ServiceHelper.startService(subscriptionHelper);
         subscriptionHelper.subscribe(topicName, this);
         subscribed = true;
+    }
+
+    /**
+     * Stops this consumer.
+     *
+     * If alsoStopSubscription=true, any underlying subscriptions will be stopped as well. SubscriptionHelper also logs
+     * out, so this will terminate the salesforce session as well.
+     *
+     * @param alsoStopSubscription to also stop subscription
+     */
+    public void stop(boolean alsoStopSubscription) {
+        if (alsoStopSubscription) {
+            LOG.info("Force stopping Consumer and SubscriptionHelper");
+        }
+        stop();
+        if (alsoStopSubscription) {
+            try {
+                ServiceHelper.stopService(subscriptionHelper);
+            } catch (Exception e) {
+                LOG.warn("Failed to stop subscription due to: {}. This exception is ignored.", e.getMessage(), e);
+            }
+        }
     }
 
     @Override
