@@ -63,6 +63,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesEndpoint.class);
 
+    // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
+    // camel-package-maven-plugin: Missing @UriPath on endpoint 
     @UriParam
     protected FilesConfiguration configuration;
 
@@ -94,7 +96,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     public FilesEndpoint(String uri, RemoteFileComponent<ShareFileItem> component,
                          FilesConfiguration configuration) {
         super(uri, component, configuration);
-        this.configuration = configuration;
+        setConfiguration(configuration);
     }
 
     public String getSv() {
@@ -264,25 +266,21 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     String filesHost() {
-        return configuration.getHost();
+        return getConfiguration().getHost();
     }
 
     @Override
     public FilesConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new FilesConfiguration();
-        }
         return configuration;
     }
 
     @Override
     public void setConfiguration(GenericFileConfiguration configuration) {
-        if (configuration == null) {
-            throw new IllegalArgumentException("Configuration expected");
+        if (configuration == null || !(configuration instanceof FilesConfiguration)) {
+            throw new IllegalArgumentException("FilesConfiguration expected.");
         }
-        // need to set on both
-        this.configuration = (FilesConfiguration) configuration;
         super.setConfiguration(configuration);
+        this.configuration = (FilesConfiguration) configuration;
     }
 
     public boolean isResumeDownload() {
@@ -310,7 +308,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     Duration getMetadataTimeout() {
-        var t1 = configuration.getTimeout();
+        var t1 = getConfiguration().getTimeout();
         var t2 = getReadLockCheckInterval();
         if (t2 > 0 && t2 < t1) {
             return Duration.ofMillis(t2);
@@ -322,7 +320,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     Duration getDataTimeout() {
-        var t1 = configuration.getTimeout();
+        var t1 = getConfiguration().getTimeout();
         if (t1 > 0) {
             return Duration.ofMillis(t1);
         }

@@ -104,7 +104,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
-        var ms = endpoint.configuration.getConnectTimeout();
+        var ms = endpoint.getConfiguration().getConnectTimeout();
         root.forceCloseAllHandles(true, Duration.ofMillis(ms), Context.NONE);
         root = null;
         dirStack = new Stack<>();
