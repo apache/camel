@@ -22,6 +22,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
@@ -202,7 +204,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
     boolean modeline = true;
 
-    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file")
+    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     String openapi;
 
     @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
@@ -944,8 +946,19 @@ public class Run extends CamelCommand {
     }
 
     private void generateOpenApi() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
+        File file = Paths.get(openapi).toFile();
+        if (!file.exists() && !file.isFile()) {
+            throw new FileNotFoundException("Cannot find file: " + file);
+        }
+
+        ObjectMapper mapper;
+        boolean yaml = file.getName().endsWith(".yaml") || file.getName().endsWith(".yml");
+        if (yaml) {
+            mapper = new YAMLMapper();
+        } else {
+            mapper = new ObjectMapper();
+        }
+        JsonNode node = mapper.readTree(file);
         OasDocument document = (OasDocument) Library.readDocument(node);
         RuntimeUtil.setRootLoggingLevel("off");
         try (CamelContext context = new LightweightCamelContext()) {
