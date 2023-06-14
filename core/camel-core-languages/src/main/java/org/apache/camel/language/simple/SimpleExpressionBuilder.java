@@ -583,72 +583,25 @@ public final class SimpleExpressionBuilder {
         if ("now".equals(command)) {
             date = new Date();
         } else if ("exchangeCreated".equals(command)) {
-            date = dateFromExchangeCreated(exchange);
+            date = LanguageHelper.dateFromExchangeCreated(exchange);
         } else if (command.startsWith("header.")) {
-            date = dateFromHeader(exchange, command);
+            date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
         } else if (command.startsWith("exchangeProperty.")) {
-            date = dateFromExchangeProperty(exchange, command);
+            date = LanguageHelper.dateFromExchangeProperty(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
         } else if ("file".equals(command)) {
-            date = dateFromFileLastModified(exchange, command);
+            date = LanguageHelper.dateFromFileLastModified(exchange, command);
         } else {
             throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
         }
         return date;
     }
 
-    private static Date dateFromFileLastModified(Exchange exchange, String command) {
-        Date date;
-        Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
-        if (num != null && num > 0) {
-            date = new Date(num);
-        } else {
-            date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
-            if (date == null) {
-                throw new IllegalArgumentException(
-                        "Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
-            }
+    private static Date tryConvertingAsDate(Exchange exchange, Object obj, String command) {
+        final Date date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
+        if (date == null) {
+            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
         }
-        return date;
-    }
 
-    private static Date dateFromExchangeProperty(Exchange exchange, String command) {
-        Date date;
-        String key = command.substring(command.lastIndexOf('.') + 1);
-        Object obj = exchange.getProperty(key);
-        if (obj instanceof Date) {
-            date = (Date) obj;
-        } else if (obj instanceof Long) {
-            date = new Date((Long) obj);
-        } else {
-            date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
-            if (date == null) {
-                throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
-            }
-        }
-        return date;
-    }
-
-    private static Date dateFromHeader(Exchange exchange, String command) {
-        Date date;
-        String key = command.substring(command.lastIndexOf('.') + 1);
-        Object obj = exchange.getMessage().getHeader(key);
-        if (obj instanceof Date) {
-            date = (Date) obj;
-        } else if (obj instanceof Long) {
-            date = new Date((Long) obj);
-        } else {
-            date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
-            if (date == null) {
-                throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
-            }
-        }
-        return date;
-    }
-
-    private static Date dateFromExchangeCreated(Exchange exchange) {
-        Date date;
-        long num = exchange.getCreated();
-        date = new Date(num);
         return date;
     }
 
