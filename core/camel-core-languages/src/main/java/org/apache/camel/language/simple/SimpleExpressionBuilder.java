@@ -1017,7 +1017,7 @@ public final class SimpleExpressionBuilder {
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
         private String key;
         private String keySuffix;
-        private String method;
+        private final String method;
         private Expression keyExpression;
         private Expression ognlExpression;
         private Language beanLanguage;
