@@ -88,7 +88,16 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sig;
 
-    private Token token = new Token();
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    private String si;  // service SAS only
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    private String sr;  // service SAS only
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    private String sdd; // service SAS only
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    private String sip;
+
+    private FilesToken token = new FilesToken();
 
     public FilesEndpoint() {
     }
@@ -169,6 +178,42 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     public void setSig(String sig) {
         token.setSig(sig);
         this.sig = sig;
+    }
+
+    public String getSi() {
+        return si;
+    }
+
+    public void setSi(String si) {
+        token.setSi(si);
+        this.si = si;
+    }
+
+    public String getSr() {
+        return sr;
+    }
+
+    public void setSr(String sr) {
+        token.setSr(sr);
+        this.sr = sr;
+    }
+
+    public String getSdd() {
+        return sdd;
+    }
+
+    public void setSdd(String sdd) {
+        token.setSdd(sdd);
+        this.sdd = sdd;
+    }
+
+    public String getSip() {
+        return sip;
+    }
+
+    public void setSip(String sip) {
+        token.setSip(sip);
+        this.sip = sip;
     }
 
     @Override
@@ -261,7 +306,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         return client;
     }
 
-    Token token() {
+    FilesToken token() {
         return token;
     }
 
