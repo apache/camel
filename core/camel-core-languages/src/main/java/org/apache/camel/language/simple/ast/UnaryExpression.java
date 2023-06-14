@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class UnaryExpression extends BaseSimpleNode {
 
-    private UnaryOperatorType operator;
+    private final UnaryOperatorType operator;
     private SimpleNode left;
 
     public UnaryExpression(SimpleToken token) {

@@ -43,7 +43,7 @@ import org.apache.camel.util.StringHelper;
 public class SimpleExpressionParser extends BaseSimpleParser {
 
     // use caches to avoid re-parsing the same expressions over and over again
-    private Map<String, Expression> cacheExpression;
+    private final Map<String, Expression> cacheExpression;
 
     public SimpleExpressionParser(CamelContext camelContext, String expression, boolean allowEscape,
                                   Map<String, Expression> cacheExpression) {

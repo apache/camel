@@ -41,7 +41,7 @@ import org.apache.camel.util.URISupport;
 public class SimpleFunctionExpression extends LiteralExpression {
 
     // use caches to avoid re-parsing the same expressions over and over again
-    private Map<String, Expression> cacheExpression;
+    private final Map<String, Expression> cacheExpression;
 
     public SimpleFunctionExpression(SimpleToken token, Map<String, Expression> cacheExpression) {
         super(token);

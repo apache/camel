@@ -41,14 +41,14 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public abstract class BaseSimpleParser {
 
-    protected CamelContext camelContext;
+    protected final CamelContext camelContext;
     protected final String expression;
     protected final List<SimpleToken> tokens = new ArrayList<>();
     protected final List<SimpleNode> nodes = new ArrayList<>();
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
-    protected boolean allowEscape;
+    protected final boolean allowEscape;
 
     protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape) {
         this.camelContext = camelContext;
