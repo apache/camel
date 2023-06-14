@@ -55,32 +55,34 @@ public final class RuntimeUtil {
     }
 
     public static void setRootLoggingLevel(String level) {
-        level = level.toLowerCase();
+        if (level != null) {
+            level = level.toLowerCase();
 
-        switch (level) {
-            case "off":
-                Configurator.setRootLevel(Level.OFF);
-                break;
-            case "trace":
-                Configurator.setRootLevel(Level.TRACE);
-                break;
-            case "debug":
-                Configurator.setRootLevel(Level.DEBUG);
-                break;
-            case "info":
-                Configurator.setRootLevel(Level.INFO);
-                break;
-            case "warn":
-                Configurator.setRootLevel(Level.WARN);
-                break;
-            case "error":
-                Configurator.setRootLevel(Level.ERROR);
-                break;
-            case "fatal":
-                Configurator.setRootLevel(Level.FATAL);
-                break;
-            default: {
-                Configurator.setRootLevel(Level.INFO);
+            switch (level) {
+                case "off":
+                    Configurator.setRootLevel(Level.OFF);
+                    break;
+                case "trace":
+                    Configurator.setRootLevel(Level.TRACE);
+                    break;
+                case "debug":
+                    Configurator.setRootLevel(Level.DEBUG);
+                    break;
+                case "info":
+                    Configurator.setRootLevel(Level.INFO);
+                    break;
+                case "warn":
+                    Configurator.setRootLevel(Level.WARN);
+                    break;
+                case "error":
+                    Configurator.setRootLevel(Level.ERROR);
+                    break;
+                case "fatal":
+                    Configurator.setRootLevel(Level.FATAL);
+                    break;
+                default: {
+                    Configurator.setRootLevel(Level.INFO);
+                }
             }
         }
     }
