@@ -419,6 +419,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createSimpleExpressionDirectly(CamelContext camelContext, String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
+        } else if (ObjectHelper.equal(expression, "prettyBody")) {
+            return ExpressionBuilder.prettyBodyExpression();
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "originalBody")) {
@@ -826,6 +828,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     public String createCodeDirectly(String expression) throws SimpleParserException {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return "body";
+        } else if (ObjectHelper.equal(expression, "prettyBody")) {
+            return "prettyBody(exchange)";
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return "bodyOneLine(exchange)";
         } else if (ObjectHelper.equal(expression, "id")) {

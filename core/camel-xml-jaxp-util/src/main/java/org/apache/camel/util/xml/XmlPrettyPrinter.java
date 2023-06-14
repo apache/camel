@@ -26,8 +26,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static org.apache.camel.util.StringHelper.padString;
-
 public final class XmlPrettyPrinter {
 
     private XmlPrettyPrinter() {
@@ -45,6 +43,16 @@ public final class XmlPrettyPrinter {
         int VALUE = 7;
 
         String color(int type, String value);
+    }
+
+    /**
+     * Pad the string with leading spaces
+     *
+     * @param level  level
+     * @param blanks number of blanks per level
+     */
+    private static String padString(int level, int blanks) {
+        return " ".repeat(level * blanks);
     }
 
     public static String colorPrint(String xml, int blanks, boolean declaration, ColorPrintElement color)
@@ -124,7 +132,7 @@ public final class XmlPrettyPrinter {
 
             @Override
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                sb.append(padString(indent, blanks));
+                sb.append(XmlPrettyPrinter.padString(indent, blanks));
 
                 StringBuilder lb = new StringBuilder();
                 lb.append("<");
@@ -158,7 +166,7 @@ public final class XmlPrettyPrinter {
                 lb.append(qName);
                 lb.append(">");
 
-                sb.append(padString(indent, blanks));
+                sb.append(XmlPrettyPrinter.padString(indent, blanks));
                 String value = color.color(ColorPrintElement.ELEMENT, lb.toString());
                 sb.append(value);
                 if (indent > 0) {
@@ -172,7 +180,7 @@ public final class XmlPrettyPrinter {
                 System.arraycopy(ch, start, chars, 0, length);
                 String value = color.color(ColorPrintElement.VALUE, new String(chars));
 
-                sb.append(padString(indent, blanks));
+                sb.append(XmlPrettyPrinter.padString(indent, blanks));
                 sb.append(value);
                 sb.append("\n");
             }
