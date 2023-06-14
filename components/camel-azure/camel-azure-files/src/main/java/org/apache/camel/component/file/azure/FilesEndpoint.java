@@ -61,6 +61,8 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 
+    public static final String HTTPS = "https";
+
     private static final Logger LOG = LoggerFactory.getLogger(FilesEndpoint.class);
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
@@ -258,7 +260,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     protected GenericFileProducer<ShareFileItem> buildProducer() {
         try {
             if (this.getMoveExistingFileStrategy() == null) {
-                this.setMoveExistingFileStrategy(createDefaultFtpMoveExistingFileStrategy());
+                this.setMoveExistingFileStrategy(createDoNotMoveExistingFileStrategy());
             }
             return new FilesProducer<>(this, createRemoteFileOperations());
         } catch (Exception e) {
@@ -266,7 +268,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         }
     }
 
-    private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
+    private FileMoveExistingStrategy createDoNotMoveExistingFileStrategy() {
         return new FileMoveExistingStrategy() {
             @Override
             public boolean moveExistingFile(
@@ -300,8 +302,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
      * @throws Exception may throw client-specific exceptions if the client cannot be created
      */
     protected ShareServiceClient createClient() throws Exception {
-        // TODO take from signed protocol? it would be token only
-        ShareServiceClient client = new ShareServiceClientBuilder().endpoint("https://" + filesHost())
+        ShareServiceClient client = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + filesHost())
                 .sasToken(token().toURIQuery()).buildClient();
         return client;
     }

@@ -11,7 +11,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Azure Files account or service SAS token.
  * <p>
- * The user delegation SAS token is not specifed for Azure Files.
+ * The user delegation SAS token is not specified for Azure Files.
  * 
  * @see com.azure.storage.common.implementation.Constants.UrlConstants
  * @see <a href="https://learn.microsoft.com/en-us/rest/api/storageservices/create-account-sas">Azure account SAS</a>
