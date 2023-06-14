@@ -94,6 +94,11 @@ product which is a repackaging of Apache Camel including a full,
 pre-configured OSGi runtime container.
 
 
+== https://talismancloud.io[Talisman Cloud, Inc]
+
+https://talismancloud.io[Talisman Cloud, Inc] provides support subscription and consulting services for Apache Camel Karavan.
+
+
 == http://touk.pl[TouK]
 
 http://touk.pl[TouK] provides enterprise integration consulting and
