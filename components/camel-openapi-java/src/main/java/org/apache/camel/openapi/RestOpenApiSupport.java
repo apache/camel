@@ -163,7 +163,7 @@ public class RestOpenApiSupport {
                             parseVariables(openapi.getServers().get(0).getUrl(),
                                     openapi.getServers().get(0)));
                     // strip off the first "/" if double "/" exists
-                    basePath = serverUrl.getPath().replaceAll("//", "/");
+                    basePath = serverUrl.getPath().replace("//", "/");
                     if ("/".equals(basePath)) {
                         basePath = "";
                     }

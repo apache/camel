@@ -41,7 +41,7 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
         String uri = entry.getUri();
         // windows path problems such as C:\temp was by simple language evaluated \t as a tab character
         // which should then be reversed
-        uri = uri.replaceAll("\t", "\\\\t");
+        uri = uri.replace("\t", "\\\\t");
 
         boolean fileName = entry.getProperties().containsKey("fileName");
         boolean tempFileName = entry.getProperties().containsKey("tempFileName");

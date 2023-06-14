@@ -255,7 +255,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
                     // If double-quotes are used to enclose fields, the two double
                     // quotes character must be replaced with one according to RFC 4180 section 2.7
-                    value = format.parse(data.replaceAll(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL));
+                    value = format.parse(data.replace(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL));
                 } else {
                     value = format.parse(data);
                 }
@@ -388,7 +388,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                             // If double-quotes are used to enclose fields, then a double-quote
                             // appearing inside a field must be escaped by preceding it with another
                             // double quote according to RFC 4180 section 2.7
-                            buffer.append(res.replaceAll(DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL));
+                            buffer.append(res.replace(DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL));
                         } else {
                             buffer.append(res);
                         }
