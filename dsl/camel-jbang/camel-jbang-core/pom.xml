@@ -61,10 +61,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-resourceresolver-github</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-io-util</artifactId>
-        </dependency>
 
         <!-- cli -->
         <dependency>
