@@ -534,14 +534,7 @@ public final class SimpleExpressionBuilder {
 
     public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
-        // Capture optional time offsets
-        final List<Long> offsets = new ArrayList<>();
-        Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
-        while (offsetMatcher.find()) {
-            String time = offsetMatcher.group(2).trim();
-            long value = TimeUtils.toMilliSeconds(time);
-            offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
-        }
+        final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
 
         return new ExpressionAdapter() {
             @Override
@@ -563,6 +556,8 @@ public final class SimpleExpressionBuilder {
             }
         };
     }
+
+
 
     private static Date evalDate(Exchange exchange, String command) {
         Date date;
