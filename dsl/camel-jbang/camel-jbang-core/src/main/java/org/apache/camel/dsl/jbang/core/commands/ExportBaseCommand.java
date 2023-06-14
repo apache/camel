@@ -418,11 +418,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         out = new File(target, source.getName());
                     }
                     if (!java) {
-                        if (camel) {
-                            safeCopy(source, out, true);
-                        }
                         if (kamelet) {
                             out = srcKameletsResourcesDir;
+                            safeCopy(source, out, true);
+                        } else {
                             safeCopy(source, out, true);
                         }
                     } else {
