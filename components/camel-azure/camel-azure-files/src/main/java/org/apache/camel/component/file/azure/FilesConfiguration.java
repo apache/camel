@@ -25,6 +25,9 @@ import org.apache.camel.spi.UriParams;
 public class FilesConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_HTTPS_PORT = 443;
+    public static final String DEFAULT_INTERNET_DOMAIN = "file.core.windows.net";
+
+    private String account;
 
     public FilesConfiguration() {
         setProtocol("azure-files");
@@ -55,6 +58,21 @@ public class FilesConfiguration extends RemoteFileConfiguration {
 
     @Override
     public String remoteServerInformation() {
-        return "https://" + getHost();
+        return getProtocol() + "://" + getAccount();
+    }
+
+    /**
+     * Files service account or &lt;account>.file.core.windows.net hostname.
+     */
+    @Override
+    public void setHost(String accountOrHostname) {
+        var dot = accountOrHostname.indexOf('.');
+        var hasDot = dot >= 0;
+        account = hasDot ? accountOrHostname.substring(0, dot) : accountOrHostname;
+        super.setHost(hasDot ? accountOrHostname : account + '.' + DEFAULT_INTERNET_DOMAIN);
+    }
+
+    public String getAccount() {
+        return account;
     }
 }

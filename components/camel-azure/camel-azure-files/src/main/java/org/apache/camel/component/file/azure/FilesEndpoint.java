@@ -264,13 +264,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     String filesHost() {
-        var base = getEndpointBaseUri();
-        var schemeAuthSeparator = base.indexOf("://");
-        if (schemeAuthSeparator == -1) {
-            return null;
-        }
-        var from = schemeAuthSeparator + 3;
-        return base.substring(from, base.indexOf('/', from));
+        return configuration.getHost();
     }
 
     @Override

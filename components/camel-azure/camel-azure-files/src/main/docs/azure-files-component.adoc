@@ -35,7 +35,7 @@ for this component:
 == URI format
 
 ----
-azure-files://hostname[:port]/share/directoryname?token[&options]
+azure-files://account[.file.core.windows.net][:port]/share/directoryname?token[&options]
 ----
 
 Where *directoryname* represents the underlying directory. The directory
