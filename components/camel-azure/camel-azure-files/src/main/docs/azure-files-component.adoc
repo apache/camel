@@ -120,7 +120,7 @@ default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the remote consumer is that it may lack
 permissions by default to be able to move or delete files.
 
-=== limitations
+=== Limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
 that is currently in the progress of being written. However, this option
@@ -147,7 +147,7 @@ Consequently:
   - No append mode is supported.
   - For the `changed` read lock, only the last modified
     can be relied on, furthermore a precision better than
-    30 seconds being problematic.
+    5 seconds might be problematic.
 
 == Exchange Properties
 
