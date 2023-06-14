@@ -438,4 +438,32 @@ At the end of exchange routing, the kafka producer would commit the transaction 
 
 It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS) which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to rollback the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
 
+== Setting Kerberos config file
+
+Since kafka clients do not expose a way to configure the `krb5.conf` file directly through their API, you can, if necessary, do this using the JVM system properties.
+
+Through command line:
+[source,bash]
+----
+java -jar myroute.jar -Djava.security.krb5.conf=/path/to/krb5.conf
+----
+
+Through java code:
+[source,java]
+----
+public class MyRoute extends RouteBuilder {
+    static {
+        System.setProperty("java.security.krb5.conf", "/path/to/krb5.conf");
+    }
+
+    // your route
+
+}
+----
+
+[WARNING]
+====
+Keep in mind that once using system properties that config will be applied to whole JVM so all routes will be affected by this.
+====
+
 include::spring-boot:partial$starter.adoc[]
