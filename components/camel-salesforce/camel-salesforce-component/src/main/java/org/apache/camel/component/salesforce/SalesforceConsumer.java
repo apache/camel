@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -298,8 +297,8 @@ public class SalesforceConsumer extends DefaultConsumer {
     /**
      * Stops this consumer.
      *
-     * If alsoStopSubscription=true, any underlying subscriptions will be stopped as well.
-     * SubscriptionHelper also logs out, so this will terminate the salesforce session as well.
+     * If alsoStopSubscription=true, any underlying subscriptions will be stopped as well. SubscriptionHelper also logs
+     * out, so this will terminate the salesforce session as well.
      *
      * @param alsoStopSubscription to also stop subscription
      */
