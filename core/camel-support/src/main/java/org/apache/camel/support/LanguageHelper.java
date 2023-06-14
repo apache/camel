@@ -253,11 +253,14 @@ public final class LanguageHelper {
         return null;
     }
 
+    /**
+     * Extracts the creation date from an exchange
+     * @param exchange the exchange to extract the create date
+     * @return A Date instance
+     */
     public static Date dateFromExchangeCreated(Exchange exchange) {
-        Date date;
         long num = exchange.getCreated();
-        date = new Date(num);
-        return date;
+        return new Date(num);
     }
 
     /**
