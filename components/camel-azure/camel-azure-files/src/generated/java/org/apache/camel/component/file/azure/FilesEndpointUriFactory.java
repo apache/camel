@@ -21,7 +21,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(97);
+        Set<String> props = new HashSet<>(101);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -98,14 +98,18 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("scheduledExecutorService");
         props.add("scheduler");
         props.add("schedulerProperties");
+        props.add("sdd");
         props.add("se");
         props.add("sendEmptyMessageWhenIdle");
         props.add("shuffle");
+        props.add("si");
         props.add("sig");
+        props.add("sip");
         props.add("sortBy");
         props.add("sorter");
         props.add("sp");
         props.add("spr");
+        props.add("sr");
         props.add("srt");
         props.add("ss");
         props.add("st");
@@ -120,11 +124,15 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(9);
+        Set<String> secretProps = new HashSet<>(13);
+        secretProps.add("sdd");
         secretProps.add("se");
+        secretProps.add("si");
         secretProps.add("sig");
+        secretProps.add("sip");
         secretProps.add("sp");
         secretProps.add("spr");
+        secretProps.add("sr");
         secretProps.add("srt");
         secretProps.add("ss");
         secretProps.add("st");

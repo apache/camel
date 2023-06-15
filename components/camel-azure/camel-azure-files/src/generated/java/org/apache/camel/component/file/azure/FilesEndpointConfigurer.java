@@ -153,16 +153,20 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sdd": target.setSdd(property(camelContext, java.lang.String.class, value)); return true;
         case "se": target.setSe(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
+        case "si": target.setSi(property(camelContext, java.lang.String.class, value)); return true;
         case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
+        case "sip": target.setSip(property(camelContext, java.lang.String.class, value)); return true;
         case "sortby":
         case "sortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
         case "sorter": target.setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
         case "sp": target.setSp(property(camelContext, java.lang.String.class, value)); return true;
         case "spr": target.setSpr(property(camelContext, java.lang.String.class, value)); return true;
+        case "sr": target.setSr(property(camelContext, java.lang.String.class, value)); return true;
         case "srt": target.setSrt(property(camelContext, java.lang.String.class, value)); return true;
         case "ss": target.setSs(property(camelContext, java.lang.String.class, value)); return true;
         case "st": target.setSt(property(camelContext, java.lang.String.class, value)); return true;
@@ -322,16 +326,20 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "scheduler": return java.lang.Object.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
+        case "sdd": return java.lang.String.class;
         case "se": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "shuffle": return boolean.class;
+        case "si": return java.lang.String.class;
         case "sig": return java.lang.String.class;
+        case "sip": return java.lang.String.class;
         case "sortby":
         case "sortBy": return java.lang.String.class;
         case "sorter": return java.util.Comparator.class;
         case "sp": return java.lang.String.class;
         case "spr": return java.lang.String.class;
+        case "sr": return java.lang.String.class;
         case "srt": return java.lang.String.class;
         case "ss": return java.lang.String.class;
         case "st": return java.lang.String.class;
@@ -492,16 +500,20 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "scheduler": return target.getScheduler();
         case "schedulerproperties":
         case "schedulerProperties": return target.getSchedulerProperties();
+        case "sdd": return target.getSdd();
         case "se": return target.getSe();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "shuffle": return target.isShuffle();
+        case "si": return target.getSi();
         case "sig": return target.getSig();
+        case "sip": return target.getSip();
         case "sortby":
         case "sortBy": return target.getSortBy();
         case "sorter": return target.getSorter();
         case "sp": return target.getSp();
         case "spr": return target.getSpr();
+        case "sr": return target.getSr();
         case "srt": return target.getSrt();
         case "ss": return target.getSs();
         case "st": return target.getSt();

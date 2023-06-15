@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
                               + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
                               + "bufferSize")
-@ManagedResource(description = "Managed Azure Files Endpoint")
+@ManagedResource(description = "Camel Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 
     public static final String HTTPS = "https";
