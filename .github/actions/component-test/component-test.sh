@@ -15,9 +15,7 @@
 # limitations under the License.
 #
 
-# Modify maven options here if needed
-MVN_DEFAULT_OPTS="-Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2 -Dci.env.name=github.com -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e"
-MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
+echo "Using MVND_OPTS=$MVND_OPTS"
 
 function main() {
   local mavenBinary=${1}
@@ -45,10 +43,10 @@ function main() {
 
   if [[ ${fastBuild} = "true" ]] ; then
     echo "Launching a fast build against the projects ${pl} and their dependencies"
-    $mavenBinary -l $log $MVN_OPTS -Pfastinstall install -pl "$pl" -am
+    $mavenBinary -l $log $MVND_OPTS -Pfastinstall install -pl "$pl" -am
   else
     echo "Launching tests of the projects ${pl}"
-    $mavenBinary -l $log $MVN_OPTS install -pl "$pl"
+    $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
   fi
 }
 
