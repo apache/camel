@@ -385,16 +385,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // in header function
-        remainder = ifStartsWithReturnRemainder("in.headers", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.header", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("headers", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("header", function);
-        }
+        remainder = parseInHeader(function);
         if (remainder != null) {
             // remove leading character (dot, colon or ?)
             if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
@@ -1113,16 +1104,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // in header function
-        remainder = ifStartsWithReturnRemainder("in.headers", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.header", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("headers", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("header", function);
-        }
+        remainder = parseInHeader(function);
         if (remainder != null) {
             // remove leading character (dot, colon or ?)
             if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
@@ -1179,6 +1161,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         return null;
+    }
+
+    private String parseInHeader(String function) {
+        String remainder;
+        remainder = ifStartsWithReturnRemainder("in.headers", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("in.header", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("headers", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("header", function);
+        }
+        return remainder;
     }
 
     private String createCodeExchangeProperty(final String function) {
