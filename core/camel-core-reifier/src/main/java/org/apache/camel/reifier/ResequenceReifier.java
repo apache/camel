@@ -68,7 +68,6 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      * @return           the configured batch resequencer.
      * @throws Exception can be thrown
      */
-    @SuppressWarnings("deprecation")
     protected Resequencer createBatchResequencer(BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
