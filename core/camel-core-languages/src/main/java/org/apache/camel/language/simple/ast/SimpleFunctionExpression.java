@@ -876,11 +876,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${bodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
             type = type.trim();
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             index = StringHelper.removeQuotes(index);
             index = index.trim();
@@ -947,11 +944,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
             type = type.trim();
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             index = StringHelper.removeQuotes(index);
             index = index.trim();
