@@ -50,7 +50,8 @@ public class EventbridgeComponent extends DefaultComponent {
         configuration.setEventbusName(remaining);
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
                 && configuration.getEventbridgeClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(

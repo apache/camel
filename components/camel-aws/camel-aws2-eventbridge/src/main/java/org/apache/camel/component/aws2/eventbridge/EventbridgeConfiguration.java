@@ -230,7 +230,6 @@ public class EventbridgeConfiguration implements Cloneable {
         return useDefaultCredentialsProvider;
     }
 
-
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }
