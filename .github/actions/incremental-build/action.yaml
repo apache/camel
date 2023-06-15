@@ -37,8 +37,6 @@ runs:
     - id: install-mvnd
       uses: ./.github/actions/install-mvnd
       with:
-        version: 1.0-m6
-        distribution: m39-linux-amd64
         dry-run: ${{ inputs.skip-mvnd-install }}
     - name: maven build
       shell: bash
