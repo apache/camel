@@ -76,6 +76,7 @@ or not implemented:
   - soTimeout
   - useList
   - ignoreFileNotFoundOrPermissionError
+  - moveExisting
 
 Basic `to("azure-files://...")` does not crash. 
 

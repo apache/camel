@@ -54,6 +54,9 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
             throw new IllegalArgumentException(
                     "Appending to remote files is not supported.");
+        } else if (endpoint.getFileExist() == GenericFileExist.Move) {
+            throw new IllegalArgumentException(
+                    "Moving of existing remote files is not implemented.");
         }
     }
 }

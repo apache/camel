@@ -102,8 +102,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "mindepth":
         case "minDepth": target.setMinDepth(property(camelContext, int.class, value)); return true;
         case "move": target.setMove(property(camelContext, java.lang.String.class, value)); return true;
-        case "moveexisting":
-        case "moveExisting": target.setMoveExisting(property(camelContext, java.lang.String.class, value)); return true;
         case "moveexistingfilestrategy":
         case "moveExistingFileStrategy": target.setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
         case "movefailed":
@@ -275,8 +273,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "mindepth":
         case "minDepth": return int.class;
         case "move": return java.lang.String.class;
-        case "moveexisting":
-        case "moveExisting": return java.lang.String.class;
         case "moveexistingfilestrategy":
         case "moveExistingFileStrategy": return org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class;
         case "movefailed":
@@ -449,8 +445,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "mindepth":
         case "minDepth": return target.getMinDepth();
         case "move": return target.getMove();
-        case "moveexisting":
-        case "moveExisting": return target.getMoveExisting();
         case "moveexistingfilestrategy":
         case "moveExistingFileStrategy": return target.getMoveExistingFileStrategy();
         case "movefailed":
