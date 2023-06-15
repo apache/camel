@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -27,7 +26,6 @@ import org.apache.maven.project.MavenProject;
 final class ReportPluginCommon {
 
     private ReportPluginCommon() {
-
     }
 
     public static String asRelativeFile(String name, MavenProject project) {
