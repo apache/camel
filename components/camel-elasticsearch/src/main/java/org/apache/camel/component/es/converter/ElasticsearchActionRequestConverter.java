@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,9 @@ import co.elastic.clients.elasticsearch.core.bulk.CreateOperation;
 import co.elastic.clients.elasticsearch.core.bulk.DeleteOperation;
 import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
 import co.elastic.clients.elasticsearch.core.bulk.UpdateOperation;
+import co.elastic.clients.elasticsearch.core.search.FieldCollapse;
+import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import co.elastic.clients.elasticsearch.core.search.SourceConfigBuilders;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.json.JsonData;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,6 +59,10 @@ public final class ElasticsearchActionRequestConverter {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchActionRequestConverter.class);
 
     private static final String ES_QUERY_DSL_PREFIX = "query";
+
+    private static final String ES_SOURCE_DSL_PREFIX = "_source";
+
+    private static final String ES_COLLAPSE_PREFIX = "collapse";
 
     private ElasticsearchActionRequestConverter() {
     }
@@ -230,11 +239,19 @@ public final class ElasticsearchActionRequestConverter {
         }
 
         String queryText;
+        List<String> includeSourceLst = new ArrayList<>();
+        String collapseField = null;
 
         if (queryObject instanceof Map<?, ?>) {
             Map<?, ?> mapQuery = (Map<?, ?>) queryObject;
             // Remove 'query' prefix from the query object for backward
             // compatibility
+            if (mapQuery.containsKey(ES_SOURCE_DSL_PREFIX)) {
+                includeSourceLst.addAll((List<String>) mapQuery.get(ES_SOURCE_DSL_PREFIX));
+            }
+            if (mapQuery.containsKey(ES_COLLAPSE_PREFIX)) {
+                collapseField = (String) mapQuery.get(ES_COLLAPSE_PREFIX);
+            }
             if (mapQuery.containsKey(ES_QUERY_DSL_PREFIX)) {
                 mapQuery = (Map<?, ?>) mapQuery.get(ES_QUERY_DSL_PREFIX);
             }
@@ -244,6 +261,19 @@ public final class ElasticsearchActionRequestConverter {
             queryText = (String) queryObject;
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonTextObject = mapper.readValue(queryText, JsonNode.class);
+            JsonNode sourceJsonNode = jsonTextObject.get(ES_SOURCE_DSL_PREFIX);
+            if (sourceJsonNode != null && sourceJsonNode.isArray()) {
+                Iterator<JsonNode> elements = sourceJsonNode.elements();
+                while (elements.hasNext()) {
+                    includeSourceLst.add(elements.next().toString());
+                }
+            }
+
+            JsonNode collapseJsonNode = jsonTextObject.get(ES_COLLAPSE_PREFIX);
+            if (collapseJsonNode != null) {
+                collapseField = collapseJsonNode.toString();
+            }
+
             JsonNode parentJsonNode = jsonTextObject.get(ES_QUERY_DSL_PREFIX);
             if (parentJsonNode != null) {
                 queryText = parentJsonNode.toString();
@@ -262,7 +292,16 @@ public final class ElasticsearchActionRequestConverter {
             builder.from(from);
         }
         builder.query(new Query.Builder().withJson(new StringReader(queryText)).build());
-
+        if (includeSourceLst.size() > 0) {
+            SourceConfig sourceConfig = new SourceConfig.Builder().filter(
+                    SourceConfigBuilders.filter().includes(includeSourceLst).build())
+                    .build();
+            builder.source(sourceConfig);
+        }
+        if (collapseField != null) {
+            FieldCollapse fieldCollapse = new FieldCollapse.Builder().field(collapseField).build();
+            builder.collapse(fieldCollapse);
+        }
         return builder;
     }
 
