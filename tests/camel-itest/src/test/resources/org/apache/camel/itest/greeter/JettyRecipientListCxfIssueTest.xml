@@ -73,7 +73,7 @@
     <route>
       <from uri="cxf:bean:serviceEndpoint"/>
       <transform>
-        <simple resultType="java.io.File">src/test/resources/greetMe-reply1.xml</simple>
+        <simple>resource:greetMe-reply1.xml</simple>
       </transform>
     </route>
 
@@ -86,7 +86,7 @@
       </delay>
       -->
       <transform>
-        <simple resultType="java.io.File">src/test/resources/greetMe-reply2.xml</simple>
+        <simple>resource:greetMe-reply2.xml</simple>
       </transform>
     </route>
 
