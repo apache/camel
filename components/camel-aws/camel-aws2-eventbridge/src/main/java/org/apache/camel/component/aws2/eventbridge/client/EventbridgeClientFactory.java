@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.eventbridge.client;
 
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration;
 import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class EventbridgeClientFactory {
      * @return               EventBridgeClient
      */
     public static EventbridgeInternalClient getEventbridgeClient(EventbridgeConfiguration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new EventbridgeClientIAMOptimizedImpl(configuration) : new EventbridgeClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new EventbridgeClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new EventbridgeClientIAMProfileOptimizedImpl(configuration);
+        } else {
+            return new EventbridgeClientStandardImpl(configuration);
+        }
     }
 }
