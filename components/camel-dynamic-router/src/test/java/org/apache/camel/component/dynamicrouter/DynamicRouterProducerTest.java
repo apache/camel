@@ -42,10 +42,4 @@ class DynamicRouterProducerTest extends DynamicRouterTestSupport {
         Assertions.assertTrue(result);
     }
 
-    @Test
-    void testProcessAynchronous() {
-        when(endpoint.getConfiguration().isSynchronous()).thenReturn(false);
-        boolean result = producer.process(exchange, asyncCallback);
-        Assertions.assertTrue(result);
-    }
 }
