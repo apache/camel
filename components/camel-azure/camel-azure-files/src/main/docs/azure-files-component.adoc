@@ -32,15 +32,15 @@ for this component:
 ----
 
 
-== URI format
+== URI Format
 
 ----
-azure-files://account[.file.core.windows.net][:port]/share/directoryname?token[&options]
+azure-files://account[.file.core.windows.net][:port]/share[/directoryname]
 ----
 
 Where *directoryname* represents the underlying directory. The directory
 name is a relative path and does not include the share name. The relative path
-can contain nested folders, such as /inbox/us.
+can contain nested folders, such as `/inbox/spam`.
 
 The `autoCreate` option is supported for the underlying directory.
 when consumer or producer starts there's additional operation
@@ -52,9 +52,9 @@ If no *port* number is provided, Camel will provide default values
 according to the protocol (https 443).
 
 You can append query options to the URI in the following format,
-`?option=value&option=value&...`
+`?option=value&option2=value&...`
 
-This component uses Azure Java SDK libraries for the actual work.
+This component uses the Azure Java SDK libraries for the actual work.
 
 The SAS token or shared key based auth is supported.
 
@@ -76,10 +76,14 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 
-== Examples
+== URI Examples
 
 ----
 azure-files://camelazurefiles.file.core.windows.net/samples?sv=2022-11-02&ss=f&srt=sco&sp=rwdlc&se=2023-06-18T22:29:13Z&st=2023-06-05T14:29:13Z&spr=https&sig=MPsMh8zci0v3To7IT9SKdaFGZV8ezno63m9C8s9bdVQ%3D
+----
+
+----
+azure-files://camelazurefiles/samples/inbox/spam?sharedKey=FAKE502UyuBD...3Z%2BASt9dCmJg%3D%3D&delete=true
 ----
 
 == Paths
