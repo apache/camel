@@ -15,9 +15,7 @@
 # limitations under the License.
 #
 
-# Modify maven options here if needed
-MVN_DEFAULT_OPTS="-Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -e -Dmaven.artifact.threads=25 -Daether.dependencyCollector.impl=bf"
-MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
+echo "Using MVND_OPTS=$MVND_OPTS"
 
 maxNumberOfBuildableProjects=100
 maxNumberOfTestableProjects=50
@@ -80,10 +78,10 @@ function main() {
   if [[ ${mode} = "checkstyle" ]] ; then
     if [[ ${buildAll} = "true" ]] ; then
       echo "Launching checkstyle command against all projects"
-      $mavenBinary -l $log $MVN_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
+      $mavenBinary -l $log $MVND_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
     else
       echo "Launching checkstyle command against the projects ${pl}"
-      $mavenBinary -l $log $MVN_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle -pl "$pl"
+      $mavenBinary -l $log $MVND_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle -pl "$pl"
     fi
   elif [[ ${mode} = "build" ]] ; then
     local mustBuildAll
@@ -94,7 +92,7 @@ function main() {
     fi
     if [[ ${buildAll} = "true" ]] ; then
       echo "Launching fast build command against all projects"
-      $mavenBinary -l $log $MVN_OPTS -Pfastinstall install
+      $mavenBinary -l $log $MVND_OPTS -Pfastinstall install
     else
       local buildDependents
       buildDependents=$(hasLabel ${prId} "build-dependents")
@@ -103,14 +101,14 @@ function main() {
         echo "The build-dependents label has been detected thus the projects that depend on the affected projects will be built"
         totalTestableProjects=0
       else
-        totalTestableProjects=$(mvn -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+        totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
-        $mavenBinary -l $log $MVN_OPTS -Pfastinstall install -pl "$pl" -amd -am
+        $mavenBinary -l $log $MVND_OPTS -Pfastinstall install -pl "$pl" -amd -am
       else
         echo "Launching fast build command against the projects ${pl} and their dependencies"
-        $mavenBinary -l $log $MVN_OPTS -Pfastinstall install -pl "$pl" -am
+        $mavenBinary -l $log $MVND_OPTS -Pfastinstall install -pl "$pl" -am
       fi
     fi
   else
@@ -129,14 +127,14 @@ function main() {
         echo "The test-dependents label has been detected thus the projects that depend on affected projects will be tested"
         totalTestableProjects=0
       else
-        totalTestableProjects=$(mvn -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+        totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "There are too many projects to test so only the affected projects are tested"
-        $mavenBinary -l $log $MVN_OPTS install -pl "$pl"
+        $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
       else
         echo "Testing the affected projects and the projects that depend on them"
-        $mavenBinary -l $log $MVN_OPTS install -pl "$pl" -amd
+        $mavenBinary -l $log $MVND_OPTS install -pl "$pl" -amd
       fi
     fi
   fi

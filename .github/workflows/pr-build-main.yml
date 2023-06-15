@@ -45,7 +45,7 @@ jobs:
         java-version: 17
         cache: 'maven'
     - name: mvn checkstyle
-      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true -e checkstyle:checkstyle
+      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log $MVND_OPTS -e checkstyle:checkstyle
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -86,7 +86,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pfastinstall -DskipTests install
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log $MVND_OPTS -Pfastinstall -DskipTests install
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
