@@ -557,8 +557,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
                 // NOTE: here >4MiB is possible (unlike upload limitation)
                 try (var os = file.getFileOutputStream()) {
                     // TODO add data timeout?
-                    // TODO err if the is is shorter than file length?  
+                    // TODO err if the is is shorter than allocated file length?  
                     is.transferTo(os);
+                    os.flush();
                 }
                 answer = true;
             }
