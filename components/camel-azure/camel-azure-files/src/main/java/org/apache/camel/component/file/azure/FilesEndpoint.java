@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
-                              + "bufferSize,moveExisting")
+                              + "bufferSize,moveExisting,username")
 @ManagedResource(description = "Camel Azure Files Endpoint")
 public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
 

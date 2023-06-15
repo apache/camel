@@ -49,7 +49,7 @@ to https://github.com/pekuz/camel.git
 The endpoint path interpretation is specialized
 to non-uniform /share[/directory]. 
 
-Endpoint parameters cleanup, removed those FTP specific:
+Endpoint parameters cleanup, removed those FTP-specific: 
 
   - ftpClient
   - ftpClientConfig
@@ -67,12 +67,16 @@ Endpoint parameters cleanup, removed those FTP specific:
   - sendNoop
   - bufferSize
   
+or Azure Files irrelevant:
+  
+  - username
+  - password
+  
 or not implemented:
 
   - transferLoggingLevel
   - transferLoggingIntervalSeconds
   - transferLoggingVerbose
-  - password
   - soTimeout
   - useList
   - ignoreFileNotFoundOrPermissionError
