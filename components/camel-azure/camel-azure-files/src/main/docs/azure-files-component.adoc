@@ -56,7 +56,7 @@ You can append query options to the URI in the following format,
 
 This component uses Azure Java SDK libraries for the actual work.
 
-SAS token based auth is supported.
+The SAS token or shared key based auth is supported.
 
 
 // component-configure options: START

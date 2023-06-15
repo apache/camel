@@ -155,6 +155,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "se": target.setSe(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sharedkey":
+        case "sharedKey": target.setSharedKey(property(camelContext, java.lang.String.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
         case "si": target.setSi(property(camelContext, java.lang.String.class, value)); return true;
         case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
@@ -326,6 +328,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "se": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sharedkey":
+        case "sharedKey": return java.lang.String.class;
         case "shuffle": return boolean.class;
         case "si": return java.lang.String.class;
         case "sig": return java.lang.String.class;
@@ -498,6 +502,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "se": return target.getSe();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "sharedkey":
+        case "sharedKey": return target.getSharedKey();
         case "shuffle": return target.isShuffle();
         case "si": return target.getSi();
         case "sig": return target.getSig();

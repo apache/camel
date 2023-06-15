@@ -26,4 +26,10 @@ final class FilesURIStrings {
         return new URI(baseUri);
     }
 
+    static String reconstructBase64EncodedValue(String value) {
+        // base64 allows + and =, URI encoded as %2B and %3D
+        // Camel URI configurers decode both + and %2B to a space
+        return value.replace(" ", "+");
+    }
+
 }

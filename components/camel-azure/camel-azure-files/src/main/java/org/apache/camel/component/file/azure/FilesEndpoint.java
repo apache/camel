@@ -19,6 +19,7 @@ package org.apache.camel.component.file.azure;
 import java.net.URI;
 import java.time.Duration;
 
+import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.ShareServiceClientBuilder;
 import com.azure.storage.file.share.models.ShareFileItem;
@@ -98,6 +99,9 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     private String sdd; // service SAS only
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     private String sip;
+
+    @UriParam(label = "both", description = "Shared key (storage account key)", secret = true)
+    private String sharedKey;
 
     private FilesToken token = new FilesToken();
 
@@ -218,6 +222,14 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
         this.sip = sip;
     }
 
+    public String getSharedKey() {
+        return sharedKey;
+    }
+
+    public void setSharedKey(String sharedKey) {
+        this.sharedKey = sharedKey;
+    }
+
     @Override
     public String getScheme() {
         // TODO or name of component bean?
@@ -303,13 +315,20 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
      * @throws Exception may throw client-specific exceptions if the client cannot be created
      */
     protected ShareServiceClient createClient() throws Exception {
+        var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + filesHost());
         if (token.isInvalid()) {
-            LOG.warn("The configured SAS token is not valid.");
-            // TODO try account key instead
+            if (sharedKey != null) {
+                LOG.warn("The configured SAS token is not valid, using the shared key fallback.");
+                var keyB64 = FilesURIStrings.reconstructBase64EncodedValue(sharedKey);
+                builder.credential(new StorageSharedKeyCredential(getConfiguration().getAccount(), keyB64));
+            } else {
+                LOG.error("A valid SAS token or shared key must be configured.");
+            }
+            // TODO Azure AD https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-requests-to-azure-storage
+        } else {
+            builder = builder.sasToken(token().toURIQuery());
         }
-        ShareServiceClient client = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + filesHost())
-                .sasToken(token().toURIQuery()).buildClient();
-        return client;
+        return builder.buildClient();
     }
 
     FilesToken token() {

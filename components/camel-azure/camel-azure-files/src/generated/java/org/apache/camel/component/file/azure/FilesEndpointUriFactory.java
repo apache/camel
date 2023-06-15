@@ -21,7 +21,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(100);
+        Set<String> props = new HashSet<>(101);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -100,6 +100,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("sdd");
         props.add("se");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("sharedKey");
         props.add("shuffle");
         props.add("si");
         props.add("sig");
@@ -123,9 +124,10 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(13);
+        Set<String> secretProps = new HashSet<>(14);
         secretProps.add("sdd");
         secretProps.add("se");
+        secretProps.add("sharedKey");
         secretProps.add("si");
         secretProps.add("sig");
         secretProps.add("sip");
