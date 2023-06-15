@@ -41,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
@@ -101,6 +102,11 @@ public class VersionList extends CamelCommand {
             } else if ("quarkus".equalsIgnoreCase(runtime)) {
                 g = "org.apache.camel.quarkus";
                 a = "camel-quarkus-catalog";
+            }
+
+            RepositoryResolver rr = main.getCamelContext().hasService(RepositoryResolver.class);
+            if (rr != null) {
+                repo = rr.resolveRepository(repo);
             }
 
             versions = downloader.resolveAvailableVersions(g, a, minimumVersion, repo);
