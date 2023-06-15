@@ -339,7 +339,7 @@
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
-        <maven-checkstyle-plugin-version>3.2.1</maven-checkstyle-plugin-version>
+        <maven-checkstyle-plugin-version>3.3.0</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
         <maven-owasp-plugin-version>8.2.1</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
@@ -2902,7 +2902,6 @@
                                 <failsOnError>${checkstyle.failOnViolation}</failsOnError>
                                 <linkXRef>false</linkXRef>
                                 <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
-                                <encoding>UTF-8</encoding>
                                 <sourceDirectories>
                                     <sourceDirectory>${basedir}/src</sourceDirectory>
                                 </sourceDirectories>
