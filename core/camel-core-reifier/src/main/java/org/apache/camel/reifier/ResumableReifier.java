@@ -70,7 +70,7 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
                 Optional<ResumeStrategy> resumeStrategyOptional = factoryFinder.newInstance(
                         resumeStrategyConfiguration.resumeStrategyService(), ResumeStrategy.class);
 
-                if (!resumeStrategyOptional.isPresent()) {
+                if (resumeStrategyOptional.isEmpty()) {
                     throw new RuntimeCamelException("Cannot find a resume strategy class in the classpath or the registry");
                 }
 
