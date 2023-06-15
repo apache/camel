@@ -344,8 +344,8 @@
         <maven-owasp-plugin-version>8.2.1</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.4.1</maven-javadoc-plugin-version>
-        <maven-plugin-plugin-version>3.7.0</maven-plugin-plugin-version>
-        <maven-plugin-annotations-version>3.7.0</maven-plugin-annotations-version>
+        <maven-plugin-plugin-version>3.9.0</maven-plugin-plugin-version>
+        <maven-plugin-annotations-version>3.9.0</maven-plugin-annotations-version>
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
         <maven-remote-resources-plugin-version>3.0.0</maven-remote-resources-plugin-version>
         <!-- resources plugin needed by Camel maven archetypes -->
