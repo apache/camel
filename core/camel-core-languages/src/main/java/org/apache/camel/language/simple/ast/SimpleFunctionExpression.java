@@ -660,10 +660,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String type = StringHelper.before(remainder, ")");
             remainder = StringHelper.after(remainder, ")");
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
@@ -915,10 +912,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (type == null) {
                 throw new SimpleParserException("Valid syntax: ${bodyAs(type)} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
@@ -989,10 +983,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (type == null) {
                 throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
@@ -1075,10 +1066,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             index = StringHelper.removeQuotes(index);
@@ -1113,10 +1101,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
@@ -1219,10 +1204,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             index = StringHelper.removeQuotes(index);
@@ -1260,10 +1242,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
@@ -1313,6 +1292,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         return null;
+    }
+
+    private static String appendClass(String type) {
+        type = StringHelper.removeQuotes(type);
+        if (!type.endsWith(".class")) {
+            type = type + ".class";
+        }
+        return type;
     }
 
     private String createCodeFileExpression(String remainder) {
