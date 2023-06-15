@@ -1,12 +1,9 @@
 package org.apache.camel.component.file.azure;
 
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.camel.util.URISupport;
 
 /**
  * Azure Files account or service SAS token.
@@ -109,9 +106,7 @@ final class FilesToken {
         if (value == null || value.isBlank()) {
             return "";
         }
-        // TODO a bit clumsy, check if Azure SDK does not have the needed encoder
-        return param + "=" + URISupport.createQueryString(Collections.singletonMap("any", value))
-                .substring(4).replace("+", "%2B").replace("%3A", ":");
+        return param + "=" + FilesURIStrings.encodeTokenValue(value);
     }
 
     @Override

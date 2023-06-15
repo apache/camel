@@ -2,6 +2,9 @@ package org.apache.camel.component.file.azure;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
+
+import org.apache.camel.util.URISupport;
 
 /**
  * Helper for Camel endpoint URI strings.
@@ -30,6 +33,16 @@ final class FilesURIStrings {
         // base64 allows + and =, URI encoded as %2B and %3D
         // Camel URI configurers decode both + and %2B to a space
         return value.replace(" ", "+");
+    }
+
+    /**
+     * Uses encoding style expected by the files service: it preserves time separator ':' and encodes base64 plus '+',
+     * slash '/' and padding '='.
+     */
+    static String encodeTokenValue(String value) throws URISyntaxException {
+        return URISupport.createQueryString(Collections.singletonMap("x", value)).substring(2)
+                .replace("+", "%2B") // sig is base64
+                .replace("%3A", ":"); // se has time separator
     }
 
 }
