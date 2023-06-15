@@ -47,8 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // , extendsScheme = "file"   in FTPS but AzureBlob does not have it
-@UriEndpoint(firstVersion = "3.21.0", scheme = "azure-files", extendsScheme = "file", title = "Azure Files",
-             syntax = "azure-files://host/share", category = {
+@UriEndpoint(firstVersion = "3.21.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
+             syntax = FilesComponent.SCHEME + "://account[.host]/share[/dir]", category = {
                      Category.CLOUD, Category.FILE },
              headersClass = FilesHeaders.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
@@ -220,7 +220,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
 
     @Override
     public String getScheme() {
-        return "azure-files";
+        // TODO or name of component bean?
+        return FilesComponent.SCHEME;
     }
 
     @Override
@@ -239,8 +240,8 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
             return null;
         }
         var share = path.substring(1);
-        if (share.contains("/")) {
-            share = share.substring(0, share.indexOf('/'));
+        if (share.indexOf(FilesPath.PATH_SEPARATOR) != -1) {
+            share = share.substring(0, share.indexOf(FilesPath.PATH_SEPARATOR));
         }
         return share;
     }

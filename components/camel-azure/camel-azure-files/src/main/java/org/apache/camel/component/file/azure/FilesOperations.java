@@ -188,15 +188,10 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // org.apache.camel.component.file.GenericFileOperationFailedException: Cannot cd to the share
         // root: not connected
         // at org.apache.camel.component.file.azure.FilesOperations.cd(FilesOperations.java:605)
-        // at
         // org.apache.camel.component.file.azure.FilesOperations.changeCurrentDirectory(FilesOperations.java:563)
-        // at
         // org.apache.camel.component.file.azure.FilesOperations.buildDirectory(FilesOperations.java:178)
-        // at
         // org.apache.camel.component.file.GenericFileProducer.writeFile(GenericFileProducer.java:279)
-        // at
         // org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173)
-        // at
         // org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61)
 
         // must normalize directory first

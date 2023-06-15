@@ -30,7 +30,7 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     private String account;
 
     public FilesConfiguration() {
-        setProtocol("azure-files");
+        setProtocol(FilesComponent.SCHEME);
     }
 
     public FilesConfiguration(URI uri) {

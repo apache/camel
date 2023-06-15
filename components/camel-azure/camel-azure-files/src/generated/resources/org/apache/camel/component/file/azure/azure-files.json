@@ -15,7 +15,7 @@
     "version": "3.21.0-SNAPSHOT",
     "scheme": "azure-files",
     "extendsScheme": "file",
-    "syntax": "azure-files:\/\/host\/share",
+    "syntax": "azure-files:\/\/account[.host]\/share[\/dir]",
     "async": false,
     "api": false,
     "consumerOnly": false,

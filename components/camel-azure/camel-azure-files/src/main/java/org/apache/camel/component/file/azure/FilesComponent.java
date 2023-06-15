@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.azure;
 
-import java.net.URI;
 import java.util.Map;
 
 import com.azure.storage.file.share.models.ShareFileItem;
@@ -27,10 +26,12 @@ import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.spi.annotations.Component;
 
 /**
- * Azure Files component
+ * Camel Azure Files component.
  */
-@Component("azure-files")
+@Component(FilesComponent.SCHEME)
 public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
+
+    public static final String SCHEME = "azure-files";
 
     public FilesComponent() {
     }
@@ -44,22 +45,8 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
             String uri, String remaining,
             Map<String, Object> parameters)
             throws Exception {
-        String baseUri = getBaseUri(uri);
-        var config = new FilesConfiguration(new URI(baseUri));
+        var config = new FilesConfiguration(FilesURIStrings.getBaseURI(uri));
         return new FilesEndpoint<>(uri, this, config);
-    }
-
-    /**
-     * Get the base uri part before the options as they can be non URI valid such as the expression using $ chars and
-     * the URI constructor will regard $ as an illegal character and we don't want to enforce end users to to escape the
-     * $ for the expression (file language)
-     */
-    protected String getBaseUri(String uri) {
-        String baseUri = uri;
-        if (uri.indexOf('?') != -1) {
-            baseUri = uri.substring(0, uri.indexOf('?'));
-        }
-        return baseUri;
     }
 
     @Override
