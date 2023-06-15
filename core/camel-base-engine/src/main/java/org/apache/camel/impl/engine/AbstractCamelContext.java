@@ -175,12 +175,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.URISupport;
+import org.apache.camel.util.*;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -702,6 +697,10 @@ public abstract class AbstractCamelContext extends BaseService
         removeEndpoints(endpoint.getEndpointUri());
     }
 
+    public String unsafeUriCharactersDecodeWithOutPercent(String uri){
+        return UnsafeUriCharactersDecoder.decode(uri);
+    }
+
     @Override
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
         Collection<Endpoint> answer = new ArrayList<>();
@@ -710,21 +709,28 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            List<NormalizedUri> toRemove = new ArrayList<>();
-            for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
-                oldEndpoint = entry.getValue();
-                if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
-                    try {
-                        stopServices(oldEndpoint);
-                    } catch (Exception e) {
-                        LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
+            String decodeUri = unsafeUriCharactersDecodeWithOutPercent(uri);
+            oldEndpoint = endpoints.remove(getEndpointKey(decodeUri));
+            if(oldEndpoint != null){
+                answer.add(oldEndpoint);
+                stopServices(oldEndpoint);
+            } else {
+                List<NormalizedUri> toRemove = new ArrayList<>();
+                for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+                    oldEndpoint = entry.getValue();
+                    if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
+                        try {
+                            stopServices(oldEndpoint);
+                        } catch (Exception e) {
+                            LOG.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
+                        }
+                        answer.add(oldEndpoint);
+                        toRemove.add(entry.getKey());
                     }
-                    answer.add(oldEndpoint);
-                    toRemove.add(entry.getKey());
                 }
-            }
-            for (NormalizedUri key : toRemove) {
-                endpoints.remove(key);
+                for (NormalizedUri key : toRemove) {
+                    endpoints.remove(key);
+                }
             }
         }
 
