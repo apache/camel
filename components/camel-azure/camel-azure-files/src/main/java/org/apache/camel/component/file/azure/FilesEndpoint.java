@@ -298,11 +298,15 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     /**
-     * Create the client
+     * Create the Azure Files service client
      *
      * @throws Exception may throw client-specific exceptions if the client cannot be created
      */
     protected ShareServiceClient createClient() throws Exception {
+        if (token.isInvalid()) {
+            LOG.warn("The configured SAS token is not valid.");
+            // TODO try account key instead
+        }
         ShareServiceClient client = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + filesHost())
                 .sasToken(token().toURIQuery()).buildClient();
         return client;

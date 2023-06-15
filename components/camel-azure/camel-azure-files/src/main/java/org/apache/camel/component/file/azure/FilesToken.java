@@ -80,6 +80,18 @@ final class FilesToken {
         this.sip = sip;
     }
 
+    boolean isInvalid() {
+        return sig == null || sv == null || se == null || !(isAccountTokenForFilesService() || isFilesServiceToken());
+    }
+
+    private boolean isAccountTokenForFilesService() {
+        return ss != null && ss.contains("f");
+    }
+
+    private boolean isFilesServiceToken() {
+        return sr != null && (sr.contains("f") || sr.contains("s"));
+    }
+
     // sv=2021-12-02&ss=f&srt=o&sp=rwdlc&se=2023-05-05T19:27:05Z&st=2023-04-28T11:27:05Z&spr=https&sig=TCU0PcBjrxRbKOW%2FLA7HrPLISin6FXLNkRtLvmxkvhY%3D"
     // params in Azure order
     public String toURIQuery() {
