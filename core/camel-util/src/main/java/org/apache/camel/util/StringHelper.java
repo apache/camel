@@ -1157,10 +1157,7 @@ public final class StringHelper {
         if (level == 0) {
             return "";
         } else {
-            byte[] arr = new byte[level * blanks];
-            byte space = ' ';
-            Arrays.fill(arr, space);
-            return new String(arr);
+            return " ".repeat(level * blanks);
         }
     }
 
@@ -1174,10 +1171,7 @@ public final class StringHelper {
         if (count <= 0) {
             return "";
         } else {
-            byte[] arr = new byte[count];
-            byte b = (byte) ch;
-            Arrays.fill(arr, b);
-            return new String(arr);
+            return Character.toString(ch).repeat(count);
         }
     }
 
