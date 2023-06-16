@@ -28,6 +28,7 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     public static final String DEFAULT_INTERNET_DOMAIN = "file.core.windows.net";
 
     private String account;
+    private String share;
 
     public FilesConfiguration() {
         setProtocol(FilesComponent.SCHEME);
@@ -47,13 +48,21 @@ public class FilesConfiguration extends RemoteFileConfiguration {
 
     @Override
     public void setDirectory(String path) {
-        // strip share from endpoint path
+        // split URI path to share and starting directory
+        if (path == null || path.isBlank()) {
+            throw new IllegalArgumentException("Illegal share[/dir]: " + path);
+        }
         var dir = "";
         var separator = path.indexOf(FilesPath.PATH_SEPARATOR);
-        if (separator > 1) {
+        if (separator != -1) {
             dir = path.substring(separator);
+            share = path.substring(0, separator);
         }
         super.setDirectory(dir);
+    }
+
+    public String getShare() {
+        return share;
     }
 
     @Override

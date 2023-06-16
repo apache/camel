@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.azure;
 
-import java.net.URI;
 import java.time.Duration;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -244,17 +243,8 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
         return super.createConsumer(processor);
     }
 
-    public String getShare() {
-        var base = getEndpointBaseUri();
-        var path = URI.create(base).getPath();
-        if (path == null || path.isBlank() || !path.startsWith("/")) {
-            return null;
-        }
-        var share = path.substring(1);
-        if (share.indexOf(FilesPath.PATH_SEPARATOR) != -1) {
-            share = share.substring(0, share.indexOf(FilesPath.PATH_SEPARATOR));
-        }
-        return share;
+    String getShare() {
+        return getConfiguration().getShare();
     }
 
     @Override
@@ -314,7 +304,7 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
      * @throws Exception may throw client-specific exceptions if the client cannot be created
      */
     protected ShareServiceClient createClient() throws Exception {
-        var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + filesHost());
+        var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + getConfiguration().getHost());
         if (token.isInvalid()) {
             if (sharedKey != null) {
                 LOG.warn("The configured SAS token is not valid, using the shared key fallback.");
@@ -332,10 +322,6 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     FilesToken token() {
         return token;
-    }
-
-    String filesHost() {
-        return getConfiguration().getHost();
     }
 
     @Override

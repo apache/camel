@@ -4,22 +4,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FilesEndpointTests extends CamelTestSupport {
-
-    @Test
-    void hostForValidURIShouldBeExtracted() {
-        var endpoint = context.getEndpoint("azure-files://host/share", FilesEndpoint.class);
-        assertEquals("host", endpoint.filesHost());
-    }
-
-    @Test
-    void hostForInvalidURIShouldBeNull() {
-        // intentionally missing ://
-        var endpoint = context.getEndpoint("azure-files:host/share", FilesEndpoint.class);
-        assertNull(endpoint.filesHost()); // TODO Camel added missing // , acceptable?
-    }
 
     @Test
     void sasTokenForCopyPastedURIShouldBePreserved() {
@@ -32,7 +18,7 @@ public class FilesEndpointTests extends CamelTestSupport {
         // likely need to post-process replacing + by %2B 
         // Camel also sorted params before calling setters
         var endpoint = context.getEndpoint(
-                "azure-files://host/share?" + plainToken, FilesEndpoint.class);
+                "azure-files://account/share?" + plainToken, FilesEndpoint.class);
         assertEquals(
                 plainToken,
                 endpoint.token().toURIQuery());
@@ -40,19 +26,19 @@ public class FilesEndpointTests extends CamelTestSupport {
 
     @Test
     void shareForValidURIShouldBeExtracted() {
-        var endpoint = context.getEndpoint("azure-files://host/share?", FilesEndpoint.class);
+        var endpoint = context.getEndpoint("azure-files://account/share?", FilesEndpoint.class);
         assertEquals("share", endpoint.getShare());
     }
 
     @Test
     void shareForValidURIShouldBeExtracted2() {
-        var endpoint = context.getEndpoint("azure-files://host/share/", FilesEndpoint.class);
+        var endpoint = context.getEndpoint("azure-files://account/share/", FilesEndpoint.class);
         assertEquals("share", endpoint.getShare());
     }
 
     @Test
     void shareForValidURIShouldBeExtracted3() {
-        var endpoint = context.getEndpoint("azure-files://host/share/path", FilesEndpoint.class);
+        var endpoint = context.getEndpoint("azure-files://account/share/path", FilesEndpoint.class);
         assertEquals("share", endpoint.getShare());
     }
 }

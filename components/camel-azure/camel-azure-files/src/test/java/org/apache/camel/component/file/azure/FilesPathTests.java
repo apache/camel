@@ -1,12 +1,11 @@
 package org.apache.camel.component.file.azure;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @SuppressWarnings("static-method")
-public class FilesPathTests extends CamelTestSupport {
+public class FilesPathTests {
 
     @Test
     void splitAbsolutePreservingRootShouldReturnRootAndSteps() {
