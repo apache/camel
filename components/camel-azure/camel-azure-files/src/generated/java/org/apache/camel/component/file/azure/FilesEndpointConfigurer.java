@@ -151,30 +151,30 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "sdd": target.setSdd(property(camelContext, java.lang.String.class, value)); return true;
-        case "se": target.setSe(property(camelContext, java.lang.String.class, value)); return true;
+        case "sdd": target.getConfiguration().setSdd(property(camelContext, java.lang.String.class, value)); return true;
+        case "se": target.getConfiguration().setSe(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sharedkey":
-        case "sharedKey": target.setSharedKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sharedKey": target.getConfiguration().setSharedKey(property(camelContext, java.lang.String.class, value)); return true;
         case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
-        case "si": target.setSi(property(camelContext, java.lang.String.class, value)); return true;
-        case "sig": target.setSig(property(camelContext, java.lang.String.class, value)); return true;
-        case "sip": target.setSip(property(camelContext, java.lang.String.class, value)); return true;
+        case "si": target.getConfiguration().setSi(property(camelContext, java.lang.String.class, value)); return true;
+        case "sig": target.getConfiguration().setSig(property(camelContext, java.lang.String.class, value)); return true;
+        case "sip": target.getConfiguration().setSip(property(camelContext, java.lang.String.class, value)); return true;
         case "sortby":
         case "sortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
         case "sorter": target.setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
-        case "sp": target.setSp(property(camelContext, java.lang.String.class, value)); return true;
-        case "spr": target.setSpr(property(camelContext, java.lang.String.class, value)); return true;
-        case "sr": target.setSr(property(camelContext, java.lang.String.class, value)); return true;
-        case "srt": target.setSrt(property(camelContext, java.lang.String.class, value)); return true;
-        case "ss": target.setSs(property(camelContext, java.lang.String.class, value)); return true;
-        case "st": target.setSt(property(camelContext, java.lang.String.class, value)); return true;
+        case "sp": target.getConfiguration().setSp(property(camelContext, java.lang.String.class, value)); return true;
+        case "spr": target.getConfiguration().setSpr(property(camelContext, java.lang.String.class, value)); return true;
+        case "sr": target.getConfiguration().setSr(property(camelContext, java.lang.String.class, value)); return true;
+        case "srt": target.getConfiguration().setSrt(property(camelContext, java.lang.String.class, value)); return true;
+        case "ss": target.getConfiguration().setSs(property(camelContext, java.lang.String.class, value)); return true;
+        case "st": target.getConfiguration().setSt(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "streamdownload":
         case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "sv": target.setSv(property(camelContext, java.lang.String.class, value)); return true;
+        case "sv": target.getConfiguration().setSv(property(camelContext, java.lang.String.class, value)); return true;
         case "tempfilename":
         case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "tempprefix":
@@ -496,30 +496,30 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "scheduler": return target.getScheduler();
         case "schedulerproperties":
         case "schedulerProperties": return target.getSchedulerProperties();
-        case "sdd": return target.getSdd();
-        case "se": return target.getSe();
+        case "sdd": return target.getConfiguration().getSdd();
+        case "se": return target.getConfiguration().getSe();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sharedkey":
-        case "sharedKey": return target.getSharedKey();
+        case "sharedKey": return target.getConfiguration().getSharedKey();
         case "shuffle": return target.isShuffle();
-        case "si": return target.getSi();
-        case "sig": return target.getSig();
-        case "sip": return target.getSip();
+        case "si": return target.getConfiguration().getSi();
+        case "sig": return target.getConfiguration().getSig();
+        case "sip": return target.getConfiguration().getSip();
         case "sortby":
         case "sortBy": return target.getSortBy();
         case "sorter": return target.getSorter();
-        case "sp": return target.getSp();
-        case "spr": return target.getSpr();
-        case "sr": return target.getSr();
-        case "srt": return target.getSrt();
-        case "ss": return target.getSs();
-        case "st": return target.getSt();
+        case "sp": return target.getConfiguration().getSp();
+        case "spr": return target.getConfiguration().getSpr();
+        case "sr": return target.getConfiguration().getSr();
+        case "srt": return target.getConfiguration().getSrt();
+        case "ss": return target.getConfiguration().getSs();
+        case "st": return target.getConfiguration().getSt();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "streamdownload":
         case "streamDownload": return target.getConfiguration().isStreamDownload();
-        case "sv": return target.getSv();
+        case "sv": return target.getConfiguration().getSv();
         case "tempfilename":
         case "tempFileName": return target.getTempFileName();
         case "tempprefix":

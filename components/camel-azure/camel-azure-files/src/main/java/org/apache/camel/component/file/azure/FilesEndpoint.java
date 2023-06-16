@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
                               + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
                               + "bufferSize,moveExisting,username")
-@ManagedResource(description = "Camel Azure Files Endpoint")
+@ManagedResource(description = "Camel Azure Files endpoint")
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     public static final String HTTPS = "https";
@@ -70,37 +70,6 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
 
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String sv;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String ss;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String srt;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String sp;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String se;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String st;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String spr;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String sig;
-
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String si;  // service SAS only
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String sr;  // service SAS only
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String sdd; // service SAS only
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String sip;
-
-    @UriParam(label = "both", description = "Shared key (storage account key)", secret = true)
-    private String sharedKey;
-
-    private FilesToken token = new FilesToken();
-
     public FilesEndpoint() {
     }
 
@@ -108,122 +77,6 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
                          FilesConfiguration configuration) {
         super(uri, component, configuration);
         setConfiguration(configuration);
-    }
-
-    public String getSv() {
-        return sv;
-    }
-
-    public void setSv(String sv) {
-        token.setSv(sv);
-        this.sv = sv;
-    }
-
-    public String getSs() {
-        return ss;
-    }
-
-    public void setSs(String ss) {
-        token.setSs(ss);
-        this.ss = ss;
-    }
-
-    public String getSrt() {
-        return srt;
-    }
-
-    public void setSrt(String srt) {
-        token.setSrt(srt);
-        this.srt = srt;
-    }
-
-    public String getSp() {
-        return sp;
-    }
-
-    public void setSp(String sp) {
-        token.setSp(sp);
-        this.sp = sp;
-    }
-
-    public String getSe() {
-        return se;
-    }
-
-    public void setSe(String se) {
-        token.setSe(se);
-        this.se = se;
-    }
-
-    public String getSt() {
-        return st;
-    }
-
-    public void setSt(String st) {
-        token.setSt(st);
-        this.st = st;
-    }
-
-    public String getSpr() {
-        return spr;
-    }
-
-    public void setSpr(String spr) {
-        token.setSpr(spr);
-        this.spr = spr;
-    }
-
-    public String getSig() {
-        return sig;
-    }
-
-    public void setSig(String sig) {
-        token.setSig(sig);
-        this.sig = sig;
-    }
-
-    public String getSi() {
-        return si;
-    }
-
-    public void setSi(String si) {
-        token.setSi(si);
-        this.si = si;
-    }
-
-    public String getSr() {
-        return sr;
-    }
-
-    public void setSr(String sr) {
-        token.setSr(sr);
-        this.sr = sr;
-    }
-
-    public String getSdd() {
-        return sdd;
-    }
-
-    public void setSdd(String sdd) {
-        token.setSdd(sdd);
-        this.sdd = sdd;
-    }
-
-    public String getSip() {
-        return sip;
-    }
-
-    public void setSip(String sip) {
-        token.setSip(sip);
-        this.sip = sip;
-    }
-
-    public String getSharedKey() {
-        return sharedKey;
-    }
-
-    public void setSharedKey(String sharedKey) {
-        this.sharedKey = sharedKey;
     }
 
     @Override
@@ -303,7 +156,9 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
      */
     protected ShareServiceClient createClient() throws Exception {
         var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + getConfiguration().getHost());
-        if (token.isInvalid()) {
+        var token = getConfiguration().getToken();
+        var sharedKey = getConfiguration().getSharedKey();
+        if (token().isInvalid()) {
             if (sharedKey != null) {
                 LOG.warn("The configured SAS token is not valid, using the shared key fallback.");
                 var keyB64 = FilesURIStrings.reconstructBase64EncodedValue(sharedKey);
@@ -319,7 +174,7 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     }
 
     FilesToken token() {
-        return token;
+        return getConfiguration().getToken();
     }
 
     @Override
