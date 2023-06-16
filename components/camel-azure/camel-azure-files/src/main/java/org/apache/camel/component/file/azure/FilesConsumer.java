@@ -39,7 +39,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ManagedResource(description = "Managed Azure Files Consumer")
+@ManagedResource(description = "Camel Azure Files consumer")
 public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesConsumer.class);
@@ -105,15 +105,6 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return answer;
     }
 
-    protected boolean pollSubDirectory(
-            String absolutePath, String dirName,
-            List<GenericFile<ShareFileItem>> fileList, int depth) {
-        boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
-        // change back to parent directory when finished polling sub directory
-        operations.changeToParentDirectory();
-        return answer;
-    }
-
     @Override
     protected boolean doPollDirectory(
             String path, String dirName,
@@ -123,80 +114,84 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         dirName = FileUtil.stripTrailingSeparator(dirName);
         var dir = ObjectHelper.isNotEmpty(dirName) ? dirName : path;
         operations.changeCurrentDirectory(dir);
+        try {
+            var listedFileItems = listFileItems(dir);
 
-        var files = listFiles(dir);
-
-        if (files == null || files.length == 0) {
-            LOG.trace("No files found in directory: {}", dir);
-            return true;
-        }
-
-        LOG.trace("Found {} files in directory: {}", files.length, dir);
-
-        if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(ShareFileItem::getName));
-        }
-
-        for (var file : files) {
-            if (handleFiles(path, fileList, depth + 1, files, file)) {
-                return false;
+            if (listedFileItems == null || listedFileItems.length == 0) {
+                LOG.trace("No files found in directory: {}", dir);
+                return true;
             }
+
+            LOG.trace("Found {} files in directory: {}", listedFileItems.length, dir);
+
+            if (getEndpoint().isPreSort()) {
+                Arrays.sort(listedFileItems, Comparator.comparing(ShareFileItem::getName));
+            }
+
+            for (var fileItem : listedFileItems) {
+                if (handleFileItem(path, fileList, depth + 1, listedFileItems, fileItem)) {
+                    return false;
+                }
+            }
+        } finally {
+            operations.changeToParentDirectory();
         }
 
         return true;
     }
 
-    private boolean handleFiles(
-            String path, List<GenericFile<ShareFileItem>> fileList,
-            int depth, ShareFileItem[] files, ShareFileItem file) {
+    private boolean handleFileItem(
+            String path, List<GenericFile<ShareFileItem>> polledFiles,
+            int depth, ShareFileItem[] listedFileItems, ShareFileItem fileItem) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Item[name={}, dir={}, file={}]", file.getName(), file.isDirectory(),
-                    !file.isDirectory());
+            LOG.trace("Item[name={}, dir={}]", fileItem.getName(), fileItem.isDirectory());
         }
 
         // check if we can continue polling in files
-        if (!canPollMoreFiles(fileList)) {
+        if (!canPollMoreFiles(polledFiles)) {
             return true;
         }
 
-        if (file.isDirectory()) {
-            if (handleDirectory(path, fileList, depth, files, file)) {
+        if (fileItem.isDirectory()) {
+            if (handleDirectory(path, polledFiles, depth, listedFileItems, fileItem)) {
                 return true;
             }
         } else {
-            handleFile(path, fileList, depth, files, file);
+            handleFile(path, polledFiles, depth, listedFileItems, fileItem);
         }
         return false;
     }
 
     private boolean handleDirectory(
-            String path, List<GenericFile<ShareFileItem>> fileList,
-            int depth, ShareFileItem[] files, ShareFileItem file) {
-        RemoteFile<ShareFileItem> remote = asRemoteFile(path, file);
-        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()
-                && isValidFile(remote, true, files)) {
-            // recursive scan and add the sub files and folders
-            String dirName = file.getName();
-            String dirPath = FilesPath.concat(path, dirName);
-            boolean canPollMore = pollSubDirectory(dirPath, dirName, fileList, depth);
-            if (!canPollMore) {
-                return true;
+            String path, List<GenericFile<ShareFileItem>> polledFiles,
+            int depth, ShareFileItem[] listedFileItems, ShareFileItem dir) {
+
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            var remote = asRemoteFile(path, dir);
+            if (isValidFile(remote, true, listedFileItems)) {
+                String dirName = dir.getName();
+                String dirPath = FilesPath.concat(path, dirName);
+                boolean canPollMore = doSafePollSubDirectory(dirPath, dirName, polledFiles, depth);
+                if (!canPollMore) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     private void handleFile(
-            String path, List<GenericFile<ShareFileItem>> fileList, int depth,
-            ShareFileItem[] files, ShareFileItem file) {
-        RemoteFile<ShareFileItem> remote = asRemoteFile(path, file);
-        if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
-            // matched file so add
-            fileList.add(remote);
+            String path, List<GenericFile<ShareFileItem>> polledFiles, int depth,
+            ShareFileItem[] listedFileItems, ShareFileItem file) {
+        if (depth >= endpoint.getMinDepth()) {
+            var remote = asRemoteFile(path, file);
+            if (isValidFile(remote, false, listedFileItems)) {
+                polledFiles.add(remote);
+            }
         }
     }
 
-    private ShareFileItem[] listFiles(String dir) {
+    private ShareFileItem[] listFileItems(String dir) {
         // TODO unused param
         try {
             return operations.listFiles();

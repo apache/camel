@@ -41,7 +41,7 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
     }
 
     @Override
-    protected GenericFileEndpoint<ShareFileItem> buildFileEndpoint(
+    protected FilesEndpoint<ShareFileItem> buildFileEndpoint(
             String uri, String remaining,
             Map<String, Object> parameters)
             throws Exception {
