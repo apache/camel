@@ -83,21 +83,20 @@ public class DynamicRouterProducer extends DefaultAsyncProducer {
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        try {
-            // we may be forced synchronous
-            if (configuration.isSynchronous()) {
+        if (configuration.isSynchronous()) {
+            try {
                 process(exchange);
-            } else {
-                return getComponent()
-                        .getRoutingProcessor(configuration.getChannel())
-                        .process(exchange, callback);
+            } catch (Exception e) {
+                exchange.setException(e);
+            } finally {
+                callback.done(true);
             }
-        } catch (Exception e) {
-            exchange.setException(e);
-        } finally {
-            callback.done(true);
+            return true;
+        } else {
+            return getComponent()
+                    .getRoutingProcessor(configuration.getChannel())
+                    .process(exchange, callback);
         }
-        return true;
     }
 
     /**

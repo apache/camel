@@ -595,7 +595,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             String contextKey) {
 
         // extract from header
-        Map<String, ?> context = (Map<String, ?>) camelHeaders.get(contextKey);
+        Map<String, ?> context = null;
+        if (camelHeaders.get(contextKey) instanceof Map) {
+            context = (Map<String, ?>) camelHeaders.get(contextKey);
+        }
+
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
@@ -607,7 +611,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
 
         // extract from exchange property
-        context = (Map<String, ?>) camelExchange.getProperty(contextKey);
+        if (camelExchange.getProperty(contextKey) instanceof Map) {
+            context = (Map<String, ?>) camelExchange.getProperty(contextKey);
+        }
+
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
