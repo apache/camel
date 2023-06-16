@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kinesis.client;
 
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
 import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class KinesisClientFactory {
      * @return               KinesisClient
      */
     public static KinesisInternalClient getKinesisClient(Kinesis2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
-                ? new KinesisClientIAMOptimizedImpl(configuration) : new KinesisClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new KinesisClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new KinesisClientIAMProfileOptimizedImpl(configuration);
+        } else {
+            return new KinesisClientStandardImpl(configuration);
+        }
     }
 }
