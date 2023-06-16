@@ -186,7 +186,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -359,7 +358,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeout": return int.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -533,7 +531,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeout": return target.getConfiguration().getTimeout();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
     }

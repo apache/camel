@@ -21,7 +21,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(101);
+        Set<String> props = new HashSet<>(100);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -122,9 +122,8 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("timeUnit");
         props.add("timeout");
         props.add("useFixedDelay");
-        props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(14);
+        Set<String> secretProps = new HashSet<>(13);
         secretProps.add("sdd");
         secretProps.add("se");
         secretProps.add("sharedKey");
@@ -138,7 +137,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         secretProps.add("ss");
         secretProps.add("st");
         secretProps.add("sv");
-        secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");
