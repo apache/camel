@@ -21,9 +21,7 @@
 # The result and other important data is saved on log files (i.e.: test log, the PR number and the result message).
 # The log file is archived by the action (see: action.yaml file)
 
-# Modify maven options here if needed
-MVN_DEFAULT_OPTS="-Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2 -Dci.env.name=github.com"
-MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
+echo "Using MVND_OPTS=$MVND_OPTS"
 
 # Script variables
 failures=0
@@ -104,7 +102,7 @@ function runTest() {
   echo ""
 
   echo "Logging test to ${logDir}/${component/\//-}.log"
-  mvn -l "${logDir}/${component/\//-}.log" -Psourcecheck ${MVN_OPTS} verify
+  ./mvnw -l "${logDir}/${component/\//-}.log" -Psourcecheck ${MVND_OPTS} verify
   if [[ $? -ne 0 ]]; then
     ((failures++))
     notifyError "${component} test" "${total}" "${current}" "${failures}"

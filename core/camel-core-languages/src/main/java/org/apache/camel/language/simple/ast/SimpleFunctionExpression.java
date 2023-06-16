@@ -385,16 +385,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // in header function
-        remainder = ifStartsWithReturnRemainder("in.headers", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.header", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("headers", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("header", function);
-        }
+        remainder = parseInHeader(function);
         if (remainder != null) {
             // remove leading character (dot, colon or ?)
             if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
@@ -660,10 +651,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String type = StringHelper.before(remainder, ")");
             remainder = StringHelper.after(remainder, ")");
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
@@ -888,11 +876,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${bodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
             type = type.trim();
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             index = StringHelper.removeQuotes(index);
             index = index.trim();
@@ -915,10 +900,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (type == null) {
                 throw new SimpleParserException("Valid syntax: ${bodyAs(type)} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
@@ -962,11 +944,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
             type = type.trim();
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             index = StringHelper.removeQuotes(index);
             index = index.trim();
@@ -989,10 +968,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (type == null) {
                 throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
             }
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
@@ -1075,10 +1051,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             index = StringHelper.removeQuotes(index);
@@ -1113,10 +1086,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
@@ -1128,16 +1098,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // in header function
-        remainder = ifStartsWithReturnRemainder("in.headers", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.header", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("headers", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("header", function);
-        }
+        remainder = parseInHeader(function);
         if (remainder != null) {
             // remove leading character (dot, colon or ?)
             if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
@@ -1196,6 +1157,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
+    private String parseInHeader(String function) {
+        String remainder;
+        remainder = ifStartsWithReturnRemainder("in.headers", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("in.header", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("headers", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("header", function);
+        }
+        return remainder;
+    }
+
     private String createCodeExchangeProperty(final String function) {
         // exchangePropertyAsIndex
         String remainder = ifStartsWithReturnRemainder("exchangePropertyAsIndex(", function);
@@ -1219,10 +1195,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             index = StringHelper.removeQuotes(index);
@@ -1260,10 +1233,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
+            type = appendClass(type);
             type = type.replace('$', '.');
             type = type.trim();
             return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
@@ -1313,6 +1283,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         return null;
+    }
+
+    private static String appendClass(String type) {
+        type = StringHelper.removeQuotes(type);
+        if (!type.endsWith(".class")) {
+            type = type + ".class";
+        }
+        return type;
     }
 
     private String createCodeFileExpression(String remainder) {

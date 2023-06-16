@@ -21,11 +21,11 @@ inputs:
   version:
     description: 'The version of the maven daemon to install'
     required: true
-    default: '0.8.2'
+    default: '1.0-m6'
   distribution:
     description: 'The maven distribution to use'
     required: true
-    default: 'linux-amd64'
+    default: 'm39-linux-amd64'
   dry-run:
     description: 'Flag to enable to the dry-run mode'
     required: true
@@ -52,4 +52,7 @@ runs:
       shell: bash
     - id: mvnd-location
       run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}/bin" >> $GITHUB_OUTPUT
+      shell: bash
+    - id: mvnd-opts
+      run: echo "MVND_OPTS=-V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
       shell: bash

@@ -222,8 +222,6 @@ public class ValidateMojo extends AbstractExecMojo {
     }
 
     protected void doExecuteConfigurationFiles(CamelCatalog catalog) throws MojoExecutionException {
-        // TODO: implement me
-
         Set<File> propertiesFiles = new LinkedHashSet<>();
         for (Resource dir : project.getResources()) {
             findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
