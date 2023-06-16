@@ -20,9 +20,6 @@ import org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientStandardImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientStandardImpl;
 
 /**
  * Factory class to return the correct type of AWS Kinesis client.

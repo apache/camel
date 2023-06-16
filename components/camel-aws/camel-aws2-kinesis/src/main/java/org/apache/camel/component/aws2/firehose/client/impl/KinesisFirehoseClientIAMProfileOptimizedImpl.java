@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.firehose.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,8 +32,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS Kinesis Firehose client for all users to use (enabling temporary creds). This implementation is for
