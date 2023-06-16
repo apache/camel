@@ -57,6 +57,7 @@ public class FilesConfiguration extends RemoteFileConfiguration {
             throw new IllegalArgumentException("Illegal share[/dir]: " + path);
         }
         var dir = "";
+        share = path;
         var separator = path.indexOf(FilesPath.PATH_SEPARATOR);
         if (separator != -1) {
             dir = path.substring(separator);
