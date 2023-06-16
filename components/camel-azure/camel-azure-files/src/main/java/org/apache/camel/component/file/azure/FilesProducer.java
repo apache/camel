@@ -1,13 +1,12 @@
 package org.apache.camel.component.file.azure;
 
+import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.file.remote.RemoteFileEndpoint;
-import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.remote.RemoteFileProducer;
 
-public class FilesProducer<T> extends RemoteFileProducer<T> {
+public class FilesProducer extends RemoteFileProducer<ShareFileItem> {
 
-    FilesProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
+    FilesProducer(FilesEndpoint endpoint, FilesOperations operations) {
         super(endpoint, operations);
     }
 

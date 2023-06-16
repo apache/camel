@@ -32,9 +32,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.azure.strategy.FilesProcessStrategyFactory;
-import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
@@ -106,7 +104,7 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     public FilesEndpoint() {
     }
 
-    public FilesEndpoint(String uri, RemoteFileComponent<ShareFileItem> component,
+    public FilesEndpoint(String uri, FilesComponent component,
                          FilesConfiguration configuration) {
         super(uri, component, configuration);
         setConfiguration(configuration);
@@ -248,7 +246,7 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     }
 
     @Override
-    protected RemoteFileConsumer<ShareFileItem> buildConsumer(Processor processor) {
+    protected FilesConsumer buildConsumer(Processor processor) {
         try {
             return new FilesConsumer(
                     this, processor, createRemoteFileOperations(),
@@ -259,12 +257,12 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     }
 
     @Override
-    protected GenericFileProducer<ShareFileItem> buildProducer() {
+    protected FilesProducer buildProducer() {
         try {
             if (this.getMoveExistingFileStrategy() == null) {
                 this.setMoveExistingFileStrategy(createDoNotMoveExistingFileStrategy());
             }
-            return new FilesProducer<>(this, createRemoteFileOperations());
+            return new FilesProducer(this, createRemoteFileOperations());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(this, e);
         }
