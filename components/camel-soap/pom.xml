@@ -63,6 +63,13 @@
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
         </dependency>
 
+        <!-- soap implementation -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
