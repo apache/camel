@@ -193,9 +193,9 @@ public final class RestConsumerContextPathMatcher {
                 }
             }
 
-            OptionalInt max = pathMap.keySet().stream().mapToInt(Integer::intValue).max();
-            if (max.isPresent()) {
-                List<ConsumerPath> bestConsumerPaths = pathMap.get(max.getAsInt());
+            OptionalInt min = pathMap.keySet().stream().mapToInt(Integer::intValue).min();
+            if (min.isPresent()) {
+                List<ConsumerPath> bestConsumerPaths = pathMap.get(min.getAsInt());
                 if (bestConsumerPaths.size() > 1) {
                     String exceptionMsg = "Ambiguous paths " + bestConsumerPaths.stream().map(ConsumerPath::getConsumerPath)
                             .collect(Collectors.joining(",")) + " for request path " + requestPath;
