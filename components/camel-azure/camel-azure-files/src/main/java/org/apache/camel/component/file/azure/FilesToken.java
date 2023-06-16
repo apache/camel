@@ -22,7 +22,7 @@ final class FilesToken {
 
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sv;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    @UriParam(label = "both", description = "part of account SAS token", secret = true)
     protected String ss;
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String srt;
@@ -37,12 +37,12 @@ final class FilesToken {
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     protected String sig;
 
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String si;  // service SAS only
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String sr;  // service SAS only
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    private String sdd; // service SAS only
+    @UriParam(label = "both", description = "part of service SAS token", secret = true)
+    private String si;
+    @UriParam(label = "both", description = "part of service SAS token", secret = true)
+    private String sr;
+    @UriParam(label = "both", description = "part of service SAS token", secret = true)
+    private String sdd;
     @UriParam(label = "both", description = "part of SAS token", secret = true)
     private String sip;
 
