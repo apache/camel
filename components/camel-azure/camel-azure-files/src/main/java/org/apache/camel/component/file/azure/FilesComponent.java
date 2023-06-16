@@ -41,12 +41,12 @@ public class FilesComponent extends RemoteFileComponent<ShareFileItem> {
     }
 
     @Override
-    protected FilesEndpoint<ShareFileItem> buildFileEndpoint(
+    protected FilesEndpoint buildFileEndpoint(
             String uri, String remaining,
             Map<String, Object> parameters)
             throws Exception {
         var config = new FilesConfiguration(FilesURIStrings.getBaseURI(uri));
-        return new FilesEndpoint<>(uri, this, config);
+        return new FilesEndpoint(uri, this, config);
     }
 
     @Override

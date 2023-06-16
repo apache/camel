@@ -38,7 +38,6 @@ import org.apache.camel.component.file.azure.strategy.FilesProcessStrategyFactor
 import org.apache.camel.component.file.remote.RemoteFileComponent;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
-import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -60,7 +59,7 @@ import org.slf4j.LoggerFactory;
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
                               + "bufferSize,moveExisting,username")
 @ManagedResource(description = "Camel Azure Files Endpoint")
-public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<ShareFileItem> {
+public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     public static final String HTTPS = "https";
 
@@ -301,7 +300,7 @@ public class FilesEndpoint<T extends ShareFileItem> extends RemoteFileEndpoint<S
     }
 
     @Override
-    public RemoteFileOperations<ShareFileItem> createRemoteFileOperations() throws Exception {
+    public FilesOperations createRemoteFileOperations() throws Exception {
         ShareServiceClient client = createClient();
 
         FilesOperations operations = new FilesOperations(client);

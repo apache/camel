@@ -64,7 +64,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final ShareServiceClient client;
-    protected FilesEndpoint<ShareFileItem> endpoint;
+    protected FilesEndpoint endpoint;
     private ShareDirectoryClient root;
     private Stack<ShareDirectoryClient> dirStack = new Stack<>();
 
@@ -74,7 +74,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public void setEndpoint(GenericFileEndpoint<ShareFileItem> endpoint) {
-        this.endpoint = (FilesEndpoint<ShareFileItem>) endpoint;
+        this.endpoint = (FilesEndpoint) endpoint;
     }
 
     @Override
