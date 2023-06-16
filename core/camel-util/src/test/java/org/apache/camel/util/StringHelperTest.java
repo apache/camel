@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StringHelperTest {
 
     @Test
-    public void testCamelCashToDash() throws Exception {
+    public void testCamelCashToDash() {
         assertEquals(null, camelCaseToDash(null));
         assertEquals("", camelCaseToDash(""));
 
@@ -65,48 +65,48 @@ public class StringHelperTest {
     class DashToCamelCase {
 
         @Test
-        void testDashToCamelCaseWithNull() throws Exception {
+        void testDashToCamelCaseWithNull() {
             assertThat(dashToCamelCase(null)).isNull();
         }
 
         @Test
-        void testDashToCamelCaseWithEmptyValue() throws Exception {
+        void testDashToCamelCaseWithEmptyValue() {
             assertThat(dashToCamelCase("")).isEmpty();
         }
 
         @Test
-        void testDashToCamelCaseWithNoDash() throws Exception {
+        void testDashToCamelCaseWithNoDash() {
             assertThat(dashToCamelCase("a")).isEqualTo("a");
         }
 
         @Test
-        void testDashToCamelCaseWithOneDash() throws Exception {
+        void testDashToCamelCaseWithOneDash() {
             assertThat(dashToCamelCase("a-b")).isEqualTo("aB");
         }
 
         @Test
-        void testDashToCamelCaseWithSeveralDashes() throws Exception {
+        void testDashToCamelCaseWithSeveralDashes() {
             assertThat(dashToCamelCase("a-bb-cc-dd")).isEqualTo("aBbCcDd");
         }
 
         @Test
-        void testDashToCamelCaseWithEndDash() throws Exception {
+        void testDashToCamelCaseWithEndDash() {
             assertThat(dashToCamelCase("a-")).isEqualTo("a");
         }
 
         @Test
-        void testDashToCamelCaseWithEndDashes() throws Exception {
+        void testDashToCamelCaseWithEndDashes() {
             assertThat(dashToCamelCase("a----")).isEqualTo("a");
         }
 
         @Test
-        void testDashToCamelCaseWithSeceralDashesGrouped() throws Exception {
+        void testDashToCamelCaseWithSeceralDashesGrouped() {
             assertThat(dashToCamelCase("a--b")).isEqualTo("aB");
         }
     }
 
     @Test
-    public void testSplitWords() throws Exception {
+    public void testSplitWords() {
         String[] arr = splitWords("apiName/methodName");
         assertEquals(2, arr.length);
         assertEquals("apiName", arr[0]);
@@ -118,7 +118,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testReplaceFirst() throws Exception {
+    public void testReplaceFirst() {
         assertEquals("jms:queue:bar", replaceFirst("jms:queue:bar", "foo", "bar"));
         assertEquals("jms:queue:bar", replaceFirst("jms:queue:foo", "foo", "bar"));
         assertEquals("jms:queue:bar?blah=123", replaceFirst("jms:queue:foo?blah=123", "foo", "bar"));
@@ -126,7 +126,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testRemoveLeadingAndEndingQuotes() throws Exception {
+    public void testRemoveLeadingAndEndingQuotes() {
         assertEquals("abc", removeLeadingAndEndingQuotes("'abc'"));
         assertEquals("abc", removeLeadingAndEndingQuotes("\"abc\""));
         assertEquals("a'b'c", removeLeadingAndEndingQuotes("a'b'c"));
@@ -136,7 +136,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testRemoveLeadingAndEndingQuotesWithSpaces() throws Exception {
+    public void testRemoveLeadingAndEndingQuotesWithSpaces() {
         assertNull(StringHelper.removeLeadingAndEndingQuotes(null));
         assertEquals(" ", StringHelper.removeLeadingAndEndingQuotes(" "));
         assertEquals("Hello World", StringHelper.removeLeadingAndEndingQuotes("Hello World"));
@@ -146,7 +146,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testSplitOnCharacterAsList() throws Exception {
+    public void testSplitOnCharacterAsList() {
         List<String> list = splitOnCharacterAsList("foo", ',', 1);
         assertEquals(1, list.size());
         assertEquals("foo", list.get(0));
@@ -187,7 +187,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testSplitOnCharacterAsIterator() throws Exception {
+    public void testSplitOnCharacterAsIterator() {
         Iterator<String> it = splitOnCharacterAsIterator("foo", ',', 1);
         assertEquals("foo", it.next());
         assertFalse(it.hasNext());
@@ -300,7 +300,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testRemoveQuotes() throws Exception {
+    public void testRemoveQuotes() {
         assertEquals("Hello World", StringHelper.removeQuotes("Hello World"));
         assertEquals("", StringHelper.removeQuotes(""));
         assertNull(StringHelper.removeQuotes(null));
@@ -315,7 +315,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testHasUpper() throws Exception {
+    public void testHasUpper() {
         assertFalse(StringHelper.hasUpperCase(null));
         assertFalse(StringHelper.hasUpperCase(""));
         assertFalse(StringHelper.hasUpperCase(" "));
@@ -330,7 +330,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testIsClassName() throws Exception {
+    public void testIsClassName() {
         assertFalse(StringHelper.isClassName(null));
         assertFalse(StringHelper.isClassName(""));
         assertFalse(StringHelper.isClassName(" "));
@@ -345,7 +345,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testHasStartToken() throws Exception {
+    public void testHasStartToken() {
         assertFalse(StringHelper.hasStartToken(null, null));
         assertFalse(StringHelper.hasStartToken(null, "simple"));
         assertFalse(StringHelper.hasStartToken("", null));
@@ -364,7 +364,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testIsQuoted() throws Exception {
+    public void testIsQuoted() {
         assertFalse(StringHelper.isQuoted(null));
         assertFalse(StringHelper.isQuoted(""));
         assertFalse(StringHelper.isQuoted(" "));
@@ -383,7 +383,7 @@ public class StringHelperTest {
     }
 
     @Test
-    public void testRemoveInitialCharacters() throws Exception {
+    public void testRemoveInitialCharacters() {
         assertEquals("foo", StringHelper.removeStartingCharacters("foo", '/'));
         assertEquals("foo", StringHelper.removeStartingCharacters("/foo", '/'));
         assertEquals("foo", StringHelper.removeStartingCharacters("//foo", '/'));
