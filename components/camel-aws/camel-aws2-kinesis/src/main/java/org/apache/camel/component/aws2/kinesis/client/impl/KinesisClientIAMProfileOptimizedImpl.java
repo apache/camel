@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.kinesis.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
 import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,8 +32,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS Kinesis client for all users to use (enabling temporary creds). This implementation is for remote

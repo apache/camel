@@ -86,9 +86,8 @@ public class Kinesis2Configuration implements Cloneable {
               description = "Set whether the Kinesis client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
     @UriParam(label = "common",
-              description =  "If using a profile credentials provider this parameter will set the profile name.")
+              description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
-
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -249,6 +248,7 @@ public class Kinesis2Configuration implements Cloneable {
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }
+
     // *************************************************
     //
     // *************************************************
