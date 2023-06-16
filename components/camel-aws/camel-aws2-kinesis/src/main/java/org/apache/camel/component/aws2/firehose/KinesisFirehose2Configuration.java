@@ -184,7 +184,7 @@ public class KinesisFirehose2Configuration implements Cloneable {
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
-    
+
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }
