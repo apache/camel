@@ -67,6 +67,9 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     @UriParam
     protected FilesConfiguration configuration;
 
+    @UriParam
+    protected FilesToken token = new FilesToken();
+
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
 
@@ -156,9 +159,8 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
      */
     protected ShareServiceClient createClient() throws Exception {
         var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + getConfiguration().getHost());
-        var token = getConfiguration().getToken();
         var sharedKey = getConfiguration().getSharedKey();
-        if (token().isInvalid()) {
+        if (token.isInvalid()) {
             if (sharedKey != null) {
                 LOG.warn("The configured SAS token is not valid, using the shared key fallback.");
                 var keyB64 = FilesURIStrings.reconstructBase64EncodedValue(sharedKey);
@@ -168,13 +170,17 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
             }
             // TODO Azure AD https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-requests-to-azure-storage
         } else {
-            builder = builder.sasToken(token().toURIQuery());
+            builder = builder.sasToken(token.toURIQuery());
         }
         return builder.buildClient();
     }
 
-    FilesToken token() {
-        return getConfiguration().getToken();
+    public FilesToken getToken() {
+        return token;
+    }
+
+    public void setToken(FilesToken token) {
+        this.token = token;
     }
 
     @Override

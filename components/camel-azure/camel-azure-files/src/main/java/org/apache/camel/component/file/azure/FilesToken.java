@@ -5,6 +5,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+
 /**
  * Azure Files account or service SAS token.
  * <p>
@@ -14,19 +17,33 @@ import java.util.stream.Stream;
  * @see <a href="https://learn.microsoft.com/en-us/rest/api/storageservices/create-account-sas">Azure account SAS</a>
  * @see <a href="https://learn.microsoft.com/en-us/rest/api/storageservices/create-service-sas">Azure service SAS</a>
  */
+@UriParams
 final class FilesToken {
 
-    private String sv;
-    private String ss;
-    private String srt;
-    private String sp;
-    private String se;
-    private String st;
-    private String spr;
-    private String sig;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String sv;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String ss;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String srt;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String sp;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String se;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String st;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String spr;
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    protected String sig;
+
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     private String si;  // service SAS only
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     private String sr;  // service SAS only
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     private String sdd; // service SAS only
+    @UriParam(label = "both", description = "part of SAS token", secret = true)
     private String sip;
 
     public void setSv(String sv) {
@@ -96,6 +113,7 @@ final class FilesToken {
             return Stream
                     .of(e("sv", sv), e("ss", ss), e("srt", srt), e("sp", sp), e("se", se), e("st", st),
                             e("spr", spr), e("sig", sig), e("si", si), e("sr", sr), e("sdd", sdd), e("sip", sip))
+                    .filter(Objects::nonNull)
                     .collect(Collectors.joining("&"));
         } catch (URISyntaxException e) {
             return null;
@@ -104,7 +122,7 @@ final class FilesToken {
 
     private String e(String param, String value) throws URISyntaxException {
         if (value == null || value.isBlank()) {
-            return "";
+            return null;
         }
         return param + "=" + FilesURIStrings.encodeTokenValue(value);
     }
@@ -129,6 +147,54 @@ final class FilesToken {
                 && Objects.equals(spr, other.spr) && Objects.equals(sr, other.sr)
                 && Objects.equals(srt, other.srt) && Objects.equals(ss, other.ss)
                 && Objects.equals(st, other.st) && Objects.equals(sv, other.sv);
+    }
+
+    String getSv() {
+        return sv;
+    }
+
+    String getSs() {
+        return ss;
+    }
+
+    String getSrt() {
+        return srt;
+    }
+
+    String getSp() {
+        return sp;
+    }
+
+    String getSe() {
+        return se;
+    }
+
+    String getSt() {
+        return st;
+    }
+
+    String getSpr() {
+        return spr;
+    }
+
+    String getSig() {
+        return sig;
+    }
+
+    String getSi() {
+        return si;
+    }
+
+    String getSr() {
+        return sr;
+    }
+
+    String getSdd() {
+        return sdd;
+    }
+
+    String getSip() {
+        return sip;
     }
 
 }

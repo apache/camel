@@ -21,7 +21,7 @@ public class FilesEndpointTests extends CamelTestSupport {
                 "azure-files://account/share?" + plainToken, FilesEndpoint.class);
         assertEquals(
                 plainToken,
-                endpoint.token().toURIQuery());
+                endpoint.getToken().toURIQuery());
     }
 
     @Test
