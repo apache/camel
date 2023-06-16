@@ -53,8 +53,8 @@ public class CamelServletTest {
         HttpConsumer httpConsumer2 = new HttpConsumer(httpCommonEndpoint, null);
 
         camelServlet.connect(httpConsumer1);
-        IllegalStateException illegalStateException =
-                assertThrows(IllegalStateException.class, () -> camelServlet.connect(httpConsumer2));
+        IllegalStateException illegalStateException
+                = assertThrows(IllegalStateException.class, () -> camelServlet.connect(httpConsumer2));
         assertEquals("Duplicate request path for rest:post://camel.apache.org",
                 illegalStateException.getMessage());
     }

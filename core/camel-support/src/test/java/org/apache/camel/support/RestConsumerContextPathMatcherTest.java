@@ -58,8 +58,8 @@ public class RestConsumerContextPathMatcherTest {
     @Test
     public void testRestConsumerContextPathMatcherWithAmbiguousPaths() {
         List<RestConsumerContextPathMatcher.ConsumerPath> consumerPaths = new ArrayList<>();
-        consumerPaths.add(new MockConsumerPath("GET","/camel/{a}/b/{c}"));
-        consumerPaths.add(new MockConsumerPath("GET","/camel/a/{b}/{c}"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/{a}/b/{c}"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/a/{b}/{c}"));
 
         IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () -> {
             RestConsumerContextPathMatcher.matchBestPath("GET", "/camel/a/b/3", consumerPaths);
@@ -68,16 +68,14 @@ public class RestConsumerContextPathMatcherTest {
                 illegalStateException.getMessage());
     }
 
-
     @Test
     public void testRestConsumerContextPathMatcherSuccess() {
         List<RestConsumerContextPathMatcher.ConsumerPath> consumerPaths = new ArrayList<>();
-        consumerPaths.add(new MockConsumerPath("GET","/camel/a/b/{c}"));
-        consumerPaths.add(new MockConsumerPath("GET","/camel/aa/{b}/{c}"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/a/b/{c}"));
+        consumerPaths.add(new MockConsumerPath("GET", "/camel/aa/{b}/{c}"));
 
-        RestConsumerContextPathMatcher.ConsumerPath path =
-                RestConsumerContextPathMatcher.matchBestPath("GET",
-                        "/camel/a/b/3", consumerPaths);
+        RestConsumerContextPathMatcher.ConsumerPath path = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/camel/a/b/3", consumerPaths);
         assertEquals(path.getConsumerPath(), "/camel/a/b/{c}");
     }
 }
