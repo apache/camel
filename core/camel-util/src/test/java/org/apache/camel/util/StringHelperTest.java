@@ -134,6 +134,7 @@ public class StringHelperTest {
         assertEquals("'", removeLeadingAndEndingQuotes("'"));
     }
 
+    @Test
     public void testSplitOnCharacterAsList() throws Exception {
         List<String> list = splitOnCharacterAsList("foo", ',', 1);
         assertEquals(1, list.size());
