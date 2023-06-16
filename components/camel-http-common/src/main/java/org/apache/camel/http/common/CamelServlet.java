@@ -415,7 +415,11 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     @Override
     public void connect(HttpConsumer consumer) {
         log.debug("Connecting consumer: {}", consumer);
-        consumers.put(consumer.getEndpoint().getEndpointUri(), consumer);
+        String endpointUri = consumer.getEndpoint().getEndpointUri();
+        if (consumers.containsKey(endpointUri)) {
+            throw new IllegalStateException("Duplicate request path for " + endpointUri);
+        }
+        consumers.put(endpointUri, consumer);
     }
 
     @Override
