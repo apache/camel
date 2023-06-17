@@ -101,7 +101,7 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
                             + "`additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`")
     private Map<String, Object> additionalProperties = new HashMap<>();
 
-    public EmbeddedDebeziumConfiguration() {
+    protected EmbeddedDebeziumConfiguration() {
         ObjectHelper.notNull(configureConnectorClass(), "connectorClass");
         this.connectorClass = configureConnectorClass();
     }
