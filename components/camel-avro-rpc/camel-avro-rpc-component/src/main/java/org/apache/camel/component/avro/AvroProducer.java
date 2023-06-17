@@ -30,7 +30,7 @@ public abstract class AvroProducer extends DefaultAsyncProducer {
     Transceiver transceiver;
     Requestor requestor;
 
-    public AvroProducer(Endpoint endpoint) {
+    protected AvroProducer(Endpoint endpoint) {
         super(endpoint);
     }
 
