@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//CHECKSTYLE:OFF
 @JsonFilter("fieldsToNull")
 public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
@@ -218,4 +217,3 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     }
 
 }
-//CHECKSTYLE:ON

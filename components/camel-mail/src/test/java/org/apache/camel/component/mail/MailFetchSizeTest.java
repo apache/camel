@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for fetch size.
  */
 public class MailFetchSizeTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override

@@ -34,11 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailProducerTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser camel = Mailbox.getOrCreateUser("camel", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser someone = Mailbox.getOrCreateUser("someone", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser recipient2 = Mailbox.getOrCreateUser("recipient2", "secret");
 
     @Test

@@ -19,7 +19,6 @@
 // for license please see accompanying LICENSE.txt file (available also at http://www.xmlpull.org/)
 
 package org.apache.camel.xml.io;
-// CHECKSTYLE:OFF
 
 /**
  * This exception is thrown to signal XML Pull Parser related faults.
@@ -63,4 +62,3 @@ public class XmlPullParserException extends Exception {
     }
 
 }
-// CHECKSTYLE:ON

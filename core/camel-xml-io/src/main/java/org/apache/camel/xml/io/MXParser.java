@@ -24,7 +24,6 @@
  * $Id: MXParser.java,v 1.52 2006/11/09 18:29:37 aslom Exp $
  */
 
-// CHECKSTYLE:OFF
 package org.apache.camel.xml.io;
 
 import java.io.EOFException;
@@ -3148,4 +3147,3 @@ public class MXParser implements XmlPullParser {
  * PERFORMANCE AND VALIDITY OF INFORMATION GENERATED USING SOFTWARE.
  */
 
-// CHECKSTYLE:ON

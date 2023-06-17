@@ -18,7 +18,6 @@
 /* -*-             c-basic-offset: 4; indent-tabs-mode: nil; -*-  //------100-columns-wide------>|*/
 // for license please see accompanying LICENSE.txt file (available also at http://www.xmlpull.org/)
 
-// CHECKSTYLE:OFF
 package org.apache.camel.xml.io;
 
 import java.io.IOException;
@@ -1103,4 +1102,3 @@ public interface XmlPullParser {
     int nextTag() throws XmlPullParserException, IOException;
 
 }
-// CHECKSTYLE:ON

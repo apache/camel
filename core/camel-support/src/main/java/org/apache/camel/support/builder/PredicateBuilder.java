@@ -34,7 +34,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A helper class for working with predicates
  */
-//CHECKSTYLE:OFF
 public class PredicateBuilder {
     /**
      * Converts the given expression into an {@link Predicate}

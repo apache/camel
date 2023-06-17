@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
  * Unit test for batch consumer.
  */
 public class MailMaxMessagesPerPollTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override

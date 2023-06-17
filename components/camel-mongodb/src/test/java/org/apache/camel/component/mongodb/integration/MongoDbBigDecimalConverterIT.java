@@ -33,9 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private class NumberClass {
-        // CHECKSTYLE:OFF
         public String _id = "testBigDecimalConvert";
-        // CHECKSTYLE:ON
 
         public BigDecimal aNumber = new BigDecimal(0);
 

@@ -32,7 +32,6 @@
  *
  */
 
-// CHECKSTYLE:OFF
 package org.apache.camel.xml.io.util;
 
 import java.io.IOException;
@@ -166,4 +165,3 @@ public class XmlStreamReaderException extends IOException {
         return is;
     }
 }
-// CHECKSTYLE:ON

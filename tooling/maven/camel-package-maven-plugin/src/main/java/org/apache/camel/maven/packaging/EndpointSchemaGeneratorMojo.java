@@ -1163,7 +1163,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    // CHECKSTYLE:OFF
     protected void findClassProperties(
             ComponentModel componentModel, Class<?> classElement,
             Set<String> excludes, String prefix,
@@ -1587,7 +1586,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         return null;
     }
-    // CHECKSTYLE:ON
 
     private static boolean isNullOrEmpty(Object value) {
         return value == null || "".equals(value) || "null".equals(value);
@@ -1606,7 +1604,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return false;
     }
 
-    // CHECKSTYLE:ON
 
     private static boolean isGroovyMetaClassProperty(final Method method) {
         final String methodName = method.getName();

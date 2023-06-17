@@ -27,9 +27,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jstrachan = Mailbox.getOrCreateUser("jstrachan", "secret");
 
     @Test

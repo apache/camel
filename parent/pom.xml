@@ -47,7 +47,6 @@
         <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
         <cxf.xjc.jvmArgs />
         <trimStackTrace>false</trimStackTrace>
-        <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <activemq-version>5.18.1</activemq-version>
@@ -338,8 +337,6 @@
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
-        <maven-checkstyle-plugin-version>3.3.0</maven-checkstyle-plugin-version>
-        <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
         <maven-owasp-plugin-version>8.2.1</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.4.1</maven-javadoc-plugin-version>
@@ -2893,46 +2890,6 @@
                     <version>${maven-archetype-plugin-version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${maven-checkstyle-plugin-version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-buildtools</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>${maven-checkstyle-version}</version>
-                        </dependency>
-                    </dependencies>
-                    <executions>
-                        <execution>
-                            <id>default-cli</id>
-                            <phase>validate</phase>
-                            <configuration>
-                                <includeResources>false</includeResources>
-                                <configLocation>camel-checkstyle.xml</configLocation>
-                                <consoleOutput>true</consoleOutput>
-                                <failsOnError>${checkstyle.failOnViolation}</failsOnError>
-                                <linkXRef>false</linkXRef>
-                                <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
-                                <sourceDirectories>
-                                    <sourceDirectory>${basedir}/src</sourceDirectory>
-                                </sourceDirectories>
-                                <headerLocation>header-java.txt</headerLocation>
-                                <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
-                                <excludes>${sourcecheckExcludesComma}**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
-                            </configuration>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>net.revelc.code</groupId>
                     <artifactId>impsort-maven-plugin</artifactId>
                     <version>${impsort-maven-plugin-version}</version>
@@ -3019,18 +2976,10 @@
                     <configuration>
                         <buildcommands>
                             <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
-                            <java.lang.String>net.sf.eclipsecs.core.CheckstyleBuilder</java.lang.String>
                         </buildcommands>
                         <projectnatures>
                             <nature>org.eclipse.jdt.core.javanature</nature>
-                            <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
                         </projectnatures>
-                        <additionalConfig>
-                            <file>
-                                <name>.checkstyle</name>
-                                <location>/camel-eclipse-checkstyle</location>
-                            </file>
-                        </additionalConfig>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -3347,11 +3296,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${maven-checkstyle-plugin-version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${maven-surefire-report-plugin-version}</version>
             </plugin>
@@ -3433,10 +3377,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                    </plugin>
-                    <plugin>
                         <groupId>net.revelc.code.formatter</groupId>
                         <artifactId>formatter-maven-plugin</artifactId>
                         <executions>
@@ -3472,9 +3412,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <properties>
-                <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
-            </properties>
         </profile>
 
         <profile>

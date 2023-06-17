@@ -185,7 +185,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return answer;
     }
 
-    // CHECKSTYLE:OFF
     public static ProcessorReifier<? extends ProcessorDefinition<?>> coreReifier(
             Route route, ProcessorDefinition<?> definition) {
 
@@ -322,7 +321,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         }
         return null;
     }
-    // CHECKSTYLE:OFF
 
     /**
      * Determines whether a new thread pool will be created or not.

@@ -151,7 +151,6 @@ public final class Jsoner {
      * @throws IOException              if the underlying reader encounters an I/O error. Ensure the reader is properly
      *                                  instantiated, isn't closed, or that it is ready before trying again.
      */
-    // CHECKSTYLE:OFF
     private static JsonArray deserialize(final Reader deserializable, final Set<DeserializationOptions> flags) throws DeserializationException, IOException {
         final Yylex lexer = new Yylex(deserializable);
         Yytoken token;
@@ -364,7 +363,6 @@ public final class Jsoner {
         } while (!(States.DONE.equals(currentState) && Yytoken.Types.END.equals(token.getType())));
         return new JsonArray(valueStack);
     }
-    // CHECKSTYLE:ON
 
     /**
      * A convenience method that assumes a StringReader to deserialize a string.
@@ -926,7 +924,6 @@ public final class Jsoner {
      * @throws IllegalArgumentException if the jsonSerializable isn't serializable in JSON.
      * @see                             SerializationOptions
      */
-    // CHECKSTYLE:OFF
     private static void serialize(final Object jsonSerializable, final Writer writableDestination, final Set<SerializationOptions> flags) throws IOException {
         if (jsonSerializable == null) {
             /* When a null is passed in the word null is supported in JSON. */
@@ -1173,7 +1170,6 @@ public final class Jsoner {
             }
         }
     }
-    // CHECKSTYLE:ON
 
     /**
      * Serializes like the first version of this library. It has been adapted to use Jsonable for serializing custom

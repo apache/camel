@@ -40,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for idempotent repository.
  */
 public class MailIdempotentRepositoryTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @BindToRegistry("myRepo")

@@ -35,7 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SObjectCompositeTest {
 
-    // CHECKSTYLE:OFF
     @JsonPropertyOrder({"account__c", "contactId__c"})
     public static class AccountContactJunction__c extends AbstractDescribedSObjectBase {
 
@@ -68,7 +67,6 @@ public class SObjectCompositeTest {
             this.contactId__c = contactId__c;
         }
     }
-    // CHECKSTYLE:ON
 
     @JsonPropertyOrder({ "Name", "BillingStreet", "BillingCity", "BillingState", "Industry" })
     public static class TestAccount extends Account {

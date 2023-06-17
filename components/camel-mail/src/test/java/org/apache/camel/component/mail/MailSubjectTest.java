@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Unit test for Mail subject support.
  */
 public class MailSubjectTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james2 = Mailbox.getOrCreateUser("james2", "secret");
     private String subject = "Camel rocks";
 

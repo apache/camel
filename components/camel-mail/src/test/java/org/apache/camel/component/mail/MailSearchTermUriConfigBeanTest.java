@@ -22,7 +22,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 
 public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @BindToRegistry("mySearchTerm")

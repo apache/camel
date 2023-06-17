@@ -32,7 +32,6 @@
  *
  */
 
-// CHECKSTYLE:OFF
 package org.apache.camel.xml.io.util;
 
 import java.io.BufferedInputStream;
@@ -773,4 +772,3 @@ public class XmlStreamReader extends Reader {
     }
 
 }
-// CHECKSTYLE:ON

@@ -84,7 +84,6 @@ public enum ExchangePropertyKey {
         return name;
     }
 
-    // CHECKSTYLE:OFF
     public static ExchangePropertyKey asExchangePropertyKey(String name) {
         switch (name) {
             case Exchange.AGGREGATED_COMPLETED_BY:
@@ -189,5 +188,4 @@ public enum ExchangePropertyKey {
                 return null;
         }
     }
-    // CHECKSTYLE:ON
 }

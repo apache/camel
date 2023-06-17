@@ -52,7 +52,6 @@
         <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
         <cxf.xjc.jvmArgs />
         <trimStackTrace>false</trimStackTrace>
-        <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <activemq-version>5.18.1</activemq-version>
@@ -343,8 +342,6 @@
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
-        <maven-checkstyle-plugin-version>3.3.0</maven-checkstyle-plugin-version>
-        <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
         <maven-owasp-plugin-version>8.2.1</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.4.1</maven-javadoc-plugin-version>

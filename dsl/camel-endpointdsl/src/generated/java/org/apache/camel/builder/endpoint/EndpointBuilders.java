@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package org.apache.camel.builder.endpoint;
 
 import javax.annotation.processing.Generated;
@@ -343,4 +342,3 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory {
 
 }
-//CHECKSTYLE:ON

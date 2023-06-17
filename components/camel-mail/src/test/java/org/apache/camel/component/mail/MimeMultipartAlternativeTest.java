@@ -40,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser ryan = Mailbox.getOrCreateUser("ryan", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";

@@ -62,7 +62,6 @@ import org.apache.camel.util.StringHelper;
 @SuppressWarnings("unused")
 public abstract class AbstractCamelCatalog {
 
-    // CHECKSTYLE:OFF
 
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("([\\w.]+)");
     private static final Pattern ENV_OR_SYS_PATTERN = Pattern.compile("\\{\\{(env|sys):\\w+\\}\\}");
@@ -1583,6 +1582,5 @@ public abstract class AbstractCamelCatalog {
         return sb.toString();
     }
 
-    // CHECKSTYLE:ON
 
 }

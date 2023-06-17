@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Tests if post process action is called if it is set
  */
 public class MailPostProcessActionTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
     private static final Logger LOG = LoggerFactory.getLogger(MailPostProcessActionTest.class);
 

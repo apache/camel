@@ -30,7 +30,6 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
-//CHECKSTYLE:OFF
 public class Line_Item__c extends AbstractDescribedSObjectBase {
 
     @JsonTypeResolver(AsNestedPropertyResolver.class)
@@ -163,4 +162,3 @@ public class Line_Item__c extends AbstractDescribedSObjectBase {
         return description;
     }
 }
-//CHECKSTYLE:ON

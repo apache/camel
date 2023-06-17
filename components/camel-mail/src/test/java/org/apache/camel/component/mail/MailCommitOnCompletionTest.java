@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for delete mail runs as an onCompletion.
  */
 public class MailCommitOnCompletionTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jonesCommitOnCompletion", "secret");
 
     @Override

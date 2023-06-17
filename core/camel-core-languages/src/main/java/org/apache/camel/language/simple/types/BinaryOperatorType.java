@@ -44,7 +44,6 @@ public enum BinaryOperatorType {
     STARTS_WITH,
     ENDS_WITH;
 
-    //CHECKSTYLE:OFF
     public static BinaryOperatorType asOperator(String text) {
         if ("==".equals(text)) {
             return EQ;
@@ -240,7 +239,6 @@ public enum BinaryOperatorType {
         }
         return null;
     }
-    //CHECKSTYLE:ON
 
     @Override
     public String toString() {

@@ -185,7 +185,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         return contextClassLoaderOnStart;
     }
 
-    //CHECKSTYLE:OFF
     public void afterPropertiesSet() throws Exception {
         if (org.apache.camel.util.ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
@@ -477,7 +476,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // init route controller
         initRouteController();
     }
-    //CHECKSTYLE:ON
 
     /**
      * Setup all the routes which must be done prior starting {@link CamelContext}.

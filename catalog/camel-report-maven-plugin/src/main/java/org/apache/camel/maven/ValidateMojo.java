@@ -178,7 +178,6 @@ public class ValidateMojo extends AbstractExecMojo {
     @Parameter(property = "camel.configurationFiles")
     private String configurationFiles = "application.properties";
 
-    // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         CamelCatalog catalog = new DefaultCamelCatalog();
@@ -775,7 +774,6 @@ public class ValidateMojo extends AbstractExecMojo {
 
         return sb.toString();
     }
-    // CHECKSTYLE:ON
 
     private static int countRouteId(List<CamelRouteDetails> details, String routeId) {
         int answer = 0;

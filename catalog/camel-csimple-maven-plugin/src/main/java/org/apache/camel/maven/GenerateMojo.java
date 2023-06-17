@@ -125,7 +125,6 @@ public class GenerateMojo extends AbstractExecMojo {
     private final Set<String> imports = new TreeSet<>();
     private final Map<String, String> aliases = new HashMap<>();
 
-    // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         loadConfiguration();
@@ -312,8 +311,6 @@ public class GenerateMojo extends AbstractExecMojo {
             getLog().info("Loaded csimple language imports: " + counter1 + " and aliases: " + counter2 + " from configuration: " + configFile);
         }
     }
-
-    // CHECKSTYLE:ON
 
     private void findJavaFiles(File dir, Set<File> javaFiles) {
         File[] files = dir.isDirectory() ? dir.listFiles() : null;

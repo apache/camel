@@ -30,9 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for CAMEL-1249
  */
 public class MailUsingOwnComponentTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
 
     @Override

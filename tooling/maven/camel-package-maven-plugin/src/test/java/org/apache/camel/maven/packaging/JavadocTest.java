@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 public class JavadocTest {
 
-    // CHECKSTYLE:OFF
     public static final String SOURCE_CLASS_1 =
             "    /**\n" +
             "     * Path to the template.\n" +
@@ -101,7 +100,6 @@ public class JavadocTest {
     public static final String JAVADOC_4 =
             "Messaging with AMQP protocol using Apache QPid Client.\n\nThis class extends JmsEndpoint " +
             "because it uses Apache Qpid JMS-compatible client for\nperforming the AMQP connectivity.";
-    // CHECKSTYLE:ON
 
     @Test
     public void testJavadoc1() {

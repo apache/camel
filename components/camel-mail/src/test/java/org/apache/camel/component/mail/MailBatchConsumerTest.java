@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for batch consumer.
  */
 public class MailBatchConsumerTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override

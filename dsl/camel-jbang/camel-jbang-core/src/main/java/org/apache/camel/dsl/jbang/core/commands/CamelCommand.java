@@ -41,10 +41,8 @@ public abstract class CamelCommand implements Callable<Integer> {
     private final CamelJBangMain main;
     private File camelDir;
 
-    //CHECKSTYLE:OFF
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
-    //CHECKSTYLE:ON
 
     public CamelCommand(CamelJBangMain main) {
         this.main = main;

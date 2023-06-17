@@ -24,7 +24,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 
-// CHECKSTYLE:OFF
 public class OwbTypeVariableImpl {
     private static final Class<?>[] TYPE_VARIABLE_TYPES = new Class<?>[] {TypeVariable.class};
 
