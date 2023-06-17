@@ -39,7 +39,7 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
 
     private final JiraEndpoint endpoint;
 
-    public AbstractJiraConsumer(JiraEndpoint endpoint, Processor processor) {
+    protected AbstractJiraConsumer(JiraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         setDelay(endpoint.getDelay());
