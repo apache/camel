@@ -20,12 +20,14 @@ package org.apache.camel.component.mllp;
  * Abstract base for all MLLP Negative Acknowledgements
  */
 public abstract class MllpNegativeAcknowledgementException extends MllpAcknowledgementException {
-    public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+    protected MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement,
+                                                   boolean logPhi) {
         super(message, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
-                                                boolean logPhi) {
+    protected MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement,
+                                                   Throwable cause,
+                                                   boolean logPhi) {
         super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 
