@@ -77,7 +77,7 @@ abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
     protected abstract class AbstractWatcher implements Runnable {
         private final C client;
 
-        public AbstractWatcher(C client) {
+        protected AbstractWatcher(C client) {
             this.client = client;
         }
 
