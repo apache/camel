@@ -42,7 +42,8 @@ public abstract class AbstractCommitManager implements CommitManager {
 
     private final Consumer<?, ?> consumer;
 
-    public AbstractCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
+    protected AbstractCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId,
+                                    String printableTopic) {
         this.consumer = consumer;
         this.kafkaConsumer = kafkaConsumer;
         this.threadId = threadId;
