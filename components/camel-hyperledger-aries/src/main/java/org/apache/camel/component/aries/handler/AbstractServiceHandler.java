@@ -39,7 +39,7 @@ public abstract class AbstractServiceHandler implements ServiceHandler {
 
     protected final HyperledgerAriesEndpoint endpoint;
 
-    public AbstractServiceHandler(HyperledgerAriesEndpoint endpoint) {
+    protected AbstractServiceHandler(HyperledgerAriesEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
