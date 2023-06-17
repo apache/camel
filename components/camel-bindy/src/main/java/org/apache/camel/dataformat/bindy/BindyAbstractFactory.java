@@ -50,7 +50,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     private String locale;
     private Class<?> type;
 
-    public BindyAbstractFactory(Class<?> type) throws Exception {
+    protected BindyAbstractFactory(Class<?> type) throws Exception {
         this.type = type;
 
         if (LOG.isDebugEnabled()) {
