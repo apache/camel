@@ -87,7 +87,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
      */
-    public AbstractJacksonDataFormat() {
+    protected AbstractJacksonDataFormat() {
         this(Object.class);
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
      *
      * @param unmarshalType the custom unmarshal type
      */
-    public AbstractJacksonDataFormat(Class<?> unmarshalType) {
+    protected AbstractJacksonDataFormat(Class<?> unmarshalType) {
         this(unmarshalType, null);
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
      *                      https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      */
-    public AbstractJacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+    protected AbstractJacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
     }
@@ -118,7 +118,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type
      */
-    public AbstractJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType) {
+    protected AbstractJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType) {
         this(mapper, unmarshalType, null);
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
      * @param jsonView      marker class to specify properties to be included during marshalling. See also
      *                      https://github.com/FasterXML/jackson-annotations/blob/master/src/main/java/com/fasterxml/jackson/annotation/JsonView.java
      */
-    public AbstractJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
+    protected AbstractJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
         this.jsonView = jsonView;
