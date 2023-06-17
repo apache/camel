@@ -49,27 +49,28 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <!-- must use 4.5.10 as otherwise apache ivy causes ugly WARN -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>4.5.10</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>
                     <artifactId>commons-codec</artifactId>
                 </exclusion>
             </exclusions>
-            <version>${httpclient4-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
+            <version>${httpcore4-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>
                     <artifactId>commons-codec</artifactId>
                 </exclusion>
             </exclusions>
-            <version>${httpcore4-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
