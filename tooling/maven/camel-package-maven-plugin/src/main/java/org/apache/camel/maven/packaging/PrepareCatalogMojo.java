@@ -432,7 +432,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
     }
 
-    // CHECKSTYLE:OFF
     protected Set<String> executeComponents() throws Exception {
         Path componentsOutDir = this.componentsOutDir.toPath();
 
@@ -1146,7 +1145,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return Stream.concat(l1.stream(), l2.stream()).collect(Collectors.toList());
     }
 
-    // CHECKSTYLE:ON
 
     private Stream<Path> list(Path dir) {
         try {

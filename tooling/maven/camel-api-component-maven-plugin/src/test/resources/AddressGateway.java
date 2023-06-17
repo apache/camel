@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package com.braintreegateway;
 
 import com.braintreegateway.exceptions.NotFoundException;
@@ -89,4 +88,3 @@ public class AddressGateway {
         return new Result<Address>(node, Address.class);
     }
 }
-//CHECKSTYLE:ON

@@ -448,7 +448,6 @@ class Yylex {
      * @return                        the next token
      * @exception java.io.IOException if any I/O-Error occurs
      */
-    // CHECKSTYLE:OFF
     public Yytoken yylex() throws java.io.IOException, DeserializationException {
         int zzInput;
         int zzAction;
@@ -659,6 +658,5 @@ class Yylex {
             }
         }
     }
-    // CHECKSTYLE:ON
 
 }

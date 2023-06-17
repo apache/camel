@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-//CHECKSTYLE:OFF
 public class RestError extends AbstractDTOBase {
 
     private String errorCode;
@@ -97,4 +96,3 @@ public class RestError extends AbstractDTOBase {
     }
 
 }
-//CHECKSTYLE:ON

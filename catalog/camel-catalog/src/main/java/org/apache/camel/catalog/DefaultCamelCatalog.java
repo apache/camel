@@ -581,6 +581,4 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         }
     }
 
-    // CHECKSTYLE:ON
-
 }

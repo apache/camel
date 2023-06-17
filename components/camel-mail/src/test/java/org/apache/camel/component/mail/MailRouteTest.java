@@ -41,11 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailRouteTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser result = Mailbox.getOrCreateUser("result", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser copy = Mailbox.getOrCreateUser("copy", "secret");
 
     @Test

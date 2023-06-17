@@ -139,12 +139,6 @@
                         <projectnatures>
                             <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
                         </projectnatures>
-                        <additionalConfig>
-                            <file>
-                                <name>.checkstyle</name>
-                                <location>/camel-eclipse-checkstyle</location>
-                            </file>
-                        </additionalConfig>
                     </configuration>
                 </plugin>
             </plugins>

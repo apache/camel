@@ -36,7 +36,6 @@ import static org.apache.camel.component.mail.SearchTermBuilder.Op;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailSearchTermTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     protected static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @BindToRegistry("myTerm")

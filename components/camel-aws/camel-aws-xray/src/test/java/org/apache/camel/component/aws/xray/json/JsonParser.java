@@ -39,7 +39,6 @@ public final class JsonParser {
         String keyName = null;
         boolean inWord = false;
         for (char c : json.toCharArray()) {
-            // CHECKSTYLE:OFF
             // fallthrough is intended here and as this is only a helper class for tests (as the previously used
             // org.json classes are incompatible with Apache 2.0 license) formatting rules shouldn't be that strict IMO
             // Note that the fall-through was the only rant checkstyle generated, so everything else should follow these
@@ -115,7 +114,6 @@ public final class JsonParser {
                         curToken.append(c);
                     }
             }
-            // CHECKSTYLE:ON
         }
         return ret;
     }

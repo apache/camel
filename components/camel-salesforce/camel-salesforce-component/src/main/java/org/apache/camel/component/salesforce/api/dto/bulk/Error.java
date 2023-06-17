@@ -21,7 +21,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-//CHECKSTYLE:OFF
 /**
  * <p>
  * Java class for Error complex type.
@@ -90,4 +89,3 @@ public class Error {
     }
 
 }
-//CHECKSTYLE:ON

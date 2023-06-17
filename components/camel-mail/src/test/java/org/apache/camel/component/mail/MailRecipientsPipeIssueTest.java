@@ -30,11 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for recipients using | in email address
  */
 public class MailRecipientsPipeIssueTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser you = Mailbox.getOrCreateUser("you", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser camelPipes = Mailbox.getOrCreateUser("camel|pipes@riders.org", "camelPipes", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser easyPipes = Mailbox.getOrCreateUser("easyPipes@riders.org", "easyPipes", "secret");
 
     @Test

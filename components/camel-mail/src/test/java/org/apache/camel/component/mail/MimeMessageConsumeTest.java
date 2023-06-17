@@ -47,9 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MimeMessageConsumeTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james3 = Mailbox.getOrCreateUser("james3", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james4 = Mailbox.getOrCreateUser("james4", "secret");
     private String body = "hello world!";
 

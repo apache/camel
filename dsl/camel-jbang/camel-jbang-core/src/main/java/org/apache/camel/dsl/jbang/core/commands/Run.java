@@ -113,7 +113,6 @@ public class Run extends CamelCommand {
 
     private File logFile;
 
-    //CHECKSTYLE:OFF
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
@@ -228,7 +227,6 @@ public class Run extends CamelCommand {
         super(main);
     }
 
-    //CHECKSTYLE:ON
 
     public String getProfile() {
         return profile;

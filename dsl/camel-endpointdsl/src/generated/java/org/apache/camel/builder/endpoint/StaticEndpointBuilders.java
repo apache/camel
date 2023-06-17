@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package org.apache.camel.builder.endpoint;
 
 import javax.annotation.processing.Generated;
@@ -15560,4 +15559,3 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
 }
-//CHECKSTYLE:ON

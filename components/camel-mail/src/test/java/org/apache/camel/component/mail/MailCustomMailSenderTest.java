@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailCustomMailSenderTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
 
     private static boolean sent;

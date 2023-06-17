@@ -47,11 +47,8 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     public static final String UUID_EXPRESSION = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser default_ = Mailbox.getOrCreateUser("default", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser suffix = Mailbox.getOrCreateUser("suffix", "secret");
 
     MockEndpoint resultEndpoint;

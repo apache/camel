@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// CHECKSTYLE:OFF
 public class AbstractOlingo2AppAPITestSupport {
 
     protected static final String SERVICE_NAME = "MyFormula.svc";

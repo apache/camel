@@ -108,7 +108,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
         nextToken();
         while (!token.getType().isEol()) {
             // predicate supports quotes, functions, operators and whitespaces
-            //CHECKSTYLE:OFF
             if (!singleQuotedLiteralWithFunctionsText()
                     && !doubleQuotedLiteralWithFunctionsText()
                     && !functionText()
@@ -122,7 +121,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 // use the previous index as that is where the problem is
                 throw new SimpleParserException("Unexpected token " + token, previousIndex);
             }
-            //CHECKSTYLE:ON
             // take the next token
             nextToken();
         }
@@ -695,7 +693,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
             }
 
             // then we proceed in the grammar according to the parameter types supported by the given binary operator
-            //CHECKSTYLE:OFF
             if ((literalWithFunctionsSupported && singleQuotedLiteralWithFunctionsText())
                     || (literalWithFunctionsSupported && doubleQuotedLiteralWithFunctionsText())
                     || (literalSupported && singleQuotedLiteralText())
@@ -713,7 +710,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
             } else {
                 throw new SimpleParserException("Binary operator " + operatorType + " does not support token " + token, token.getIndex());
             }
-            //CHECKSTYLE:ON
             return true;
         }
         return false;

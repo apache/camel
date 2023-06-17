@@ -30,13 +30,9 @@ import org.junit.jupiter.api.Test;
  * Unit test to verify that we can have multiple recipients in To, CC and BCC
  */
 public class MailMultipleRecipientsTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser willem = Mailbox.getOrCreateUser("willem", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser hadrian = Mailbox.getOrCreateUser("hadrian", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser tracy = Mailbox.getOrCreateUser("tracy", "secret");
 
     @Test

@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * SortUtilTest.
  */
 public class MailSortTermThreeTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @BindToRegistry("sortAscendingDate")

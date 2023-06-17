@@ -34,10 +34,8 @@ import java.util.function.BiConsumer;
 public final class URISupport {
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
-    // CHECKSTYLE:OFF
     public static final char[] RAW_TOKEN_START = { '(', '{' };
     public static final char[] RAW_TOKEN_END = { ')', '}' };
-    // CHECKSTYLE:ON
 
     private static final String CHARSET = "UTF-8";
 

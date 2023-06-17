@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * DTO for Salesforce login error
  */
-//CHECKSTYLE:OFF
 public class LoginError {
 
     private String error;
@@ -46,4 +45,3 @@ public class LoginError {
         this.errorDescription = errorDescription;
     }
 }
-//CHECKSTYLE:ON

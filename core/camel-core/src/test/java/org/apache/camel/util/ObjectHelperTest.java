@@ -307,7 +307,6 @@ public class ObjectHelperTest {
         assertEquals("bean:bar?method=cool('A','Hello,World')", it.next());
     }
 
-    // CHECKSTYLE:OFF
     @Test
     void testCreateIteratorWithPrimitiveArrayTypes() {
         Iterator<?> it = ObjectHelper.createIterator(new byte[] {13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE}, null);
@@ -554,7 +553,6 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
     }
-    // CHECKSTYLE:ON
 
     @Test
     void testArrayAsIterator() {

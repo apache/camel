@@ -29,9 +29,7 @@ import org.junit.jupiter.api.Test;
  * Unit test for Mail header decoding/unfolding support.
  */
 public class MailMimeDecodeHeadersTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser plain = Mailbox.getOrCreateUser("plain", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser decoded = Mailbox.getOrCreateUser("decoded", "secret");
     private String nonAsciiSubject = "\uD83D\uDC2A rocks!";
     private String encodedNonAsciiSubject = "=?UTF-8?Q?=F0=9F=90=AA_rocks!?=";

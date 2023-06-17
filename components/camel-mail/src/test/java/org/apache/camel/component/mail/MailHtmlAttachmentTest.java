@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for Camel html attachments and Mail attachments.
  */
 public class MailHtmlAttachmentTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     @Test

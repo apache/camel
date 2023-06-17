@@ -142,7 +142,6 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     @Parameter(property = "camel.generateJacocoXmlReport", defaultValue = "false")
     private boolean generateJacocoXmlReport;
 
-    // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException {
 
@@ -377,7 +376,6 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         return it;
     }
 
-    // CHECKSTYLE:ON
 
     @SuppressWarnings("unchecked")
     private String templateCoverageData(

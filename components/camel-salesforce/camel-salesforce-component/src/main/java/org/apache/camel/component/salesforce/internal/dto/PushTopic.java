@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce.internal.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
-//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject PushTopic
  */
@@ -148,4 +147,3 @@ public class PushTopic extends AbstractSObjectBase {
         this.NotifyForOperationUndelete = notifyForOperationUndelete;
     }
 }
-//CHECKSTYLE:ON

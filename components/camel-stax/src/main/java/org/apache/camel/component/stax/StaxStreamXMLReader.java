@@ -46,7 +46,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * class extracted from spring 3.0.6.RELEASE.
  */
-// CHECKSTYLE:OFF
 public class StaxStreamXMLReader implements XMLReader {
 
   private static final String DEFAULT_XML_VERSION = "1.0";
@@ -587,4 +586,3 @@ public class StaxStreamXMLReader implements XMLReader {
     }
   }
 }
-// CHECKSTYLE:ON

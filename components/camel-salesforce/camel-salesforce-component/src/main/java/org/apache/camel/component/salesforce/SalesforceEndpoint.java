@@ -41,7 +41,6 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
-    //CHECKSTYLE:OFF
     @UriPath( label = "common", description = "The operation to use", enums = "getVersions,"
             + "getResources,getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,"
             + "updateSObject,deleteSObject,getSObjectWithId,upsertSObject,deleteSObjectWithId,"
@@ -60,7 +59,6 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             + "raw,subscribe,pubSubSubscribe,pubSubPublish")
     @Metadata(required = true)
     private final OperationName operationName;
-    //CHECKSTYLE:ON
 
     @UriPath(label = "consumer,producer", description = "The name of the topic/channel to use")
     private final String topicName;

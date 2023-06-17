@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for rollback option.
  */
 public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
 
     private static int counter;

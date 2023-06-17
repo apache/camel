@@ -85,7 +85,6 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // CHECKSTYLE:OFF
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
                             .completionSize(5).aggregationRepository(getRepo())
@@ -103,7 +102,6 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTest
                             })
                             .to("mock:result")
                         .end();
-                // CHECKSTYLE:ON
             }
         };
     }

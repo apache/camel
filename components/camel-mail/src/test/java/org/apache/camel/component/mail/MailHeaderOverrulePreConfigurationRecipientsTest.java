@@ -31,9 +31,7 @@ import org.junit.jupiter.api.Test;
  * Unit test to verify that message headers override pre configuration.
  */
 public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser willem = Mailbox.getOrCreateUser("willem", "secret");
 
     @Test
