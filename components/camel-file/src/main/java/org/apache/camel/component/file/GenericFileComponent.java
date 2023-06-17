@@ -39,10 +39,10 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    public GenericFileComponent() {
+    protected GenericFileComponent() {
     }
 
-    public GenericFileComponent(CamelContext context) {
+    protected GenericFileComponent(CamelContext context) {
         super(context);
     }
 
