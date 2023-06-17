@@ -119,7 +119,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     /**
      * The catalog directory where the component json files are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
     private transient String licenseHeader;
