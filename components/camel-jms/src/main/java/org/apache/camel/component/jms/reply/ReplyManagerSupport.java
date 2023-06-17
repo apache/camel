@@ -64,7 +64,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected CorrelationTimeoutMap correlation;
     protected String correlationProperty;
 
-    public ReplyManagerSupport(CamelContext camelContext) {
+    protected ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
