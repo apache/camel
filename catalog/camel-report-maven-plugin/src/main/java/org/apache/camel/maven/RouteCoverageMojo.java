@@ -194,7 +194,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         long anonymous = routeTrees.stream().filter(t -> t.getRouteId() == null).count();
         if (!anonymousRoutes && anonymous > 0) {
-            getLog().warn("Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support");
+            getLog().warn(
+                    "Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support");
         }
 
         final AtomicInteger notCovered = new AtomicInteger();
@@ -242,10 +243,11 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
             // grab dump data for the route
             try {
-                List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
+                List<CoverageData> coverageData = RouteCoverageHelper
+                        .parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
                 if (coverageData.isEmpty()) {
                     getLog().warn("No route coverage data found for route: " + routeId
-                        + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
+                                  + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
                 } else {
                     List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
                     totalNumberOfNodes += coverage.size();
@@ -275,10 +277,11 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         if (anonymousRoutes && !anonymousRouteTrees.isEmpty()) {
             // grab dump data for the route
             try {
-                Map<String, List<CoverageData>> datas = RouteCoverageHelper.parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + "/target/camel-route-coverage");
+                Map<String, List<CoverageData>> datas = RouteCoverageHelper
+                        .parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + "/target/camel-route-coverage");
                 if (datas.isEmpty()) {
                     getLog().warn("No route coverage data found"
-                        + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
+                                  + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
                 } else {
                     Map<String, List<CamelNodeDetails>> routes = groupAnonymousRoutesByClassName(anonymousRouteTrees);
                     // attempt to match anonymous routes via the unit test class
@@ -300,7 +303,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
                         if (!coverage.isEmpty()) {
                             totalNumberOfNodes += coverage.size();
-                            String fileName = stripRootPath(asRelativeFile(t.getValue().get(0).getFileName(), project), project);
+                            String fileName
+                                    = stripRootPath(asRelativeFile(t.getValue().get(0).getFileName(), project), project);
                             String out = templateCoverageData(fileName, null, coverage, notCovered, coveredNodes);
                             getLog().info("Route coverage summary:\n\n" + out);
                             getLog().info("");
@@ -360,7 +364,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
     }
 
-    private ListIterator<RouteCoverageNode> positionToLineNumber(ListIterator<RouteCoverageNode> it, List<RouteCoverageNode> coverage, int lineNumber) {
+    private ListIterator<RouteCoverageNode> positionToLineNumber(
+            ListIterator<RouteCoverageNode> it, List<RouteCoverageNode> coverage, int lineNumber) {
         // restart
         if (it == null || !it.hasNext()) {
             it = coverage.listIterator();
@@ -375,7 +380,6 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
         return it;
     }
-
 
     @SuppressWarnings("unchecked")
     private String templateCoverageData(

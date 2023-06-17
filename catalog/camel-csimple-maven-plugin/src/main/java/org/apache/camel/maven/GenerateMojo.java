@@ -209,7 +209,6 @@ public class GenerateMojo extends AbstractExecMojo {
             }
         }
 
-
         if (!csimpleExpressions.isEmpty()) {
             getLog().info("Discovered " + csimpleExpressions.size() + " csimple expressions");
 
@@ -308,7 +307,8 @@ public class GenerateMojo extends AbstractExecMojo {
             }
         }
         if (counter1 > 0 || counter2 > 0) {
-            getLog().info("Loaded csimple language imports: " + counter1 + " and aliases: " + counter2 + " from configuration: " + configFile);
+            getLog().info("Loaded csimple language imports: " + counter1 + " and aliases: " + counter2 + " from configuration: "
+                          + configFile);
         }
     }
 

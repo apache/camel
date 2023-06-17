@@ -233,20 +233,27 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         parser.addImport(ArrayList.class);
         parser.addImport(org.w3c.dom.Element.class);
         parser.addAnnotation(SuppressWarnings.class).setLiteralValue("\"unused\"");
-        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter("org.apache.camel.spi.Resource", "input").addThrows(IOException.class)
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser")
+                .addParameter("org.apache.camel.spi.Resource", "input").addThrows(IOException.class)
                 .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input);");
-        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter("org.apache.camel.spi.Resource", "input").addParameter(String.class, "namespace")
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser")
+                .addParameter("org.apache.camel.spi.Resource", "input").addParameter(String.class, "namespace")
                 .addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input, namespace);");
-        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(InputStream.class, "input").addThrows(IOException.class)
-            .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input);");
-        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(Reader.class, "reader").addThrows(IOException.class)
-            .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(reader);");
-        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(InputStream.class, "input").addParameter(String.class, "namespace")
-            .addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input, namespace);");
-        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(Reader.class, "reader").addParameter(String.class, "namespace")
-            .addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(reader, namespace);");
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(InputStream.class, "input")
+                .addThrows(IOException.class)
+                .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input);");
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(Reader.class, "reader")
+                .addThrows(IOException.class)
+                .addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(reader);");
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(InputStream.class, "input")
+                .addParameter(String.class, "namespace")
+                .addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(input, namespace);");
+        parser.addMethod().setConstructor(true).setPublic().setName("ModelParser").addParameter(Reader.class, "reader")
+                .addParameter(String.class, "namespace")
+                .addThrows(IOException.class).addThrows(XML_PULL_PARSER_EXCEPTION).setBody("super(reader, namespace);");
 
-        List<Class<?>> elementRefs = Arrays.asList(processorDefinitionClass, expressionDefinitionClass, dataFormatDefinitionClass);
+        List<Class<?>> elementRefs
+                = Arrays.asList(processorDefinitionClass, expressionDefinitionClass, dataFormatDefinitionClass);
 
         for (Class<?> clazz : model) {
             if (clazz.getAnnotation(XmlEnum.class) != null || clazz.isInterface()) {
@@ -266,10 +273,13 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             List<Member> members = getMembers(clazz);
 
             // XmlAttribute
-            List<Member> attributeMembers = members.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlAttribute.class) != null).collect(Collectors.toList());
+            List<Member> attributeMembers
+                    = members.stream().filter(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) != null)
+                            .collect(Collectors.toList());
             String baseAttributeHandler = null;
             for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
-                if (getMembers(parent).stream().anyMatch(member -> ((AccessibleObject)member).getAnnotation(XmlAttribute.class) != null)) {
+                if (getMembers(parent).stream()
+                        .anyMatch(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) != null)) {
                     baseAttributeHandler = lowercase(parent.getSimpleName()) + "AttributeHandler()";
                     break;
                 }
@@ -280,10 +290,11 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             } else {
                 SortedMap<String, String> cases = new TreeMap<>();
                 for (Member member : attributeMembers) {
-                    Type pt = member instanceof Method ? ((Method)member).getGenericParameterTypes()[0] : ((Field)member).getGenericType();
+                    Type pt = member instanceof Method
+                            ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
                     GenericType type = new GenericType(pt);
                     String mn = member.getName();
-                    String an = ((AccessibleObject)member).getAnnotation(XmlAttribute.class).name();
+                    String an = ((AccessibleObject) member).getAnnotation(XmlAttribute.class).name();
                     if ("##default".equals(an)) {
                         an = member instanceof Method ? propname(mn) : mn;
                     }
@@ -293,7 +304,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 String defaultCase = baseAttributeHandler != null ? baseAttributeHandler + ".accept(def, key, val)" : "false";
                 if (attributeMembers.size() == 1) {
                     Map.Entry<String, String> entry = cases.entrySet().iterator().next();
-                    attributes = " (def, key, val) -> {\n" + "    if (\"" + entry.getKey() + "\".equals(key)) {\n" + "        " + entry.getValue() + "\n" + "        return true;\n"
+                    attributes = " (def, key, val) -> {\n" + "    if (\"" + entry.getKey() + "\".equals(key)) {\n" + "        "
+                                 + entry.getValue() + "\n" + "        return true;\n"
                                  + "    }\n" + "    return " + defaultCase + ";\n" + "}";
                 } else {
                     attributes = generateCases(cases, defaultCase);
@@ -301,75 +313,101 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             // @XmlAnyAttribute
-            members.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlAnyAttribute.class) != null).forEach(member -> {
-                if (!"otherAttributes".equals(member.getName())) {
-                    throw new UnsupportedOperationException("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlAnyAttribute");
-                }
-            });
+            members.stream().filter(member -> ((AccessibleObject) member).getAnnotation(XmlAnyAttribute.class) != null)
+                    .forEach(member -> {
+                        if (!"otherAttributes".equals(member.getName())) {
+                            throw new UnsupportedOperationException(
+                                    "Class " + clazz.getName() + " / member " + member + ": unsupported @XmlAnyAttribute");
+                        }
+                    });
 
             // @XmlElementRef @XmlElement @XmlElements
-            List<Member> elementMembers = members.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlAttribute.class) == null)
-                .filter(member -> ((AccessibleObject)member).getAnnotation(XmlAnyAttribute.class) == null)
-                .filter(member -> ((AccessibleObject)member).getAnnotation(XmlValue.class) == null).collect(Collectors.toList());
+            List<Member> elementMembers
+                    = members.stream().filter(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) == null)
+                            .filter(member -> ((AccessibleObject) member).getAnnotation(XmlAnyAttribute.class) == null)
+                            .filter(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) == null)
+                            .collect(Collectors.toList());
             List<Member> multiElements = members.stream()
-                .filter(member -> ((AccessibleObject)member).getAnnotation(XmlElementRef.class) != null || ((AccessibleObject)member).getAnnotation(XmlElements.class) != null
-                                  || (clazz == outputDefinitionClass && "setOutputs".equals(member.getName())))
-                .collect(Collectors.toList());
+                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlElementRef.class) != null
+                            || ((AccessibleObject) member).getAnnotation(XmlElements.class) != null
+                            || (clazz == outputDefinitionClass && "setOutputs".equals(member.getName())))
+                    .collect(Collectors.toList());
             Map<String, String> expressionHandlersDefs = new LinkedHashMap<>();
             Map<String, String> cases = new LinkedHashMap<>();
             // to handle elements from external namespaces
             List<String[]> externalNamespaces = new ArrayList<>();
             // XmlElementRef
-            elementMembers.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlElementRef.class) != null
-                                                     || (clazz == outputDefinitionClass && "setOutputs".equals(member.getName())))
-                .forEach(member -> {
-                    Type pt = member instanceof Method ? ((Method)member).getGenericParameterTypes()[0] : ((Field)member).getGenericType();
-                    GenericType type = new GenericType(pt);
-                    boolean list = type.getRawClass() == List.class;
-                    String fn = member.getName();
-                    String sn = member instanceof Method ? fn : "set" + uppercase(fn);
-                    String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
-                    Class<?> root = list ? type.getActualTypeArgument(0).getRawClass() : type.getRawClass();
-                    if (elementRefs.contains(root)) {
-                        expressionHandlersDefs.put(lowercase(sn.substring(3)),
-                                                   "    " + root.getSimpleName() + " v = doParse" + root.getSimpleName() + "Ref(key);\n" + "    if (v != null) { \n" + "        "
-                                                                               + (list ? "doAdd(v, def." + gn + "(), def::" + sn + ");" : "def." + sn + "(v);") + "\n"
-                                                                               + "        return true;\n" + "    }\n");
-                    } else {
-                        model.stream().filter(root::isAssignableFrom).filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).forEach(cl -> {
-                            String en = cl.getAnnotation(XmlRootElement.class).name();
-                            if ("##default".equals(en)) {
-                                en = lowercase(cl.getSimpleName());
-                            }
-                            String tn = cl.getSimpleName();
-                            cases.put(en, list ? "doAdd(doParse" + tn + "(), def." + gn + "(), def::" + sn + ");" : "def." + sn + "(doParse" + tn + "());");
-                        });
-                    }
-                });
-            // @XmlElements
-            elementMembers.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlElements.class) != null).forEach(member -> {
-                Type pt = member instanceof Method ? ((Method)member).getGenericParameterTypes()[0] : ((Field)member).getGenericType();
-                GenericType type = new GenericType(pt);
-                boolean list = type.getRawClass() == List.class;
-                String fn = member.getName();
-                String sn = member instanceof Method ? fn : "set" + uppercase(fn);
-                String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
-                Class<?> root = list ? type.getActualTypeArgument(0).getRawClass() : type.getRawClass();
-                if (elementRefs.contains(root)) {
-                    expressionHandlersDefs.put(lowercase(sn.substring(3)),
-                                               "    " + root.getSimpleName() + " v = doParse" + root.getSimpleName() + "Ref(key);\n" + "    if (v != null) { \n" + "        "
-                                                                           + (list ? "doAdd(v, def." + gn + "(), def::" + sn + ");" : "def." + sn + "(v);") + "\n"
-                                                                           + "        return true;\n" + "    }\n");
-                } else {
-                    Stream.of(((AccessibleObject)member).getAnnotation(XmlElements.class).value()).forEach(xe -> {
-                        String en = xe.name();
-                        String tn = xe.type().getSimpleName();
-                        cases.put(en, list ? "doAdd(doParse" + tn + "(), def." + gn + "(), def::" + sn + ");" : "def." + sn + "(doParse" + tn + "());");
+            elementMembers.stream().filter(member -> ((AccessibleObject) member).getAnnotation(XmlElementRef.class) != null
+                    || (clazz == outputDefinitionClass && "setOutputs".equals(member.getName())))
+                    .forEach(member -> {
+                        Type pt = member instanceof Method
+                                ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
+                        GenericType type = new GenericType(pt);
+                        boolean list = type.getRawClass() == List.class;
+                        String fn = member.getName();
+                        String sn = member instanceof Method ? fn : "set" + uppercase(fn);
+                        String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
+                        Class<?> root = list ? type.getActualTypeArgument(0).getRawClass() : type.getRawClass();
+                        if (elementRefs.contains(root)) {
+                            expressionHandlersDefs.put(lowercase(sn.substring(3)),
+                                    "    " + root.getSimpleName() + " v = doParse" + root.getSimpleName() + "Ref(key);\n"
+                                                                                   + "    if (v != null) { \n" + "        "
+                                                                                   + (list
+                                                                                           ? "doAdd(v, def." + gn + "(), def::"
+                                                                                             + sn + ");"
+                                                                                           : "def." + sn + "(v);")
+                                                                                   + "\n"
+                                                                                   + "        return true;\n" + "    }\n");
+                        } else {
+                            model.stream().filter(root::isAssignableFrom)
+                                    .filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).forEach(cl -> {
+                                        String en = cl.getAnnotation(XmlRootElement.class).name();
+                                        if ("##default".equals(en)) {
+                                            en = lowercase(cl.getSimpleName());
+                                        }
+                                        String tn = cl.getSimpleName();
+                                        cases.put(en,
+                                                list
+                                                        ? "doAdd(doParse" + tn + "(), def." + gn + "(), def::" + sn + ");"
+                                                        : "def." + sn + "(doParse" + tn + "());");
+                                    });
+                        }
                     });
-                }
-            });
+            // @XmlElements
+            elementMembers.stream().filter(member -> ((AccessibleObject) member).getAnnotation(XmlElements.class) != null)
+                    .forEach(member -> {
+                        Type pt = member instanceof Method
+                                ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
+                        GenericType type = new GenericType(pt);
+                        boolean list = type.getRawClass() == List.class;
+                        String fn = member.getName();
+                        String sn = member instanceof Method ? fn : "set" + uppercase(fn);
+                        String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
+                        Class<?> root = list ? type.getActualTypeArgument(0).getRawClass() : type.getRawClass();
+                        if (elementRefs.contains(root)) {
+                            expressionHandlersDefs.put(lowercase(sn.substring(3)),
+                                    "    " + root.getSimpleName() + " v = doParse" + root.getSimpleName() + "Ref(key);\n"
+                                                                                   + "    if (v != null) { \n" + "        "
+                                                                                   + (list
+                                                                                           ? "doAdd(v, def." + gn + "(), def::"
+                                                                                             + sn + ");"
+                                                                                           : "def." + sn + "(v);")
+                                                                                   + "\n"
+                                                                                   + "        return true;\n" + "    }\n");
+                        } else {
+                            Stream.of(((AccessibleObject) member).getAnnotation(XmlElements.class).value()).forEach(xe -> {
+                                String en = xe.name();
+                                String tn = xe.type().getSimpleName();
+                                cases.put(en,
+                                        list
+                                                ? "doAdd(doParse" + tn + "(), def." + gn + "(), def::" + sn + ");"
+                                                : "def." + sn + "(doParse" + tn + "());");
+                            });
+                        }
+                    });
             elementMembers.stream().filter(member -> !multiElements.contains(member)).forEach(member -> {
-                Type pt = member instanceof Method ? ((Method)member).getGenericParameterTypes()[0] : ((Field)member).getGenericType();
+                Type pt = member instanceof Method
+                        ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
                 GenericType type = new GenericType(pt);
                 boolean list;
                 Class<?> root;
@@ -385,12 +423,12 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 String fn = member.getName();
                 String en = "##default";
-                if (((AccessibleObject)member).getAnnotation(XmlElement.class) != null) {
-                    en = ((AccessibleObject)member).getAnnotation(XmlElement.class).name();
+                if (((AccessibleObject) member).getAnnotation(XmlElement.class) != null) {
+                    en = ((AccessibleObject) member).getAnnotation(XmlElement.class).name();
                     // special for value which can be wrapped
                     if ("value".equals(en)) {
-                        if (((AccessibleObject)member).getAnnotation(XmlElementWrapper.class) != null) {
-                            en = ((AccessibleObject)member).getAnnotation(XmlElementWrapper.class).name();
+                        if (((AccessibleObject) member).getAnnotation(XmlElementWrapper.class) != null) {
+                            en = ((AccessibleObject) member).getAnnotation(XmlElementWrapper.class).name();
                         }
                     }
                 }
@@ -401,23 +439,28 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
                 String tn = root.getSimpleName();
                 String pc;
-                if (((AccessibleObject)member).getAnnotation(XmlJavaTypeAdapter.class) != null) {
-                    Class<? extends XmlAdapter> adapter = ((AccessibleObject)member).getAnnotation(XmlJavaTypeAdapter.class).value();
+                if (((AccessibleObject) member).getAnnotation(XmlJavaTypeAdapter.class) != null) {
+                    Class<? extends XmlAdapter> adapter
+                            = ((AccessibleObject) member).getAnnotation(XmlJavaTypeAdapter.class).value();
                     Class<?> cl = adapter;
                     while (cl.getSuperclass() != XmlAdapter.class) {
                         cl = cl.getSuperclass();
                     }
-                    Type t = ((ParameterizedType)cl.getGenericSuperclass()).getActualTypeArguments()[0];
+                    Type t = ((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[0];
                     Class<?> c = new GenericType(t).getRawClass();
-                    String n = adapter.getDeclaringClass() != null ? adapter.getDeclaringClass().getSimpleName() + "." + adapter.getSimpleName() : adapter.getSimpleName();
+                    String n = adapter.getDeclaringClass() != null
+                            ? adapter.getDeclaringClass().getSimpleName() + "." + adapter.getSimpleName()
+                            : adapter.getSimpleName();
                     if (c == String.class) {
                         pc = "new " + n + "().unmarshal(doParseText())";
                     } else if (model.contains(c)) {
                         pc = "new " + n + "().unmarshal(doParse" + c.getSimpleName() + "())";
                     } else {
-                        throw new UnsupportedOperationException("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlJavaTypeAdapter");
+                        throw new UnsupportedOperationException(
+                                "Class " + clazz.getName() + " / member " + member + ": unsupported @XmlJavaTypeAdapter");
                     }
-                    if (list && type.equals(new GenericType(((ParameterizedType)cl.getGenericSuperclass()).getActualTypeArguments()[1]))) {
+                    if (list && type.equals(
+                            new GenericType(((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[1]))) {
                         list = false;
                     }
                 } else if (model.contains(root)) {
@@ -442,17 +485,19 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
                 // special for allowableValues
                 if ("allowableValues".equals(en)) {
-                    cases.put(en, list ? "doAddValues(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
+                    cases.put(en, list
+                            ? "doAddValues(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
                 } else {
-                    cases.put(en, list ? "doAdd(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
+                    cases.put(en,
+                            list ? "doAdd(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
                 }
             });
             String expressionHandler = null;
             for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
                 if (getMembers(parent).stream()
-                    .anyMatch(member -> ((AccessibleObject)member).getAnnotation(XmlAttribute.class) == null
-                                        && ((AccessibleObject)member).getAnnotation(XmlAnyAttribute.class) == null
-                                        && ((AccessibleObject)member).getAnnotation(XmlValue.class) == null)) {
+                        .anyMatch(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) == null
+                                && ((AccessibleObject) member).getAnnotation(XmlAnyAttribute.class) == null
+                                && ((AccessibleObject) member).getAnnotation(XmlValue.class) == null)) {
                     expressionHandler = lowercase(parent.getSimpleName()) + "ElementHandler()";
                     break;
                 }
@@ -473,7 +518,8 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                     } else {
                         sb.append("    else if (\"" + nn[1] + "\".equals(parser.getNamespace())) {\n");
                     }
-                    sb.append("        Element el = doParseDOMElement(\"" + nn[0] + "\", \"" + nn[1] + "\", def." + gn + "());\n");
+                    sb.append("        Element el = doParseDOMElement(\"" + nn[0] + "\", \"" + nn[1] + "\", def." + gn
+                              + "());\n");
                     sb.append("        if (el != null) {\n");
                     sb.append("            doAddElement(el, def." + gn + "(), def::" + sn + ");\n");
                     sb.append("            return true;\n");
@@ -492,17 +538,21 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                                + (expressionHandler == null ? "false" : expressionHandler + ".accept(def, key)") + ";\n" + "}";
                 }
             } else {
-                String returnClause = (expressionHandlersDefs.isEmpty() ? "" : expressionHandlersDefs.values().iterator().next() + "    ")
-                                      + (expressionHandler == null ? "return false;" : "return " + expressionHandler + ".accept(def, key);");
+                String returnClause
+                        = (expressionHandlersDefs.isEmpty() ? "" : expressionHandlersDefs.values().iterator().next() + "    ")
+                          + (expressionHandler == null
+                                  ? "return false;" : "return " + expressionHandler + ".accept(def, key);");
                 if (cases.size() == 1) {
                     Map.Entry<String, String> entry = cases.entrySet().iterator().next();
-                    elements = " (def, key) -> {\n" + externalElements + "    if (\"" + entry.getKey() + "\".equals(key)) {\n" + "        " + entry.getValue() + "\n" + "        return true;\n"
+                    elements = " (def, key) -> {\n" + externalElements + "    if (\"" + entry.getKey() + "\".equals(key)) {\n"
+                               + "        " + entry.getValue() + "\n" + "        return true;\n"
                                + "    }\n" + "    " + returnClause + "\n" + "}";
                 } else {
                     StringBuilder sb = new StringBuilder();
                     sb.append(" (def, key) -> {\n" + externalElements + "    switch (key) {\n");
                     for (Map.Entry<String, String> entry : cases.entrySet()) {
-                        sb.append("        case \"").append(entry.getKey()).append("\": ").append(entry.getValue()).append(" break;\n");
+                        sb.append("        case \"").append(entry.getKey()).append("\": ").append(entry.getValue())
+                                .append(" break;\n");
                     }
                     sb.append("        default: ");
                     if (expressionHandlersDefs.isEmpty()) {
@@ -517,22 +567,24 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             // @XmlValue
-            String value = members.stream().filter(member -> ((AccessibleObject)member).getAnnotation(XmlValue.class) != null).findFirst().map(member -> {
-                String fn = member.getName();
-                String sn = member instanceof Method ? fn : "set" + uppercase(fn);
-                if (expressionDefinitionClass.isAssignableFrom(member.getDeclaringClass())) {
-                    return " expressionDefinitionValueHandler()";
-                } else {
-                    return " (def, val) -> def." + sn + "(val)";
-                }
-            }).orElseGet(() -> {
-                for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
-                    if (getMembers(parent).stream().anyMatch(member -> ((AccessibleObject)member).getAnnotation(XmlValue.class) != null)) {
-                        return " " + lowercase(parent.getSimpleName()) + "ValueHandler()";
-                    }
-                }
-                return " noValueHandler()";
-            });
+            String value = members.stream().filter(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) != null)
+                    .findFirst().map(member -> {
+                        String fn = member.getName();
+                        String sn = member instanceof Method ? fn : "set" + uppercase(fn);
+                        if (expressionDefinitionClass.isAssignableFrom(member.getDeclaringClass())) {
+                            return " expressionDefinitionValueHandler()";
+                        } else {
+                            return " (def, val) -> def." + sn + "(val)";
+                        }
+                    }).orElseGet(() -> {
+                        for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
+                            if (getMembers(parent).stream()
+                                    .anyMatch(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) != null)) {
+                                return " " + lowercase(parent.getSimpleName()) + "ValueHandler()";
+                            }
+                        }
+                        return " noValueHandler()";
+                    });
 
             if (clazz == beansDefinitionClass || clazz == applicationDefinitionClass) {
                 // for beans/camel we want public methods to be invoked by camel-xml-io-dsl
@@ -549,7 +601,9 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                                 "return Optional.empty();");
             }
 
-            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass || clazz == templatedRoutesDefinitionClass || clazz == restsDefinitionClass || clazz == routeConfigurationsDefinitionClass) {
+            if (clazz == routesDefinitionClass || clazz == routeTemplatesDefinitionClass
+                    || clazz == templatedRoutesDefinitionClass || clazz == restsDefinitionClass
+                    || clazz == routeConfigurationsDefinitionClass) {
 
                 // for routes/rests/routeTemplates we want to support single-mode as well, this means
                 // we check that the tag name is either plural or singular and parse accordingly
@@ -560,18 +614,18 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 String singleName = name.replace("sDefinition", "Definition");
 
                 parser.addMethod().setPublic()
-                    .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
-                    .setName("parse" + name)
-                    .addThrows(IOException.class)
-                    .addThrows(XML_PULL_PARSER_EXCEPTION)
-                    .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", element, singleElement),
-                            "if (tag != null) {",
-                            "    switch (tag) {",
-                            String.format("        case \"%s\" : return Optional.of(doParse%s());", element, name),
-                            String.format("        case \"%s\" : return parseSingle%s();", singleElement, name),
-                            "    }",
-                            "}",
-                            "return Optional.empty();");
+                        .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
+                        .setName("parse" + name)
+                        .addThrows(IOException.class)
+                        .addThrows(XML_PULL_PARSER_EXCEPTION)
+                        .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", element, singleElement),
+                                "if (tag != null) {",
+                                "    switch (tag) {",
+                                String.format("        case \"%s\" : return Optional.of(doParse%s());", element, name),
+                                String.format("        case \"%s\" : return parseSingle%s();", singleElement, name),
+                                "    }",
+                                "}",
+                                "return Optional.empty();");
 
                 parser.addMethod().setPrivate()
                         .setReturnType(new GenericType(Optional.class, new GenericType(clazz)))
@@ -591,46 +645,68 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
             if (hasDerived) {
                 if (!attributeMembers.isEmpty()) {
-                    parser.addMethod().setSignature("protected <T extends " + qname + "> AttributeHandler<T> " + lowercase(name) + "AttributeHandler()")
-                        .setBody("return" + attributes + ";");
+                    parser.addMethod()
+                            .setSignature("protected <T extends " + qname + "> AttributeHandler<T> " + lowercase(name)
+                                          + "AttributeHandler()")
+                            .setBody("return" + attributes + ";");
                 }
                 if (!elementMembers.isEmpty()) {
-                    parser.addMethod().setSignature("protected <T extends " + qname + "> ElementHandler<T> " + lowercase(name) + "ElementHandler()")
-                        .setBody("return" + elements + ";");
+                    parser.addMethod()
+                            .setSignature("protected <T extends " + qname + "> ElementHandler<T> " + lowercase(name)
+                                          + "ElementHandler()")
+                            .setBody("return" + elements + ";");
                 }
                 if (!Modifier.isAbstract(clazz.getModifiers())) {
                     if (externalNamespaces.isEmpty()) {
-                        parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
-                            .setBody("return doParse(new " + qname + "(), " + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", "
-                                     + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ");\n");
+                        parser.addMethod()
+                                .setSignature("protected " + qname + " doParse" + name
+                                              + "() throws IOException, XmlPullParserException")
+                                .setBody("return doParse(new " + qname + "(), "
+                                         + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()")
+                                         + ", "
+                                         + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + ","
+                                         + value + ");\n");
                     } else {
-                        parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
-                            .setBody("return doParse(new " + qname + "(), " + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", "
-                                     + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ", true);\n");
+                        parser.addMethod()
+                                .setSignature("protected " + qname + " doParse" + name
+                                              + "() throws IOException, XmlPullParserException")
+                                .setBody("return doParse(new " + qname + "(), "
+                                         + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()")
+                                         + ", "
+                                         + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + ","
+                                         + value + ", true);\n");
                     }
                 }
             } else {
                 // special for value definition
                 if ("ValueDefinition".equals(name)) {
-                    parser.addMethod().setSignature("protected List<" + qname + "> doParse" + name + "() throws IOException, XmlPullParserException")
+                    parser.addMethod()
+                            .setSignature("protected List<" + qname + "> doParse" + name
+                                          + "() throws IOException, XmlPullParserException")
                             .setBody("return doParseValue(() -> new " + qname + "()" + "," + value + ");\n");
                 } else {
-                    parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
-                            .setBody("return doParse(new " + qname + "()," + attributes + "," + elements + "," + value + ");\n");
+                    parser.addMethod()
+                            .setSignature(
+                                    "protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                            .setBody(
+                                    "return doParse(new " + qname + "()," + attributes + "," + elements + "," + value + ");\n");
                 }
             }
         }
 
         for (Class<?> root : elementRefs) {
-            parser.addMethod().setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
-                .setBody("switch (key) {\n" + model.stream().filter(root::isAssignableFrom).filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).map(cl -> {
-                    String en = cl.getAnnotation(XmlRootElement.class).name();
-                    if ("##default".equals(en)) {
-                        en = lowercase(cl.getSimpleName());
-                    }
-                    String tn = cl.getSimpleName();
-                    return "    case \"" + en + "\": return doParse" + tn + "();\n";
-                }).collect(Collectors.joining()) + "    default: return null;\n" + "}");
+            parser.addMethod()
+                    .setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName()
+                                  + "Ref(String key) throws IOException, XmlPullParserException")
+                    .setBody("switch (key) {\n" + model.stream().filter(root::isAssignableFrom)
+                            .filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).map(cl -> {
+                                String en = cl.getAnnotation(XmlRootElement.class).name();
+                                if ("##default".equals(en)) {
+                                    en = lowercase(cl.getSimpleName());
+                                }
+                                String tn = cl.getSimpleName();
+                                return "    case \"" + en + "\": return doParse" + tn + "();\n";
+                            }).collect(Collectors.joining()) + "    default: return null;\n" + "}");
         }
 
         return parser;

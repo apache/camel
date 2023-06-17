@@ -309,7 +309,7 @@ public class ObjectHelperTest {
 
     @Test
     void testCreateIteratorWithPrimitiveArrayTypes() {
-        Iterator<?> it = ObjectHelper.createIterator(new byte[] {13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE}, null);
+        Iterator<?> it = ObjectHelper.createIterator(new byte[] { 13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE }, null);
         assertTrue(it.hasNext());
         assertEquals((byte) 13, it.next());
         assertTrue(it.hasNext());
@@ -339,7 +339,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new short[] {13, Short.MAX_VALUE, 7, Short.MIN_VALUE}, null);
+        it = ObjectHelper.createIterator(new short[] { 13, Short.MAX_VALUE, 7, Short.MIN_VALUE }, null);
         assertTrue(it.hasNext());
         assertEquals((short) 13, it.next());
         assertTrue(it.hasNext());
@@ -369,7 +369,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new int[] {13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE}, null);
+        it = ObjectHelper.createIterator(new int[] { 13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE }, null);
         assertTrue(it.hasNext());
         assertEquals(13, it.next());
         assertTrue(it.hasNext());
@@ -399,7 +399,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new long[] {13L, Long.MAX_VALUE, 7L, Long.MIN_VALUE}, null);
+        it = ObjectHelper.createIterator(new long[] { 13L, Long.MAX_VALUE, 7L, Long.MIN_VALUE }, null);
         assertTrue(it.hasNext());
         assertEquals(13L, it.next());
         assertTrue(it.hasNext());
@@ -429,7 +429,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new float[] {13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE}, null);
+        it = ObjectHelper.createIterator(new float[] { 13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE }, null);
         assertTrue(it.hasNext());
         assertEquals(13.7F, it.next());
         assertTrue(it.hasNext());
@@ -459,7 +459,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new double[] {13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE}, null);
+        it = ObjectHelper.createIterator(new double[] { 13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE }, null);
         assertTrue(it.hasNext());
         assertEquals(13.7D, it.next());
         assertTrue(it.hasNext());
@@ -489,7 +489,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new char[] {'C', 'a', 'm', 'e', 'l'}, null);
+        it = ObjectHelper.createIterator(new char[] { 'C', 'a', 'm', 'e', 'l' }, null);
         assertTrue(it.hasNext());
         assertEquals('C', it.next());
         assertTrue(it.hasNext());
@@ -521,7 +521,7 @@ public class ObjectHelperTest {
             assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
-        it = ObjectHelper.createIterator(new boolean[] {false, true, false, true, true}, null);
+        it = ObjectHelper.createIterator(new boolean[] { false, true, false, true, true }, null);
         assertTrue(it.hasNext());
         assertEquals(Boolean.FALSE, it.next());
         assertTrue(it.hasNext());

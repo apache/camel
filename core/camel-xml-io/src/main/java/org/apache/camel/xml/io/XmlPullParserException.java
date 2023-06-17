@@ -23,8 +23,7 @@ package org.apache.camel.xml.io;
 /**
  * This exception is thrown to signal XML Pull Parser related faults.
  *
- * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander
- *         Slominski</a>
+ * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
  */
 public class XmlPullParserException extends Exception {
     protected int row = -1;
@@ -42,7 +41,8 @@ public class XmlPullParserException extends Exception {
      */
 
     public XmlPullParserException(String msg, XmlPullParser parser, Throwable cause) {
-        super((msg == null ? "" : msg + " ") + (parser == null ? "" : "(position:" + parser.getPositionDescription() + ") ") + (cause == null ? "" : "caused by: " + cause), cause);
+        super((msg == null ? "" : msg + " ") + (parser == null ? "" : "(position:" + parser.getPositionDescription() + ") ")
+              + (cause == null ? "" : "caused by: " + cause), cause);
 
         if (parser != null) {
             this.row = parser.getLineNumber();

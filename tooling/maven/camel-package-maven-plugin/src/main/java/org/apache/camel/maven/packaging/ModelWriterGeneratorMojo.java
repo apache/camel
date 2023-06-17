@@ -221,8 +221,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                     .setName("write" + name)
                     .addThrows(IOException.class)
                     .setBody(
-                            "doWrite" + name + "(\"" + element + "\", def);"
-                    );
+                            "doWrite" + name + "(\"" + element + "\", def);");
 
         }
 
@@ -232,7 +231,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         model.stream().filter(cl -> "OptionalIdentifiedDefinition".equals(cl.getSimpleName()))
                 .forEach(elementRefs::add);
         writer.addMethod()
-                .setSignature("public void writeOptionalIdentifiedDefinitionRef(OptionalIdentifiedDefinition def) throws IOException")
+                .setSignature(
+                        "public void writeOptionalIdentifiedDefinitionRef(OptionalIdentifiedDefinition def) throws IOException")
                 .setBody("doWriteOptionalIdentifiedDefinitionRef(null, def);");
 
         for (Class<?> clazz : model) {
@@ -269,12 +269,14 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                     an = member.getName();
                 }
                 String gn = member.getGetter();
-                attributes.add("doWriteAttribute(\"" + an + "\", " + conversion(writer, type, "def." + gn + "()", clazz.getName()) + ");");
+                attributes.add("doWriteAttribute(\"" + an + "\", "
+                               + conversion(writer, type, "def." + gn + "()", clazz.getName()) + ");");
             });
 
             // @XmlAnyAttribute
             members.stream().filter(Property::isAnyAttribute).forEach(member -> {
-                throw new UnsupportedOperationException("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlAnyAttribute");
+                throw new UnsupportedOperationException(
+                        "Class " + clazz.getName() + " / member " + member + ": unsupported @XmlAnyAttribute");
             });
 
             List<String> elements = new ArrayList<>();
@@ -306,7 +308,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                     if (list) {
                         Class<?> parent = new GenericType(member.getType()).getActualTypeArgument(0).getRawClass();
                         elementRefs.add(parent);
-                        elements.add("doWriteList(null, null, def." + gn + "(), this::doWrite" + parent.getSimpleName() + "Ref);");
+                        elements.add(
+                                "doWriteList(null, null, def." + gn + "(), this::doWrite" + parent.getSimpleName() + "Ref);");
                     } else {
                         Class<?> parent = new GenericType(member.getType()).getRawClass();
                         elementRefs.add(parent);
@@ -331,7 +334,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                         for (XmlElement elem : member.getAnnotation(XmlElements.class).value()) {
                             String t = elem.type().getSimpleName();
                             String n = elem.name();
-                            elements.add("        case \"" + t + "\" -> doWrite" + t + "(\"" + n + "\", (" + t + ") def." + gn + "());");
+                            elements.add("        case \"" + t + "\" -> doWrite" + t + "(\"" + n + "\", (" + t + ") def." + gn
+                                         + "());");
                         }
                         elements.add("    }");
                         elements.add("});");
@@ -360,14 +364,16 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                                 }
                             }
                             if (actualType == null) {
-                                throw new IllegalArgumentException("Unable to determine property name for JAXB" +
-                                        " adapted member: " + member);
+                                throw new IllegalArgumentException(
+                                        "Unable to determine property name for JAXB" +
+                                                                   " adapted member: " + member);
                             }
                             elements.add("doWriteElement(" +
-                                    "\"" + n + "\", new " + cl.getSimpleName() + "().marshal(def." + gn + "()), this::doWrite" + actualType.getSimpleName() + ");");
+                                         "\"" + n + "\", new " + cl.getSimpleName() + "().marshal(def." + gn
+                                         + "()), this::doWrite" + actualType.getSimpleName() + ");");
                         } else {
                             elements.add("doWriteElement(" +
-                                    "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
+                                         "\"" + n + "\", def." + gn + "(), this::doWrite" + t + ");");
                         }
                     }
                 } else if (member.getAnnotation(XmlAnyElement.class) != null) {
@@ -390,11 +396,10 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             });
 
             // @XmlValue
-            List<String> value =
-                    getClassAndSuper(clazz).flatMap(this::getProperties)
-                            .filter(Property::isValue).findFirst()
-                            .map(member -> "doWriteValue(def." + member.getGetter() + "());")
-                            .stream().toList();
+            List<String> value = getClassAndSuper(clazz).flatMap(this::getProperties)
+                    .filter(Property::isValue).findFirst()
+                    .map(member -> "doWriteValue(def." + member.getGetter() + "());")
+                    .stream().toList();
 
             String qgname = qname;
             if (clazz.getTypeParameters().length > 0) {
@@ -402,7 +407,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                         .collect(Collectors.joining(", ")) + ">";
             }
             if (!attributeMembers.isEmpty() || !elementMembers.isEmpty() || isRootElement(clazz)
-                || isReferenced(clazz, model)) {
+                    || isReferenced(clazz, model)) {
                 List<String> statements = new ArrayList<>();
                 if ("ExpressionSubElementDefinition".equals(name)) {
                     statements.add("startExpressionElement(name);");
@@ -511,7 +516,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                         "    value(value);",
                         "}");
         writer.addMethod()
-                .setSignature("protected <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException")
+                .setSignature(
+                        "protected <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
                         if (list != null) {
                             if (wrapperName != null) {
@@ -525,7 +531,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                             }
                         }""");
         writer.addMethod()
-                .setSignature("protected <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException")
+                .setSignature(
+                        "protected <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
                         if (v != null) {
                             elementSerializer.doWriteElement(name, v);
@@ -607,8 +614,8 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         if (rawClass == String.class) {
             return val;
         } else if (rawClass.isEnum()
-                   || rawClass == Integer.class || rawClass == Long.class || rawClass == Boolean.class
-                   || rawClass == Float.class) {
+                || rawClass == Integer.class || rawClass == Long.class || rawClass == Boolean.class
+                || rawClass == Float.class) {
             writer.addImport(rawClass);
             return "toString(" + val + ")";
         } else if (rawClass == byte[].class) {
@@ -642,24 +649,24 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                             .filter(this::isField)
                             .findFirst().or(() -> allMembers.stream()
                                     .filter(m -> isField(m)
-                                                 && Objects.equals(propname(m), name)
-                                                 && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
+                                            && Objects.equals(propname(m), name)
+                                            && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
                                     .findFirst())
                             .orElse(null);
                     Member getter = members.stream()
                             .filter(this::isGetter)
                             .findFirst().or(() -> allMembers.stream()
                                     .filter(m -> isGetter(m)
-                                                 && Objects.equals(propname(m), name)
-                                                 && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
+                                            && Objects.equals(propname(m), name)
+                                            && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
                                     .findFirst())
                             .orElse(null);
                     Member setter = members.stream()
                             .filter(this::isSetter)
                             .findFirst().or(() -> allMembers.stream()
                                     .filter(m -> isSetter(m)
-                                                 && Objects.equals(propname(m), name)
-                                                 && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
+                                            && Objects.equals(propname(m), name)
+                                            && Objects.equals(ModelWriterGeneratorMojo.type(m), type))
                                     .findFirst())
                             .orElse(null);
                     if (getter != null && setter != null) {
@@ -690,11 +697,11 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private List<Member> getMembers(Class<?> clazz) {
-        return members.computeIfAbsent(clazz, cl -> Stream.<Member>concat(
-                        Arrays.stream(cl.getDeclaredMethods())
-                                .filter(m -> isSetter(m) || isGetter(m))
-                                .filter(m -> !m.isSynthetic()),
-                        Arrays.stream(cl.getDeclaredFields()))
+        return members.computeIfAbsent(clazz, cl -> Stream.<Member> concat(
+                Arrays.stream(cl.getDeclaredMethods())
+                        .filter(m -> isSetter(m) || isGetter(m))
+                        .filter(m -> !m.isSynthetic()),
+                Arrays.stream(cl.getDeclaredFields()))
                 .toList());
     }
 
@@ -707,23 +714,24 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         }
         if (accessType == XmlAccessType.PROPERTY) {
             return m -> m.getDeclaringClass() == clazz
-                        && isSetter(m) || isGetter(m) || (isField(m) && isXmlBindAnnotated(m));
+                    && isSetter(m) || isGetter(m) || (isField(m) && isXmlBindAnnotated(m));
         } else if (accessType == XmlAccessType.FIELD) {
             return m -> m.getDeclaringClass() == clazz
-                        && ((isSetter(m) || isGetter(m)) && isXmlBindAnnotated(m)
+                    && ((isSetter(m) || isGetter(m)) && isXmlBindAnnotated(m)
                             || isField(m) && !Modifier.isStatic(m.getModifiers()) && !Modifier.isTransient(m.getModifiers()));
         } else if (accessType == XmlAccessType.PUBLIC_MEMBER) {
             return m -> m.getDeclaringClass() == clazz
-                        && (Modifier.isPublic(m.getModifiers()) || isXmlBindAnnotated(m));
+                    && (Modifier.isPublic(m.getModifiers()) || isXmlBindAnnotated(m));
         } else /* if (accessType == XmlAccessType.NONE) */ {
             return m -> m.getDeclaringClass() == clazz
-                        && isXmlBindAnnotated(m);
+                    && isXmlBindAnnotated(m);
         }
     }
 
     private boolean isXmlBindAnnotated(Member m) {
         return Stream.of(((AnnotatedElement) m).getAnnotations())
-                .anyMatch(a -> a.getClass().getAnnotatedInterfaces()[0].getType().getTypeName().startsWith("jakarta.xml.bind.annotation."));
+                .anyMatch(a -> a.getClass().getAnnotatedInterfaces()[0].getType().getTypeName()
+                        .startsWith("jakarta.xml.bind.annotation."));
     }
 
     private boolean isField(Member member) {
@@ -732,19 +740,19 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     private boolean isSetter(Member member) {
         return (member instanceof Method m)
-               && !Modifier.isStatic(m.getModifiers())
-               && m.getName().startsWith("set") && m.getName().length() > 3
-               && m.getParameterCount() == 1
-               && m.getReturnType() == Void.TYPE;
+                && !Modifier.isStatic(m.getModifiers())
+                && m.getName().startsWith("set") && m.getName().length() > 3
+                && m.getParameterCount() == 1
+                && m.getReturnType() == Void.TYPE;
     }
 
     private boolean isGetter(Member member) {
         return (member instanceof Method m)
-               && !Modifier.isStatic(m.getModifiers())
-               && m.getParameterCount() == 0
-               && (m.getName().startsWith("get") && m.getName().length() > 3
-                   || m.getName().startsWith("is") && m.getName().length() > 2
-                      && (m.getReturnType() == Boolean.TYPE || m.getReturnType() == Boolean.class));
+                && !Modifier.isStatic(m.getModifiers())
+                && m.getParameterCount() == 0
+                && (m.getName().startsWith("get") && m.getName().length() > 3
+                        || m.getName().startsWith("is") && m.getName().length() > 2
+                                && (m.getReturnType() == Boolean.TYPE || m.getReturnType() == Boolean.class));
     }
 
     private Stream<Class<?>> getClassAndSuper(Class<?> clazz) {

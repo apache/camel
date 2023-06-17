@@ -708,7 +708,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     expect(TokenType.whiteSpace);
                 }
             } else {
-                throw new SimpleParserException("Binary operator " + operatorType + " does not support token " + token, token.getIndex());
+                throw new SimpleParserException(
+                        "Binary operator " + operatorType + " does not support token " + token, token.getIndex());
             }
             return true;
         }

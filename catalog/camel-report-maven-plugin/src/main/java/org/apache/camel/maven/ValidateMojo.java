@@ -326,11 +326,13 @@ public class ValidateMojo extends AbstractExecMojo {
         String configurationSummary;
         if (configurationErrors == 0) {
             int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
-            configurationSummary = String.format("Configuration validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+            configurationSummary = String.format(
+                    "Configuration validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
                     ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
         } else {
             int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
-            configurationSummary = String.format("Configuration validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+            configurationSummary = String.format(
+                    "Configuration validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
                     ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
         }
         if (configurationErrors > 0) {
@@ -397,7 +399,8 @@ public class ValidateMojo extends AbstractExecMojo {
         int deprecatedOptions = 0;
         for (CamelEndpointDetails detail : endpoints) {
             getLog().debug("Validating endpoint: " + detail.getEndpointUri());
-            EndpointValidationResult result = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
+            EndpointValidationResult result
+                    = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
             int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
             deprecatedOptions += deprecated;
 
@@ -434,7 +437,8 @@ public class ValidateMojo extends AbstractExecMojo {
                 getLog().info(msg);
             }
         }
-        String endpointSummary = buildEndpointSummaryMessage(endpoints, endpointErrors, unknownComponents, incapableErrors, deprecatedOptions);
+        String endpointSummary
+                = buildEndpointSummaryMessage(endpoints, endpointErrors, unknownComponents, incapableErrors, deprecatedOptions);
         if (endpointErrors > 0) {
             getLog().warn(endpointSummary);
         } else {
@@ -454,12 +458,15 @@ public class ValidateMojo extends AbstractExecMojo {
         int sedaDirectErrors = 0;
         String sedaDirectSummary = "";
         if (directOrSedaPairCheck) {
-            long sedaDirectEndpoints = (long) countEndpointPairs(endpoints, "direct") + (long) countEndpointPairs(endpoints, "seda");
+            long sedaDirectEndpoints
+                    = (long) countEndpointPairs(endpoints, "direct") + (long) countEndpointPairs(endpoints, "seda");
             sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
             if (sedaDirectErrors == 0) {
-                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
+                sedaDirectSummary
+                        = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
             } else {
-                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)", sedaDirectEndpoints, sedaDirectErrors);
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)",
+                        sedaDirectEndpoints, sedaDirectErrors);
             }
             if (sedaDirectErrors > 0) {
                 getLog().warn(sedaDirectSummary);
@@ -475,7 +482,8 @@ public class ValidateMojo extends AbstractExecMojo {
             if (duplicateRouteIdErrors == 0) {
                 routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
             } else {
-                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
+                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)",
+                        routeIds.size(), duplicateRouteIdErrors);
             }
             if (duplicateRouteIdErrors > 0) {
                 getLog().warn(routeIdSummary);
@@ -485,7 +493,8 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
-            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
+            throw new MojoExecutionException(
+                    endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
         }
     }
 
@@ -501,22 +510,27 @@ public class ValidateMojo extends AbstractExecMojo {
         return simpleSummary;
     }
 
-    private String buildEndpointSummaryMessage(List<CamelEndpointDetails> endpoints, int endpointErrors, int unknownComponents, int incapableErrors, int deprecatedOptions) {
+    private String buildEndpointSummaryMessage(
+            List<CamelEndpointDetails> endpoints, int endpointErrors, int unknownComponents, int incapableErrors,
+            int deprecatedOptions) {
         String endpointSummary;
         if (endpointErrors == 0) {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
-                ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
+            endpointSummary = String.format(
+                    "Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         } else {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
-                ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
+            endpointSummary = String.format(
+                    "Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         }
         return endpointSummary;
     }
 
     private String buildValidationPassedMessage(CamelEndpointDetails detail, EndpointValidationResult result) {
-        StringBuilder sb = buildValidationSuccessMessage("Endpoint validation passed at: ", detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), result.getUri());
+        StringBuilder sb = buildValidationSuccessMessage("Endpoint validation passed at: ", detail.getClassName(),
+                detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), result.getUri());
 
         return sb.toString();
     }
@@ -532,7 +546,9 @@ public class ValidateMojo extends AbstractExecMojo {
         return sb.toString();
     }
 
-    private void parseXmlRouteFile(List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions, List<CamelRouteDetails> routeIds, File file) {
+    private void parseXmlRouteFile(
+            List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
+            List<CamelRouteDetails> routeIds, File file) {
         try {
             List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
             List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
@@ -566,7 +582,9 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
-    private void parseJavaRouteFile(List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions, List<CamelRouteDetails> routeIds, File file) {
+    private void parseJavaRouteFile(
+            List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
+            List<CamelRouteDetails> routeIds, File file) {
         try {
             List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
             List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
@@ -603,12 +621,13 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
-
     private int countEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
         int pairs = 0;
 
-        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
-        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> consumers = endpoints.stream()
+                .filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream()
+                .filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
 
         // find all pairs, eg producers that has a consumer (no need to check for opposite)
         for (CamelEndpointDetails p : producers) {
@@ -624,8 +643,10 @@ public class ValidateMojo extends AbstractExecMojo {
     private int validateEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
         int errors = 0;
 
-        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
-        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> consumers = endpoints.stream()
+                .filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream()
+                .filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
 
         // are there any producers that do not have a consumer pair
         for (CamelEndpointDetails detail : producers) {
@@ -636,7 +657,9 @@ public class ValidateMojo extends AbstractExecMojo {
                 final String msg = buildEndpointValidationErrorMessage(detail);
                 getLog().warn(msg);
             } else if (showAll) {
-                StringBuilder sb = buildValidationSuccessMessage("Endpoint pair (seda/direct) validation passed at: ", detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), detail.getEndpointUri());
+                StringBuilder sb = buildValidationSuccessMessage("Endpoint pair (seda/direct) validation passed at: ",
+                        detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(),
+                        detail.getEndpointUri());
 
                 final String msg = sb.toString();
                 getLog().info(msg);
@@ -649,7 +672,8 @@ public class ValidateMojo extends AbstractExecMojo {
         return errors;
     }
 
-    private StringBuilder buildValidationSuccessMessage(String str, String className, String lineNumber, String methodName, String fileName, String uri) {
+    private StringBuilder buildValidationSuccessMessage(
+            String str, String className, String lineNumber, String methodName, String fileName, String uri) {
         StringBuilder sb = new StringBuilder();
         sb.append(str);
         buildErrorMessage(sb, className, lineNumber, methodName, fileName);
@@ -727,7 +751,8 @@ public class ValidateMojo extends AbstractExecMojo {
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("Simple validation error at: ");
-                buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName());
+                buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(),
+                        detail.getFileName());
                 sb.append("\n");
                 String[] lines = result.getError().split("\n");
                 for (String line : lines) {
@@ -737,7 +762,8 @@ public class ValidateMojo extends AbstractExecMojo {
 
                 getLog().warn(sb.toString());
             } else if (showAll) {
-                StringBuilder sb = buildValidationSuccessMessage("Simple validation passed at: ", detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), result.getText());
+                StringBuilder sb = buildValidationSuccessMessage("Simple validation passed at: ", detail.getClassName(),
+                        detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), result.getText());
 
                 getLog().info(sb.toString());
             }
@@ -770,7 +796,8 @@ public class ValidateMojo extends AbstractExecMojo {
     }
 
     private String buildRouteIdValidationMessage(String str, CamelRouteDetails detail) {
-        StringBuilder sb = buildValidationSuccessMessage(str, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), detail.getRouteId());
+        StringBuilder sb = buildValidationSuccessMessage(str, detail.getClassName(), detail.getLineNumber(),
+                detail.getMethodName(), detail.getFileName(), detail.getRouteId());
 
         return sb.toString();
     }
