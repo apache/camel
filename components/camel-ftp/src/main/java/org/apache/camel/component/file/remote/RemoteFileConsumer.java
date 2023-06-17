@@ -41,8 +41,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
 
-    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
-                              GenericFileProcessStrategy processStrategy) {
+    protected RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
+                                 GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
