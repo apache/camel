@@ -117,11 +117,11 @@ public abstract class BaseOptions<T extends BaseOptions<T>> {
     @UriParam(label = "connection", defaultValue = "10")
     private short acknowledgeWindow;
 
-    public BaseOptions() {
+    protected BaseOptions() {
         this.protocolOptions = new ProtocolOptions.Builder();
     }
 
-    public BaseOptions(final ProtocolOptions protocolOptions) {
+    protected BaseOptions(final ProtocolOptions protocolOptions) {
         Objects.requireNonNull(protocolOptions);
         this.protocolOptions = new ProtocolOptions.Builder(protocolOptions);
     }
