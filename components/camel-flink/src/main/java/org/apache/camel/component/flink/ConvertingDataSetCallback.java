@@ -27,7 +27,7 @@ public abstract class ConvertingDataSetCallback<T> implements DataSetCallback<T>
 
     private final Class[] payloadTypes;
 
-    public ConvertingDataSetCallback(CamelContext camelContext, Class... payloadTypes) {
+    protected ConvertingDataSetCallback(CamelContext camelContext, Class... payloadTypes) {
         this.camelContext = camelContext;
         this.payloadTypes = payloadTypes;
     }
