@@ -211,7 +211,12 @@
 
     <profiles>
         <profile>
-            <id>plugin-itest</id>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

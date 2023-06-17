@@ -81,24 +81,33 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-<!--                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>-->
-                    <systemProperties>
-                        <property>
-                            <name>hazelcast.logging.type</name>
-                            <value>slf4j</value>
-                        </property>
-                    </systemProperties>
-                    <argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <!-- <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds> -->
+                            <systemProperties>
+                                <property>
+                                    <name>hazelcast.logging.type</name>
+                                    <value>slf4j</value>
+                                </property>
+                            </systemProperties>
+                            <argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

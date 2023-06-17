@@ -90,7 +90,6 @@
     <build>
         <plugins>
 
-
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>

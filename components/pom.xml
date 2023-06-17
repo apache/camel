@@ -336,8 +336,8 @@
         <skipTests.s390x />
         <skipITs.s390x />
     </properties>
-    
-    <dependencies>    
+
+    <dependencies>
         <!-- logging for testing -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -352,33 +352,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${maven-failsafe-plugin-version}</version>
-                    <executions>
-                        <execution>
-                            <id>integration-test</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <reuseForks>true</reuseForks>
-                        <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
-                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                        <systemPropertyVariables>
-                            <visibleassertions.silence>true</visibleassertions.silence>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -447,10 +420,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
 
@@ -472,7 +441,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
                         <configuration>
                             <skipTests>${skipTests.aarch64}</skipTests>
                         </configuration>
@@ -480,7 +448,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${maven-failsafe-plugin-version}</version>
                         <configuration>
                             <skipITs>${skipITs.aarch64}</skipITs>
                         </configuration>
@@ -540,6 +507,40 @@
                         <configuration>
                             <skipITs>${skipITs.ppc64le}</skipITs>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                            <systemPropertyVariables>
+                                <visibleassertions.silence>true</visibleassertions.silence>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

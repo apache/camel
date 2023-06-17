@@ -109,7 +109,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>${properties-maven-plugin-version}</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
@@ -213,7 +212,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build-helper-maven-plugin-version}</version>
                 <executions>
                     <execution>
                         <id>add-test-source</id>

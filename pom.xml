@@ -116,7 +116,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
@@ -126,7 +126,8 @@
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
         <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
-        <maven-dependency-plugin-version>3.5.0</maven-dependency-plugin-version>
+        <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
+        <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -200,24 +201,48 @@
 
         <plugins>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-enforcer-plugin</artifactId>
-              <version>${maven-enforcer-plugin-version}</version>
-              <executions>
-                <execution>
-                  <id>enforce-maven</id>
-                  <goals>
-                    <goal>enforce</goal>
-                  </goals>
-                  <configuration>
-                    <rules>
-                      <requireMavenVersion>
-                        <version>3.5.0</version>
-                      </requireMavenVersion>
-                    </rules>
-                  </configuration>
-                </execution>
-              </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven-version</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                    <execution>
+                        <id>enforce-java-version</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>process-resource-bundles</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <phase>none</phase><!-- skip to save time -->
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -232,8 +257,13 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin-version}</version>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -250,6 +280,31 @@
                         <downloadSources>true</downloadSources>
                         <downloadJavadocs>false</downloadJavadocs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <version>${maven-remote-resources-plugin-version}</version>
                 </plugin>
 
                 <plugin>
@@ -379,17 +434,6 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-remote-resources-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>process-resource-bundles</id>
-                            <phase>disabled</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.16.0</version>
@@ -426,7 +470,9 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
+                    <version>1.8</version>
                     <configuration>
                         <skipInstallation>${invoker.skip}</skipInstallation>
                         <skipInvocation>${invoker.skip}</skipInvocation>
@@ -440,18 +486,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>assembly</id>
-            <activation>
-                <property>
-                    <name>!noassembly</name>
-                </property>
-            </activation>
-            <modules>
-                <module>apache-camel</module>
-            </modules>
-        </profile>
-
         <profile>
             <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
               for schemagen to work -->
@@ -760,6 +794,51 @@
                     </releases>
                 </repository>
             </repositories>
+        </profile>
+        <profile>
+            <!-- The full profile contains mojos *not* essential for the quick build. -->
+            <!-- These are typically various source checks and code generations whose result is stored in git anyway. -->
+            <!-- Pass -Dquickly to skip these non-essential plugin executions. -->
+            <!-- -Dquickly suits primarily the situation when building from a state that passed all checks on the CI. -->
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-maven-version</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireMavenVersion>
+                                            <version>3.5.0</version>
+                                        </requireMavenVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
