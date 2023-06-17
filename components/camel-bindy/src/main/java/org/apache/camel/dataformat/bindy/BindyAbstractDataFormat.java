@@ -52,7 +52,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
     private boolean unwrapSingleInstance = true;
     private boolean allowEmptyStream;
 
-    public BindyAbstractDataFormat() {
+    protected BindyAbstractDataFormat() {
     }
 
     protected BindyAbstractDataFormat(Class<?> classType) {
