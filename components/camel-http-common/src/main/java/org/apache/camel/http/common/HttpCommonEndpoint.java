@@ -174,10 +174,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
     private String proxyAuthNtHost;
 
-    public HttpCommonEndpoint() {
+    protected HttpCommonEndpoint() {
     }
 
-    public HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) {
+    protected HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
