@@ -817,7 +817,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Processor createProcessor(ProcessorDefinition<?> output) throws Exception {
         // ensure node has id assigned
         String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-        StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(ProcessorReifier.class, outputId, "Create processor");
+        StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(ProcessorReifier.class,
+                outputId, "Create processor");
 
         Processor processor = null;
         // at first use custom factory
@@ -902,8 +903,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * configured executor services in the same coherent way.
      *
      * @param  definition               the node definition which may leverage aggregation strategy
-     * @throws IllegalArgumentException is thrown if lookup of aggregation strategy in {@link org.apache.camel.spi.Registry}
-     *                                  was not found
+     * @throws IllegalArgumentException is thrown if lookup of aggregation strategy in
+     *                                  {@link org.apache.camel.spi.Registry} was not found
      */
     public AggregationStrategy getConfiguredAggregationStrategy(AggregationStrategyAwareDefinition definition) {
         AggregationStrategy strategy = definition.getAggregationStrategyBean();

@@ -545,7 +545,7 @@ class Yylex {
                 case 23: {
                     try {
                         int ch = Integer.parseInt(yytext().substring(2), 16);
-                        sb.append((char)ch);
+                        sb.append((char) ch);
                     } catch (Exception e) {
                         /*
                          * The lexer is broken if it can build a 4 byte character
@@ -614,7 +614,8 @@ class Yylex {
                 case 39:
                     break;
                 case 1: {
-                    throw new DeserializationException(yychar, DeserializationException.Problems.UNEXPECTED_CHARACTER, Character.valueOf(yycharat(0)));
+                    throw new DeserializationException(
+                            yychar, DeserializationException.Problems.UNEXPECTED_CHARACTER, Character.valueOf(yycharat(0)));
                 }
                 case 40:
                     break;

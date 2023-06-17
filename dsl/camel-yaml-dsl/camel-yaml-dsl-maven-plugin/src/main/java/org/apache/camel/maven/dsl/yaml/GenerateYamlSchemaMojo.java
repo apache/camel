@@ -50,12 +50,12 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 
 @Mojo(
-        name = "generate-yaml-schema",
-        inheritByDefault = false,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-        requiresDependencyResolution = ResolutionScope.COMPILE,
-        threadSafe = true,
-        requiresProject = false)
+      name = "generate-yaml-schema",
+      inheritByDefault = false,
+      defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+      requiresDependencyResolution = ResolutionScope.COMPILE,
+      threadSafe = true,
+      requiresProject = false)
 public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     @Parameter(required = true)
     private File outputFile;
@@ -226,7 +226,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 ObjectNode p = (ObjectNode) jn;
                 Map<String, JsonNode> rebuild = new LinkedHashMap<>();
                 // the properties are in mixed kebab-case and camelCase
-                for (Iterator<String> it = p.fieldNames(); it.hasNext(); ) {
+                for (Iterator<String> it = p.fieldNames(); it.hasNext();) {
                     String n = it.next();
                     String t = StringHelper.dashToCamelCase(n);
                     JsonNode prop = p.get(n);
