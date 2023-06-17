@@ -119,8 +119,6 @@
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.xjc.jvmArgs}</additionalJvmArgs>
                             <sourceRoot>${basedir}/target/xjc</sourceRoot>
                             <xsdOptions>
                                 <xsdOption>
