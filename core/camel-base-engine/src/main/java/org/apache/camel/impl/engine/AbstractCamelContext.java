@@ -181,7 +181,6 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersDecoder;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -703,10 +702,6 @@ public abstract class AbstractCamelContext extends BaseService
         removeEndpoints(endpoint.getEndpointUri());
     }
 
-    public String unsafeUriCharactersDecodeWithOutPercent(String uri){
-        return UnsafeUriCharactersDecoder.decode(uri);
-    }
-
     @Override
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
         Collection<Endpoint> answer = new ArrayList<>();
@@ -715,8 +710,11 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            String decodeUri = unsafeUriCharactersDecodeWithOutPercent(uri);
-            oldEndpoint = endpoints.remove(getEndpointKey(decodeUri));
+            String decodeQuery = URISupport.getDecodeQuery(uri);
+            if(decodeQuery != null) {
+                String decodeUri = StringHelper.before(uri, "?") + "?" + decodeQuery;
+                oldEndpoint = endpoints.remove(getEndpointKey(decodeUri));
+            }
             if(oldEndpoint != null){
                 answer.add(oldEndpoint);
                 stopServices(oldEndpoint);
@@ -728,7 +726,7 @@ public abstract class AbstractCamelContext extends BaseService
                         try {
                             stopServices(oldEndpoint);
                         } catch (Exception e) {
-                            LOG.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
+                            LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
                         }
                         answer.add(oldEndpoint);
                         toRemove.add(entry.getKey());

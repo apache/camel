@@ -40,6 +40,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -430,15 +432,18 @@ public class DefaultCamelContextTest extends TestSupport {
         });
         ctx.start();
 
-
         EndpointRegistry<NormalizedUri> endpoints = ctx.getEndpointRegistry();
         Map<String, RouteService> routeServices = ctx.getRouteServices();
         Set<Endpoint> routeEndpoints =  routeServices.get("rawRoute").gatherEndpoints();
+
         for(Endpoint endpoint : routeEndpoints) {
             Endpoint oldEndpoint = endpoints.remove(ctx.getEndpointKey(endpoint.getEndpointUri()));
-            if(oldEndpoint == null){
-                oldEndpoint = endpoints.remove(ctx.getEndpointKey(ctx.unsafeUriCharactersDecodeWithOutPercent(endpoint.getEndpointUri())));
-            }else {
+            if(oldEndpoint == null) {
+                String decodeQuery = URISupport.getDecodeQuery(endpoint.getEndpointUri());
+                String decodeUri = StringHelper.before(endpoint.getEndpointUri(), "?") + "?" + decodeQuery;
+                oldEndpoint = endpoints.remove(ctx.getEndpointKey(decodeUri));
+
+            } else {
                 assertNotNull(oldEndpoint);
             }
             assertNotNull(oldEndpoint);
