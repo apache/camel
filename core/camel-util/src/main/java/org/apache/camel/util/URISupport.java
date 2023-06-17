@@ -22,14 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
@@ -751,6 +744,34 @@ public final class URISupport {
         }
 
         return rc;
+    }
+
+    public static String getDecodeQuery(final String uri) {
+        try {
+            URI u = new URI(uri);
+            String query = URISupport.prepareQuery(u);
+            if(query == null){
+                return null;
+            }else {
+                Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
+                if (parameters.size() == 1) {
+                    // only 1 parameter need to create new query string
+                    query = URISupport.createQueryString(parameters);
+                    return query;
+                } else {
+                    // reorder parameters a..z
+                    final Set<String> keySet = parameters.keySet();
+                    final String[] parametersArray = keySet.toArray(new String[keySet.size()]);
+                    Arrays.sort(parametersArray);
+
+                    // build uri object with sorted parameters
+                    query = URISupport.createQueryString(parametersArray, parameters, true);
+                    return query;
+                }
+            }
+        }catch(URISyntaxException ex){
+            return null;
+        }
     }
 
     public static String pathAndQueryOf(final URI uri) {
