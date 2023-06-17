@@ -57,10 +57,10 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     @Deprecated
     private String password;
 
-    public FeedEndpoint() {
+    protected FeedEndpoint() {
     }
 
-    public FeedEndpoint(String endpointUri, FeedComponent component, String feedUri) {
+    protected FeedEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component);
         this.feedUri = feedUri;
     }

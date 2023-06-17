@@ -35,7 +35,7 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
     protected boolean throttleEntries;
     protected Object feed;
 
-    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean throttleEntries) {
+    protected FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean throttleEntries) {
         super(endpoint, processor);
         this.throttleEntries = throttleEntries;
     }
