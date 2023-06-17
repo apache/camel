@@ -26,7 +26,7 @@ public abstract class InfinispanEventListener<T> {
     private InfinispanEventProcessor eventProcessor;
     private String cacheName;
 
-    public InfinispanEventListener(Set<T> events) {
+    protected InfinispanEventListener(Set<T> events) {
         this.events = Collections.unmodifiableSet(new HashSet<>(events));
     }
 
