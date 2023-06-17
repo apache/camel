@@ -30,7 +30,7 @@ public abstract class AbstractDdbCommand {
     protected Exchange exchange;
     protected DynamoDbClient ddbClient;
 
-    public AbstractDdbCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration, Exchange exchange) {
+    protected AbstractDdbCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration, Exchange exchange) {
 
         this.ddbClient = ddbClient;
         this.configuration = configuration;
