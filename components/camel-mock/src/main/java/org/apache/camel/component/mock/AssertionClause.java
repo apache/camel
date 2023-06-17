@@ -38,7 +38,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
     private final Expression previous = new PreviousTimestamp();
     private final Expression next = new NextTimestamp();
 
-    public AssertionClause(MockEndpoint mock) {
+    protected AssertionClause(MockEndpoint mock) {
         super(null);
         this.mock = mock;
     }
