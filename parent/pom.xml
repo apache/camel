@@ -34,7 +34,6 @@
 
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-        <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs />
         <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError</camel.surefire.fork.vmargs>
@@ -2961,7 +2960,6 @@
                     <configuration>
                         <release>${jdk.version}</release>
                         <maxmem>512M</maxmem>
-                        <fork>${compiler.fork}</fork>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
                         <compilerArgs>
