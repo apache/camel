@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestConsumerContextPathMatcherTest {
 
-    private static class MockConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath {
+    private static final class MockConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath {
         private final String method;
         private final String consumerPath;
 
