@@ -136,8 +136,6 @@
                             <goal>xsdtojava-tests</goal>
                         </goals>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.xjc.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <xsdOptions>
                                 <xsdOption>
@@ -165,8 +163,6 @@
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.xjc.jvmArgs}</additionalJvmArgs>
                             <sourceRoot>${basedir}/target/xjc</sourceRoot>
                             <extensions>
                                 <extension>net.java.dev.jaxb2-commons:jaxb-fluent-api:2.1.8</extension>
@@ -206,8 +202,6 @@
                         <id>generate-sources-wsdl</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>
                                 <frontEnd>jaxws</frontEnd>
