@@ -67,7 +67,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
                                                          + "not be downloaded.")
     private boolean download = true;
 
-    public RemoteFileEndpoint() {
+    protected RemoteFileEndpoint() {
         // ftp must be synchronous as the ftp-client is not thread-safe
         setSynchronous(true);
         // no args constructor for spring bean endpoint configuration
@@ -79,7 +79,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
-    public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
+    protected RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
         // ftp must be synchronous as the ftp-client is not thread-safe
