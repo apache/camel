@@ -258,7 +258,6 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <!-- camelCase -->
                     <execution>

@@ -144,49 +144,15 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <skipITs>${skipITs}</skipITs>
-                    <skipTests>${skipTests}</skipTests>
-                    <reuseForks>true</reuseForks>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <skipITs>${skipITs}</skipITs>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <excludedGroups>health,idempotent</excludedGroups>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>serials-test</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <reuseForks>false</reuseForks>
-                            <groups>health,idempotent</groups>
-                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
-        <!-- Ensures camel-kafka does not run any tests during the release -->
         <profile>
-            <id>release</id>
+            <!-- This is needed only for camel-kafka to skip itests selected in the backwards-compatibility profile -->
+            <id>quickly</id>
+            <activation>
+                <property>
+                    <name>quickly</name>
+                </property>
+            </activation>
             <properties>
                 <skipITs>true</skipITs>
                 <skipTests>true</skipTests>
@@ -199,7 +165,6 @@
                     <arch>amd64</arch>
                 </os>
             </activation>
-
             <build>
                 <plugins>
                     <plugin>
@@ -223,7 +188,55 @@
                                 </configuration>
                                 <goals>
                                     <goal>integration-test</goal>
+                                    <goal>verify</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>${skipITs}</skipITs>
+                            <skipTests>${skipTests}</skipTests>
+                            <reuseForks>true</reuseForks>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <skipITs>${skipITs}</skipITs>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
+                                    <excludedGroups>health,idempotent</excludedGroups>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>serials-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <reuseForks>false</reuseForks>
+                                    <groups>health,idempotent</groups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

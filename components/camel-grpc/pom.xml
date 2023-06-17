@@ -241,13 +241,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>${skipTests}</skipTests>
-                </configuration>
-            </plugin>
             <!-- Force the version of guava to camel-package-maven-plugin to prevent build failure due to the
              usage of an old/incompatible version of guava -->
             <plugin>

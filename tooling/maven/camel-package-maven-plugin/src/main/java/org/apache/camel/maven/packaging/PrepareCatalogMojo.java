@@ -135,49 +135,49 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The components directory where all the Apache Camel components are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components")
+    @Parameter(defaultValue = "${project.basedir}/../../components")
     protected File componentsDir;
 
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/")
+    @Parameter(defaultValue = "${project.basedir}/../../core/")
     protected File coreDir;
 
     /**
      * The camel-model directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-model")
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-core-model")
     protected File modelDir;
 
     /**
      * The DSL directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../dsl/")
+    @Parameter(defaultValue = "${project.basedir}/../../dsl")
     protected File dslDir;
 
     /**
      * The camel-core-languages directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-languages")
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-core-languages")
     protected File languagesDir;
 
     /**
      * The directory where the camel-spring XML models are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml")
     protected File springDir;
 
     /**
      * The directory where the camel-spring XML schema are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml/target/schema")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml/target/schema")
     protected File springSchemaDir;
 
     /**
      * The directory where the camel-main metadata are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-main/target/classes/META-INF")
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-main/target/classes/META-INF")
     protected File mainDir;
 
     /**
@@ -1195,7 +1195,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private Path getModule(Path p) {
         Path parent = p;
-        while (!parent.endsWith("target")) {
+        while (!parent.endsWith("target") && !parent.endsWith("src")) {
             parent = parent.getParent();
         }
         return parent.getParent();

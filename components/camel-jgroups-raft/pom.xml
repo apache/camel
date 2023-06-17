@@ -68,17 +68,27 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
-                    </systemPropertyVariables>
-                    <argLine>${camel.surefire.fork.vmargs} -Djava.net.preferIPv4Stack=true</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
+                            </systemPropertyVariables>
+                            <argLine>${camel.surefire.fork.vmargs} -Djava.net.preferIPv4Stack=true</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

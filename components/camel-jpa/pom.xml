@@ -115,51 +115,13 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.apache.openjpa</groupId>
-                                    <artifactId>openjpa</artifactId>
-                                    <version>${openjpa-version}</version>
-                                    <classifier>jakarta</classifier>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}-jakarta.jar -Xmx3G
-                        ${camel.surefire.fork.vmargs}
-                    </argLine>
-                    <forkedProcessTimeoutInSeconds>240</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>openjpa</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!hibernate</name>
+                </property>
             </activation>
             <build>
                 <pluginManagement>
@@ -245,6 +207,11 @@
         </profile>
         <profile>
             <id>hibernate</id>
+            <activation>
+                <property>
+                    <name>hibernate</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -279,6 +246,53 @@
                     <scope>test</scope>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.openjpa</groupId>
+                                            <artifactId>openjpa</artifactId>
+                                            <version>${openjpa-version}</version>
+                                            <classifier>jakarta</classifier>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}-jakarta.jar -Xmx3G
+                                ${camel.surefire.fork.vmargs}
+                            </argLine>
+                            <forkedProcessTimeoutInSeconds>240</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
