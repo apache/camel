@@ -143,6 +143,8 @@
         <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
+
+        <invoker.skip>${skipTests}</invoker.skip>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
