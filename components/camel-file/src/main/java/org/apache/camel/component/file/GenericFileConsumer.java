@@ -61,8 +61,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private final String[] includeExt;
     private final String[] excludeExt;
 
-    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
-                               GenericFileProcessStrategy<T> processStrategy) {
+    protected GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
+                                  GenericFileProcessStrategy<T> processStrategy) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
