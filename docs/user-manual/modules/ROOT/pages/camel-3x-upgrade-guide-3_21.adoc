@@ -61,6 +61,11 @@ To enable access, then set `accessExternalSchemaProtocols=all` or specify allowe
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
+=== camel-spring-rabbitmq
+
+The option `replyTimeout` in `camel-spring-rabbitmq` has been fixed and the default value from 5 to 30 seconds
+(this is the default used by Spring).
+
 === camel-stax
 
 XML parser in `StAXJAXBIteratorExpression` has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
