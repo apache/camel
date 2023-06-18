@@ -1244,11 +1244,13 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Specify the timeout in milliseconds to be used when waiting for a
          * reply message when doing request/reply (InOut) messaging. The default
-         * value is 5 seconds. A negative value indicates an indefinite timeout.
+         * value is 30 seconds. A negative value indicates an indefinite timeout
+         * (Beware that this will cause a memory leak if a reply is not
+         * received).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 30000
          * Group: producer
          * 
          * @param replyTimeout the value to set
@@ -1262,11 +1264,13 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         /**
          * Specify the timeout in milliseconds to be used when waiting for a
          * reply message when doing request/reply (InOut) messaging. The default
-         * value is 5 seconds. A negative value indicates an indefinite timeout.
+         * value is 30 seconds. A negative value indicates an indefinite timeout
+         * (Beware that this will cause a memory leak if a reply is not
+         * received).
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 5000
+         * Default: 30000
          * Group: producer
          * 
          * @param replyTimeout the value to set
