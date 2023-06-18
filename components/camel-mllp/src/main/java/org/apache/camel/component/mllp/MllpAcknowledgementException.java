@@ -21,28 +21,28 @@ package org.apache.camel.component.mllp;
  */
 public abstract class MllpAcknowledgementException extends MllpException {
 
-    public MllpAcknowledgementException(String message, boolean logPhi) {
+    protected MllpAcknowledgementException(String message, boolean logPhi) {
         super(message, logPhi);
     }
 
-    public MllpAcknowledgementException(String message, Throwable cause, boolean logPhi) {
+    protected MllpAcknowledgementException(String message, Throwable cause, boolean logPhi) {
         super(message, cause, logPhi);
     }
 
-    public MllpAcknowledgementException(String message, byte[] hl7Message, boolean logPhi) {
+    protected MllpAcknowledgementException(String message, byte[] hl7Message, boolean logPhi) {
         super(message, hl7Message, logPhi);
     }
 
-    public MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
+    protected MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, boolean logPhi) {
         super(message, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpAcknowledgementException(String message, byte[] hl7Message, Throwable cause, boolean logPhi) {
+    protected MllpAcknowledgementException(String message, byte[] hl7Message, Throwable cause, boolean logPhi) {
         super(message, hl7Message, cause, logPhi);
     }
 
-    public MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
-                                        boolean logPhi) {
+    protected MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
+                                           boolean logPhi) {
         super(message, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 

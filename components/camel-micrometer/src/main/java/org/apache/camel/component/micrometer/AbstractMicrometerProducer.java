@@ -39,7 +39,7 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
 
     private static final String HEADER_PATTERN = HEADER_PREFIX + "*";
 
-    public AbstractMicrometerProducer(MicrometerEndpoint endpoint) {
+    protected AbstractMicrometerProducer(MicrometerEndpoint endpoint) {
         super(endpoint);
     }
 

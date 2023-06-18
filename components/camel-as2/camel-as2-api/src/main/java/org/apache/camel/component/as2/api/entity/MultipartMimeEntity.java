@@ -33,15 +33,15 @@ public abstract class MultipartMimeEntity extends MimeEntity {
 
     private final List<MimeEntity> parts = new ArrayList<>();
 
-    public MultipartMimeEntity(ContentType contentType) {
+    protected MultipartMimeEntity(ContentType contentType) {
         this(contentType, false, null);
     }
 
-    public MultipartMimeEntity(ContentType contentType, boolean isMainBody) {
+    protected MultipartMimeEntity(ContentType contentType, boolean isMainBody) {
         this(contentType, isMainBody, null);
     }
 
-    public MultipartMimeEntity(ContentType contentType, boolean isMainBody, String boundary) {
+    protected MultipartMimeEntity(ContentType contentType, boolean isMainBody, String boundary) {
         setContentType(contentType);
         setMainBody(isMainBody);
 

@@ -62,7 +62,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
     }
 
-    public AbstractCamelInvocationHandler(Endpoint endpoint, Producer producer) {
+    protected AbstractCamelInvocationHandler(Endpoint endpoint, Producer producer) {
         this.endpoint = endpoint;
         this.producer = producer;
     }

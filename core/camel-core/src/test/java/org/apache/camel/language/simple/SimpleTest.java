@@ -1981,6 +1981,80 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testJsonPrettyPrint() throws Exception {
+
+        StringBuilder expectedJson = new StringBuilder();
+        expectedJson.append("{");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\"firstName\": \"foo\",");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\"lastName\": \"bar\"");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("}");
+        expectedJson.append(System.lineSeparator());
+
+        exchange.getIn().setBody("{\"firstName\": \"foo\", \"lastName\": \"bar\"}");
+        assertExpression("${prettyBody}", expectedJson.toString());
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson.toString());
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson.toString() + " Again");
+
+        expectedJson = new StringBuilder();
+        expectedJson.append("[");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t{");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"firstName\": \"foo\",");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"lastName\": \"bar\"");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t},");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t{");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"firstName\": \"foo\",");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"lastName\": \"bar\"");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t}");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("]");
+        expectedJson.append(System.lineSeparator());
+
+        exchange.getIn()
+                .setBody("[{\"firstName\": \"foo\", \"lastName\": \"bar\"},{\"firstName\": \"foo\", \"lastName\": \"bar\"}]");
+        assertExpression("${prettyBody}", expectedJson.toString());
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson.toString());
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson.toString() + " Again");
+
+    }
+
+    @Test
+    public void testXMLPrettyPrint() throws Exception {
+        StringBuilder expectedXml = new StringBuilder();
+        expectedXml.append("<person>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  <firstName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("    foo");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  </firstName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  <lastName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("    bar");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  </lastName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("</person>");
+
+        exchange.getIn().setBody("<person><firstName>foo</firstName><lastName>bar</lastName></person>");
+
+        assertExpression("${prettyBody}", expectedXml.toString());
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedXml.toString());
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedXml.toString() + " Again");
+    }
+
+    @Test
     public void testNestedTypeFunction() throws Exception {
         // when using type: function we need special logic to not lazy evaluate
         // it so its evaluated only once

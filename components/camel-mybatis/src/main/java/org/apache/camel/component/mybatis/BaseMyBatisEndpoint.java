@@ -30,10 +30,10 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     @UriParam(label = "producer")
     private String outputHeader;
 
-    public BaseMyBatisEndpoint() {
+    protected BaseMyBatisEndpoint() {
     }
 
-    public BaseMyBatisEndpoint(String endpointUri, Component component) {
+    protected BaseMyBatisEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 

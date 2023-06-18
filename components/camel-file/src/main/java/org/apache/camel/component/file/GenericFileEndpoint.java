@@ -439,10 +439,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     private Pattern includePattern;
     private Pattern excludePattern;
 
-    public GenericFileEndpoint() {
+    protected GenericFileEndpoint() {
     }
 
-    public GenericFileEndpoint(String endpointUri, Component component) {
+    protected GenericFileEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 

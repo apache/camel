@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -1157,10 +1156,7 @@ public final class StringHelper {
         if (level == 0) {
             return "";
         } else {
-            byte[] arr = new byte[level * blanks];
-            byte space = ' ';
-            Arrays.fill(arr, space);
-            return new String(arr);
+            return " ".repeat(level * blanks);
         }
     }
 
@@ -1174,10 +1170,7 @@ public final class StringHelper {
         if (count <= 0) {
             return "";
         } else {
-            byte[] arr = new byte[count];
-            byte b = (byte) ch;
-            Arrays.fill(arr, b);
-            return new String(arr);
+            return Character.toString(ch).repeat(count);
         }
     }
 

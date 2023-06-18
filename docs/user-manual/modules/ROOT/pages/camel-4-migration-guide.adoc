@@ -339,6 +339,11 @@ If the route or consumer is suspended then http status 503 is now returned inste
 
 The default delay (on slack consumer) is changed from 0.5s to 10s to avoid being rate limited to often by Slack.
 
+=== camel-spring-rabbitmq
+
+The option `replyTimeout` in `camel-spring-rabbitmq` has been fixed and the default value from 5 to 30 seconds
+(this is the default used by Spring).
+
 
 == Camel Spring Boot
 

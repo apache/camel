@@ -39,7 +39,7 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
     private String name;
     private String roleClassNames;
 
-    public SecurityAuthenticatorSupport() {
+    protected SecurityAuthenticatorSupport() {
     }
 
     @Override

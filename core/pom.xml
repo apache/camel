@@ -44,6 +44,7 @@
         <module>camel-base-engine</module>
         <module>camel-xml-io-util</module>
         <module>camel-xml-jaxp</module>
+        <module>camel-xml-jaxp-util</module>
         <module>camel-cluster</module>
         <module>camel-core-engine</module>
         <module>camel-core-languages</module>

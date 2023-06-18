@@ -30,7 +30,7 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
 
     private Git git;
 
-    public AbstractGitConsumer(GitEndpoint endpoint, Processor processor) {
+    protected AbstractGitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
