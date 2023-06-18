@@ -146,10 +146,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
-    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
-              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
-                            + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
-    private long replyTimeout = 5000;
+    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "30000",
+              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
+                            + " The default value is 30 seconds. A negative value indicates an indefinite timeout (Beware that this will cause a memory leak if a reply is not received).")
+    private long replyTimeout = 30000;
     @UriParam(label = "producer", defaultValue = "false",
               description = "Use a separate connection for publishers and consumers")
     private boolean usePublisherConnection;
@@ -528,6 +528,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         template.setRoutingKey(routingKey);
         template.setUsePublisherConnection(usePublisherConnection);
         AsyncRabbitTemplate asyncTemplate = new AsyncRabbitTemplate(template);
+        // use receive timeout (for reply timeout) on the async template
         asyncTemplate.setReceiveTimeout(replyTimeout);
         return asyncTemplate;
     }
