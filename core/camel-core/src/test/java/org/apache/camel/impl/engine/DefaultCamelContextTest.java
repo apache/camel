@@ -439,8 +439,7 @@ public class DefaultCamelContextTest extends TestSupport {
         for(Endpoint endpoint : routeEndpoints) {
             Endpoint oldEndpoint = endpoints.remove(ctx.getEndpointKey(endpoint.getEndpointUri()));
             if(oldEndpoint == null) {
-                String decodeQuery = URISupport.getDecodeQuery(endpoint.getEndpointUri());
-                String decodeUri = StringHelper.before(endpoint.getEndpointUri(), "?") + "?" + decodeQuery;
+                String decodeUri = URISupport.getDecodeQuery(endpoint.getEndpointUri());
                 oldEndpoint = endpoints.remove(ctx.getEndpointKey(decodeUri));
 
             } else {
