@@ -196,7 +196,7 @@ public final class RestConsumerContextPathMatcher {
             OptionalInt min = pathMap.keySet().stream().mapToInt(Integer::intValue).min();
             if (min.isPresent()) {
                 List<ConsumerPath> bestConsumerPaths = pathMap.get(min.getAsInt());
-                if (bestConsumerPaths.size() > 1) {
+                if (bestConsumerPaths.size() > 1 && !shouldEscapeFromAmbiguous(requestMethod, requestMethod)) {
                     String exceptionMsg = "Ambiguous paths " + bestConsumerPaths.stream().map(ConsumerPath::getConsumerPath)
                             .collect(Collectors.joining(",")) + " for request path " + requestPath;
                     throw new IllegalStateException(exceptionMsg);
@@ -216,6 +216,16 @@ public final class RestConsumerContextPathMatcher {
         }
 
         return answer;
+    }
+
+    /**
+     *
+     * @param  requestMethod The request method
+     * @param  requestPath   The request path
+     * @return               if the request method and path can escape from the ambiguous exception
+     */
+    private static boolean shouldEscapeFromAmbiguous(String requestMethod, String requestPath) {
+        return requestMethod.equalsIgnoreCase("options");
     }
 
     /**
