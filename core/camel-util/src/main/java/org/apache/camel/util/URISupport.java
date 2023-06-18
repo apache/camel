@@ -746,18 +746,33 @@ public final class URISupport {
         return rc;
     }
 
+    private static String makeUri(String uriWithoutQuery, String query){
+        int len = uriWithoutQuery.length();
+        if (query != null) {
+            len += 1 + query.length();
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(uriWithoutQuery).append('?').append(query);
+            return sb.toString();
+        } else {
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(uriWithoutQuery);
+            return sb.toString();
+        }
+    }
+
     public static String getDecodeQuery(final String uri) {
         try {
             URI u = new URI(uri);
             String query = URISupport.prepareQuery(u);
+            String uriWithoutQuery = URISupport.stripQuery(uri);
             if(query == null){
-                return null;
+                return uriWithoutQuery;
             }else {
                 Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
                 if (parameters.size() == 1) {
                     // only 1 parameter need to create new query string
                     query = URISupport.createQueryString(parameters);
-                    return query;
+                    return makeUri(uriWithoutQuery, query);
                 } else {
                     // reorder parameters a..z
                     final Set<String> keySet = parameters.keySet();
@@ -766,7 +781,7 @@ public final class URISupport {
 
                     // build uri object with sorted parameters
                     query = URISupport.createQueryString(parametersArray, parameters, true);
-                    return query;
+                    return makeUri(uriWithoutQuery, query);
                 }
             }
         }catch(URISyntaxException ex){

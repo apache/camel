@@ -617,7 +617,7 @@ public class URISupportTest {
     public void testGetDecodeQuery() throws Exception{
         String out = URISupport.normalizeUri("smtp://localhost?username=davsclaus&password=secret");
         String enc = UnsafeUriCharactersEncoder.encode(out);
-        String dec = StringHelper.before(enc,"?") + "?" + URISupport.getDecodeQuery(enc);
+        String dec = URISupport.getDecodeQuery(enc);
         assertEquals(out, dec);
 
         out = URISupport.normalizeUri("smtp://localhost?password=secret&username=davsclaus");
@@ -627,14 +627,14 @@ public class URISupportTest {
         enc = UnsafeUriCharactersEncoder.encode(out);
         assertNotEquals(out, enc);
 
-        dec = StringHelper.before(enc,"?") + "?" + URISupport.getDecodeQuery(enc);
+        dec = URISupport.getDecodeQuery(enc);
         assertEquals(out, dec);
 
         out = URISupport.normalizeUri("bean://MyBean?method=RAW(addString(%22#@a%23, test))");
         enc = UnsafeUriCharactersEncoder.encode(out);
         assertNotEquals(out, enc);
 
-        dec = StringHelper.before(enc,"?") + "?" + URISupport.getDecodeQuery(enc);
+        dec = URISupport.getDecodeQuery(enc);
         assertEquals(out, dec);
 
     }

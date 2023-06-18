@@ -710,9 +710,8 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            String decodeQuery = URISupport.getDecodeQuery(uri);
-            if(decodeQuery != null) {
-                String decodeUri = StringHelper.before(uri, "?") + "?" + decodeQuery;
+            String decodeUri = URISupport.getDecodeQuery(uri);
+            if(decodeUri != null) {
                 oldEndpoint = endpoints.remove(getEndpointKey(decodeUri));
             }
             if(oldEndpoint != null){
