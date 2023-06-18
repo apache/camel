@@ -147,8 +147,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
     @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "30000",
-            description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
-                          + " The default value is 30 seconds. A negative value indicates an indefinite timeout (Beware that this will cause a memory leak if a reply is not received).")
+              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
+                            + " The default value is 30 seconds. A negative value indicates an indefinite timeout (Beware that this will cause a memory leak if a reply is not received).")
     private long replyTimeout = 30000;
     @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
               description = "Specify the timeout in milliseconds to be used when waiting for a message sent to be confirmed by RabbitMQ when doing send only messaging (InOnly)."
