@@ -550,9 +550,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     public AsyncRabbitTemplate createInOutTemplate() {
         RabbitTemplate template = new RabbitTemplate(getConnectionFactory());
         template.setRoutingKey(routingKey);
-        template.setReplyTimeout(replyTimeout);
         template.setUsePublisherConnection(usePublisherConnection);
-        return new AsyncRabbitTemplate(template);
+        AsyncRabbitTemplate asyncTemplate = new AsyncRabbitTemplate(template);
+        asyncTemplate.setReceiveTimeout(replyTimeout);
+        return asyncTemplate;
     }
 
     public AbstractMessageListenerContainer createMessageListenerContainer() {
