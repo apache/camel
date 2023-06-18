@@ -22,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class DynamicRouterProducerTest extends DynamicRouterTestSupport {
@@ -42,4 +43,11 @@ class DynamicRouterProducerTest extends DynamicRouterTestSupport {
         Assertions.assertTrue(result);
     }
 
+    @Test
+    void testProcessAsynchronous() {
+        when(endpoint.getConfiguration().isSynchronous()).thenReturn(false);
+        when(component.getRoutingProcessor(anyString())).thenReturn(processor);
+        boolean result = producer.process(exchange, asyncCallback);
+        Assertions.assertFalse(result);
+    }
 }
