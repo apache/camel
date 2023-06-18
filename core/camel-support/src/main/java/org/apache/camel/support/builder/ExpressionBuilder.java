@@ -54,6 +54,8 @@ import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
+import org.apache.camel.util.xml.XmlPrettyPrinter;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -2034,6 +2036,42 @@ public class ExpressionBuilder {
                 return "bodyOneLine()";
             }
         };
+    }
+
+    /**
+     * Returns the expression for the message body as pretty formatted string
+     */
+    public static Expression prettyBodyExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exchange.getIn().getBody(String.class);
+
+                if (body == null) {
+                    return null;
+                } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
+                    return Jsoner.prettyPrint(body); //json
+                } else if(body.startsWith("<") && body.endsWith(">")) {
+                    return ExpressionBuilder.prettyXml(body); //xml
+                }
+
+                return body;
+            }
+
+            @Override
+            public String toString() {
+                return "prettyBody()";
+            }
+        };
+    }
+
+    private static String prettyXml(String rawXml) {
+        try {
+            boolean includeDeclaration = rawXml.startsWith("<?xml");
+            return XmlPrettyPrinter.pettyPrint(rawXml, 2, includeDeclaration);
+        } catch (Exception e) {
+            return rawXml;
+        }
     }
 
 }

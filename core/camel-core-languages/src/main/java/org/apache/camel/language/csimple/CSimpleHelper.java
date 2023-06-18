@@ -48,6 +48,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
+import org.apache.camel.util.xml.XmlPrettyPrinter;
 
 /**
  * A set of helper as static imports for the Camel compiled simple language.
@@ -161,6 +163,29 @@ public final class CSimpleHelper {
         }
         body = body.replace(System.lineSeparator(), "");
         return body;
+    }
+
+    public static String prettyBody(Exchange exchange) {
+        String body = exchange.getIn().getBody(String.class);
+
+        if (body == null) {
+            return null;
+        } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
+            body = Jsoner.prettyPrint(body.trim()); //json
+        } else if (body.startsWith("<") && body.endsWith(">")) {
+            return CSimpleHelper.prettyXml(body.trim()); //xml
+        }
+
+        return body;
+    }
+
+    private static String prettyXml(String rawXml) {
+        try {
+            boolean includeDeclaration = rawXml.startsWith("<?xml");
+            return XmlPrettyPrinter.pettyPrint(rawXml, 2, includeDeclaration);
+        } catch (Exception e) {
+            return rawXml;
+        }
     }
 
     public static Exception exception(Exchange exchange) {
