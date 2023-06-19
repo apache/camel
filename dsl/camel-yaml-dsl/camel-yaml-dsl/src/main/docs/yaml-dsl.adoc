@@ -309,5 +309,3 @@ The following set of high level EIPs are supported in the yaml DSL language. For
 - When
 - When Skip Send To Endpoint
 - Wire Tap
-
-NOTE: The Try / Catch / Finally EIP currently only supports specifying one `do-catch` clause.
