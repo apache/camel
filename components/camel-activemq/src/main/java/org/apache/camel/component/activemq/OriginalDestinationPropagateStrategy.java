@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(OriginalDestinationPropagateStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OriginalDestinationPropagateStrategy.class);
 
     @Override
     public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {
