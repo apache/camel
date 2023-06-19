@@ -348,7 +348,7 @@ public class OpenAPI3to2 {
             }
             return headerProp;
         } else {
-            log.warn("Missing schema for Header {}", header.toString());
+            log.warn("Missing schema for Header {}", header);
             return null;
         }
     }
