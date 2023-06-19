@@ -111,26 +111,22 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
     @Test
     public void updateWithFullDocumentTest() throws Exception {
         assertEquals(0, mongoCollection.countDocuments());
-        MockEndpoint mock = getMockEndpoint("mock:test");
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
         mock.expectedMessageCount(1);
 
         String consumerRouteId = "updateWithFullDocumentConsumer";
-        addTestRoutes();
         context.getRouteController().startRoute(consumerRouteId);
 
         ObjectId objectId1 = new ObjectId();
         ObjectId objectId2 = new ObjectId();
-        Thread t = new Thread(() -> {
+        Executors.newSingleThreadExecutor().submit(() -> {
             mongoCollection.insertOne(new Document("_id", objectId1).append("property", "random value"));
             mongoCollection.insertOne(new Document("_id", objectId2).append("property", "another value"));
             mongoCollection.updateOne(new Document("_id", objectId1),
                     new Document("$set", new Document("property", "filterOk")));
             mongoCollection.updateOne(new Document("_id", objectId2),
                     new Document("$set", new Document("property", "filterNotOk")));
-        });
-
-        t.start();
-        t.join();
+        }).get();
 
         mock.assertIsSatisfied();
 
@@ -141,6 +137,7 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    @Order(4)
     @Test
     public void operationTypeAndIdHeaderTest() throws Exception {
         Assumptions.assumeTrue(0 == mongoCollection.countDocuments(), "The collection should have no documents");
