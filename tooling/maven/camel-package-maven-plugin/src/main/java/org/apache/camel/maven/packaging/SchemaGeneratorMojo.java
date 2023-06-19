@@ -416,9 +416,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             isEnum = fieldTypeElement.isEnum();
             if (isEnum) {
                 for (Object val : fieldTypeElement.getEnumConstants()) {
-                    // make the enum nicely human readable instead of typically upper cased
                     String str = val.toString();
-                    str = SchemaHelper.camelCaseToDash(str);
                     enums.add(str);
                 }
             }
@@ -544,9 +542,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 isEnum = fieldTypeElement.isEnum();
                 if (isEnum) {
                     for (Object val : fieldTypeElement.getEnumConstants()) {
-                        // make the enum nicely human readable instead of typically upper cased
                         String str = val.toString();
-                        str = SchemaHelper.camelCaseToDash(str);
                         enums.add(str);
                     }
                 }
