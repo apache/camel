@@ -209,7 +209,6 @@ public class KMS2Configuration implements Cloneable {
         return useDefaultCredentialsProvider;
     }
 
-
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }
