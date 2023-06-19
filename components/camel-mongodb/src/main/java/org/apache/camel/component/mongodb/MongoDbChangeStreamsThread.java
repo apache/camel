@@ -22,7 +22,6 @@ import com.mongodb.MongoException;
 import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
-import com.mongodb.client.model.changestream.FullDocument;
 import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -35,13 +34,11 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
-    private FullDocument fullDocument;
 
     MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer,
-                               List<BsonDocument> bsonFilter, FullDocument fullDocument) {
+                               List<BsonDocument> bsonFilter) {
         super(endpoint, consumer);
         this.bsonFilter = bsonFilter;
-        this.fullDocument = fullDocument;
     }
 
     @Override
@@ -52,8 +49,10 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     @Override
     protected MongoCursor initializeCursor() {
         ChangeStreamIterable<Document> iterable = bsonFilter != null
-                ? dbCol.watch(bsonFilter).fullDocument(fullDocument)
-                : dbCol.watch().fullDocument(fullDocument);
+                ? dbCol.watch(bsonFilter)
+                : dbCol.watch();
+
+        iterable.fullDocument(endpoint.getFullDocument());
 
         if (resumeToken != null) {
             iterable = iterable.resumeAfter(resumeToken);

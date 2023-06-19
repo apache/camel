@@ -19,7 +19,6 @@ package org.apache.camel.component.mongodb;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import com.mongodb.client.model.changestream.FullDocument;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
@@ -63,11 +62,9 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
             bsonFilter = singletonList(BsonDocument.parse(streamFilter));
         }
 
-        FullDocument fullDocumentOption = FullDocument.fromString(endpoint.getFullDocument());
-
         executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
                 endpoint.getEndpointUri(), 1);
-        changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter, fullDocumentOption);
+        changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter);
         changeStreamsThread.init();
         executor.execute(changeStreamsThread);
     }

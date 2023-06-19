@@ -30,6 +30,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.changestream.FullDocument;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -57,7 +58,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
 /**
  * Perform operations on MongoDB documents and collections.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
+@UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean", 
              category = { Category.DATABASE }, headersClass = MongoDbConstants.class)
 public class MongoDbEndpoint extends DefaultEndpoint {
 
@@ -107,8 +108,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackIncreasingField;
     @UriParam(label = "consumer,changeStream")
     private String streamFilter;
-    @UriParam(label = "consumer,changeStream", enums = "default,updateLookup", defaultValue = "default")
-    private String fullDocument = "default";
+    @UriParam(label = "consumer,changeStream", enums = "default,updateLookup,required,whenAvailable", defaultValue = "default")
+    private FullDocument fullDocument = FullDocument.DEFAULT;
     // persistent tail tracking
     @UriParam(label = "consumer,tail")
     private boolean persistentTailTracking;
@@ -580,9 +581,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public MongoDbTailTrackingConfig getTailTrackingConfig() {
         if (tailTrackingConfig == null) {
             tailTrackingConfig = new MongoDbTailTrackingConfig(
-                    persistentTailTracking, tailTrackIncreasingField, tailTrackDb == null ? database : tailTrackDb,
-                    tailTrackCollection,
-                    tailTrackField, getPersistentId());
+                    persistentTailTracking, tailTrackIncreasingField,
+                    tailTrackDb == null ? database : tailTrackDb, tailTrackCollection, tailTrackField,
+                    getPersistentId());
         }
         return tailTrackingConfig;
     }
@@ -664,7 +665,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         this.streamFilter = streamFilter;
     }
 
-    public String getFullDocument() {
+    public FullDocument getFullDocument() {
         return fullDocument;
     }
 
@@ -672,7 +673,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * Specifies whether changeStream consumer include a copy of the full document when modified by update operations.
      * Possible values are default and updateLookup.
      */
-    public void setFullDocument(String fullDocument) {
+    public void setFullDocument(FullDocument fullDocument) {
         this.fullDocument = fullDocument;
     }
 
