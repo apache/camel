@@ -2054,7 +2054,7 @@ public class ExpressionBuilder {
                     return null;
                 } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
                     return Jsoner.prettyPrint(body); //json
-                } else if(body.startsWith("<") && body.endsWith(">")) {
+                } else if (body.startsWith("<") && body.endsWith(">")) {
                     return ExpressionBuilder.prettyXml(body); //xml
                 }
 
