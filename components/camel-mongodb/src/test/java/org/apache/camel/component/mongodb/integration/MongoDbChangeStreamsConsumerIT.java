@@ -96,6 +96,39 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
     }
 
     @Test
+    public void updateWithFullDocumentTest() throws Exception {
+        assertEquals(0, mongoCollection.countDocuments());
+        MockEndpoint mock = getMockEndpoint("mock:test");
+        mock.expectedMessageCount(1);
+
+        String consumerRouteId = "updateWithFullDocumentConsumer";
+        addTestRoutes();
+        context.getRouteController().startRoute(consumerRouteId);
+
+        ObjectId objectId1 = new ObjectId();
+        ObjectId objectId2 = new ObjectId();
+        Thread t = new Thread(() -> {
+            mongoCollection.insertOne(new Document("_id", objectId1).append("property", "random value"));
+            mongoCollection.insertOne(new Document("_id", objectId2).append("property", "another value"));
+            mongoCollection.updateOne(new Document("_id", objectId1),
+                    new Document("$set", new Document("property", "filterOk")));
+            mongoCollection.updateOne(new Document("_id", objectId2),
+                    new Document("$set", new Document("property", "filterNotOk")));
+        });
+
+        t.start();
+        t.join();
+
+        mock.assertIsSatisfied();
+
+        Exchange updateExchange = mock.getExchanges().get(0);
+        Document actualDocument = updateExchange.getIn().getBody(Document.class);
+        assertEquals("filterOk", actualDocument.get("property"));
+        assertEquals(objectId1, updateExchange.getIn().getHeader("_id"));
+        context.getRouteController().stopRoute(consumerRouteId);
+    }
+
+    @Test
     public void operationTypeAndIdHeaderTest() throws Exception {
         assertEquals(0, mongoCollection.countDocuments());
         MockEndpoint mock = getMockEndpoint("mock:test");
@@ -143,6 +176,11 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
 
                 from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{myStreamFilter}}")
                         .id("filterConsumer")
+                        .autoStartup(false)
+                        .to("mock:test");
+
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{filter.update}}&fullDocument=updateLookup")
+                        .id("updateWithFullDocumentConsumer")
                         .autoStartup(false)
                         .to("mock:test");
             }

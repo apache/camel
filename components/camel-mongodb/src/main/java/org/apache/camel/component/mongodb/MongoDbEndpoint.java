@@ -107,6 +107,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackIncreasingField;
     @UriParam(label = "consumer,changeStream")
     private String streamFilter;
+    @UriParam(label = "consumer,changeStream", enums = "default,updateLookup", defaultValue = "default")
+    private String fullDocument = "default";
     // persistent tail tracking
     @UriParam(label = "consumer,tail")
     private boolean persistentTailTracking;
@@ -660,6 +662,18 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void setStreamFilter(String streamFilter) {
         this.streamFilter = streamFilter;
+    }
+
+    public String getFullDocument() {
+        return fullDocument;
+    }
+
+    /**
+     * Specifies whether changeStream consumer include a copy of the full document when modified by update operations.
+     * Possible values are default and updateLookup.
+     */
+    public void setFullDocument(String fullDocument) {
+        this.fullDocument = fullDocument;
     }
 
     /**
