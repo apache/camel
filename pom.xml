@@ -117,7 +117,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1687211006</project.build.outputTimestamp>
 
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
