@@ -40,7 +40,6 @@ public abstract class ActiveMQITSupport implements ConfigurableContext, Configur
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-
     public static MessagingLocalContainerService<ArtemisContainer> createLocalService() {
         ArtemisContainer container = new ArtemisContainer();
 
