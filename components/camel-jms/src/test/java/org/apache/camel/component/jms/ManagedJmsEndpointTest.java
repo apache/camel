@@ -36,12 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
 
+    private final String uuid = new ShortUuidGenerator().generateUuid();
+
     @Override
     protected boolean useJmx() {
         return true;
     }
-
-    private final String uuid = new ShortUuidGenerator().generateUuid();
 
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
