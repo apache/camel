@@ -21,7 +21,7 @@ public class MQ2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(17);
         props.add("accessKey");
         props.add("amazonMqClient");
         props.add("label");
@@ -29,6 +29,7 @@ public class MQ2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("operation");
         props.add("overrideEndpoint");
         props.add("pojoRequest");
+        props.add("profileCredentialsName");
         props.add("proxyHost");
         props.add("proxyPort");
         props.add("proxyProtocol");
@@ -37,6 +38,7 @@ public class MQ2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
+        props.add("useProfileCredentialsProvider");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("accessKey");
