@@ -403,13 +403,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     @Override
-    public RestDefinition description(String text) {
+    public RestDefinition description(String description) {
         if (getVerbs().isEmpty()) {
-            super.description(text);
+            super.description(description);
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.description(text);
+            verb.description(description);
         }
 
         return this;

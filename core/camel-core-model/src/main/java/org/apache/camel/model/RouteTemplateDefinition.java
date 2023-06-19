@@ -129,10 +129,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     }
 
     @Override
-    public RouteTemplateDefinition description(String text) {
-        DescriptionDefinition def = new DescriptionDefinition();
-        def.setText(text);
-        setDescription(def);
+    public RouteTemplateDefinition description(String description) {
+        setDescription(description);
         return this;
     }
 

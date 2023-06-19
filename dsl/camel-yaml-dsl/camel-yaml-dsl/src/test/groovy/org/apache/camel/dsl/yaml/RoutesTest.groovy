@@ -58,7 +58,7 @@ class RoutesTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0], RouteDefinition) {
             input.id == 'from-demo'
-            input.description.text == 'from something cool'
+            input.description == 'from something cool'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {
@@ -242,7 +242,7 @@ class RoutesTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0], RouteDefinition) {
             routeId == 'demo-route'
-            description.text == 'something cool'
+            description == 'something cool'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {
@@ -268,7 +268,7 @@ class RoutesTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0], RouteDefinition) {
             routeId == 'demo-route'
-            description.text == 'something cool'
+            description == 'something cool'
             input.endpointUri == 'direct:info'
             precondition == '{{?red}}'
 
@@ -296,10 +296,10 @@ class RoutesTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0], RouteDefinition) {
             routeId == 'demo-route'
-            description.text == 'something cool'
+            description == 'something cool'
 
             input.id == 'from-demo'
-            input.description.text == 'from something cool'
+            input.description == 'from something cool'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {

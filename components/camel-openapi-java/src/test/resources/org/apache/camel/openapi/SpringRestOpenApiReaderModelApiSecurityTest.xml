@@ -31,15 +31,13 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <rest path="/user" tag="dude" consumes="application/json" produces="application/json">
-      <description>User rest service</description>
+    <rest path="/user" tag="dude" description="User rest service" consumes="application/json" produces="application/json">
       <securityDefinitions>
         <oauth2 key="petstore_auth" authorizationUrl="http://petstore.swagger.io/oauth/dialog"/>
         <apiKey key="api_key" name="myHeader" inHeader="true"/>
       </securityDefinitions>
 
-      <get path="/{id}/{date}" outType="org.apache.camel.openapi.User">
-        <description>Find user by id and date</description>
+      <get path="/{id}/{date}" description="Find user by id and date" outType="org.apache.camel.openapi.User">
         <param name="id" type="path" description="The id of the user to get"/>
         <param name="date" type="path" dataFormat="date" description="The date"/>
         <responseMessage message="The user returned"/>
@@ -47,15 +45,13 @@
         <to uri="bean:userService?method=getUser(${header.id})"/>
       </get>
 
-      <put type="org.apache.camel.openapi.User">
-        <description>Updates or create a user</description>
+      <put description="Updates or create a user" type="org.apache.camel.openapi.User">
         <param name="body" type="body" description="The user to update or create"/>
         <security key="petstore_auth" scopes="write:pets,read:pets"/>
         <to uri="bean:userService?method=updateUser"/>
       </put>
 
-      <get path="/findAll" outType="org.apache.camel.openapi.User[]">
-        <description>Find all users</description>
+      <get path="/findAll" description="Find all users" outType="org.apache.camel.openapi.User[]">
         <responseMessage message="All the found users"/>
         <to uri="bean:userService?method=listUsers"/>
       </get>

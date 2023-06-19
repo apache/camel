@@ -275,9 +275,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @Override
     public RouteDefinition routeDescription(String description) {
-        DescriptionDefinition desc = new DescriptionDefinition();
-        desc.setText(description);
-        setDescription(desc);
+        setDescription(description);
         return this;
     }
 

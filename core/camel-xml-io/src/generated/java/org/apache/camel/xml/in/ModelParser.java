@@ -171,6 +171,7 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "customId": def.setCustomId(Boolean.valueOf(val)); break;
+                case "description": def.setDescription(val); break;
                 case "id": def.setId(val); break;
                 default: return false;
             }
@@ -179,17 +180,12 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends OptionalIdentifiedDefinition> ElementHandler<T> optionalIdentifiedDefinitionElementHandler() {
         return (def, key) -> {
-            switch (key) {
-                case "description": def.setDescription(doParseDescriptionDefinition()); break;
-                case "generatedId": def.setGeneratedId(doParseText()); break;
-                default: return false;
+            if ("generatedId".equals(key)) {
+                def.setGeneratedId(doParseText());
+                return true;
             }
-            return true;
+            return false;
         };
-    }
-    protected DescriptionDefinition doParseDescriptionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new DescriptionDefinition(),
-            noAttributeHandler(), noElementHandler(), (def, val) -> def.setText(val));
     }
     protected BeanDefinition doParseBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new BeanDefinition(), (def, key, val) -> {

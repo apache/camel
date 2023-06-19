@@ -20,7 +20,6 @@ import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DelayDefinition;
-import org.apache.camel.model.DescriptionDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ErrorHandlerDefinition;
@@ -505,7 +504,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -1106,7 +1105,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -1743,7 +1742,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -1819,7 +1818,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -1904,7 +1903,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -1994,7 +1993,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -2519,7 +2518,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -4297,7 +4296,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -4449,47 +4448,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
-                    target.setDescription(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "description",
-            inline = true,
-            types = org.apache.camel.model.DescriptionDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = @YamlProperty(name = "text", type = "string")
-    )
-    public static class DescriptionDefinitionDeserializer extends YamlDeserializerBase<DescriptionDefinition> {
-        public DescriptionDefinitionDeserializer() {
-            super(DescriptionDefinition.class);
-        }
-
-        @Override
-        protected DescriptionDefinition newInstance() {
-            return new DescriptionDefinition();
-        }
-
-        @Override
-        protected DescriptionDefinition newInstance(String value) {
-            return new DescriptionDefinition(value);
-        }
-
-        @Override
-        protected boolean setProperty(DescriptionDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "text": {
                     String val = asText(node);
-                    target.setText(val);
+                    target.setDescription(val);
                     break;
                 }
                 default: {
@@ -4625,7 +4585,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -4846,7 +4806,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -5527,7 +5487,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -5597,7 +5557,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -5827,7 +5787,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -6254,7 +6214,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -6575,7 +6535,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -6644,7 +6604,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -6698,7 +6658,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -6771,7 +6731,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -6856,7 +6816,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -8196,7 +8156,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -8289,7 +8249,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -8368,7 +8328,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -8679,7 +8639,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -8953,7 +8913,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -9343,7 +9303,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -9471,7 +9431,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -9538,7 +9498,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -9708,7 +9668,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -9765,7 +9725,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -9825,7 +9785,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10324,7 +10284,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10389,7 +10349,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10443,7 +10403,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10507,7 +10467,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10616,7 +10576,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10768,7 +10728,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -10867,7 +10827,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -11261,7 +11221,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -11509,7 +11469,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -11932,7 +11892,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -12006,7 +11966,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -12080,7 +12040,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -12148,7 +12108,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -12226,7 +12186,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -12636,7 +12596,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13050,7 +13010,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13244,7 +13204,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13315,7 +13275,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13392,7 +13352,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13622,7 +13582,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13769,7 +13729,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13882,7 +13842,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -13978,7 +13938,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -14053,7 +14013,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -14113,7 +14073,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -14559,7 +14519,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -14860,7 +14820,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -14937,7 +14897,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -15006,7 +14966,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -15084,7 +15044,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -15304,7 +15264,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -15514,7 +15474,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -15753,7 +15713,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -15851,7 +15811,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -16259,7 +16219,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -16372,7 +16332,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -16527,7 +16487,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -16610,7 +16570,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -16738,7 +16698,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -16843,7 +16803,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -17058,7 +17018,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -17122,7 +17082,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -17267,7 +17227,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -18033,7 +17993,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -18099,7 +18059,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -18328,7 +18288,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -18405,7 +18365,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }
@@ -18541,7 +18501,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "description": {
-                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    String val = asText(node);
                     target.setDescription(val);
                     break;
                 }

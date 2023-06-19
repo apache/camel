@@ -67,7 +67,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
 
         String uri = null;
         String id = null;
-        org.apache.camel.model.DescriptionDefinition desc = null;
+        String desc = null;
         Map<String, Object> parameters = null;
 
         for (NodeTuple tuple : node.getValue()) {
@@ -81,7 +81,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                     id = asText(val);
                     break;
                 case "description":
-                    desc = asType(val, org.apache.camel.model.DescriptionDefinition.class);
+                    desc = asText(val);
                     break;
                 case "uri":
                     uri = asText(val);

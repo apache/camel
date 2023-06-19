@@ -735,18 +735,6 @@
           }
         }
       },
-      "org.apache.camel.model.DescriptionDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "text" : {
-              "type" : "string"
-            }
-          }
-        } ]
-      },
       "org.apache.camel.model.DynamicRouterDefinition" : {
         "type" : "object",
         "anyOf" : [ {
@@ -2562,6 +2550,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateBeanDefinition"
             }
+          },
+          "description" : {
+            "type" : "string"
           },
           "from" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FromDefinition"

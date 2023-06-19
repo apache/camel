@@ -372,15 +372,6 @@ Rest DELETE command
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="description" type="tns:descriptionDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-To provide comments about the node.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="dnsServiceDiscovery" type="tns:dnsServiceCallServiceDiscoveryConfiguration">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3356,10 +3347,17 @@ later at runtime. Default value: false
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="optionalIdentifiedDefinition">
-    <xs:sequence>
-      <xs:element minOccurs="0" ref="tns:description"/>
-    </xs:sequence>
+    <xs:sequence/>
     <xs:attribute name="customId" type="xs:boolean"/>
+    <xs:attribute name="description" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the description of this node.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="id" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
@@ -3370,9 +3368,6 @@ Sets the id of this node.
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  <xs:simpleType name="descriptionDefinition">
-    <xs:restriction base="xs:string"/>
-  </xs:simpleType>
   <xs:complexType name="aggregateDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
