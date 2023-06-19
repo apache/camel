@@ -18,7 +18,6 @@ package org.apache.camel.yaml.io;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,10 +29,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.catalog.impl.URISupport;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -50,10 +54,11 @@ import org.apache.camel.util.json.JsonObject;
  * After this we transform from {@link EipModel} to {@link EipNode} to have a List/Map structure that we then transform
  * to JSon, and then from JSon to YAML.
  */
-public class YamlWriter {
+public class YamlWriter extends ServiceSupport implements CamelContextAware {
 
+    private CamelContext camelContext;
     private final Writer writer;
-    private final DefaultRuntimeCamelCatalog catalog;
+    private DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
     private final Stack<EipModel> models = new Stack<>();
@@ -63,9 +68,35 @@ public class YamlWriter {
     public YamlWriter(Writer writer) {
         this.writer = writer;
         this.catalog = new DefaultRuntimeCamelCatalog();
-        this.catalog.setCaching(false); // turn cache off as we store state per node
         this.catalog.setJSonSchemaResolver(new ModelJSonSchemaResolver());
+        this.catalog.setCaching(false); // turn cache off as we store state per node
         this.catalog.start();
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (camelContext != null) {
+            DefaultRuntimeCamelCatalog runtime = (DefaultRuntimeCamelCatalog) PluginHelper.getRuntimeCamelCatalog(camelContext);
+            if (runtime != null) {
+                // use json schema resolver from camel context
+                this.catalog.setJSonSchemaResolver(runtime.getJSonSchemaResolver());
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     public void setUriAsParameters(boolean uriAsParameters) {
@@ -188,11 +219,26 @@ public class YamlWriter {
             // uri should be expanded into more human-readable with parameters
             if (uriAsParameters && "uri".equals(name) && value != null) {
                 try {
+                    String base = StringHelper.before(value.toString(), ":");
+                    if (base != null) {
+                        Map parameters = catalog.endpointProperties(value.toString());
+                        if (!parameters.isEmpty()) {
+                            prepareParameters(parameters);
+                            last.getMetadata().put("uri", base);
+                            last.getMetadata().put("parameters", parameters);
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore will attempt without catalog
+                }
+                try {
                     String base = URISupport.stripQuery(value.toString());
                     String query = URISupport.extractQuery(value.toString());
                     if (base != null && query != null) {
-                        Map<String, Object> parameters = parseQuery(query);
+                        Map parameters = URISupport.parseQuery(query);
                         if (!parameters.isEmpty()) {
+                            prepareParameters(parameters);
                             last.getMetadata().put("uri", base);
                             last.getMetadata().put("parameters", parameters);
                             return;
@@ -207,15 +253,14 @@ public class YamlWriter {
         }
     }
 
-    private static Map<String, Object> parseQuery(String query) throws URISyntaxException {
-        Map<String, Object> parameters = URISupport.parseQuery(query);
+    private static void prepareParameters(Map<String, Object> parameters) {
         // convert "true" / "false" to boolean values
         parameters.forEach((k, v) -> {
             if ("true".equals(v) || "false".equals(v)) {
-                parameters.replace(k, Boolean.valueOf(v.toString()));
+                Object s = Boolean.valueOf(v.toString());
+                parameters.replace(k, s);
             }
         });
-        return parameters;
     }
 
     private EipNode asExpressionNode(EipModel model, String name) {

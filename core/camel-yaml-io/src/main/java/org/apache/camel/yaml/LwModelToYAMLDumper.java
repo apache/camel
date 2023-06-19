@@ -136,7 +136,6 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 }
             }
         };
-        writer.setUriAsParameters(uriAsParameters);
 
         // gather all namespaces from the routes or route which is stored on the expression nodes
         if (definition instanceof RouteTemplatesDefinition templates) {
@@ -148,7 +147,15 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         } else if (definition instanceof RouteDefinition route) {
             extractor.accept(route);
         }
-        writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+
+        writer.setUriAsParameters(uriAsParameters);
+        writer.setCamelContext(context);
+        writer.start();
+        try {
+            writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+        } finally {
+            writer.stop();
+        }
 
         return buffer.toString();
     }

@@ -87,10 +87,14 @@ public class ManagedCamelContextDumpRoutesAsYamlTest extends ManagementTestSuppo
         assertTrue(yaml.contains("route"));
         assertTrue(yaml.contains("myRoute"));
         assertTrue(yaml.contains("myOtherRoute"));
-        assertTrue(yaml.contains("direct:start"));
-        assertTrue(yaml.contains("mock:result"));
-        assertTrue(yaml.contains("seda:bar"));
-        assertTrue(yaml.contains("ref:bar"));
+        assertTrue(yaml.contains("direct"));
+        assertTrue(yaml.contains("name: start"));
+        assertTrue(yaml.contains("mock"));
+        assertTrue(yaml.contains("name: result"));
+        assertTrue(yaml.contains("ref"));
+        assertTrue(yaml.contains("name: bar"));
+        assertTrue(yaml.contains("seda"));
+        assertTrue(yaml.contains("name: bar"));
         assertTrue(yaml.contains("parameters:"));
         assertTrue(yaml.contains("size: 1234"));
         assertTrue(yaml.contains("multipleConsumers: true"));
