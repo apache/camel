@@ -43,12 +43,13 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ModelWriterTest {
+public class ModelWriterUriAsParametersTest {
 
     @Test
     public void testTimerLog() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute0");
@@ -61,7 +62,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route0b.yaml"));
+        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route0.yaml"));
         Assertions.assertEquals(expected, out);
     }
 
@@ -69,6 +70,7 @@ public class ModelWriterTest {
     public void testFromTo() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute1");
@@ -90,6 +92,7 @@ public class ModelWriterTest {
     public void testFromSplitTo() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute2");
@@ -116,6 +119,7 @@ public class ModelWriterTest {
     public void testFromAggregateTo() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute3");
@@ -146,6 +150,7 @@ public class ModelWriterTest {
     public void testFromSetBodyTo() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute4");
@@ -167,6 +172,7 @@ public class ModelWriterTest {
     public void testFromLogSetBodyTo() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute5");
@@ -192,6 +198,7 @@ public class ModelWriterTest {
     public void testFromChoice() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute6");
@@ -215,6 +222,7 @@ public class ModelWriterTest {
     public void testFromTryCatch() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
@@ -247,6 +255,7 @@ public class ModelWriterTest {
     public void testTwoRoutes() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RoutesDefinition routes = new RoutesDefinition();
 
@@ -272,7 +281,7 @@ public class ModelWriterTest {
         writer.writeRoutesDefinition(routes);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route8b.yaml"));
+        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route8.yaml"));
         Assertions.assertEquals(expected, out);
     }
 
@@ -280,6 +289,7 @@ public class ModelWriterTest {
     public void testMarshal() throws Exception {
         StringWriter sw = new StringWriter();
         ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
 
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute9");

@@ -172,7 +172,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             RoutesDefinition def = new RoutesDefinition();
             def.setRoutes(getRouteDefinitions());
             try {
-                String xml = dumper.dumpModelAsXml(this, def, true, true);
+                String xml = dumper.dumpModelAsXml(this, def, true);
                 // lets separate routes with empty line
                 xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                         "xmlns=\"http://camel.apache.org/schema/spring\">\n");
@@ -190,7 +190,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             RestsDefinition def = new RestsDefinition();
             def.setRests(getRestDefinitions());
             try {
-                String xml = dumper.dumpModelAsXml(this, def, true, true);
+                String xml = dumper.dumpModelAsXml(this, def, true);
                 // lets separate rests with empty line
                 xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                         "xmlns=\"http://camel.apache.org/schema/spring\">\n");
@@ -208,7 +208,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             RouteTemplatesDefinition def = new RouteTemplatesDefinition();
             def.setRouteTemplates(getRouteTemplateDefinitions());
             try {
-                String xml = dumper.dumpModelAsXml(this, def, true, true);
+                String xml = dumper.dumpModelAsXml(this, def, true);
                 // lets separate rests with empty line
                 xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                         "xmlns=\"http://camel.apache.org/schema/spring\">\n");
@@ -229,7 +229,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             RoutesDefinition def = new RoutesDefinition();
             def.setRoutes(getRouteDefinitions());
             try {
-                String yaml = dumper.dumpModelAsYaml(this, def, true, true);
+                String yaml = dumper.dumpModelAsYaml(this, def, true, false);
                 LOG.info("\n\n{}\n", yaml);
             } catch (Exception e) {
                 LOG.warn("Error dumping routes to YAML due to {}. This exception is ignored.", e.getMessage(), e);
@@ -242,7 +242,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             RestsDefinition def = new RestsDefinition();
             def.setRests(getRestDefinitions());
             try {
-                String taml = dumper.dumpModelAsYaml(this, def, true, true);
+                String taml = dumper.dumpModelAsYaml(this, def, true, false);
                 LOG.info("\n\n{}\n", taml);
             } catch (Exception e) {
                 LOG.warn("Error dumping rests to YAML due to {}. This exception is ignored.", e.getMessage(), e);
@@ -255,7 +255,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             RouteTemplatesDefinition def = new RouteTemplatesDefinition();
             def.setRouteTemplates(getRouteTemplateDefinitions());
             try {
-                String yaml = dumper.dumpModelAsYaml(this, def, true, true);
+                String yaml = dumper.dumpModelAsYaml(this, def, true, false);
                 LOG.info("\n\n{}\n", yaml);
             } catch (Exception e) {
                 LOG.warn("Error dumping route-templates to YAML due to {}. This exception is ignored.", e.getMessage(), e);

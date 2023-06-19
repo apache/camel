@@ -383,21 +383,15 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public String dumpRouteAsXml() throws Exception {
-        return dumpRouteAsXml(false, false);
+        return dumpRouteAsXml(false);
     }
 
     @Override
     public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
-        return dumpRouteAsXml(resolvePlaceholders, false);
-    }
-
-    @Override
-    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
-            return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders,
-                    resolveDelegateEndpoints);
+            return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders);
         }
 
         return null;
@@ -414,12 +408,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
-    public String dumpRouteAsYaml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
+    public String dumpRouteAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
             return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders,
-                    resolveDelegateEndpoints);
+                    uriAsParameters);
         }
 
         return null;

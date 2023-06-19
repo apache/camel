@@ -61,6 +61,10 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                         description = "To output raw without metadata")
     boolean raw;
 
+    @CommandLine.Option(names = { "--uri-as-parameters" },
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+    boolean uriAsParameters;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter route by filename (multiple names can be separated by comma)")
     String filter;
@@ -98,6 +102,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         root.put("action", "route-dump");
         root.put("filter", "*");
         root.put("format", format);
+        root.put("uriAsParameters", uriAsParameters);
         File file = getActionFile(Long.toString(pid));
         try {
             IOHelper.writeText(root.toJson(), file);

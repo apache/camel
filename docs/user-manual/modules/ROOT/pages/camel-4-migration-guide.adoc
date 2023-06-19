@@ -127,6 +127,8 @@ Camel now also include MBeans for `doCatch` and `doFinally` in the tree of proce
 The `ManagedChoiceMBean` have renamed `choiceStatistics` to `extendedInformation`.
 The `ManagedFailoverLoadBalancerMBean` have renamed `exceptionStatistics` to `extendedInformation`.
 
+The `CamelContextMBean` and `CamelRouteMBean` has removed method `dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints)`.
+
 == YAML DSL
 
 The backwards compatible mode Camel 3.14 or older, which allowed to have _steps_ as child to _route_ has been removed.

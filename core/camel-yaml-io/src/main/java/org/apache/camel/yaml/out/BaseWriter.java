@@ -33,6 +33,10 @@ public class BaseWriter {
         // namespace is only for XML
     }
 
+    public void setUriAsParameters(boolean uriAsParameters) {
+        this.writer.setUriAsParameters(uriAsParameters);
+    }
+
     public String toYaml() {
         return writer.toYaml();
     }

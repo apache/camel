@@ -465,21 +465,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
 
-        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, false);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders);
     }
 
     @Override
     public String dumpRoutesAsXml() throws Exception {
-        return dumpRoutesAsXml(false, false);
+        return dumpRoutesAsXml(false);
     }
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception {
-        return dumpRoutesAsXml(resolvePlaceholders, false);
-    }
-
-    @Override
-    public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -489,8 +484,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders,
-                resolveDelegateEndpoints);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders);
     }
 
     @Override
@@ -504,7 +498,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
-    public String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
+    public String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception {
         List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -514,8 +508,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders,
-                resolveDelegateEndpoints);
+        return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters);
     }
 
     @Override

@@ -58,6 +58,7 @@ public class YamlWriter {
     private boolean routesIsRoot;
     private final Stack<EipModel> models = new Stack<>();
     private String expression;
+    private boolean uriAsParameters;
 
     public YamlWriter(Writer writer) {
         this.writer = writer;
@@ -65,6 +66,10 @@ public class YamlWriter {
         this.catalog.setCaching(false); // turn cache off as we store state per node
         this.catalog.setJSonSchemaResolver(new ModelJSonSchemaResolver());
         this.catalog.start();
+    }
+
+    public void setUriAsParameters(boolean uriAsParameters) {
+        this.uriAsParameters = uriAsParameters;
     }
 
     public void startElement(String name) throws IOException {
@@ -181,7 +186,7 @@ public class YamlWriter {
         EipModel last = models.isEmpty() ? null : models.peek();
         if (last != null) {
             // uri should be expanded into more human-readable with parameters
-            if ("uri".equals(name) && value != null) {
+            if (uriAsParameters && "uri".equals(name) && value != null) {
                 try {
                     String base = URISupport.stripQuery(value.toString());
                     String query = URISupport.extractQuery(value.toString());

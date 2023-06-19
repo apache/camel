@@ -50,12 +50,19 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
      */
     public static final String LIMIT = "limit";
 
+    /**
+     * Whether to expand URIs into separated key/value parameters
+     */
+    public static final String URI_AS_PARAMETERS = "uriAsParameters";
+
     public RouteDumpDevConsole() {
         super("camel", "route-dump", "Route Dump", "Dump route structure in XML or YAML format");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
             String dump = null;
@@ -64,7 +71,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 if (format == null || "xml".equals(format)) {
                     dump = mrb.dumpRouteAsXml();
                 } else if ("yaml".equals(format)) {
-                    dump = mrb.dumpRouteAsYaml();
+                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
                 }
             } catch (Exception e) {
                 // ignore
@@ -90,6 +97,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
 
@@ -111,7 +120,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     dump = mrb.dumpRouteAsXml();
                 } else if ("yaml".equals(format)) {
                     jo.put("format", "yaml");
-                    dump = mrb.dumpRouteAsYaml();
+                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
                 }
                 if (dump != null) {
                     List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new StringReader(dump), null);

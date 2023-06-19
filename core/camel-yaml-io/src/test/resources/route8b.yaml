@@ -1,0 +1,20 @@
+- route:
+    id: myRoute0
+    from:
+      uri: timer:yaml?period=1234
+      steps:
+        - setBody:
+            constant:
+              expression: Hello from yaml
+        - log:
+            message: "${body}"
+- route:
+    id: myRoute1
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: log:input
+        - to:
+            uri: mock:result
+            pattern: InOut

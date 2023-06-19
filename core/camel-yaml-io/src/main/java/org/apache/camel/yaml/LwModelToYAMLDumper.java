@@ -26,8 +26,6 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.DelegateEndpoint;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.ExpressionNode;
@@ -61,7 +59,8 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
     @Override
     public String dumpModelAsYaml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders,
+            boolean uriAsParameters)
             throws Exception {
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
@@ -119,18 +118,8 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
             @Override
             protected void attribute(String name, Object value) throws IOException {
-                if (value != null) {
-                    if (resolveDelegateEndpoints && "uri".equals(name)) {
-                        String uri = resolve(value.toString(), properties);
-                        Endpoint endpoint = context.hasEndpoint(uri);
-                        if (endpoint instanceof DelegateEndpoint) {
-                            endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
-                            value = endpoint.getEndpointUri();
-                        }
-                    }
-                    if (resolvePlaceholders) {
-                        value = resolve(value.toString(), properties);
-                    }
+                if (resolvePlaceholders && value != null) {
+                    value = resolve(value.toString(), properties);
                 }
                 super.attribute(name, value);
             }
@@ -147,6 +136,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 }
             }
         };
+        writer.setUriAsParameters(uriAsParameters);
 
         // gather all namespaces from the routes or route which is stored on the expression nodes
         if (definition instanceof RouteTemplatesDefinition templates) {

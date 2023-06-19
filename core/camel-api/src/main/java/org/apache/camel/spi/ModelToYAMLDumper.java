@@ -42,17 +42,16 @@ public interface ModelToYAMLDumper {
     /**
      * Dumps the definition as YAML
      *
-     * @param  context                  the CamelContext
-     * @param  definition               the definition, such as a {@link NamedNode}
-     * @param  resolvePlaceholders      whether to resolve property placeholders in the dumped YAML
-     * @param  resolveDelegateEndpoints whether to resolve delegate endpoints in the dumped YAML (limited to endpoints
-     *                                  used in uri attributes in the model)
-     * @return                          the output in YAML (is formatted)
-     * @throws Exception                is throw if error marshalling to YAML
+     * @param  context             the CamelContext
+     * @param  definition          the definition, such as a {@link NamedNode}
+     * @param  resolvePlaceholders whether to resolve property placeholders in the dumped YAML
+     * @param  uriAsParameters     whether to expand uri into a key/value parameters
+     * @return                     the output in YAML (is formatted)
+     * @throws Exception           is throw if error marshalling to YAML
      */
     String dumpModelAsYaml(
             CamelContext context, NamedNode definition,
-            boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            boolean resolvePlaceholders, boolean uriAsParameters)
             throws Exception;
 
 }
