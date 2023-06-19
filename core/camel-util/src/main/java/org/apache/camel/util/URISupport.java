@@ -753,7 +753,7 @@ public final class URISupport {
         return rc;
     }
 
-    private static String makeUri(String uriWithoutQuery, String query){
+    private static String makeUri(String uriWithoutQuery, String query) {
         int len = uriWithoutQuery.length();
         if (query != null) {
             len += 1 + query.length();
@@ -772,9 +772,9 @@ public final class URISupport {
             URI u = new URI(uri);
             String query = URISupport.prepareQuery(u);
             String uriWithoutQuery = URISupport.stripQuery(uri);
-            if(query == null){
+            if (query == null) {
                 return uriWithoutQuery;
-            }else {
+            } else {
                 Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
                 if (parameters.size() == 1) {
                     // only 1 parameter need to create new query string
@@ -791,7 +791,7 @@ public final class URISupport {
                     return makeUri(uriWithoutQuery, query);
                 }
             }
-        }catch(URISyntaxException ex){
+        } catch (URISyntaxException ex) {
             return null;
         }
     }

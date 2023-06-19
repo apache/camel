@@ -40,7 +40,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 
@@ -434,11 +433,11 @@ public class DefaultCamelContextTest extends TestSupport {
 
         EndpointRegistry<NormalizedUri> endpoints = ctx.getEndpointRegistry();
         Map<String, RouteService> routeServices = ctx.getRouteServices();
-        Set<Endpoint> routeEndpoints =  routeServices.get("rawRoute").gatherEndpoints();
+        Set<Endpoint> routeEndpoints = routeServices.get("rawRoute").gatherEndpoints();
 
-        for(Endpoint endpoint : routeEndpoints) {
+        for (Endpoint endpoint : routeEndpoints) {
             Endpoint oldEndpoint = endpoints.remove(ctx.getEndpointKey(endpoint.getEndpointUri()));
-            if(oldEndpoint == null) {
+            if (oldEndpoint == null) {
                 String decodeUri = URISupport.getDecodeQuery(endpoint.getEndpointUri());
                 oldEndpoint = endpoints.remove(ctx.getEndpointKey(decodeUri));
 
@@ -449,7 +448,6 @@ public class DefaultCamelContextTest extends TestSupport {
         }
 
     }
-
 
     private static class MyService extends ServiceSupport implements CamelContextAware {
 

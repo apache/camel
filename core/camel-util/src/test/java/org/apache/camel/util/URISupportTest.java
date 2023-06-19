@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -614,7 +614,7 @@ public class URISupportTest {
     }
 
     @Test
-    public void testGetDecodeQuery() throws Exception{
+    public void testGetDecodeQuery() throws Exception {
         String out = URISupport.normalizeUri("smtp://localhost?username=davsclaus&password=secret");
         String enc = UnsafeUriCharactersEncoder.encode(out);
         String dec = URISupport.getDecodeQuery(enc);
