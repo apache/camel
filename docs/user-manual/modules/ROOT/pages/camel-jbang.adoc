@@ -1038,11 +1038,11 @@ TIP: You do not have to type the full name, as the stop command will match using
 that starts with the input, for example you can do `camel stop d` to stop all integrations
 starting with d.
 
-To stop all integrations then you need to use the `--all` option as follows:
+To stop all integrations, then execute without any pid:
 
 [source,bash]
 ----
-camel stop --all
+camel stop
 Stopping running Camel integration (pid: 61818)
 Stopping running Camel integration (pid: 62506)
 ----
@@ -1264,8 +1264,6 @@ To stop the integration you can use `camel stop`
 $ camel stop chuck
 Shutting down Camel integration (pid: 80093)
 ----
-
-TIP: To stop all Camel integrations you can use `camel stop --all`.
 
 ==== Starting and Stopping routes
 

@@ -295,6 +295,8 @@ The command `camel dependencies` has been renamed to `camel dependency`.
 
 In Camel JBang the `-dir` parameter for `init` and `run` goal has been renamed to require 2 dashes `--dir` like all the other options.
 
+The `camel stop` command will now by default stop all running integrations (the option `--all` has been removed).
+
 === camel-openapi-java
 
 The `camel-openapi-java` component has been changed to use `io.swagger.v3` libraries instead of `io.apicurio.datamodels`.
