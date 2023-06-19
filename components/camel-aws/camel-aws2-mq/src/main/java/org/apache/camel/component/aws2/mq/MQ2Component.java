@@ -45,7 +45,9 @@ public class MQ2Component extends DefaultComponent {
         MQ2Configuration configuration = this.configuration != null ? this.configuration.copy() : new MQ2Configuration();
         MQ2Endpoint endpoint = new MQ2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider()) && configuration.getAmazonMqClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
+                && configuration.getAmazonMqClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, amazonMQClient or accessKey and secretKey must be specified");
