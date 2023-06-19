@@ -669,8 +669,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Specifies whether changeStream consumer include a copy of the full document when modified by update
-     * operations. Possible values are default and updateLookup.
+     * Specifies whether changeStream consumer include a copy of the full document when modified by update operations.
+     * Possible values are default and updateLookup.
      */
     public void setFullDocument(String fullDocument) {
         this.fullDocument = fullDocument;
