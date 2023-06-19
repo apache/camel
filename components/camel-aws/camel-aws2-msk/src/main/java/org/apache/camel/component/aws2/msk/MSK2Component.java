@@ -45,7 +45,8 @@ public class MSK2Component extends DefaultComponent {
         MSK2Configuration configuration = this.configuration != null ? this.configuration.copy() : new MSK2Configuration();
         MSK2Endpoint endpoint = new MSK2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider()) && configuration.getMskClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider()) && configuration.getMskClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, Amazon msk client or accessKey and secretKey must be specified");
