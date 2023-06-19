@@ -291,7 +291,6 @@ public class Ses2Configuration implements Cloneable {
         return useDefaultCredentialsProvider;
     }
 
-
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }
