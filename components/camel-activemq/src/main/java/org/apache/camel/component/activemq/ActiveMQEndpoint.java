@@ -30,8 +30,8 @@ import org.apache.camel.spi.UriParam;
  * Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.
  */
 @UriEndpoint(firstVersion = "1.0.0", extendsScheme = "jms", scheme = "activemq", title = "ActiveMQ",
-        syntax = "activemq:destinationType:destinationName",
-        category = { Category.MESSAGING })
+             syntax = "activemq:destinationType:destinationName",
+             category = { Category.MESSAGING })
 public class ActiveMQEndpoint extends JmsEndpoint {
 
     @UriParam(multiValue = true, prefix = "destination.", label = "consumer,advanced")
