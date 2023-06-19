@@ -49,7 +49,7 @@ public class CoAPNotifier extends DefaultProducer {
             throw new IllegalStateException("Resource not found: " + endpoint.getUri());
         }
         if (!resource.isObservable()) {
-            LOG.warn("Ignoring notification attempt for resource that is not observable: " + endpoint.getUri());
+            LOG.warn("Ignoring notification attempt for resource that is not observable: {}", endpoint.getUri());
             return;
         }
 
