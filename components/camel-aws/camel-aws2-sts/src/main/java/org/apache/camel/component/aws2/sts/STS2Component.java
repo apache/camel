@@ -47,11 +47,11 @@ public class STS2Component extends DefaultComponent {
         STS2Configuration configurationClone = this.configuration != null ? this.configuration.copy() : new STS2Configuration();
         STS2Endpoint endpoint = new STS2Endpoint(uri, this, configurationClone);
         setProperties(endpoint, parameters);
-        if (Boolean.FALSE.equals(configurationClone.isUseDefaultCredentialsProvider())
+        if (Boolean.FALSE.equals(configurationClone.isUseDefaultCredentialsProvider()) && Boolean.FALSE.equals(configurationClone.isUseProfileCredentialsProvider())
                 && configurationClone.getStsClient() == null
                 && (configurationClone.getAccessKey() == null || configurationClone.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, Amazon STS client or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, Amazon STS client or accessKey and secretKey must be specified");
         }
 
         return endpoint;
