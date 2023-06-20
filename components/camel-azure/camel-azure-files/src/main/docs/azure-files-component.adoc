@@ -108,10 +108,10 @@ This component is an extension of the File component.
 So there are more samples and details on the File
 component page.
 
-== Default when consuming files
+== Consuming Files
 
 The remote consumer will by default leave the consumed
-files untouched on the remote FTP server. You have to configure it
+files untouched on the remote files server. You have to configure it
 explicitly if you want it to delete the files or move them to another
 location. For example you can use `delete=true` to delete the files, or
 use `move=.done` to move the files into `.done` sub directory.
@@ -124,6 +124,18 @@ default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the remote consumer is that it may lack
 permissions by default to be able to move or delete files.
 
+=== Body Type Options
+
+For each matching file, the consumer sends to the Camel exchange
+a message with a selected body type:
+
+  - `byte[]` by default
+  - `java.io.InputStream` if `streamDownload=true` is configured
+  - `java.io.File` if `localWorkDirectory` is configured
+
+The body type configuration should be tuned to fit available resources,
+performance targets, route processors, caching, resuming, etc.
+
 === Limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
@@ -135,9 +147,9 @@ read locks. +
 being written; for instance, you can write to a temporary
 destination and move the file after it has been written.
 
-When moving files using `move` or `preMove` option the files are
-restricted to the share. That prevents you from moving files
-outside the share.
+When moving files using `move` or `preMove` option, the files are
+restricted to the share. That prevents consumer from moving files
+outside of the endpoint share.
 
 == Producing Files
 
