@@ -40,6 +40,7 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -592,6 +593,41 @@ public class VertxPlatformHttpEngineTest {
         } finally {
             context.stop();
             vertx.close();
+        }
+    }
+
+    @Test
+    public void testInvalidContentTypeClientRequestValidation() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    restConfiguration()
+                            .component("platform-http")
+                            .bindingMode(RestBindingMode.json)
+                            .clientRequestValidation(true);
+
+                    rest("/rest")
+                            .post("/validate/body").consumes("text/plain").produces("application/json")
+                            .to("direct:rest");
+                    from("direct:rest")
+                            .setBody(simple("Hello ${body}"));
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .body("{\"name\": \"Donald\"}")
+                    .contentType("application/json")
+                    .post("/rest/validate/body")
+                    .then()
+                    .statusCode(415);
+        } finally {
+            context.stop();
         }
     }
 
