@@ -265,37 +265,141 @@
                         <failIfUnknown>true</failIfUnknown>
                         <header>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt</header>
                         <excludes>
-                            <exclude>KEYS</exclude>
-                            <exclude>**/NOTICE</exclude>
-                            <exclude>**/LICENSE</exclude>
-                            <exclude>**/NOTICE.txt</exclude>
-                            <exclude>**/LICENSE.txt</exclude>
-                            <exclude>doap.rdf</exclude>
-                            <exclude>**/README</exclude>
+                            <exclude>**/*.MockMaker</exclude>
+                            <exclude>**/*.adm</exclude>
+                            <exclude>**/*.adoc.template</exclude>
                             <exclude>**/*.adoc</exclude>
-                            <exclude>**/node_modules/**</exclude>
-                            <exclude>**/cacerts</exclude>
-                            <exclude>**/*.p12</exclude>
-                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.arff</exclude>
+                            <exclude>**/*.asn1</exclude>
+                            <exclude>**/*.avpr</exclude>
+                            <exclude>**/*.avsc</exclude>
+                            <exclude>**/*.bin</exclude>
+                            <exclude>**/*.cat</exclude>
+                            <exclude>**/*.cer</exclude>
+                            <exclude>**/*.chtml</exclude>
+                            <exclude>**/*.csv</exclude>
+                            <exclude>**/*.gpg</exclude>
+                            <exclude>**/*.graphql*</exclude>
+                            <exclude>**/*.ics</exclude>
+                            <exclude>**/*.joor</exclude>
+                            <exclude>**/*.jpeg</exclude>
+                            <exclude>**/*.jslt</exclude>
+                            <exclude>**/*.key</exclude>
+                            <exclude>**/*.keystore</exclude>
+                            <exclude>**/*.model</exclude>
                             <exclude>**/*.mp3</exclude>
                             <exclude>**/*.mp4</exclude>
-                            <exclude>.mvn/**</exclude>
-                            <exclude>mvnw*</exclude>
+                            <exclude>**/*.p12</exclude>
+                            <exclude>**/*.params</exclude>
+                            <exclude>**/*.parquet</exclude>
+                            <exclude>**/*.pem</exclude>
+                            <exclude>**/*.pfx</exclude>
+                            <exclude>**/*.pgp</exclude>
+                            <exclude>**/*.tm</exclude>
+                            <exclude>**/*.truststore</exclude>
+                            <exclude>**/*.tt</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.webp</exclude>
+                            <exclude>**/*.xquery</exclude>
+                            <exclude>**/*utf16.ftl</exclude>
+                            <exclude>**/*utf16.vm</exclude>
+                            <exclude>**/.eslint*</exclude>
+                            <exclude>**/.pnp*</exclude>
+                            <exclude>**/.yarn/**</exclude>
+                            <exclude>**/.yarnrc.yml</exclude>
+                            <exclude>**/CamelJBang.java</exclude>
+                            <exclude>**/LICENSE.txt</exclude>
+                            <exclude>**/LICENSE</exclude>
+                            <exclude>**/META-INF/cxf/**</exclude>
+                            <exclude>**/META-INF/groovy/**</exclude>
+                            <exclude>**/META-INF/kotlin/**</exclude>
                             <exclude>**/META-INF/persistence*.xsd</exclude>
+                            <exclude>**/MySecondBarConfigurer.java</exclude>
+                            <exclude>**/MySecondFooConfigurer.java</exclude>
+                            <exclude>**/NOTICE.txt</exclude>
+                            <exclude>**/NOTICE</exclude>
+                            <exclude>**/README</exclude>
+                            <exclude>**/TestImpl*</exclude>
+                            <exclude>**/archetype-resources/**</exclude>
+                            <exclude>**/ca-openssl.cnf</exclude>
+                            <exclude>**/cacerts</exclude>
+                            <exclude>**/cxf.extension</exclude>
+                            <exclude>**/dhis.conf</exclude>
+                            <exclude>**/driver.conf</exclude>
+                            <exclude>**/expressions.spec</exclude>
+                            <exclude>**/git.config</exclude>
+                            <exclude>**/id_file</exclude>
+                            <exclude>**/id_rsa</exclude>
+                            <exclude>**/ignite/**</exclude>
+                            <exclude>**/it/resources/*.connectedApp</exclude>
+                            <exclude>**/it/resources/salesforce/**</exclude>
+                            <exclude>**/javamail.default.*</exclude>
+                            <exclude>**/kafka*.config</exclude>
+                            <exclude>**/known_hosts*</exclude>
+                            <exclude>**/leveldb.dat/**</exclude>
+                            <exclude>**/mosquitto.conf</exclude>
+                            <exclude>**/myjaas.config</exclude>
+                            <exclude>**/node_modules/**</exclude>
+                            <exclude>**/salesforce/dto/generated/**</exclude>
+                            <exclude>**/src/generated/**</exclude>
+                            <exclude>**/src/generated/**</exclude>
+                            <exclude>**/src/main/resources/templates/*.tmpl</exclude>
+                            <exclude>**/src/test/resources/generated/**</exclude>
+                            <exclude>**/test-kerb5.conf</exclude>
+                            <exclude>**/yarn.lock</exclude>
+                            <exclude>**/zkserver*.conf</exclude>
+                            <exclude>.mvn/**</exclude>
+                            <exclude>KEYS</exclude>
                             <exclude>camel-sbom/*.xml</exclude>
+                            <exclude>doap.rdf</exclude>
+                            <exclude>mvnw*</exclude>
                         </excludes>
                         <mapping>
-                            <java>SLASHSTAR_STYLE</java>
-                            <properties>CAMEL_PROPERTIES_STYLE</properties>
-                            <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
-                            <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
+                            <Adapter>CAMEL_PROPERTIES_STYLE</Adapter>
+                            <Dockerfile.jvm>SCRIPT_STYLE</Dockerfile.jvm>
+                            <Dockerfile.legacy-jar>SCRIPT_STYLE</Dockerfile.legacy-jar>
+                            <Dockerfile.native-micro>SCRIPT_STYLE</Dockerfile.native-micro>
+                            <Dockerfile.native>SCRIPT_STYLE</Dockerfile.native>
+                            <Dockerfile>SCRIPT_STYLE</Dockerfile>
                             <Jenkinsfile.deploy>SLASHSTAR_STYLE</Jenkinsfile.deploy>
+                            <Jenkinsfile.dryrun>SLASHSTAR_STYLE</Jenkinsfile.dryrun>
                             <Jenkinsfile.jdk17>SLASHSTAR_STYLE</Jenkinsfile.jdk17>
                             <Jenkinsfile.ppc64le>SLASHSTAR_STYLE</Jenkinsfile.ppc64le>
                             <Jenkinsfile.s390x>SLASHSTAR_STYLE</Jenkinsfile.s390x>
+                            <atom>XML_STYLE</atom>
+                            <bpmn>XML_STYLE</bpmn>
+                            <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
+                            <cql>DOUBLEDASHES_STYLE</cql>
+                            <ds>SLASHSTAR_STYLE</ds>
+                            <gdsl>SLASHSTAR_STYLE</gdsl>
+                            <ini>SCRIPT_STYLE</ini>
+                            <java>SLASHSTAR_STYLE</java>
+                            <javamail.providers>CAMEL_PROPERTIES_STYLE</javamail.providers>
+                            <jaxb.index>CAMEL_PROPERTIES_STYLE</jaxb.index>
+                            <jj>DOUBLESLASH_STYLE</jj>
+                            <jsh>SLASHSTAR_STYLE</jsh>
+                            <kts>SLASHSTAR_STYLE</kts>
+                            <ldif>LDIF_STYLE</ldif>
+                            <libsonnet>SLASHSTAR_STYLE</libsonnet>
+                            <motd>SCRIPT_STYLE</motd>
+                            <mvel>MVEL_STYLE</mvel>
+                            <properties>CAMEL_PROPERTIES_STYLE</properties>
+                            <proto>SLASHSTAR_STYLE</proto>
+                            <qf.cfg>CAMEL_PROPERTIES_STYLE</qf.cfg>
+                            <robot>SCRIPT_STYLE</robot>
+                            <sch>XML_STYLE</sch>
+                            <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
+                            <spring.handlers>CAMEL_PROPERTIES_STYLE</spring.handlers>
+                            <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
+                            <spring.schemas>CAMEL_PROPERTIES_STYLE</spring.schemas>
+                            <sql>DOUBLEDASHES_STYLE</sql>
+                            <thrift>JAVADOC_STYLE</thrift>
+                            <unrealircd.conf>SLASHSTAR_STYLE</unrealircd.conf>
+                            <vm>CAMEL_PROPERTIES_STYLE</vm>
                         </mapping>
                         <headerDefinitions>
                             <headerDefinition>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/license-properties-headerdefinition.xml</headerDefinition>
+                            <headerDefinition>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/ldif-properties-headerdefinition.xml</headerDefinition>
                         </headerDefinitions>
                     </configuration>
                 </plugin>
