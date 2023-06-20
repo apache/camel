@@ -59,7 +59,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             path = "/" + path;
         }
 
-        OpenAPI openApi = loadOpenApiModel(camelContext, apiDoc);
+        OpenAPI openApi = loadOpenApiModel(apiDoc);
         Operation operation = getOpenApiOperation(openApi, verb, path);
         if (operation == null) {
             throw new IllegalArgumentException("OpenApi api-doc does not contain operation for " + verb + ":" + path);
@@ -87,7 +87,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 produces, consumes, componentName, parameters);
     }
 
-    OpenAPI loadOpenApiModel(CamelContext camelContext, String apiDoc) throws Exception {
+    OpenAPI loadOpenApiModel(String apiDoc) throws Exception {
         final OpenAPIParser openApiParser = new OpenAPIParser();
         final SwaggerParseResult openApi = openApiParser.readLocation(apiDoc, null, null);
 
