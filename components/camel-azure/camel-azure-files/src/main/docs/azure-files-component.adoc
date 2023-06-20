@@ -147,23 +147,33 @@ read locks. +
 being written; for instance, you can write to a temporary
 destination and move the file after it has been written.
 
+For the `changed` read lock, it relies only on the last modified,
+furthermore a precision finer than 5 seconds might be problematic.
+
 When moving files using `move` or `preMove` option, the files are
 restricted to the share. That prevents consumer from moving files
 outside of the endpoint share.
 
 == Producing Files
 
-Azure Files service does not allow to grow files. The file
-length must be known ahead.
+The Files producer is optimized for two body types:
 
-Consequently:
+  - `java.io.InputStream` if `CamelFileLength` header is set
+  - `byte[]`
 
-  - `CamelFileLength` header has important
+In either case the remote file size is allocated
+and then rewritten with body content. Any inconsistency between
+declared file length and stream length results in a corrupted
+remote file.
+
+=== Limitations
+
+The underlying Azure Files service does not allow to grow files. The file
+length must be known at its creation time, consequently:
+
+  - `CamelFileLength` header has an important
     meaning even for producers.
   - No append mode is supported.
-  - For the `changed` read lock, only the last modified
-    can be relied on, furthermore a precision better than
-    5 seconds might be problematic.
 
 == Exchange Properties
 
