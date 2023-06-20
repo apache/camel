@@ -58,7 +58,7 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
             cmf.setCamelContext(context);
             cmf.start();
 
-            String out = cmf.apply("myconfig/foo");
+            String out = cmf.apply("myconfig/foo.txt");
             Assertions.assertEquals("123", out);
 
             out = cmf.apply("myconfig/unknown");
@@ -67,7 +67,7 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
             out = cmf.apply("myconfig/unknown:444");
             Assertions.assertEquals("444", out);
 
-            out = cmf.apply("myconfig/bar");
+            out = cmf.apply("myconfig/bar.txt");
             Assertions.assertEquals("Moes Bar", out);
         } finally {
             client.resource(cm).delete();

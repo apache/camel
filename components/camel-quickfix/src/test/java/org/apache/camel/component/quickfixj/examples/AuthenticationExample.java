@@ -57,19 +57,19 @@ public class AuthenticationExample {
             public void configure() {
                 // Modify the outgoing logon message to add a password
                 // The modified message will be sent from the FIX engine when the message exchange completes
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").filter(PredicateBuilder.and(
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET").filter(PredicateBuilder.and(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AdminMessageSent),
                         header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.LOGON)))
                         .bean(new CredentialInjector("PASSWORD"));
 
                 // Release latch when the trader received a logout message
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET")
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET")
                         .filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogoff))
                         .bean(new CountDownLatchDecrementer("logout", logoutLatch));
 
                 // Reject all logons on market side
                 // Demonstrates how to validate logons
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").filter(PredicateBuilder.and(
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER").filter(PredicateBuilder.and(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AdminMessageReceived),
                         header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.LOGON))).bean(new LogonAuthenticator());
             }

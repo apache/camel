@@ -158,7 +158,7 @@ public class RawMailMessageTest extends CamelTestSupport {
         folder.open(Folder.READ_WRITE);
         folder.expunge();
 
-        InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.elm");
+        InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.txt");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
         Message[] messages = new Message[] { hurzMsg };
 

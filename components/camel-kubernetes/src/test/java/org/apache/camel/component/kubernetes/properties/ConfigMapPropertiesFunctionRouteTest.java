@@ -52,7 +52,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .transform().simple("Hello ${body} we are at {{configmap:myconfig/bar}}");
+                        .transform().simple("Hello ${body} we are at {{configmap:myconfig/bar.txt}}");
             }
         };
     }

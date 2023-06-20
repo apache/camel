@@ -32,7 +32,7 @@ public class GrokFileUnmarshalTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:src/test/resources/org/apache/camel/component/grok/data?fileName=access_log&noop=true")
+                from("file:src/test/resources/org/apache/camel/component/grok/data?fileName=access_log.txt&noop=true")
                         .unmarshal().grok("%{COMMONAPACHELOG}")
                         .to("mock:apachelog");
             }

@@ -84,7 +84,7 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
         folder.open(Folder.READ_WRITE);
         folder.expunge();
 
-        InputStream is = getClass().getResourceAsStream("/nested-multipart.elm");
+        InputStream is = getClass().getResourceAsStream("/nested-multipart.txt");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
         Message[] messages = new Message[] { hurzMsg };
 
