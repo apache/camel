@@ -255,17 +255,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected void updateFileHeaders(GenericFile<ShareFileItem> file, Message message) {
-        long length = file.getFile().getFileSize();
-        long modified = lastModified(file.getFile());
-        file.setFileLength(length);
-        file.setLastModified(modified);
-        // TODO remove unnecessary conditions?
-        if (length >= 0) {
-            message.setHeader(FilesHeaders.FILE_LENGTH, length);
-        }
-        if (modified >= 0) {
-            message.setHeader(FilesHeaders.FILE_LAST_MODIFIED, modified);
-        }
+        message.setHeader(FilesHeaders.FILE_LENGTH, file.getFileLength());
+        message.setHeader(FilesHeaders.FILE_LAST_MODIFIED, file.getLastModified());
     }
 
     @Override
@@ -280,7 +271,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         var raw = file.getProperties().getLastModified();
         if (raw == null) {
             // if ls without metadata
-            return -1;
+            return 0;
         }
         return raw.toInstant().toEpochMilli();
     }
