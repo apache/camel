@@ -116,7 +116,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
-        var ms = endpoint.getConfiguration().getConnectTimeout();
+        var ms = configuration.getConnectTimeout();
         root.forceCloseAllHandles(true, Duration.ofMillis(ms), Context.NONE);
         root = null;
         dirStack = new Stack<>();
@@ -206,7 +206,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173)
         // org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61)
 
-        directory = endpoint.getConfiguration().normalizePath(directory);
+        directory = configuration.normalizePath(directory);
 
         var backup = backup();
         try {
@@ -245,7 +245,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         boolean success = false;
         for (String dir : dirs) {
             sb.append(dir).append(FilesPath.PATH_SEPARATOR);
-            String directory = endpoint.getConfiguration().normalizePath(sb.toString());
+            String directory = configuration.normalizePath(sb.toString());
 
             if (!(FilesPath.isRoot(directory))) {
                 log.trace("Trying to build remote directory by chunk: {}", dir);
@@ -317,7 +317,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // directory
         String remoteName = FileUtil.stripPath(name);
 
-        if (endpoint.getConfiguration().isStreamDownload()) {
+        if (configuration.isStreamDownload()) {
             log.trace("Prepared {} for download as opened input stream.", remoteName);
             InputStream is = cwd().getFileClient(remoteName).openInputStream();
             target.setBody(is);
@@ -482,7 +482,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             throws GenericFileOperationFailedException {
         log.trace("storeFile({})", name);
 
-        name = endpoint.getConfiguration().normalizePath(name);
+        name = configuration.normalizePath(name);
 
         boolean answer;
         String path = FileUtil.onlyPath(name);
@@ -509,9 +509,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         boolean existFile = false;
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore
-                || endpoint.getFileExist() == GenericFileExist.Fail
-                || endpoint.getFileExist() == GenericFileExist.Move
-                || endpoint.getFileExist() == GenericFileExist.Append) {
+                || endpoint.getFileExist() == GenericFileExist.Fail) {
             existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
@@ -520,9 +518,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Fail) {
                 throw new GenericFileOperationFailedException(
                         "File already exist: " + name + ". Cannot write new file.");
-            } else if (existFile && endpoint.getFileExist() == GenericFileExist.Move) {
-                // move any existing file first
-                this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, this, targetName);
             }
         }
 
@@ -768,7 +763,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         }
         if (reconnectRequired) {
             log.trace("Probing if the file service is connectible ...");
-            connect(endpoint.getConfiguration(), exchange);
+            connect(configuration, exchange);
         }
     }
 
