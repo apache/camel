@@ -573,16 +573,16 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         }
 
         boolean isXml = valid.contains("xml");
-        boolean isJson = valid.contains("json");
-
         if (isXml && !target.contains("xml")) {
             return false;
         }
+
+        boolean isJson = valid.contains("json");
         if (isJson && !target.contains("json")) {
             return false;
         }
 
-        return true;
+        return false;
     }
 
 }
