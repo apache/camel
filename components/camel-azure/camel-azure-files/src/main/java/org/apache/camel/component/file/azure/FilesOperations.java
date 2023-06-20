@@ -28,9 +28,11 @@ import java.util.EmptyStackException;
 import java.util.Stack;
 
 import com.azure.core.util.Context;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.share.ShareDirectoryClient;
 import com.azure.storage.file.share.ShareFileClient;
 import com.azure.storage.file.share.ShareServiceClient;
+import com.azure.storage.file.share.ShareServiceClientBuilder;
 import com.azure.storage.file.share.models.ShareFileItem;
 import com.azure.storage.file.share.models.ShareFileRange;
 import com.azure.storage.file.share.options.ShareDirectoryCreateOptions;
@@ -60,21 +62,31 @@ import org.slf4j.LoggerFactory;
  */
 public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
+	// TODO if underlying lib'd support multi-step navigation, could we eliminate cwd state? 
+	
+    public static final String HTTPS = "https";
+
     static final int HTTP_OK = 200;
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final ShareServiceClient client;
-    protected FilesEndpoint endpoint;
+    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final FilesEndpoint endpoint;
+    private final FilesConfiguration configuration;
+    private final FilesToken token;
+    private ShareServiceClient client;
     private ShareDirectoryClient root;
     private Stack<ShareDirectoryClient> dirStack = new Stack<>();
 
-    public FilesOperations(ShareServiceClient client) {
-        this.client = client;
+    FilesOperations(FilesEndpoint endpoint) {
+        this.endpoint = endpoint;
+        configuration = endpoint.getConfiguration();
+        token = endpoint.getToken();
     }
 
     @Override
     public void setEndpoint(GenericFileEndpoint<ShareFileItem> endpoint) {
-        this.endpoint = (FilesEndpoint) endpoint;
+        if (this.endpoint != endpoint) {
+            throw new IllegalStateException("The endpoint is final: " + endpoint);
+        }
     }
 
     @Override
@@ -83,9 +95,9 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @Override
-    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
+    public boolean connect(RemoteFileConfiguration config, Exchange exchange)
             throws GenericFileOperationFailedException {
-        root = client.getShareClient(endpoint.getShare()).getRootDirectoryClient();
+        root = getClient().getShareClient(configuration.getShare()).getRootDirectoryClient();
         // TODO what about (starting) directory as the root?
         dirStack.push(root);
         // TODO translate runtime exception to Camel one?
@@ -194,7 +206,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         // org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173)
         // org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61)
 
-        // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
 
         var backup = backup();
@@ -722,7 +733,29 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     public ShareServiceClient getClient() {
+        if (client == null) {
+            client = createClient();
+        }
         return client;
+    }
+
+    private ShareServiceClient createClient() {
+
+        var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + configuration.getHost());
+        var sharedKey = configuration.getSharedKey();
+        if (token.isInvalid()) {
+            if (sharedKey != null) {
+                log.warn("The configured SAS token is not valid, using the shared key fallback.");
+                var keyB64 = FilesURIStrings.reconstructBase64EncodedValue(sharedKey);
+                builder.credential(new StorageSharedKeyCredential(configuration.getAccount(), keyB64));
+            } else {
+                log.error("A valid SAS token or shared key must be configured.");
+            }
+            // TODO Azure AD https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-requests-to-azure-storage
+        } else {
+            builder = builder.sasToken(token.toURIQuery());
+        }
+        return builder.buildClient();
     }
 
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {

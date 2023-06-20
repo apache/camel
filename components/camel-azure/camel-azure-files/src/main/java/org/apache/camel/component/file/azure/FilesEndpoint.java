@@ -18,9 +18,6 @@ package org.apache.camel.component.file.azure;
 
 import java.time.Duration;
 
-import com.azure.storage.common.StorageSharedKeyCredential;
-import com.azure.storage.file.share.ShareServiceClient;
-import com.azure.storage.file.share.ShareServiceClientBuilder;
 import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Category;
 import org.apache.camel.FailedToCreateConsumerException;
@@ -28,14 +25,10 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFileConfiguration;
-import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.azure.strategy.FilesProcessStrategyFactory;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
-import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -57,10 +50,6 @@ import org.slf4j.LoggerFactory;
                               + "bufferSize,moveExisting,username")
 @ManagedResource(description = "Camel Azure Files endpoint")
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
-
-    public static final String HTTPS = "https";
-
-    private static final Logger LOG = LoggerFactory.getLogger(FilesEndpoint.class);
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
     // camel-package-maven-plugin: Missing @UriPath on endpoint 
@@ -97,10 +86,6 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
         return super.createConsumer(processor);
     }
 
-    String getShare() {
-        return getConfiguration().getShare();
-    }
-
     @Override
     protected FilesConsumer buildConsumer(Processor processor) {
         try {
@@ -115,26 +100,10 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     @Override
     protected FilesProducer buildProducer() {
         try {
-            if (this.getMoveExistingFileStrategy() == null) {
-                this.setMoveExistingFileStrategy(createDoNotMoveExistingFileStrategy());
-            }
             return new FilesProducer(this, createRemoteFileOperations());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(this, e);
         }
-    }
-
-    private FileMoveExistingStrategy createDoNotMoveExistingFileStrategy() {
-        return new FileMoveExistingStrategy() {
-            @Override
-            public boolean moveExistingFile(
-                    GenericFileEndpoint endpoint,
-                    GenericFileOperations operations, String fileName)
-                    throws GenericFileOperationFailedException {
-                LOG.warn("The fileExist=Move option is not implemented.");
-                return false;
-            }
-        };
     }
 
     @Override
@@ -144,35 +113,8 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
     }
 
     @Override
-    public FilesOperations createRemoteFileOperations() throws Exception {
-        ShareServiceClient client = createClient();
-
-        FilesOperations operations = new FilesOperations(client);
-        operations.setEndpoint(this);
-        return operations;
-    }
-
-    /**
-     * Create the Azure Files service client
-     *
-     * @throws Exception may throw client-specific exceptions if the client cannot be created
-     */
-    protected ShareServiceClient createClient() throws Exception {
-        var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + getConfiguration().getHost());
-        var sharedKey = getConfiguration().getSharedKey();
-        if (token.isInvalid()) {
-            if (sharedKey != null) {
-                LOG.warn("The configured SAS token is not valid, using the shared key fallback.");
-                var keyB64 = FilesURIStrings.reconstructBase64EncodedValue(sharedKey);
-                builder.credential(new StorageSharedKeyCredential(getConfiguration().getAccount(), keyB64));
-            } else {
-                LOG.error("A valid SAS token or shared key must be configured.");
-            }
-            // TODO Azure AD https://learn.microsoft.com/en-us/rest/api/storageservices/authorize-requests-to-azure-storage
-        } else {
-            builder = builder.sasToken(token.toURIQuery());
-        }
-        return builder.buildClient();
+    public FilesOperations createRemoteFileOperations() {
+        return new FilesOperations(this);
     }
 
     public FilesToken getToken() {
