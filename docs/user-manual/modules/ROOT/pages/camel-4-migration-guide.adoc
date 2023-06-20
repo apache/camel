@@ -19,7 +19,6 @@ The following components has been removed:
 [options="header"]
 |===
 | Component | Alternative component(s)
-| camel-activemq                       | camel-jms, camel-sjms, camel-amqp
 | camel-any23                          | none
 | camel-atmos                          | none
 | camel-caffeine-lrucache              | camel-cache, camel-ignite, camel-infinispan
