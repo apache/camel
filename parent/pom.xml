@@ -51,7 +51,7 @@
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.17.4</activemq-version>
-        <activemq-artemis-version>2.27.1</activemq-artemis-version>
+        <activemq-artemis-version>2.29.0</activemq-artemis-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.7</apache-any23-version>
         <apache-drill-version>1.19.0</apache-drill-version>
@@ -393,9 +393,9 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.15</metrics-version>
-        <micrometer-version>1.10.7</micrometer-version>
-        <micrometer-tracing-version>1.0.6</micrometer-tracing-version>
+        <metrics-version>4.2.19</metrics-version>
+        <micrometer-version>1.10.8</micrometer-version>
+        <micrometer-tracing-version>1.0.7</micrometer-tracing-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
@@ -419,7 +419,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.92.Final</netty-version>
+        <netty-version>4.1.93.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -510,9 +510,9 @@
         <spring-vault-core-version>2.3.3</spring-vault-core-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.27</spring5-version>
+        <spring5-version>5.3.28</spring5-version>
         <spring-rabbitmq-version>2.4.8</spring-rabbitmq-version>
-        <spring-security-version>5.8.3</spring-security-version>
+        <spring-security-version>5.8.4</spring-security-version>
         <spring-ws-version>3.1.6</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
