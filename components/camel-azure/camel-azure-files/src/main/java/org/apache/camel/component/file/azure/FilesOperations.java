@@ -62,8 +62,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
-	// TODO if underlying lib'd support multi-step navigation, could we eliminate cwd state? 
-	
+    // TODO the underlying lib supports multi-step navigation, could we eliminate cwd state? 
+
     public static final String HTTPS = "https";
 
     static final int HTTP_OK = 200;
@@ -692,26 +692,40 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public ShareFileItem[] listFiles() throws GenericFileOperationFailedException {
-        log.trace("{}> ls -a", cwd().getDirectoryPath());
-        try {
-            var withTS = new ShareListFilesAndDirectoriesOptions().setIncludeTimestamps(true);
-            return cwd().listFilesAndDirectories(withTS, endpoint.getMetadataTimeout(), Context.NONE)
-                    .stream().toArray(ShareFileItem[]::new);
-        } catch (RuntimeException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
-        }
+        log.trace("listFiles()");
+        return listRemote(cwd());
     }
 
     @Override
     public ShareFileItem[] listFiles(String path) throws GenericFileOperationFailedException {
         log.trace("listFiles({})", path);
 
+        if (FilesPath.isAbsolute(path)) {
+            if (FilesPath.isRoot(path)) {
+                return listRemote(root);
+            }
+            var dir = FilesPath.ensureRelative(path);
+            return listRemote(root.getSubdirectoryClient(dir));
+        }
+
+        // TODO needed? could this be called with relative path? 
         var backup = backup();
         try {
             changeCurrentDirectory(path);
             return listFiles();
         } finally {
             restore(backup);
+        }
+    }
+
+    private ShareFileItem[] listRemote(ShareDirectoryClient dir) {
+        log.trace("{}> ls -a", dir.getDirectoryPath());
+        try {
+            var withTS = new ShareListFilesAndDirectoriesOptions().setIncludeTimestamps(true);
+            return dir.listFilesAndDirectories(withTS, endpoint.getMetadataTimeout(), Context.NONE)
+                    .stream().toArray(ShareFileItem[]::new);
+        } catch (RuntimeException e) {
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
     }
 

@@ -31,7 +31,6 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -92,44 +91,23 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
             int depth) {
         LOG.trace("pollDirectory({},,{})", path, depth);
 
-        String backup = operations.getCurrentDirectory();
-
-        boolean answer = doPollDirectory(FileUtil.stripTrailingSeparator(path), null, fileList, depth);
-        if (backup != null) {
-            operations.changeCurrentDirectory(FilesPath.SHARE_ROOT + backup);
-        }
-
-        return answer;
+        return doPollDirectory(FilesPath.trimTrailingSeparator(path), null, fileList, depth);
     }
 
-    private boolean pollSubDirectory(
-            String path, String dirName,
-            List<GenericFile<ShareFileItem>> fileList, int depth) {
-        try {
-            return doSafePollSubDirectory(path, dirName, fileList, depth);
-        } finally {
-            operations.changeToParentDirectory();
-        }
-    }
-
-    // leaves modified cwd
     @Override
     protected boolean doPollDirectory(
             String path, String dirName,
             List<GenericFile<ShareFileItem>> fileList, int depth) {
         LOG.trace("doPollDirectory({},{},,{})", path, dirName, depth);
 
-        dirName = FileUtil.stripTrailingSeparator(dirName);
-        var dir = ObjectHelper.isNotEmpty(dirName) ? dirName : path;
-        operations.changeCurrentDirectory(dir);
-        var listedFileItems = listFileItems(dir);
+        var listedFileItems = listFileItems(path);
 
         if (listedFileItems == null || listedFileItems.length == 0) {
-            LOG.trace("No files found in directory: {}", dir);
+            LOG.trace("No files found in directory: {}", path);
             return true;
         }
 
-        LOG.trace("Found {} files in directory: {}", listedFileItems.length, dir);
+        LOG.trace("Found {} files in directory: {}", listedFileItems.length, path);
 
         if (getEndpoint().isPreSort()) {
             Arrays.sort(listedFileItems, Comparator.comparing(ShareFileItem::getName));
@@ -175,7 +153,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
             if (isValidFile(remote, true, listedFileItems)) {
                 String dirName = dir.getName();
                 String dirPath = FilesPath.concat(path, dirName);
-                boolean canPollMore = pollSubDirectory(dirPath, dirName, polledFiles, depth);
+                boolean canPollMore = doSafePollSubDirectory(dirPath, dirName, polledFiles, depth);
                 if (!canPollMore) {
                     return true;
                 }
@@ -196,9 +174,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private ShareFileItem[] listFileItems(String dir) {
-        // TODO unused param
         try {
-            return operations.listFiles();
+            return operations.listFiles(dir);
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
                 LOG.debug(

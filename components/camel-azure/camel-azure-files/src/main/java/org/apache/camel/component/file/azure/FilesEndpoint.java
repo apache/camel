@@ -33,8 +33,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // , extendsScheme = "file"   in FTPS but AzureBlob does not have it
 @UriEndpoint(firstVersion = "3.21.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
