@@ -62,24 +62,24 @@ public class TradeExecutorExample {
             @Override
             public void configure() throws Exception {
                 // Release latch when session logon events are received
-                from("quickfix:examples/inprocess.cfg")
+                from("quickfix:examples/inprocess.qf.cfg")
                         .filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon))
                         .bean(new CountDownLatchDecrementer("logon", logonLatch));
 
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").filter(
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER").filter(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived))
                         .to("trade-executor:market");
 
-                from("trade-executor:market").to("quickfix:examples/inprocess.cfg");
+                from("trade-executor:market").to("quickfix:examples/inprocess.qf.cfg");
 
                 // Logger app messages as JSON
-                from("quickfix:examples/inprocess.cfg").filter(PredicateBuilder.or(
+                from("quickfix:examples/inprocess.qf.cfg").filter(PredicateBuilder.or(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageSent)))
                         .bean(new QuickfixjMessageJsonPrinter());
 
                 // Release latch when trader receives execution report
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").filter(PredicateBuilder.and(
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET").filter(PredicateBuilder.and(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),
                         header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EXECUTION_REPORT)))
                         .bean(new CountDownLatchDecrementer("execution report", executionReportLatch));
@@ -97,7 +97,7 @@ public class TradeExecutorExample {
             throw new IllegalStateException("Logon did not complete");
         }
 
-        String gatewayUri = "quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET";
+        String gatewayUri = "quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET";
         Endpoint gatewayEndpoint = context.getEndpoint(gatewayUri);
         Producer producer = gatewayEndpoint.createProducer();
 

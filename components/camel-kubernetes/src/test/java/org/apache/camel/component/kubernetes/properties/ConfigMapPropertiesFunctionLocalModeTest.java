@@ -32,7 +32,7 @@ public class ConfigMapPropertiesFunctionLocalModeTest extends KubernetesTestSupp
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .transform().simple("Hello ${body} we are at {{configmap:myconfig/bar}}");
+                        .transform().simple("Hello ${body} we are at {{configmap:myconfig/bar.txt}}");
             }
         };
     }
@@ -41,7 +41,7 @@ public class ConfigMapPropertiesFunctionLocalModeTest extends KubernetesTestSupp
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent().addInitialProperty(ConfigMapPropertiesFunction.LOCAL_MODE, "true");
-        context.getPropertiesComponent().addInitialProperty("myconfig/bar", "The Local Bar");
+        context.getPropertiesComponent().addInitialProperty("myconfig/bar.txt", "The Local Bar");
         return context;
     }
 

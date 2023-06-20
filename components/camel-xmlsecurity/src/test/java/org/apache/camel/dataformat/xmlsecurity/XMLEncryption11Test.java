@@ -72,7 +72,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
     public void testFullPayloadAsymmetricKeyEncryptionGCM() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP);
@@ -93,7 +93,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
     public void testFullPayloadAsymmetricKeyEncryptionSHA256() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP);
@@ -115,7 +115,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
     public void testFullPayloadAsymmetricKeyEncryptionMGF256() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP_11);
@@ -141,11 +141,11 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -164,11 +164,11 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -189,7 +189,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP_11);
@@ -200,7 +200,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {

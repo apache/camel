@@ -112,7 +112,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
         String uri
                 = getScpUri()
-                  + "?username=admin&privateKeyFile=src/test/resources/camel-key.priv&privateKeyFilePassphrase=password&knownHostsFile="
+                  + "?username=admin&privateKeyFile=src/test/resources/camel-key.priv.pem&privateKeyFilePassphrase=password&knownHostsFile="
                   + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
@@ -128,7 +128,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
         String uri
                 = getScpUri()
-                  + "?username=admin&privateKeyFile=classpath:camel-key.priv&privateKeyFilePassphrase=password&knownHostsFile="
+                  + "?username=admin&privateKeyFile=classpath:camel-key.priv.pem&privateKeyFilePassphrase=password&knownHostsFile="
                   + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
@@ -151,7 +151,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @BindToRegistry("privKey")
     public byte[] loadPrivateKey() throws Exception {
-        byte[] privKey = Files.readAllBytes(new File("src/test/resources/camel-key.priv").toPath());
+        byte[] privKey = Files.readAllBytes(new File("src/test/resources/camel-key.priv.pem").toPath());
         return privKey;
     }
 }

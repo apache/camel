@@ -155,7 +155,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     public void testFullPayloadAsymmetricKeyEncryption() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_v1dot5);
@@ -176,7 +176,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -194,7 +194,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     public void testAsymmetricEncryptionAddKeyValue() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyOrTrustStoreParameters(tsParameters);
@@ -217,7 +217,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     public void testAsymmetricEncryptionNoKeyValue() throws Exception {
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyOrTrustStoreParameters(tsParameters);
@@ -339,11 +339,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -362,11 +362,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient-with-key-pass.ks");
+        ksParameters.setResource("recipient-with-key-pass.keystore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -388,11 +388,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -413,11 +413,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     public void testPartialPayloadAsymmetricKeyDecryptionCustomNS() throws Exception {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         final Map<String, String> namespaces = new HashMap<>();
         namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
@@ -442,11 +442,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         // RSA v1.5 is not allowed unless explicitly configured
         context.addRoutes(new RouteBuilder() {
@@ -472,11 +472,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         // RSA v1.5 is not allowed unless explicitly configured
         context.addRoutes(new RouteBuilder() {
@@ -505,11 +505,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
-        tsParameters.setResource("sender.ts");
+        tsParameters.setResource("sender.truststore");
 
         final KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
-        ksParameters.setResource("recipient.ks");
+        ksParameters.setResource("recipient.keystore");
 
         // RSA v1.5 is not allowed unless explicitly configured
         context.addRoutes(new RouteBuilder() {

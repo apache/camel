@@ -46,8 +46,8 @@ public class LumberjackChannelInitializerTest {
 
         // When writing the stream byte per byte in order to ensure that we support splits everywhere
         // It contains 2 windows with compressed messages
-        writeResourceBytePerByte(channel, "window10");
-        writeResourceBytePerByte(channel, "window15");
+        writeResourceBytePerByte(channel, "window10.bin");
+        writeResourceBytePerByte(channel, "window15.bin");
 
         // EmbeddedChannel is no "real" Channel implementation and mainly use-able for testing and embedded ChannelHandlers
         // since now we are executing scheduled writeAndFlush for parallel messages within a single session

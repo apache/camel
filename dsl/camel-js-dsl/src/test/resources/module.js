@@ -14,7 +14,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { greeting } from "src/test/resources/module.js";
-
-from('timer:tick')
-    .to('log:info')
+export const greeting = "Hello World!";

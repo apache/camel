@@ -86,7 +86,7 @@ final class LumberjackUtil {
                     .connect("127.0.0.1", port).sync().channel(); //
 
             // send 5 frame windows, without pausing
-            windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s", window))));
+            windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
             TimeUnit.MILLISECONDS.sleep(500);
 
             channel.close();

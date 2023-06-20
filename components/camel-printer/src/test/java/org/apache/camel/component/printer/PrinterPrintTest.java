@@ -130,7 +130,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/asf-logo.JPG"));
+                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/asf-logo.jpg"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
