@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.eclipse.californium.core.CoapClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,6 @@ public class CoAPNotifier extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(CoAPNotifier.class);
 
     private final CoAPEndpoint endpoint;
-    private CoapClient client;
 
     public CoAPNotifier(CoAPEndpoint endpoint) {
         super(endpoint);
