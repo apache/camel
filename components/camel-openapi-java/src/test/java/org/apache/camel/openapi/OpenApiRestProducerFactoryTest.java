@@ -27,13 +27,13 @@ public class OpenApiRestProducerFactoryTest {
     public void shouldLoadOpenApiPetStoreModel() throws Exception {
         OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();
 
-        assertNotNull(factory.loadOpenApiModel(new DefaultCamelContext(), "petstore.json"));
+        assertNotNull(factory.loadOpenApiModel("petstore.json"));
     }
 
     @Test
     public void shouldLoadOpenApiPetStoreModelV3() throws Exception {
         OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();
 
-        assertNotNull(factory.loadOpenApiModel(new DefaultCamelContext(), "petstore-v3.json"));
+        assertNotNull(factory.loadOpenApiModel( "petstore-v3.json"));
     }
 }

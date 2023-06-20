@@ -107,7 +107,7 @@ public class OpenAPI3to2 {
             }
         }
         if (openApi3.getComponents() != null && openApi3.getComponents().getSecuritySchemes() != null) {
-            convertSecurityDefinitions(openApi2, openApi3.getComponents().getSecuritySchemes());
+            convertSecurityDefinitions(openApi3.getComponents().getSecuritySchemes());
         }
         if (openApi3.getSecurity() != null) {
             for (SecurityRequirement sr : openApi3.getSecurity()) {
@@ -124,7 +124,7 @@ public class OpenAPI3to2 {
         return sreq;
     }
 
-    private void convertSecurityDefinitions(Swagger openApi22, Map<String, SecurityScheme> securitySchemes) {
+    private void convertSecurityDefinitions(Map<String, SecurityScheme> securitySchemes) {
         for (Map.Entry<String, SecurityScheme> entry : securitySchemes.entrySet()) {
             openApi2.addSecurityDefinition(entry.getKey(), convertSecurityScheme(entry.getValue()));
         }
