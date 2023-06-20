@@ -240,15 +240,11 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
         answer.setDirectory(file.isDirectory());
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
-
-        boolean absolute = FilesPath.isAbsolute(path);
-        answer.setAbsolute(absolute);
+        answer.setAbsolute(FilesPath.isAbsolute(path));
 
         String pseudoAbsoluteFileName = FilesPath.concat(path, file.getName());
         answer.setAbsoluteFilePath(pseudoAbsoluteFileName);
 
-        // the relative filename, skip the leading endpoint configured path
-        // TODO likely FTP-specific leftover
         String relativePath = StringHelper.after(pseudoAbsoluteFileName, endpointPath);
         relativePath = FilesPath.ensureRelative(relativePath);
         answer.setRelativeFilePath(relativePath);

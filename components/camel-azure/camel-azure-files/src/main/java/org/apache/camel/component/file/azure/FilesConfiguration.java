@@ -53,15 +53,19 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     @Override
     public void setDirectory(String path) {
         // split URI path to share and starting directory
-        if (path == null || path.isBlank()) {
-            throw new IllegalArgumentException("Illegal share[/dir]: " + path);
+        if (path == null || path.isBlank() || path.contains(FilesPath.PATH_SEPARATOR + "" + FilesPath.PATH_SEPARATOR)
+                || path.equals(FilesPath.SHARE_ROOT)) {
+            throw new IllegalArgumentException("Illegal endpoint URI path (expected share[/dir]): " + path);
         }
-        var dir = "";
-        share = path;
-        var separator = path.indexOf(FilesPath.PATH_SEPARATOR);
-        if (separator != -1) {
-            dir = path.substring(separator);
-            share = path.substring(0, separator);
+        var dir = FilesPath.trimTrailingSeparator(path);
+        dir = FilesPath.trimLeadingSeparator(dir);
+        var separator = dir.indexOf(FilesPath.PATH_SEPARATOR);
+        if (separator == -1) {
+            share = dir;
+            dir = FilesPath.SHARE_ROOT;
+        } else {
+            share = dir.substring(0, separator);
+            dir = dir.substring(separator);
         }
         super.setDirectory(dir);
     }

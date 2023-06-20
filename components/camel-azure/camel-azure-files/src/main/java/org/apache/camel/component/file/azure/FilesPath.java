@@ -123,4 +123,14 @@ public class FilesPath {
         return pathSteps;
     }
 
+    public static String trimLeadingSeparator(String path) {
+        if (path == null) {
+            return null;
+        }
+        if (isAbsolute(path)) {
+            return path.substring(1);
+        }
+        return path;
+    }
+
 }
