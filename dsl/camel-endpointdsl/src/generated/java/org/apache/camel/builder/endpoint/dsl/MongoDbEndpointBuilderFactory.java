@@ -256,6 +256,23 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether changeStream consumer include a copy of the full
+         * document when modified by update operations. Possible values are
+         * default and updateLookup.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: default
+         * Group: changeStream
+         * 
+         * @param fullDocument the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder fullDocument(String fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
          * Filter condition for change streams consumer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
