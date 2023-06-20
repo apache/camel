@@ -67,14 +67,13 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         try {
             super.doStart();
             if (endpoint.isAutoCreate() && hasStartingDirectory()) {
-                String dir = endpoint.getConfiguration().getDirectory();
-                LOG.debug("Auto creating directory: {}", dir);
+                LOG.debug("Auto creating directory: {}", endpointPath);
                 try {
                     connectIfNecessary();
-                    operations.buildDirectory(dir, true);
+                    operations.buildDirectory(endpointPath, true);
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
-                    LOG.warn("Error auto creating directory: " + dir + " due " + e.getMessage()
+                    LOG.warn("Error auto creating directory: " + endpointPath + " due " + e.getMessage()
                              + ". This exception is ignored.",
                             e);
                 }
