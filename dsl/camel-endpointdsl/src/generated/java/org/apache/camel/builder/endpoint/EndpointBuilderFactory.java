@@ -32,6 +32,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2Builders,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2Builders,
             org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3Builders,
+            org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQBuilders,
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbBuilders,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskBuilders,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2Builders,

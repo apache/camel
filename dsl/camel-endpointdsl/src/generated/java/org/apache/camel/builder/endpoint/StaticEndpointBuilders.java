@@ -26,6 +26,63 @@ import javax.annotation.processing.Generated;
 public class StaticEndpointBuilders {
 
     /**
+     * ActiveMQ (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-activemq
+     * 
+     * Syntax: <code>activemq:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
+     * 
+     * Path parameter: destinationName (required)
+     * Name of the queue or topic to use as destination
+     * 
+     * @param path destinationType:destinationName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder("activemq", path);
+    }
+    /**
+     * ActiveMQ (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-activemq
+     * 
+     * Syntax: <code>activemq:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
+     * 
+     * Path parameter: destinationName (required)
+     * Name of the queue or topic to use as destination
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path destinationType:destinationName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
