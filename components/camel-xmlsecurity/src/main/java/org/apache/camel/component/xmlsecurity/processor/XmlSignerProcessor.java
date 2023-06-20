@@ -478,7 +478,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
         Document doc = (Document) messageBodyNode.getParentNode();
         if (SignatureType.detached == sigType) {
-            return getParentForDetachedCase(doc, inMessage, contentReferenceURI);
+            return getParentForDetachedCase(doc, contentReferenceURI);
         } else {
             // enveloped case
             return getParentForEnvelopedCase(doc, inMessage);
@@ -530,7 +530,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    private Element getParentForDetachedCase(Document doc, Message inMessage, String referenceUri)
+    private Element getParentForDetachedCase(Document doc, String referenceUri)
             throws XmlSignatureException {
         String elementId = referenceUri;
         if (elementId.startsWith("#")) {
