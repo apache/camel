@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.websocket;
 
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
 
 /**
  * Default websocket factory. Used when no custom websocket is needed.
@@ -25,7 +25,7 @@ public class DefaultWebsocketFactory implements WebSocketFactory {
 
     @Override
     public DefaultWebsocket newInstance(
-            ServletUpgradeRequest request,
+            JettyServerUpgradeRequest request,
             String pathSpec,
             NodeSynchronization sync,
             WebsocketConsumer consumer,

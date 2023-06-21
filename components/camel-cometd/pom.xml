@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.pkg>
-            org.eclipse.jetty.*;version="[9.4,10)",
+            org.eclipse.jetty.*;version="[10,11)",
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>

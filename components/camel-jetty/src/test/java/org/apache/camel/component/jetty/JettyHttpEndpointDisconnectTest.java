@@ -20,8 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty9.JettyHttpComponent9;
-import org.eclipse.jetty.util.Jetty;
+import org.apache.camel.component.jetty10.JettyHttpComponent10;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -42,7 +41,7 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
                 () -> {
                     StringBuilder sb = new StringBuilder("Connector should have been removed\n");
                     for (String key : JettyHttpComponent.CONNECTORS.keySet()) {
-                        Throwable t = JettyHttpComponent9.connectorCreation.get(key);
+                        Throwable t = JettyHttpComponent10.connectorCreation.get(key);
                         if (t == null) {
                             t = new Throwable("Unable to find connector creation");
                         }

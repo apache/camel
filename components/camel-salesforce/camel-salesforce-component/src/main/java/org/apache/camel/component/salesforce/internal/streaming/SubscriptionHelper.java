@@ -401,7 +401,7 @@ public class SubscriptionHelper extends ServiceSupport {
                         throw new RuntimeException(e);
                     }
                 }
-                request.getHeaders().put(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
+                request.header(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
             }
         };
 

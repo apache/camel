@@ -1435,7 +1435,7 @@ public interface WebsocketEndpointBuilderFactory {
         /**
          * Remote address of the websocket session.
          * 
-         * The option is a: {@code java.net.InetSocketAddress} type.
+         * The option is a: {@code java.net.SocketAddress} type.
          * 
          * Group: consumer
          * 

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -56,7 +56,7 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     public void sendMessage(
             final String connectionKey,
             final String message,
-            final InetSocketAddress remote,
+            final SocketAddress remote,
             final String subprotocol,
             final String relativePath) {
         sendMessage(connectionKey, (Object) message, remote, subprotocol, relativePath);
@@ -65,7 +65,7 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
     public void sendMessage(
             final String connectionKey,
             final Object message,
-            final InetSocketAddress remote,
+            final SocketAddress remote,
             final String subprotocol,
             final String relativePath) {
 

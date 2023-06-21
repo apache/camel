@@ -55,6 +55,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.websocket.server.config.JettyWebSocketServletContainerInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,6 +201,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
+                JettyWebSocketServletContainerInitializer.configure(context, null);
                 LOG.info("Jetty Server starting on host: {}:{}", connector.getHost(), connector.getPort());
                 connectorRef.memoryStore.start();
                 connectorRef.server.start();
@@ -514,12 +516,12 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     private ServerConnector getSslSocketConnector(Server server, SSLContextParameters sslContextParameters) throws Exception {
         ServerConnector sslSocketConnector = null;
         if (sslContextParameters != null) {
-            SslContextFactory sslContextFactory = new WebSocketComponentSslContextFactory();
+            SslContextFactory.Server sslContextFactory = new WebSocketComponentSslContextFactory();
             sslContextFactory.setEndpointIdentificationAlgorithm(null);
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
-            SslContextFactory sslContextFactory = new SslContextFactory();
+            SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setEndpointIdentificationAlgorithm(null);
             sslContextFactory.setKeyStorePassword(sslKeyPassword);
             sslContextFactory.setKeyManagerPassword(sslPassword);
@@ -536,7 +538,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
      * Override the key/trust store check method as it does not account for a factory that has a pre-configured
      * {@link javax.net.ssl.SSLContext}.
      */
-    private static final class WebSocketComponentSslContextFactory extends SslContextFactory {
+    private static final class WebSocketComponentSslContextFactory extends SslContextFactory.Server {
         // This method is for Jetty 7.0.x ~ 7.4.x
         @SuppressWarnings("unused")
         public boolean checkConfig() {
@@ -827,6 +829,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
             LOG.info("Starting static resources server {}:{} with static resource: {}", host, port, staticResources);
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
             staticResourcesServer = createStaticResourcesServer(context, host, port, staticResources);
+            JettyWebSocketServletContainerInitializer.configure(context, null);
             staticResourcesServer.start();
             ServerConnector connector = (ServerConnector) staticResourcesServer.getConnectors()[0];
 

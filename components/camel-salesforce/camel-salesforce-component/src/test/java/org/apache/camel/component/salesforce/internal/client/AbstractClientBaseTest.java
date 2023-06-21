@@ -113,7 +113,7 @@ public class AbstractClientBaseTest {
     @Test
     public void shouldDetermineHeadersFromResponse() {
         final Response response = mock(Response.class);
-        final HttpFields httpHeaders = new HttpFields();
+        final HttpFields.Mutable httpHeaders = HttpFields.build();
         httpHeaders.add("Date", "Mon, 20 May 2013 22:21:46 GMT");
         httpHeaders.add("Sforce-Limit-Info", "api-usage=18/5000");
         httpHeaders.add("Last-Modified", "Mon, 20 May 2013 20:49:32 GMT");
@@ -139,7 +139,7 @@ public class AbstractClientBaseTest {
         final Result result = mock(Result.class);
         final Response response = mock(Response.class);
         when(result.getResponse()).thenReturn(response);
-        when(response.getHeaders()).thenReturn(new HttpFields());
+        when(response.getHeaders()).thenReturn(HttpFields.build());
 
         final SalesforceHttpRequest salesforceRequest = mock(SalesforceHttpRequest.class);
         when(result.getRequest()).thenReturn(salesforceRequest);

@@ -35,8 +35,8 @@
     <properties>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.websocket.*,
-            org.eclipse.jetty.util.ssl;version="[9.3,10)";resolution:=optional,
-            org.eclipse.jetty.*;version="[9.3,10)",
+            org.eclipse.jetty.util.ssl;version="[10,11)";resolution:=optional,
+            org.eclipse.jetty.*;version="[10,11)",
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
@@ -51,17 +51,17 @@
         <!-- Jetty -->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-server</artifactId>
+            <artifactId>websocket-jetty-client</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-client</artifactId>
+            <artifactId>websocket-servlet</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-api</artifactId>
+            <artifactId>websocket-jetty-server</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>

@@ -48,7 +48,7 @@
     <aries-blueprint-proxy-version>1.1.12</aries-blueprint-proxy-version>
     <aries-spifly-version>1.3.5</aries-spifly-version>
     <aries-util-version>1.1.3</aries-util-version>
-    <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
+    <arquillian-jetty-embedded-10-version>1.0.0.Final</arquillian-jetty-embedded-10-version>
     <arquillian-version>1.6.0.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
     <as2-lib-version>4.11.0</as2-lib-version>
@@ -324,7 +324,7 @@
     <jettison-version>1.5.3</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
-    <jetty-version>${jetty9-version}</jetty-version>
+    <jetty-version>10.0.17</jetty-version>
     <jetty9-version>9.4.53.v20231009</jetty9-version>
     <jgit-version>6.3.0.202209071007-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>

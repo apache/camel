@@ -2,7 +2,7 @@
 :doctitle: Jetty
 :shortname: jetty
 :artifactid: camel-jetty
-:description: Expose HTTP endpoints using Jetty 9.
+:description: Expose HTTP endpoints using Jetty 10.
 :since: 1.2
 :supportlevel: Stable
 :component-header: Only consumer is supported
@@ -496,7 +496,7 @@ from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler")
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.
 
-Blueprint based definition of basic authentication (based on Jetty 9):
+Blueprint based definition of basic authentication (based on Jetty 10):
 
 [source,xml]
 ----

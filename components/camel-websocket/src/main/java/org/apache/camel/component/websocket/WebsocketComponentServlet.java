@@ -21,16 +21,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
-import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
-import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+import org.eclipse.jetty.websocket.api.WebSocketPolicy;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
+import org.eclipse.jetty.websocket.server.JettyWebSocketServlet;
+import org.eclipse.jetty.websocket.server.JettyWebSocketServletFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.jetty.websocket.api.WebSocketConstants.SEC_WEBSOCKET_PROTOCOL;
+import static org.eclipse.jetty.websocket.api.util.WebSocketConstants.SEC_WEBSOCKET_PROTOCOL;
 
-public class WebsocketComponentServlet extends WebSocketServlet {
+public class WebsocketComponentServlet extends JettyWebSocketServlet {
     public static final String UNSPECIFIED_SUBPROTOCOL = "default";
     public static final String ANY_SUBPROTOCOL = "any";
 
@@ -68,7 +69,7 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         consumers.remove(consumer.getPath());
     }
 
-    public DefaultWebsocket doWebSocketConnect(ServletUpgradeRequest request, ServletUpgradeResponse resp) {
+    public DefaultWebsocket doWebSocketConnect(JettyServerUpgradeRequest request, JettyServerUpgradeResponse resp) {
         String subprotocol = negotiateSubprotocol(request, consumer);
         if (subprotocol == null) {
             return null;       // no agreeable subprotocol was found, reject the connection
@@ -106,7 +107,7 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         return factory.newInstance(request, pathSpec, sync, consumer, subprotocol, relativePath);
     }
 
-    private String negotiateSubprotocol(ServletUpgradeRequest request, WebsocketConsumer consumer) {
+    private String negotiateSubprotocol(JettyServerUpgradeRequest request, WebsocketConsumer consumer) {
         final String[] supportedSubprotocols = Optional.ofNullable(consumer)
                 .map(WebsocketConsumer::getEndpoint)
                 .map(WebsocketEndpoint::getSubprotocol)
@@ -154,7 +155,8 @@ public class WebsocketComponentServlet extends WebSocketServlet {
     }
 
     @Override
-    public void configure(WebSocketServletFactory factory) {
+    protected void configure(JettyWebSocketServletFactory factory) {
+        getServletContext().setAttribute(WebSocketPolicy.class.getName(), factory);
         factory.setCreator(this::doWebSocketConnect);
     }
 }

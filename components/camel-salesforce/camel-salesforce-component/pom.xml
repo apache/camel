@@ -35,7 +35,7 @@
     <properties>
         <camel.osgi.import.additional>
             javax.xml.bind*;version="[2.2,3.0)",
-            org.eclipse.jetty.*;version="[9.4,10)",
+            org.eclipse.jetty.*;version="[10,11)",
             org.mortbay.cometd.*;version="[6.1,7)"
         </camel.osgi.import.additional>
         <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
@@ -53,22 +53,22 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util-ajax</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-io</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -178,19 +178,19 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-proxy</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

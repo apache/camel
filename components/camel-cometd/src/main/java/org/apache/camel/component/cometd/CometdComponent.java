@@ -233,7 +233,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
             sslParams = retrieveGlobalSslContextParameters();
         }
 
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setEndpointIdentificationAlgorithm(null);
         if (sslParams != null) {
             sslContextFactory.setSslContext(sslParams.createSSLContext(getCamelContext()));

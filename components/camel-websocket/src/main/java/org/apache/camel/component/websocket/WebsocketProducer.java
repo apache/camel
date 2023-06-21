@@ -27,6 +27,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StopWatch;
+import org.eclipse.jetty.util.FutureCallback;
+import org.eclipse.jetty.websocket.api.WriteCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,10 +167,14 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         if (websocket != null && websocket.getSession().isOpen()) {
             LOG.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
-                future = websocket.getSession().getRemote().sendStringByFuture((String) message);
+                FutureWriteCallback callback = new FutureWriteCallback();
+                websocket.getSession().getRemote().sendString((String) message, callback);
+                future = callback;
             } else if (message instanceof byte[]) {
+                FutureWriteCallback callback = new FutureWriteCallback();
                 ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
-                future = websocket.getSession().getRemote().sendBytesByFuture(buf);
+                websocket.getSession().getRemote().sendBytes(buf, callback);
+                future = callback;
             }
         }
         return future;
@@ -194,4 +200,23 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         throw e;
     }
 
+    private static class FutureWriteCallback extends FutureCallback implements WriteCallback {
+        private static final Logger LOG = LoggerFactory.getLogger(FutureWriteCallback.class);
+
+        @Override
+        public void writeFailed(Throwable cause) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(".writeFailed", cause);
+            }
+            failed(cause);
+        }
+
+        @Override
+        public void writeSuccess() {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(".writeSuccess");
+            }
+            succeeded();
+        }
+    }
 }

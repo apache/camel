@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.WebSocketConstants;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.api.util.WebSocketConstants;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -56,9 +56,9 @@ public class WebsocketComponentServletTest {
     @Mock
     private NodeSynchronization sync;
     @Mock
-    private ServletUpgradeRequest request;
+    private JettyServerUpgradeRequest request;
     @Mock
-    private ServletUpgradeResponse response;
+    private JettyServerUpgradeResponse response;
 
     private WebsocketComponentServlet websocketComponentServlet;
 

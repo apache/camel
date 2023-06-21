@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.websocket;
 
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
 
 /**
  * Web socket factory interface.
@@ -24,7 +24,7 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 public interface WebSocketFactory {
 
     DefaultWebsocket newInstance(
-            ServletUpgradeRequest request,
+            JettyServerUpgradeRequest request,
             String pathSpec,
             NodeSynchronization sync,
             WebsocketConsumer consumer,

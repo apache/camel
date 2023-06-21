@@ -17,7 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.io.Serializable;
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.UUID;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -93,7 +93,7 @@ public class DefaultWebsocket implements Serializable {
         }
     }
 
-    private InetSocketAddress getRemoteAddress() {
+    private SocketAddress getRemoteAddress() {
         Session current = session;
         return current != null ? current.getRemoteAddress() : null;
     }

@@ -236,8 +236,8 @@
         <!-- jetty test dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-jetty-embedded-9</artifactId>
-            <version>${arquillian-jetty-embedded-9-version}</version>
+            <artifactId>arquillian-jetty-embedded-10</artifactId>
+            <version>${arquillian-jetty-embedded-10-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

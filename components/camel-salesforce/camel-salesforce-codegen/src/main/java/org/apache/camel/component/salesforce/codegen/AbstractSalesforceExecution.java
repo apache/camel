@@ -203,7 +203,7 @@ public abstract class AbstractSalesforceExecution {
 
         // set ssl context parameters
         try {
-            final SslContextFactory sslContextFactory = new SslContextFactory();
+            final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
             SecurityUtils.adaptToIBMCipherNames(sslContextFactory);

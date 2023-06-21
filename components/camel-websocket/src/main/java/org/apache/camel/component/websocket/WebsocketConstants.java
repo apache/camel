@@ -34,7 +34,7 @@ public final class WebsocketConstants {
               javaType = "Boolean")
     public static final String SEND_TO_ALL = "websocket.sendToAll";
     @Metadata(label = "consumer", description = "Remote address of the websocket session.",
-              javaType = "java.net.InetSocketAddress")
+              javaType = "java.net.SocketAddress")
     public static final String REMOTE_ADDRESS = "websocket.remoteAddress";
     @Metadata(label = "consumer",
               description = "If a specific subprotocol was negotiated, it will be specfied in this header. " +

@@ -19,13 +19,13 @@ package org.apache.camel.component.websocket;
 import java.util.*;
 import java.util.stream.Stream;
 
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.eclipse.jetty.websocket.api.WebSocketConstants.SEC_WEBSOCKET_PROTOCOL;
+import static org.eclipse.jetty.websocket.api.util.WebSocketConstants.SEC_WEBSOCKET_PROTOCOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -85,8 +85,8 @@ public class WebsocketSubprotocolNegotiationTest {
         // mock the test component inputs
         NodeSynchronization sync = mock(NodeSynchronization.class);
         Map<String, WebSocketFactory> factoryMap = mock(Map.class);
-        ServletUpgradeRequest req = mock(ServletUpgradeRequest.class);
-        ServletUpgradeResponse res = mock(ServletUpgradeResponse.class);
+        JettyServerUpgradeRequest req = mock(JettyServerUpgradeRequest.class);
+        JettyServerUpgradeResponse res = mock(JettyServerUpgradeResponse.class);
         WebsocketConsumer consumer = mock(WebsocketConsumer.class);
         WebsocketEndpoint endpoint = mock(WebsocketEndpoint.class);
         DefaultWebsocket implementation = mock(DefaultWebsocket.class);

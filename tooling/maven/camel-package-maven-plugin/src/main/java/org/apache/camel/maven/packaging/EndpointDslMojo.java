@@ -1001,7 +1001,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 return "AtmosphereWebsocket";
             case "org.apache.camel.component.zookeepermaster.MasterComponent":
                 return "ZooKeeperMaster";
-            case "org.apache.camel.component.jetty9.JettyHttpComponent9":
+            case "org.apache.camel.component.jetty10.JettyHttpComponent10":
                 return "JettyHttp";
             case "org.apache.camel.component.elasticsearch.ElasticsearchComponent":
                 return "ElasticsearchRest";

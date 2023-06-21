@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -54,15 +55,36 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
         ServerConnector connector;
         SSLContext sslContext = jettyConfiguration.getSslContext();
         if (sslContext != null) {
-            SslContextFactory sslContextFactory = new SslContextFactory.Server();
-            sslContextFactory.setSslContext(sslContext);
-
-            connector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, null));
+            connector = new ServerConnector(server, createSslConnectionFactory(sslContext));
         } else {
             connector = new ServerConnector(server);
         }
 
         return connector;
+    }
+
+    @NotNull
+    private static SslConnectionFactory createSslConnectionFactory(SSLContext sslContext) {
+        try {
+            SslContextFactory sslContextFactory = createSslContextFactory(sslContext);
+            sslContextFactory.setSslContext(sslContext);
+            return SslConnectionFactory.class.getConstructor(sslContextFactory.getClass(), String.class)
+                    .newInstance(sslContextFactory, null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @NotNull
+    private static SslContextFactory createSslContextFactory(SSLContext sslContext) throws Exception {
+        Class<?> factoryClass;
+        if (Server.getVersion().startsWith("9")) {
+            // Jetty 9 detected
+            factoryClass = Class.forName("org.eclipse.jetty.util.ssl.SslContextFactory");
+        } else {
+            factoryClass = Class.forName("org.eclipse.jetty.util.ssl.SslContextFactory$Server");
+        }
+        return (SslContextFactory) factoryClass.getConstructor().newInstance();
     }
 
     @Override

@@ -29,8 +29,8 @@ import java.util.stream.Stream;
 import javax.servlet.ServletContext;
 
 import org.eclipse.jetty.deploy.App;
-import org.jboss.arquillian.container.jetty.embedded_9.JettyEmbeddedConfiguration;
-import org.jboss.arquillian.container.jetty.embedded_9.JettyEmbeddedContainer;
+import org.jboss.arquillian.container.jetty.embedded_10.JettyEmbeddedConfiguration;
+import org.jboss.arquillian.container.jetty.embedded_10.JettyEmbeddedContainer;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.test.impl.enricher.resource.URIResourceProvider;
 import org.jboss.arquillian.container.test.impl.enricher.resource.URLResourceProvider;

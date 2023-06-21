@@ -368,10 +368,11 @@ public abstract class AbstractClientBase extends ServiceSupport
             return;
         }
 
-        final HttpFields requestHeaders = request.getHeaders();
-        for (Entry<String, List<String>> header : headers.entrySet()) {
-            requestHeaders.put(header.getKey(), header.getValue());
-        }
+        request.headers(requestHeaders -> {
+            for (Entry<String, List<String>> header : headers.entrySet()) {
+                requestHeaders.put(header.getKey(), header.getValue());
+            }
+        });
     }
 
     static Map<String, List<String>> determineHeaders(final Exchange exchange) {

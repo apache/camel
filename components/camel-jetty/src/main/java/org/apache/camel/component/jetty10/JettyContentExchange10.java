@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty9;
+package org.apache.camel.component.jetty10;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -55,9 +55,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Jetty specific exchange which keeps track of the request and response.
  */
-public class JettyContentExchange9 implements JettyContentExchange {
+public class JettyContentExchange10 implements JettyContentExchange {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JettyContentExchange9.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyContentExchange10.class);
 
     private volatile Exchange exchange;
     private volatile AsyncCallback callback;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty9;
+package org.apache.camel.component.jetty10;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,13 +37,14 @@ import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
+import org.eclipse.jetty.http.HttpFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To handle attachments with Jetty 9.
+ * To handle attachments with Jetty 10.
  * <p/>
- * This implementation is needed to deal with attachments when using Jetty 9.
+ * This implementation is needed to deal with attachments when using Jetty 10.
  */
 final class AttachmentHttpBinding extends DefaultHttpBinding {
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
@@ -92,7 +93,9 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         // remove Content-Encoding from request
         if (request instanceof org.eclipse.jetty.server.Request) {
             org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request) request;
-            jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
+            HttpFields originalFields = jettyRequest.getHttpFields();
+            HttpFields newFields = HttpFields.build(originalFields).remove(Exchange.CONTENT_ENCODING);
+            jettyRequest.setHttpFields(newFields);
         }
 
         // attachment is optional
