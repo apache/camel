@@ -91,6 +91,10 @@ so you could use any of the supported languages such as
 xref:components:languages:simple-language.adoc[Simple], xref:components:languages:xpath-language.adoc[XPath],
 xref:components:languages:jsonpath-language.adoc[JSonPath], xref:components:languages:groovy-language.adoc[Groovy] to perform the split.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:my.queue")
@@ -98,8 +102,8 @@ from("activemq:my.queue")
         .to("file:some/directory")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -110,6 +114,7 @@ And in XML:
     </split>
 </route>
 ----
+====
 
 === Splitting the message body
 
@@ -131,6 +136,10 @@ the Split EIP will be split into a single message (the same).
 
 To use this with the splitter you should _just_ use body as the expression:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:splitUsingBody")
@@ -138,6 +147,8 @@ from("direct:splitUsingBody")
         .to("mock:result");
 ----
 
+XML::
++
 In XML you use xref:components:languages:simple-language.adoc[Simple] to refer to the message body:
 
 [source,xml]
@@ -150,6 +161,7 @@ In XML you use xref:components:languages:simple-language.adoc[Simple] to refer t
   </split>
 </route>
 ----
+====
 
 === Splitting with parallel processing
 
@@ -158,6 +170,10 @@ is processed by its own thread in parallel.
 
 The example below enabled parallel mode:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -167,8 +183,8 @@ from("direct:a")
     .to("direct:z");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -181,6 +197,14 @@ And in XML:
     </split>
 </route>
 ----
+====
+
+[IMPORTANT]
+====
+When parallel processing is enabled, then the Camel routing engin will continue processing
+using last used thread from the parallel thread pool. However, if you want to use the original
+thread that called the splitter, then make sure to enable the synchronous option as well.
+====
 
 === Ending a Split block
 
@@ -191,6 +215,10 @@ In the example above then sending to mock:result happens after the Spllit EIP ha
 In other words the message should finish splitting the entire message before the message
 continues.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -202,6 +230,8 @@ from("direct:a")
   .to("mock:result");
 ----
 
+XML::
++
 And in XML its intuitive as `</split>` marks the end of the block:
 
 [source,xml]
@@ -217,6 +247,7 @@ And in XML its intuitive as `</split>` marks the end of the block:
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 === What is returned from Split EIP when its complete
 
@@ -231,6 +262,10 @@ as a single response exchange, that becomes the outgoing exchange after the Spli
 
 The example now aggregates with the `MyAggregationStrategy` class:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -242,6 +277,8 @@ from("direct:start")
   .to("mock:result");
 ----
 
+XML::
++
 And in XML we can refer to the FQN class name with `#class:` syntax as shown below:
 
 [source,xml]
@@ -257,6 +294,7 @@ And in XML we can refer to the FQN class name with `#class:` syntax as shown bel
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 [NOTE]
 ====
@@ -277,6 +315,10 @@ The Split EIP operates in two modes when splitting:
 
 You can split in streaming mode as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:streaming")
@@ -284,8 +326,8 @@ from("direct:streaming")
     .to("activemq:my.parts");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -296,10 +338,15 @@ And in XML:
     </split>
 </route>
 ----
+====
 
 You can also supply a custom xref:components:languages:bean-language.adoc[Bean]
 to perform the splitting in streaming mode like this:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:streaming")
@@ -307,8 +354,8 @@ from("direct:streaming")
     .to("activemq:my.parts")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -319,6 +366,7 @@ And in XML:
     </split>
 </route>
 ----
+====
 
 Then the custom bean could for example be implemented as follows:
 
@@ -394,15 +442,18 @@ Now to split this big file using xref:components:languages:xpath-language.adoc[X
 would cause the entire content to be loaded into memory. So instead we can use the
 xref:components:languages:tokenize-language.adoc[Tokenize] language to do this as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
   .split().tokenizeXML("order").streaming()
      .to("activemq:queue:order");
 ----
-
-In XML the route would be as follows:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -413,6 +464,7 @@ In XML the route would be as follows:
   </split>
 </route>
 ----
+====
 
 This will split the file using the tag name of the child nodes (more precisely speaking, the local name of the element without its namespace prefix if any),
 which mean it will grab the content between the `<order>` and `</order>` tags (incl. the tags).
@@ -428,6 +480,19 @@ So for example a split message would be structured as follows:
 
 If you want to inherit namespaces from a root/parent tag, then you can do this as well by providing the name of the root/parent tag:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .split().tokenizeXML("order", "orders").streaming()
+     .to("activemq:queue:order");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -438,15 +503,7 @@ If you want to inherit namespaces from a root/parent tag, then you can do this a
   </split>
 </route>
 ----
-
-And in Java DSL it is done like this:
-
-[source,java]
-----
-from("file:inbox")
-  .split().tokenizeXML("order", "orders").streaming()
-     .to("activemq:queue:order");
-----
+====
 
 You can set `inheritNamsepaceTagName` property to `*` to include the preceding context in each token (i.e., generating each token enclosed in its ancestor elements). It is noted that each token must share the same ancestor elements in this case.
 The above tokenizer works well on simple structures but has some inherent limitations in handling more complex XML structures.
@@ -550,6 +607,10 @@ can be used for grouping N parts together, for example to split big files into c
 
 Doing this is easy as the following example shows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -557,8 +618,8 @@ from("file:inbox")
      .to("activemq:queue:order");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -569,6 +630,7 @@ And in XML DSL:
   </split>
 </route>
 ----
+====
 
 The `group` value must be a positive number dictating how many elements to combine together in a group.
 Each part will be combined using the token.
@@ -707,6 +769,10 @@ handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
 shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -717,8 +783,8 @@ from("direct:start")
     .to("direct:cheese");
 ----
 
-And using XML DSL you specify it as follows:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -731,6 +797,7 @@ And using XML DSL you specify it as follows:
     <to uri="direct:cheese"/>
 </route>
 ----
+====
 
 In the example above, then `MyProcessor` is causing a failure and throws an exception.
 This means the Split EIP will stop after this, and not split anymore.

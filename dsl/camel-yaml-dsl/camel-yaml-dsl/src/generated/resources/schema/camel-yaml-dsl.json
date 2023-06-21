@@ -1549,6 +1549,9 @@
           "streaming" : {
             "type" : "boolean"
           },
+          "synchronous" : {
+            "type" : "boolean"
+          },
           "timeout" : {
             "type" : "string"
           }
@@ -2012,6 +2015,9 @@
             "type" : "boolean"
           },
           "streaming" : {
+            "type" : "boolean"
+          },
+          "synchronous" : {
             "type" : "boolean"
           },
           "timeout" : {
@@ -2940,6 +2946,9 @@
             "type" : "boolean"
           },
           "streaming" : {
+            "type" : "boolean"
+          },
+          "synchronous" : {
             "type" : "boolean"
           },
           "timeout" : {

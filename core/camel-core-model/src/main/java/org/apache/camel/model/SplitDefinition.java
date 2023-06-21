@@ -65,6 +65,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     private String parallelProcessing;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
+    private String synchronous;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
@@ -194,6 +197,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * all messages has been fully processed, before it continues. It's only processing the sub messages from the
      * splitter which happens concurrently.
      *
+     * When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread
+     * from the parallel thread pool. However, if you want to use the original thread that called the splitter, then
+     * make sure to enable the synchronous option as well.
+     *
      * @return the builder
      */
     public SplitDefinition parallelProcessing() {
@@ -205,6 +212,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * all messages has been fully processed, before it continues. It's only processing the sub messages from the
      * splitter which happens concurrently.
      *
+     * When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread
+     * from the parallel thread pool. However, if you want to use the original thread that called the splitter, then
+     * make sure to enable the synchronous option as well.
+     *
      * @return the builder
      */
     public SplitDefinition parallelProcessing(boolean parallelProcessing) {
@@ -215,6 +226,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
      * all messages has been fully processed, before it continues. It's only processing the sub messages from the
      * splitter which happens concurrently.
+     *
+     * When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread
+     * from the parallel thread pool. However, if you want to use the original thread that called the splitter, then
+     * make sure to enable the synchronous option as well.
      *
      * @return the builder
      */
@@ -257,6 +272,37 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      */
     public SplitDefinition parallelAggregate(String parallelAggregate) {
         setParallelAggregate(parallelAggregate);
+        return this;
+    }
+
+    /**
+     * Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to
+     * continue routing after the split is complete, even if parallel processing is enabled.
+     *
+     * @return the builder
+     */
+    public SplitDefinition synchronous() {
+        return synchronous(true);
+    }
+
+    /**
+     * Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to
+     * continue routing after the split is complete, even if parallel processing is enabled.
+     *
+     * @return the builder
+     */
+    public SplitDefinition synchronous(boolean synchronous) {
+        return synchronous(Boolean.toString(synchronous));
+    }
+
+    /**
+     * Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to
+     * continue routing after the split is complete, even if parallel processing is enabled.
+     *
+     * @return the builder
+     */
+    public SplitDefinition synchronous(String synchronous) {
+        setSynchronous(synchronous);
         return this;
     }
 
@@ -520,6 +566,14 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+
+    public String getSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(String synchronous) {
+        this.synchronous = synchronous;
     }
 
     public String getStreaming() {

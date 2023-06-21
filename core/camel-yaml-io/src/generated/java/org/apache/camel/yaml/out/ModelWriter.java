@@ -1540,6 +1540,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("onPrepare", def.getOnPrepare());
         doWriteAttribute("executorService", def.getExecutorService());
+        doWriteAttribute("synchronous", def.getSynchronous());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
         doWriteAttribute("timeout", def.getTimeout());
         doWriteAttribute("streaming", def.getStreaming());
@@ -1778,6 +1779,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("onPrepare", def.getOnPrepare());
         doWriteAttribute("executorService", def.getExecutorService());
+        doWriteAttribute("synchronous", def.getSynchronous());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
         doWriteAttribute("timeout", def.getTimeout());
         doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints());
@@ -2209,6 +2211,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("aggregationStrategy", def.getAggregationStrategy());
         doWriteAttribute("onPrepare", def.getOnPrepare());
         doWriteAttribute("executorService", def.getExecutorService());
+        doWriteAttribute("synchronous", def.getSynchronous());
         doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName());
         doWriteAttribute("timeout", def.getTimeout());
         doWriteAttribute("streaming", def.getStreaming());

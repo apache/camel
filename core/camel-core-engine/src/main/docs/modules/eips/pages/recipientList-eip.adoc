@@ -178,6 +178,13 @@ XML::
 ----
 ====
 
+[IMPORTANT]
+====
+When parallel processing is enabled, then the Camel routing engin will continue processing
+using last used thread from the parallel thread pool. However, if you want to use the original
+thread that called the recipient list, then make sure to enable the synchronous option as well.
+====
+
 ==== Using custom thread pool
 
 A thread pool is only used for `parallelProcessing`. You supply your own custom thread pool via the `ExecutorServiceStrategy` (see Camel's Threading Model),
