@@ -43,7 +43,8 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
     @Override
     protected AbstractMicrometerEventNotifier<?> getEventNotifier() {
         MicrometerExchangeEventNotifier eventNotifier = new MicrometerExchangeEventNotifier();
-        eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.getEndpointUri());
+        // use sanitized uri to not reveal sensitive information
+        eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.toString());
         return eventNotifier;
     }
 
