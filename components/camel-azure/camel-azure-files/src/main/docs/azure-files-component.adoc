@@ -290,9 +290,9 @@ Unlike FTP component that features special combination of options:
   
   - `useList=false`
   - `fileName=myFileName.txt`
-  - `ignoreFileNotFoundOrPermissionError=true`.
+  - `ignoreFileNotFoundOrPermissionError=true`
 
-to optimize _the single file using a fixed name_ use case
+to optimize _the single file using a fixed name_ use case,
 it is necessary to fallback to regular filters (i.e. the list
 permission is needed). 
 

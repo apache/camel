@@ -93,12 +93,14 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public GenericFile<ShareFileItem> newGenericFile() {
+    	log.trace("newGenericFile()");
         return new RemoteFile<>();
     }
 
     @Override
     public boolean connect(RemoteFileConfiguration config, Exchange exchange)
             throws GenericFileOperationFailedException {
+    	log.trace("connect()");
         root = getClient().getShareClient(configuration.getShare()).getRootDirectoryClient();
         // TODO what about (starting) directory as the root?
         dirStack.push(root);
@@ -107,17 +109,19 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     }
 
     @Override
-    public boolean isConnected() throws GenericFileOperationFailedException {
+    public boolean isConnected() {
+    	log.trace("isConnected()");
         return root != null;
     }
 
     @Override
-    public void disconnect() throws GenericFileOperationFailedException {
-        // noop
+    public void disconnect() {
+    	log.trace("disconnect()");
     }
 
     @Override
     public void forceDisconnect() throws GenericFileOperationFailedException {
+    	log.debug("forceDisconnect()");
         var ms = configuration.getConnectTimeout();
         root.forceCloseAllHandles(true, Duration.ofMillis(ms), Context.NONE);
         root = null;
@@ -126,7 +130,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        log.debug("deleteFile({})", name);
+        log.trace("deleteFile({})", name);
 
         reconnectIfNecessary(null);
 
@@ -653,6 +657,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
 
     @Override
     public void changeToParentDirectory() throws GenericFileOperationFailedException {
+    	log.trace("changeToParentDirectory()");
         try {
             dirStack.pop();
         } catch (EmptyStackException e) {
