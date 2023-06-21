@@ -41,7 +41,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fulldocument":
-        case "fullDocument": target.setFullDocument(property(camelContext, java.lang.String.class, value)); return true;
+        case "fullDocument": target.setFullDocument(property(camelContext, com.mongodb.client.model.changestream.FullDocument.class, value)); return true;
         case "hosts": target.setHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -99,7 +99,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "fulldocument":
-        case "fullDocument": return java.lang.String.class;
+        case "fullDocument": return com.mongodb.client.model.changestream.FullDocument.class;
         case "hosts": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
