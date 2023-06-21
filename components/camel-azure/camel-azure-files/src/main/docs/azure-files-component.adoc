@@ -15,7 +15,7 @@
 
 This component provides access to Azure Files.
 
-When consuming from remote FTP server make sure you read the section titled _Default when consuming files_
+When consuming from remote files server make sure you read the section titled _Consuming Files_
 further below for details related to consuming files.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -31,22 +31,22 @@ for this component:
 </dependency>
 ----
 
-
-== URI Format
+== Endpoint URI Format
 
 ----
-azure-files://account[.file.core.windows.net][:port]/share[/directoryname]
+azure-files://account[.file.core.windows.net][:port]/share[/directory]
 ----
 
-Where *directoryname* represents the underlying directory. The directory
-name is a relative path and does not include the share name. The relative path
-can contain nested folders, such as `/inbox/spam`.
+Where *directory* represents the underlying directory. The directory
+is a relative path and does not include the share name. The relative path
+can contain nested folders, such as `inbox/spam`. It defaults to
+the share root directory.
 
-The `autoCreate` option is supported for the underlying directory.
-when consumer or producer starts there's additional operation
-performed to create the directory configured for endpoint. The default
-value for `autoCreate` is `true`. On contrary, the share is not automatically
-created, it must exist.
+The `autoCreate` option is supported for the directory,
+when consumer or producer starts there's an additional operation
+performed to create the directory configured for the endpoint. The default
+value for `autoCreate` is `true`. On contrary, the share must exist, it
+is not automatically created.
 
 If no *port* number is provided, Camel will provide default values
 according to the protocol (https 443).
@@ -54,10 +54,8 @@ according to the protocol (https 443).
 You can append query options to the URI in the following format,
 `?option=value&option2=value&...`
 
-This component uses the Azure Java SDK libraries for the actual work.
-
-The SAS token or shared key based auth is supported.
-
+The SAS token or shared key based auth is supported, the options
+for selected one must be present.
 
 // component-configure options: START
 
@@ -76,7 +74,7 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 
-== URI Examples
+=== Endpoint URI Examples
 
 ----
 azure-files://camelazurefiles.file.core.windows.net/samples?sv=2022-11-02&ss=f&srt=sco&sp=rwdlc&se=2023-06-18T22:29:13Z&st=2023-06-05T14:29:13Z&spr=https&sig=MPsMh8zci0v3To7IT9SKdaFGZV8ezno63m9C8s9bdVQ%3D
@@ -100,13 +98,15 @@ or to the endpoint starting directory) so interpret them with a grain of salt.
 
 == Concurrency
 
-The component does not support concurrency on its endpoints.
+This component does not support concurrency on its endpoints.
 
-== More information
+== More Information
 
 This component is an extension of the File component.
 So there are more samples and details on the File
 component page.
+
+This component uses the Azure Java SDK libraries for the actual work.
 
 == Consuming Files
 
@@ -147,7 +147,7 @@ read locks. +
 being written; for instance, you can write to a temporary
 destination and move the file after it has been written.
 
-For the `changed` read lock, it relies only on the last modified,
+For the `readLock=changed`, it relies only on the last modified,
 furthermore a precision finer than 5 seconds might be problematic.
 
 When moving files using `move` or `preMove` option, the files are
