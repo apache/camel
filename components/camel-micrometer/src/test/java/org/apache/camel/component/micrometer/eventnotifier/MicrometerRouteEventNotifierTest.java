@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.eventNotifier;
+package org.apache.camel.component.micrometer.eventnotifier;
 
 import io.micrometer.core.instrument.Gauge;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.micrometer.eventnotifier.AbstractMicrometerEventNotifier;
-import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifier;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
