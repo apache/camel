@@ -13578,7 +13578,23 @@ AggregationStrategy is implemented as thread-safe. Default value: false
 If enabled then sending messages to the multicasts occurs concurrently. Note the
 caller thread will still wait until all messages has been fully processed,
 before it continues. Its only the sending and processing the replies from the
-multicasts which happens concurrently. Default value: false
+multicasts which happens concurrently. When parallel processing is enabled, then
+the Camel routing engin will continue processing using last used thread from the
+parallel thread pool. However, if you want to use the original thread that
+called the multicast, then make sure to enable the synchronous option as well.
+Default value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="synchronous" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets whether synchronous processing should be strictly used. When enabled then
+the same thread is used to continue routing after the multicast is complete,
+even if parallel processing is enabled. Default value: false
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15232,7 +15248,23 @@ AggregationStrategy is implemented as thread-safe. Default value: false
 If enabled then sending messages to the recipients occurs concurrently. Note the
 caller thread will still wait until all messages has been fully processed,
 before it continues. Its only the sending and processing the replies from the
-recipients which happens concurrently. Default value: false
+recipients which happens concurrently. When parallel processing is enabled, then
+the Camel routing engin will continue processing using last used thread from the
+parallel thread pool. However, if you want to use the original thread that
+called the recipient list, then make sure to enable the synchronous option as
+well. Default value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="synchronous" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets whether synchronous processing should be strictly used. When enabled then
+the same thread is used to continue routing after the recipient list is
+complete, even if parallel processing is enabled. Default value: false
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17562,7 +17594,23 @@ AggregationStrategy is implemented as thread-safe. Default value: false
 If enabled then processing each split messages occurs concurrently. Note the
 caller thread will still wait until all messages has been fully processed,
 before it continues. It's only processing the sub messages from the splitter
-which happens concurrently. Default value: false
+which happens concurrently. When parallel processing is enabled, then the Camel
+routing engin will continue processing using last used thread from the parallel
+thread pool. However, if you want to use the original thread that called the
+splitter, then make sure to enable the synchronous option as well. Default
+value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="synchronous" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets whether synchronous processing should be strictly used. When enabled then
+the same thread is used to continue routing after the split is complete, even if
+parallel processing is enabled. Default value: false
             ]]>
             </xs:documentation>
           </xs:annotation>
