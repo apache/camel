@@ -35,6 +35,7 @@ import com.azure.storage.file.share.ShareServiceClient;
 import com.azure.storage.file.share.ShareServiceClientBuilder;
 import com.azure.storage.file.share.models.ShareFileItem;
 import com.azure.storage.file.share.models.ShareFileRange;
+import com.azure.storage.file.share.models.ShareStorageException;
 import com.azure.storage.file.share.options.ShareDirectoryCreateOptions;
 import com.azure.storage.file.share.options.ShareFileRenameOptions;
 import com.azure.storage.file.share.options.ShareListFilesAndDirectoriesOptions;
@@ -67,6 +68,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     public static final String HTTPS = "https";
 
     static final int HTTP_OK = 200;
+    static final int HTTP_NOT_FOUND = 404;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final FilesEndpoint endpoint;
@@ -161,22 +163,12 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         // by observation both paths are absolute paths on the share
-        log.debug("Renaming file: {} to: {}", from, to);
+        log.trace("renameFile({}, {})", from, to);
 
-        var backup = backup();
         try {
-            var shareRelativeTo = FilesPath.ensureRelative(to);
-            var fileName = FilesPath.trimParentPath(from);
-
-            changeCurrentDirectory(FilesPath.extractParentPath(from));
-            var cwd = cwd();
-            log.trace("{}> mv {} {}", cwd.getDirectoryPath(), fileName,
-                    FilesPath.SHARE_ROOT + shareRelativeTo);
-            return renameRemote(cwd.getFileClient(fileName), shareRelativeTo);
+            return renameRemote(getFileClient(FilesPath.ensureRelative(from)), FilesPath.ensureRelative(to));
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException("Cannot rename: " + from + " to: " + to, e);
-        } finally {
-            restore(backup);
         }
     }
 
@@ -193,18 +185,6 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
             throws GenericFileOperationFailedException {
 
         log.trace("buildDirectory({})", directory);
-
-        reconnectIfNecessary(null);
-
-        // otherwise to() fails:
-        // org.apache.camel.component.file.GenericFileOperationFailedException: Cannot cd to the share
-        // root: not connected
-        // at org.apache.camel.component.file.azure.FilesOperations.cd(FilesOperations.java:605)
-        // org.apache.camel.component.file.azure.FilesOperations.changeCurrentDirectory(FilesOperations.java:563)
-        // org.apache.camel.component.file.azure.FilesOperations.buildDirectory(FilesOperations.java:178)
-        // org.apache.camel.component.file.GenericFileProducer.writeFile(GenericFileProducer.java:279)
-        // org.apache.camel.component.file.GenericFileProducer.processExchange(GenericFileProducer.java:173)
-        // org.apache.camel.component.file.remote.RemoteFileProducer.process(RemoteFileProducer.java:61)
 
         directory = configuration.normalizePath(directory);
 
@@ -595,28 +575,26 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
-        String directory = FileUtil.onlyPath(name);
-        String onlyName = FileUtil.stripPath(name);
-        var backup = backup();
-        try {
-            changeCurrentDirectory(directory);
-            var file = cwd().getFileClient(onlyName);
-            return existsRemote(file);
-        } catch (RuntimeException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
-        } finally {
-            restore(backup);
-        }
+        return existsRemote(getFileClient(name));
     }
 
     private boolean existsRemote(ShareDirectoryClient dirClient) {
+        // TODO wrap to 404 check too?
         return Boolean.TRUE.equals(
                 dirClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
     }
 
     private boolean existsRemote(ShareFileClient fileClient) {
-        return Boolean.TRUE.equals(
-                fileClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
+        try {
+            return Boolean.TRUE.equals(
+                    fileClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
+        } catch (ShareStorageException ex) {
+            // observed "Status code 404, ParentNotFound" for deep checks
+            if (ex.getStatusCode() == HTTP_NOT_FOUND) {
+                return false;
+            }
+            throw ex;
+        }
     }
 
     /**
@@ -699,23 +677,26 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
     @Override
     public ShareFileItem[] listFiles(String path) throws GenericFileOperationFailedException {
         log.trace("listFiles({})", path);
+        return listRemote(getDirClient(path));
+    }
 
-        if (FilesPath.isAbsolute(path)) {
-            if (FilesPath.isRoot(path)) {
-                return listRemote(root);
-            }
-            var dir = FilesPath.ensureRelative(path);
-            return listRemote(root.getSubdirectoryClient(dir));
-        }
+    private ShareDirectoryClient getDirClient(String path) {
 
-        // TODO needed? could this be called with relative path? 
-        var backup = backup();
-        try {
-            changeCurrentDirectory(path);
-            return listFiles();
-        } finally {
-            restore(backup);
+        assert FilesPath.isAbsolute(path);
+
+        if (FilesPath.isRoot(path)) {
+            return root;
         }
+        var dir = FilesPath.ensureRelative(path);
+        return root.getSubdirectoryClient(dir);
+    }
+
+    private ShareFileClient getFileClient(String path) {
+
+        assert FilesPath.isAbsolute(path);
+        assert !FilesPath.isRoot(path);
+
+        return root.getFileClient(FilesPath.ensureRelative(path));
     }
 
     private ShareFileItem[] listRemote(ShareDirectoryClient dir) {
@@ -767,7 +748,7 @@ public class FilesOperations implements RemoteFileOperations<ShareFileItem> {
         return builder.buildClient();
     }
 
-    private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
+    void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
         boolean reconnectRequired;
         try {
             reconnectRequired = !isConnected();

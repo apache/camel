@@ -154,6 +154,21 @@ When moving files using `move` or `preMove` option, the files are
 restricted to the share. That prevents consumer from moving files
 outside of the endpoint share.
 
+=== Exchange Properties
+
+The consumer sets the following exchange properties
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelBatchIndex` |Current index out of total number of files being consumed in this batch.
+
+|`CamelBatchSize` |Total number of files being consumed in this batch.
+
+|`CamelBatchComplete` |True if there are no more files in this batch.
+|=======================================================================
+
 == Producing Files
 
 The Files producer is optimized for two body types:
@@ -175,20 +190,6 @@ length must be known at its creation time, consequently:
     meaning even for producers.
   - No append mode is supported.
 
-== Exchange Properties
-
-Camel sets the following exchange properties
-
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelBatchIndex` |Current index out of total number of files being consumed in this batch.
-
-|`CamelBatchSize` |Total number of files being consumed in this batch.
-
-|`CamelBatchComplete` |True if there are no more files in this batch.
-|=======================================================================
 
 == About Timeouts
 

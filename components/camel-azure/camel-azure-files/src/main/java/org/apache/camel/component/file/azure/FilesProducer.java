@@ -14,4 +14,10 @@ public class FilesProducer extends RemoteFileProducer<ShareFileItem> {
     public void preWriteCheck(Exchange exchange) throws Exception {
         // noop
     }
+
+    @Override
+    public void start() {
+        super.start();
+        ((FilesOperations) operations).reconnectIfNecessary(null);
+    }
 }
