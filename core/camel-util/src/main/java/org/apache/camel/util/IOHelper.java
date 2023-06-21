@@ -41,7 +41,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -740,4 +743,29 @@ public final class IOHelper {
     public static BufferedWriter toWriter(FileOutputStream os, Charset charset) {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
+
+    /**
+     * Reads the file under the given {@code path}, strips lines starting with {@code commentPrefix} and optionally also
+     * strips blank lines (the ones for which {@link String#isBlank()} returns {@code true}. Normalizes EOL characters
+     * to {@code '\n'}.
+     *
+     * @param  path            the path of the file to read
+     * @param  commentPrefix   the leading character sequence of comment lines.
+     * @param  stripEmptylines if true {@code true} the lines matching {@link String#isBlank()} will not appear in the
+     *                         result
+     * @return                 the filtered content of the file
+     */
+    public static String stripLineComments(Path path, String commentPrefix, boolean stripBlankLines) {
+        StringBuilder result = new StringBuilder();
+        try (Stream<String> lines = Files.lines(path)) {
+            lines
+                    .filter(l -> !l.isBlank())
+                    .filter(line -> !line.startsWith(commentPrefix))
+                    .forEach(line -> result.append(line).append('\n'));
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read " + path, e);
+        }
+        return result.toString();
+    }
+
 }

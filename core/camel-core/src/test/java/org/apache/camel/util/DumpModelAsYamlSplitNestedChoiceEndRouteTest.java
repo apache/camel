@@ -16,7 +16,7 @@
  */
 package org.apache.camel.util;
 
-import java.io.FileInputStream;
+import java.nio.file.Paths;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
@@ -33,7 +33,8 @@ public class DumpModelAsYamlSplitNestedChoiceEndRouteTest extends DumpModelAsYam
         assertNotNull(out);
         log.info(out);
 
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/org/apache/camel/util/split-choice.yaml"));
+        String expected = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/split-choice.yaml"),
+                "#", true);
         Assertions.assertEquals(expected, out);
     }
 
