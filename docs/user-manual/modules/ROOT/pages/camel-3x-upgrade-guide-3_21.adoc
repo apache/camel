@@ -106,6 +106,7 @@ The following components that had been marked as deprecated, were removed in thi
 
 * camel-dozer
 * camel-cmis
+* camel-vertx-kafka
 
 === Backlog Tracing
 
