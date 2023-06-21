@@ -68,6 +68,8 @@ public class FilesOperations extends NormalizedOperations {
     public static final String HTTPS = "https";
 
     static final int HTTP_OK = 200;
+    static final int HTTP_CREATED = 201;
+    static final int HTTP_ACCEPTED = 202;
     static final int HTTP_NOT_FOUND = 404;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -146,8 +148,10 @@ public class FilesOperations extends NormalizedOperations {
 
     private boolean deleteRemote(ShareDirectoryClient dirClient, String fileName) {
         log.trace("{}> rm {}", dirClient.getDirectoryPath(), fileName);
-        return Boolean.TRUE.equals(dirClient
-                .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE).getValue());
+        var status = dirClient
+                .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE).getStatusCode();
+        // doc: If Response's status code is 202, the file was successfully deleted. If status code is 404, the file does not exist.
+        return status == HTTP_NOT_FOUND || status == HTTP_ACCEPTED;
     }
 
     @SuppressWarnings("unchecked")
@@ -493,18 +497,10 @@ public class FilesOperations extends NormalizedOperations {
             } else {
                 var cwd = cwd();
                 var file = cwd.getFileClient(targetName);
-                // TODO check return values?
-                deleteRemote(cwd, targetName);
-                createRemote(file, length);
-                log.trace("{}> put {}", cwd.getDirectoryPath(), targetName);
-                // NOTE: here >4MiB is possible (unlike upload limitation)
-                try (var os = file.getFileOutputStream()) {
-                    // TODO add data timeout?
-                    // TODO err if the is is shorter than allocated file length?
-                    is.transferTo(os);
-                    os.flush();
+                if (deleteRemote(cwd, targetName) && createRemote(file, length)) {
+                	storeRemote(file, is);
+                	answer = true;
                 }
-                answer = true;
             }
             if (log.isDebugEnabled()) {
                 long time = watch.taken();
@@ -514,19 +510,28 @@ public class FilesOperations extends NormalizedOperations {
 
             return answer;
 
-        } catch (IOException e) {
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
-        } catch (InvalidPayloadException e) {
+        } catch (InvalidPayloadException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(is, "store: " + name, log);
         }
     }
+    
+    private void storeRemote(ShareFileClient file, InputStream is) throws IOException {
+        log.trace("> put {}", file.getFilePath());
+        // NOTE: here >4MiB is possible (unlike the upload limitation)
+        try (var os = file.getFileOutputStream()) {
+            // TODO add data timeout?
+            // TODO err if the is is shorter than allocated file length?
+            is.transferTo(os);
+            os.flush();
+        }
+    }
 
     private boolean createRemote(ShareFileClient fileClient, int length) {
-        var createResponse = fileClient.createWithResponse(length, null, null, null, null,
-                endpoint.getMetadataTimeout(), Context.NONE);
-        return createResponse.getStatusCode() == HTTP_OK;
+        var code = fileClient.createWithResponse(length, null, null, null, null,
+                endpoint.getMetadataTimeout(), Context.NONE).getStatusCode();
+        return code == HTTP_CREATED || code == HTTP_OK;
     }
 
     @Override
@@ -542,7 +547,6 @@ public class FilesOperations extends NormalizedOperations {
     private boolean existsRemote(ShareDirectoryClient dirClient) {
         try {
             return Boolean.TRUE.equals(
-
                     dirClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
         } catch (ShareStorageException ex) {
             // observed "Status code 404, ParentNotFound" for deep checks
