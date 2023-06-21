@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.mongodb.integration;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
@@ -45,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private MongoCollection<Document> mongoCollection;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /*
      * NOTE: in the case of this test, we *DO* want to recreate everything after the test has executed, so that when
@@ -76,7 +74,7 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         String consumerRouteId = "simpleConsumer";
         context.getRouteController().startRoute(consumerRouteId);
 
-        Executors.newSingleThreadExecutor().submit(this::singleInsert).get();
+        CompletableFuture.runAsync(this::singleInsert);
 
         mock.assertIsSatisfied();
         context.getRouteController().stopRoute(consumerRouteId);
@@ -98,7 +96,7 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         String consumerRouteId = "filterConsumer";
         context.getRouteController().startRoute(consumerRouteId);
 
-        executorService.submit(this::singleInsert).get();
+        CompletableFuture.runAsync(this::singleInsert);
 
         mock.assertIsSatisfied();
 
@@ -108,6 +106,36 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
     }
 
     @Order(3)
+    @Test
+    public void updateWithFullDocumentTest() throws Exception {
+        assertEquals(0, mongoCollection.countDocuments());
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
+        mock.expectedMessageCount(1);
+
+        String consumerRouteId = "updateWithFullDocumentConsumer";
+        context.getRouteController().startRoute(consumerRouteId);
+
+        ObjectId objectId1 = new ObjectId();
+        ObjectId objectId2 = new ObjectId();
+        CompletableFuture.runAsync(() -> {
+            mongoCollection.insertOne(new Document("_id", objectId1).append("property", "random value"));
+            mongoCollection.insertOne(new Document("_id", objectId2).append("property", "another value"));
+            mongoCollection.updateOne(new Document("_id", objectId1),
+                    new Document("$set", new Document("property", "filterOk")));
+            mongoCollection.updateOne(new Document("_id", objectId2),
+                    new Document("$set", new Document("property", "filterNotOk")));
+        });
+
+        mock.assertIsSatisfied();
+
+        Exchange updateExchange = mock.getExchanges().get(0);
+        Document actualDocument = updateExchange.getIn().getBody(Document.class);
+        assertEquals("filterOk", actualDocument.get("property"));
+        assertEquals(objectId1, updateExchange.getIn().getHeader("_id"));
+        context.getRouteController().stopRoute(consumerRouteId);
+    }
+
+    @Order(4)
     @Test
     public void operationTypeAndIdHeaderTest() throws Exception {
         Assumptions.assumeTrue(0 == mongoCollection.countDocuments(), "The collection should have no documents");
@@ -120,7 +148,7 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         context.getRouteController().startRoute(consumerRouteId);
 
         ObjectId objectId = new ObjectId();
-        Executors.newSingleThreadExecutor().submit(() -> insertAndDelete(objectId)).get();
+        CompletableFuture.runAsync(() -> insertAndDelete(objectId));
 
         mock.assertIsSatisfied();
 
@@ -158,6 +186,11 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
 
                 from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{myStreamFilter}}")
                         .id("filterConsumer")
+                        .autoStartup(false)
+                        .to("mock:test");
+
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{filter.update}}&fullDocument=updateLookup")
+                        .id("updateWithFullDocumentConsumer")
                         .autoStartup(false)
                         .to("mock:test");
             }

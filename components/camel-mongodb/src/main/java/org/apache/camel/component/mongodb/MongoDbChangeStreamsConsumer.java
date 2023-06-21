@@ -62,8 +62,8 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
             bsonFilter = singletonList(BsonDocument.parse(streamFilter));
         }
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
-                1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                endpoint.getEndpointUri(), 1);
         changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter);
         changeStreamsThread.init();
         executor.execute(changeStreamsThread);
