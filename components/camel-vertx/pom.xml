@@ -36,7 +36,6 @@
         <module>camel-vertx-common</module>
         <module>camel-vertx</module>
         <module>camel-vertx-http</module>
-        <module>camel-vertx-kafka</module>
         <module>camel-vertx-websocket</module>
     </modules>
 

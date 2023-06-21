@@ -40,7 +40,7 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     }
 
     protected KafkaContainer initContainer() {
-        return new KafkaContainer().withEmbeddedZookeeper();
+        return new KafkaContainer(DockerImageName.parse(KAFKA3_IMAGE_NAME)).withEmbeddedZookeeper();
     }
 
     public String getBootstrapServers() {
