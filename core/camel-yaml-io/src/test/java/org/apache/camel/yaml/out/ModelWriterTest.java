@@ -16,9 +16,9 @@
  */
 package org.apache.camel.yaml.out;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Paths;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,9 +39,10 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.util.IOHelper.stripLineComments;
 
 public class ModelWriterTest {
 
@@ -61,7 +62,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route0b.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route0b.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -82,7 +83,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route1.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route1.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -108,7 +109,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route2.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route2.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -138,7 +139,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route3.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route3.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -159,7 +160,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route4.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route4.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -184,7 +185,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route5.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route5.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -207,7 +208,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route6.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route6.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -239,7 +240,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(mcc.getRouteDefinition("myRoute7"));
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route7.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route7.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -272,7 +273,7 @@ public class ModelWriterTest {
         writer.writeRoutesDefinition(routes);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route8b.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route8b.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -292,7 +293,7 @@ public class ModelWriterTest {
         writer.writeRouteDefinition(route);
 
         String out = sw.toString();
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/route9.yaml"));
+        String expected = stripLineComments(Paths.get("src/test/resources/route9.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
