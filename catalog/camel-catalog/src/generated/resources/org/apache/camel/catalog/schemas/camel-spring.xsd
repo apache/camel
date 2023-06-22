@@ -15409,7 +15409,7 @@ Sets the name of the service to use.
             <xs:documentation xml:lang="en">
               <![CDATA[
 The uri of the endpoint to send to. The uri can be dynamic computed using the
-org.apache.camel.language.simple.SimpleLanguage expression.
+simple language expression.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15497,73 +15497,74 @@ Set a reference to a custom Expression to use.
         <xs:attribute name="nodes" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 A comma separate list of servers to connect to in the form host:port.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="namespace" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
-As ZooKeeper is a shared space, users of a given cluster should stay within a pre-defined namespace. If a namespace is
-set here, all paths will get pre-pended with the namespace.
-]]>
+              <![CDATA[
+As ZooKeeper is a shared space, users of a given cluster should stay within a
+pre-defined namespace. If a namespace is set here, all paths will get pre-pended
+with the namespace.
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="reconnectBaseSleepTime" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Initial amount of time to wait between retries.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="reconnectMaxSleepTime" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Max time in ms to sleep on each retry.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="reconnectMaxRetries" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Max number of times to retry.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="sessionTimeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Session timeout.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="connectionTimeout" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Connection timeout.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="basePath" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Set the base path to store in ZK.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15604,20 +15605,20 @@ Set the base path to store in ZK.
         <xs:attribute name="hostHeader" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
-The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST. Default value:
-CamelServiceCallServiceHost
-]]>
+              <![CDATA[
+The header that holds the service host information, default
+ServiceCallConstants.SERVICE_HOST. Default value: CamelServiceCallServiceHost
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="portHeader" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
-The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT. Default value:
-CamelServiceCallServicePort
-]]>
+              <![CDATA[
+The header that holds the service port information, default
+ServiceCallConstants.SERVICE_PORT. Default value: CamelServiceCallServicePort
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -15648,9 +15649,9 @@ CamelServiceCallServicePort
           <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
             <xs:annotation>
               <xs:documentation xml:lang="en">
-<![CDATA[
+                <![CDATA[
 Configures the Expression using the given configuration.
-]]>
+              ]]>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -15658,91 +15659,91 @@ Configures the Expression using the given configuration.
         <xs:attribute name="name" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Sets the name of the service to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="uri" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 The uri of the endpoint to send to. The uri can be dynamic computed using the
 org.apache.camel.language.simple.SimpleLanguage expression.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="component" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 The component to use. Default value: http
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="pattern" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Sets the optional ExchangePattern used to invoke this endpoint.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="configurationRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Refers to a ServiceCall configuration to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="serviceDiscoveryRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Sets a reference to a custom ServiceDiscovery to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="serviceFilterRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Sets a reference to a custom ServiceFilter to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="serviceChooserRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Sets a reference to a custom ServiceChooser to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="loadBalancerRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Sets a reference to a custom ServiceLoadBalancer to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="expressionRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
-<![CDATA[
+              <![CDATA[
 Set a reference to a custom Expression to use.
-]]>
+            ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -17262,16 +17263,6 @@ password, application or accessCode.
               <![CDATA[
 OpenId Connect URL to discover OAuth2 configuration values.
             ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="configurationRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Reference to a saxon configuration instance in the registry to use for xquery (requires camel-saxon). This may be needed
-to add custom functions to a saxon configuration, so these custom functions can be used in xquery expressions.
-]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
