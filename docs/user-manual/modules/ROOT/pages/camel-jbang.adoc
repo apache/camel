@@ -2441,10 +2441,15 @@ User configuration values can be used as placeholder substitutes with command li
 ----
 camel config set repos=https://maven.repository.my.repo.com/ga
 
-camel run 'Test.java' --logging-level=info --repos=$repos,https://packages.atlassian.com/maven-external
+camel run 'Test.java' --logging-level=info --repos=#repos,https://packages.atlassian.com/maven-external
 ----
 
-in this example, since `repos` is set in the user configuration (`config set`) and the `camel run` command declares the placeholder `$repos`, `camel run` will replace the placeholder so that both repositories will be used during the execution.
+In this example, since `repos` is set in the user configuration (`config set`) and the `camel run` command declares the placeholder `#repos`, `camel run` will replace the placeholder so that both repositories will be used during the execution.
+Notice, that to refer to the configuration value the syntax is `#optionName` eg `#repos`.
+
+NOTE: The placeholder substitution only works for every option that a given Camel command has.
+You can see all the options a command has via the help, eg `camel run --help`.
+
 
 == Troubleshooting
 
