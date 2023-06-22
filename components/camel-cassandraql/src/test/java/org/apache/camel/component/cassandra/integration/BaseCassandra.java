@@ -18,6 +18,7 @@ package org.apache.camel.component.cassandra.integration;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -31,11 +32,11 @@ import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSupportHelper {
 
@@ -68,10 +69,10 @@ public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSuppo
     }
 
     public void executeScript(String pathToScript) throws IOException {
-        String s = IOUtils.toString(getClass().getResourceAsStream("/" + pathToScript), "UTF-8");
+        String s = IOHelper.stripLineComments(Paths.get("src/test/resources/" + pathToScript), "--", true);
         String[] statements = s.split(";");
         for (int i = 0; i < statements.length; i++) {
-            if (!statements[i].isEmpty()) {
+            if (!statements[i].isBlank()) {
                 executeCql(statements[i]);
             }
         }
