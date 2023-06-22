@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
@@ -566,13 +565,6 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return producerCache.getEndpointUtilizationStatistics();
-    }
-
-    /**
-     * Returns the outbound message if available. Otherwise return the inbound message.
-     */
-    private Message getResultMessage(Exchange exchange) {
-        return exchange.getMessage();
     }
 
     /**
