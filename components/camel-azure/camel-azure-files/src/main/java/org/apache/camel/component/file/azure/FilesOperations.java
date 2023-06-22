@@ -498,8 +498,8 @@ public class FilesOperations extends NormalizedOperations {
                 var cwd = cwd();
                 var file = cwd.getFileClient(targetName);
                 if (deleteRemote(cwd, targetName) && createRemote(file, length)) {
-                	storeRemote(file, is);
-                	answer = true;
+                    storeRemote(file, is);
+                    answer = true;
                 }
             }
             if (log.isDebugEnabled()) {
@@ -516,7 +516,7 @@ public class FilesOperations extends NormalizedOperations {
             IOHelper.close(is, "store: " + name, log);
         }
     }
-    
+
     private void storeRemote(ShareFileClient file, InputStream is) throws IOException {
         log.trace("> put {}", file.getFilePath());
         // NOTE: here >4MiB is possible (unlike the upload limitation)

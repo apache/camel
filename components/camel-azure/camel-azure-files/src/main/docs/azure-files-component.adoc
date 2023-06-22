@@ -2,7 +2,7 @@
 :doctitle: Azure Files
 :shortname: azure-files
 :artifactid: camel-azure-files
-:description: Camel Azure Files Component
+:description: Camel Azure Files Component (Preview)
 :since: 3.21
 :supportlevel: Preview
 :component-header: Both producer and consumer are supported
