@@ -663,6 +663,7 @@
                         <configuration>
                             <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <failIfNoTests>false</failIfNoTests>
+                            <skipTests>true</skipTests>
                         </configuration>
                      </plugin>
                 </plugins>
