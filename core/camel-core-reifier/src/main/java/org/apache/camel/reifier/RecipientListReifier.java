@@ -46,6 +46,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         final Expression expression = createExpression(definition.getExpression());
 
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isSynchronous = parseBoolean(definition.getSynchronous(), false);
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
         boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
@@ -62,6 +63,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         answer.setAggregationStrategy(createAggregationStrategy());
         answer.setParallelProcessing(isParallelProcessing);
         answer.setParallelAggregate(isParallelAggregate);
+        answer.setSynchronous(isSynchronous);
         answer.setStreaming(isStreaming);
         answer.setShareUnitOfWork(isShareUnitOfWork);
         answer.setStopOnException(isStopOnException);

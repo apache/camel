@@ -134,7 +134,7 @@
     <commons-dbcp-version>1.4</commons-dbcp-version>
     <commons-dbcp2-version>2.9.0</commons-dbcp2-version>
     <commons-exec-version>1.3</commons-exec-version>
-    <commons-io-version>2.11.0</commons-io-version>
+    <commons-io-version>2.13.0</commons-io-version>
     <commons-lang-version>2.6</commons-lang-version>
     <commons-lang3-version>3.12.0</commons-lang3-version>
     <commons-logging-version>1.2</commons-logging-version>
@@ -433,7 +433,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.93.Final</netty-version>
+    <netty-version>4.1.94.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
     <nitrite-version>3.4.4</nitrite-version>

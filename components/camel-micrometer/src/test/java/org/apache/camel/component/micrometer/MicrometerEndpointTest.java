@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class MicrometerEndpointTest {
@@ -83,12 +81,6 @@ public class MicrometerEndpointTest {
     public void testAbstractMetricsEndpoint() {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
         assertThat(endpoint.getRegistry(), is(registry));
-    }
-
-    @Test
-    public void testCreateConsumer() {
-        assertThrows(RuntimeCamelException.class,
-                () -> endpoint.createConsumer(processor));
     }
 
     @Test

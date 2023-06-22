@@ -606,6 +606,7 @@ public class ModelParser extends BaseParser {
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
                 case "stopOnException": def.setStopOnException(val); break;
                 case "streaming": def.setStreaming(val); break;
+                case "synchronous": def.setSynchronous(val); break;
                 case "timeout": def.setTimeout(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -818,6 +819,7 @@ public class ModelParser extends BaseParser {
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
                 case "stopOnException": def.setStopOnException(val); break;
                 case "streaming": def.setStreaming(val); break;
+                case "synchronous": def.setSynchronous(val); break;
                 case "timeout": def.setTimeout(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -1343,6 +1345,7 @@ public class ModelParser extends BaseParser {
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
                 case "stopOnException": def.setStopOnException(val); break;
                 case "streaming": def.setStreaming(val); break;
+                case "synchronous": def.setSynchronous(val); break;
                 case "timeout": def.setTimeout(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }

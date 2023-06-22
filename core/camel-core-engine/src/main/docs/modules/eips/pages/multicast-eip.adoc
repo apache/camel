@@ -94,6 +94,13 @@ And in XML:
 </route>
 ----
 
+[IMPORTANT]
+====
+When parallel processing is enabled, then the Camel routing engin will continue processing
+using last used thread from the parallel thread pool. However, if you want to use the original
+thread that called the multicast, then make sure to enable the synchronous option as well.
+====
+
 === Ending a Multicast block
 
 You may want to continue routing the exchange after the Multicast EIP. In Java DSL you need to use `end()`
