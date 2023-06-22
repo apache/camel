@@ -41,12 +41,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Isolated
 public class WireTapAbortPolicyTest extends ContextTestSupport {
 
-    final CountDownLatch latch = new CountDownLatch(1);
-    final CyclicBarrier barrier = new CyclicBarrier(2);
-
     protected MockEndpoint tap;
     protected MockEndpoint result;
     protected ExecutorService pool;
+
+    private final CountDownLatch latch = new CountDownLatch(1);
+    private final CyclicBarrier barrier = new CyclicBarrier(2);
 
     @Override
     @AfterEach
