@@ -447,12 +447,12 @@
         <splunk-version>1.9.0_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.0.2</spring-batch-version>
-        <spring-data-redis-version>3.0.5</spring-data-redis-version>
+        <spring-data-redis-version>3.1.1</spring-data-redis-version>
         <spring-ldap-version>3.1.0</spring-ldap-version>
-        <spring-vault-core-version>3.0.2</spring-vault-core-version>
+        <spring-vault-core-version>3.0.3</spring-vault-core-version>
         <spring-version>6.0.10</spring-version>
-        <spring-rabbitmq-version>3.0.4</spring-rabbitmq-version>
-        <spring-security-version>6.0.4</spring-security-version>
+        <spring-rabbitmq-version>3.0.5</spring-rabbitmq-version>
+        <spring-security-version>6.1.1</spring-security-version>
         <spring-ws-version>4.0.4</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
