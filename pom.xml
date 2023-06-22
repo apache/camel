@@ -591,6 +591,9 @@
                     <name>release</name>
                 </property>
             </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
             <build>
                 <plugins>
                     <!-- We want to deploy the artifact to a staging location for perusal -->
