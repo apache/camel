@@ -288,7 +288,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                 if (e != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint, e);
                     }
                     current.setException(null);
                 }
@@ -364,7 +364,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                     : ExchangeHelper.resolveEndpoint(exchange, recipient);
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoints()) {
-                LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
             } else {
                 throw e;
             }
@@ -461,7 +461,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                                 if (e != null) {
                                     if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.",
+                                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint,
                                                 e);
                                     }
                                     current.setException(null);
