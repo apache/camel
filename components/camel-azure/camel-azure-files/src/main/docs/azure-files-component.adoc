@@ -15,6 +15,14 @@
 
 This component provides access to Azure Files.
 
+[CAUTION]
+====
+A preview component so anything can change in a next release
+or it could be even dropped. At the same time it is consolidated
+enough, sparingly documented, a few users reported it was working
+in their environment, and it is ready for wider feedback. 
+====
+
 When consuming from remote files server make sure you read the section titled _Consuming Files_
 further below for details related to consuming files.
 
