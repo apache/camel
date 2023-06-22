@@ -20,7 +20,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- If uncommented detected as Java 8 -->
     <parent>  
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
@@ -29,31 +28,19 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-files</artifactId>
-    <!--<version>4.0.0-SNAPSHOT</version>-->
     <packaging>jar</packaging>
 
     <name>Camel :: Azure Files</name>
-    <description>Camel Azure Files Component</description>
+    <description>Camel Azure Files Component (Preview)</description>
 
     <properties>
         <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
-
-<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jdk.version>11</jdk.version
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <mockito-version>3.12.4</mockito-version>
-        <commons-lang3-version>3.12.0</commons-lang3-version>
-        <awaitility-version>4.2.0</awaitility-version>
-        <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>-->
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
-            <!--<version>4.0.0-SNAPSHOT</version>  inlined from parent -->
         </dependency>
 
         <dependency>
@@ -65,7 +52,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
-            <!-- <version>4.0.0-SNAPSHOT</version>  inlined from parent -->
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -86,16 +72,6 @@
             <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-    <!--
-      <build>
-    <plugins>
-      <plugin>  inlined from parent
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin-version}</version>
-      </plugin>
-    </plugins>
-  </build> -->
+
 </project>

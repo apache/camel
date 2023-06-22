@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-files",
     "title": "Azure Files",
-    "description": "Camel Azure Files Component",
+    "description": "Camel Azure Files Component (Preview)",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "3.21.0",
