@@ -439,6 +439,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.exchangeExceptionMessageExpression();
         } else if (ObjectHelper.equal(expression, "exception.stacktrace")) {
             return ExpressionBuilder.exchangeExceptionStackTraceExpression();
+        } else if (ObjectHelper.equal(expression, "threadId")) {
+            return ExpressionBuilder.threadIdExpression();
         } else if (ObjectHelper.equal(expression, "threadName")) {
             return ExpressionBuilder.threadNameExpression();
         } else if (ObjectHelper.equal(expression, "hostname")) {
@@ -846,6 +848,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "exceptionMessage(exchange)";
         } else if (ObjectHelper.equal(expression, "exception.stacktrace")) {
             return "exceptionStacktrace(exchange)";
+        } else if (ObjectHelper.equal(expression, "threadId")) {
+            return "threadId()";
         } else if (ObjectHelper.equal(expression, "threadName")) {
             return "threadName()";
         } else if (ObjectHelper.equal(expression, "hostname")) {
