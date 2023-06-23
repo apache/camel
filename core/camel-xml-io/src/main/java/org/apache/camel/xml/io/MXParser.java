@@ -101,15 +101,15 @@ public class MXParser implements XmlPullParser {
     protected boolean emptyElementTag;
     // element stack
     protected int depth;
-    protected char[] elRawName[];
-    protected int elRawNameEnd[];
-    protected int elRawNameLine[];
+    protected char[][] elRawName;
+    protected int[] elRawNameEnd;
+    protected int[] elRawNameLine;
 
-    protected String elName[];
-    protected String elPrefix[];
-    protected String elUri[];
+    protected String[] elName;
+    protected String[] elPrefix;
+    protected String[] elUri;
     // protected String elValue[];
-    protected int elNamespaceCount[];
+    protected int[] elNamespaceCount;
 
     /**
      * Make sure that we have enough space to keep element stack if passed size. It will always create one additional
@@ -189,13 +189,13 @@ public class MXParser implements XmlPullParser {
 
     // attribute stack
     protected int attributeCount;
-    protected String attributeName[];
-    protected int attributeNameHash[];
+    protected String[] attributeName;
+    protected int[] attributeNameHash;
     // protected int attributeNameStart[];
     // protected int attributeNameEnd[];
-    protected String attributePrefix[];
-    protected String attributeUri[];
-    protected String attributeValue[];
+    protected String[] attributePrefix;
+    protected String[] attributeUri;
+    protected String[] attributeValue;
     // protected int attributeValueStart[];
     // protected int attributeValueEnd[];
 
@@ -246,9 +246,9 @@ public class MXParser implements XmlPullParser {
 
     // namespace stack
     protected int namespaceEnd;
-    protected String namespacePrefix[];
-    protected int namespacePrefixHash[];
-    protected String namespaceUri[];
+    protected String[] namespacePrefix;
+    protected int[] namespacePrefixHash;
+    protected String[] namespaceUri;
 
     protected void ensureNamespacesCapacity(int size) {
         final int namespaceSize = namespacePrefix != null ? namespacePrefix.length : 0;
@@ -282,7 +282,7 @@ public class MXParser implements XmlPullParser {
      * simplistic implementation of hash function that has <b>constant</b> time to compute - so it also means
      * diminishing hash quality for long strings but for XML parsing it should be good enough ...
      */
-    protected static int fastHash(char ch[], int off, int len) {
+    protected static int fastHash(char[] ch, int off, int len) {
         if (len == 0)
             return 0;
         // assert len >0
@@ -308,12 +308,12 @@ public class MXParser implements XmlPullParser {
     // entity replacement stack
     protected int entityEnd;
 
-    protected String entityName[];
-    protected char[] entityNameBuf[];
-    protected String entityReplacement[];
-    protected char[] entityReplacementBuf[];
+    protected String[] entityName;
+    protected char[][] entityNameBuf;
+    protected String[] entityReplacement;
+    protected char[][] entityReplacementBuf;
 
-    protected int entityNameHash[];
+    protected int[] entityNameHash;
 
     protected void ensureEntityCapacity() {
         final int entitySize = entityReplacementBuf != null ? entityReplacementBuf.length : 0;
@@ -324,9 +324,9 @@ public class MXParser implements XmlPullParser {
                 System.err.println("TRACE_SIZING entitySize " + entitySize + " ==> " + newSize);
             }
             final String[] newEntityName = new String[newSize];
-            final char[] newEntityNameBuf[] = new char[newSize][];
+            final char[][] newEntityNameBuf = new char[newSize][];
             final String[] newEntityReplacement = new String[newSize];
-            final char[] newEntityReplacementBuf[] = new char[newSize][];
+            final char[][] newEntityReplacementBuf = new char[newSize][];
             if (entityName != null) {
                 System.arraycopy(entityName, 0, newEntityName, 0, entityEnd);
                 System.arraycopy(entityNameBuf, 0, newEntityNameBuf, 0, entityEnd);
@@ -357,7 +357,7 @@ public class MXParser implements XmlPullParser {
     protected int bufLoadFactor = 95; // 99%
     // protected int bufHardLimit; // only matters when expanding
 
-    protected char buf[] = new char[Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 256];
+    protected char[] buf = new char[Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 256];
     protected int bufSoftLimit = (bufLoadFactor * buf.length) / 100; // desirable
                                                                     // size of
                                                                     // buffer
@@ -370,7 +370,7 @@ public class MXParser implements XmlPullParser {
     protected int posStart;
     protected int posEnd;
 
-    protected char pc[] = new char[Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 64];
+    protected char[] pc = new char[Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 64];
     protected int pcStart;
     protected int pcEnd;
 
@@ -3049,8 +3049,8 @@ public class MXParser implements XmlPullParser {
     // protected static int lookupNameStartChar[] = new int[ LOOKUP_MAX_CHAR /
     // 32 ];
     // protected static int lookupNameChar[] = new int[ LOOKUP_MAX_CHAR / 32 ];
-    protected static boolean lookupNameStartChar[] = new boolean[LOOKUP_MAX];
-    protected static boolean lookupNameChar[] = new boolean[LOOKUP_MAX];
+    protected static boolean[] lookupNameStartChar = new boolean[LOOKUP_MAX];
+    protected static boolean[] lookupNameChar = new boolean[LOOKUP_MAX];
 
     private static void setName(char ch)
     // { lookupNameChar[ (int)ch / 32 ] |= (1 << (ch % 32)); }
