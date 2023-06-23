@@ -133,13 +133,13 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     LOG.debug("Hzlq Consumer Interrupted: {}", e, e);
                 }
                 continue;
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // Rollback
                 if (transactionCtx != null) {
                     LOG.trace("Rollback transaction: {}", transactionCtx.getTxnId());
                     try {
                         transactionCtx.rollbackTransaction();
-                    } catch (Throwable ignore) {
+                    } catch (Exception ignore) {
                     }
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
