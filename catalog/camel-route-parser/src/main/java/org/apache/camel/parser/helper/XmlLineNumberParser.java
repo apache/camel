@@ -247,7 +247,7 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void characters(final char ch[], final int start, final int length) {
+            public void characters(final char[] ch, final int start, final int length) {
                 textBuffer.append(ch, start, length);
             }
 
