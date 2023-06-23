@@ -117,7 +117,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         if (lockFile != null) {
             try {
                 lockFile.close();
-            } catch (Throwable ignore) {
+            } catch (Exception ignore) {
                 // Ignore
             }
             lockFile = null;

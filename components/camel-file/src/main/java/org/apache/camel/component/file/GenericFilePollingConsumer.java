@@ -175,9 +175,6 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                     cause = t;
                     done = true;
                 }
-            } catch (Throwable t) {
-                cause = t;
-                done = true;
             }
 
             if (!done && timeout > 0) {
