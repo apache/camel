@@ -21,7 +21,7 @@ package org.apache.camel.converter.crypto;
  */
 public final class HexUtils {
 
-    private static char hexChars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    private static char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
     private HexUtils() {
     }
@@ -34,7 +34,7 @@ public final class HexUtils {
      * @param  length how many bytes from the array to include in the hexidecimal representation
      * @return        a string containing the hexidecimal representation of the requested bytes from the array
      */
-    public static String byteArrayToHexString(byte in[], int start, int length) {
+    public static String byteArrayToHexString(byte[] in, int start, int length) {
         String asHexString = null;
         if (in != null) {
             StringBuilder out = new StringBuilder(in.length * 2);
@@ -55,7 +55,7 @@ public final class HexUtils {
      * @param  in the byte array to convert to a hex string.
      * @return    a string containing the hexidecimal representation of the array
      */
-    public static String byteArrayToHexString(byte in[]) {
+    public static String byteArrayToHexString(byte[] in) {
         return byteArrayToHexString(in, 0, in.length);
     }
 
