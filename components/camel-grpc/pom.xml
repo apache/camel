@@ -250,7 +250,7 @@
                     <dependency>
                         <groupId>com.google.guava</groupId>
                         <artifactId>guava</artifactId>
-                        <version>${grpc-guava-version}</version>
+                        <version>${guava-version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

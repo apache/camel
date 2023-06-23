@@ -48,12 +48,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Override the android JDK 7 guava in libraries-bom -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${google-cloud-guava-version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>

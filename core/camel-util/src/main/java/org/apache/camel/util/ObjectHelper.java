@@ -160,6 +160,21 @@ public final class ObjectHelper {
     }
 
     /**
+     * Asserts that the given {@code value} is neither {@code null} nor an emptyString.
+     *
+     * @param  value                    the value to test
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static String notNullOrEmpty(String value, String name) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(name + " must be specified and non-empty");
+        }
+        return value;
+    }
+
+    /**
      * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
      * @param  value                    the value to test
