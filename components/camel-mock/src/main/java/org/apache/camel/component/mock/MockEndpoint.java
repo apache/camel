@@ -1334,7 +1334,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (!skip) {
                 try {
                     test.run();
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // the test failed so we do not match
                     return false;
                 }
@@ -1634,8 +1634,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                     }
                 }
             }
-        } catch (Throwable e) {
-            // must catch java.lang.Throwable as AssertionError extends java.lang.Error
+        } catch (AssertionError | Exception e) {
+            // AssertionError extends java.lang.Error
             failures.add(e);
         } finally {
             // make sure latch is counted down to avoid test hanging forever
