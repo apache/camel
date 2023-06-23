@@ -69,7 +69,6 @@ public class Translate2Configuration implements Cloneable {
     @UriParam
     private String profileCredentialsName;
 
-
     public TranslateClient getTranslateClient() {
         return translateClient;
     }
