@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.DeletedModel;
@@ -27,9 +28,6 @@ import org.apache.camel.component.wordpress.api.service.spi.PostsSPI;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using
@@ -54,7 +52,7 @@ public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAd
     @Override
     public List<Post> list(PostSearchCriteria criteria) {
         LOGGER.debug("Calling list posts: searchCriteria {}", criteria);
-        checkNotNull(criteria, "Please provide a search criteria");
+        Objects.requireNonNull(criteria, "Please provide a search criteria");
         return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
                 criteria.getSearch(), criteria.getAfter(), criteria.getAuthor(),
                 criteria.getAuthorExclude(), criteria.getBefore(), criteria.getExclude(), criteria.getInclude(),
@@ -66,8 +64,10 @@ public class WordpressServicePostsAdapter extends AbstractWordpressCrudServiceAd
     @Override
     public Post retrieve(Integer postId, Context context, String password) {
         LOGGER.debug("Calling retrievePosts: postId {};  postContext: {}", postId, context);
-        checkArgument(postId > 0, "Please provide a non zero post id");
-        checkNotNull(context, "Provide a post context");
+        if (postId <= 0) {
+            throw new IllegalArgumentException("Please provide a non zero post id");
+        }
+        Objects.requireNonNull(context, "Provide a post context");
         return getSpi().retrieve(this.getApiVersion(), postId, context, password);
     }
 

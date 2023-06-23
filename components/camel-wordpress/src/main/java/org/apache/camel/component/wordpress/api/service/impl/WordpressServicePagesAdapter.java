@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.Page;
@@ -28,9 +29,6 @@ import org.apache.camel.component.wordpress.api.service.spi.PostsSPI;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using
@@ -56,7 +54,7 @@ public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAd
     @Override
     public List<Page> list(PageSearchCriteria c) {
         LOGGER.debug("Calling list pages: searchCriteria {}", c);
-        checkNotNull(c, "Please provide a search criteria");
+        Objects.requireNonNull(c, "Please provide a search criteria");
         return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(),
                 c.getAuthor(), c.getAuthorExclude(), c.getBefore(), c.getExclude(),
                 c.getInclude(), c.getMenuOrder(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(),
@@ -67,7 +65,9 @@ public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAd
     @Override
     public Page retrieve(Integer pageId, Context context, String password) {
         LOGGER.debug("Calling retrieve: postId {};  context: {}", pageId, context);
-        checkArgument(pageId > 0, "Please provide a non zero post id");
+        if (pageId <= 0) {
+            throw new IllegalArgumentException("Please provide a non zero post id");
+        }
         return getSpi().retrieve(this.getApiVersion(), pageId, context, password);
     }
 

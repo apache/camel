@@ -20,8 +20,6 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostRevision extends Publishable implements Serializable {
 
@@ -83,7 +81,7 @@ public class PostRevision extends Publishable implements Serializable {
 
     @Override
     public String toString() {
-        return toStringHelper(this).add("ID", this.getId()).add("PostID", this.parent).addValue(this.getTitle()).toString();
+        return "PostRevision{ID=" + getId() + ", PostID=" + this.parent + ", " + getTitle() + "}";
     }
 
 }

@@ -17,14 +17,13 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.component.wordpress.api.model.Comment;
 import org.apache.camel.component.wordpress.api.model.CommentSearchCriteria;
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceComments;
 import org.apache.camel.component.wordpress.api.service.spi.CommentsSPI;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WordpressServiceCommentsAdapter
         extends AbstractWordpressCrudServiceAdapter<CommentsSPI, Comment, CommentSearchCriteria>
@@ -39,16 +38,14 @@ public class WordpressServiceCommentsAdapter
         return CommentsSPI.class;
     }
 
-    // @formatter:off
     @Override
     public List<Comment> list(CommentSearchCriteria c) {
-        checkNotNull(c, "The search criteria must be defined");
+        Objects.requireNonNull(c, "The search criteria must be defined");
         return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(),
                 c.getAuthor(), c.getAuthorExclude(), c.getAuthorEmail(), c.getBefore(),
                 c.getExclude(), c.getInclude(), c.getKarma(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(),
                 c.getParentExclude(), c.getPost(), c.getStatus(), c.getType());
     }
-    // @formatter:on
 
     @Override
     protected Comment doCreate(Comment object) {
