@@ -43,7 +43,7 @@ public class ReplyTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
             case Evict:
                 try {
                     handler.onTimeout(key);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     log.warn("Error processing onTimeout for messageKey: {} due: {}. " +
                              "This exception is ignored.",
                             key, e.getLocalizedMessage(), e);
