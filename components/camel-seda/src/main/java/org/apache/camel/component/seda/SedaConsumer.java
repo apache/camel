@@ -202,7 +202,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             } catch (InterruptedException e) {
                 LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 continue;
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 if (exchange != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 } else {
