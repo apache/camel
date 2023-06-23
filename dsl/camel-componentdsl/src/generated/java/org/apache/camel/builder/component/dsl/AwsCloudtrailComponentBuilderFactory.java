@@ -152,6 +152,22 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Cloudtrail client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -267,6 +283,23 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -347,6 +380,7 @@ public interface AwsCloudtrailComponentBuilderFactory {
             case "eventSource": getOrCreateConfiguration((CloudtrailComponent) component).setEventSource((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((CloudtrailComponent) component).setMaxResults((int) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((CloudtrailComponent) component).setOverrideEndpoint((boolean) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((CloudtrailComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((CloudtrailComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((CloudtrailComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((CloudtrailComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -354,6 +388,7 @@ public interface AwsCloudtrailComponentBuilderFactory {
             case "trustAllCertificates": getOrCreateConfiguration((CloudtrailComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((CloudtrailComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((CloudtrailComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((CloudtrailComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((CloudtrailComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((CloudtrailComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((CloudtrailComponent) component).setSecretKey((java.lang.String) value); return true;
