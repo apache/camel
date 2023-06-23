@@ -21,7 +21,7 @@ public class Translate2EndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(20);
         props.add("accessKey");
         props.add("autodetectSourceLanguage");
         props.add("label");
@@ -29,6 +29,7 @@ public class Translate2EndpointUriFactory extends org.apache.camel.support.compo
         props.add("operation");
         props.add("overrideEndpoint");
         props.add("pojoRequest");
+        props.add("profileCredentialsName");
         props.add("proxyHost");
         props.add("proxyPort");
         props.add("proxyProtocol");
@@ -40,6 +41,7 @@ public class Translate2EndpointUriFactory extends org.apache.camel.support.compo
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
+        props.add("useProfileCredentialsProvider");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("accessKey");
