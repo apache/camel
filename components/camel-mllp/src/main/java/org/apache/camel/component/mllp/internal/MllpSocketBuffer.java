@@ -40,7 +40,7 @@ public class MllpSocketBuffer {
     private static final Logger LOG = LoggerFactory.getLogger(MllpSocketBuffer.class);
     final MllpEndpoint endpoint;
 
-    byte buffer[];
+    byte[] buffer;
     int availableByteCount;
 
     int startOfBlockIndex = -1;
