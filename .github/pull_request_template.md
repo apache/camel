@@ -19,14 +19,14 @@
 
 - [ ] I checked that each commit in the pull request has a meaningful subject line and body.
 
-<!--  
+<!--
 If you're unsure, you can format the pull request title like `[CAMEL-XXX] Fixes bug in camel-file component`, where you replace `CAMEL-XXX` with the appropriate JIRA issue.
 -->
 
-- [ ] I formatted the code using `mvn -Pformat,fastinstall install && mvn -Psourcecheck`
+- [ ] I have run `mvn clean install -DskipTests` locally and I have committed all auto-generated changes
 
-<!-- 
-You can run the aforementioned command in your module so that the build auto-formats your code and the source check verifies that is complies with our coding style. This will also be verified as part of the checks and your PR may be rejected if the checkstyle does not pass.
+<!--
+You can run the aforementioned command in your module so that the build auto-formats your code. This will also be verified as part of the checks and your PR may be rejected if if there are uncommited changes after running `mvn clean install -DskipTests`.
 
 You can learn more about the contribution guidelines at https://github.com/apache/camel/blob/main/CONTRIBUTING.md
 -->

@@ -19,7 +19,7 @@ name: "Incremental Build Runner"
 description: "Build only affected projects"
 inputs:
   mode:
-    description: 'The mode to launch, it can be build, checkstyle or test'
+    description: 'The mode to launch, it can be build or test'
     required: true
   pr-id:
     description: 'Id of the pull request'

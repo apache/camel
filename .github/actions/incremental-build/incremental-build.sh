@@ -75,15 +75,7 @@ function main() {
   fi
   pl="${pl:1}"
 
-  if [[ ${mode} = "checkstyle" ]] ; then
-    if [[ ${buildAll} = "true" ]] ; then
-      echo "Launching checkstyle command against all projects"
-      $mavenBinary -l $log $MVND_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
-    else
-      echo "Launching checkstyle command against the projects ${pl}"
-      $mavenBinary -l $log $MVND_OPTS -Dcheckstyle.failOnViolation=true checkstyle:checkstyle -pl "$pl"
-    fi
-  elif [[ ${mode} = "build" ]] ; then
+  if [[ ${mode} = "build" ]] ; then
     local mustBuildAll
     mustBuildAll=$(hasLabel ${prId} "build-all")
     if [[ ${mustBuildAll} = "1" ]] ; then
@@ -91,8 +83,8 @@ function main() {
       buildAll=true
     fi
     if [[ ${buildAll} = "true" ]] ; then
-      echo "Launching fast build command against all projects"
-      $mavenBinary -l $log $MVND_OPTS -Pfastinstall install
+      echo "Building all projects"
+      $mavenBinary -l $log $MVND_OPTS -DskipTests install
     else
       local buildDependents
       buildDependents=$(hasLabel ${prId} "build-dependents")
@@ -105,12 +97,13 @@ function main() {
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
-        $mavenBinary -l $log $MVND_OPTS -Pfastinstall install -pl "$pl" -amd -am
+        $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -amd -am
       else
         echo "Launching fast build command against the projects ${pl} and their dependencies"
-        $mavenBinary -l $log $MVND_OPTS -Pfastinstall install -pl "$pl" -am
+        $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -am
       fi
     fi
+    [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
   else
     local mustSkipTests
     mustSkipTests=$(hasLabel ${prId} "skip-tests")
