@@ -156,6 +156,22 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Secrets Manager client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -288,6 +304,23 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Secrets Manager client should expect to load
+         * credentials through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -368,6 +401,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((SecretsManagerComponent) component).setOperation((org.apache.camel.component.aws.secretsmanager.SecretsManagerOperations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((SecretsManagerComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((SecretsManagerComponent) component).setPojoRequest((boolean) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((SecretsManagerComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -376,6 +410,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             case "trustAllCertificates": getOrCreateConfiguration((SecretsManagerComponent) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((SecretsManagerComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((SecretsManagerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((SecretsManagerComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretKey((java.lang.String) value); return true;
