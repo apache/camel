@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.cloudtrail.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration;
 import org.apache.camel.component.aws.cloudtrail.client.CloudtrailInternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,8 +32,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS Cloudtrail client for all users to use (enabling temporary creds). This implementation is for remote
