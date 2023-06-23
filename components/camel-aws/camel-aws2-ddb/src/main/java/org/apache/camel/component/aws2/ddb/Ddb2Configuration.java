@@ -297,7 +297,6 @@ public class Ddb2Configuration implements Cloneable {
         this.enabledInitialDescribeTable = enabledInitialDescribeTable;
     }
 
-
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }

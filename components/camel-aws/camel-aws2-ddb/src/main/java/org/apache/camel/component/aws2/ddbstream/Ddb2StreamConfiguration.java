@@ -72,10 +72,10 @@ public class Ddb2StreamConfiguration implements Cloneable {
                             " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
     @UriParam(defaultValue = "false",
-            description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
+              description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
     @UriParam(
-            description = "If using a profile credentials provider this parameter will set the profile name.")
+              description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {
