@@ -47,7 +47,8 @@ public class SecretsManagerComponent extends DefaultComponent {
                 = this.configuration != null ? this.configuration.copy() : new SecretsManagerConfiguration();
         SecretsManagerEndpoint endpoint = new SecretsManagerEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
                 && configuration.getSecretsManagerClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
