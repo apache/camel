@@ -35,7 +35,7 @@ import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
-    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch:8.6.2";
+    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch:8.8.1";
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
     private static final String USER_NAME = "elastic";
