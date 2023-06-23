@@ -151,6 +151,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
                         .filter(property -> property.getKey().equals("mycila-license-version")))
                 .filter(property -> includes.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
                 .map(property -> "<" + property.getKey() + ">" + property.getValue() + "</" + property.getKey() + ">")
+                .sorted()
                 .collect(Collectors.joining("\n        "));
 
         try {
