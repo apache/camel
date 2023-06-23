@@ -382,14 +382,14 @@ public class HazelcastAggregationRepository extends ServiceSupport
                             key);
                     LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
-                } catch (Throwable throwable) {
+                } catch (Exception exception) {
                     tCtx.rollbackTransaction();
 
                     final String msg = String.format(
                             "Transaction with ID %s was rolled back for remove operation with a key %s and an Exchange ID %s.",
                             tCtx.getTxnId(), key, exchange.getExchangeId());
-                    LOG.warn(msg, throwable);
-                    throw new RuntimeCamelException(msg, throwable);
+                    LOG.warn(msg, exception);
+                    throw new RuntimeCamelException(msg, exception);
                 }
             } else {
                 cache.remove(key);
