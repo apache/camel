@@ -29,39 +29,6 @@ on:
       - NOTICE.txt
 
 jobs:
-  checkstyle:
-    if: github.repository == 'apache/camel'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        persist-credentials: false
-    - id: install-mvnd
-      uses: ./.github/actions/install-mvnd
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: 17
-        cache: 'maven'
-    - name: mvn checkstyle
-      run: ./mvnw -l checkstyle.log $MVND_OPTS -e checkstyle:checkstyle
-    - name: archive logs
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: checkstyle.log
-        path: checkstyle.log
-    - name: Generate failure checkstyle summary
-      if: failure()
-      run: |
-        echo ":x: Checkstyle failed" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-    - name: Generate successful checkstyle summary
-      if: success()
-      run: |
-        echo ":white_check_mark: Checkstyle passed" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
   build:
     if: github.repository == 'apache/camel'
     permissions:
@@ -86,13 +53,17 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ./mvnw -l build.log $MVND_OPTS -Pfastinstall -DskipTests install
+        run: ./mvnw -l build.log $MVND_OPTS -DskipTests install
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: build.log
           path: build.log
+      - name: Fail if there are uncommitted changes
+        shell: bash
+        run: |
+          [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
       - id: test
         name: Quick test execution for affected components
         uses: ./.github/actions/quick-test
@@ -100,27 +71,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           start-commit: ${{ github.event.pull_request.base.sha }}
           end-commit: ${{ github.event.after }}
-  incremental-checkstyle:
-    if: github.repository == 'apache/camel'
-    # Mark as optional since it is experimental
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 17
-          cache: 'maven'
-      - name: mvn checkstyle
-        uses: ./.github/actions/incremental-build
-        with:
-          mode: checkstyle
-          log: incremental-checkstyle.log
-          pr-id: ${{ github.event.number }}
   incremental-build:
     if: github.repository == 'apache/camel'
     # Mark as optional since it is experimental
