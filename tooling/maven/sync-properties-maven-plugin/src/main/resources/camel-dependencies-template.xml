@@ -37,6 +37,29 @@
     <description>Camel Dependencies POM</description>
 
     <!-- sync properties here from parent/pom.xml -->
-    <properties>@properties@</properties>
+    <properties>
+        @properties@
+    </properties>
 
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.mycila</groupId>
+                            <artifactId>license-maven-plugin</artifactId>
+                            <version>${mycila-license-version}</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
