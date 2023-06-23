@@ -8,11 +8,13 @@ Then follow these simple guidelines for working on the code and committing your 
 
     git clone https://github.com/your-github-username/camel.git
 
-- Build the project using Maven:
+- Build the project using Maven. For Camel versions 3.x and older:
 
-    mvn clean install -Pfastinstall,format
+    mvn clean install -Pfastinstall 
 
-Note: the `format` profile will ensure that the code is properly formatted according to the project standards:
+- Build the project using Maven. For Camel versions 4.x and newer (on the `main` branch):
+
+    mvn clean install -Dquickly
 
 - Add a unit test with assertions for your changes.
 
