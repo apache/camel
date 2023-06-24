@@ -3591,6 +3591,12 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
             }
           },
+          "restConfiguration" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
+            }
+          },
           "route" : {
             "type" : "array",
             "items" : {
@@ -3661,6 +3667,12 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
+            }
+          },
+          "restConfiguration" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
             }
           },
           "route" : {
@@ -8160,6 +8172,9 @@
       },
       "templatedRoute" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
+      },
+      "restConfiguration" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
       },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"

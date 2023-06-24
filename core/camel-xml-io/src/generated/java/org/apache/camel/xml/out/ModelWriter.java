@@ -2516,6 +2516,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
         domElements(def.getSpringBeans());
+        doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "bean", def.getBeans(), this::doWriteRegistryBeanDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
