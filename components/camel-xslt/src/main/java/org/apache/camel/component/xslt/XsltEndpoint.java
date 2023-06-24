@@ -89,6 +89,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private EntityResolver entityResolver;
     @UriParam(label = "advanced")
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
+    @UriParam(label = "advanced")
+    private XsltMessageLogger xsltMessageLogger;
 
     public XsltEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -311,6 +313,17 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.transformerFactoryConfigurationStrategy = transformerFactoryConfigurationStrategy;
     }
 
+    public XsltMessageLogger getXsltMessageLogger() {
+        return xsltMessageLogger;
+    }
+
+    /**
+     * A consumer to messages generated during XSLT transformations.
+     */
+    public void setXsltMessageLogger(XsltMessageLogger xsltMessageLogger) {
+        this.xsltMessageLogger = xsltMessageLogger;
+    }
+
     /**
      * Loads the resource.
      *
@@ -401,6 +414,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         if (resultHandlerFactory != null) {
             xslt.setResultHandlerFactory(resultHandlerFactory);
+        }
+
+        if (xsltMessageLogger != null) {
+            xslt.setXsltMessageLogger(xsltMessageLogger);
         }
 
         // any additional transformer parameters then make a copy to avoid side-effects
