@@ -457,6 +457,8 @@ public class SubscriptionHelper extends ServiceSupport {
                                 failure != null ? failure.getMessage() : error);
                         boolean abort = true;
 
+                        String failureReason = getFailureReason(message);
+
                         if (isTemporaryError(message)) {
                             LOG.warn(msg);
 
@@ -484,6 +486,13 @@ public class SubscriptionHelper extends ServiceSupport {
                             LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
                             REPLAY_EXTENSION.addChannelReplayId(channelName, fallBackReplayId);
                             subscribe(topicName, consumer, true);
+                        } else if (failureReason.equals(AUTHENTICATION_INVALID)) {
+                            LOG.info(
+                                    "attempting login due to handshake error: 403 -> 401::Authentication invalid");
+                            attemptLoginUntilSuccessful();
+                            subscribe(topicName, consumer, true);
+                        } else {
+                            LOG.error("Unexpected subscribe error: \n{}\n{}", error, failureReason);
                         }
 
                         if (abort && client != null) {
