@@ -67,7 +67,7 @@ pipeline {
             }
             steps {
                 // Work-around for https://issues.apache.org/jira/browse/INFRA-24713
-                sh 'sed -e "s/3.9.2/3.8.8/g" .mvn/wrapper/maven-wrapper.properties'
+                sh 'sed -i -e "s/3.9.2/3.8.8/g" .mvn/wrapper/maven-wrapper.properties'
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dmaven.test.skip.exec=true clean deploy"
             }
         }
