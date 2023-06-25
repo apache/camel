@@ -118,6 +118,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
+        <maven-invoker-plugin-version>1.8</maven-invoker-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
@@ -620,7 +621,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>${maven-invoker-plugin-version}</version>
                     <configuration>
                         <skipInstallation>${invoker.skip}</skipInstallation>
                         <skipInvocation>${invoker.skip}</skipInvocation>
