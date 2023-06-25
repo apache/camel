@@ -518,20 +518,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- generate sources JAR by default as this is needed by camel-blueprint -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
