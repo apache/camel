@@ -229,6 +229,7 @@
                             </pomIncludes>
                             <postBuildHookScript>verify</postBuildHookScript>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <skipInvocation>${maven.test.skip.exec}</skipInvocation>
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <goals>
                                 <goal>clean</goal>
