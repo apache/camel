@@ -61,7 +61,7 @@ https://www.redhat.com/en/services/training/courses-by-curriculum#Red-Hat-JBoss-
 https://www.redhat.com/en/services/consulting[consulting], and
 https://developers.redhat.com/products/fuse/overview/[a developer community].
 
-== https://www.randoli.io [Randoli]
+== https://www.randoli.io[Randoli]
 We provide consulting and implementation of Microservices as well as modernization support for legacy applications using Springboot + Camel or Quarkus + Camel.
 https://randoli.io/services/
 https://randoli.io/case-studies/case-study-postal-tech-company-modernization
