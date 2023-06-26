@@ -421,7 +421,7 @@
         <jsch-version>0.2.1</jsch-version>
         <ivy-version>2.5.1</ivy-version>
         <ical4j-version>1.0.7</ical4j-version>
-        <maven-resolver-version>1.9.10</maven-resolver-version>
+        <maven-resolver-version>1.9.13</maven-resolver-version>
         <ehcache3-version>3.10.8</ehcache3-version>
         <awaitility-version>4.2.0</awaitility-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
