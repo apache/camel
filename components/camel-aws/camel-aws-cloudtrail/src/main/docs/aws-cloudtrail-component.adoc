@@ -24,7 +24,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Cloudtrail. More information are available
 at https://aws.amazon.com/cloudtrail/[AWS Cloudtrail]
 
-=== Static credentials, Default Credential Provider and Profile Credentials Provider
+== Static credentials, Default Credential Provider and Profile Credentials Provider
 
 You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
 
