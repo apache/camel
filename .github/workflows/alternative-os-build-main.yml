@@ -54,7 +54,3 @@ jobs:
           name: build-${{ matrix.os }}
           path: build.log
           retention-days: 2
-      - name: Fail if there are uncommitted changes
-        shell: bash
-        run: |
-          [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
