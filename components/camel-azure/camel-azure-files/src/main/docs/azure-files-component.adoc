@@ -51,7 +51,7 @@ can contain nested folders, such as `inbox/spam`. It defaults to
 the share root directory.
 
 The `autoCreate` option is supported for the directory,
-when consumer or producer starts there's an additional operation
+when consumer or producer starts, there's an additional operation
 performed to create the directory configured for the endpoint. The default
 value for `autoCreate` is `true`. On contrary, the share must exist, it
 is not automatically created.
@@ -59,8 +59,8 @@ is not automatically created.
 If no *port* number is provided, Camel will provide default values
 according to the protocol (https 443).
 
-You can append query options to the URI in the following format,
-`?option=value&option2=value&...`
+You can append query options to the URI in the following format
+`?option=value&option2=value&...`.
 
 The SAS token or shared key based auth is supported, the options
 for selected one must be present.
@@ -94,15 +94,14 @@ azure-files://camelazurefiles/samples/inbox/spam?sharedKey=FAKE502UyuBD...3Z%2BA
 
 == Paths
 
-The path separator is `/`. +
- The absolute paths start with the path separator, they do not include
-the share name and they are relative to the share root rather than
-to the endpoint starting directory.
+The path separator is `/`. The absolute paths start with the path separator.
+The absolute paths do not include the share name and they are relative
+to the share root rather than to the endpoint starting directory.
  
-*NOTE:* At some places, namely logs of the more abstract Camel component
-classes, OS-specific path separator appears and the relative paths are
-relative to the share root (rather than to the current working directory
-or to the endpoint starting directory) so interpret them with a grain of salt.
+*NOTE:* At some places, namely logs of used libraries, OS-specific path separator
+appears, and the relative paths are relative to the share root (rather than
+to the current working directory or to the endpoint starting directory)
+so interpret them with a grain of salt.
 
 == Concurrency
 
@@ -110,8 +109,8 @@ This component does not support concurrency on its endpoints.
 
 == More Information
 
-This component is an extension of the File component.
-So there are more samples and details on the File
+This component mimics the FTP component.
+So, there are more samples and details on the FTP
 component page.
 
 This component uses the Azure Java SDK libraries for the actual work.
@@ -119,7 +118,7 @@ This component uses the Azure Java SDK libraries for the actual work.
 == Consuming Files
 
 The remote consumer will by default leave the consumed
-files untouched on the remote files server. You have to configure it
+files untouched on the remote cloud files server. You have to configure it
 explicitly if you want it to delete the files or move them to another
 location. For example you can use `delete=true` to delete the files, or
 use `move=.done` to move the files into `.done` sub directory.
