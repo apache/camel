@@ -53,7 +53,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ./mvnw -l build.log $MVND_OPTS -DskipTests install
+        run: ./mvnw -l build.log -Dquickly install
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
