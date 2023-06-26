@@ -264,7 +264,7 @@
         <braintree-gateway-version>3.24.0</braintree-gateway-version>
         <compress-lzf-version>1.1</compress-lzf-version>
         <nitrite-version>3.4.4</nitrite-version>
-        <lucene-version>9.6.0</lucene-version>
+        <lucene-version>9.7.0</lucene-version>
         <vavr-version>0.10.4</vavr-version>
         <spring-security-version>6.1.1</spring-security-version>
         <google-mail-guava-version>32.0.0-jre</google-mail-guava-version>
