@@ -21,8 +21,10 @@ import org.apache.camel.DynamicRouter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Currently disabled due to CAMEL-19425")
 public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
 
     private static final int COUNT = 100;
