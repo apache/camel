@@ -17,30 +17,29 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("Still blocking on some environments")
+@Timeout(50)
 public class SplitParallelTimeoutTest extends ContextTestSupport {
 
     private volatile Exchange receivedExchange;
     private volatile int receivedIndex;
     private volatile int receivedTotal;
     private volatile long receivedTimeout;
-    private final Phaser phaser = new Phaser(4);
+    private final Phaser phaser = new Phaser(3);
 
-    @Test
-    @Timeout(5)
+    @RepeatedTest(20)
     public void testSplitParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C
@@ -48,7 +47,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "A,B,C");
 
-        phaser.arriveAndAwaitAdvance();
+        phaser.awaitAdvanceInterruptibly(0, 5000, TimeUnit.SECONDS);
 
         assertMockEndpointsSatisfied();
 
@@ -73,11 +72,11 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
                         .end() // end split
                         .to("mock:result");
 
-                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).setBody(constant("A"));
+                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(200).setBody(constant("A"));
 
-                from("direct:b").process(e -> phaser.arrive()).setBody(constant("B"));
+                from("direct:b").process(e -> phaser.arriveAndAwaitAdvance()).setBody(constant("B"));
 
-                from("direct:c").delay(10).process(e -> phaser.arrive()).setBody(constant("C"));
+                from("direct:c").process(e -> phaser.arriveAndAwaitAdvance()).delay(10).setBody(constant("C"));
             }
         };
     }
