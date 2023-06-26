@@ -203,7 +203,7 @@ The following operations are supported:
 * <<getSObject,getSObject>> - Gets an SObject.
 * <<getSObjectWithId,getSObjectWithId>> - Gets an SObject using an External Id (user defined) field.
 * <<getSObjectWithId,getBlobField>> - Retrieves the specified blob field from an individual record.
-* <<getSObjectWithId,createSObject>> - Creates an SObject.
+* <<createSObject,createSObject>> - Creates an SObject.
 * <<updateSObject,updateSObject>> - Updates an SObject.
 * <<deleteSObject,deleteSObject>> - Deletes an SObject.
 * <<upsertSObject,upsertSObject>> - Inserts or updates an SObject using an External Id.
