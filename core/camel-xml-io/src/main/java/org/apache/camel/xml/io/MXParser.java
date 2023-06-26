@@ -51,16 +51,16 @@ import org.apache.camel.xml.io.util.XmlStreamReader;
 public class MXParser implements XmlPullParser {
     // NOTE: no interning of those strings --> by Java lang spec they MUST be
     // already interned
-    protected final static String XML_URI = "http://www.w3.org/XML/1998/namespace";
-    protected final static String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
-    protected final static String FEATURE_XML_ROUNDTRIP =
+    protected static final String XML_URI = "http://www.w3.org/XML/1998/namespace";
+    protected static final String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
+    protected static final String FEATURE_XML_ROUNDTRIP =
     // "http://xmlpull.org/v1/doc/features.html#xml-roundtrip";
             "http://xmlpull.org/v1/doc/features.html#xml-roundtrip";
-    protected final static String FEATURE_NAMES_INTERNED = "http://xmlpull.org/v1/doc/features.html#names-interned";
-    protected final static String PROPERTY_XMLDECL_VERSION = "http://xmlpull.org/v1/doc/properties.html#xmldecl-version";
-    protected final static String PROPERTY_XMLDECL_STANDALONE = "http://xmlpull.org/v1/doc/properties.html#xmldecl-standalone";
-    protected final static String PROPERTY_XMLDECL_CONTENT = "http://xmlpull.org/v1/doc/properties.html#xmldecl-content";
-    protected final static String PROPERTY_LOCATION = "http://xmlpull.org/v1/doc/properties.html#location";
+    protected static final String FEATURE_NAMES_INTERNED = "http://xmlpull.org/v1/doc/features.html#names-interned";
+    protected static final String PROPERTY_XMLDECL_VERSION = "http://xmlpull.org/v1/doc/properties.html#xmldecl-version";
+    protected static final String PROPERTY_XMLDECL_STANDALONE = "http://xmlpull.org/v1/doc/properties.html#xmldecl-standalone";
+    protected static final String PROPERTY_XMLDECL_CONTENT = "http://xmlpull.org/v1/doc/properties.html#xmldecl-content";
+    protected static final String PROPERTY_LOCATION = "http://xmlpull.org/v1/doc/properties.html#location";
 
     /**
      * Implementation notice: the is instance variable that controls if newString() is interning.
@@ -2471,11 +2471,11 @@ public class MXParser implements XmlPullParser {
     // protected final static char[] YES = {'y','e','s'};
     // protected final static char[] NO = {'n','o'};
 
-    protected final static char[] VERSION = "version".toCharArray();
-    protected final static char[] NCODING = "ncoding".toCharArray();
-    protected final static char[] TANDALONE = "tandalone".toCharArray();
-    protected final static char[] YES = "yes".toCharArray();
-    protected final static char[] NO = "no".toCharArray();
+    protected static final char[] VERSION = "version".toCharArray();
+    protected static final char[] NCODING = "ncoding".toCharArray();
+    protected static final char[] TANDALONE = "tandalone".toCharArray();
+    protected static final char[] YES = "yes".toCharArray();
+    protected static final char[] NO = "no".toCharArray();
 
     protected void parseXmlDecl(char ch) throws XmlPullParserException, IOException {
         // [23] XMLDecl ::= '<?xml' VersionInfo EncodingDecl? SDDecl? S? '?>'
