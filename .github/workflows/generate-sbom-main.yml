@@ -48,7 +48,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: mvn build and sbom generation
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log $MVND_OPTS -Psbom -Dquickly verify
+        run: ./mvnw -B -l build.log -Psbom -Dquickly verify
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
