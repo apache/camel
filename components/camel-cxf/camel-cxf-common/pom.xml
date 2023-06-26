@@ -147,12 +147,6 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
                             <childDelegation>false</childDelegation>
                             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                             <reportFormat>brief</reportFormat>
