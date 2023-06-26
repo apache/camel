@@ -94,8 +94,18 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                     .newDefaultScheduledThreadPool(this, "saga-lra");
         }
         if (this.client == null) {
-            this.client = new LRAClient(this);
+            this.client = createLRAClient();
         }
+    }
+
+    /**
+     * Use this method to override some behavior within the LRAClient
+     *
+     * @return the LRAClient to be used within the LRASagaService
+     *
+     */
+    protected LRAClient createLRAClient() {
+        return new LRAClient(this);
     }
 
     @Override
@@ -114,13 +124,23 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         if (this.routes == null) {
-            this.routes = new LRASagaRoutes(this);
+            this.routes = createLRASagaRoutes(camelContext);
             try {
                 this.camelContext.addRoutes(this.routes);
             } catch (Exception ex) {
                 throw RuntimeCamelException.wrapRuntimeException(ex);
             }
         }
+    }
+
+    /**
+     * Use this method to override the creation of LRASagaRoutes
+     *
+     * @param  camelContext
+     * @return              the LRASagaRoutes instance to use in this service
+     */
+    protected LRASagaRoutes createLRASagaRoutes(CamelContext camelContext) {
+        return new LRASagaRoutes(this);
     }
 
     @Override
