@@ -8176,6 +8176,9 @@
       "templatedRoute" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
       },
+      "restConfiguration" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
+      },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
       }

@@ -12536,6 +12536,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = {
                     "rest-configuration",
