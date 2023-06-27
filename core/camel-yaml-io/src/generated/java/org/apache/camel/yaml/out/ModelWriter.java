@@ -1102,8 +1102,8 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("precondition", def.getPrecondition());
-        doWriteElement("otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
         doWriteList(null, null, def.getWhenClauses(), this::doWriteWhenDefinitionRef);
+        doWriteElement("otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
         endElement(name);
     }
     protected void doWriteCircuitBreakerDefinition(

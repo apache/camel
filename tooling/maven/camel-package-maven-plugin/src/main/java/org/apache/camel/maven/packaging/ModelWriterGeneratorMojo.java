@@ -689,8 +689,10 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         if (xmlType != null) {
             String[] propOrder = xmlType.propOrder();
             if (propOrder != null && propOrder.length > 0) {
+                // special for choice where whenClauses should use when in xml-io parser
+                final List<String> list = Arrays.stream(propOrder).map(o -> o.equals("whenClauses") ? "when" : o).toList();
                 properties = properties
-                        .sorted(Comparator.comparing(p -> Arrays.binarySearch(propOrder, p.getName())));
+                        .sorted(Comparator.comparing(p -> Arrays.binarySearch(list.toArray(), p.getName())));
             }
         }
         return properties.toList();

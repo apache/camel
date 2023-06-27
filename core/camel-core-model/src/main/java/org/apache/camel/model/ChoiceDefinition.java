@@ -89,7 +89,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 }
                 throw new IllegalArgumentException(
                         "Expected either a WhenDefinition or OtherwiseDefinition but was "
-                                + ObjectHelper.classCanonicalName(def));
+                                                   + ObjectHelper.classCanonicalName(def));
             }
 
             public int size() {
