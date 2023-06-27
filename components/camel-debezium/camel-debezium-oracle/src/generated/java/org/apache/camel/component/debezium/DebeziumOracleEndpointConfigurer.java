@@ -108,6 +108,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferTransactionEventsThreshold": target.getConfiguration().setLogMiningBufferTransactionEventsThreshold(property(camelContext, long.class, value)); return true;
         case "logminingbuffertype":
         case "logMiningBufferType": target.getConfiguration().setLogMiningBufferType(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingflushtablename":
+        case "logMiningFlushTableName": target.getConfiguration().setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingqueryfiltermode":
+        case "logMiningQueryFilterMode": target.getConfiguration().setLogMiningQueryFilterMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingrestartconnection":
+        case "logMiningRestartConnection": target.getConfiguration().setLogMiningRestartConnection(property(camelContext, boolean.class, value)); return true;
         case "logminingscngapdetectiongapsizemin":
         case "logMiningScnGapDetectionGapSizeMin": target.getConfiguration().setLogMiningScnGapDetectionGapSizeMin(property(camelContext, long.class, value)); return true;
         case "logminingscngapdetectiontimeintervalmaxms":
@@ -128,6 +134,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningTransactionRetentionMs": target.getConfiguration().setLogMiningTransactionRetentionMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": target.getConfiguration().setLogMiningUsernameExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingusernameincludelist":
+        case "logMiningUsernameIncludeList": target.getConfiguration().setLogMiningUsernameIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbatchsize":
         case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
@@ -136,6 +144,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxQueueSizeInBytes": target.getConfiguration().setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": target.getConfiguration().setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": target.getConfiguration().setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
@@ -176,6 +188,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalenabledchannels":
+        case "signalEnabledChannels": target.getConfiguration().setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": target.getConfiguration().setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
@@ -198,6 +214,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshottablesorderbyrowcount":
         case "snapshotTablesOrderByRowCount": target.getConfiguration().setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": target.getConfiguration().setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": target.getConfiguration().setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableincludelist":
@@ -306,6 +324,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferTransactionEventsThreshold": return long.class;
         case "logminingbuffertype":
         case "logMiningBufferType": return java.lang.String.class;
+        case "logminingflushtablename":
+        case "logMiningFlushTableName": return java.lang.String.class;
+        case "logminingqueryfiltermode":
+        case "logMiningQueryFilterMode": return java.lang.String.class;
+        case "logminingrestartconnection":
+        case "logMiningRestartConnection": return boolean.class;
         case "logminingscngapdetectiongapsizemin":
         case "logMiningScnGapDetectionGapSizeMin": return long.class;
         case "logminingscngapdetectiontimeintervalmaxms":
@@ -326,6 +350,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningTransactionRetentionMs": return long.class;
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": return java.lang.String.class;
+        case "logminingusernameincludelist":
+        case "logMiningUsernameIncludeList": return java.lang.String.class;
         case "maxbatchsize":
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
@@ -334,6 +360,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxQueueSizeInBytes": return long.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return java.lang.String.class;
         case "offsetcommittimeoutms":
@@ -374,6 +404,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalenabledchannels":
+        case "signalEnabledChannels": return java.lang.String.class;
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": return long.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
@@ -396,6 +430,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "snapshottablesorderbyrowcount":
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": return java.lang.String.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableincludelist":
@@ -505,6 +541,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferTransactionEventsThreshold": return target.getConfiguration().getLogMiningBufferTransactionEventsThreshold();
         case "logminingbuffertype":
         case "logMiningBufferType": return target.getConfiguration().getLogMiningBufferType();
+        case "logminingflushtablename":
+        case "logMiningFlushTableName": return target.getConfiguration().getLogMiningFlushTableName();
+        case "logminingqueryfiltermode":
+        case "logMiningQueryFilterMode": return target.getConfiguration().getLogMiningQueryFilterMode();
+        case "logminingrestartconnection":
+        case "logMiningRestartConnection": return target.getConfiguration().isLogMiningRestartConnection();
         case "logminingscngapdetectiongapsizemin":
         case "logMiningScnGapDetectionGapSizeMin": return target.getConfiguration().getLogMiningScnGapDetectionGapSizeMin();
         case "logminingscngapdetectiontimeintervalmaxms":
@@ -525,6 +567,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningTransactionRetentionMs": return target.getConfiguration().getLogMiningTransactionRetentionMs();
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": return target.getConfiguration().getLogMiningUsernameExcludeList();
+        case "logminingusernameincludelist":
+        case "logMiningUsernameIncludeList": return target.getConfiguration().getLogMiningUsernameIncludeList();
         case "maxbatchsize":
         case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":
@@ -533,6 +577,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "maxQueueSizeInBytes": return target.getConfiguration().getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": return target.getConfiguration().getNotificationEnabledChannels();
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": return target.getConfiguration().getNotificationSinkTopicName();
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return target.getConfiguration().getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
@@ -573,6 +621,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
+        case "signalenabledchannels":
+        case "signalEnabledChannels": return target.getConfiguration().getSignalEnabledChannels();
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": return target.getConfiguration().getSignalPollIntervalMs();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
@@ -595,6 +647,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotSelectStatementOverrides": return target.getConfiguration().getSnapshotSelectStatementOverrides();
         case "snapshottablesorderbyrowcount":
         case "snapshotTablesOrderByRowCount": return target.getConfiguration().getSnapshotTablesOrderByRowCount();
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": return target.getConfiguration().getSourceinfoStructMaker();
         case "tableexcludelist":
         case "tableExcludeList": return target.getConfiguration().getTableExcludeList();
         case "tableincludelist":

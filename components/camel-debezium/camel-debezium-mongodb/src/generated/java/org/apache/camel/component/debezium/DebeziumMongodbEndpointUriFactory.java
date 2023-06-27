@@ -21,7 +21,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(59);
+        Set<String> props = new HashSet<>(64);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("captureMode");
@@ -56,6 +56,8 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("mongodbSslInvalidHostnameAllowed");
         props.add("mongodbUser");
         props.add("name");
+        props.add("notificationEnabledChannels");
+        props.add("notificationSinkTopicName");
         props.add("offsetCommitPolicy");
         props.add("offsetCommitTimeoutMs");
         props.add("offsetFlushIntervalMs");
@@ -71,6 +73,8 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("schemaHistoryInternalFileFilename");
         props.add("schemaNameAdjustmentMode");
         props.add("signalDataCollection");
+        props.add("signalEnabledChannels");
+        props.add("signalPollIntervalMs");
         props.add("skippedOperations");
         props.add("snapshotCollectionFilterOverrides");
         props.add("snapshotDelayMs");
@@ -78,6 +82,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("snapshotIncludeCollectionList");
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
+        props.add("sourceinfoStructMaker");
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");

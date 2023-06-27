@@ -21,7 +21,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(89);
+        Set<String> props = new HashSet<>(95);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -65,6 +65,8 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("messagePrefixExcludeList");
         props.add("messagePrefixIncludeList");
         props.add("name");
+        props.add("notificationEnabledChannels");
+        props.add("notificationSinkTopicName");
         props.add("offsetCommitPolicy");
         props.add("offsetCommitTimeoutMs");
         props.add("offsetFlushIntervalMs");
@@ -79,6 +81,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("publicationAutocreateMode");
         props.add("publicationName");
         props.add("queryFetchSize");
+        props.add("replicaIdentityAutosetValues");
         props.add("retriableRestartConnectorWaitMs");
         props.add("schemaExcludeList");
         props.add("schemaHistoryInternalFileFilename");
@@ -86,6 +89,8 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("schemaNameAdjustmentMode");
         props.add("schemaRefreshMode");
         props.add("signalDataCollection");
+        props.add("signalEnabledChannels");
+        props.add("signalPollIntervalMs");
         props.add("skippedOperations");
         props.add("slotDropOnStop");
         props.add("slotMaxRetries");
@@ -101,6 +106,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("snapshotMode");
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
+        props.add("sourceinfoStructMaker");
         props.add("statusUpdateIntervalMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");

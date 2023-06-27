@@ -18,6 +18,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String messageKeyColumns;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int queryFetchSize = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "source")
+    private String signalEnabledChannels = "source";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean includeSchemaChanges = true;
     @UriParam(label = LABEL_NAME)
@@ -122,6 +124,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "off")
     private String snapshotNewTables = "off";
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.mysql.MySqlSourceInfoStructMaker")
+    private String sourceinfoStructMaker = "io.debezium.connector.mysql.MySqlSourceInfoStructMaker";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
@@ -134,8 +138,12 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive_time_microseconds")
     private String timePrecisionMode = "adaptive_time_microseconds";
+    @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
+    private long signalPollIntervalMs = 5000;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventDeserializationFailureHandlingMode = "fail";
+    @UriParam(label = LABEL_NAME)
+    private String notificationEnabledChannels;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "1")
@@ -144,8 +152,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int databasePort = 3306;
     @UriParam(label = LABEL_NAME)
     private String databaseSslTruststore;
-    @UriParam(label = LABEL_NAME, defaultValue = "disabled")
-    private String databaseSslMode = "disabled";
+    @UriParam(label = LABEL_NAME)
+    private String notificationSinkTopicName;
+    @UriParam(label = LABEL_NAME, defaultValue = "preferred")
+    private String databaseSslMode = "preferred";
     @UriParam(label = LABEL_NAME)
     private String databaseSslKeystorePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
@@ -221,6 +231,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public int getQueryFetchSize() {
         return queryFetchSize;
+    }
+
+    /**
+     * List of channels names that are enabled. Source channel is enabled by
+     * default
+     */
+    public void setSignalEnabledChannels(String signalEnabledChannels) {
+        this.signalEnabledChannels = signalEnabledChannels;
+    }
+
+    public String getSignalEnabledChannels() {
+        return signalEnabledChannels;
     }
 
     /**
@@ -696,18 +718,27 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The criteria for running a snapshot upon startup of the connector.
-     * Options include: 'when_needed' to specify that the connector run a
-     * snapshot upon startup whenever it deems it necessary; 'schema_only' to
-     * only take a snapshot of the schema (table structures) but no actual data;
-     * 'initial' (the default) to specify the connector can run a snapshot only
-     * when no offsets are available for the logical server name; 'initial_only'
-     * same as 'initial' except the connector should stop after completing the
-     * snapshot and before it would normally read the binlog; and'never' to
-     * specify the connector should never run a snapshot and that upon first
-     * startup the connector should read from the beginning of the binlog. The
-     * 'never' mode should be used with care, and only when the binlog is known
-     * to contain all history.
+     * The criteria for running a snapshot upon startup of the connector. Select
+     * one of the following snapshot options: 'when_needed': On startup, the
+     * connector runs a snapshot if one is needed.; 'schema_only': If the
+     * connector does not detect any offsets for the logical server name, it
+     * runs a snapshot that captures only the schema (table structures), but not
+     * any table data. After the snapshot completes, the connector begins to
+     * stream changes from the binlog.; 'schema_only_recovery': The connector
+     * performs a snapshot that captures only the database schema history. The
+     * connector then transitions back to streaming. Use this setting to restore
+     * a corrupted or lost database schema history topic. Do not use if the
+     * database schema was modified after the connector stopped.; 'initial'
+     * (default): If the connector does not detect any offsets for the logical
+     * server name, it runs a snapshot that captures the current full state of
+     * the configured tables. After the snapshot completes, the connector begins
+     * to stream changes from the binlog.; 'initial_only': The connector
+     * performs a snapshot as it does for the 'initial' option, but after the
+     * connector completes the snapshot, it stops, and does not stream changes
+     * from the binlog.; 'never': The connector does not run a snapshot. Upon
+     * first startup, the connector immediately begins reading from the
+     * beginning of the binlog. The 'never' mode should be used with care, and
+     * only when the binlog is known to contain all history.
      */
     public void setSnapshotMode(String snapshotMode) {
         this.snapshotMode = snapshotMode;
@@ -743,7 +774,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The maximum size of chunk for incremental snapshotting
+     * The maximum size of chunk (number of documents/rows) for incremental
+     * snapshotting
      */
     public void setIncrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
         this.incrementalSnapshotChunkSize = incrementalSnapshotChunkSize;
@@ -931,6 +963,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the SourceInfoStructMaker class that returns SourceInfo
+     * schema and struct.
+     */
+    public void setSourceinfoStructMaker(String sourceinfoStructMaker) {
+        this.sourceinfoStructMaker = sourceinfoStructMaker;
+    }
+
+    public String getSourceinfoStructMaker() {
+        return sourceinfoStructMaker;
+    }
+
+    /**
      * Flag specifying whether built-in tables should be ignored.
      */
     public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
@@ -1016,6 +1060,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Interval for looking for new signals in registered channels, given in
+     * milliseconds. Defaults to 5 seconds.
+     */
+    public void setSignalPollIntervalMs(long signalPollIntervalMs) {
+        this.signalPollIntervalMs = signalPollIntervalMs;
+    }
+
+    public long getSignalPollIntervalMs() {
+        return signalPollIntervalMs;
+    }
+
+    /**
      * Specify how failures during deserialization of binlog events (i.e. when
      * encountering a corrupted event) should be handled, including: 'fail' (the
      * default) an exception indicating the problematic event and its binlog
@@ -1030,6 +1086,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getEventDeserializationFailureHandlingMode() {
         return eventDeserializationFailureHandlingMode;
+    }
+
+    /**
+     * List of notification channels names that are enabled.
+     */
+    public void setNotificationEnabledChannels(
+            String notificationEnabledChannels) {
+        this.notificationEnabledChannels = notificationEnabledChannels;
+    }
+
+    public String getNotificationEnabledChannels() {
+        return notificationEnabledChannels;
     }
 
     /**
@@ -1085,8 +1153,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the topic for the notifications. This is required in case
+     * 'sink' is in the list of enabled channels
+     */
+    public void setNotificationSinkTopicName(String notificationSinkTopicName) {
+        this.notificationSinkTopicName = notificationSinkTopicName;
+    }
+
+    public String getNotificationSinkTopicName() {
+        return notificationSinkTopicName;
+    }
+
+    /**
      * Whether to use an encrypted connection to MySQL. Options include:
-     * 'disabled' (the default) to use an unencrypted connection; 'preferred' to
+     * 'disabled' to use an unencrypted connection; 'preferred' (the default) to
      * establish a secure (encrypted) connection if the server supports secure
      * connections, but fall back to an unencrypted connection otherwise;
      * 'required' to use a secure (encrypted) connection, and fail if one cannot
@@ -1241,6 +1321,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode", snapshotLockingMode);
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
         addPropertyIfNotNull(configBuilder, "database.jdbc.driver", databaseJdbcDriver);
@@ -1292,17 +1373,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "snapshot.new.tables", snapshotNewTables);
+        addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "bigint.unsigned.handling.mode", bigintUnsignedHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.server.id", databaseServerId);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
+        addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
+        addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "database.ssl.truststore", databaseSslTruststore);
+        addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "database.ssl.mode", databaseSslMode);
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore.password", databaseSslKeystorePassword);
         addPropertyIfNotNull(configBuilder, "schema.history.internal", schemaHistoryInternal);

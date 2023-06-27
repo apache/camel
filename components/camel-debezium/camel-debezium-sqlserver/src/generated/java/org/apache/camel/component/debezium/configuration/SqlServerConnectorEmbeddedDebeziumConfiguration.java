@@ -16,6 +16,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String messageKeyColumns;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int queryFetchSize = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "source")
+    private String signalEnabledChannels = "source";
     @UriParam(label = LABEL_NAME)
     private String databaseInstance;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -96,6 +98,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeSchemaComments = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker")
+    private String sourceinfoStructMaker = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -106,6 +110,10 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";
+    @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
+    private long signalPollIntervalMs = 5000;
+    @UriParam(label = LABEL_NAME)
+    private String notificationEnabledChannels;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "repeatable_read")
@@ -114,6 +122,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME, defaultValue = "1433")
     private int databasePort = 1433;
+    @UriParam(label = LABEL_NAME)
+    private String notificationSinkTopicName;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
     private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
     @UriParam(label = LABEL_NAME, defaultValue = "0")
@@ -156,6 +166,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getQueryFetchSize() {
         return queryFetchSize;
+    }
+
+    /**
+     * List of channels names that are enabled. Source channel is enabled by
+     * default
+     */
+    public void setSignalEnabledChannels(String signalEnabledChannels) {
+        this.signalEnabledChannels = signalEnabledChannels;
+    }
+
+    public String getSignalEnabledChannels() {
+        return signalEnabledChannels;
     }
 
     /**
@@ -492,11 +514,19 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The criteria for running a snapshot upon startup of the connector.
-     * Options include: 'initial' (the default) to specify the connector should
-     * run a snapshot only when no offsets are available for the logical server
-     * name; 'schema_only' to specify the connector should run a snapshot of the
-     * schema when no offsets are available for the logical server name. 
+     * The criteria for running a snapshot upon startup of the connector. Select
+     * one of the following snapshot options: 'initial' (default): If the
+     * connector does not detect any offsets for the logical server name, it
+     * runs a snapshot that captures the current full state of the configured
+     * tables. After the snapshot completes, the connector begins to stream
+     * changes from the transaction log.; 'initial_only': The connector performs
+     * a snapshot as it does for the 'initial' option, but after the connector
+     * completes the snapshot, it stops, and does not stream changes from the
+     * transaction log.; 'schema_only': If the connector does not detect any
+     * offsets for the logical server name, it runs a snapshot that captures
+     * only the schema (table structures), but not any table data. After the
+     * snapshot completes, the connector begins to stream changes from the
+     * transaction log.
      */
     public void setSnapshotMode(String snapshotMode) {
         this.snapshotMode = snapshotMode;
@@ -520,7 +550,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The maximum size of chunk for incremental snapshotting
+     * The maximum size of chunk (number of documents/rows) for incremental
+     * snapshotting
      */
     public void setIncrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
         this.incrementalSnapshotChunkSize = incrementalSnapshotChunkSize;
@@ -687,6 +718,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the SourceInfoStructMaker class that returns SourceInfo
+     * schema and struct.
+     */
+    public void setSourceinfoStructMaker(String sourceinfoStructMaker) {
+        this.sourceinfoStructMaker = sourceinfoStructMaker;
+    }
+
+    public String getSourceinfoStructMaker() {
+        return sourceinfoStructMaker;
+    }
+
+    /**
      * Flag specifying whether built-in tables should be ignored.
      */
     public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
@@ -756,6 +799,30 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Interval for looking for new signals in registered channels, given in
+     * milliseconds. Defaults to 5 seconds.
+     */
+    public void setSignalPollIntervalMs(long signalPollIntervalMs) {
+        this.signalPollIntervalMs = signalPollIntervalMs;
+    }
+
+    public long getSignalPollIntervalMs() {
+        return signalPollIntervalMs;
+    }
+
+    /**
+     * List of notification channels names that are enabled.
+     */
+    public void setNotificationEnabledChannels(
+            String notificationEnabledChannels) {
+        this.notificationEnabledChannels = notificationEnabledChannels;
+    }
+
+    public String getNotificationEnabledChannels() {
+        return notificationEnabledChannels;
+    }
+
+    /**
      * Specify how failures during processing of events (i.e. when encountering
      * a corrupted event) should be handled, including: 'fail' (the default) an
      * exception indicating the problematic event and its position is raised,
@@ -818,6 +885,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getDatabasePort() {
         return databasePort;
+    }
+
+    /**
+     * The name of the topic for the notifications. This is required in case
+     * 'sink' is in the list of enabled channels
+     */
+    public void setNotificationSinkTopicName(String notificationSinkTopicName) {
+        this.notificationSinkTopicName = notificationSinkTopicName;
+    }
+
+    public String getNotificationSinkTopicName() {
+        return notificationSinkTopicName;
     }
 
     /**
@@ -901,6 +980,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "database.instance", databaseInstance);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
@@ -940,15 +1020,19 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
+        addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.option.recompile", incrementalSnapshotOptionRecompile);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
+        addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.isolation.mode", snapshotIsolationMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
+        addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "schema.history.internal", schemaHistoryInternal);
         addPropertyIfNotNull(configBuilder, "max.iteration.transactions", maxIterationTransactions);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);

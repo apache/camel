@@ -114,6 +114,12 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration(target).setLogMiningBufferTransactionEventsThreshold(property(camelContext, long.class, value)); return true;
         case "logminingbuffertype":
         case "logMiningBufferType": getOrCreateConfiguration(target).setLogMiningBufferType(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingflushtablename":
+        case "logMiningFlushTableName": getOrCreateConfiguration(target).setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingqueryfiltermode":
+        case "logMiningQueryFilterMode": getOrCreateConfiguration(target).setLogMiningQueryFilterMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingrestartconnection":
+        case "logMiningRestartConnection": getOrCreateConfiguration(target).setLogMiningRestartConnection(property(camelContext, boolean.class, value)); return true;
         case "logminingscngapdetectiongapsizemin":
         case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration(target).setLogMiningScnGapDetectionGapSizeMin(property(camelContext, long.class, value)); return true;
         case "logminingscngapdetectiontimeintervalmaxms":
@@ -134,6 +140,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningTransactionRetentionMs": getOrCreateConfiguration(target).setLogMiningTransactionRetentionMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": getOrCreateConfiguration(target).setLogMiningUsernameExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingusernameincludelist":
+        case "logMiningUsernameIncludeList": getOrCreateConfiguration(target).setLogMiningUsernameIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbatchsize":
         case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
@@ -142,6 +150,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "maxQueueSizeInBytes": getOrCreateConfiguration(target).setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": getOrCreateConfiguration(target).setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": getOrCreateConfiguration(target).setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": getOrCreateConfiguration(target).setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
@@ -182,6 +194,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalenabledchannels":
+        case "signalEnabledChannels": getOrCreateConfiguration(target).setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": getOrCreateConfiguration(target).setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
@@ -204,6 +220,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshottablesorderbyrowcount":
         case "snapshotTablesOrderByRowCount": getOrCreateConfiguration(target).setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableincludelist":
@@ -311,6 +329,12 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBufferTransactionEventsThreshold": return long.class;
         case "logminingbuffertype":
         case "logMiningBufferType": return java.lang.String.class;
+        case "logminingflushtablename":
+        case "logMiningFlushTableName": return java.lang.String.class;
+        case "logminingqueryfiltermode":
+        case "logMiningQueryFilterMode": return java.lang.String.class;
+        case "logminingrestartconnection":
+        case "logMiningRestartConnection": return boolean.class;
         case "logminingscngapdetectiongapsizemin":
         case "logMiningScnGapDetectionGapSizeMin": return long.class;
         case "logminingscngapdetectiontimeintervalmaxms":
@@ -331,6 +355,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningTransactionRetentionMs": return long.class;
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": return java.lang.String.class;
+        case "logminingusernameincludelist":
+        case "logMiningUsernameIncludeList": return java.lang.String.class;
         case "maxbatchsize":
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
@@ -339,6 +365,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "maxQueueSizeInBytes": return long.class;
         case "messagekeycolumns":
         case "messageKeyColumns": return java.lang.String.class;
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return java.lang.String.class;
         case "offsetcommittimeoutms":
@@ -379,6 +409,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalenabledchannels":
+        case "signalEnabledChannels": return java.lang.String.class;
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": return long.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
@@ -401,6 +435,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
         case "snapshottablesorderbyrowcount":
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": return java.lang.String.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableincludelist":
@@ -509,6 +545,12 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBufferTransactionEventsThreshold": return getOrCreateConfiguration(target).getLogMiningBufferTransactionEventsThreshold();
         case "logminingbuffertype":
         case "logMiningBufferType": return getOrCreateConfiguration(target).getLogMiningBufferType();
+        case "logminingflushtablename":
+        case "logMiningFlushTableName": return getOrCreateConfiguration(target).getLogMiningFlushTableName();
+        case "logminingqueryfiltermode":
+        case "logMiningQueryFilterMode": return getOrCreateConfiguration(target).getLogMiningQueryFilterMode();
+        case "logminingrestartconnection":
+        case "logMiningRestartConnection": return getOrCreateConfiguration(target).isLogMiningRestartConnection();
         case "logminingscngapdetectiongapsizemin":
         case "logMiningScnGapDetectionGapSizeMin": return getOrCreateConfiguration(target).getLogMiningScnGapDetectionGapSizeMin();
         case "logminingscngapdetectiontimeintervalmaxms":
@@ -529,6 +571,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningTransactionRetentionMs": return getOrCreateConfiguration(target).getLogMiningTransactionRetentionMs();
         case "logminingusernameexcludelist":
         case "logMiningUsernameExcludeList": return getOrCreateConfiguration(target).getLogMiningUsernameExcludeList();
+        case "logminingusernameincludelist":
+        case "logMiningUsernameIncludeList": return getOrCreateConfiguration(target).getLogMiningUsernameIncludeList();
         case "maxbatchsize":
         case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxqueuesize":
@@ -537,6 +581,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "maxQueueSizeInBytes": return getOrCreateConfiguration(target).getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": return getOrCreateConfiguration(target).getNotificationEnabledChannels();
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": return getOrCreateConfiguration(target).getNotificationSinkTopicName();
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return getOrCreateConfiguration(target).getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
@@ -577,6 +625,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
+        case "signalenabledchannels":
+        case "signalEnabledChannels": return getOrCreateConfiguration(target).getSignalEnabledChannels();
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": return getOrCreateConfiguration(target).getSignalPollIntervalMs();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
         case "snapshotdelayms":
@@ -599,6 +651,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
         case "snapshottablesorderbyrowcount":
         case "snapshotTablesOrderByRowCount": return getOrCreateConfiguration(target).getSnapshotTablesOrderByRowCount();
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableincludelist":
