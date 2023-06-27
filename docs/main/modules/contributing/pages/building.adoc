@@ -1,0 +1,106 @@
+= Building Camel from Source
+
+== Common Requirements
+
+* About 10Gb of free disk space for the compiled code and local Maven cache.
+
+* At least 3.5Gb of RAM.
+
+* A relatively modern operating system (Linux, Windows, macOS, *BSDs).
+
+** Other operating systems capable of running Java should work too, although that is not tested by the project
+
+== Prerequisites for Camel 3.x
+
+* Java 11 (we test using https://adoptium.net/[OpenJDK], but any modern JDK should be fine).
+
+* https://maven.apache.org[Apache Maven] version 3.8.0 or greater to build the code. You can either use your own Maven package or build using the https://github.com/takari/maven-wrapper[Maven Wrapper] (`mvnw`) provided with the project.
+
+== Prerequisites for Camel 4.x
+
+* Java 17 (we test using https://adoptium.net/[OpenJDK], but any modern JDK should be fine).
+
+* https://github.com/takari/maven-wrapper[Maven Wrapper] can be used and is bundled.
+
+* https://maven.apache.org[Apache Maven] version 3.9.0 or greater to build the code. You can either use your own Maven package or build using the https://github.com/takari/maven-wrapper[Maven Wrapper] (`mvnw`) provided with the project.
+
+== Maven
+
+Running the Maven Wrapper `mvnw` script with `-v` parameter from the root directory of the project will reveal the recommended Maven version:
+
+[source,bash]
+----
+./mvnw -v
+Apache Maven 1.2.3
+Maven home: /home/user/.m2/wrapper/dists/apache-maven-1.2.3-bin/deadbeef/apache-maven-1.2.3
+Java version: 17.0.5, vendor: Eclipse Adoptium, runtime: /home/user/java/17.0.5-tem
+Default locale: en_IE, platform encoding: UTF-8
+OS name: "linux", version: "6.3.7-200.fc38.x86_64", arch: "amd64", family: "unix"
+----
+
+If you do not like installing Maven manually, you can keep using `mvnw` instead of `mvn`.
+
+[NOTE]
+====
+Camel committers and experienced Camel contributors are may also use Maven Daemon `mvnd` to build Camel faster.
+====
+
+== Maven options
+
+To build Camel maven has to be configured to use more memory, which is done automatically via
+the `.mvn/jvm.config` file.
+
+== A normal build
+
+Beware this runs all the unit tests which takes many hours.
+
+[source,bash]
+-----------------
+mvn clean install
+-----------------
+
+=== Building Camel 3
+
+The following command will do a fast build.
+
+[source,bash]
+----
+mvn clean install -Pfastinstall
+----
+
+=== Building Camel 4
+
+The following command will do a fast build.
+
+[source,bash]
+----
+mvn clean install -Dquickly
+----
+
+[NOTE]
+====
+On Camel 4, you can also use `-Pfastinstall` to trigger a fast build, but we encourage contributors to switch to the new command.
+====
+
+The commands above will build Camel in a quick way: skipping build optional artifacts and running tests. In most modern computers, this should complete in at most 30 minutes (usually much less, for newer hardware).
+
+
+=== Building source jars
+
+If you want to build jar files with the source code, then you can run this command from the camel root folder:
+
+[source,bash]
+------------------------------------------
+mvn -Pfastinstall,source-jar clean install
+------------------------------------------
+
+=== Building for deployment
+
+If you want to build Camel so it can be deployed to a Maven repository, then you can run this command from the camel root folder:
+
+[source,bash]
+------------------------------------------
+mvn -Pfastinstall,deploy clean install
+------------------------------------------
+
+The build with deployment will build source jars, javadoc and other artifacts needed for deployment.

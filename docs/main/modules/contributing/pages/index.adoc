@@ -100,36 +100,17 @@ git branch my-new-feature
 git checkout my-new-feature
 ----
 
-**NOTE:** If you are an Apache Camel committer, then you may also clone the https://gitbox.apache.org/repos/asf/camel.git[ASF git repo].
+[NOTE]
+====
+If you are an Apache Camel committer, then you may also clone the https://gitbox.apache.org/repos/asf/camel.git[ASF git repo].
+====
 
-
-== Building on the code
+== Building the code
 
 To build the project, you need http://maven.apache.org/download.html[Apache Maven].
 
-- To build Camel 3, you need Apache Maven version 3.6.x or newer.
-- To build Camel 4, you need Apache Maven version 3.9.x or newer.
-
-
-Running the Maven Wrapper `mvnw` script with `-v` parameter from the root directory of the project will reveal the recommended Maven version:
-
-[source,bash]
-----
-./mvnw -v
-Apache Maven 1.2.3
-Maven home: /home/user/.m2/wrapper/dists/apache-maven-1.2.3-bin/deadbeef/apache-maven-1.2.3
-Java version: 17.0.5, vendor: Eclipse Adoptium, runtime: /home/user/java/17.0.5-tem
-Default locale: en_IE, platform encoding: UTF-8
-OS name: "linux", version: "6.3.7-200.fc38.x86_64", arch: "amd64", family: "unix"
-----
-
-If you do not like installing Maven manually, you can keep using `mvnw` instead of `mvn`.
-
-[NOTE]
-====
-Camel committers and experienced Camel contributors are also encouraged to use Maven Daemon `mvnd` to build Camel faster.
-====
-
+- To build Camel 3, you need Java 11 and Apache Maven version 3.6.x or newer.
+- To build Camel 4, you need Java 17 Apache Maven version 3.9.x or newer.
 
 === Building Camel 3
 
@@ -154,7 +135,7 @@ mvn clean install -Dquickly
 On Camel 4, you can also use `-Pfastinstall` to trigger a fast build, but we encourage contributors to switch to the new command.
 ====
 
-You can find more details about building Camel on the xref:manual::building.adoc[Building Camel] page.
+You can find more details about building Camel on the xref:contributing:building.adoc[Building Camel] page.
 
 **Tips**: if you aren’t able to build a component after adding some new URI parameters due to `Empty doc for option: [OPTION], parent options: <null>` please make sure that you either added properly javadoc for get/set method or description in `@UriPath` annotation.
 
