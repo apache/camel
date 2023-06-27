@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SNIHostName;
+import javax.net.ssl.SNIServerName;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
@@ -54,6 +55,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
     protected NettyHttpConfiguration configuration;
     private NettyHttpProducer producer;
     private SSLContext sslContext;
+    private List<SNIServerName> sniServerNames;
 
     public HttpClientInitializerFactory() {
         // default constructor needed
@@ -143,6 +145,10 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(producer.getContext());
+            if (answer.getSupportedSSLParameters().getServerNames() != null
+                    && !answer.getSupportedSSLParameters().getServerNames().isEmpty()) {
+                sniServerNames = answer.getSupportedSSLParameters().getServerNames();
+            }
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");
@@ -192,7 +198,8 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             SSLEngine engine = sslContext.createSSLEngine(uri.getHost(), uri.getPort());
             engine.setUseClientMode(true);
             SSLParameters sslParameters = engine.getSSLParameters();
-            sslParameters.setServerNames(Arrays.asList(new SNIHostName(uri.getHost())));
+            sslParameters
+                    .setServerNames(sniServerNames != null ? sniServerNames : Arrays.asList(new SNIHostName(uri.getHost())));
             engine.setSSLParameters(sslParameters);
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
