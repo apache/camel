@@ -35,7 +35,7 @@ For example in order to read file `hello.txt` from the bucket `helloBucket`, use
 
 [source,java]
 --------------------------------------------------------------------------------
-from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&objectName=hello.txt")
   .to("file:/var/downloaded");
 --------------------------------------------------------------------------------
 
@@ -64,8 +64,6 @@ This component implements the Batch Consumer.
 This allows you for instance to know how many messages exists in this
 batch and for instance let the Aggregator
 aggregate this number of messages.
-
-== Usage
 
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]
