@@ -94,8 +94,18 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                     .newDefaultScheduledThreadPool(this, "saga-lra");
         }
         if (this.client == null) {
-            this.client = new LRAClient(this);
+            this.client = createLRAClient();
         }
+    }
+
+    /**
+     * Use this method to override some behavior within the LRAClient
+     *
+     * @return the LRAClient to be used within the LRASagaService
+     *
+     */
+    protected LRAClient createLRAClient() {
+        return new LRAClient(this);
     }
 
     @Override
