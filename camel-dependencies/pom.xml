@@ -361,7 +361,7 @@
         <slf4j-api-version>2.0.6</slf4j-api-version>
         <angus-mail-version>2.0.2</angus-mail-version>
         <jsonata4java-version>2.2.4</jsonata4java-version>
-        <aws-java-sdk2-version>2.20.92</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.93</aws-java-sdk2-version>
         <jansi-version>2.4.0</jansi-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jt400-version>11.2</jt400-version>
