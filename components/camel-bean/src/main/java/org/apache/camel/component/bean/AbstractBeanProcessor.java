@@ -108,8 +108,10 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                     target.process(exchange);
                 } catch (AssertionError | Exception e) {
                     exchange.setException(e);
+                } finally {
+                    callback.done(true);
                 }
-                callback.done(true);
+
                 return true;
             }
         }
