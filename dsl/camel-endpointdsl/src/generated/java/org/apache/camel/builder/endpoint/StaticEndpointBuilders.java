@@ -10622,6 +10622,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OpenSearch (camel-opensearch)
+     * Send requests to OpenSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-opensearch
+     * 
+     * Syntax: <code>opensearch:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Name of the cluster
+     * 
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.endpointBuilder("opensearch", path);
+    }
+    /**
+     * OpenSearch (camel-opensearch)
+     * Send requests to OpenSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-opensearch
+     * 
+     * Syntax: <code>opensearch:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Name of the cluster
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Openshift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 

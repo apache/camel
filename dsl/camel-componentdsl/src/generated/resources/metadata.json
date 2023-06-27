@@ -5034,6 +5034,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "OpensearchComponentBuilderFactory": {
+    "kind": "component",
+    "name": "opensearch",
+    "title": "OpenSearch",
+    "description": "Send requests to OpenSearch via Java Client API.",
+    "deprecated": false,
+    "firstVersion": "4.0.0",
+    "label": "search,monitoring",
+    "javaType": "org.apache.camel.component.opensearch.OpensearchComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-opensearch",
+    "version": "4.0.0-SNAPSHOT",
+    "scheme": "opensearch",
+    "extendsScheme": "",
+    "syntax": "opensearch:clusterName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "OpenshiftBuildConfigsComponentBuilderFactory": {
     "kind": "component",
     "name": "openshift-build-configs",

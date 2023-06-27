@@ -233,6 +233,7 @@
 ** xref:oaipmh-component.adoc[OAI-PMH]
 ** xref:olingo2-component.adoc[Olingo2]
 ** xref:olingo4-component.adoc[Olingo4]
+** xref:opensearch-component.adoc[OpenSearch]
 ** xref:openstack-summary.adoc[OpenStack]
 *** xref:openstack-cinder-component.adoc[OpenStack Cinder]
 *** xref:openstack-glance-component.adoc[OpenStack Glance]

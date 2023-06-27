@@ -3061,6 +3061,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Olingo4ComponentBuilderFactory.olingo4();
     }
     /**
+     * OpenSearch (camel-opensearch)
+     * Send requests to OpenSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-opensearch
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.OpensearchComponentBuilderFactory.OpensearchComponentBuilder opensearch() {
+        return org.apache.camel.builder.component.dsl.OpensearchComponentBuilderFactory.opensearch();
+    }
+    /**
      * Openshift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
