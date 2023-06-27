@@ -103,7 +103,7 @@ function main() {
         $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -am
       fi
     fi
-    [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
+    [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
   else
     local mustSkipTests
     mustSkipTests=$(hasLabel ${prId} "skip-tests")

@@ -63,7 +63,7 @@ jobs:
       - name: Fail if there are uncommitted changes
         shell: bash
         run: |
-          [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
+          [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
       - id: test
         name: Quick test execution for affected components
         uses: ./.github/actions/quick-test
