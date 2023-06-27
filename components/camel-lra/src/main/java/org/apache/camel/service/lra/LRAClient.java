@@ -116,9 +116,9 @@ public class LRAClient implements Closeable {
                 lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
             }
             HttpRequest request = prepareRequest(URI.create(lraEndpoint))
-                    .header(HEADER_LINK, link.toString())
-                    .header(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
-                    .header("Content-Type", "text/plain")
+                    .setHeader(HEADER_LINK, link.toString())
+                    .setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
+                    .setHeader("Content-Type", "text/plain")
                     .PUT(HttpRequest.BodyPublishers.ofString(link.toString()))
                     .build();
 
@@ -136,7 +136,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<Void> complete(URL lra) {
         HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE))
-                .header("Content-Type", "text/plain")
+                .setHeader("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
@@ -153,7 +153,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<Void> compensate(URL lra) {
         HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL))
-                .header("Content-Type", "text/plain")
+                .setHeader("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
