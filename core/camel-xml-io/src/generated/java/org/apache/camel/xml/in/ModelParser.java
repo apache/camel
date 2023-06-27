@@ -1593,6 +1593,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "bean": doAdd(doParseRegistryBeanDefinition(), def.getBeans(), def::setBeans); break;
                 case "component-scan": doAdd(doParseComponentScanDefinition(), def.getComponentScanning(), def::setComponentScanning); break;
+                case "restConfiguration": doAdd(doParseRestConfigurationDefinition(), def.getRestConfigurations(), def::setRestConfigurations); break;
                 case "rest": doAdd(doParseRestDefinition(), def.getRests(), def::setRests); break;
                 case "routeConfiguration": doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations); break;
                 case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates); break;
@@ -1630,6 +1631,46 @@ public class ModelParser extends BaseParser {
                 return true;
             }
             return false;
+        }, noValueHandler());
+    }
+    protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RestConfigurationDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "apiComponent": def.setApiComponent(val); break;
+                case "apiContextPath": def.setApiContextPath(val); break;
+                case "apiContextRouteId": def.setApiContextRouteId(val); break;
+                case "apiHost": def.setApiHost(val); break;
+                case "apiVendorExtension": def.setApiVendorExtension(val); break;
+                case "bindingMode": def.setBindingMode(RestBindingMode.valueOf(val)); break;
+                case "clientRequestValidation": def.setClientRequestValidation(val); break;
+                case "component": def.setComponent(val); break;
+                case "contextPath": def.setContextPath(val); break;
+                case "enableCORS": def.setEnableCORS(val); break;
+                case "host": def.setHost(val); break;
+                case "hostNameResolver": def.setHostNameResolver(RestHostNameResolver.valueOf(val)); break;
+                case "inlineRoutes": def.setInlineRoutes(val); break;
+                case "jsonDataFormat": def.setJsonDataFormat(val); break;
+                case "port": def.setPort(val); break;
+                case "producerApiDoc": def.setProducerApiDoc(val); break;
+                case "producerComponent": def.setProducerComponent(val); break;
+                case "scheme": def.setScheme(val); break;
+                case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
+                case "useXForwardHeaders": def.setUseXForwardHeaders(val); break;
+                case "xmlDataFormat": def.setXmlDataFormat(val); break;
+                default: return false;
+            }
+            return true;
+        }, (def, key) -> {
+            switch (key) {
+                case "apiProperty": doAdd(doParseRestPropertyDefinition(), def.getApiProperties(), def::setApiProperties); break;
+                case "componentProperty": doAdd(doParseRestPropertyDefinition(), def.getComponentProperties(), def::setComponentProperties); break;
+                case "consumerProperty": doAdd(doParseRestPropertyDefinition(), def.getConsumerProperties(), def::setConsumerProperties); break;
+                case "corsHeaders": doAdd(doParseRestPropertyDefinition(), def.getCorsHeaders(), def::setCorsHeaders); break;
+                case "dataFormatProperty": doAdd(doParseRestPropertyDefinition(), def.getDataFormatProperties(), def::setDataFormatProperties); break;
+                case "endpointProperty": doAdd(doParseRestPropertyDefinition(), def.getEndpointProperties(), def::setEndpointProperties); break;
+                default: return false;
+            }
+            return true;
         }, noValueHandler());
     }
     protected BeanPropertyDefinition doParseBeanPropertyDefinition() throws IOException, XmlPullParserException {
@@ -3137,46 +3178,6 @@ public class ModelParser extends BaseParser {
                 return true;
             }
             return false;
-        }, noValueHandler());
-    }
-    protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RestConfigurationDefinition(), (def, key, val) -> {
-            switch (key) {
-                case "apiComponent": def.setApiComponent(val); break;
-                case "apiContextPath": def.setApiContextPath(val); break;
-                case "apiContextRouteId": def.setApiContextRouteId(val); break;
-                case "apiHost": def.setApiHost(val); break;
-                case "apiVendorExtension": def.setApiVendorExtension(val); break;
-                case "bindingMode": def.setBindingMode(RestBindingMode.valueOf(val)); break;
-                case "clientRequestValidation": def.setClientRequestValidation(val); break;
-                case "component": def.setComponent(val); break;
-                case "contextPath": def.setContextPath(val); break;
-                case "enableCORS": def.setEnableCORS(val); break;
-                case "host": def.setHost(val); break;
-                case "hostNameResolver": def.setHostNameResolver(RestHostNameResolver.valueOf(val)); break;
-                case "inlineRoutes": def.setInlineRoutes(val); break;
-                case "jsonDataFormat": def.setJsonDataFormat(val); break;
-                case "port": def.setPort(val); break;
-                case "producerApiDoc": def.setProducerApiDoc(val); break;
-                case "producerComponent": def.setProducerComponent(val); break;
-                case "scheme": def.setScheme(val); break;
-                case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
-                case "useXForwardHeaders": def.setUseXForwardHeaders(val); break;
-                case "xmlDataFormat": def.setXmlDataFormat(val); break;
-                default: return false;
-            }
-            return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "apiProperty": doAdd(doParseRestPropertyDefinition(), def.getApiProperties(), def::setApiProperties); break;
-                case "componentProperty": doAdd(doParseRestPropertyDefinition(), def.getComponentProperties(), def::setComponentProperties); break;
-                case "consumerProperty": doAdd(doParseRestPropertyDefinition(), def.getConsumerProperties(), def::setConsumerProperties); break;
-                case "corsHeaders": doAdd(doParseRestPropertyDefinition(), def.getCorsHeaders(), def::setCorsHeaders); break;
-                case "dataFormatProperty": doAdd(doParseRestPropertyDefinition(), def.getDataFormatProperties(), def::setDataFormatProperties); break;
-                case "endpointProperty": doAdd(doParseRestPropertyDefinition(), def.getEndpointProperties(), def::setEndpointProperties); break;
-                default: return false;
-            }
-            return true;
         }, noValueHandler());
     }
     protected RestSecuritiesDefinition doParseRestSecuritiesDefinition() throws IOException, XmlPullParserException {

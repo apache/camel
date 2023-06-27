@@ -32,6 +32,7 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.ExternalSchemaElement;
@@ -51,6 +52,7 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
         "componentScanning",
         "beans",
         "springBeans",
+        "restConfigurations",
         "rests",
         "routeConfigurations",
         "routeTemplates",
@@ -88,6 +90,8 @@ public class BeansDefinition {
     // initially we'll be supporting only these elements which are parsed by
     // org.apache.camel.dsl.xml.io.XmlRoutesBuilderLoader in camel-xml-io-dsl
 
+    @XmlElement(name = "restConfiguration")
+    private List<RestConfigurationDefinition> restConfigurations = new ArrayList<>();
     @XmlElement(name = "rest")
     private List<RestDefinition> rests = new ArrayList<>();
     @XmlElement(name = "routeConfiguration")
@@ -121,6 +125,14 @@ public class BeansDefinition {
 
     public void setSpringBeans(List<Element> springBeans) {
         this.springBeans = springBeans;
+    }
+
+    public List<RestConfigurationDefinition> getRestConfigurations() {
+        return restConfigurations;
+    }
+
+    public void setRestConfigurations(List<RestConfigurationDefinition> restConfigs) {
+        this.restConfigurations = restConfigs;
     }
 
     public List<RestDefinition> getRests() {
