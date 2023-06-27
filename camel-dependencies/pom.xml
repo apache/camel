@@ -214,7 +214,7 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <google-oauth-client-version>1.34.0</google-oauth-client-version>
-        <huaweicloud-sdk-version>3.1.38</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.45</huaweicloud-sdk-version>
         <build-helper-maven-plugin-version>3.4.0</build-helper-maven-plugin-version>
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
         <parquet-common-version>1.12.3</parquet-common-version>
@@ -319,7 +319,7 @@
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <picocli-version>4.7.3</picocli-version>
         <maven-shade-plugin-version>3.4.1</maven-shade-plugin-version>
-        <huaweicloud-obs-version>3.23.3</huaweicloud-obs-version>
+        <huaweicloud-obs-version>3.23.3.1</huaweicloud-obs-version>
         <grpc-version>1.54.0</grpc-version>
         <assertj-version>3.24.2</assertj-version>
         <scala-datasonnet-version>2.13.10</scala-datasonnet-version>
