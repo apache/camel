@@ -679,7 +679,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             // and map those to Camel route definitions
             MappingNode source = asMappingNode(nodeAt(root, "/spec/source"));
             MappingNode sink = asMappingNode(nodeAt(root, "/spec/sink"));
-            if (source != null && sink != null) {
+            if (source != null) {
                 int line = -1;
                 if (source.getStartMark().isPresent()) {
                     line = source.getStartMark().get().getLine();
@@ -731,20 +731,23 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                 }
 
-                // sink is at the end (mandatory)
-                line = -1;
-                if (sink.getStartMark().isPresent()) {
-                    line = sink.getStartMark().get().getLine();
-                }
-                uri = extractCamelEndpointUri(sink);
-                ToDefinition to = new ToDefinition(uri);
-                route.addOutput(to);
+                if (sink != null) {
 
-                // enrich model with line number
-                if (line != -1) {
-                    to.setLineNumber(line);
-                    if (ctx != null) {
-                        to.setLocation(ctx.getResource().getLocation());
+                    // sink is at the end (mandatory)
+                    line = -1;
+                    if (sink.getStartMark().isPresent()) {
+                        line = sink.getStartMark().get().getLine();
+                    }
+                    uri = extractCamelEndpointUri(sink);
+                    ToDefinition to = new ToDefinition(uri);
+                    route.addOutput(to);
+
+                    // enrich model with line number
+                    if (line != -1) {
+                        to.setLineNumber(line);
+                        if (ctx != null) {
+                            to.setLocation(ctx.getResource().getLocation());
+                        }
                     }
                 }
 

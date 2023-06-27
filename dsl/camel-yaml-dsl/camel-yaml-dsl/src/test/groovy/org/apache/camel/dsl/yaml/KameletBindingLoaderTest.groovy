@@ -621,4 +621,40 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         context.resolvePropertyPlaceholders("{{MY_ENV}}") == "cheese"
     }
 
+    def "kamelet binding no sink"() {
+        when:
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "Hello world!"
+                  steps:
+                  - ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-action
+            ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'timer-event-source'
+            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.lineNumber == 7
+            outputs.size() == 1
+            with (outputs[0], KameletDefinition) {
+                name == 'log-action'
+                lineNumber == 14
+            }
+        }
+    }
+
 }
