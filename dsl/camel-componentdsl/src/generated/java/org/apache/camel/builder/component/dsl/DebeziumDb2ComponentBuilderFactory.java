@@ -561,7 +561,8 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
         /**
-         * The maximum size of chunk for incremental snapshotting.
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -647,6 +648,37 @@ public interface DebeziumDb2ComponentBuilderFactory {
         default DebeziumDb2ComponentBuilder messageKeyColumns(
                 java.lang.String messageKeyColumns) {
             doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
+         * List of notification channels names that are enabled.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param notificationEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder notificationEnabledChannels(
+                java.lang.String notificationEnabledChannels) {
+            doSetProperty("notificationEnabledChannels", notificationEnabledChannels);
+            return this;
+        }
+        /**
+         * The name of the topic for the notifications. This is required in case
+         * 'sink' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param notificationSinkTopicName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder notificationSinkTopicName(
+                java.lang.String notificationSinkTopicName) {
+            doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
             return this;
         }
         /**
@@ -848,6 +880,40 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
         /**
+         * List of channels names that are enabled. Source channel is enabled by
+         * default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: source
+         * Group: db2
+         * 
+         * @param signalEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder signalEnabledChannels(
+                java.lang.String signalEnabledChannels) {
+            doSetProperty("signalEnabledChannels", signalEnabledChannels);
+            return this;
+        }
+        /**
+         * Interval for looking for new signals in registered channels, given in
+         * milliseconds. Defaults to 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: db2
+         * 
+         * @param signalPollIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder signalPollIntervalMs(
+                long signalPollIntervalMs) {
+            doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
@@ -997,6 +1063,23 @@ public interface DebeziumDb2ComponentBuilderFactory {
         default DebeziumDb2ComponentBuilder snapshotTablesOrderByRowCount(
                 java.lang.String snapshotTablesOrderByRowCount) {
             doSetProperty("snapshotTablesOrderByRowCount", snapshotTablesOrderByRowCount);
+            return this;
+        }
+        /**
+         * The name of the SourceInfoStructMaker class that returns SourceInfo
+         * schema and struct.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: io.debezium.connector.db2.Db2SourceInfoStructMaker
+         * Group: db2
+         * 
+         * @param sourceinfoStructMaker the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder sourceinfoStructMaker(
+                java.lang.String sourceinfoStructMaker) {
+            doSetProperty("sourceinfoStructMaker", sourceinfoStructMaker);
             return this;
         }
         /**
@@ -1185,6 +1268,8 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumDb2Component) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumDb2Component) component).setMaxQueueSizeInBytes((long) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumDb2Component) component).setMessageKeyColumns((java.lang.String) value); return true;
+            case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumDb2Component) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumDb2Component) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumDb2Component) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumDb2Component) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumDb2Component) component).setQueryFetchSize((int) value); return true;
@@ -1196,6 +1281,8 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumDb2Component) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumDb2Component) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumDb2Component) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEnabledChannels": getOrCreateConfiguration((DebeziumDb2Component) component).setSignalEnabledChannels((java.lang.String) value); return true;
+            case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumDb2Component) component).setSignalPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumDb2Component) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotFetchSize((int) value); return true;
@@ -1204,6 +1291,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "snapshotMode": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
+            case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumDb2Component) component).setSourceinfoStructMaker((java.lang.String) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumDb2Component) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setTableIncludeList((java.lang.String) value); return true;

@@ -518,18 +518,21 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * Whether to use an encrypted connection to Postgres. Options include:
-         * 'disable' (the default) to use an unencrypted connection; 'require'
-         * to use a secure (encrypted) connection, and fail if one cannot be
-         * established; 'verify-ca' like 'required' but additionally verify the
-         * server TLS certificate against the configured Certificate Authority
-         * (CA) certificates, or fail if no valid matching CA certificates are
-         * found; or 'verify-full' like 'verify-ca' but additionally verify that
-         * the server certificate matches the host to which the connection is
-         * attempted.
+         * 'disable' (the default) to use an unencrypted connection; 'allow' to
+         * try and use an unencrypted connection first and, failing that, a
+         * secure (encrypted) connection; 'prefer' (the default) to try and use
+         * a secure (encrypted) connection first and, failing that, an
+         * unencrypted connection; 'require' to use a secure (encrypted)
+         * connection, and fail if one cannot be established; 'verify-ca' like
+         * 'required' but additionally verify the server TLS certificate against
+         * the configured Certificate Authority (CA) certificates, or fail if no
+         * valid matching CA certificates are found; or 'verify-full' like
+         * 'verify-ca' but additionally verify that the server certificate
+         * matches the host to which the connection is attempted.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: disable
+         * Default: prefer
          * Group: postgres
          * 
          * @param databaseSslmode the value to set
@@ -793,7 +796,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The maximum size of chunk for incremental snapshotting.
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -934,6 +938,37 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * List of notification channels names that are enabled.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param notificationEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder notificationEnabledChannels(
+                java.lang.String notificationEnabledChannels) {
+            doSetProperty("notificationEnabledChannels", notificationEnabledChannels);
+            return this;
+        }
+        /**
+         * The name of the topic for the notifications. This is required in case
+         * 'sink' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param notificationSinkTopicName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder notificationSinkTopicName(
+                java.lang.String notificationSinkTopicName) {
+            doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+        /**
          * The name of the Postgres logical decoding plugin installed on the
          * server. Supported values are 'decoderbufs' and 'pgoutput'. Defaults
          * to 'decoderbufs'.
@@ -1045,6 +1080,35 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder queryFetchSize(
                 int queryFetchSize) {
             doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Applies only when streaming changes using pgoutput.Determines the
+         * value for Replica Identity at table level. This option will overwrite
+         * the existing value in databaseA comma-separated list of regular
+         * expressions that match fully-qualified tables and Replica Identity
+         * value to be used in the table. Each expression must match the pattern
+         * ':', where the table names could be defined as
+         * (SCHEMA_NAME.TABLE_NAME), and the replica identity values are:
+         * DEFAULT - Records the old values of the columns of the primary key,
+         * if any. This is the default for non-system tables.INDEX index_name -
+         * Records the old values of the columns covered by the named index,
+         * that must be unique, not partial, not deferrable, and include only
+         * columns marked NOT NULL. If this index is dropped, the behavior is
+         * the same as NOTHING.FULL - Records the old values of all columns in
+         * the row.NOTHING - Records no information about the old row. This is
+         * the default for system tables.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param replicaIdentityAutosetValues the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder replicaIdentityAutosetValues(
+                java.lang.String replicaIdentityAutosetValues) {
+            doSetProperty("replicaIdentityAutosetValues", replicaIdentityAutosetValues);
             return this;
         }
         /**
@@ -1173,6 +1237,40 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder signalDataCollection(
                 java.lang.String signalDataCollection) {
             doSetProperty("signalDataCollection", signalDataCollection);
+            return this;
+        }
+        /**
+         * List of channels names that are enabled. Source channel is enabled by
+         * default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: source
+         * Group: postgres
+         * 
+         * @param signalEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder signalEnabledChannels(
+                java.lang.String signalEnabledChannels) {
+            doSetProperty("signalEnabledChannels", signalEnabledChannels);
+            return this;
+        }
+        /**
+         * Interval for looking for new signals in registered channels, given in
+         * milliseconds. Defaults to 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: postgres
+         * 
+         * @param signalPollIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder signalPollIntervalMs(
+                long signalPollIntervalMs) {
+            doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
             return this;
         }
         /**
@@ -1386,17 +1484,23 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * The criteria for running a snapshot upon startup of the connector.
-         * Options include: 'always' to specify that the connector run a
-         * snapshot each time it starts up; 'initial' (the default) to specify
-         * the connector can run a snapshot only when no offsets are available
-         * for the logical server name; 'initial_only' same as 'initial' except
-         * the connector should stop after completing the snapshot and before it
-         * would normally start emitting changes;'never' to specify the
-         * connector should never run a snapshot and that upon first startup the
-         * connector should read from the last position (LSN) recorded by the
-         * server; and'exported' deprecated, use 'initial' instead; 'custom' to
-         * specify a custom class with 'snapshot.custom_class' which will be
-         * loaded and used to determine the snapshot, see docs for more details.
+         * Select one of the following snapshot options: 'always': The connector
+         * runs a snapshot every time that it starts. After the snapshot
+         * completes, the connector begins to stream changes from the
+         * transaction log.; 'initial' (default): If the connector does not
+         * detect any offsets for the logical server name, it runs a snapshot
+         * that captures the current full state of the configured tables. After
+         * the snapshot completes, the connector begins to stream changes from
+         * the transaction log. 'initial_only': The connector performs a
+         * snapshot as it does for the 'initial' option, but after the connector
+         * completes the snapshot, it stops, and does not stream changes from
+         * the transaction log.; 'never': The connector does not run a snapshot.
+         * Upon first startup, the connector immediately begins reading from the
+         * beginning of the transaction log. 'exported': This option is
+         * deprecated; use 'initial' instead.; 'custom': The connector loads a
+         * custom class to specify how the connector performs snapshots. For
+         * more information, see Custom snapshotter SPI in the PostgreSQL
+         * connector documentation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1455,6 +1559,24 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder snapshotTablesOrderByRowCount(
                 java.lang.String snapshotTablesOrderByRowCount) {
             doSetProperty("snapshotTablesOrderByRowCount", snapshotTablesOrderByRowCount);
+            return this;
+        }
+        /**
+         * The name of the SourceInfoStructMaker class that returns SourceInfo
+         * schema and struct.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * io.debezium.connector.postgresql.PostgresSourceInfoStructMaker
+         * Group: postgres
+         * 
+         * @param sourceinfoStructMaker the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder sourceinfoStructMaker(
+                java.lang.String sourceinfoStructMaker) {
+            doSetProperty("sourceinfoStructMaker", sourceinfoStructMaker);
             return this;
         }
         /**
@@ -1718,12 +1840,15 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "messagePrefixExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixExcludeList((java.lang.String) value); return true;
             case "messagePrefixIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixIncludeList((java.lang.String) value); return true;
+            case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pluginName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPluginName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumPostgresComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "publicationAutocreateMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationAutocreateMode((java.lang.String) value); return true;
             case "publicationName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationName((java.lang.String) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setQueryFetchSize((int) value); return true;
+            case "replicaIdentityAutosetValues": getOrCreateConfiguration((DebeziumPostgresComponent) component).setReplicaIdentityAutosetValues((java.lang.String) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "schemaExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaExcludeList((java.lang.String) value); return true;
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
@@ -1731,6 +1856,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "schemaRefreshMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaRefreshMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEnabledChannels": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
+            case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSignalPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "slotDropOnStop": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotDropOnStop((boolean) value); return true;
             case "slotMaxRetries": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotMaxRetries((int) value); return true;
@@ -1746,6 +1873,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "snapshotMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
+            case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
             case "statusUpdateIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setStatusUpdateIntervalMs((int) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
