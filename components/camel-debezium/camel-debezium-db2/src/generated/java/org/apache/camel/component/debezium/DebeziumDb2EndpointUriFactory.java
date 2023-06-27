@@ -21,7 +21,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(61);
+        Set<String> props = new HashSet<>(66);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
@@ -49,6 +49,8 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("maxQueueSizeInBytes");
         props.add("messageKeyColumns");
         props.add("name");
+        props.add("notificationEnabledChannels");
+        props.add("notificationSinkTopicName");
         props.add("offsetCommitPolicy");
         props.add("offsetCommitTimeoutMs");
         props.add("offsetFlushIntervalMs");
@@ -68,6 +70,8 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("schemaHistoryInternalStoreOnlyCapturedTablesDdl");
         props.add("schemaNameAdjustmentMode");
         props.add("signalDataCollection");
+        props.add("signalEnabledChannels");
+        props.add("signalPollIntervalMs");
         props.add("skippedOperations");
         props.add("snapshotDelayMs");
         props.add("snapshotFetchSize");
@@ -76,6 +80,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("snapshotMode");
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
+        props.add("sourceinfoStructMaker");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");
