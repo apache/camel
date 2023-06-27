@@ -967,6 +967,65 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * The name of the flush table used by the connector, defaults to
+         * LOG_MINING_FLUSH.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: LOG_MINING_FLUSH
+         * Group: oracle
+         * 
+         * @param logMiningFlushTableName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningFlushTableName(
+                java.lang.String logMiningFlushTableName) {
+            doSetProperty("logMiningFlushTableName", logMiningFlushTableName);
+            return this;
+        }
+        /**
+         * Specifies how the filter configuration is applied to the LogMiner
+         * database query. none - The query does not apply any schema or table
+         * filters, all filtering is at runtime by the connector. in - The query
+         * uses SQL in-clause expressions to specify the schema or table
+         * filters. regex - The query uses Oracle REGEXP_LIKE expressions to
+         * specify the schema or table filters.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: oracle
+         * 
+         * @param logMiningQueryFilterMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningQueryFilterMode(
+                java.lang.String logMiningQueryFilterMode) {
+            doSetProperty("logMiningQueryFilterMode", logMiningQueryFilterMode);
+            return this;
+        }
+        /**
+         * Debezium opens a database connection and keeps that connection open
+         * throughout the entire streaming phase. In some situations, this can
+         * lead to excessive SGA memory usage. By setting this option to 'true'
+         * (the default is 'false'), the connector will close and re-open a
+         * database connection after every detected log switch or if the
+         * log.mining.session.max.ms has been reached.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param logMiningRestartConnection the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningRestartConnection(
+                boolean logMiningRestartConnection) {
+            doSetProperty("logMiningRestartConnection", logMiningRestartConnection);
+            return this;
+        }
+        /**
          * Used for SCN gap detection, if the difference between current SCN and
          * previous end SCN is bigger than this value, and the time difference
          * of current SCN and previous end SCN is smaller than
@@ -1148,6 +1207,21 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of usernames to include from LogMiner query.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningUsernameIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningUsernameIncludeList(
+                java.lang.String logMiningUsernameIncludeList) {
+            doSetProperty("logMiningUsernameIncludeList", logMiningUsernameIncludeList);
+            return this;
+        }
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -1218,6 +1292,37 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder messageKeyColumns(
                 java.lang.String messageKeyColumns) {
             doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
+         * List of notification channels names that are enabled.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param notificationEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder notificationEnabledChannels(
+                java.lang.String notificationEnabledChannels) {
+            doSetProperty("notificationEnabledChannels", notificationEnabledChannels);
+            return this;
+        }
+        /**
+         * The name of the topic for the notifications. This is required in case
+         * 'sink' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param notificationSinkTopicName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder notificationSinkTopicName(
+                java.lang.String notificationSinkTopicName) {
+            doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
             return this;
         }
         /**
@@ -1435,6 +1540,40 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * List of channels names that are enabled. Source channel is enabled by
+         * default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: source
+         * Group: oracle
+         * 
+         * @param signalEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder signalEnabledChannels(
+                java.lang.String signalEnabledChannels) {
+            doSetProperty("signalEnabledChannels", signalEnabledChannels);
+            return this;
+        }
+        /**
+         * Interval for looking for new signals in registered channels, given in
+         * milliseconds. Defaults to 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: oracle
+         * 
+         * @param signalPollIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder signalPollIntervalMs(
+                long signalPollIntervalMs) {
+            doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
@@ -1579,11 +1718,25 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * The criteria for running a snapshot upon startup of the connector.
-         * Options include: 'initial' (the default) to specify the connector
-         * should run a snapshot only when no offsets are available for the
-         * logical server name; 'schema_only' to specify the connector should
-         * run a snapshot of the schema when no offsets are available for the
-         * logical server name.
+         * Select one of the following snapshot options: 'always': The connector
+         * runs a snapshot every time that it starts. After the snapshot
+         * completes, the connector begins to stream changes from the redo
+         * logs.; 'initial' (default): If the connector does not detect any
+         * offsets for the logical server name, it runs a snapshot that captures
+         * the current full state of the configured tables. After the snapshot
+         * completes, the connector begins to stream changes from the redo logs.
+         * 'initial_only': The connector performs a snapshot as it does for the
+         * 'initial' option, but after the connector completes the snapshot, it
+         * stops, and does not stream changes from the redo logs.;
+         * 'schema_only': If the connector does not detect any offsets for the
+         * logical server name, it runs a snapshot that captures only the schema
+         * (table structures), but not any table data. After the snapshot
+         * completes, the connector begins to stream changes from the redo
+         * logs.; 'schema_only_recovery': The connector performs a snapshot that
+         * captures only the database schema history. The connector then
+         * transitions to streaming from the redo logs. Use this setting to
+         * restore a corrupted or lost database schema history topic. Do not use
+         * if the database schema was modified after the connector stopped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1642,6 +1795,23 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder snapshotTablesOrderByRowCount(
                 java.lang.String snapshotTablesOrderByRowCount) {
             doSetProperty("snapshotTablesOrderByRowCount", snapshotTablesOrderByRowCount);
+            return this;
+        }
+        /**
+         * The name of the SourceInfoStructMaker class that returns SourceInfo
+         * schema and struct.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: io.debezium.connector.oracle.OracleSourceInfoStructMaker
+         * Group: oracle
+         * 
+         * @param sourceinfoStructMaker the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder sourceinfoStructMaker(
+                java.lang.String sourceinfoStructMaker) {
+            doSetProperty("sourceinfoStructMaker", sourceinfoStructMaker);
             return this;
         }
         /**
@@ -1850,6 +2020,9 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferInfinispanCacheTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheTransactions((java.lang.String) value); return true;
             case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferTransactionEventsThreshold((long) value); return true;
             case "logMiningBufferType": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferType((java.lang.String) value); return true;
+            case "logMiningFlushTableName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningFlushTableName((java.lang.String) value); return true;
+            case "logMiningQueryFilterMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningQueryFilterMode((java.lang.String) value); return true;
+            case "logMiningRestartConnection": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningRestartConnection((boolean) value); return true;
             case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionGapSizeMin((long) value); return true;
             case "logMiningScnGapDetectionTimeIntervalMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionTimeIntervalMaxMs((long) value); return true;
             case "logMiningSessionMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSessionMaxMs((long) value); return true;
@@ -1860,10 +2033,13 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningStrategy((java.lang.String) value); return true;
             case "logMiningTransactionRetentionMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningTransactionRetentionMs((long) value); return true;
             case "logMiningUsernameExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningUsernameExcludeList((java.lang.String) value); return true;
+            case "logMiningUsernameIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningUsernameIncludeList((java.lang.String) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumOracleComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
+            case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumOracleComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setQueryFetchSize((int) value); return true;
@@ -1876,6 +2052,8 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
+            case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotEnhancePredicateScn": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotEnhancePredicateScn((java.lang.String) value); return true;
@@ -1887,6 +2065,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "snapshotMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
+            case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumOracleComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableIncludeList((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setTimePrecisionMode((java.lang.String) value); return true;

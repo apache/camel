@@ -13512,6 +13512,7 @@ org.apache.camel.builder.RouteBuilder.
       </xs:element>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition"/>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:restConfiguration"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplate"/>
@@ -13529,6 +13530,309 @@ org.apache.camel.builder.RouteBuilder.
     </xs:sequence>
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="restConfigurationDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="componentProperty" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure as many additional properties for the rest component in use.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="endpointProperty" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure as many additional properties for the rest endpoint in use.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="consumerProperty" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure as many additional properties for the rest consumer in use.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormatProperty" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure as many additional properties for the data formats in use. For example set property prettyPrint to
+true to have json outputted in pretty mode. The properties can be prefixed to denote the option is only for either JSON
+or XML and for either the IN or the OUT. The prefixes are: json.in. json.out. xml.in. xml.out. For example a key with
+value xml.out.mustBeJAXBElement is only for the XML data format for the outgoing. A key without a prefix is a common key
+for all situations.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="apiProperty" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure as many additional properties for the api documentation. For example set property api.title to my
+cool stuff.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="corsHeaders" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure custom CORS headers.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="component" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow. If no
+component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the
+Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then
+that is being used.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="apiComponent" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the Camel component to use as the REST API. If no API Component has been explicit configured, then Camel
+will lookup if there is a Camel component responsible for servicing and generating the REST API documentation, or if a
+org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If either one is found, then that is being
+used.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="producerComponent" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the name of the Camel component to use as the REST producer.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="scheme" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The scheme to use for exposing the REST service. Usually http or https is supported. The default value is http.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="host" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The hostname to use for exposing the REST service.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="port" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The port number to use for exposing the REST service. Notice if you use servlet component then the port number
+configured here does not apply, as the port number in use is the actual port number the servlet component is using. eg
+if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf that uses port 8181
+by default etc. Though in those situations setting the port number here, allows tooling and JMX to know the port number,
+so its recommended to set the port number to the number that the servlet engine uses.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="apiHost" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the
+generated host with this configured hostname.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="useXForwardHeaders" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to use X-Forward headers for Host and related setting. The default value is true. Default value: true
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="producerApiDoc" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid
+accordingly to the api document. The location of the api document is loaded from classpath by default, but you can use
+file: or http: to refer to resources to load from file or http url.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="contextPath" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets a leading context-path the REST services will be using. This can be used when using components such as
+camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty
+or camel-netty-http that includes a HTTP server.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="apiContextPath" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets a leading API context-path the REST API services will be using. This can be used when using components such as
+camel-servlet where the deployed web application is deployed using a context-path.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="apiContextRouteId" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route
+id.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="apiVendorExtension" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as
+vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools
+supports vendor-extensions when importing your API docs. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="hostNameResolver" type="tns:restHostNameResolver">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be
+using. Default value: allLocalIp
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="bindingMode" type="tns:restBindingMode">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the binding mode to use. The default value is off. Default value: off
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
+messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="clientRequestValidation" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes;
+returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
+406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if
+validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
+Status 400 if validation error. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="enableCORS" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable CORS headers in the HTTP response. The default value is false. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="inlineRoutes" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual
+route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl).
+Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints,
+which must be unique per service. This option is default false. Default value: false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="jsonDataFormat" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a
+custom name of the data format, not to refer to an existing data format instance.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="xmlDataFormat" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a
+custom name of the data format, not to refer to an existing data format instance.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="restPropertyDefinition">
+    <xs:sequence/>
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Property key.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="value" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Property value.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="restDefinition">
     <xs:complexContent>
@@ -13811,27 +14115,6 @@ The flow used by the OAuth2 security scheme. Valid values are implicit, password
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="restPropertyDefinition">
-    <xs:sequence/>
-    <xs:attribute name="key" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Property key.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="value" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Property value.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="openIdConnectDefinition">
     <xs:complexContent>
@@ -15861,288 +16144,6 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="restConfigurationDefinition">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="componentProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-<![CDATA[
-Allows to configure as many additional properties for the rest component in use.
-]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="endpointProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-<![CDATA[
-Allows to configure as many additional properties for the rest endpoint in use.
-]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="consumerProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-<![CDATA[
-Allows to configure as many additional properties for the rest consumer in use.
-]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormatProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-<![CDATA[
-Allows to configure as many additional properties for the data formats in use. For example set property prettyPrint to
-true to have json outputted in pretty mode. The properties can be prefixed to denote the option is only for either JSON
-or XML and for either the IN or the OUT. The prefixes are: json.in. json.out. xml.in. xml.out. For example a key with
-value xml.out.mustBeJAXBElement is only for the XML data format for the outgoing. A key without a prefix is a common key
-for all situations.
-]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="apiProperty" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-<![CDATA[
-Allows to configure as many additional properties for the api documentation. For example set property api.title to my
-cool stuff.
-]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="corsHeaders" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-<![CDATA[
-Allows to configure custom CORS headers.
-]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="component" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow. If no
-component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the
-Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then
-that is being used.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiComponent" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The name of the Camel component to use as the REST API. If no API Component has been explicit configured, then Camel
-will lookup if there is a Camel component responsible for servicing and generating the REST API documentation, or if a
-org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If either one is found, then that is being
-used.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="producerComponent" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the name of the Camel component to use as the REST producer.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="scheme" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The scheme to use for exposing the REST service. Usually http or https is supported. The default value is http.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="host" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The hostname to use for exposing the REST service.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="port" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-The port number to use for exposing the REST service. Notice if you use servlet component then the port number
-configured here does not apply, as the port number in use is the actual port number the servlet component is using. eg
-if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf that uses port 8181
-by default etc. Though in those situations setting the port number here, allows tooling and JMX to know the port number,
-so its recommended to set the port number to the number that the servlet engine uses.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiHost" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the
-generated host with this configured hostname.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="useXForwardHeaders" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to use X-Forward headers for Host and related setting. The default value is true. Default value: true
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="producerApiDoc" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid
-accordingly to the api document. The location of the api document is loaded from classpath by default, but you can use
-file: or http: to refer to resources to load from file or http url.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="contextPath" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a leading context-path the REST services will be using. This can be used when using components such as
-camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty
-or camel-netty-http that includes a HTTP server.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiContextPath" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a leading API context-path the REST API services will be using. This can be used when using components such as
-camel-servlet where the deployed web application is deployed using a context-path.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiContextRouteId" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route
-id.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiVendorExtension" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as
-vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools
-supports vendor-extensions when importing your API docs. Default value: false
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="hostNameResolver" type="tns:restHostNameResolver">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be
-using. Default value: allLocalIp
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="bindingMode" type="tns:restBindingMode">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the binding mode to use. The default value is off. Default value: off
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
-messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: false
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="clientRequestValidation" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes;
-returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status
-406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if
-validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
-Status 400 if validation error. Default value: false
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="enableCORS" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to enable CORS headers in the HTTP response. The default value is false. Default value: false
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="inlineRoutes" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual
-route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl).
-Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints,
-which must be unique per service. This option is default false. Default value: false
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="jsonDataFormat" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a
-custom name of the data format, not to refer to an existing data format instance.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="xmlDataFormat" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a
-custom name of the data format, not to refer to an existing data format instance.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
   <xs:complexType name="restsDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
@@ -17108,6 +17109,22 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="NEVER"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="restHostNameResolver">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="allLocalIp"/>
+      <xs:enumeration value="localIp"/>
+      <xs:enumeration value="localHostName"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="restBindingMode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="auto"/>
+      <xs:enumeration value="off"/>
+      <xs:enumeration value="json"/>
+      <xs:enumeration value="xml"/>
+      <xs:enumeration value="json_xml"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:simpleType name="restParamType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="body"/>
@@ -17137,22 +17154,6 @@ An optional certificate alias to use. This is useful when the keystore has multi
     <xs:restriction base="xs:string">
       <xs:enumeration value="type"/>
       <xs:enumeration value="regexp"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="restBindingMode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="auto"/>
-      <xs:enumeration value="off"/>
-      <xs:enumeration value="json"/>
-      <xs:enumeration value="xml"/>
-      <xs:enumeration value="json_xml"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="restHostNameResolver">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="allLocalIp"/>
-      <xs:enumeration value="localIp"/>
-      <xs:enumeration value="localHostName"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="springErrorHandlerType">
