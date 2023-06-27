@@ -189,7 +189,7 @@
         <graphql-java-version>18.4</graphql-java-version>
         <greenmail-version>2.0.0</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <grpc-version>1.54.0</grpc-version>
+        <grpc-version>1.56.0</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
         <grpc-google-auth-library-version>1.5.3</grpc-google-auth-library-version>
         <grpc-guava-version>32.0.0-jre</grpc-guava-version>
