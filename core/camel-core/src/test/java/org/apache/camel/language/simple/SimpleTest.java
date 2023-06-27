@@ -247,6 +247,13 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSimpleThreadId() throws Exception {
+        long id = Thread.currentThread().getId();
+        assertExpression("${threadId}", id);
+        assertExpression("The id is ${threadId}", "The id is " + id);
+    }
+
+    @Test
     public void testSimpleThreadName() throws Exception {
         String name = Thread.currentThread().getName();
         assertExpression("${threadName}", name);
@@ -339,7 +346,7 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testOGNLBodyEmptyList() throws Exception {
         Map<String, List<String>> map = new HashMap<>();
-        map.put("list", new ArrayList<String>());
+        map.put("list", new ArrayList<>());
 
         exchange.getIn().setBody(map);
 

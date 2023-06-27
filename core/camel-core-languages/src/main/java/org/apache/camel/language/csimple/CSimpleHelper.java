@@ -224,6 +224,10 @@ public final class CSimpleHelper {
         return Thread.currentThread().getName();
     }
 
+    public static long threadId() {
+        return Thread.currentThread().getId();
+    }
+
     public static String hostName() {
         return InetAddressUtil.getLocalHostNameSafe();
     }
