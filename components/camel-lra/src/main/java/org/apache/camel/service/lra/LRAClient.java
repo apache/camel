@@ -65,8 +65,7 @@ public class LRAClient implements Closeable {
     }
 
     public CompletableFuture<URL> newLRA() {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(lraUrl + COORDINATOR_PATH_START))
+        HttpRequest request = prepareRequest(URI.create(lraUrl + COORDINATOR_PATH_START))
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
@@ -116,8 +115,7 @@ public class LRAClient implements Closeable {
             if (step.getTimeoutInMilliseconds().isPresent()) {
                 lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
             }
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(lraEndpoint))
+            HttpRequest request = prepareRequest(URI.create(lraEndpoint))
                     .header(HEADER_LINK, link.toString())
                     .header(Exchange.SAGA_LONG_RUNNING_ACTION, lra.toString())
                     .header("Content-Type", "text/plain")
@@ -137,8 +135,7 @@ public class LRAClient implements Closeable {
     }
 
     public CompletableFuture<Void> complete(URL lra) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE))
+        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE))
                 .header("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
@@ -155,8 +152,7 @@ public class LRAClient implements Closeable {
     }
 
     public CompletableFuture<Void> compensate(URL lra) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL))
+        HttpRequest request = prepareRequest(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL))
                 .header("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
@@ -170,6 +166,10 @@ public class LRAClient implements Closeable {
 
             return null;
         });
+    }
+
+    protected HttpRequest.Builder prepareRequest(URI uri) {
+        return HttpRequest.newBuilder().uri(uri);
     }
 
     private URL toURL(Object url) {
