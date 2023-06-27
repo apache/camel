@@ -47,9 +47,16 @@ public class LRAClient implements Closeable {
     private final String lraUrl;
 
     public LRAClient(LRASagaService sagaService) {
-        this.sagaService = sagaService;
+        this(sagaService, HttpClient.newHttpClient());
+    }
 
-        client = HttpClient.newHttpClient();
+    public LRAClient(LRASagaService sagaService, HttpClient client) {
+        if (client == null) {
+            throw new IllegalArgumentException("HttpClient must not be null");
+        }
+
+        this.sagaService = sagaService;
+        this.client = client;
 
         lraUrl = new LRAUrlBuilder()
                 .host(sagaService.getCoordinatorUrl())
