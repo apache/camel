@@ -993,6 +993,24 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the current thread id
+     */
+
+    public static Expression threadIdExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return Thread.currentThread().getId();
+            }
+
+            @Override
+            public String toString() {
+                return "threadId";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the current thread name
      */
     public static Expression threadNameExpression() {
