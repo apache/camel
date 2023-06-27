@@ -1010,7 +1010,6 @@ public class ExpressionBuilder {
         };
     }
 
-
     /**
      * Returns the expression for the current thread name
      */
