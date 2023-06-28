@@ -1585,6 +1585,61 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Files (camel-azure-files)
+     * Camel Azure Files Component
+     * 
+     * Category: cloud,file
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-azure-files
+     * 
+     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param path //account[.host]/share[/dir]
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.endpointBuilder("azure-files", path);
+    }
+    /**
+     * Azure Files (camel-azure-files)
+     * Camel Azure Files Component
+     * 
+     * Category: cloud,file
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-azure-files
+     * 
+     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path //account[.host]/share[/dir]
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
      * 

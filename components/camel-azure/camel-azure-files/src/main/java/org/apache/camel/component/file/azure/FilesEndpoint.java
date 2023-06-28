@@ -50,7 +50,7 @@ import org.apache.camel.util.ObjectHelper;
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
-    // camel-package-maven-plugin: Missing @UriPath on endpoint 
+    // camel-package-maven-plugin: Missing @UriPath on endpoint
     @UriParam
     protected FilesConfiguration configuration;
 

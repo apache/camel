@@ -2,9 +2,10 @@
 :doctitle: Azure Files
 :shortname: azure-files
 :artifactid: camel-azure-files
-:description: Camel Azure Files Component (Preview)
+:description: Camel Azure Files Component
 :since: 3.21
-:supportlevel: Preview
+:supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: azure-files
