@@ -25,6 +25,8 @@ import org.apache.camel.StreamCache;
 
 /**
  * A {@link StreamCache} for caching using an in-memory byte array.
+ *
+ * @see StreamCache
  */
 public final class InputStreamCache extends ByteArrayInputStream implements StreamCache {
 
