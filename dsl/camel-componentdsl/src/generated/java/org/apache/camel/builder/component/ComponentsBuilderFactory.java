@@ -495,6 +495,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
     }
     /**
+     * Azure Files (camel-azure-files)
+     * Camel Azure Files Component
+     * 
+     * Category: cloud,file
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-azure-files
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureFilesComponentBuilderFactory.AzureFilesComponentBuilder azureFiles() {
+        return org.apache.camel.builder.component.dsl.AzureFilesComponentBuilderFactory.azureFiles();
+    }
+    /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
      * 
