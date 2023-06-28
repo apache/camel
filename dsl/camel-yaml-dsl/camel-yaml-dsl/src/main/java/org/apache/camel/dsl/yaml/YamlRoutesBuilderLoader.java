@@ -57,6 +57,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -648,6 +649,19 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                 }
 
+                MappingNode dataTypes = asMappingNode(nodeAt(source, "/dataTypes"));
+                if (dataTypes != null) {
+                    MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
+                    if (in != null) {
+                        route.inputType(extractTupleValue(in.getValue(), "format"));
+                    }
+
+                    MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
+                    if (out != null) {
+                        route.transform(new DataType(extractTupleValue(out.getValue(), "format")));
+                    }
+                }
+
                 // steps in the middle (optional)
                 Node steps = nodeAt(root, "/spec/steps");
                 if (steps != null) {
@@ -683,6 +697,18 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 }
 
                 if (sink != null) {
+                    dataTypes = asMappingNode(nodeAt(sink, "/dataTypes"));
+                    if (dataTypes != null) {
+                        MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
+                        if (in != null) {
+                            route.transform(new DataType(extractTupleValue(in.getValue(), "format")));
+                        }
+
+                        MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
+                        if (out != null) {
+                            route.outputType(extractTupleValue(out.getValue(), "format"));
+                        }
+                    }
 
                     // sink is at the end (mandatory)
                     line = -1;

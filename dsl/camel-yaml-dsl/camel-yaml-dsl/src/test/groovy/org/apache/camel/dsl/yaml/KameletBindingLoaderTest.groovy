@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.KameletDefinition
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.model.TransformDefinition
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition
@@ -653,6 +654,102 @@ class KameletBindingLoaderTest extends YamlTestSupport {
             with (outputs[0], KameletDefinition) {
                 name == 'log-action'
                 lineNumber == 14
+            }
+        }
+    }
+
+    def "kamelet binding with input/output data types"() {
+        when:
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    dataTypes:
+                      in:
+                        format: plain/text
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    dataTypes:
+                      out:
+                        format: application/octet-stream   
+            ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'timer-event-source'
+            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.lineNumber == 7
+            inputType.urn == 'plain/text'
+            outputType.urn == 'application/octet-stream'
+            outputs.size() == 1
+            with (outputs[0], ToDefinition) {
+                endpointUri == 'kamelet:log-sink'
+                lineNumber == 17
+            }
+        }
+    }
+
+    def "kamelet binding with data type transformation"() {
+        when:
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    dataTypes:
+                      out:
+                        format: application/octet-stream    
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+                    dataTypes:
+                      in:
+                        format: plain/text
+            ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'timer-event-source'
+            input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
+            input.lineNumber == 7
+            outputs.size() == 3
+            with (outputs[0], TransformDefinition) {
+                fromType == 'camel:any'
+                toType == 'application/octet-stream'
+                lineNumber == -1
+            }
+            with (outputs[1], TransformDefinition) {
+                fromType == 'camel:any'
+                toType == 'plain/text'
+                lineNumber == -1
+            }
+            with (outputs[2], ToDefinition) {
+                endpointUri == 'kamelet:log-sink'
+                lineNumber == 17
             }
         }
     }
