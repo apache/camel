@@ -46,10 +46,10 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.util.StopWatch;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -82,12 +82,11 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         // sync pipeline
         template.sendBody("direct:bar", "Hello World");
+        awaitInvalidSpanContext();
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
 
-        // validates that span was active in async producer's processor
-        assertFalse(Span.current().getSpanContext().isValid());
     }
 
     @Test
@@ -102,12 +101,11 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         // sync to async pipeline
         template.sendBody("direct:foo", "Hello World");
+        awaitInvalidSpanContext();
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
 
-        // context is cleaned up
-        assertFalse(Span.current().getSpanContext().isValid());
     }
 
     @Test
@@ -124,10 +122,10 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         // sync pipeline
         template.sendBody("asyncmock1:start", "Hello World");
+        awaitInvalidSpanContext();
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
-        assertFalse(Span.current().getSpanContext().isValid());
     }
 
     @Test
@@ -143,10 +141,10 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         // async pipeline
         template.sendBody("asyncmock2:start", "Hello World");
+        awaitInvalidSpanContext();
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
-        assertFalse(Span.current().getSpanContext().isValid());
     }
 
     @Test
@@ -159,7 +157,7 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         };
 
         assertThrows(CamelExecutionException.class, () -> template.sendBody("asyncmock:fail", "Hello World"));
-        assertFalse(Span.current().getSpanContext().isValid());
+        awaitInvalidSpanContext();
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
@@ -186,19 +184,19 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         // sync pipeline
         template.sendBody("direct:start", "Hello World");
+        awaitInvalidSpanContext();
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(3).getSpanId());
         assertEquals(spans.get(1).getParentSpanId(), spans.get(3).getSpanId());
         assertEquals(spans.get(2).getParentSpanId(), spans.get(3).getSpanId());
-        assertFalse(Span.current().getSpanContext().isValid());
     }
 
     @Test
     void testContextDoesNotLeak() {
         for (int i = 0; i < 30; i++) {
             template.sendBody("asyncmock3:start", String.valueOf(i));
-            assertFalse(Span.current().getSpanContext().isValid());
+            awaitInvalidSpanContext();
         }
 
         verifyTraceSpanNumbers(30, 11);
@@ -262,7 +260,12 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
         }
 
-        assertFalse(Span.current().getSpanContext().isValid(), errorMessage);
+        Awaitility.await()
+                .alias(errorMessage)
+                .atMost(5, TimeUnit.SECONDS)
+                .pollInterval(10, TimeUnit.MILLISECONDS)
+                .pollDelay(0, TimeUnit.MILLISECONDS)
+                .until(() -> !Span.current().getSpanContext().isValid());
     }
 
     private static class AsyncMockComponent extends MockComponent {
@@ -274,8 +277,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     }
 
     private static class AsyncMockEndpoint extends MockEndpoint {
-        private static final Executor DELAYED
-                = CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS, new ForkJoinPool(3));
+        private static final Executor DELAYED = CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS,
+                new ForkJoinPool(3));
 
         private Consumer consumer;
         private final String key;
@@ -360,5 +363,14 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
 
     private static void assertCurrentSpan(Exchange exchange) {
         assertEquals(Span.current().getSpanContext().getSpanId(), ActiveSpanManager.getSpan(exchange).spanId());
+    }
+
+    private void awaitInvalidSpanContext() {
+        Awaitility.await()
+                .alias("Span.current().getSpanContext().isValid() should eventually return false")
+                .atMost(5, TimeUnit.SECONDS)
+                .pollInterval(10, TimeUnit.MILLISECONDS)
+                .pollDelay(0, TimeUnit.MILLISECONDS)
+                .until(() -> !Span.current().getSpanContext().isValid());
     }
 }
