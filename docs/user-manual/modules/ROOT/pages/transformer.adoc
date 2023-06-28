@@ -2,11 +2,11 @@
 
 Transformer (`org.apache.camel.spi.Transformer`) performs declarative transformation of the message according
 to the declared _Input Type_ and/or _Output Type_ on a route definition which declares
-the expected message type. The default camel Message implements `DataTypeAware`, which allows to hold the message type
+the expected message type. The default Camel Message implements `DataTypeAware`, which allows to hold the message type
 represented by `DataType`.
 
 If the input type and/or output type is declared by _Input Type_ and/or _Output Type_ in the route
-definition, and it is different from actual message type at runtime, camel internal processor
+definition, and in case it is different from actual message type at runtime, Camel internal processor
 looks for a `Transformer` which transforms from the current message type to the expected message
 type and apply. Once transform succeed or message is already in expected type, then the message
 data type is updated.
@@ -18,9 +18,10 @@ data type is updated.
 scheme:name
 ----
 
-where *scheme* is the type of data model like `java`, `xml` or `json`, and *name* is the individual
-data type name. If you only specify *scheme* then it hits all the data types which has that scheme like
-a wildcard.
+where *scheme* is the type of data model like `java`, `xml` or `json`, and *name* is the individual data type name.
+The scheme could also represent a Camel component scheme such as `http` or `aws2-s3` in order to reference component specific data types.
+When using the `java` scheme the data type name may be the qualified class name (e.g. `java:org.apache.camel.Foo`)
+If you only specify *scheme* then it hits all the data types which has that scheme like a wildcard.
 
 == Supported Transformers
 
@@ -30,20 +31,63 @@ a wildcard.
 | Data Format Transformer | Transform with using Data Format
 | Endpoint Transformer | Transform with using Endpoint
 | Custom Transformer | Transform with using custom transformer class. Transformer must be a subclass of `org.apache.camel.spi.Transformer`
+| Loading Transformer | Loads multiple transformer implementations (e.g. via annotation classpath scan). Also preloads known default Camel transformer implementations.
 |===
 
 === Common Options
 
-All transformers have following common options to specify which data type is supported by the transformer. `scheme` or both of `fromType` and `toType` must be specified.
+All transformers have following common options to specify which data type is supported by the transformer. `name` or both of `fromType` and `toType` must be specified.
 
 [width="100%",cols="25%,75%",options="header",]
 |===
 | Name | Description
-| scheme | Type of data model like `xml` or `json`. For example if `xml` is specified, the transformer is applied for all java -&gt; xml and xml -&gt; java transformation.
+| scheme | The supported data type scheme. It is possible to just reference a scheme like `xml` or `json`. For example if `xml` is specified, the transformer is applied for all java -&gt; xml and xml -&gt; java transformation.
+| name | The name of the transformer. If name is specified users may use a combination of a scheme and name (e.g. `xml:Order`) to reference the transformer in a route.
 | fromType | xref:transformer.adoc[Data type] to transform from.
 | toType | xref:transformer.adoc[Data type] to transform to.
 |===
 
+Transformer implementations may use `scheme:name` or the combination of `fromType/toType` as an identifier.
+
+When using the `scheme:name` identifier users may reference the transformer by its full name in a route.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:abc")
+    .inputType("myScheme:myTransformer")
+    .to("...");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:abc"/>
+        <inputType urn="myScheme:myTransformer"/>
+        <to uri="..."/>
+    </route>
+</camelContext>
+----
+====
+
+As mentioned earlier the transformer may also skip the name and just use a `scheme` (e.g. `xml`) in order to apply to
+all data type transformations of a given scheme (e.g. `xml:Order`, `xml:OrderResponse`, `xml:anything`)
+
+When using the combination of `fromType/toType` as an identifier the transformer gets matched automatically by the given
+data types used on the Camel route (e.g. inputType) and the given Exchange data type (specified by the Exchange message using `DataTypeAware` interface).
+
+In general, the transformer resolving mechanism tries to find the best match when searching for a proper transformation
+from a given data type to a given data type. The mechanism tries to find exact matches for `fromType` and `toType` first,
+then wildcard matches (using transformers for the given data type scheme only), then named transformers using `scheme:name` identifiers,
+then named transformers matching `scheme` only.
+
+If not already preloaded by the configuration the Transformer resolving mechanism also performs lazy loading of transformer implementations using the factory finder resource path lookup.
 
 === DataFormat Transformer Options
 
@@ -56,8 +100,10 @@ All transformers have following common options to specify which data type is sup
 
 Here is an example to specify xref:components:dataformats:bindy-dataformat.adoc[Bindy] DataFormat type:
 
-Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 BindyDataFormat bindy = new BindyDataFormat();
@@ -69,14 +115,15 @@ transformer()
     .withDataFormat(bindy);
 ----
 
-XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <dataFormatTransformer fromType="java:com.example.Order" toType="csv:CSVOrder">
     <bindy id="csvdf" type="Csv" classType="com.example.Order"/>
 </dataFormatTransformer>
 ----
+====
 
 == Endpoint Transformer Options
 
@@ -117,8 +164,10 @@ Note that Transformer must be a subclass of `org.apache.camel.spi.Transformer`
 
 Here is an example to specify custom Transformer class:
 
-Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 transformer()
@@ -127,11 +176,78 @@ transformer()
     .withJava(com.example.MyCustomTransformer.class);
 ----
 
-XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <customTransformer className="com.example.MyCustomTransformer" fromType="xml" toType="json"/>
+----
+====
+
+== Load Transformer Options
+
+Users are able to preload known default transformers. Also users may load transformers via classpath scan.
+
+[width="100%",cols="25%,75%",options="header",]
+|===
+| Name | Description
+| defaults | Loads known default transformer implementations (e.g. plain-text, application-octet-stream)
+| location | Classpath location to scan for transformer implementations. Transformer implementations must use the `org.apache.camel.spi.DataTypeTransformer` annotation to get recognized by the scanner.
+|===
+
+Here is an example to load default Transformer classes:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+transformer()
+    .withDefaults()
+----
+
+XML::
++
+[source,xml]
+----
+<loadTransformer defaults="true"/>
+----
+====
+
+Here is an example to load Transformer classes via classpath scan:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+transformer()
+    .scan("org.apache.camel.transformer.standard")
+----
+
+XML::
++
+[source,xml]
+----
+<loadTransformer packageScan="org.apache.camel.transformer.standard"/>
+----
+====
+
+The classpath scan looks for classes that use the `org.apache.camel.spi.DataTypeTransformer` annotation.
+The annotation defines the transformer name and/or the supported from/to data types.
+
+[source,java]
+----
+@DataTypeTransformer(name = "uppercase")
+public class UppercaseDataTypeTransformer extends Transformer {
+
+    @Override
+    public void transform(Message message, DataType fromType, DataType toType) {
+        message.setBody(message.getBody(String.class).toUpperCase());
+    }
+}
 ----
 
 == Example
@@ -139,34 +255,39 @@ XML DSL:
 For example to declare the Endpoint Transformer which uses
 xslt component to transform from `xml:ABCOrder` to `xml:XYZOrder`, we can do as follows:
 
-Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------
+----
 transformer()
     .fromType("xml:ABCOrder")
     .toType("xml:XYZOrder")
     .withUri("xslt:transform.xsl");
--------------------------------------------------------------------
+----
 
-XML DSL:
-
+XML::
++
 [source,xml]
--------------------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <transformers>
         <endpointTransformer uri="xslt:transform.xsl" fromType="xml:ABCOrder" toType="xml:XYZOrder"/>
     </transformers>
     ....
 </camelContext>
--------------------------------------------------------------------
+----
+====
 
 If you have following route definition, above transformer will be applied when `direct:abc` endpoint sends the message to `direct:xyz`:
 
-Java DSL:
-
+[tabs]
+====
+Java::
++
 [source,java]
--------------------------------------------------------------------
+----
 from("direct:abc")
     .inputType("xml:ABCOrder")
     .to("direct:xyz");
@@ -174,12 +295,12 @@ from("direct:abc")
 from("direct:xyz")
     .inputType("xml:XYZOrder")
     .to("somewhere:else");
--------------------------------------------------------------------
+----
 
-XML DSL:
-
+XML::
++
 [source,xml]
--------------------------------------------------------------------
+----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:abc"/>
@@ -192,7 +313,8 @@ XML DSL:
         <to uri="somewhere:else"/>
     </route>
 </camelContext>
--------------------------------------------------------------------
+----
+====
 
 == See Also
 
