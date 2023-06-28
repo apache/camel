@@ -33,10 +33,6 @@
     <name>Camel :: Azure Files</name>
     <description>Camel Azure Files Component</description>
 
-    <properties>
-        <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
