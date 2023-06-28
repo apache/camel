@@ -174,7 +174,7 @@
         <grpc-protobuf-version>3.22.2</grpc-protobuf-version>
         <grpc-version>1.56.0</grpc-version>
         <gson-version>2.10.1</gson-version>
-        <guava-version>32.0.0-jre</guava-version>
+        <guava-version>32.0.1-jre</guava-version>
         <guice3-version>3.0</guice3-version>
         <hadoop3-version>3.3.5</hadoop3-version>
         <hamcrest-version>2.2</hamcrest-version>
