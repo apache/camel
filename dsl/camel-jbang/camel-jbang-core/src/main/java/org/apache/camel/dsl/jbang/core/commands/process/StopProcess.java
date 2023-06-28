@@ -27,7 +27,7 @@ import picocli.CommandLine.Command;
 @Command(name = "stop", description = "Shuts down running Camel integrations")
 public class StopProcess extends ProcessBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")
     String name = "*";
 
     @CommandLine.Option(names = { "--kill" },
