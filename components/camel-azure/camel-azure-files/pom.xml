@@ -46,7 +46,6 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-file-share</artifactId>
-            <version>12.18.0</version> <!-- https://mvnrepository.com/artifact/com.azure/azure-storage-file-share -->
         </dependency>
 
         <dependency>
