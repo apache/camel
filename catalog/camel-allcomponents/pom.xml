@@ -228,6 +228,11 @@
             <artifactId>camel-azure-eventhubs</artifactId>
             <version>${project.version}</version>
         </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure-files</artifactId>
+        <version>${project.version}</version>
+      </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-azure-key-vault</artifactId>
