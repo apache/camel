@@ -40,6 +40,9 @@ public class ProcessorTransformer extends Transformer {
     private Processor processor;
     private String transformerString;
 
+    public ProcessorTransformer() {
+    }
+
     public ProcessorTransformer(CamelContext context) {
         setCamelContext(context);
     }
@@ -101,8 +104,8 @@ public class ProcessorTransformer extends Transformer {
     @Override
     public String toString() {
         if (transformerString == null) {
-            transformerString = String.format("ProcessorTransformer[scheme='%s', from='%s', to='%s', processor='%s']",
-                    getModel(), getFrom(), getTo(), processor);
+            transformerString = String.format("ProcessorTransformer[name='%s', from='%s', to='%s', processor='%s']",
+                    getName(), getFrom(), getTo(), processor);
         }
         return transformerString;
     }

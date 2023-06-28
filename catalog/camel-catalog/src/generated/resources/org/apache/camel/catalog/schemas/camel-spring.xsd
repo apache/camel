@@ -13262,6 +13262,24 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
+        <xs:attribute name="fromType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+From type used in data type transformation.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="toType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To type used as a target data type in the transformation.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -16165,6 +16183,7 @@ Sets the component name that this definition will apply to.
   <xs:complexType abstract="true" name="transformer">
     <xs:sequence/>
     <xs:attribute name="scheme" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="fromType" type="xs:string"/>
     <xs:attribute name="toType" type="xs:string"/>
   </xs:complexType>
@@ -16227,11 +16246,21 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="loadTransformer">
+    <xs:complexContent>
+      <xs:extension base="tns:transformer">
+        <xs:sequence/>
+        <xs:attribute name="packageScan" type="xs:string"/>
+        <xs:attribute name="defaults" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="transformersDefinition">
     <xs:sequence>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element name="dataFormatTransformer" type="tns:dataFormatTransformer"/>
         <xs:element name="endpointTransformer" type="tns:endpointTransformer"/>
+        <xs:element name="loadTransformer" type="tns:loadTransformer"/>
         <xs:element name="customTransformer" type="tns:customTransformer"/>
       </xs:choice>
     </xs:sequence>

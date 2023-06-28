@@ -3867,8 +3867,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Transformer resolveTransformer(String scheme) {
-        return getTransformerRegistry().resolveTransformer(new TransformerKey(scheme));
+    public Transformer resolveTransformer(String name) {
+        return getTransformerRegistry().resolveTransformer(new TransformerKey(name));
     }
 
     @Override

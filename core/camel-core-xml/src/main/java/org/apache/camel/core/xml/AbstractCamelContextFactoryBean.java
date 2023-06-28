@@ -577,9 +577,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
-        return org.apache.camel.util.ObjectHelper.isNotEmpty(def.getScheme())
-                ? new TransformerKey(def.getScheme())
-                : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(def.getScheme())) {
+            return org.apache.camel.util.ObjectHelper.isNotEmpty(def.getName())
+                    ? new TransformerKey(def.getScheme() + ":" + def.getName()) : new TransformerKey(def.getScheme());
+        }
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(def.getName())) {
+            return new TransformerKey(def.getName());
+        } else {
+            return new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+        }
     }
 
     private void initValidators() {

@@ -39,7 +39,7 @@ public class CustomTransformerReifier extends TransformerReifier<CustomTransform
             if (transformer == null) {
                 throw new IllegalArgumentException("Cannot find transformer with ref:" + definition.getRef());
             }
-            if (transformer.getModel() != null || transformer.getFrom() != null || transformer.getTo() != null) {
+            if (transformer.getName() != null || transformer.getFrom() != null || transformer.getTo() != null) {
                 throw new IllegalArgumentException(
                         String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.",
                                 definition.getRef()));
@@ -53,7 +53,8 @@ public class CustomTransformerReifier extends TransformerReifier<CustomTransform
             transformer = camelContext.getInjector().newInstance(transformerClass, false);
         }
         transformer.setCamelContext(camelContext);
-        return transformer.setModel(definition.getScheme()).setFrom(definition.getFromType()).setTo(definition.getToType());
+        return transformer.setName(definition.getScheme(), definition.getName()).setFrom(definition.getFromType())
+                .setTo(definition.getToType());
     }
 
 }

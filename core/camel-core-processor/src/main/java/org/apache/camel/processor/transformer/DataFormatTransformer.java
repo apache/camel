@@ -42,6 +42,9 @@ public class DataFormatTransformer extends Transformer {
     private DataFormat dataFormat;
     private String transformerString;
 
+    public DataFormatTransformer() {
+    }
+
     public DataFormatTransformer(CamelContext context) {
         setCamelContext(context);
     }
@@ -59,10 +62,10 @@ public class DataFormatTransformer extends Transformer {
         CamelContext context = exchange.getContext();
 
         // Unmarshaling into Java Object
-        if ((to == null || to.isJavaType()) && (from.equals(getFrom()) || from.getModel().equals(getModel()))) {
+        if ((DataType.isAnyType(to) || to.isJavaType()) && (from.equals(getFrom()) || from.getScheme().equals(getName()))) {
             LOG.debug("Unmarshaling with: {}", dataFormat);
             Object answer = dataFormat.unmarshal(exchange, message.getBody(InputStream.class));
-            if (to != null && to.getName() != null) {
+            if (!DataType.isAnyType(to) && to.getName() != null) {
                 Class<?> toClass = context.getClassResolver().resolveClass(to.getName());
                 if (!toClass.isAssignableFrom(answer.getClass())) {
                     LOG.debug("Converting to: {}", toClass.getName());
@@ -72,9 +75,10 @@ public class DataFormatTransformer extends Transformer {
             message.setBody(answer);
 
             // Marshaling from Java Object
-        } else if ((from == null || from.isJavaType()) && (to.equals(getTo()) || to.getModel().equals(getModel()))) {
+        } else if ((DataType.isAnyType(from) || from.isJavaType())
+                && (to.equals(getTo()) || to.getScheme().equals(getName()))) {
             Object input = message.getBody();
-            if (from != null && from.getName() != null) {
+            if (!DataType.isAnyType(from) && from.getName() != null) {
                 Class<?> fromClass = context.getClassResolver().resolveClass(from.getName());
                 if (!fromClass.isAssignableFrom(input.getClass())) {
                     LOG.debug("Converting to: {}", fromClass.getName());
@@ -105,8 +109,8 @@ public class DataFormatTransformer extends Transformer {
     @Override
     public String toString() {
         if (transformerString == null) {
-            transformerString = String.format("DataFormatTransformer[scheme='%s', from='%s', to='%s', dataFormat='%s']",
-                    getModel(), getFrom(), getTo(), dataFormat);
+            transformerString = String.format("DataFormatTransformer[name='%s', from='%s', to='%s', dataFormat='%s']",
+                    getName(), getFrom(), getTo(), dataFormat);
         }
         return transformerString;
     }

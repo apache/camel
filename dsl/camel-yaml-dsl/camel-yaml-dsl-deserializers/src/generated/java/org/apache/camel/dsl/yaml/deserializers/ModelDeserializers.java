@@ -231,6 +231,7 @@ import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.model.transformer.LoadTransformerDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
@@ -2999,6 +3000,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "class-name", type = "string"),
                     @YamlProperty(name = "from-type", type = "string"),
+                    @YamlProperty(name = "name", type = "string"),
                     @YamlProperty(name = "ref", type = "string"),
                     @YamlProperty(name = "scheme", type = "string"),
                     @YamlProperty(name = "to-type", type = "string")
@@ -3026,6 +3028,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "from-type": {
                     String val = asText(node);
                     target.setFromType(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 case "ref": {
@@ -3156,6 +3163,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat"),
                     @YamlProperty(name = "mime-multipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
+                    @YamlProperty(name = "name", type = "string"),
                     @YamlProperty(name = "parquet-avro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
@@ -3400,6 +3408,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "from-type": {
                     String val = asText(node);
                     target.setFromType(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 case "scheme": {
@@ -4623,6 +4636,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "from-type", type = "string"),
+                    @YamlProperty(name = "name", type = "string"),
                     @YamlProperty(name = "ref", type = "string"),
                     @YamlProperty(name = "scheme", type = "string"),
                     @YamlProperty(name = "to-type", type = "string"),
@@ -4646,6 +4660,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "from-type": {
                     String val = asText(node);
                     target.setFromType(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
                     break;
                 }
                 case "ref": {
@@ -8174,6 +8193,70 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.transformer.LoadTransformerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "defaults", type = "boolean"),
+                    @YamlProperty(name = "from-type", type = "string"),
+                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "package-scan", type = "string"),
+                    @YamlProperty(name = "scheme", type = "string"),
+                    @YamlProperty(name = "to-type", type = "string")
+            }
+    )
+    public static class LoadTransformerDefinitionDeserializer extends YamlDeserializerBase<LoadTransformerDefinition> {
+        public LoadTransformerDefinitionDeserializer() {
+            super(LoadTransformerDefinition.class);
+        }
+
+        @Override
+        protected LoadTransformerDefinition newInstance() {
+            return new LoadTransformerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LoadTransformerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "defaults": {
+                    String val = asText(node);
+                    target.setDefaults(val);
+                    break;
+                }
+                case "from-type": {
+                    String val = asText(node);
+                    target.setFromType(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "package-scan": {
+                    String val = asText(node);
+                    target.setPackageScan(val);
+                    break;
+                }
+                case "scheme": {
+                    String val = asText(node);
+                    target.setScheme(val);
+                    break;
+                }
+                case "to-type": {
+                    String val = asText(node);
+                    target.setToType(val);
                     break;
                 }
                 default: {
@@ -17074,8 +17157,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
+                    @YamlProperty(name = "from-type", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "inherit-error-handler", type = "boolean")
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "to-type", type = "string")
             }
     )
     public static class TransformDefinitionDeserializer extends YamlDeserializerBase<TransformDefinition> {
@@ -17102,9 +17187,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExpression(val);
                     break;
                 }
+                case "from-type": {
+                    String val = asText(node);
+                    target.setFromType(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "to-type": {
+                    String val = asText(node);
+                    target.setToType(val);
                     break;
                 }
                 case "id": {
@@ -17141,7 +17236,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "custom-transformer", type = "object:org.apache.camel.model.transformer.CustomTransformerDefinition"),
                     @YamlProperty(name = "data-format-transformer", type = "object:org.apache.camel.model.transformer.DataFormatTransformerDefinition"),
-                    @YamlProperty(name = "endpoint-transformer", type = "object:org.apache.camel.model.transformer.EndpointTransformerDefinition")
+                    @YamlProperty(name = "endpoint-transformer", type = "object:org.apache.camel.model.transformer.EndpointTransformerDefinition"),
+                    @YamlProperty(name = "load-transformer", type = "object:org.apache.camel.model.transformer.LoadTransformerDefinition")
             }
     )
     public static class TransformersDefinitionDeserializer extends YamlDeserializerBase<TransformersDefinition> {
@@ -17175,6 +17271,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "endpoint-transformer": {
                     org.apache.camel.model.transformer.EndpointTransformerDefinition val = asType(node, org.apache.camel.model.transformer.EndpointTransformerDefinition.class);
+                    java.util.List<org.apache.camel.model.transformer.TransformerDefinition> existing = target.getTransformers();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setTransformers(existing);
+                    break;
+                }
+                case "load-transformer": {
+                    org.apache.camel.model.transformer.LoadTransformerDefinition val = asType(node, org.apache.camel.model.transformer.LoadTransformerDefinition.class);
                     java.util.List<org.apache.camel.model.transformer.TransformerDefinition> existing = target.getTransformers();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();

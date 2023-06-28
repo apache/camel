@@ -85,25 +85,25 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
         for (Object row : data.values()) {
             CompositeData composite = (CompositeData) row;
-            String scheme = (String) composite.get("scheme");
+            String name = (String) composite.get("name");
             String from = (String) composite.get("from");
             String to = (String) composite.get("to");
             String description = (String) composite.get("description");
             boolean isStatic = (boolean) composite.get("static");
             boolean isDynamic = (boolean) composite.get("dynamic");
-            LOG.info("[{}][{}][{}][{}][{}][{}]", scheme, from, to, isStatic, isDynamic, description);
+            LOG.info("[{}][{}][{}][{}][{}][{}]", name, from, to, isStatic, isDynamic, description);
             if (description.startsWith("ProcessorTransformer")) {
-                assertEquals(null, scheme);
+                assertEquals(null, name);
                 assertEquals("xml:foo", from);
                 assertEquals("json:bar", to);
             } else if (description.startsWith("DataFormatTransformer")) {
-                assertEquals(null, scheme);
+                assertEquals(null, name);
                 assertEquals("java:" + ManagedTransformerRegistryTest.class.getName(), from);
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {
-                assertEquals("custom", scheme);
-                assertEquals(null, from);
-                assertEquals(null, to);
+                assertEquals("custom", name);
+                assertEquals("camel:any", from);
+                assertEquals("camel:any", to);
             } else {
                 fail("Unexpected transformer:" + description);
             }
@@ -121,7 +121,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                         .toType("json:bar")
                         .withUri("direct:transformer");
                 transformer()
-                        .scheme("custom")
+                        .name("custom")
                         .withJava(MyTransformer.class);
 
                 from("direct:start").to("mock:result");
