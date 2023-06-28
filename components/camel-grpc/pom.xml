@@ -32,10 +32,6 @@
     <name>Camel :: gRPC</name>
     <description>Camel component for gRPC (Remote Procedure Call) support</description>
 
-    <properties>
-        <protobuf-version>${grpc-protobuf-version}</protobuf-version>
-    </properties>
-
     <dependencies>
 
         <!-- requires camel-core -->
