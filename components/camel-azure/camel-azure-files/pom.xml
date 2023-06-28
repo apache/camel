@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Azure Files</name>
-    <description>Camel Azure Files Component (Preview)</description>
+    <description>Camel Azure Files Component</description>
 
     <properties>
         <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
