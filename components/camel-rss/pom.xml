@@ -54,6 +54,10 @@
             <artifactId>rome</artifactId>
             <version>${rome-version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
