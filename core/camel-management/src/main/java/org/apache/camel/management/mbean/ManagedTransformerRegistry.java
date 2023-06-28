@@ -84,18 +84,18 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
             Collection<Transformer> transformers = transformerRegistry.values();
             for (Transformer transformer : transformers) {
                 CompositeType ct = CamelOpenMBeanTypes.listTransformersCompositeType();
-                String scheme = transformer.getModel();
+                String name = transformer.getName();
                 DataType from = transformer.getFrom();
                 DataType to = transformer.getTo();
                 String desc = transformer.toString();
                 boolean fromStatic
-                        = scheme != null ? transformerRegistry.isStatic(scheme) : transformerRegistry.isStatic(from, to);
+                        = name != null ? transformerRegistry.isStatic(name) : transformerRegistry.isStatic(from, to);
                 boolean fromDynamic
-                        = scheme != null ? transformerRegistry.isDynamic(scheme) : transformerRegistry.isDynamic(from, to);
+                        = name != null ? transformerRegistry.isDynamic(name) : transformerRegistry.isDynamic(from, to);
 
                 CompositeData data = new CompositeDataSupport(
-                        ct, new String[] { "scheme", "from", "to", "static", "dynamic", "description" },
-                        new Object[] { scheme, from.toString(), to.toString(), fromStatic, fromDynamic, desc });
+                        ct, new String[] { "name", "from", "to", "static", "dynamic", "description" },
+                        new Object[] { name, from.toString(), to.toString(), fromStatic, fromDynamic, desc });
                 answer.put(data);
             }
             return answer;

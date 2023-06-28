@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.cloudevents;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,6 +39,9 @@ public interface CloudEvent {
     String CAMEL_CLOUD_EVENT_TIME = "CamelCloudEventTime";
     String CAMEL_CLOUD_EVENT_EXTENSIONS = "CamelCloudEventExtensions";
     String CAMEL_CLOUD_EVENT_CONTENT_TYPE = Exchange.CONTENT_TYPE;
+
+    String DEFAULT_CAMEL_CLOUD_EVENT_TYPE = "org.apache.camel.event";
+    String DEFAULT_CAMEL_CLOUD_EVENT_SOURCE = "org.apache.camel";
 
     /**
      * The CloudEvent spec version.
@@ -63,6 +70,15 @@ public interface CloudEvent {
                 .filter(a -> Objects.equals(id, a.id()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unable to find attribute with id: " + id));
+    }
+
+    /**
+     * Construct event time from given Camel exchange.
+     */
+    default String getEventTime(Exchange exchange) {
+        final ZonedDateTime created
+                = ZonedDateTime.ofInstant(Instant.ofEpochMilli(exchange.getCreated()), ZoneId.systemDefault());
+        return DateTimeFormatter.ISO_INSTANT.format(created);
     }
 
     /**

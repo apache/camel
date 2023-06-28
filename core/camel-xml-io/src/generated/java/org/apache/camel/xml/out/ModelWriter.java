@@ -2381,6 +2381,8 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("toType", def.getToType());
+        doWriteAttribute("fromType", def.getFromType());
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -4547,12 +4549,23 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("uri", def.getUri());
         endElement(name);
     }
+    protected void doWriteLoadTransformerDefinition(
+            String name,
+            LoadTransformerDefinition def)
+            throws IOException {
+        startElement(name);
+        doWriteTransformerDefinitionAttributes(def);
+        doWriteAttribute("defaults", def.getDefaults());
+        doWriteAttribute("packageScan", def.getPackageScan());
+        endElement(name);
+    }
     protected void doWriteTransformerDefinitionAttributes(
             TransformerDefinition def)
             throws IOException {
         doWriteAttribute("toType", def.getToType());
         doWriteAttribute("fromType", def.getFromType());
         doWriteAttribute("scheme", def.getScheme());
+        doWriteAttribute("name", def.getName());
     }
     protected void doWriteTransformerDefinition(
             String name,
@@ -4571,6 +4584,7 @@ public class ModelWriter extends BaseWriter {
             switch (v.getClass().getSimpleName()) {
                 case "DataFormatTransformerDefinition" -> doWriteDataFormatTransformerDefinition("dataFormatTransformer", (DataFormatTransformerDefinition) v);
                 case "EndpointTransformerDefinition" -> doWriteEndpointTransformerDefinition("endpointTransformer", (EndpointTransformerDefinition) v);
+                case "LoadTransformerDefinition" -> doWriteLoadTransformerDefinition("loadTransformer", (LoadTransformerDefinition) v);
                 case "CustomTransformerDefinition" -> doWriteCustomTransformerDefinition("customTransformer", (CustomTransformerDefinition) v);
             }
         });

@@ -1513,8 +1513,14 @@ public class ModelParser extends BaseParser {
         }, outputDefinitionElementHandler(), noValueHandler());
     }
     protected TransformDefinition doParseTransformDefinition() throws IOException, XmlPullParserException {
-        return doParse(new TransformDefinition(),
-            processorDefinitionAttributeHandler(), expressionNodeElementHandler(), noValueHandler());
+        return doParse(new TransformDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "fromType": def.setFromType(val); break;
+                case "toType": def.setToType(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, expressionNodeElementHandler(), noValueHandler());
     }
     protected TryDefinition doParseTryDefinition() throws IOException, XmlPullParserException {
         return doParse(new TryDefinition(),
@@ -3242,6 +3248,7 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "fromType": def.setFromType(val); break;
+                case "name": def.setName(val); break;
                 case "scheme": def.setScheme(val); break;
                 case "toType": def.setToType(val); break;
                 default: return false;
@@ -3270,12 +3277,23 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected LoadTransformerDefinition doParseLoadTransformerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LoadTransformerDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "defaults": def.setDefaults(val); break;
+                case "packageScan": def.setPackageScan(val); break;
+                default: return transformerDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
     protected TransformersDefinition doParseTransformersDefinition() throws IOException, XmlPullParserException {
         return doParse(new TransformersDefinition(),
             noAttributeHandler(), (def, key) -> {
             switch (key) {
                 case "dataFormatTransformer": doAdd(doParseDataFormatTransformerDefinition(), def.getTransformers(), def::setTransformers); break;
                 case "endpointTransformer": doAdd(doParseEndpointTransformerDefinition(), def.getTransformers(), def::setTransformers); break;
+                case "loadTransformer": doAdd(doParseLoadTransformerDefinition(), def.getTransformers(), def::setTransformers); break;
                 case "customTransformer": doAdd(doParseCustomTransformerDefinition(), def.getTransformers(), def::setTransformers); break;
                 default: return false;
             }

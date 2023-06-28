@@ -948,10 +948,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Resolve a transformer given a scheme
      *
-     * @param  model data model name.
-     * @return       the resolved transformer, or <tt>null</tt> if not found
+     * @param  name the transformer name, usually a combination of some scheme and name.
+     * @return      the resolved transformer, or <tt>null</tt> if not found
      */
-    Transformer resolveTransformer(String model);
+    Transformer resolveTransformer(String name);
 
     /**
      * Resolve a transformer given from/to data type.
@@ -1408,8 +1408,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Whether to enable using data type on Camel messages.
      * <p/>
-     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output
-     * types. Otherwise data type is default off.
+     * Data type are automatic turned on if one or more routes has been explicit configured with input and output types.
+     * Otherwise, data type is default off.
      *
      * @return <tt>true</tt> if data type is enabled
      */
@@ -1418,8 +1418,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Whether to enable using data type on Camel messages.
      * <p/>
-     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output
-     * types. Otherwise data type is default off.
+     * Data type are automatic turned on if one or more routes has been explicit configured with input and output types.
+     * Otherwise, data type is default off.
      *
      * @param useDataType <tt>true</tt> to enable data type on Camel messages.
      */

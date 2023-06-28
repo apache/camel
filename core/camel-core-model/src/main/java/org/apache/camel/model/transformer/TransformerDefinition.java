@@ -32,8 +32,15 @@ import org.apache.camel.spi.Metadata;
  *
  * If you specify from='java:com.example.ABC' and to='xml:XYZ', the transformer will be picked up when current message
  * type is 'java:com.example.ABC' and expected message type is 'xml:XYZ'. If you specify from='java' to='xml', then it
- * will be picked up for all of Java to xml transformation. Also it's possible to specify scheme='xml' so that the
- * transformer will be picked up for all of Java to xml and xml to java transformation.
+ * will be picked up for all of Java to xml transformation.
+ *
+ * Also, it's possible to specify a transformer name that identifies the transformer. Usually the name is a combination
+ * of a scheme and a name that represents the supported data type name. The declared {@link InputTypeDefinition} and/or
+ * {@link OutputTypeDefinition} can then reference the transformer by its name.
+ *
+ * In case the transformer name should represent a data type scheme such as name='xml' that specific transformer will
+ * also be picked up for all of Java to xml and xml to Java transformation as a fallback when no matching transformer is
+ * found.
  */
 @Metadata(label = "transformation")
 @XmlType(name = "transformer")
@@ -42,6 +49,8 @@ public abstract class TransformerDefinition {
 
     @XmlAttribute
     private String scheme;
+    @XmlAttribute
+    private String name;
     @XmlAttribute
     private String fromType;
     @XmlAttribute
@@ -56,10 +65,26 @@ public abstract class TransformerDefinition {
      * of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
      * transformer exists.
      *
-     * @param scheme scheme name
+     * @param scheme the supported data type scheme
      */
     public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the transformer name under which the transformer gets referenced when specifying the input/output data type
+     * on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be
+     * picked up for all of 'csv:*' from/to Java transformation. Note that the scheme matching is performed only when no
+     * exactly matched transformer exists.
+     *
+     * @param name transformer name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFromType() {

@@ -2401,6 +2401,9 @@
           "id" : {
             "type" : "string"
           },
+          "inputType" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.InputTypeDefinition"
+          },
           "logMask" : {
             "type" : "boolean"
           },
@@ -2409,6 +2412,9 @@
           },
           "nodePrefixId" : {
             "type" : "string"
+          },
+          "outputType" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.OutputTypeDefinition"
           },
           "precondition" : {
             "type" : "string"
@@ -3242,11 +3248,17 @@
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
+          "fromType" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
+          },
+          "toType" : {
+            "type" : "string"
           }
         }
       },
@@ -7915,6 +7927,9 @@
           "fromType" : {
             "type" : "string"
           },
+          "name" : {
+            "type" : "string"
+          },
           "ref" : {
             "type" : "string"
           },
@@ -7998,6 +8013,9 @@
           "mimeMultipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
           },
+          "name" : {
+            "type" : "string"
+          },
           "parquetAvro" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
           },
@@ -8066,6 +8084,9 @@
           "fromType" : {
             "type" : "string"
           },
+          "name" : {
+            "type" : "string"
+          },
           "ref" : {
             "type" : "string"
           },
@@ -8076,6 +8097,29 @@
             "type" : "string"
           },
           "uri" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.model.transformer.LoadTransformerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "defaults" : {
+            "type" : "boolean"
+          },
+          "fromType" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "packageScan" : {
+            "type" : "string"
+          },
+          "scheme" : {
+            "type" : "string"
+          },
+          "toType" : {
             "type" : "string"
           }
         }
@@ -8091,6 +8135,9 @@
           },
           "endpointTransformer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.transformer.EndpointTransformerDefinition"
+          },
+          "loadTransformer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.transformer.LoadTransformerDefinition"
           }
         }
       },

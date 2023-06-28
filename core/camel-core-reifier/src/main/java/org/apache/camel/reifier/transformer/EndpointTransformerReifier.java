@@ -38,7 +38,7 @@ public class EndpointTransformerReifier extends TransformerReifier<EndpointTrans
                 : lookupByNameAndType(parseString(definition.getRef()), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         return new ProcessorTransformer(camelContext).setProcessor(processor)
-                .setModel(parseString(definition.getScheme()))
+                .setName(parseString(definition.getScheme()), parseString(definition.getName()))
                 .setFrom(parseString(definition.getFromType()))
                 .setTo(parseString(definition.getToType()));
     }

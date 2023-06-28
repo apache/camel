@@ -37,6 +37,7 @@ public class TransformersDefinition {
     @XmlElements({
             @XmlElement(name = "dataFormatTransformer", type = DataFormatTransformerDefinition.class),
             @XmlElement(name = "endpointTransformer", type = EndpointTransformerDefinition.class),
+            @XmlElement(name = "loadTransformer", type = LoadTransformerDefinition.class),
             @XmlElement(name = "customTransformer", type = CustomTransformerDefinition.class) })
     private List<TransformerDefinition> transformers;
 
