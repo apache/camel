@@ -21,10 +21,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,26 +40,42 @@ public class CamelCatalogJsonSchemaTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelCatalogJsonSchemaTest.class);
 
-    private CamelCatalog catalog = new DefaultCamelCatalog();
+    private static final CamelCatalog CATALOG = new DefaultCamelCatalog();
 
-    @Test
-    public void testValidateJsonComponent() throws Exception {
-        for (String name : catalog.findComponentNames()) {
-            String json = catalog.componentJSonSchema(name);
-            LOG.info("Validating {} component", name);
-            LOG.debug("with JSon: {}", json);
+    static Stream<String> componentCatalog() {
+        return CATALOG.findComponentNames().stream();
+    }
 
-            // validate we can parse the json
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode tree = mapper.readTree(json);
-            assertNotNull(tree);
+    static Stream<String> dataFormats() {
+        return CATALOG.findDataFormatNames().stream();
+    }
 
-            assertTrue(tree.has("component"), name);
-            assertTrue(tree.has("componentProperties"), name);
-            assertTrue(tree.has("properties"), name);
+    static Stream<String> languages() {
+        return CATALOG.findLanguageNames().stream();
+    }
 
-            validateComponentSyntax(name, tree);
-        }
+    static Stream<String> models() {
+        return CATALOG.findModelNames().stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource("componentCatalog")
+    void testValidateJsonComponent(String name) throws JsonProcessingException {
+        String json = CATALOG.componentJSonSchema(name);
+
+        LOG.info("Validating {} component", name);
+        LOG.debug("with JSon: {}", json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+
+        assertTrue(tree.has("component"), name);
+        assertTrue(tree.has("componentProperties"), name);
+        assertTrue(tree.has("properties"), name);
+
+        validateComponentSyntax(name, tree);
     }
 
     private void validateComponentSyntax(String name, JsonNode tree) {
@@ -103,54 +122,51 @@ public class CamelCatalogJsonSchemaTest {
         }
     }
 
-    @Test
-    public void testValidateJsonDataFormats() throws Exception {
-        for (String name : catalog.findDataFormatNames()) {
-            String json = catalog.dataFormatJSonSchema(name);
-            LOG.info("Validating {} dataformat", name);
-            LOG.debug("with JSon: {}", json);
+    @ParameterizedTest
+    @MethodSource("dataFormats")
+    public void testValidateJsonDataFormats(String name) throws Exception {
+        String json = CATALOG.dataFormatJSonSchema(name);
+        LOG.info("Validating {} dataformat", name);
+        LOG.debug("with JSon: {}", json);
 
-            // validate we can parse the json
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode tree = mapper.readTree(json);
-            assertNotNull(tree);
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
 
-            assertTrue(tree.has("dataformat"), name);
-            assertTrue(tree.has("properties"), name);
-        }
+        assertTrue(tree.has("dataformat"), name);
+        assertTrue(tree.has("properties"), name);
     }
 
-    @Test
-    public void testValidateJsonLanguages() throws Exception {
-        for (String name : catalog.findLanguageNames()) {
-            String json = catalog.languageJSonSchema(name);
-            LOG.info("Validating {} language", name);
-            LOG.debug("with JSon: {}", json);
+    @ParameterizedTest
+    @MethodSource("languages")
+    public void testValidateJsonLanguages(String name) throws Exception {
+        String json = CATALOG.languageJSonSchema(name);
+        LOG.info("Validating {} language", name);
+        LOG.debug("with JSon: {}", json);
 
-            // validate we can parse the json
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode tree = mapper.readTree(json);
-            assertNotNull(tree);
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
 
-            assertTrue(tree.has("language"), name);
-            assertTrue(tree.has("properties"), name);
-        }
+        assertTrue(tree.has("language"), name);
+        assertTrue(tree.has("properties"), name);
     }
 
-    @Test
-    public void testValidateJsonModels() throws Exception {
-        for (String name : catalog.findModelNames()) {
-            String json = catalog.modelJSonSchema(name);
-            LOG.info("Validating {} model", name);
-            LOG.debug("with JSon: {}", json);
+    @ParameterizedTest
+    @MethodSource("models")
+    public void testValidateJsonModels(String name) throws Exception {
+        String json = CATALOG.modelJSonSchema(name);
+        LOG.info("Validating {} model", name);
+        LOG.debug("with JSon: {}", json);
 
-            // validate we can parse the json
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode tree = mapper.readTree(json);
-            assertNotNull(tree);
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
 
-            assertTrue(tree.has("model"), name);
-            assertTrue(tree.has("properties"), name);
-        }
+        assertTrue(tree.has("model"), name);
+        assertTrue(tree.has("properties"), name);
     }
 }
