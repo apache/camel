@@ -67,7 +67,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                ./mvnw -U $MAVEN_PARAMS -Dquickly clean install
+                sh "./mvnw -U $MAVEN_PARAMS -Dquickly clean install"
             }
         }
 
