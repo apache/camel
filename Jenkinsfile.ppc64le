@@ -67,8 +67,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                // Skip modules camel-kudu and docs as these are not supported on ppc64le.
-                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install"
+                sh "./mvnw -U $MAVEN_PARAMS -Dquickly clean install"
             }
         }
 
