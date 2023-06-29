@@ -85,10 +85,6 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 DEFAULT_UUID_GENERATOR.generateUuid(),
                 stream.readAllBytes());
 
-        ParquetReader r = AvroParquetReader.builder(parquetInputStream)
-                .disableCompatibility()
-                .build();
-
         try (ParquetReader reader = AvroParquetReader.builder(parquetInputStream)
                 .withDataModel(new ReflectData(unmarshalType.getClassLoader()))
                 .disableCompatibility() // always use this (since this is a new project)
