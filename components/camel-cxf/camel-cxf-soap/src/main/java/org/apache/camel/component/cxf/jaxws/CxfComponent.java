@@ -44,7 +44,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    private Map<String, BeanCacheEntry> beanCache = new HashMap<String, BeanCacheEntry>();
+    private Map<String, BeanCacheEntry> beanCache = new HashMap<>();
 
     public CxfComponent() {
     }
@@ -124,7 +124,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
                                                + " but with different parameters. Please use the proper Bean scope ");
                 }
             } else {
-                beanCache.put(beanId, new BeanCacheEntry(result, new HashMap<String, Object>(parameters)));
+                beanCache.put(beanId, new BeanCacheEntry(result, new HashMap<>(parameters)));
             }
         } else {
             // endpoint URI does not specify a bean
