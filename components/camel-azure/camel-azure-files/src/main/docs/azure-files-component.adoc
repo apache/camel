@@ -8,6 +8,7 @@
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
+:group: Azure
 
 *Since Camel {since}*
 
