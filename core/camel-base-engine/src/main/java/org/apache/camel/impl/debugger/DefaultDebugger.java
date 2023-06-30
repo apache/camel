@@ -63,7 +63,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         private final List<Condition> conditions;
 
         private BreakpointConditions(Breakpoint breakpoint) {
-            this(breakpoint, new ArrayList<Condition>());
+            this(breakpoint, new ArrayList<>());
         }
 
         private BreakpointConditions(Breakpoint breakpoint, List<Condition> conditions) {
