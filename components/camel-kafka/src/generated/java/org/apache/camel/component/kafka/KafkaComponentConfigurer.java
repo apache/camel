@@ -100,6 +100,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": getOrCreateConfiguration(target).setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": getOrCreateConfiguration(target).setKerberosConfigLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosinitcmd":
         case "kerberosInitCmd": getOrCreateConfiguration(target).setKerberosInitCmd(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosprincipaltolocalrules":
@@ -322,6 +324,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return java.lang.Integer.class;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return java.lang.String.class;
         case "kerberosinitcmd":
         case "kerberosInitCmd": return java.lang.String.class;
         case "kerberosprincipaltolocalrules":
@@ -540,6 +544,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return getOrCreateConfiguration(target).getKerberosBeforeReloginMinTime();
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return getOrCreateConfiguration(target).getKerberosConfigLocation();
         case "kerberosinitcmd":
         case "kerberosInitCmd": return getOrCreateConfiguration(target).getKerberosInitCmd();
         case "kerberosprincipaltolocalrules":

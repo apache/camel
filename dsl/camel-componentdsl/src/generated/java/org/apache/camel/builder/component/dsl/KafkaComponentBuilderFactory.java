@@ -1689,6 +1689,21 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Location of the kerberos config file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kerberosConfigLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder kerberosConfigLocation(
+                java.lang.String kerberosConfigLocation) {
+            doSetProperty("kerberosConfigLocation", kerberosConfigLocation);
+            return this;
+        }
+        /**
          * Kerberos kinit command path. Default is /usr/bin/kinit.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2221,6 +2236,7 @@ public interface KafkaComponentBuilderFactory {
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;
+            case "kerberosConfigLocation": getOrCreateConfiguration((KafkaComponent) component).setKerberosConfigLocation((java.lang.String) value); return true;
             case "kerberosInitCmd": getOrCreateConfiguration((KafkaComponent) component).setKerberosInitCmd((java.lang.String) value); return true;
             case "kerberosPrincipalToLocalRules": getOrCreateConfiguration((KafkaComponent) component).setKerberosPrincipalToLocalRules((java.lang.String) value); return true;
             case "kerberosRenewJitter": getOrCreateConfiguration((KafkaComponent) component).setKerberosRenewJitter((java.lang.Double) value); return true;
