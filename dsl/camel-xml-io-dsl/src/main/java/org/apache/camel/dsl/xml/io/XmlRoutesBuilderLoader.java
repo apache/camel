@@ -67,9 +67,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> NAMESPACES = List.of("", NAMESPACE);
 
+    private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
     private final Map<String, Resource> resourceCache = new ConcurrentHashMap<>();
     private final Map<String, XmlStreamInfo> xmlInfoCache = new ConcurrentHashMap<>();
     private final Map<String, BeansDefinition> camelAppCache = new ConcurrentHashMap<>();
+    private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -85,6 +87,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public void preParseRoute(Resource resource) throws Exception {
         // preparsing is done at early stage, so we have a chance to load additional beans and populate
         // Camel registry
+        if (preparseDone.getOrDefault(resource.getLocation(), false)) {
+            return;
+        }
         XmlStreamInfo xmlInfo = xmlInfo(resource);
         if (xmlInfo.isValid()) {
             String root = xmlInfo.getRootElementName();
@@ -97,6 +102,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         });
             }
         }
+        preparseDone.put(resource.getLocation(), true);
     }
 
     @Override
@@ -149,6 +155,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 resourceCache.remove(resourceLocation);
                 xmlInfoCache.remove(resourceLocation);
                 camelAppCache.remove(resourceLocation);
+                preparseDone.remove(resourceLocation);
             }
 
             @Override
@@ -164,6 +171,14 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void configureCamel(BeansDefinition app) {
+                if (!delayedRegistrations.isEmpty()) {
+                    // some of the beans were not available yet, so we have to try register them now
+                    for (RegistryBeanDefinition bean : delayedRegistrations) {
+                        registerBeanDefinition(bean, false);
+                    }
+                    delayedRegistrations.clear();
+                }
+
                 // we have access to beans and spring beans, but these are already processed
                 // in preParseRoute() and possibly registered in
                 // org.apache.camel.main.BaseMainSupport.postProcessCamelRegistry() (if given Main implementation
@@ -232,13 +247,6 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         };
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        resourceCache.clear();
-        xmlInfoCache.clear();
-        camelAppCache.clear();
-    }
-
     private Resource resource(Resource resource) {
         return resourceCache.computeIfAbsent(resource.getLocation(), l -> new CachedResource(resource));
     }
@@ -289,25 +297,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
         // <bean>s - register Camel beans directly with Camel injection
         for (RegistryBeanDefinition bean : app.getBeans()) {
-            String type = bean.getType();
-            String name = bean.getName();
-            if (name == null || "".equals(name.trim())) {
-                name = type;
-            }
-            if (type != null && !type.startsWith("#")) {
-                type = "#class:" + type;
-                try {
-                    final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
-
-                    if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
-                        PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, bean.getProperties());
-                    }
-                    getCamelContext().getRegistry().unbind(name);
-                    getCamelContext().getRegistry().bind(name, target);
-                } catch (Exception e) {
-                    LOG.warn("Problem creating bean {}", type, e);
-                }
-            }
+            registerBeanDefinition(bean, true);
         }
 
         // <s:bean>, <s:beans> and <s:alias> elements - all the elements in single BeansDefinition have
@@ -318,6 +308,39 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
             String id = String.format("spring-document:%05d:%s", counter.incrementAndGet(), resource.getLocation());
             getCamelContext().getRegistry().bind(id, doc);
+        }
+    }
+
+    /**
+     * Try to instantiate bean from the definition. Depending on the stage ({@link #preParseRoute} or
+     * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
+     *
+     * @param def
+     * @param delayIfFailed
+     */
+    private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
+        String type = def.getType();
+        String name = def.getName();
+        if (name == null || "".equals(name.trim())) {
+            name = type;
+        }
+        if (type != null && !type.startsWith("#")) {
+            type = "#class:" + type;
+            try {
+                final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
+
+                if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+                    PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, def.getProperties());
+                }
+                getCamelContext().getRegistry().unbind(name);
+                getCamelContext().getRegistry().bind(name, target);
+            } catch (Exception e) {
+                if (delayIfFailed) {
+                    delayedRegistrations.add(def);
+                } else {
+                    LOG.warn("Problem creating bean {}", type, e);
+                }
+            }
         }
     }
 
