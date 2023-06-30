@@ -96,7 +96,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
 
         <dependency>
@@ -164,13 +163,6 @@
                     <mojoDependencies>
                         <dep>org.apache.maven:maven-plugin-api</dep>
                     </mojoDependencies>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

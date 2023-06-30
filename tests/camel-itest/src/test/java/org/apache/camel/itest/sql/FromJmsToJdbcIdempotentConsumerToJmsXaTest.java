@@ -19,7 +19,6 @@ package org.apache.camel.itest.sql;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.apache.camel.itest.ITestSupport;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +68,6 @@ public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIde
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        ITestSupport.getPort1();
         return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsXaTest.xml");
     }
 }

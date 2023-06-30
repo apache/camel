@@ -677,9 +677,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
         if (route != null) {
-            DescriptionDefinition desc = new DescriptionDefinition();
-            desc.setText(description);
-            route.setDescription(desc);
+            route.setDescription(description);
         }
 
         return asType();

@@ -280,19 +280,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <childDelegation>false</childDelegation>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                    <reportFormat>brief</reportFormat>
-                    <useFile>false</useFile>
-                    <runOrder>alphabetical</runOrder>
-                    <!--parallel>classes</parallel>
-                    <perCoreThreadCount>true</perCoreThreadCount>
-                    <threadCount>2</threadCount-->
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -322,8 +309,6 @@
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>
                                 <frontEnd>jaxws</frontEnd>
@@ -425,20 +410,30 @@
             </dependencies>
         </profile>
         <profile>
-            <id>jdk17-build</id>
+            <id>full</id>
             <activation>
-                <jdk>[17,)</jdk>
+                <property>
+                    <name>!quickly</name>
+                </property>
             </activation>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <childDelegation>false</childDelegation>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                            <reportFormat>brief</reportFormat>
+                            <useFile>false</useFile>
+                            <runOrder>alphabetical</runOrder>
+                            <!--parallel>classes</parallel>
+                            <perCoreThreadCount>true</perCoreThreadCount>
+                            <threadCount>2</threadCount-->
                             <argLine>--add-opens java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
-           </build>
+            </build>
         </profile>
     </profiles>
 </project>

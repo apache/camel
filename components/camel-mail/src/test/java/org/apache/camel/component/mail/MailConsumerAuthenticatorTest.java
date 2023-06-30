@@ -40,7 +40,6 @@ import static org.mockito.Mockito.when;
  * Test the dynamic behavior of the MailAuthenticator in the MailConsumer.
  */
 public class MailConsumerAuthenticatorTest {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser user1 = Mailbox.getOrCreateUser("user1", "correctPassword");
 
     @Test

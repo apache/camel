@@ -27,16 +27,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailComponentRecipientSetTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser admin = Mailbox.getOrCreateUser("admin", "secret");
 
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser a = Mailbox.getOrCreateUser("a", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser b = Mailbox.getOrCreateUser("b", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser c = Mailbox.getOrCreateUser("c", "secret");
 
     @Test

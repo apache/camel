@@ -33,8 +33,7 @@
     <description>Camel Hashicorp Vault Component</description>
 
     <properties>
-        <!-- Hashicorp vault container is not available on these platforms -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <!-- Hashicorp vault container is not available on this platform -->
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
@@ -89,4 +88,30 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
+<profiles>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>${skipTests}</skipITs>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                 <hashicorp.vault.container>icr.io/ppc64le-oss/vault-ppc64le:v1.13.1</hashicorp.vault.container>
+                           </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

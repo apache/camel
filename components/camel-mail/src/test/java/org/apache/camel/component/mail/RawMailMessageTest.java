@@ -45,15 +45,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class RawMailMessageTest extends CamelTestSupport {
 
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jonesPop3 = Mailbox.getOrCreateUser("jonesPop3", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jonesRawPop3 = Mailbox.getOrCreateUser("jonesRawPop3", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jonesImap = Mailbox.getOrCreateUser("jonesImap", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jonesRawImap = Mailbox.getOrCreateUser("jonesRawImap", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser davsclaus = Mailbox.getOrCreateUser("davsclaus", "secret");
 
     @Override
@@ -163,7 +158,7 @@ public class RawMailMessageTest extends CamelTestSupport {
         folder.open(Folder.READ_WRITE);
         folder.expunge();
 
-        InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.elm");
+        InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.txt");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
         Message[] messages = new Message[] { hurzMsg };
 

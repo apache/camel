@@ -318,7 +318,7 @@ public abstract class AbstractClientBase extends ServiceSupport
                         responseContent.reset();
                         body = IOUtils.toString(responseContent, StandardCharsets.UTF_8);
                         responseContent.reset();
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         log.warn("Unable to reset HTTP response content input stream.");
                     }
                     if (statusCode == HttpStatus.NOT_FOUND_404) {

@@ -24,26 +24,23 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 
-// CHECKSTYLE:OFF
 public class OwbTypeVariableImpl {
-    private static final Class<?>[] TYPE_VARIABLE_TYPES = new Class<?>[] {TypeVariable.class};
+    private static final Class<?>[] TYPE_VARIABLE_TYPES = new Class<?>[] { TypeVariable.class };
 
     /**
-     * Java TypeVariable is different in various JDK versions. Thus it is not
-     * possible to e.g. write a custom TypeVariable which works in either Java7
-     * and Java8 as they introduced new methods in Java8 which have return
-     * generics which only exist in Java8 :( As workaround we dynamically crate
-     * a proxy to wrap this and do the delegation manually. This is of course
-     * slower, but as we do not use it often it might not have much impact.
+     * Java TypeVariable is different in various JDK versions. Thus it is not possible to e.g. write a custom
+     * TypeVariable which works in either Java7 and Java8 as they introduced new methods in Java8 which have return
+     * generics which only exist in Java8 :( As workaround we dynamically crate a proxy to wrap this and do the
+     * delegation manually. This is of course slower, but as we do not use it often it might not have much impact.
      *
-     * @param typeVariable
-     * @param bounds
-     * @return the typeVariable with the defined bounds.
+     * @param  typeVariable
+     * @param  bounds
+     * @return              the typeVariable with the defined bounds.
      */
     public static TypeVariable createTypeVariable(TypeVariable typeVariable, Type... bounds) {
 
-        return (TypeVariable)Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
-                                                               new OwbTypeVariableInvocationHandler(typeVariable, bounds));
+        return (TypeVariable) Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
+                new OwbTypeVariableInvocationHandler(typeVariable, bounds));
     }
 
     public static class OwbTypeVariableInvocationHandler implements InvocationHandler {
@@ -109,8 +106,9 @@ public class OwbTypeVariableImpl {
             if (this == object) {
                 return true;
             } else if (object instanceof TypeVariable) {
-                TypeVariable<?> that = (TypeVariable<?>)object;
-                return name.equals(that.getName()) && genericDeclaration.equals(that.getGenericDeclaration()) && Arrays.equals(bounds, that.getBounds());
+                TypeVariable<?> that = (TypeVariable<?>) object;
+                return name.equals(that.getName()) && genericDeclaration.equals(that.getGenericDeclaration())
+                        && Arrays.equals(bounds, that.getBounds());
             } else {
                 return false;
             }

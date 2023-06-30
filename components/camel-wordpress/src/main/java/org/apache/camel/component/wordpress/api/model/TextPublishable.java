@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
-
 /**
  * Describes a object that may be published on the Wordpress engine, eg. a Post, a Page etc.
  */
@@ -160,11 +158,8 @@ public abstract class TextPublishable extends Publishable {
         this.template = template;
     }
 
-    // @formatter:off
     @Override
     public String toString() {
-        return toStringHelper(this).add("ID", this.getId()).add("Status", this.getStatus()).addValue(this.guid)
-                .addValue(this.getTitle()).toString();
+        return "PostRevision{ID=" + getId() + ", Status=" + this.getStatus() + ", " + guid + "}";
     }
-    // @formatter:on
 }

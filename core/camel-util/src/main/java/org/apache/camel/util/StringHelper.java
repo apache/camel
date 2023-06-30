@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -168,6 +167,16 @@ public final class StringHelper {
      * @return   <tt>true</tt> if the string starts and ends with either single or double quotes.
      */
     public static boolean isQuoted(String s) {
+        return isSingleQuoted(s) || isDoubleQuoted(s);
+    }
+
+    /**
+     * Whether the string starts and ends with single quotes.
+     *
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with single quotes.
+     */
+    public static boolean isSingleQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
         }
@@ -175,6 +184,21 @@ public final class StringHelper {
         if (s.startsWith("'") && s.endsWith("'")) {
             return true;
         }
+
+        return false;
+    }
+
+    /**
+     * Whether the string starts and ends with double quotes.
+     *
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with double quotes.
+     */
+    public static boolean isDoubleQuoted(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return false;
+        }
+
         if (s.startsWith("\"") && s.endsWith("\"")) {
             return true;
         }
@@ -1132,10 +1156,7 @@ public final class StringHelper {
         if (level == 0) {
             return "";
         } else {
-            byte[] arr = new byte[level * blanks];
-            byte space = ' ';
-            Arrays.fill(arr, space);
-            return new String(arr);
+            return " ".repeat(level * blanks);
         }
     }
 
@@ -1149,10 +1170,7 @@ public final class StringHelper {
         if (count <= 0) {
             return "";
         } else {
-            byte[] arr = new byte[count];
-            byte b = (byte) ch;
-            Arrays.fill(arr, b);
-            return new String(arr);
+            return Character.toString(ch).repeat(count);
         }
     }
 

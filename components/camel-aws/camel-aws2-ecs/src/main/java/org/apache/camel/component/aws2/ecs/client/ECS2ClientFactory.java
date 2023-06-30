@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.ecs.client;
 
 import org.apache.camel.component.aws2.ecs.ECS2Configuration;
 import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class ECS2ClientFactory {
      * @return               EcsClient
      */
     public static ECS2InternalClient getEcsClient(ECS2Configuration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new ECS2ClientIAMOptimizedImpl(configuration) : new ECS2ClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new ECS2ClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new ECS2ClientIAMProfileOptimizedImpl(configuration);
+        } else {
+            return new ECS2ClientStandardImpl(configuration);
+        }
     }
 }

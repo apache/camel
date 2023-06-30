@@ -44,7 +44,6 @@ public enum BinaryOperatorType {
     STARTS_WITH,
     ENDS_WITH;
 
-    //CHECKSTYLE:OFF
     public static BinaryOperatorType asOperator(String text) {
         if ("==".equals(text)) {
             return EQ;
@@ -146,16 +145,22 @@ public enum BinaryOperatorType {
     /**
      * Parameter types a binary operator supports on the right hand side.
      * <ul>
-     *     <li>Literal - Only literals enclosed by single quotes</li>
-     *     <li>LiteralWithFunction - literals which may have embedded functions enclosed by single quotes</li>
-     *     <li>Function - A function</li>
-     *     <li>NumericValue - A numeric value</li>
-     *     <li>BooleanValue - A boolean value</li>
-     *     <li>NullValue - A null value</li>
+     * <li>Literal - Only literals enclosed by single quotes</li>
+     * <li>LiteralWithFunction - literals which may have embedded functions enclosed by single quotes</li>
+     * <li>Function - A function</li>
+     * <li>NumericValue - A numeric value</li>
+     * <li>BooleanValue - A boolean value</li>
+     * <li>NullValue - A null value</li>
      * </ul>
      */
     public enum ParameterType {
-        Literal, LiteralWithFunction, Function, NumericValue, BooleanValue, NullValue, MinusValue;
+        Literal,
+        LiteralWithFunction,
+        Function,
+        NumericValue,
+        BooleanValue,
+        NullValue,
+        MinusValue;
 
         public boolean isLiteralSupported() {
             return this == Literal;
@@ -189,8 +194,8 @@ public enum BinaryOperatorType {
     /**
      * Returns the types of right hand side parameters this operator supports.
      *
-     * @param operator the operator
-     * @return <tt>null</tt> if accepting all types, otherwise the array of accepted types
+     * @param  operator the operator
+     * @return          <tt>null</tt> if accepting all types, otherwise the array of accepted types
      */
     public static ParameterType[] supportedParameterTypes(BinaryOperatorType operator) {
         if (operator == EQ) {
@@ -218,21 +223,21 @@ public enum BinaryOperatorType {
         } else if (operator == NOT_CONTAINS_IGNORECASE) {
             return null;
         } else if (operator == REGEX) {
-            return new ParameterType[]{ParameterType.Literal, ParameterType.Function};
+            return new ParameterType[] { ParameterType.Literal, ParameterType.Function };
         } else if (operator == NOT_REGEX) {
-            return new ParameterType[]{ParameterType.Literal, ParameterType.Function};
+            return new ParameterType[] { ParameterType.Literal, ParameterType.Function };
         } else if (operator == IN) {
             return null;
         } else if (operator == NOT_IN) {
             return null;
         } else if (operator == IS) {
-            return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
+            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
         } else if (operator == NOT_IS) {
-            return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
+            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
         } else if (operator == RANGE) {
-            return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
+            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
         } else if (operator == NOT_RANGE) {
-            return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
+            return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
         } else if (operator == STARTS_WITH) {
             return null;
         } else if (operator == ENDS_WITH) {
@@ -240,7 +245,6 @@ public enum BinaryOperatorType {
         }
         return null;
     }
-    //CHECKSTYLE:ON
 
     @Override
     public String toString() {

@@ -35,8 +35,8 @@ import picocli.CommandLine.Command;
 @Command(name = "source", description = "List top processors (source) in a running Camel integration")
 public class CamelSourceTop extends ActionWatchCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
-    String name;
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    String name = "*";
 
     @CommandLine.Option(names = { "--limit" },
                         description = "Filter processors by limiting to the given number of rows")

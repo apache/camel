@@ -21,7 +21,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 
 public class MailSortTermTwoUriConfigTest extends MailSortTermTwoTest {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @Override

@@ -45,7 +45,7 @@
             <goals><goal>read-project-properties</goal></goals>
             <configuration>
               <files>
-                <file>../../../../test-salesforce-login.properties.sample</file>
+                <file>../../../../test-salesforce-login.sample.properties</file>
               </files>
             </configuration>
           </execution>

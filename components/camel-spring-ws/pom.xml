@@ -56,6 +56,11 @@
             <version>${jakarta-servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus-mail-version}</version>
+        </dependency>
 
         <!-- spring -->
         <dependency>

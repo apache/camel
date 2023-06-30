@@ -61,6 +61,11 @@ To enable access, then set `accessExternalSchemaProtocols=all` or specify allowe
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
+=== camel-spring-rabbitmq
+
+The option `replyTimeout` in `camel-spring-rabbitmq` has been fixed and the default value from 5 to 30 seconds
+(this is the default used by Spring).
+
 === camel-stax
 
 XML parser in `StAXJAXBIteratorExpression` has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
@@ -83,7 +88,44 @@ The command `camel dependencies` has been renamed to `camel dependency`.
 
 In Camel JBang the `-dir` parameter for `init` and `run` goal has been renamed to require 2 dashes `--dir` like all the other options.
 
-=== camel-spring-boot
+The _Placeholders substitutes_ is changed to use `#name` instead of `$name` syntax.
+
+=== camel-java-joor-dsl
+
+The `camel-java-joor-dsl` cannot anymore load routes defined in class files as we consider it no more needed, consequently the ability to configure the compile directory and the compile load first flag using the corresponding `camel-main` properties is no longer possible.
+
+=== camel-elasticsearch
+
+The `certificatePath` parameter can now be specified as resource: for user pointing to a local certificate, the file should be now prefixed with `file:`. It's also possible to use the classic resource helper prefixes, like `classpath`, `https` etc.
+
+=== camel-rest
+
+The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
+
+=== Deprecated Components
+
+The following components that had been marked as deprecated, were removed in this release:
+
+* camel-dozer
+* camel-cmis
+* camel-vertx-kafka
+
+=== Backlog Tracing
+
+The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
+was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
+The old behavior can be archived by setting `backlogTracingStandby=true`.
+
+Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
+to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
+
+
+== Camel Spring Boot
+
+The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
+with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+
+=== Health Check
 
 The health-check has aligned to be more similar to microprofile-health in the JSon output.
 Spring Boot now also includes additional data per check, when using full exposure level.
@@ -121,50 +163,14 @@ For example as shown below for the context health check:
 }
 ----
 
-=== camel-java-joor-dsl
-
-The `camel-java-joor-dsl` cannot anymore load routes defined in class files as we consider it no more needed, consequently the ability to configure the compile directory and the compile load first flag using the corresponding `camel-main` properties is no longer possible.
-
-=== camel-elasticsearch
-
-The `certificatePath` parameter can now be specified as resource: for user pointing to a local certificate, the file should be now prefixed with `file:`. It's also possible to use the classic resource helper prefixes, like `classpath`, `https` etc.
-
-=== camel-rest
-
-The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
-
-=== camel-platform-http-starter
-
-If the route or consumer is suspended then http status 503 is now returned instead of 404.
-
-=== Deprecated Components
-
-The following components that had been marked as deprecated, were removed in this release:
-
-* camel-dozer
-* camel-cmis
-
-== Backlog Tracing
-
-The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
-was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
-The old behavior can be archived by setting `backlogTracingStandby=true`.
-
-Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
-to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
-
-
-== Camel Spring Boot
-
-The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
-with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
-
 === camel-micrometer-starter
 
 The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
 This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
 
 === camel-platform-http-starter
+
+If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
 The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
 Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).

@@ -16,7 +16,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.YAMLDataFormat"
   },
   "properties": {
-    "library": { "index": 0, "kind": "attribute", "displayName": "Library", "required": false, "type": "enum", "javaType": "org.apache.camel.model.dataformat.YAMLLibrary", "enum": [ "snake-yaml" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "SnakeYAML", "description": "Which yaml library to use. By default it is SnakeYAML" },
+    "library": { "index": 0, "kind": "attribute", "displayName": "Library", "required": false, "type": "enum", "javaType": "org.apache.camel.model.dataformat.YAMLLibrary", "enum": [ "SnakeYAML" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "SnakeYAML", "description": "Which yaml library to use. By default it is SnakeYAML" },
     "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" },
     "constructor": { "index": 2, "kind": "attribute", "displayName": "Constructor", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "BaseConstructor to construct incoming documents." },
     "representer": { "index": 3, "kind": "attribute", "displayName": "Representer", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Representer to emit outgoing objects." },

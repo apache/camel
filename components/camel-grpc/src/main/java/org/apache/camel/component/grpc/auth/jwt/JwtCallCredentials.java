@@ -48,7 +48,7 @@ public class JwtCallCredentials extends CallCredentials {
                 Metadata.Key<String> jwtKey = GrpcConstants.GRPC_JWT_METADATA_KEY;
                 headers.put(jwtKey, jwtToken);
                 metadataApplier.apply(headers);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.debug("Unable to set metadata credentials header", e);
                 metadataApplier.fail(Status.UNAUTHENTICATED.withCause(e));
             }

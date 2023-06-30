@@ -49,6 +49,8 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "profilecredentialsname":
+        case "profileCredentialsName": target.getConfiguration().setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -81,6 +83,8 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -121,6 +125,8 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "overrideEndpoint": return boolean.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "profilecredentialsname":
+        case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -153,6 +159,8 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -189,6 +197,8 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
+        case "profilecredentialsname":
+        case "profileCredentialsName": return target.getConfiguration().getProfileCredentialsName();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -221,6 +231,8 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         default: return null;
         }
     }

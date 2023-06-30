@@ -95,7 +95,6 @@ public abstract class CamelTestSupport
      */
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
 
-    // CHECKSTYLE:OFF
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<>();
@@ -120,7 +119,6 @@ public abstract class CamelTestSupport
     private boolean isCreateCamelContextPerClass = false;
     private CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
     private ExtensionContext.Store globalStore;
-    // CHECKSTYLE:ON
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {

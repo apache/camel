@@ -1,0 +1,90 @@
+= ActiveMQ Component
+:doctitle: ActiveMQ
+:shortname: activemq
+:artifactid: camel-activemq
+:description: Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.
+:since: 1.0
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: activemq
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The ActiveMQ component is an extension to the JMS component and has been pre-configured for using Apache ActiveMQ 5.x (not Artemis).
+Users of Apache ActiveMQ Artemis should use the JMS component.
+
+[TIP]
+====
+*More documentation*
+
+See the JMS component for more documentation and examples
+====
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-activemq</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+--------------------------------------------
+activemq:[queue:|topic:]destinationName[?options]
+--------------------------------------------
+
+Where `destinationName` is a JMS queue or topic name. By default, the
+`destinationName` is interpreted as a queue name. For example, to
+connect to the queue, `foo` use:
+
+-----------
+activemq:foo
+-----------
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Examples
+
+You'll need to provide a connectionFactory to the ActiveMQ Component, to have the following examples working.
+
+=== Producer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("timer:mytimer?period=5000")
+        .setBody(constant("HELLO from Camel!"))
+        .to("activemq:queue:HELLO.WORLD");
+--------------------------------------------------------------------------------
+
+=== Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+from("activemq:queue:HELLO.WORLD")
+        .log("Received a message - ${body}");
+--------------------------------------------------------------------------------
+
+
+
+include::spring-boot:partial$starter.adoc[]

@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
  * Unit test for Mail using @ in username option
  */
 public class MailUsernameWithAtSignTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser jamesAtSign
             = Mailbox.getOrCreateUser("jamesAtSign@localhost", "jamesAtSign@localhost", "secret");
 

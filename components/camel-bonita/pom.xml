@@ -55,7 +55,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- testing -->
@@ -69,19 +68,6 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-version}</version>
             <scope>test</scope>
-        </dependency>
-        <!-- Override the guava version prescribed by Camel with the one needed by wiremock for tests -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>

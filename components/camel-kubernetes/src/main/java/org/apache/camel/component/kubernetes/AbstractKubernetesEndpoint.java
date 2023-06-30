@@ -32,7 +32,7 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
 
     private transient KubernetesClient client;
 
-    public AbstractKubernetesEndpoint(String uri, AbstractKubernetesComponent component, KubernetesConfiguration config) {
+    protected AbstractKubernetesEndpoint(String uri, AbstractKubernetesComponent component, KubernetesConfiguration config) {
         super(uri, component);
         this.configuration = config;
     }

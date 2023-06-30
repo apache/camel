@@ -313,4 +313,8 @@ public abstract class BaseOptionModel {
         return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

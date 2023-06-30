@@ -39,11 +39,11 @@ public class JmsTransferExceptionTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    private static final MyErrorLogger ERROR_LOGGER = new MyErrorLogger();
     private static int counter;
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
-    protected MyErrorLogger errorLogger = new MyErrorLogger();
 
     protected String getUri() {
         return "activemq:queue:JmsTransferExceptionTest?transferException=true";
@@ -81,7 +81,7 @@ public class JmsTransferExceptionTest extends AbstractJMSTest {
         assertEquals(0, e.getSuppressed().length);
 
         // and check what camel logged
-        Throwable t = errorLogger.getException();
+        Throwable t = ERROR_LOGGER.getException();
         assertNotNull(t);
         assertEquals(0, t.getSuppressed().length);
     }
@@ -96,7 +96,7 @@ public class JmsTransferExceptionTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(defaultErrorHandler().maximumRedeliveries(4).logger(errorLogger));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(4).logger(ERROR_LOGGER));
 
                 from(getUri())
                         .process(exchange -> {

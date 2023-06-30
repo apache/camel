@@ -29,6 +29,10 @@ import org.apache.camel.util.IOHelper;
  * A {@link ByteBuf} which is exposed as an {@link InputStream} which makes it very easy to use by Camel and other Camel
  * components. Also supported is {@link StreamCache} which allows the data to be re-read for example when doing content
  * based routing with XPath.
+ * <p/>
+ * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
+ * users to create as instances, but they are part of Camels
+ * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  */
 public final class NettyChannelBufferStreamCache extends InputStream implements StreamCache {
 

@@ -42,6 +42,7 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <camel-generate-yaml-writer>true</camel-generate-yaml-writer>
     </properties>
 
     <dependencies>
@@ -214,13 +215,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -259,7 +258,6 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <!-- camelCase -->
                     <execution>

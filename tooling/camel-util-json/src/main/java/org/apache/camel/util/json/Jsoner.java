@@ -151,8 +151,8 @@ public final class Jsoner {
      * @throws IOException              if the underlying reader encounters an I/O error. Ensure the reader is properly
      *                                  instantiated, isn't closed, or that it is ready before trying again.
      */
-    // CHECKSTYLE:OFF
-    private static JsonArray deserialize(final Reader deserializable, final Set<DeserializationOptions> flags) throws DeserializationException, IOException {
+    private static JsonArray deserialize(final Reader deserializable, final Set<DeserializationOptions> flags)
+            throws DeserializationException, IOException {
         final Yylex lexer = new Yylex(deserializable);
         Yytoken token;
         States currentState;
@@ -167,7 +167,8 @@ public final class Jsoner {
             switch (currentState) {
                 case DONE:
                     /* The parse has finished a JSON value. */
-                    if (!flags.contains(DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES) || Yytoken.Types.END.equals(token.getType())) {
+                    if (!flags.contains(DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES)
+                            || Yytoken.Types.END.equals(token.getType())) {
                         /*
                          * Break if concatenated values are not allowed or if an END
                          * token is read.
@@ -190,7 +191,8 @@ public final class Jsoner {
                                 valueStack.addLast(token.getValue());
                                 stateStack.addLast(States.DONE);
                             } else {
-                                throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.DISALLOWED_TOKEN, token);
+                                throw new DeserializationException(
+                                        lexer.getPosition(), DeserializationException.Problems.DISALLOWED_TOKEN, token);
                             }
                             break;
                         case LEFT_BRACE:
@@ -199,7 +201,8 @@ public final class Jsoner {
                                 valueStack.addLast(new JsonObject());
                                 stateStack.addLast(States.PARSING_OBJECT);
                             } else {
-                                throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.DISALLOWED_TOKEN, token);
+                                throw new DeserializationException(
+                                        lexer.getPosition(), DeserializationException.Problems.DISALLOWED_TOKEN, token);
                             }
                             break;
                         case LEFT_SQUARE:
@@ -208,12 +211,14 @@ public final class Jsoner {
                                 valueStack.addLast(new JsonArray());
                                 stateStack.addLast(States.PARSING_ARRAY);
                             } else {
-                                throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.DISALLOWED_TOKEN, token);
+                                throw new DeserializationException(
+                                        lexer.getPosition(), DeserializationException.Problems.DISALLOWED_TOKEN, token);
                             }
                             break;
                         default:
                             /* Neither a JSON array or object was detected. */
-                            throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
+                            throw new DeserializationException(
+                                    lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
                     }
                     break;
                 case PARSED_ERROR:
@@ -221,7 +226,8 @@ public final class Jsoner {
                      * The parse could be in this state due to the state stack not
                      * having a state to pop off.
                      */
-                    throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
+                    throw new DeserializationException(
+                            lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
                 case PARSING_ARRAY:
                     switch (token.getType()) {
                         case COMMA:
@@ -266,7 +272,8 @@ public final class Jsoner {
                             break;
                         default:
                             /* Any other token is invalid in an array. */
-                            throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
+                            throw new DeserializationException(
+                                    lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
                     }
                     break;
                 case PARSING_OBJECT:
@@ -297,7 +304,8 @@ public final class Jsoner {
                                  * Abort! JSON keys are always strings and it wasn't a
                                  * string.
                                  */
-                                throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
+                                throw new DeserializationException(
+                                        lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
                             }
                             break;
                         case RIGHT_BRACE:
@@ -312,7 +320,8 @@ public final class Jsoner {
                             break;
                         default:
                             /* The parse didn't detect the end of an object or a key. */
-                            throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
+                            throw new DeserializationException(
+                                    lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
                     }
                     break;
                 case PARSING_ENTRY:
@@ -354,7 +363,8 @@ public final class Jsoner {
                             /*
                              * The parse didn't find anything for the parsed pair key.
                              */
-                            throw new DeserializationException(lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
+                            throw new DeserializationException(
+                                    lexer.getPosition(), DeserializationException.Problems.UNEXPECTED_TOKEN, token);
                     }
                     break;
                 default:
@@ -364,7 +374,6 @@ public final class Jsoner {
         } while (!(States.DONE.equals(currentState) && Yytoken.Types.END.equals(token.getType())));
         return new JsonArray(valueStack);
     }
-    // CHECKSTYLE:ON
 
     /**
      * A convenience method that assumes a StringReader to deserialize a string.
@@ -926,21 +935,24 @@ public final class Jsoner {
      * @throws IllegalArgumentException if the jsonSerializable isn't serializable in JSON.
      * @see                             SerializationOptions
      */
-    // CHECKSTYLE:OFF
-    private static void serialize(final Object jsonSerializable, final Writer writableDestination, final Set<SerializationOptions> flags) throws IOException {
+    private static void serialize(
+            final Object jsonSerializable, final Writer writableDestination, final Set<SerializationOptions> flags)
+            throws IOException {
         if (jsonSerializable == null) {
             /* When a null is passed in the word null is supported in JSON. */
             writableDestination.write("null");
         } else if (jsonSerializable instanceof Jsonable && flags.contains(SerializationOptions.ALLOW_JSONABLES)) {
             /* Writes the writable as defined by the writable. */
             writableDestination.write(((Jsonable) jsonSerializable).toJson());
-        } else if (jsonSerializable instanceof Enum && flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
+        } else if (jsonSerializable instanceof Enum
+                && flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
             /*
              * Writes the enum as a special case of string. All enums (unless
              * they implement Jsonable) will be the string literal
              * "${DECLARING_CLASS_NAME}.${ENUM_NAME}" as their value.
              */
-            @SuppressWarnings("rawtypes") final Enum e = (Enum) jsonSerializable;
+            @SuppressWarnings("rawtypes")
+            final Enum e = (Enum) jsonSerializable;
             writableDestination.write('"');
             writableDestination.write(e.getDeclaringClass().getName());
             writableDestination.write('.');
@@ -978,7 +990,8 @@ public final class Jsoner {
         } else if (jsonSerializable instanceof Map) {
             /* Writes the map in JSON object format. */
             boolean isFirstEntry = true;
-            @SuppressWarnings("rawtypes") final Iterator entries = ((Map) jsonSerializable).entrySet().iterator();
+            @SuppressWarnings("rawtypes")
+            final Iterator entries = ((Map) jsonSerializable).entrySet().iterator();
             writableDestination.write('{');
             while (entries.hasNext()) {
                 if (isFirstEntry) {
@@ -986,7 +999,8 @@ public final class Jsoner {
                 } else {
                     writableDestination.write(',');
                 }
-                @SuppressWarnings("rawtypes") final Map.Entry entry = (Map.Entry) entries.next();
+                @SuppressWarnings("rawtypes")
+                final Map.Entry entry = (Map.Entry) entries.next();
                 Jsoner.serialize(entry.getKey(), writableDestination, flags);
                 writableDestination.write(':');
                 Jsoner.serialize(entry.getValue(), writableDestination, flags);
@@ -995,7 +1009,8 @@ public final class Jsoner {
         } else if (jsonSerializable instanceof Collection) {
             /* Writes the collection in JSON array format. */
             boolean isFirstElement = true;
-            @SuppressWarnings("rawtypes") final Iterator elements = ((Collection) jsonSerializable).iterator();
+            @SuppressWarnings("rawtypes")
+            final Iterator elements = ((Collection) jsonSerializable).iterator();
             writableDestination.write('[');
             while (elements.hasNext()) {
                 if (isFirstElement) {
@@ -1164,16 +1179,16 @@ public final class Jsoner {
                 /*
                  * Notify the caller the cause of failure for the serialization.
                  */
-                throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: " + jsonSerializable.toString()
-                        + "  that isn't JSON serializable.\n  Try:\n"
-                        + "    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n"
-                        + "    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n"
-                        + "    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n"
-                        + "    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
+                throw new IllegalArgumentException(
+                        "Encountered a: " + jsonSerializable.getClass().getName() + " as: " + jsonSerializable.toString()
+                                                   + "  that isn't JSON serializable.\n  Try:\n"
+                                                   + "    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n"
+                                                   + "    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n"
+                                                   + "    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n"
+                                                   + "    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
             }
         }
     }
-    // CHECKSTYLE:ON
 
     /**
      * Serializes like the first version of this library. It has been adapted to use Jsonable for serializing custom

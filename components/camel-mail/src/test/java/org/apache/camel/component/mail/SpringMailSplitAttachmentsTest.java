@@ -44,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Spring XML version of {@link MailSplitAttachmentsTest}
  */
 public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
     private Endpoint endpoint;

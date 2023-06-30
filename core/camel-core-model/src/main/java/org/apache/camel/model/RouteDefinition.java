@@ -275,9 +275,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     @Override
     public RouteDefinition routeDescription(String description) {
-        DescriptionDefinition desc = new DescriptionDefinition();
-        desc.setText(description);
-        setDescription(desc);
+        setDescription(description);
         return this;
     }
 
@@ -1118,6 +1116,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
             errorHandlerFactory = createErrorHandlerBuilder();
         }
         return errorHandlerFactory;
+    }
+
+    /**
+     * Is a custom error handler been set
+     */
+    boolean isErrorHandlerFactorySet() {
+        return errorHandlerFactory != null;
     }
 
     /**

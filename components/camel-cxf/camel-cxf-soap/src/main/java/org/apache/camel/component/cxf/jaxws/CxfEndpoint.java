@@ -367,14 +367,14 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
         if (this.isSkipPayloadMessagePartCheck()) {
             if (sfb.getProperties() == null) {
-                sfb.setProperties(new HashMap<String, Object>());
+                sfb.setProperties(new HashMap<>());
             }
             sfb.getProperties().put("soap.no.validate.parts", Boolean.TRUE);
         }
 
         if (this.isSkipFaultLogging()) {
             if (sfb.getProperties() == null) {
-                sfb.setProperties(new HashMap<String, Object>());
+                sfb.setProperties(new HashMap<>());
             }
             sfb.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
@@ -563,21 +563,21 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             authPolicy.setUserName(username);
             authPolicy.setPassword(password);
             if (factoryBean.getProperties() == null) {
-                factoryBean.setProperties(new HashMap<String, Object>());
+                factoryBean.setProperties(new HashMap<>());
             }
             factoryBean.getProperties().put(AuthorizationPolicy.class.getName(), authPolicy);
         }
 
         if (this.isSkipPayloadMessagePartCheck()) {
             if (factoryBean.getProperties() == null) {
-                factoryBean.setProperties(new HashMap<String, Object>());
+                factoryBean.setProperties(new HashMap<>());
             }
             factoryBean.getProperties().put("soap.no.validate.parts", Boolean.TRUE);
         }
 
         if (this.isSkipFaultLogging()) {
             if (factoryBean.getProperties() == null) {
-                factoryBean.setProperties(new HashMap<String, Object>());
+                factoryBean.setProperties(new HashMap<>());
             }
             factoryBean.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }

@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -263,6 +264,15 @@ public class IOConverterTest extends ContextTestSupport {
         String fn = (String) p.get("appender.file.fileName");
         assertNotNull(fn);
         assertTrue(fn.contains("camel-core-test.log"));
+    }
+
+    @Test
+    public void testToPathFromFile() throws Exception {
+        File file = new File("src/test/resources/log4j2.properties");
+        Path p = IOConverter.toPath(file);
+        assertNotNull(p);
+        assertEquals(file.getName(), p.getFileName().toString());
+        assertEquals("log4j2.properties", p.getFileName().toString());
     }
 
 }

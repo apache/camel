@@ -94,7 +94,7 @@ public class PrinterProducer extends DefaultProducer {
     }
 
     private MediaTray resolveMediaTray(String tray) {
-        Media medias[] = (Media[]) getPrintService().getSupportedAttributeValues(Media.class, null, null);
+        Media[] medias = (Media[]) getPrintService().getSupportedAttributeValues(Media.class, null, null);
 
         if (medias == null) {
             return null;

@@ -20,6 +20,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.xml.io.beans.GreeterMessage;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,9 @@ public class XmlLoadAppTest {
                 Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                         "/org/apache/camel/dsl/xml/io/" + r);
 
-                PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+                RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+                routesLoader.preParseRoute(resource, false);
+                routesLoader.loadRoutes(resource);
             }
 
             assertNotNull(context.getRoute("r1"), "Loaded r1 route should be there");
@@ -77,7 +80,9 @@ public class XmlLoadAppTest {
             Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/camel-app3.xml");
 
-            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
 
             assertNotNull(context.getRoute("r3"), "Loaded r3 route should be there");
             assertEquals(1, context.getRoutes().size());
@@ -101,7 +106,9 @@ public class XmlLoadAppTest {
             Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/camel-app4.xml");
 
-            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
 
             assertNotNull(context.getRoute("r4"), "Loaded r4 route should be there");
             assertEquals(1, context.getRoutes().size());

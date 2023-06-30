@@ -33,9 +33,11 @@
 
     <profiles>
         <profile>
-            <id>jdk17-build</id>
+            <id>full</id>
             <activation>
-                <jdk>[17,)</jdk>
+                <property>
+                    <name>!quickly</name>
+                </property>
             </activation>
             <build>
                 <plugins>

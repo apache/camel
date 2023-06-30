@@ -144,6 +144,22 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * The operation to do in case the user don't want to send only a
          * record.
          * 
@@ -361,6 +377,41 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         default KinesisFirehose2EndpointBuilder useDefaultCredentialsProvider(
                 String useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**

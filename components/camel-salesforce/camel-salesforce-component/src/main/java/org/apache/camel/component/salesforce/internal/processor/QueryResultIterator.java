@@ -62,7 +62,7 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
             return iterator.next();
         } else if (!queryRecords.getDone()) {
             final CountDownLatch latch = new CountDownLatch(1);
-            List<T> valueHolder = new ArrayList<T>();
+            List<T> valueHolder = new ArrayList<>();
 
             restClient.queryMore(queryRecords.getNextRecordsUrl(), requestHeaders, (response, headers, exception) -> {
                 final AbstractQueryRecordsBase<T> qrb;

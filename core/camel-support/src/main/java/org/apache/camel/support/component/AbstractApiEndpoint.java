@@ -49,7 +49,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         implements ApiEndpoint, PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
-    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorService> EXECUTOR_SERVICE_MAP = new ConcurrentHashMap<>();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -311,7 +311,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
         // lookup executorService for extending class name
         final String endpointClassName = endpointClass.getName();
-        ExecutorService executorService = executorServiceMap.get(endpointClassName);
+        ExecutorService executorService = EXECUTOR_SERVICE_MAP.get(endpointClassName);
 
         // CamelContext will shutdown thread pool when it shutdown so we can
         // lazy create it on demand
@@ -330,7 +330,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             // create a new pool using the custom or default profile
             executorService = manager.newScheduledThreadPool(endpointClass, threadProfileName, poolProfile);
 
-            executorServiceMap.put(endpointClassName, executorService);
+            EXECUTOR_SERVICE_MAP.put(endpointClassName, executorService);
         }
 
         return executorService;

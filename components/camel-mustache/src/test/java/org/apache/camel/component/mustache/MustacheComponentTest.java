@@ -45,7 +45,7 @@ public class MustacheComponentTest extends CamelTestSupport {
     public void testMustache() throws Exception {
         // Prepare
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("Message with body 'The Body' and some header 'Some Header'");
+        endSimpleMock.expectedBodiesReceived("\nMessage with body 'The Body' and some header 'Some Header'");
         // Act
         startSimpleProducerTemplate.sendBodyAndHeader("The Body", "someHeader", "Some Header");
         // Verify

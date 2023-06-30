@@ -49,16 +49,7 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${jira-guava-version}</version>
         </dependency>
 
         <!-- atlassian jira dependencies -->
@@ -82,10 +73,6 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -96,10 +83,6 @@
                 <exclusion>
                     <groupId>com.atlassian.sal</groupId>
                     <artifactId>sal-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.codehaus.jettison</groupId>

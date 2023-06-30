@@ -19,7 +19,6 @@ package org.apache.camel.converter.stream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,7 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link StreamCache} for {@link File}s
+ * A {@link StreamCache} for {@link File}s.
+ * <p/>
+ * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
+ * users to create as instances, but they are part of Camels
+ * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  */
 public final class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
@@ -58,11 +61,11 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     private final CipherPair ciphers;
 
     /** Only for testing purposes. */
-    public FileInputStreamCache(File file) throws FileNotFoundException {
+    public FileInputStreamCache(File file) {
         this(new TempFileManager(file, true));
     }
 
-    FileInputStreamCache(TempFileManager closer) throws FileNotFoundException {
+    FileInputStreamCache(TempFileManager closer) {
         this.file = closer.getTempFile();
         this.stream = null;
         this.ciphers = closer.getCiphers();
@@ -165,7 +168,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         return getInputStream().transferTo(out);
     }
 
-    protected InputStream getInputStream() throws IOException {
+    private InputStream getInputStream() throws IOException {
         if (stream == null) {
             stream = createInputStream(file);
         }
@@ -332,12 +335,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             return out;
         }
 
-        FileInputStreamCache newStreamCache() throws IOException {
-            try {
-                return new FileInputStreamCache(this);
-            } catch (FileNotFoundException e) {
-                throw new IOException("Cached file " + tempFile + " not found", e);
-            }
+        FileInputStreamCache newStreamCache() {
+            return new FileInputStreamCache(this);
         }
 
         void closeFileInputStreams() {

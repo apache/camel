@@ -663,9 +663,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
         }
         /**
          * Whether to use an encrypted connection to MySQL. Options include:
-         * 'disabled' (the default) to use an unencrypted connection;
-         * 'preferred' to establish a secure (encrypted) connection if the
-         * server supports secure connections, but fall back to an unencrypted
+         * 'disabled' to use an unencrypted connection; 'preferred' (the
+         * default) to establish a secure (encrypted) connection if the server
+         * supports secure connections, but fall back to an unencrypted
          * connection otherwise; 'required' to use a secure (encrypted)
          * connection, and fail if one cannot be established; 'verify_ca' like
          * 'required' but additionally verify the server TLS certificate against
@@ -676,7 +676,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: disabled
+         * Default: preferred
          * Group: mysql
          * 
          * @param databaseSslMode the value to set
@@ -1048,7 +1048,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * The maximum size of chunk for incremental snapshotting.
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1153,6 +1154,37 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder minRowCountToStreamResults(
                 int minRowCountToStreamResults) {
             doSetProperty("minRowCountToStreamResults", minRowCountToStreamResults);
+            return this;
+        }
+        /**
+         * List of notification channels names that are enabled.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param notificationEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder notificationEnabledChannels(
+                java.lang.String notificationEnabledChannels) {
+            doSetProperty("notificationEnabledChannels", notificationEnabledChannels);
+            return this;
+        }
+        /**
+         * The name of the topic for the notifications. This is required in case
+         * 'sink' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param notificationSinkTopicName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder notificationSinkTopicName(
+                java.lang.String notificationSinkTopicName) {
+            doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
             return this;
         }
         /**
@@ -1353,6 +1385,40 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * List of channels names that are enabled. Source channel is enabled by
+         * default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: source
+         * Group: mysql
+         * 
+         * @param signalEnabledChannels the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder signalEnabledChannels(
+                java.lang.String signalEnabledChannels) {
+            doSetProperty("signalEnabledChannels", signalEnabledChannels);
+            return this;
+        }
+        /**
+         * Interval for looking for new signals in registered channels, given in
+         * milliseconds. Defaults to 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: mysql
+         * 
+         * @param signalPollIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder signalPollIntervalMs(
+                long signalPollIntervalMs) {
+            doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
@@ -1488,17 +1554,28 @@ public interface DebeziumMysqlComponentBuilderFactory {
         }
         /**
          * The criteria for running a snapshot upon startup of the connector.
-         * Options include: 'when_needed' to specify that the connector run a
-         * snapshot upon startup whenever it deems it necessary; 'schema_only'
-         * to only take a snapshot of the schema (table structures) but no
-         * actual data; 'initial' (the default) to specify the connector can run
-         * a snapshot only when no offsets are available for the logical server
-         * name; 'initial_only' same as 'initial' except the connector should
-         * stop after completing the snapshot and before it would normally read
-         * the binlog; and'never' to specify the connector should never run a
-         * snapshot and that upon first startup the connector should read from
-         * the beginning of the binlog. The 'never' mode should be used with
-         * care, and only when the binlog is known to contain all history.
+         * Select one of the following snapshot options: 'when_needed': On
+         * startup, the connector runs a snapshot if one is needed.;
+         * 'schema_only': If the connector does not detect any offsets for the
+         * logical server name, it runs a snapshot that captures only the schema
+         * (table structures), but not any table data. After the snapshot
+         * completes, the connector begins to stream changes from the binlog.;
+         * 'schema_only_recovery': The connector performs a snapshot that
+         * captures only the database schema history. The connector then
+         * transitions back to streaming. Use this setting to restore a
+         * corrupted or lost database schema history topic. Do not use if the
+         * database schema was modified after the connector stopped.; 'initial'
+         * (default): If the connector does not detect any offsets for the
+         * logical server name, it runs a snapshot that captures the current
+         * full state of the configured tables. After the snapshot completes,
+         * the connector begins to stream changes from the binlog.;
+         * 'initial_only': The connector performs a snapshot as it does for the
+         * 'initial' option, but after the connector completes the snapshot, it
+         * stops, and does not stream changes from the binlog.; 'never': The
+         * connector does not run a snapshot. Upon first startup, the connector
+         * immediately begins reading from the beginning of the binlog. The
+         * 'never' mode should be used with care, and only when the binlog is
+         * known to contain all history.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1584,6 +1661,23 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder snapshotTablesOrderByRowCount(
                 java.lang.String snapshotTablesOrderByRowCount) {
             doSetProperty("snapshotTablesOrderByRowCount", snapshotTablesOrderByRowCount);
+            return this;
+        }
+        /**
+         * The name of the SourceInfoStructMaker class that returns SourceInfo
+         * schema and struct.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: io.debezium.connector.mysql.MySqlSourceInfoStructMaker
+         * Group: mysql
+         * 
+         * @param sourceinfoStructMaker the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder sourceinfoStructMaker(
+                java.lang.String sourceinfoStructMaker) {
+            doSetProperty("sourceinfoStructMaker", sourceinfoStructMaker);
             return this;
         }
         /**
@@ -1798,6 +1892,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "minRowCountToStreamResults": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMinRowCountToStreamResults((int) value); return true;
+            case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMySqlComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setQueryFetchSize((int) value); return true;
@@ -1809,6 +1905,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEnabledChannels": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
+            case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotFetchSize((int) value); return true;
@@ -1820,6 +1918,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "snapshotNewTables": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotNewTables((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
+            case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableIncludeList((java.lang.String) value); return true;

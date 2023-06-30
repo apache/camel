@@ -47,10 +47,12 @@ public class Lambda2Component extends DefaultComponent {
         Lambda2Endpoint endpoint = new Lambda2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         endpoint.setFunction(remaining);
-        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && configuration.getAwsLambdaClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
+                && configuration.getAwsLambdaClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, accessKey/secretKey or awsLambdaClient must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, AmazonLambdaClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;

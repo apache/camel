@@ -59,6 +59,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -443,10 +444,12 @@ public abstract class BaseMainSupport extends BaseService {
                         mainConfigurationProperties.setRoutesIncludePattern(value);
                         return null;
                     });
-            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
-            if (camelContext.isModeline() || mainConfigurationProperties.isModeline()) {
-                modelineRoutes(camelContext);
+            if (mainConfigurationProperties.isModeline()) {
+                camelContext.setModeline(true);
             }
+            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
+            // also load other non-route related configuration (e.g., beans)
+            modelineRoutes(camelContext);
 
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         }
@@ -885,6 +888,17 @@ public abstract class BaseMainSupport extends BaseService {
 
         // configure the common/default options
         DefaultConfigurationConfigurer.configure(camelContext, config);
+
+        // org.apache.camel.spring.boot.CamelAutoConfiguration (camel-spring-boot) also calls the methods
+        // on DefaultConfigurationConfigurer, but the CamelContext being configured is already
+        // org.apache.camel.spring.boot.SpringBootCamelContext, which has access to Spring's ApplicationContext.
+        // That's why DefaultConfigurationConfigurer.afterConfigure() can alter CamelContext using beans from
+        // Spring's ApplicationContext.
+        // so here, before configuring Camel Context, we can process the registry and let Main implementations
+        // decide how to do it
+        Registry registry = camelContext.getCamelContextExtension().getRegistry();
+        postProcessCamelRegistry(camelContext, config, registry);
+
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterConfigure(camelContext);
 
@@ -1130,6 +1144,19 @@ public abstract class BaseMainSupport extends BaseService {
 
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
+    }
+
+    /**
+     * Main implementation may do some additional configuration of the {@link Registry} before it's used to
+     * (re)configure Camel context.
+     *
+     * @param camelContext
+     * @param config
+     * @param registry
+     */
+    protected void postProcessCamelRegistry(
+            CamelContext camelContext, MainConfigurationProperties config,
+            Registry registry) {
     }
 
     private void setRouteTemplateProperties(

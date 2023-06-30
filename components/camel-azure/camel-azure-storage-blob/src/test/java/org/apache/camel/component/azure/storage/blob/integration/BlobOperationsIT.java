@@ -158,12 +158,12 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testUploadBlockBlob() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         // first: test as file provided
         final File fileToUpload
-                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
+                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt")).getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(fileToUpload);
 
@@ -206,11 +206,11 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testUploadBlockBlobAsCachedStream() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final File fileToUpload
-                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
+                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt")).getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new FileInputStreamCache(fileToUpload));
 
@@ -233,11 +233,11 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testUploadBlockBlobAsStreamWithBlobSizeHeader() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final File fileToUpload
-                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
+                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file.txt")).getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new FileInputStream(fileToUpload));
         exchange.getIn().setHeader(BlobConstants.BLOB_UPLOAD_SIZE, fileToUpload.length());
@@ -264,7 +264,7 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testCommitAndStageBlockBlob() throws Exception {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final List<BlobBlock> blocks = new LinkedList<>();
@@ -304,7 +304,7 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testCreateAndUpdateAppendBlob() throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         final String data = "Hello world from my awesome tests!";
@@ -332,7 +332,7 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testCreateAndUploadPageBlob() throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
@@ -363,7 +363,7 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testResizePageBlob() throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[1024]; // we set range for the page from 0-511
@@ -398,7 +398,7 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testClearPages() throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
@@ -426,7 +426,7 @@ class BlobOperationsIT extends Base {
 
     @Test
     void testGetPageBlobRanges() throws IOException {
-        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511

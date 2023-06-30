@@ -173,6 +173,22 @@ public interface IAM2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default IAM2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the IAM client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -352,6 +368,41 @@ public interface IAM2EndpointBuilderFactory {
         default IAM2EndpointBuilder useDefaultCredentialsProvider(
                 String useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the IAM client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default IAM2EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the IAM client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default IAM2EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**

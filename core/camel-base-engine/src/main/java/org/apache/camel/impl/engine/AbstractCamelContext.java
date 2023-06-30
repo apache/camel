@@ -125,6 +125,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -251,7 +252,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean devConsole = Boolean.FALSE;
     private Boolean sourceLocationEnabled = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
-    private Boolean dumpRoutes = Boolean.FALSE;
+    private String dumpRoutes;
     private Boolean useMDCLogging = Boolean.FALSE;
     private String mdcLoggingKeysPattern;
     private Boolean useDataType = Boolean.FALSE;
@@ -380,6 +381,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
+        camelContextExtension.lazyAddContextPlugin(ModelToYAMLDumper.class, this::createModelToYAMLDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
@@ -708,21 +710,30 @@ public abstract class AbstractCamelContext extends BaseService
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            List<NormalizedUri> toRemove = new ArrayList<>();
-            for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
-                oldEndpoint = entry.getValue();
-                if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
-                    try {
-                        stopServices(oldEndpoint);
-                    } catch (Exception e) {
-                        LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
-                    }
-                    answer.add(oldEndpoint);
-                    toRemove.add(entry.getKey());
-                }
+            String decodeUri = URISupport.getDecodeQuery(uri);
+            if (decodeUri != null) {
+                oldEndpoint = endpoints.remove(getEndpointKey(decodeUri));
             }
-            for (NormalizedUri key : toRemove) {
-                endpoints.remove(key);
+            if (oldEndpoint != null) {
+                answer.add(oldEndpoint);
+                stopServices(oldEndpoint);
+            } else {
+                List<NormalizedUri> toRemove = new ArrayList<>();
+                for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+                    oldEndpoint = entry.getValue();
+                    if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
+                        try {
+                            stopServices(oldEndpoint);
+                        } catch (Exception e) {
+                            LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
+                        }
+                        answer.add(oldEndpoint);
+                        toRemove.add(entry.getKey());
+                    }
+                }
+                for (NormalizedUri key : toRemove) {
+                    endpoints.remove(key);
+                }
             }
         }
 
@@ -1482,9 +1493,11 @@ public abstract class AbstractCamelContext extends BaseService
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until
         // we find it
-        String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
+        String[] subPackages = new String[] {
+                "", "cloud/", "config/", "dataformat/", "errorhandler/", "language/", "loadbalancer/", "rest/", "transformer/",
+                "validator/" };
         for (String sub : subPackages) {
-            String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
+            String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + eipName + ".json";
             String inputStream = doLoadResource(eipName, path, "eip");
             if (inputStream != null) {
                 return inputStream;
@@ -2783,7 +2796,7 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
-        if (isDumpRoutes() != null && isDumpRoutes()) {
+        if (getDumpRoutes() != null && !"false".equals(getDumpRoutes())) {
             doDumpRoutes();
         }
 
@@ -3467,12 +3480,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Boolean isDumpRoutes() {
+    public String getDumpRoutes() {
         return dumpRoutes;
     }
 
     @Override
-    public void setDumpRoutes(Boolean dumpRoutes) {
+    public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
     }
 
@@ -4044,6 +4057,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ResourceLoader createResourceLoader();
 
     protected abstract ModelToXMLDumper createModelToXMLDumper();
+
+    protected abstract ModelToYAMLDumper createModelToYAMLDumper();
 
     protected abstract RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory();
 

@@ -46,10 +46,10 @@ public final class KuduUtils {
      */
     public static List<Map<String, Object>> scannerToList(KuduScanner scanner) {
         KuduScannerIterator it = scanner.iterator();
-        List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> res = new ArrayList<>();
         while (it.hasNext()) {
             RowResult row = it.next();
-            Map<String, Object> r = new HashMap<String, Object>();
+            Map<String, Object> r = new HashMap<>();
             res.add(r);
             for (ColumnSchema columnSchema : scanner.getProjectionSchema().getColumns()) {
                 final String name = columnSchema.getName();

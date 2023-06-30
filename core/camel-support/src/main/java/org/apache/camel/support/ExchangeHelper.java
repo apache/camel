@@ -884,7 +884,6 @@ public final class ExchangeHelper {
         return StringHelper.before(uri, ":");
     }
 
-    @SuppressWarnings("unchecked")
     private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
         if (properties == null) {
             return null;

@@ -32,8 +32,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowContextMapAll": getOrCreateConfiguration(target).setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": getOrCreateConfiguration(target).setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "argumentfile":
-        case "argumentFile": getOrCreateConfiguration(target).setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
+        case "argumentfiles":
+        case "argumentFiles": getOrCreateConfiguration(target).setArgumentFiles(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -44,7 +44,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "criticaltags":
         case "criticalTags": getOrCreateConfiguration(target).setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
         case "debugfile":
-        case "debugFile": getOrCreateConfiguration(target).setDebugFile(property(camelContext, java.io.File.class, value)); return true;
+        case "debugFile": getOrCreateConfiguration(target).setDebugFile(property(camelContext, java.lang.String.class, value)); return true;
         case "document": getOrCreateConfiguration(target).setDocument(property(camelContext, java.lang.String.class, value)); return true;
         case "dryrun": getOrCreateConfiguration(target).setDryrun(property(camelContext, boolean.class, value)); return true;
         case "excludes": getOrCreateConfiguration(target).setExcludes(property(camelContext, java.lang.String.class, value)); return true;
@@ -55,7 +55,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "listener": getOrCreateConfiguration(target).setListener(property(camelContext, java.lang.String.class, value)); return true;
         case "listeners": getOrCreateConfiguration(target).setListeners(property(camelContext, java.lang.String.class, value)); return true;
-        case "log": getOrCreateConfiguration(target).setLog(property(camelContext, java.io.File.class, value)); return true;
+        case "log": getOrCreateConfiguration(target).setLog(property(camelContext, java.lang.String.class, value)); return true;
         case "loglevel":
         case "logLevel": getOrCreateConfiguration(target).setLogLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "logtitle":
@@ -70,11 +70,11 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "noStatusReturnCode": getOrCreateConfiguration(target).setNoStatusReturnCode(property(camelContext, boolean.class, value)); return true;
         case "noncriticaltags":
         case "nonCriticalTags": getOrCreateConfiguration(target).setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "output": getOrCreateConfiguration(target).setOutput(property(camelContext, java.io.File.class, value)); return true;
+        case "output": getOrCreateConfiguration(target).setOutput(property(camelContext, java.lang.String.class, value)); return true;
         case "outputdirectory":
-        case "outputDirectory": getOrCreateConfiguration(target).setOutputDirectory(property(camelContext, java.io.File.class, value)); return true;
+        case "outputDirectory": getOrCreateConfiguration(target).setOutputDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "randomize": getOrCreateConfiguration(target).setRandomize(property(camelContext, java.lang.String.class, value)); return true;
-        case "report": getOrCreateConfiguration(target).setReport(property(camelContext, java.io.File.class, value)); return true;
+        case "report": getOrCreateConfiguration(target).setReport(property(camelContext, java.lang.String.class, value)); return true;
         case "reportbackground":
         case "reportBackground": getOrCreateConfiguration(target).setReportBackground(property(camelContext, java.lang.String.class, value)); return true;
         case "reporttitle":
@@ -82,7 +82,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "runemptysuite":
         case "runEmptySuite": getOrCreateConfiguration(target).setRunEmptySuite(property(camelContext, boolean.class, value)); return true;
         case "runfailed":
-        case "runFailed": getOrCreateConfiguration(target).setRunFailed(property(camelContext, java.io.File.class, value)); return true;
+        case "runFailed": getOrCreateConfiguration(target).setRunFailed(property(camelContext, java.lang.String.class, value)); return true;
         case "runmode":
         case "runMode": getOrCreateConfiguration(target).setRunMode(property(camelContext, java.lang.String.class, value)); return true;
         case "skipteardownonexit":
@@ -112,7 +112,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "warnonskippedfiles":
         case "warnOnSkippedFiles": getOrCreateConfiguration(target).setWarnOnSkippedFiles(property(camelContext, boolean.class, value)); return true;
         case "xunitfile":
-        case "xunitFile": getOrCreateConfiguration(target).setXunitFile(property(camelContext, java.io.File.class, value)); return true;
+        case "xunitFile": getOrCreateConfiguration(target).setXunitFile(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -124,8 +124,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowContextMapAll": return boolean.class;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return boolean.class;
-        case "argumentfile":
-        case "argumentFile": return java.io.File.class;
+        case "argumentfiles":
+        case "argumentFiles": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -136,7 +136,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "criticaltags":
         case "criticalTags": return java.lang.String.class;
         case "debugfile":
-        case "debugFile": return java.io.File.class;
+        case "debugFile": return java.lang.String.class;
         case "document": return java.lang.String.class;
         case "dryrun": return boolean.class;
         case "excludes": return java.lang.String.class;
@@ -147,7 +147,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "lazyStartProducer": return boolean.class;
         case "listener": return java.lang.String.class;
         case "listeners": return java.lang.String.class;
-        case "log": return java.io.File.class;
+        case "log": return java.lang.String.class;
         case "loglevel":
         case "logLevel": return java.lang.String.class;
         case "logtitle":
@@ -162,11 +162,11 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "noStatusReturnCode": return boolean.class;
         case "noncriticaltags":
         case "nonCriticalTags": return java.lang.String.class;
-        case "output": return java.io.File.class;
+        case "output": return java.lang.String.class;
         case "outputdirectory":
-        case "outputDirectory": return java.io.File.class;
+        case "outputDirectory": return java.lang.String.class;
         case "randomize": return java.lang.String.class;
-        case "report": return java.io.File.class;
+        case "report": return java.lang.String.class;
         case "reportbackground":
         case "reportBackground": return java.lang.String.class;
         case "reporttitle":
@@ -174,7 +174,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "runemptysuite":
         case "runEmptySuite": return boolean.class;
         case "runfailed":
-        case "runFailed": return java.io.File.class;
+        case "runFailed": return java.lang.String.class;
         case "runmode":
         case "runMode": return java.lang.String.class;
         case "skipteardownonexit":
@@ -204,7 +204,7 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "warnonskippedfiles":
         case "warnOnSkippedFiles": return boolean.class;
         case "xunitfile":
-        case "xunitFile": return java.io.File.class;
+        case "xunitFile": return java.lang.String.class;
         default: return null;
         }
     }
@@ -217,8 +217,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowContextMapAll": return getOrCreateConfiguration(target).isAllowContextMapAll();
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return getOrCreateConfiguration(target).isAllowTemplateFromHeader();
-        case "argumentfile":
-        case "argumentFile": return getOrCreateConfiguration(target).getArgumentFile();
+        case "argumentfiles":
+        case "argumentFiles": return getOrCreateConfiguration(target).getArgumentFiles();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

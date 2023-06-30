@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
@@ -42,7 +41,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private CamelContext camelContext;
     private String id;
     private Boolean customId;
-    private DescriptionDefinition description;
+    private String description;
     private int lineNumber = -1;
     private String location;
 
@@ -78,7 +77,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         customId = null;
     }
 
-    public DescriptionDefinition getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -87,9 +86,9 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      *
      * @param description sets the text description, use null to not set a text
      */
-    @XmlElement
+    @XmlAttribute
     @Metadata(description = "The description for this node")
-    public void setDescription(DescriptionDefinition description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -126,17 +125,12 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Sets the description of this node
      *
-     * @param  text sets the text description, use null to not set a text
-     * @return      the builder
+     * @param  description sets the text description, use null to not set a text
+     * @return             the builder
      */
     @SuppressWarnings("unchecked")
-    public T description(String text) {
-        if (text != null) {
-            if (description == null) {
-                description = new DescriptionDefinition();
-            }
-            description.setText(text);
-        }
+    public T description(String description) {
+        this.description = description;
         return (T) this;
     }
 
@@ -205,7 +199,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      */
     @Override
     public String getDescriptionText() {
-        return (description != null) ? description.getText() : null;
+        return description;
     }
 
     // Implementation methods

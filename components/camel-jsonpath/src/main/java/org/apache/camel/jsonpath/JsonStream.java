@@ -197,7 +197,7 @@ public class JsonStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
 
         if (inputIndex < inputEnd) {
             int minimum = Math.min(b.length, inputEnd - inputIndex);
@@ -225,7 +225,7 @@ public class JsonStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         if (inputIndex < inputEnd) {
             int minimum = Math.min(b.length, inputEnd - inputIndex);
             for (int i = 0; i < minimum; i++) {

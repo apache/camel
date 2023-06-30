@@ -46,6 +46,13 @@ import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * {@link org.apache.camel.StreamCache} implementation for CXF payload.
+ * <p/>
+ * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
+ * users to create as instances, but they are part of Camels
+ * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
+ */
 public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
     private static String defaultCharset = ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");

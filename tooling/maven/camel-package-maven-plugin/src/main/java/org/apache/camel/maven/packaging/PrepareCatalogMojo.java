@@ -18,6 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -56,6 +59,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
 
 import static org.apache.camel.maven.packaging.MojoHelper.getComponentPath;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
@@ -126,49 +135,49 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The components directory where all the Apache Camel components are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components")
+    @Parameter(defaultValue = "${project.basedir}/../../components")
     protected File componentsDir;
 
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/")
+    @Parameter(defaultValue = "${project.basedir}/../../core/")
     protected File coreDir;
 
     /**
      * The camel-model directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-model")
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-core-model")
     protected File modelDir;
 
     /**
      * The DSL directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../dsl/")
+    @Parameter(defaultValue = "${project.basedir}/../../dsl")
     protected File dslDir;
 
     /**
      * The camel-core-languages directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-languages")
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-core-languages")
     protected File languagesDir;
 
     /**
      * The directory where the camel-spring XML models are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml")
     protected File springDir;
 
     /**
      * The directory where the camel-spring XML schema are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml/target/schema")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml/target/schema")
     protected File springSchemaDir;
 
     /**
      * The directory where the camel-main metadata are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-main/target/classes/META-INF")
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-main/target/classes/META-INF")
     protected File mainDir;
 
     /**
@@ -183,6 +192,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
     @Component
     protected MavenProjectHelper projectHelper;
 
+    @Component
+    private RepositorySystem repoSystem;
+
+    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
+    private RepositorySystemSession repoSession;
+
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true)
+    private List<RemoteRepository> repositories;
+
     private Collection<Path> allJsonFiles;
     private Collection<Path> allPropertiesFiles;
     private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
@@ -195,6 +213,67 @@ public class PrepareCatalogMojo extends AbstractMojo {
             return name.substring(0, name.length() - ".adoc".length());
         }
         return name;
+    }
+
+    /**
+     * Gives the {@code target/classes} directory if it already exists, otherwise downloads the corresponding artifact
+     * and unzips its content into the {@code target/classes} directory to support incremental build.
+     *
+     * @param  componentRootDirectory the root directory of a given component
+     * @return                        the path to the {@code target/classes} directory.
+     */
+    private Path getComponentClassesDirectory(Path componentRootDirectory) {
+        Path result = componentRootDirectory.resolve("target/classes");
+        if (Files.exists(result)) {
+            return result;
+        }
+        String artifactId = componentRootDirectory.getFileName().toString();
+        ArtifactRequest req = new ArtifactRequest()
+                .setRepositories(this.repositories)
+                .setArtifact(new DefaultArtifact("org.apache.camel", artifactId, "jar", project.getVersion()));
+        try {
+            ArtifactResult resolutionResult = this.repoSystem.resolveArtifact(this.repoSession, req);
+            File file = resolutionResult.getArtifact().getFile();
+            if (file != null && file.exists()) {
+                unzipArtifact(result, file);
+            }
+        } catch (Exception e) {
+            getLog().warn("Artifact %s could not be resolved.".formatted(artifactId), e);
+        }
+
+        return result;
+    }
+
+    /**
+     * Unzips the given jar file into the given target directory.
+     *
+     * @param  targetDirectory the target directory
+     * @param  jarFile         the jar file to unzip
+     * @throws IOException     if an error occurs while unzipping the file.
+     */
+    private void unzipArtifact(Path targetDirectory, File jarFile) throws IOException {
+        Path targetRoot = targetDirectory.normalize();
+        try (FileSystem fs = FileSystems.newFileSystem(URI.create("jar:%s".formatted(jarFile.toURI())), Map.of())) {
+            for (Path root : fs.getRootDirectories()) {
+                try (Stream<Path> walk = Files.walk(root)) {
+                    walk.forEach(
+                            source -> {
+                                Path target = targetRoot.resolve(root.relativize(source).toString()).normalize();
+                                if (target.startsWith(targetRoot)) {
+                                    try {
+                                        if (Files.isDirectory(source)) {
+                                            Files.createDirectories(target);
+                                        } else {
+                                            Files.copy(source, target);
+                                        }
+                                    } catch (IOException e) {
+                                        getLog().warn("Could not copy %s to %s.".formatted(source, target), e);
+                                    }
+                                }
+                            });
+                }
+            }
+        }
     }
 
     /**
@@ -217,7 +296,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                          .filter(dir -> !"target".equals(dir.getFileName().toString()))
                          .flatMap(p -> getComponentPath(p).stream())
                          .filter(dir -> Files.isDirectory(dir.resolve("src")))
-                         .map(p -> p.resolve("target/classes"))
+                         .map(this::getComponentClassesDirectory)
                          .flatMap(PackageHelper::walk)
                          .filter(Files::isRegularFile)) {
                 stream
@@ -353,7 +432,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
     }
 
-    // CHECKSTYLE:OFF
     protected Set<String> executeComponents() throws Exception {
         Path componentsOutDir = this.componentsOutDir.toPath();
 
@@ -370,8 +448,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> missingFirstVersions = new TreeSet<>();
 
         // find all json files in components and camel-core
-        componentFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("component.properties")).collect(Collectors.toCollection(TreeSet::new));
-        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof ComponentModel).collect(Collectors.toCollection(TreeSet::new));
+        componentFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("component.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof ComponentModel)
+                .collect(Collectors.toCollection(TreeSet::new));
         componentFiles.stream().filter(p -> p.endsWith("component.properties")).forEach(p -> {
             Path parent = getModule(p);
             List<Path> jsons = jsonFiles.stream().filter(f -> f.startsWith(parent)).collect(Collectors.toList());
@@ -417,14 +497,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
                 // check all the component options and grab the label(s) they
                 // use
-                model.getComponentOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l)).flatMap(l -> Stream.of(label.split(",")))
+                model.getComponentOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l))
+                        .flatMap(l -> Stream.of(label.split(",")))
                         .forEach(usedOptionLabels::add);
 
                 // check all the endpoint options and grab the label(s) they use
-                model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l)).flatMap(l -> Stream.of(label.split(",")))
+                model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l))
+                        .flatMap(l -> Stream.of(label.split(",")))
                         .forEach(usedOptionLabels::add);
 
-                long unused = model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(Strings::isNullOrEmpty).count();
+                long unused = model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(Strings::isNullOrEmpty)
+                        .count();
                 if (unused >= UNUSED_LABELS_WARN) {
                     unlabeledOptions.add(name);
                 }
@@ -449,10 +532,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         Path all = componentsOutDir.resolve("../components.properties");
-        Set<String> componentNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> componentNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", componentNames) + "\n");
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions, missingFirstVersions);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels,
+                unlabeledOptions, missingFirstVersions);
 
         // filter out duplicate component names that are alternative scheme
         // names
@@ -473,8 +558,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> missingFirstVersions = new TreeSet<>();
 
         // find all data formats from the components directory
-        dataFormatFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("dataformat.properties")).collect(Collectors.toCollection(TreeSet::new));
-        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof DataFormatModel).collect(Collectors.toCollection(TreeSet::new));
+        dataFormatFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("dataformat.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof DataFormatModel)
+                .collect(Collectors.toCollection(TreeSet::new));
 
         getLog().info("Found " + dataFormatFiles.size() + " dataformat.properties files");
         getLog().info("Found " + jsonFiles.size() + " dataformat json files");
@@ -510,7 +597,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         Path all = dataFormatsOutDir.resolve("../dataformats.properties");
-        Set<String> dataFormatNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> dataFormatNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", dataFormatNames) + "\n");
 
         printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
@@ -531,8 +619,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> missingFirstVersions = new TreeSet<>();
 
         // find all languages from the components directory
-        languageFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("language.properties")).collect(Collectors.toCollection(TreeSet::new));
-        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof LanguageModel).collect(Collectors.toCollection(TreeSet::new));
+        languageFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("language.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof LanguageModel)
+                .collect(Collectors.toCollection(TreeSet::new));
 
         getLog().info("Found " + languageFiles.size() + " language.properties files");
         getLog().info("Found " + jsonFiles.size() + " language json files");
@@ -568,7 +658,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         Path all = languagesOutDir.resolve("../languages.properties");
-        Set<String> languagesNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> languagesNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", languagesNames) + "\n");
 
         printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
@@ -588,7 +679,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Map<String, Set<String>> usedLabels = new TreeMap<>();
         Set<Path> missingFirstVersions = new TreeSet<>();
 
-        otherFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("other.properties")).collect(Collectors.toCollection(TreeSet::new));
+        otherFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("other.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
         jsonFiles = allJsonFiles.stream().filter(p -> {
             Path m = getModule(p);
             switch (m.getFileName().toString()) {
@@ -684,7 +776,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
 
         Path all = othersOutDir.resolve("../others.properties");
-        Set<String> otherNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> otherNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", otherNames) + "\n");
 
         printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
@@ -707,7 +800,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         copyFile(mainDir.toPath().resolve("camel-main-configuration-metadata.json"), mainOutDir.toPath());
     }
 
-    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) {
+    protected void executeDocuments(
+            Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) {
         // lets use sorted set/maps
         Set<Path> adocFiles = new TreeSet<>();
         Set<Path> missingAdocFiles = new TreeSet<>();
@@ -729,7 +823,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             if (l.isEmpty()) {
                                 String n = dir.getFileName().toString();
                                 boolean isDir = dir.toFile().isDirectory();
-                                boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common") && !n.equals("src");
+                                boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common")
+                                        && !n.equals("src");
                                 if (valid) {
                                     // the dir must be active (inactive can be removed component from old branch)
                                     String[] poms = dir.toFile().list((dir1, name) -> "pom.xml".equals(name));
@@ -749,7 +844,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Check duplicates
         duplicateAdocFiles = getDuplicates(adocFiles);
-        Set<String> docNames = adocFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> docNames
+                = adocFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         printDocumentsReport(adocFiles, duplicateAdocFiles, missingAdocFiles);
 
         // find out if we have documents for each component / dataformat /
@@ -757,7 +853,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printMissingDocumentsReport(docNames, components, dataformats, languages, others);
     }
 
-    private void printMissingDocumentsReport(Set<String> docs, Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) {
+    private void printMissingDocumentsReport(
+            Set<String> docs, Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) {
         getLog().info("");
         getLog().info("Camel missing documents report");
         getLog().info("");
@@ -781,7 +878,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     break;
             }
             String name = component + "-component";
-            if (!docs.contains(name) && (!component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
+            if (!docs.contains(name)
+                    && (!component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
                 missing.add(name);
             }
         }
@@ -845,7 +943,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    private void printModelsReport(Set<Path> json, Set<Path> duplicate, Set<Path> missingLabels, Map<String, Set<String>> usedLabels, Set<Path> missingJavaDoc) {
+    private void printModelsReport(
+            Set<Path> json, Set<Path> duplicate, Set<Path> missingLabels, Map<String, Set<String>> usedLabels,
+            Set<Path> missingJavaDoc) {
         getLog().info("================================================================================");
 
         getLog().info("");
@@ -902,8 +1002,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    private void printComponentsReport(Set<Path> json, Set<Path> duplicate, Set<Path> missing, Map<String, Set<String>> usedComponentLabels, Set<String> usedOptionsLabels,
-                                       Set<String> unusedLabels, Set<Path> missingFirstVersions) {
+    private void printComponentsReport(
+            Set<Path> json, Set<Path> duplicate, Set<Path> missing, Map<String, Set<String>> usedComponentLabels,
+            Set<String> usedOptionsLabels,
+            Set<String> unusedLabels, Set<Path> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -961,7 +1063,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    private void printDataFormatsReport(Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
+    private void printDataFormatsReport(
+            Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel data format catalog report");
@@ -983,7 +1086,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printLanguagesReport(Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
+    private void printLanguagesReport(
+            Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel language catalog report");
@@ -1005,7 +1109,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printOthersReport(Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
+    private void printOthersReport(
+            Set<Path> json, Set<Path> duplicate, Map<String, Set<String>> usedLabels, Set<Path> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel other catalog report");
@@ -1067,8 +1172,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return Stream.concat(l1.stream(), l2.stream()).collect(Collectors.toList());
     }
 
-    // CHECKSTYLE:ON
-
     private Stream<Path> list(Path dir) {
         try {
             if (Files.isDirectory(dir)) {
@@ -1118,7 +1221,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private Path getModule(Path p) {
         Path parent = p;
-        while (!parent.endsWith("target")) {
+        while (!parent.endsWith("target") && !parent.endsWith("src")) {
             parent = parent.getParent();
         }
         return parent.getParent();

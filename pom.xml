@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>29</version>
+        <version>30</version>
     </parent>
 
     <groupId>org.apache.camel</groupId>
@@ -109,7 +109,6 @@
 
         <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
         <jdk.version>17</jdk.version>
-        <compiler.fork>false</compiler.fork>
         <!-- These two are here only to prevent the versions for the Apache parent pom from leaking-->
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
@@ -117,17 +116,19 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>1</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
+        <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
-        <maven-surefire-plugin-version>3.1.0</maven-surefire-plugin-version>
-        <maven-failsafe-plugin-version>3.1.0</maven-failsafe-plugin-version>
+        <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
+        <maven-failsafe-plugin-version>3.1.2</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
         <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
-        <maven-dependency-plugin-version>3.5.0</maven-dependency-plugin-version>
+        <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
+        <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -137,12 +138,14 @@
         <jaxb-osgi-version>4.0.1</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.1</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.1</jaxb-jxc-version>
-        <mycila-license-version>3.0</mycila-license-version>
+        <mycila-license-version>4.2</mycila-license-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <groovy-version>4.0.12</groovy-version>
         <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
+
+        <invoker.skip>${skipTests}</invoker.skip>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
@@ -182,17 +185,6 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <repository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/snapshots/</url>
-            <name>Apache Snapshot Repo</name>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -212,24 +204,48 @@
 
         <plugins>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-enforcer-plugin</artifactId>
-              <version>${maven-enforcer-plugin-version}</version>
-              <executions>
-                <execution>
-                  <id>enforce-maven</id>
-                  <goals>
-                    <goal>enforce</goal>
-                  </goals>
-                  <configuration>
-                    <rules>
-                      <requireMavenVersion>
-                        <version>3.5.0</version>
-                      </requireMavenVersion>
-                    </rules>
-                  </configuration>
-                </execution>
-              </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven-version</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                    <execution>
+                        <id>enforce-java-version</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>process-resource-bundles</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <phase>none</phase><!-- skip to save time -->
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -243,9 +259,160 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${mycila-license-version}</version>
+                    <configuration>
+                        <failIfUnknown>true</failIfUnknown>
+                        <header>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt</header>
+                        <excludes>
+                            <exclude>**/*.MockMaker</exclude>
+                            <exclude>**/*.adm</exclude>
+                            <exclude>**/*.adoc.template</exclude>
+                            <exclude>**/*.adoc</exclude>
+                            <exclude>**/*.arff</exclude>
+                            <exclude>**/*.asn1</exclude>
+                            <exclude>**/*.avpr</exclude>
+                            <exclude>**/*.avsc</exclude>
+                            <exclude>**/*.bin</exclude>
+                            <exclude>**/*.cat</exclude>
+                            <exclude>**/*.cer</exclude>
+                            <exclude>**/*.chtml</exclude>
+                            <exclude>**/*.csv</exclude>
+                            <exclude>**/*.gpg</exclude>
+                            <exclude>**/*.graphql*</exclude>
+                            <exclude>**/*.ics</exclude>
+                            <exclude>**/*.joor</exclude>
+                            <exclude>**/*.jpeg</exclude>
+                            <exclude>**/*.jslt</exclude>
+                            <exclude>**/*.key</exclude>
+                            <exclude>**/*.keystore</exclude>
+                            <exclude>**/*.model</exclude>
+                            <exclude>**/*.mp3</exclude>
+                            <exclude>**/*.mp4</exclude>
+                            <exclude>**/*.p12</exclude>
+                            <exclude>**/*.params</exclude>
+                            <exclude>**/*.parquet</exclude>
+                            <exclude>**/*.pem</exclude>
+                            <exclude>**/*.pfx</exclude>
+                            <exclude>**/*.pgp</exclude>
+                            <exclude>**/*.tm</exclude>
+                            <exclude>**/*.truststore</exclude>
+                            <exclude>**/*.tt</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.webp</exclude>
+                            <exclude>**/*.xquery</exclude>
+                            <exclude>**/*utf16.ftl</exclude>
+                            <exclude>**/*utf16.vm</exclude>
+                            <exclude>**/.eslint*</exclude>
+                            <exclude>**/.pnp*</exclude>
+                            <exclude>**/.yarn/**</exclude>
+                            <exclude>**/.yarnrc.yml</exclude>
+                            <exclude>**/CamelJBang.java</exclude>
+                            <exclude>**/LICENSE.txt</exclude>
+                            <exclude>**/LICENSE</exclude>
+                            <exclude>**/META-INF/cxf/**</exclude>
+                            <exclude>**/META-INF/groovy/**</exclude>
+                            <exclude>**/META-INF/kotlin/**</exclude>
+                            <exclude>**/META-INF/persistence*.xsd</exclude>
+                            <exclude>**/MySecondBarConfigurer.java</exclude>
+                            <exclude>**/MySecondFooConfigurer.java</exclude>
+                            <exclude>**/NOTICE.txt</exclude>
+                            <exclude>**/NOTICE</exclude>
+                            <exclude>**/README</exclude>
+                            <exclude>**/TestImpl*</exclude>
+                            <exclude>**/archetype-resources/**</exclude>
+                            <exclude>**/ca-openssl.cnf</exclude>
+                            <exclude>**/cacerts</exclude>
+                            <exclude>**/cxf.extension</exclude>
+                            <exclude>**/dhis.conf</exclude>
+                            <exclude>**/driver.conf</exclude>
+                            <exclude>**/expressions.spec</exclude>
+                            <exclude>**/git.config</exclude>
+                            <exclude>**/id_file</exclude>
+                            <exclude>**/id_rsa</exclude>
+                            <exclude>**/ignite/**</exclude>
+                            <exclude>**/it/resources/*.connectedApp</exclude>
+                            <exclude>**/it/resources/salesforce/**</exclude>
+                            <exclude>**/javamail.default.*</exclude>
+                            <exclude>**/kafka*.config</exclude>
+                            <exclude>**/known_hosts*</exclude>
+                            <exclude>**/leveldb.dat/**</exclude>
+                            <exclude>**/mosquitto.conf</exclude>
+                            <exclude>**/myjaas.config</exclude>
+                            <exclude>**/node_modules/**</exclude>
+                            <exclude>**/salesforce/dto/generated/**</exclude>
+                            <exclude>**/src/generated/**</exclude>
+                            <exclude>**/src/generated/**</exclude>
+                            <exclude>**/src/main/resources/templates/*.tmpl</exclude>
+                            <exclude>**/src/test/resources/generated/**</exclude>
+                            <exclude>**/test-kerb5.conf</exclude>
+                            <exclude>**/yarn.lock</exclude>
+                            <exclude>**/zkserver*.conf</exclude>
+                            <exclude>.mvn/**</exclude>
+                            <exclude>KEYS</exclude>
+                            <exclude>camel-sbom/*.xml</exclude>
+                            <exclude>doap.rdf</exclude>
+                            <exclude>mvnw*</exclude>
+                        </excludes>
+                        <mapping>
+                            <Adapter>CAMEL_PROPERTIES_STYLE</Adapter>
+                            <Dockerfile.jvm>SCRIPT_STYLE</Dockerfile.jvm>
+                            <Dockerfile.legacy-jar>SCRIPT_STYLE</Dockerfile.legacy-jar>
+                            <Dockerfile.native-micro>SCRIPT_STYLE</Dockerfile.native-micro>
+                            <Dockerfile.native>SCRIPT_STYLE</Dockerfile.native>
+                            <Dockerfile>SCRIPT_STYLE</Dockerfile>
+                            <Jenkinsfile.deploy>SLASHSTAR_STYLE</Jenkinsfile.deploy>
+                            <Jenkinsfile.dryrun>SLASHSTAR_STYLE</Jenkinsfile.dryrun>
+                            <Jenkinsfile.jdk17>SLASHSTAR_STYLE</Jenkinsfile.jdk17>
+                            <Jenkinsfile.ppc64le>SLASHSTAR_STYLE</Jenkinsfile.ppc64le>
+                            <Jenkinsfile.s390x>SLASHSTAR_STYLE</Jenkinsfile.s390x>
+                            <atom>XML_STYLE</atom>
+                            <bpmn>XML_STYLE</bpmn>
+                            <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
+                            <cql>DOUBLEDASHES_STYLE</cql>
+                            <ds>SLASHSTAR_STYLE</ds>
+                            <gdsl>SLASHSTAR_STYLE</gdsl>
+                            <ini>SCRIPT_STYLE</ini>
+                            <java>SLASHSTAR_STYLE</java>
+                            <javamail.providers>CAMEL_PROPERTIES_STYLE</javamail.providers>
+                            <jaxb.index>CAMEL_PROPERTIES_STYLE</jaxb.index>
+                            <jj>DOUBLESLASH_STYLE</jj>
+                            <jsh>SLASHSTAR_STYLE</jsh>
+                            <kts>SLASHSTAR_STYLE</kts>
+                            <ldif>LDIF_STYLE</ldif>
+                            <libsonnet>SLASHSTAR_STYLE</libsonnet>
+                            <motd>SCRIPT_STYLE</motd>
+                            <mvel>MVEL_STYLE</mvel>
+                            <properties>CAMEL_PROPERTIES_STYLE</properties>
+                            <proto>SLASHSTAR_STYLE</proto>
+                            <qf.cfg>CAMEL_PROPERTIES_STYLE</qf.cfg>
+                            <robot>SCRIPT_STYLE</robot>
+                            <sch>XML_STYLE</sch>
+                            <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
+                            <spring.handlers>CAMEL_PROPERTIES_STYLE</spring.handlers>
+                            <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
+                            <spring.schemas>CAMEL_PROPERTIES_STYLE</spring.schemas>
+                            <sql>DOUBLEDASHES_STYLE</sql>
+                            <thrift>JAVADOC_STYLE</thrift>
+                            <unrealircd.conf>SLASHSTAR_STYLE</unrealircd.conf>
+                            <vm>CAMEL_PROPERTIES_STYLE</vm>
+                        </mapping>
+                        <headerDefinitions>
+                            <headerDefinition>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/license-properties-headerdefinition.xml</headerDefinition>
+                            <headerDefinition>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/ldif-properties-headerdefinition.xml</headerDefinition>
+                        </headerDefinitions>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven-javadoc-plugin-version}</version>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -262,6 +429,31 @@
                         <downloadSources>true</downloadSources>
                         <downloadJavadocs>false</downloadJavadocs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <version>${maven-remote-resources-plugin-version}</version>
                 </plugin>
 
                 <plugin>
@@ -391,26 +583,15 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-remote-resources-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>process-resource-bundles</id>
-                            <phase>disabled</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.8.1</version>
+                    <version>2.16.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.2.5</version>
+                    <version>1.5.0</version>
                     <executions>
                         <execution>
                             <id>default-cli</id>
@@ -438,7 +619,9 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
+                    <version>${maven-invoker-plugin-version}</version>
                     <configuration>
                         <skipInstallation>${invoker.skip}</skipInstallation>
                         <skipInvocation>${invoker.skip}</skipInvocation>
@@ -452,18 +635,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>assembly</id>
-            <activation>
-                <property>
-                    <name>!noassembly</name>
-                </property>
-            </activation>
-            <modules>
-                <module>apache-camel</module>
-            </modules>
-        </profile>
-
         <profile>
             <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
               for schemagen to work -->
@@ -540,7 +711,7 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -576,7 +747,7 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -591,6 +762,9 @@
                     <name>release</name>
                 </property>
             </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
             <build>
                 <plugins>
                     <!-- We want to deploy the artifact to a staging location for perusal -->
@@ -609,7 +783,7 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -663,6 +837,7 @@
                         <configuration>
                             <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <failIfNoTests>false</failIfNoTests>
+                            <skipTests>true</skipTests>
                         </configuration>
                      </plugin>
                 </plugins>
@@ -677,57 +852,6 @@
         </profile>
 
         <profile>
-            <id>license</id>
-            <build>
-                <defaultGoal>license:format</defaultGoal>
-                <plugins>
-                    <plugin>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin</artifactId>
-                        <version>${mycila-license-version}</version>
-                        <configuration>
-                            <header>header.txt</header>
-                            <excludes>
-                                <exclude>KEYS</exclude>
-                                <exclude>**/NOTICE</exclude>
-                                <exclude>**/LICENSE</exclude>
-                                <exclude>**/NOTICE.txt</exclude>
-                                <exclude>**/LICENSE.txt</exclude>
-                                <exclude>doap.rdf</exclude>
-                                <exclude>**/README</exclude>
-                                <exclude>**/*.adoc</exclude>
-                                <exclude>**/node_modules/**</exclude>
-                                <exclude>**/cacerts</exclude>
-                                <exclude>**/*.p12</exclude>
-                                <exclude>**/*.txt</exclude>
-                                <exclude>**/*.mp3</exclude>
-                                <exclude>**/*.mp4</exclude>
-                                <exclude>.mvn/**</exclude>
-                                <exclude>mvnw*</exclude>
-                                <exclude>**/META-INF/persistence*.xsd</exclude>
-                            </excludes>
-                            <mapping>
-                                <java>SLASHSTAR_STYLE</java>
-                                <properties>CAMEL_PROPERTIES_STYLE</properties>
-                                <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
-                                <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
-                            </mapping>
-                            <headerDefinitions>
-                                <headerDefinition>license-properties-headerdefinition.xml</headerDefinition>
-                            </headerDefinitions>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.camel</groupId>
-                                <artifactId>camel-buildtools</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-            <profile>
             <id>sbom</id>
             <build>
             <plugins>
@@ -751,6 +875,80 @@
                    </executions>
                 </plugin>
             </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>apache-snapshots</id>
+            <repositories>
+                <repository>
+                    <id>apache.snapshots</id>
+                    <url>https://repository.apache.org/snapshots/</url>
+                    <name>Apache Snapshot Repo</name>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <!-- The full profile contains mojos *not* essential for the quick build. -->
+            <!-- These are typically various source checks and code generations whose result is stored in git anyway. -->
+            <!-- Pass -Dquickly to skip these non-essential plugin executions. -->
+            <!-- -Dquickly suits primarily the situation when building from a state that passed all checks on the CI. -->
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>license-format</id>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                                <phase>process-sources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-maven-version</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireMavenVersion>
+                                            <version>3.5.0</version>
+                                        </requireMavenVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>

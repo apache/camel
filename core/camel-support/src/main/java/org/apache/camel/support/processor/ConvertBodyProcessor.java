@@ -171,14 +171,4 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     public String getCharset() {
         return charset;
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

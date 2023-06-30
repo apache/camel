@@ -34,7 +34,7 @@ public abstract class DigitalSignatureProcessor implements Processor {
 
     protected DigitalSignatureConfiguration config;
 
-    public DigitalSignatureProcessor(DigitalSignatureConfiguration configuration) {
+    protected DigitalSignatureProcessor(DigitalSignatureConfiguration configuration) {
         this.config = configuration;
     }
 

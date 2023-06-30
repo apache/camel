@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,13 +26,13 @@ public class OpenApiRestProducerFactoryTest {
     public void shouldLoadOpenApiPetStoreModel() throws Exception {
         OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();
 
-        assertNotNull(factory.loadOpenApiModel(new DefaultCamelContext(), "petstore.json"));
+        assertNotNull(factory.loadOpenApiModel("petstore.json"));
     }
 
     @Test
     public void shouldLoadOpenApiPetStoreModelV3() throws Exception {
         OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();
 
-        assertNotNull(factory.loadOpenApiModel(new DefaultCamelContext(), "petstore-v3.json"));
+        assertNotNull(factory.loadOpenApiModel("petstore-v3.json"));
     }
 }

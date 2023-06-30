@@ -25,8 +25,8 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
     protected final KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload;
     protected final KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload;
 
-    public DefaultKafkaManualCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
-                                    KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload) {
+    protected DefaultKafkaManualCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
+                                       KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload) {
         this.camelExchangePayload = camelExchangePayload;
         this.kafkaRecordPayload = kafkaRecordPayload;
     }

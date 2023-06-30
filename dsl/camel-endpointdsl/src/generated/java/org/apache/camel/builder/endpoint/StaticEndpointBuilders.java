@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package org.apache.camel.builder.endpoint;
 
 import javax.annotation.processing.Generated;
@@ -25,6 +24,63 @@ import javax.annotation.processing.Generated;
 @Generated("org.apache.camel.maven.packaging.EndpointDslMojo")
 public class StaticEndpointBuilders {
 
+    /**
+     * ActiveMQ (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-activemq
+     * 
+     * Syntax: <code>activemq:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
+     * 
+     * Path parameter: destinationName (required)
+     * Name of the queue or topic to use as destination
+     * 
+     * @param path destinationType:destinationName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder("activemq", path);
+    }
+    /**
+     * ActiveMQ (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-activemq
+     * 
+     * Syntax: <code>activemq:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
+     * 
+     * Path parameter: destinationName (required)
+     * Name of the queue or topic to use as destination
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path destinationType:destinationName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
@@ -1527,6 +1583,61 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Azure Files (camel-azure-files)
+     * Camel Azure Files Component
+     * 
+     * Category: cloud,file
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-azure-files
+     * 
+     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param path //account[.host]/share[/dir]
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.endpointBuilder("azure-files", path);
+    }
+    /**
+     * Azure Files (camel-azure-files)
+     * Camel Azure Files Component
+     * 
+     * Category: cloud,file
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-azure-files
+     * 
+     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path //account[.host]/share[/dir]
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)
@@ -13151,10 +13262,6 @@ public class StaticEndpointBuilders {
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
      * 
-     * Path parameter: expression
-     * The XPath expression to use when option type=xpathresult. Then this
-     * option is required to be configured.
-     * 
      * @param path type:lookupKey:webServiceEndpointUri
      * @return the dsl builder
      */
@@ -13193,10 +13300,6 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
-     * 
-     * Path parameter: expression
-     * The XPath expression to use when option type=xpathresult. Then this
-     * option is required to be configured.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15511,4 +15614,3 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
 }
-//CHECKSTYLE:ON

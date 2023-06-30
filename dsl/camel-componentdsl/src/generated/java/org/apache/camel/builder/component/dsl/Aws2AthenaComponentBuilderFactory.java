@@ -320,6 +320,22 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Athena client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -488,6 +504,23 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the Athena client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
          * Optional max wait time in millis to wait for a successful query
          * completion. See the section 'Waiting for Query Completion and
          * Retrying Failed Queries' to learn more.
@@ -595,6 +628,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Athena2Component) component).setOperation((org.apache.camel.component.aws2.athena.Athena2Operations) value); return true;
             case "outputLocation": getOrCreateConfiguration((Athena2Component) component).setOutputLocation((java.lang.String) value); return true;
             case "outputType": getOrCreateConfiguration((Athena2Component) component).setOutputType((org.apache.camel.component.aws2.athena.Athena2OutputType) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Athena2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Athena2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Athena2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Athena2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -605,6 +639,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "retry": getOrCreateConfiguration((Athena2Component) component).setRetry((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Athena2Component) component).setSecretKey((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
             case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
             case "autowiredEnabled": ((Athena2Component) component).setAutowiredEnabled((boolean) value); return true;

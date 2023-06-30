@@ -131,20 +131,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-endpoint-dsl</id>
-                        <goals>
-                            <goal>generate-endpoint-dsl</goal>
-                            <goal>generate-others-list</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -181,11 +167,35 @@
                     <maxmem>1024M</maxmem>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-package-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-endpoint-dsl</id>
+                                <goals>
+                                    <goal>generate-endpoint-dsl</goal>
+                                    <goal>generate-others-list</goal>
+                                </goals>
+                                <phase>generate-sources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

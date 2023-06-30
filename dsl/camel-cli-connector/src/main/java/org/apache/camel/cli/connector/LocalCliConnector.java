@@ -303,6 +303,19 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
+            } else if ("route-dump".equals(action)) {
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                        .resolveById("route-dump");
+                if (dc != null) {
+                    String filter = root.getString("filter");
+                    String format = root.getString("format");
+                    String uriAsParameters = root.getString("uriAsParameters");
+                    JsonObject json
+                            = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                                    Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             } else if ("route-controller".equals(action)) {
                 DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("route-controller");
@@ -569,6 +582,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     JsonObject json = (JsonObject) dc11.call(DevConsole.MediaType.JSON);
                     if (json != null && !json.isEmpty()) {
                         root.put("fault-tolerance", json);
+                    }
+                }
+                DevConsole dc12a = dcr.resolveById("route-circuit-breaker");
+                if (dc12a != null) {
+                    JsonObject json = (JsonObject) dc12a.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("route-circuit-breaker", json);
                     }
                 }
                 DevConsole dc12 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)

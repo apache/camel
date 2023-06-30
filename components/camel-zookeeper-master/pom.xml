@@ -66,17 +66,6 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
             <version>${curator-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava-eventbus-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
@@ -88,17 +77,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -134,22 +120,32 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>${skipTests}</skipTests>
-                    <systemPropertyVariables>
-                        <visibleassertions.silence>true</visibleassertions.silence>
-                    </systemPropertyVariables>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <systemPropertyVariables>
+                                <visibleassertions.silence>true</visibleassertions.silence>
+                            </systemPropertyVariables>
+                            <childDelegation>false</childDelegation>
+                            <useFile>true</useFile>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

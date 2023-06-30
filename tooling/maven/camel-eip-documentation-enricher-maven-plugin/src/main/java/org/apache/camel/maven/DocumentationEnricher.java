@@ -30,7 +30,7 @@ import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
@@ -143,9 +143,9 @@ public class DocumentationEnricher {
 
     private String formatTextContent(Element item, String textContent) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(System.lineSeparator())
+        stringBuilder.append("\n")
                 .append(WordUtils.wrap(textContent, Constants.WRAP_LENGTH))
-                .append(System.lineSeparator());
+                .append("\n");
         // Fix closing tag intention.
         stringBuilder.append(Constants.DEFAULT_XML_INTENTION);
         for (Node parent = item.getParentNode(); parent != null; parent = parent.getParentNode()) {

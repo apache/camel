@@ -41,6 +41,11 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus-mail-version}</version>
+        </dependency>
+        <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>ses</artifactId>
             <version>${aws-java-sdk2-version}</version>
@@ -49,11 +54,6 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>apache-client</artifactId>
             <version>${aws-java-sdk2-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.angus</groupId>
-            <artifactId>angus-mail</artifactId>
-            <version>${angus-mail-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

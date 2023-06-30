@@ -35,7 +35,7 @@ public abstract class AbstractHandler {
     protected final Processor processor;
     protected final ExceptionHandler exceptionHandler;
 
-    public AbstractHandler(OAIPMHConsumer consumer) {
+    protected AbstractHandler(OAIPMHConsumer consumer) {
         this.consumer = consumer;
         this.endpoint = consumer.getEndpoint();
         this.processor = consumer.getAsyncProcessor();

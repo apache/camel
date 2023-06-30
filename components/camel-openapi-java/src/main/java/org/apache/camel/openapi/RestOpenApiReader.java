@@ -969,8 +969,8 @@ public class RestOpenApiReader {
                         // a schema with this name and a classname is already in the model
                         addSchema = false;
                         LOG.info("Duplicate schema found for with name {}; classname1={}, classname2={}",
-                                newSchema.getName(), oldClassName.toString(),
-                                newClassName != null ? newClassName.toString() : "none");
+                                newSchema.getName(), oldClassName,
+                                newClassName != null ? newClassName : "none");
                     }
                 }
             }

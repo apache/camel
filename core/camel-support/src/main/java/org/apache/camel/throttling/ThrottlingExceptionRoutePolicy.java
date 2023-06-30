@@ -70,6 +70,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     // stateful information
     private final AtomicInteger failures = new AtomicInteger();
+    private final AtomicInteger success = new AtomicInteger();
     private final AtomicInteger state = new AtomicInteger(STATE_CLOSED);
     private final AtomicBoolean keepOpen = new AtomicBoolean();
     private volatile Timer halfOpenTimer;
@@ -100,6 +101,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return camelContext;
     }
 
+    public List<Class<?>> getThrottledExceptions() {
+        return throttledExceptions;
+    }
+
     @Override
     public void onInit(Route route) {
         LOG.debug("Initializing ThrottlingExceptionRoutePolicy route policy");
@@ -127,7 +132,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     public void onExchangeDone(Route route, Exchange exchange) {
         if (keepOpen.get()) {
             if (state.get() != STATE_OPEN) {
-                LOG.debug("opening circuit b/c keepOpen is on");
+                LOG.debug("Opening circuit (keepOpen is true)");
                 openCircuit(route);
             }
         } else {
@@ -135,6 +140,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 // record the failure
                 failures.incrementAndGet();
                 lastFailure = System.currentTimeMillis();
+            } else {
+                success.incrementAndGet();
             }
 
             // check for state change
@@ -143,7 +150,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     /**
-     * uses similar approach as circuit breaker if the exchange has an exception that we are watching then we count that
+     * Uses similar approach as circuit breaker if the exchange has an exception that we are watching then we count that
      * as a failure otherwise we ignore it
      */
     private boolean hasFailed(Exchange exchange) {
@@ -214,10 +221,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                         halfOpenCircuit(route);
                     }
                 } else {
-                    LOG.debug("keeping circuit open (time not elapsed)...");
+                    LOG.debug("Keeping circuit open (time not elapsed)...");
                 }
             } else {
-                LOG.debug("keeping circuit open (keepOpen is true)...");
+                LOG.debug("Keeping circuit open (keepOpen is true)...");
                 this.addHalfOpenTimer(route);
             }
         }
@@ -274,6 +281,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             lock.lock();
             resumeOrStartConsumer(route.getConsumer());
             failures.set(0);
+            success.set(0);
             lastFailure = 0;
             openedAt = 0;
             state.set(STATE_CLOSED);
@@ -291,9 +299,12 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         }
     }
 
+    public String getStateAsString() {
+        return stateAsString(state.get());
+    }
+
     public String dumpState() {
-        int num = state.get();
-        String routeState = stateAsString(num);
+        String routeState = getStateAsString();
         if (failures.get() > 0) {
             return String.format("State %s, failures %d, last failure %d ms ago", routeState, failures.get(),
                     System.currentTimeMillis() - lastFailure);
@@ -339,7 +350,6 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     public void setKeepOpen(boolean keepOpen) {
-        LOG.debug("keep open: {}", keepOpen);
         this.keepOpen.set(keepOpen);
     }
 
@@ -369,6 +379,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     public int getFailures() {
         return failures.get();
+    }
+
+    public int getSuccess() {
+        return success.get();
     }
 
     public long getLastFailure() {

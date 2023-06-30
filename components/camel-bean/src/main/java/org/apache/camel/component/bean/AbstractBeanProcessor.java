@@ -43,11 +43,11 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     private String method;
     private boolean shorthandMethod;
 
-    public AbstractBeanProcessor(Object pojo, BeanInfo beanInfo) {
+    protected AbstractBeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
     }
 
-    public AbstractBeanProcessor(BeanHolder beanHolder) {
+    protected AbstractBeanProcessor(BeanHolder beanHolder) {
         this.beanHolder = beanHolder;
     }
 
@@ -106,10 +106,12 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                 }
                 try {
                     target.process(exchange);
-                } catch (Throwable e) {
+                } catch (AssertionError | Exception e) {
                     exchange.setException(e);
+                } finally {
+                    callback.done(true);
                 }
-                callback.done(true);
+
                 return true;
             }
         }

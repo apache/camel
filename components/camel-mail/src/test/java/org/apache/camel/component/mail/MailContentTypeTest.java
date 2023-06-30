@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for contentType option.
  */
 public class MailContentTypeTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser claus = Mailbox.getOrCreateUser("claus", "secret");
 
     @Test

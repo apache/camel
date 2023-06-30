@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -612,4 +613,29 @@ public class URISupportTest {
         assertEquals("hey=foo&hey=bar&hey=3&hey=true&hey=baz", URISupport.buildMultiValueQuery("hey", list));
     }
 
+    @Test
+    public void testGetDecodeQuery() throws Exception {
+        String out = URISupport.normalizeUri("smtp://localhost?username=davsclaus&password=secret");
+        String enc = UnsafeUriCharactersEncoder.encode(out);
+        String dec = URISupport.getDecodeQuery(enc);
+        assertEquals(out, dec);
+
+        out = URISupport.normalizeUri("smtp://localhost?password=secret&username=davsclaus");
+        assertEquals(out, dec);
+
+        out = URISupport.normalizeUri("http://localhost?username=davsclaus&password=RAW(#@a)");
+        enc = UnsafeUriCharactersEncoder.encode(out);
+        assertNotEquals(out, enc);
+
+        dec = URISupport.getDecodeQuery(enc);
+        assertEquals(out, dec);
+
+        out = URISupport.normalizeUri("bean://MyBean?method=RAW(addString(%22#@a%23, test))");
+        enc = UnsafeUriCharactersEncoder.encode(out);
+        assertNotEquals(out, enc);
+
+        dec = URISupport.getDecodeQuery(enc);
+        assertEquals(out, dec);
+
+    }
 }

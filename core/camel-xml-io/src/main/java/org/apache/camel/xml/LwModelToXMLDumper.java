@@ -26,8 +26,6 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.DelegateEndpoint;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.ExpressionNode;
@@ -56,12 +54,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        return dumpModelAsXml(context, definition, false, false);
+        return dumpModelAsXml(context, definition, false);
     }
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders)
             throws Exception {
 
         Properties properties = new Properties();
@@ -92,6 +90,10 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                 }
                 // write id
                 doWriteAttribute("id", def.getId());
+                // write description
+                if (def.getDescriptionText() != null) {
+                    doWriteAttribute("description", def.getDescriptionText());
+                }
                 // write location information
                 if (context.isDebugging()) {
                     String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
@@ -120,30 +122,25 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             @Override
             protected void doWriteValue(String value) throws IOException {
                 if (value != null && !value.isEmpty()) {
+                    if (resolvePlaceholders) {
+                        value = resolve(value, properties);
+                    }
                     super.doWriteValue(value);
                 }
             }
 
             @Override
-            protected void text(String text) throws IOException {
+            protected void text(String name, String text) throws IOException {
                 if (resolvePlaceholders) {
                     text = resolve(text, properties);
                 }
-                super.text(text);
+                super.text(name, text);
             }
 
             @Override
-            protected void attribute(String name, String value) throws IOException {
-                if (resolveDelegateEndpoints && "uri".equals(name)) {
-                    String uri = resolve(value, properties);
-                    Endpoint endpoint = context.hasEndpoint(uri);
-                    if (endpoint instanceof DelegateEndpoint) {
-                        endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
-                        value = endpoint.getEndpointUri();
-                    }
-                }
-                if (resolvePlaceholders) {
-                    value = resolve(value, properties);
+            protected void attribute(String name, Object value) throws IOException {
+                if (resolvePlaceholders && value != null) {
+                    value = resolve(value.toString(), properties);
                 }
                 super.attribute(name, value);
             }

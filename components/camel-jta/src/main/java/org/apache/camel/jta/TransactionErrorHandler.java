@@ -108,7 +108,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         // support using multiple threads to span a transaction
         try {
             process(exchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
 

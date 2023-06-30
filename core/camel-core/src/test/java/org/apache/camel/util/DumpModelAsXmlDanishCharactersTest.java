@@ -45,7 +45,7 @@ public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
         log.info(xml);
 
         assertTrue(xml.contains("<simple>Hello ${body}</simple>"));
-        assertTrue(xml.contains("<description>Hello danish \u00C6\u00D8\u00C5</description>"));
+        assertTrue(xml.contains("description=\"Hello danish \u00C6\u00D8\u00C5\""));
     }
 
     @Override

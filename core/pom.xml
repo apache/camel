@@ -44,6 +44,7 @@
         <module>camel-base-engine</module>
         <module>camel-xml-io-util</module>
         <module>camel-xml-jaxp</module>
+        <module>camel-xml-jaxp-util</module>
         <module>camel-cluster</module>
         <module>camel-core-engine</module>
         <module>camel-core-languages</module>
@@ -52,6 +53,7 @@
         <module>camel-core-reifier</module>
         <module>camel-xml-io</module>
         <module>camel-xml-jaxb</module>
+        <module>camel-yaml-io</module>
         <module>camel-core</module>
         <module>camel-core-xml</module>
         <module>camel-cloud</module>
@@ -97,21 +99,6 @@
                             <goal>compile</goal>
                         </goals>
                         <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- generate sources JAR by default as they are needed by other Camel sub projects -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

@@ -53,6 +53,11 @@
             <version>${jakarta-inject-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
         <!-- maven / maven resolver -->
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -93,6 +98,12 @@
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-transport-http</artifactId>
             <version>${maven-resolver-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>

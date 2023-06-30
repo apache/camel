@@ -44,6 +44,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         final AggregationStrategy strategy = createAggregationStrategy();
 
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isSynchronous = parseBoolean(definition.getSynchronous(), false);
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
@@ -75,6 +76,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
                     threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, prepare,
                     isShareUnitOfWork, isParallelAggregate);
         }
+        answer.setSynchronous(isSynchronous);
 
         return answer;
     }

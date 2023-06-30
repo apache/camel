@@ -19,6 +19,12 @@ In order to determine if a message payload requires caching, then Camel uses
 the xref:type-converter.adoc[Type Converter] functionality, to determine if
 the message payload type can be converted into an `org.apache.camel.StreamCache` instance.
 
+[IMPORTANT]
+====
+All the classes from the Camel release that implements `org.apache.camel.StreamCache` is NOT intended for end users
+to create as instances, but they are part of Camels stream-caching functionality.
+====
+
 == Configuring Stream Caching
 
 Stream caching is configured using `org.apache.camel.spi.StreamCachingStrategy`.

@@ -67,28 +67,23 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <!-- json schema -->
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
-            <version>${jackson2-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>jakarta.xml.bind</groupId>
@@ -99,7 +94,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jsonSchema</artifactId>
-            <version>${jackson2-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.validation</groupId>
@@ -133,7 +127,7 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb-impl-version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -144,17 +138,14 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
-            <version>${grpc-version}</version>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
-            <version>${grpc-version}</version>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
-            <version>${grpc-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -297,11 +288,11 @@
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
+                <version>${protobuf-maven-plugin-version}</version>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.21.12:exe:${os.detected.classifier}</protocArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.51.1:exe:${os.detected.classifier}</pluginArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc-version}:exe:${os.detected.classifier}</pluginArtifact>
                 </configuration>
                 <executions>
                     <execution>
@@ -338,7 +329,7 @@
                                             </files>
                                             <message><![CDATA[Salesforce Migration Tool required
 
-You need to download the Salesforce Migration Tool (ZIP file) and 
+You need to download the Salesforce Migration Tool (ZIP file) and
 extract the `ant-salesforce.jar` out of it to:
 
 ${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar

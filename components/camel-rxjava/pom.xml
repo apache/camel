@@ -73,17 +73,26 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xmx2G ${camel.surefire.fork.vmargs}
-                    </argLine>
-                    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-Xmx2G ${camel.surefire.fork.vmargs}
+                            </argLine>
+                            <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -30,10 +30,6 @@ import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.test.infra.core.CamelContextExtension;
-import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
-import org.apache.camel.test.infra.kafka.services.KafkaService;
-import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -48,7 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,12 +62,6 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String PROPAGATED_CUSTOM_HEADER = "PropagatedCustomHeader";
     public static final byte[] PROPAGATED_HEADER_VALUE = "propagated header value".getBytes();
 
-    @Order(1)
-    @RegisterExtension
-    public static KafkaService service = KafkaServiceFactory.createService();
-    @Order(2)
-    @RegisterExtension
-    public static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
     protected static AdminClient kafkaAdminClient;
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerHealthCheckIT.class);
@@ -160,6 +149,7 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
         CamelContext context = contextExtension.getContext();
         // and shutdown Kafka which will make readiness report as DOWN
         service.shutdown();
+        serviceShutdown = true;
 
         // health-check liveness should be UP
         final Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);

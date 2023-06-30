@@ -31,15 +31,6 @@
     <name>Camel :: Test Infra :: Common</name>
     <description>Common test infrastructure code for Camel</description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.testcontainers</groupId>

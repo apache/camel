@@ -44,6 +44,10 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-debug-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
@@ -104,20 +108,18 @@
     <build>
         <plugins>
             <plugin>
+                <!-- Required by camel-as2-api and possibly others which unpack the sources -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <phase>verify</phase>
                         <goals>
-                            <goal>jar-no-fork</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -50,6 +50,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.StringHelper;
 
@@ -62,7 +63,7 @@ import static org.apache.camel.support.ObjectHelper.isNumber;
 public class SimplePredicateParser extends BaseSimpleParser {
 
     // use caches to avoid re-parsing the same expressions over and over again
-    private Map<String, Expression> cacheExpression;
+    private final Map<String, Expression> cacheExpression;
 
     public SimplePredicateParser(CamelContext camelContext, String expression, boolean allowEscape,
                                  Map<String, Expression> cacheExpression) {
@@ -107,7 +108,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
         nextToken();
         while (!token.getType().isEol()) {
             // predicate supports quotes, functions, operators and whitespaces
-            //CHECKSTYLE:OFF
             if (!singleQuotedLiteralWithFunctionsText()
                     && !doubleQuotedLiteralWithFunctionsText()
                     && !functionText()
@@ -121,7 +121,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 // use the previous index as that is where the problem is
                 throw new SimpleParserException("Unexpected token " + token, previousIndex);
             }
-            //CHECKSTYLE:ON
             // take the next token
             nextToken();
         }
@@ -173,7 +172,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 exp = StringHelper.removeLeadingAndEndingQuotes(exp);
                 sb.append("\"");
                 // " should be escaped to \"
-                exp = escapeQuotes(exp);
+                exp = LanguageHelper.escapeQuotes(exp);
                 // \n \t \r should be escaped
                 exp = exp.replaceAll("\n", "\\\\n");
                 exp = exp.replaceAll("\t", "\\\\t");
@@ -186,22 +185,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 sb.append("\"");
             } else {
                 sb.append(exp);
-            }
-        }
-        return sb.toString();
-    }
-
-    private static String escapeQuotes(String text) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < text.length(); i++) {
-            char prev = i > 0 ? text.charAt(i - 1) : 0;
-            char ch = text.charAt(i);
-
-            if (ch == '"' && (i == 0 || prev != '\\')) {
-                sb.append('\\');
-                sb.append('"');
-            } else {
-                sb.append(ch);
             }
         }
         return sb.toString();
@@ -710,7 +693,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
             }
 
             // then we proceed in the grammar according to the parameter types supported by the given binary operator
-            //CHECKSTYLE:OFF
             if ((literalWithFunctionsSupported && singleQuotedLiteralWithFunctionsText())
                     || (literalWithFunctionsSupported && doubleQuotedLiteralWithFunctionsText())
                     || (literalSupported && singleQuotedLiteralText())
@@ -726,9 +708,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     expect(TokenType.whiteSpace);
                 }
             } else {
-                throw new SimpleParserException("Binary operator " + operatorType + " does not support token " + token, token.getIndex());
+                throw new SimpleParserException(
+                        "Binary operator " + operatorType + " does not support token " + token, token.getIndex());
             }
-            //CHECKSTYLE:ON
             return true;
         }
         return false;

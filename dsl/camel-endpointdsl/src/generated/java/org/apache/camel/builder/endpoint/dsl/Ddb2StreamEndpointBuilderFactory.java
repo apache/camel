@@ -142,6 +142,22 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the DDBStreams client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -390,6 +406,41 @@ public interface Ddb2StreamEndpointBuilderFactory {
         default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
                 String useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**

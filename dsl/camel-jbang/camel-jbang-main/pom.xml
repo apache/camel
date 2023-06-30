@@ -38,7 +38,6 @@
         <firstVersion>3.12.0</firstVersion>
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
-        <checkstyle.skip>true</checkstyle.skip>
         <dist.dir>dist</dist.dir>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
@@ -63,14 +62,6 @@
         </resources>
         <sourceDirectory>src/main/jbang</sourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <skip>${checkstyle.skip}</skip>
-                    <failOnViolation>false</failOnViolation>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

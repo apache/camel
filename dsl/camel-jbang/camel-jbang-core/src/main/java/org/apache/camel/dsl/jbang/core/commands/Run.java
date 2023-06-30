@@ -22,6 +22,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,9 +47,11 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
@@ -65,8 +68,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -112,9 +113,8 @@ public class Run extends CamelCommand {
 
     private File logFile;
 
-    //CHECKSTYLE:OFF
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+                arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
     List<String> files = new ArrayList<>();
@@ -137,20 +137,25 @@ public class Run extends CamelCommand {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
     String dependencies;
 
-    @Option(names = { "--repos" }, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @Option(names = { "--repos" },
+            description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @Option(names = { "--maven-settings" }, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
-            " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    @Option(names = { "--maven-settings" },
+            description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
+                          +
+                          " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @Option(names = { "--maven-settings-security" }, description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+    @Option(names = { "--maven-settings-security" },
+            description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
-    @Option(names = { "--download" }, defaultValue = "true", description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @Option(names = { "--download" }, defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
@@ -217,7 +222,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
     boolean modeline = true;
 
-    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file")
+    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     String openapi;
 
     @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
@@ -226,8 +231,6 @@ public class Run extends CamelCommand {
     public Run(CamelJBangMain main) {
         super(main);
     }
-
-    //CHECKSTYLE:ON
 
     public String getProfile() {
         return profile;
@@ -579,10 +582,20 @@ public class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
+        // if we have a specific camel version then make sure we really need to switch
+        if (camelVersion != null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String v = catalog.getCatalogVersion();
+            if (camelVersion.equals(v)) {
+                // same version, so we use current
+                camelVersion = null;
+            }
+        }
+
         // okay we have validated all input and are ready to run
         if (camelVersion != null) {
             // run in another JVM with different camel version (foreground or background)
-            boolean custom = camelVersion.contains("-");
+            boolean custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
             if (custom) {
                 // custom camel distribution
                 return runCustomCamelVersion(main);
@@ -947,13 +960,28 @@ public class Run extends CamelCommand {
     }
 
     private void generateOpenApi() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
+        File file = Paths.get(openapi).toFile();
+        if (!file.exists() && !file.isFile()) {
+            throw new FileNotFoundException("Cannot find file: " + file);
+        }
+
+        ObjectMapper mapper;
+        boolean yaml = file.getName().endsWith(".yaml") || file.getName().endsWith(".yml");
+        if (yaml) {
+            mapper = new YAMLMapper();
+        } else {
+            mapper = new ObjectMapper();
+        }
+        JsonNode node = mapper.readTree(file);
         OasDocument document = (OasDocument) Library.readDocument(node);
-        Configurator.setRootLevel(Level.OFF);
-        try (CamelContext context = new DefaultCamelContext()) {
-            String out = RestDslGenerator.toYaml(document).generate(context, false);
-            Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
+        RuntimeUtil.setRootLoggingLevel("off");
+        try {
+            try (CamelContext context = new DefaultCamelContext()) {
+                String out = RestDslGenerator.toYaml(document).generate(context, false);
+                Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
+            }
+        } finally {
+            RuntimeUtil.setRootLoggingLevel(loggingLevel);
         }
     }
 

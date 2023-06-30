@@ -152,6 +152,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-jaxb</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-io</artifactId>
+        </dependency>
 
         <!-- all components, languages and dataformats -->
         <dependency>
@@ -177,6 +181,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog-maven</artifactId>
         </dependency>
+       <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-catalog-maven-grape</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-route-parser</artifactId>
@@ -184,52 +192,37 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <!-- skip remote resources in assembly is a bit cumbersome to turn off -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>${maven-remote-resources-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <id>process-remote-resources</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <skip>true</skip>
-                            <attachToTest>false</attachToTest>
-                            <excludeTransitive>true</excludeTransitive>
-                            <includeGroupIds>org.apache.camel</includeGroupIds>
-                            <includeScope>compile</includeScope>
-                            <resourceBundles>
-                                <resourceBundle>org.apache.camel:*:${project.version}</resourceBundle>
-                            </resourceBundles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <id>src</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/descriptors/src.xml</descriptor>
-                            </descriptors>
-                            <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>src</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/descriptors/src.xml</descriptor>
+                                    </descriptors>
+                                    <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -188,7 +188,7 @@ public class CxfProducer extends DefaultAsyncProducer {
 
         // create invocation context
         WrappedMessageContext requestContext
-                = new WrappedMessageContext(new HashMap<String, Object>(), null, Scope.APPLICATION);
+                = new WrappedMessageContext(new HashMap<>(), null, Scope.APPLICATION);
 
         camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
 

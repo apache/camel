@@ -278,26 +278,7 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumCachePoolSize(CamelContext camelContext) throws IllegalArgumentException {
-        if (camelContext != null) {
-            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_CACHE_POOL_SIZE);
-            if (s != null) {
-                try {
-                    // we cannot use Camel type converters as they may not be ready this early
-                    Integer size = Integer.valueOf(s);
-                    if (size == null || size <= 0) {
-                        throw new IllegalArgumentException(
-                                "Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s);
-                    }
-                    return size;
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "Property " + Exchange.MAXIMUM_CACHE_POOL_SIZE + " must be a positive number, was: " + s, e);
-                }
-            }
-        }
-
-        // 1000 is the default fallback
-        return 1000;
+        return getPositiveIntegerProperty(camelContext, Exchange.MAXIMUM_CACHE_POOL_SIZE);
     }
 
     /**
@@ -311,26 +292,7 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumEndpointCacheSize(CamelContext camelContext) throws IllegalArgumentException {
-        if (camelContext != null) {
-            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE);
-            if (s != null) {
-                // we cannot use Camel type converters as they may not be ready this early
-                try {
-                    int size = Integer.parseInt(s);
-                    if (size <= 0) {
-                        throw new IllegalArgumentException(
-                                "Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s);
-                    }
-                    return size;
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s, e);
-                }
-            }
-        }
-
-        // 1000 is the default fallback
-        return 1000;
+        return getPositiveIntegerProperty(camelContext, Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE);
     }
 
     /**
@@ -344,21 +306,7 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumSimpleCacheSize(CamelContext camelContext) throws IllegalArgumentException {
-        if (camelContext != null) {
-            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_SIMPLE_CACHE_SIZE);
-            if (s != null) {
-                // we cannot use Camel type converters as they may not be ready this early
-                try {
-                    return Integer.parseInt(s);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s, e);
-                }
-            }
-        }
-
-        // 1000 is the default fallback
-        return 1000;
+        return getPositiveIntegerProperty(camelContext, Exchange.MAXIMUM_SIMPLE_CACHE_SIZE);
     }
 
     /**
@@ -372,21 +320,25 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumTransformerCacheSize(CamelContext camelContext) throws IllegalArgumentException {
+        return getPositiveIntegerProperty(camelContext, Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE);
+    }
+
+    private static int getPositiveIntegerProperty(CamelContext camelContext, String property) {
         if (camelContext != null) {
-            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE);
+            String s = camelContext.getGlobalOption(property);
             if (s != null) {
                 // we cannot use Camel type converters as they may not be ready this early
                 try {
-                    Integer size = Integer.valueOf(s);
-                    if (size == null || size <= 0) {
+                    int size = Integer.parseInt(s);
+                    if (size <= 0) {
                         throw new IllegalArgumentException(
-                                "Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: "
+                                "Property " + property + " must be a positive number, was: "
                                                            + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(
-                            "Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                            "Property " + property + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -406,26 +358,7 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if the property is illegal
      */
     public static int getMaximumValidatorCacheSize(CamelContext camelContext) throws IllegalArgumentException {
-        if (camelContext != null) {
-            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE);
-            if (s != null) {
-                // we cannot use Camel type converters as they may not be ready this early
-                try {
-                    Integer size = Integer.valueOf(s);
-                    if (size == null || size <= 0) {
-                        throw new IllegalArgumentException(
-                                "Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s);
-                    }
-                    return size;
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                            "Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s, e);
-                }
-            }
-        }
-
-        // 1000 is the default fallback
-        return 1000;
+        return getPositiveIntegerProperty(camelContext, Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE);
     }
 
     /**

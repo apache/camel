@@ -38,12 +38,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Override the android JDK 7 guava in libraries-bom -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${google-cloud-guava-version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>google-cloud-functions-bom</artifactId>
@@ -61,16 +55,6 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-functions</artifactId>
@@ -119,18 +103,28 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <childDelegation>false</childDelegation>
+                            <useFile>true</useFile>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

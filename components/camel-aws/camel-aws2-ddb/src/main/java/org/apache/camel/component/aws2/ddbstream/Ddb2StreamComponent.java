@@ -49,10 +49,11 @@ public class Ddb2StreamComponent extends DefaultComponent {
         Ddb2StreamEndpoint endpoint = new Ddb2StreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
                 && configuration.getAmazonDynamoDbStreamsClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, amazonDDBStreamsClient or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, amazonDDBStreamsClient or accessKey and secretKey must be specified");
         }
         return endpoint;
     }

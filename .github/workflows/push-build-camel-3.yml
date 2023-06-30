@@ -54,7 +54,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: mvn formatter and build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pformat,fastinstall -DskipTests verify
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log $MVND_OPTS -Pformat,fastinstall -DskipTests verify
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
@@ -62,7 +62,7 @@ jobs:
           name: build.log
           path: build.log
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v4
         with:
           base: camel-3.x
           token: ${{ secrets.GITHUB_TOKEN }}

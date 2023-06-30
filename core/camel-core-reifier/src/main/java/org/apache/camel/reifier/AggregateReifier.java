@@ -57,6 +57,11 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
+        // correlation expression is required
+        if (definition.getExpression() == null) {
+            throw new IllegalArgumentException("CorrelationExpression must be set on " + definition);
+        }
+
         Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = getConfiguredAggregationStrategy(definition);
         // strategy is required

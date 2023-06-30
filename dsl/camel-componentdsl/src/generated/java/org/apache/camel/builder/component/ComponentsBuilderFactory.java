@@ -44,6 +44,20 @@ import javax.annotation.processing.Generated;
 public interface ComponentsBuilderFactory {
 
     /**
+     * ActiveMQ (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-activemq
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ActivemqComponentBuilderFactory.ActivemqComponentBuilder activemq() {
+        return org.apache.camel.builder.component.dsl.ActivemqComponentBuilderFactory.activemq();
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
@@ -479,6 +493,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.AzureEventhubsComponentBuilder azureEventhubs() {
         return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
+    }
+    /**
+     * Azure Files (camel-azure-files)
+     * Camel Azure Files Component
+     * 
+     * Category: cloud,file
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-azure-files
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureFilesComponentBuilderFactory.AzureFilesComponentBuilder azureFiles() {
+        return org.apache.camel.builder.component.dsl.AzureFilesComponentBuilderFactory.azureFiles();
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)

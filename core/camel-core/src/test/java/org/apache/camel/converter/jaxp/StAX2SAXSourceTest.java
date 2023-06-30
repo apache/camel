@@ -19,6 +19,7 @@ package org.apache.camel.converter.jaxp;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -41,7 +42,7 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
 
     private static final String TEST_XML = "<root xmlns=\"urn:org.apache.camel:test\">Text</root>";
 
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     @Test
     public void testDefaultPrefixInRootElementWithCopyTransformer() throws Exception {

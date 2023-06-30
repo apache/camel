@@ -39,8 +39,8 @@ import picocli.CommandLine;
                      description = "Sends a message to a system via an existing running Camel integration")
 public class CamelSendAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
-    String name;
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    String name = "*";
 
     @CommandLine.Option(names = { "--endpoint" },
                         description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")

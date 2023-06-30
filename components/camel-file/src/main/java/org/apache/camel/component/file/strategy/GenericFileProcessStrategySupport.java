@@ -153,10 +153,13 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     protected void deleteLocalWorkFile(Exchange exchange) {
         // delete local work file, if it was used (eg by ftp component)
-        File local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, File.class);
-        if (local != null && local.exists()) {
-            boolean deleted = FileUtil.deleteFile(local);
-            LOG.trace("Local work file: {} was deleted: {}", local, deleted);
+        String local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, String.class);
+        if (local != null) {
+            File f = new File(local);
+            if (f.exists()) {
+                boolean deleted = FileUtil.deleteFile(f);
+                LOG.trace("Local work file: {} was deleted: {}", local, deleted);
+            }
         }
     }
 

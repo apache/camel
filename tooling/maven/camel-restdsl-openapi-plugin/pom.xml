@@ -74,7 +74,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -92,60 +91,109 @@
             <version>${jakarta-annotation-api-version}</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-invoker-plugin</artifactId>
-                <configuration>
-                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                    <pomIncludes>
-                        <pomInclude>*/pom.xml</pomInclude>
-                    </pomIncludes>
-                    <postBuildHookScript>verify</postBuildHookScript>
-                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                    <settingsFile>src/it/settings.xml</settingsFile>
-                    <goals>
-                        <goal>clean</goal>
-                        <goal>verify</goal>
-                    </goals>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>install</goal>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.groovy</groupId>
-                        <artifactId>groovy</artifactId>
-                        <version>${groovy-version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
+        <!-- Required by invoker integration tests -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-openapi-java</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-servlet</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jetty</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
-            <id>fastinstall</id>
+            <id>full</id>
             <activation>
-            <activeByDefault>true</activeByDefault>
                 <property>
-                    <name>skipTests</name>
+                    <name>!quickly</name>
                 </property>
             </activation>
-            <properties>
-                <invoker.skip>true</invoker.skip>
-            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <pomIncludes>
+                                <pomInclude>*/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <goals>
+                                <goal>clean</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.groovy</groupId>
+                                <artifactId>groovy</artifactId>
+                                <version>${groovy-version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

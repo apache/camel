@@ -58,7 +58,7 @@ Configuration details are provided to the ShiroSecurityPolicy using an
 Ini file (properties file) or an Ini object. The Ini file is a standard
 Shiro configuration file containing user/role details as shown below
 
-[source,java]
+[source,properties]
 ------------------------------------------------------------------
 [users]
 # user 'ringo' with password 'starr' and the 'sec-level1' role
@@ -155,7 +155,7 @@ require all of the roles to be met.
 == Applying Shiro Authentication on a Camel Route
 
 The ShiroSecurityPolicy, tests and permits incoming message exchanges
-containing a encrypted SecurityToken in the Message Header to proceed
+containing an encrypted SecurityToken in the Message Header to proceed
 further following proper authentication. The SecurityToken object
 contains a Username/Password details that are used to determine where
 the user is a valid user.

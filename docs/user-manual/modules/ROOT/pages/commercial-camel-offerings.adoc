@@ -61,7 +61,11 @@ https://www.redhat.com/en/services/training/courses-by-curriculum#Red-Hat-JBoss-
 https://www.redhat.com/en/services/consulting[consulting], and
 https://developers.redhat.com/products/fuse/overview/[a developer community].
 
-
+== https://www.randoli.io[Randoli]
+We provide consulting and implementation of Microservices as well as modernization support for legacy applications using Springboot + Camel or Quarkus + Camel.
+https://randoli.io/services/
+https://randoli.io/case-studies/case-study-postal-tech-company-modernization
+https://www.redhat.com/rhdc/managed-files/cl-randoli-partner-case-study-f31836pr-202211-en_0.pdf
 
 == https://riverlog.com/systemintegration/esb-model-and-camel-based-systems-integration[RiverLog]
 
@@ -92,6 +96,11 @@ training and support for Apache Camel and their
 http://www.talend.com/products/esb-standard-edition.php[Talend ESB]
 product which is a repackaging of Apache Camel including a full,
 pre-configured OSGi runtime container.
+
+
+== https://talismancloud.io[Talisman Cloud, Inc]
+
+https://talismancloud.io[Talisman Cloud, Inc] provides support subscription and consulting services for Apache Camel Karavan.
 
 
 == http://touk.pl[TouK]

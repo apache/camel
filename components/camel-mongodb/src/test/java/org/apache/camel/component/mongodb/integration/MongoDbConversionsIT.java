@@ -141,9 +141,7 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
         public int number = 123;
         public String text = "hello";
         public String[] array = { "daVinci", "copernico", "einstein" };
-        // CHECKSTYLE:OFF
         public String _id = "testInsertPojo";
-        // CHECKSTYLE:ON
     }
 
     @Test

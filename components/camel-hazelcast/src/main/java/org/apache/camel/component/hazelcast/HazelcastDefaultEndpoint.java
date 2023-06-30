@@ -42,12 +42,12 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     @UriParam
     private HazelcastOperation defaultOperation;
 
-    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
+    protected HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);
     }
 
-    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
-                                    String cacheName) {
+    protected HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
+                                       String cacheName) {
         super(endpointUri, component);
         this.cacheName = cacheName;
         this.hazelcastInstance = hazelcastInstance;

@@ -420,12 +420,6 @@ class ExportSpringBoot extends Export {
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
 
-        // if platform-http is included then we need servlet as implementation
-        if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-servlet"))) {
-            // version does not matter
-            answer.add("mvn:org.apache.camel:camel-servlet:1.0-SNAPSHOT");
-        }
-
         return answer;
     }
 

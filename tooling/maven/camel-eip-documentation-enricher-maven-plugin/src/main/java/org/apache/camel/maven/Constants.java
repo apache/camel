@@ -23,7 +23,7 @@ public final class Constants {
 
     // Camel core constants.
     public static final String DEFAULT_XML_INTENTION = "  ";
-    public static final int WRAP_LENGTH = 80;
+    public static final int WRAP_LENGTH = 120;
 
     // XML constants.
     public static final String XML_SCHEMA_NAMESPACE_PREFIX = "xs";
@@ -32,14 +32,6 @@ public final class Constants {
     public static final String TYPE_ATTRIBUTE_NAME = "type";
     public static final String XS_ANNOTATION_ELEMENT_NAME = "xs:annotation";
     public static final String XS_DOCUMENTATION_ELEMENT_NAME = "xs:documentation";
-
-    // Json files constants.
-    public static final String PROPERTIES_ATTRIBUTE_NAME = "properties";
-    public static final String JSON_SUFIX = ".json";
-    public static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
-    public static final String DEFAULT_VALUE_ATTRIBUTE_NAME = "defaultValue";
-    public static final String DEPRECATED_ATTRIBUTE_NAME = "deprecated";
-    public static final String MODEL_ATTRIBUTE_NAME = "model";
 
     private Constants() {
     }

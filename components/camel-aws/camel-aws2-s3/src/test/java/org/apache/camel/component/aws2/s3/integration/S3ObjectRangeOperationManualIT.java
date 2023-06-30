@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.BindToRegistry;
@@ -110,7 +109,7 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
     private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
         try (Reader reader
-                = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
+                = new BufferedReader(new InputStreamReader(s3Object, StandardCharsets.UTF_8))) {
             int c = 0;
             while ((c = reader.read()) != -1) {
                 textBuilder.append((char) c);

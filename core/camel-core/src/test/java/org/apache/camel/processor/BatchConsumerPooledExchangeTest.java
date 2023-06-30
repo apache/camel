@@ -59,9 +59,9 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        template.sendBodyAndHeader(fileUri(), "aaa", Exchange.FILE_NAME, "aaa.txt");
-        template.sendBodyAndHeader(fileUri(), "bbb", Exchange.FILE_NAME, "bbb.txt");
-        template.sendBodyAndHeader(fileUri(), "ccc", Exchange.FILE_NAME, "ccc.txt");
+        template.sendBodyAndHeader(fileUri(), "aaa", Exchange.FILE_NAME, "aaa.BatchConsumerPooledExchangeTest.txt");
+        template.sendBodyAndHeader(fileUri(), "bbb", Exchange.FILE_NAME, "bbb.BatchConsumerPooledExchangeTest.txt");
+        template.sendBodyAndHeader(fileUri(), "ccc", Exchange.FILE_NAME, "ccc.BatchConsumerPooledExchangeTest.txt");
     }
 
     @Test

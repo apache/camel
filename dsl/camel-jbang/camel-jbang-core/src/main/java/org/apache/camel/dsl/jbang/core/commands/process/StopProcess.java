@@ -24,15 +24,11 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Shuts down a running Camel integration")
+@Command(name = "stop", description = "Shuts down running Camel integrations")
 public class StopProcess extends ProcessBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
-    String name;
-
-    @CommandLine.Option(names = { "--all" },
-                        description = "To shutdown all running Camel integrations")
-    boolean all;
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")
+    String name = "*";
 
     @CommandLine.Option(names = { "--kill" },
                         description = "To force killing the process (SIGKILL)")
@@ -45,12 +41,6 @@ public class StopProcess extends ProcessBaseCommand {
     @Override
     public Integer doCall() throws Exception {
 
-        if (!all && name == null) {
-            return 0;
-        } else if (all) {
-            name = "*";
-        }
-
         List<Long> pids = findPids(name);
 
         // stop by deleting the pid file
@@ -61,6 +51,8 @@ public class StopProcess extends ProcessBaseCommand {
                 System.out.println("Shutting down Camel integration (PID: " + pid + ")");
                 FileUtil.deleteFile(pidFile);
             }
+        }
+        for (Long pid : pids) {
             if (kill) {
                 ProcessHandle.of(pid).ifPresent(ph -> {
                     System.out.println("Killing Camel integration (PID: " + pid + ")");

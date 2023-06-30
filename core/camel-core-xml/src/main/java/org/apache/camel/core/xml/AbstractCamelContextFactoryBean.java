@@ -185,7 +185,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         return contextClassLoaderOnStart;
     }
 
-    //CHECKSTYLE:OFF
     public void afterPropertiesSet() throws Exception {
         if (org.apache.camel.util.ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
@@ -267,7 +266,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         AsyncProcessorAwaitManager asyncProcessorAwaitManager = getBeanForType(AsyncProcessorAwaitManager.class);
         if (asyncProcessorAwaitManager != null) {
             LOG.info("Using custom AsyncProcessorAwaitManager: {}", asyncProcessorAwaitManager);
-            getContext().getCamelContextExtension().addContextPlugin(AsyncProcessorAwaitManager.class, asyncProcessorAwaitManager);
+            getContext().getCamelContextExtension().addContextPlugin(AsyncProcessorAwaitManager.class,
+                    asyncProcessorAwaitManager);
         }
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
         if (managementStrategy != null) {
@@ -321,7 +321,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // set endpoint strategies if defined
-        Map<String, EndpointStrategy> endpointStrategies = getContext().getRegistry().findByTypeWithName(EndpointStrategy.class);
+        Map<String, EndpointStrategy> endpointStrategies
+                = getContext().getRegistry().findByTypeWithName(EndpointStrategy.class);
         if (endpointStrategies != null && !endpointStrategies.isEmpty()) {
             for (Entry<String, EndpointStrategy> entry : endpointStrategies.entrySet()) {
                 EndpointStrategy strategy = entry.getValue();
@@ -336,7 +337,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setShutdownStrategy(shutdownStrategy);
         }
         // add global interceptors
-        Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().findByTypeWithName(InterceptStrategy.class);
+        Map<String, InterceptStrategy> interceptStrategies
+                = getContext().getRegistry().findByTypeWithName(InterceptStrategy.class);
         if (interceptStrategies != null && !interceptStrategies.isEmpty()) {
             for (Entry<String, InterceptStrategy> entry : interceptStrategies.entrySet()) {
                 InterceptStrategy strategy = entry.getValue();
@@ -348,7 +350,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // set the lifecycle strategy if defined
-        Map<String, LifecycleStrategy> lifecycleStrategies = getContext().getRegistry().findByTypeWithName(LifecycleStrategy.class);
+        Map<String, LifecycleStrategy> lifecycleStrategies
+                = getContext().getRegistry().findByTypeWithName(LifecycleStrategy.class);
         if (lifecycleStrategies != null && !lifecycleStrategies.isEmpty()) {
             for (Entry<String, LifecycleStrategy> entry : lifecycleStrategies.entrySet()) {
                 LifecycleStrategy strategy = entry.getValue();
@@ -360,19 +363,22 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // set the node lifecycle strategy if defined
-        Map<String, ModelLifecycleStrategy> modelLifecycleStrategies = getContext().getRegistry().findByTypeWithName(ModelLifecycleStrategy.class);
+        Map<String, ModelLifecycleStrategy> modelLifecycleStrategies
+                = getContext().getRegistry().findByTypeWithName(ModelLifecycleStrategy.class);
         if (modelLifecycleStrategies != null && !modelLifecycleStrategies.isEmpty()) {
             for (Entry<String, ModelLifecycleStrategy> entry : modelLifecycleStrategies.entrySet()) {
                 ModelLifecycleStrategy strategy = entry.getValue();
                 ModelCamelContext mcc = getContext();
                 if (!mcc.getModelLifecycleStrategies().contains(strategy)) {
-                    LOG.info("Using custom ModelLifecycleStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
+                    LOG.info("Using custom ModelLifecycleStrategy with id: {} and implementation: {}", entry.getKey(),
+                            strategy);
                     mcc.addModelLifecycleStrategy(strategy);
                 }
             }
         }
         // cluster service
-        Map<String, CamelClusterService> clusterServices = getContext().getRegistry().findByTypeWithName(CamelClusterService.class);
+        Map<String, CamelClusterService> clusterServices
+                = getContext().getRegistry().findByTypeWithName(CamelClusterService.class);
         if (clusterServices != null && !clusterServices.isEmpty()) {
             for (Entry<String, CamelClusterService> entry : clusterServices.entrySet()) {
                 CamelClusterService service = entry.getValue();
@@ -395,7 +401,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
         }
         // add route policy factories
-        Map<String, RoutePolicyFactory> routePolicyFactories = getContext().getRegistry().findByTypeWithName(RoutePolicyFactory.class);
+        Map<String, RoutePolicyFactory> routePolicyFactories
+                = getContext().getRegistry().findByTypeWithName(RoutePolicyFactory.class);
         if (routePolicyFactories != null && !routePolicyFactories.isEmpty()) {
             for (Entry<String, RoutePolicyFactory> entry : routePolicyFactories.entrySet()) {
                 RoutePolicyFactory factory = entry.getValue();
@@ -455,7 +462,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (logListeners != null && !logListeners.isEmpty()) {
             for (Map.Entry<String, LogListener> entry : logListeners.entrySet()) {
                 LogListener logListener = entry.getValue();
-                if (getContext().getCamelContextExtension().getLogListeners() == null || !getContext().getCamelContextExtension().getLogListeners().contains(logListener)) {
+                if (getContext().getCamelContextExtension().getLogListeners() == null
+                        || !getContext().getCamelContextExtension().getLogListeners().contains(logListener)) {
                     LOG.info("Using custom LogListener with id: {} and implementation: {}", entry.getKey(), logListener);
                     getContext().getCamelContextExtension().addLogListener(logListener);
                 }
@@ -477,7 +485,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // init route controller
         initRouteController();
     }
-    //CHECKSTYLE:ON
 
     /**
      * Setup all the routes which must be done prior starting {@link CamelContext}.
@@ -1215,7 +1222,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setMDCLoggingKeysPattern(CamelContextHelper.parseText(context, getMDCLoggingKeysPattern()));
         }
         if (getDumpRoutes() != null) {
-            context.setDumpRoutes(CamelContextHelper.parseBoolean(context, getDumpRoutes()));
+            context.setDumpRoutes(CamelContextHelper.parseText(context, getDumpRoutes()));
         }
         if (getUseDataType() != null) {
             context.setUseDataType(CamelContextHelper.parseBoolean(context, getUseDataType()));

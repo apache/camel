@@ -21,10 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Unit test for max messages per poll
  */
+@Isolated
 public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSupport {
 
     // sort by name and not eager, then we should pickup the files in order
@@ -36,9 +38,9 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("AAA", "BBB");
 
-        template.sendBodyAndHeader(fileUrl, "CCC", Exchange.FILE_NAME, "ccc.txt");
-        template.sendBodyAndHeader(fileUrl, "AAA", Exchange.FILE_NAME, "aaa.txt");
-        template.sendBodyAndHeader(fileUrl, "BBB", Exchange.FILE_NAME, "bbb.txt");
+        template.sendBodyAndHeader(fileUrl, "CCC", Exchange.FILE_NAME, "ccc.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(fileUrl, "AAA", Exchange.FILE_NAME, "aaa.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(fileUrl, "BBB", Exchange.FILE_NAME, "bbb.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
 
         // start route
         context.getRouteController().startRoute("foo");

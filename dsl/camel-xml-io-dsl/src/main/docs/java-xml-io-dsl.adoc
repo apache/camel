@@ -57,6 +57,64 @@ kamel run my-route.xml
 camel run my-route.xml
 ----
 
+*Since Camel 4.0.0*
+
+It is now possible with `xml-io-dsl` to declare some beans to be bound to xref:manual::registry.adoc[Camel Registry] in similar way as with xref:yaml-dsl.adoc[YAML DSL]. Beans may be declared in XML and have their properties (also nested) defined. For example:
+
+[source,xml]
+----
+<camel>
+
+	<bean name="beanFromProps" type="com.acme.MyBean">
+		<properties>
+			<property key="field1" value="f1_p" />
+			<property key="field2" value="f2_p" />
+			<property key="nested.field1" value="nf1_p" />
+			<property key="nested.field2" value="nf2_p" />
+		</properties>
+	</bean>
+
+</camel>
+----
+
+While keeping all the benefits of fast XML parser used by `xml-io-dsl`, Camel can also process XML elements declared in other XML namespaces and process them separately. With this mechanism it is possible to include XML elements using Spring's `http://www.springframework.org/schema/beans` namespace.
+
+This brings the flexibility of Spring Beans into xref:components:others:main.adoc[Camel Main] without actually running any Spring Application Context (or Spring Boot). When elements from Spring namespace are found, they are used to populate and configure an instance of `org.springframework.beans.factory.support.DefaultListableBeanFactory` and leverage Spring dependency injection to wire the beans together. These beans are then exposed through normal xref:manual::registry.adoc[Camel Registry] and may be used by Camel routes.
+
+Here's an example `camel.xml` file, which defines both the routes and beans used (referred to) by the route definition:
+
+.camel.xml
+[source,xml]
+----
+<camel>
+
+    <beans xmlns="http://www.springframework.org/schema/beans">
+        <bean id="messageString" class="java.lang.String">
+            <constructor-arg index="0" value="Hello"/>
+        </bean>
+
+        <bean id="greeter" class="org.apache.camel.main.app.Greeter">
+            <description>Spring Bean</description>
+            <property name="message">
+                <bean class="org.apache.camel.main.app.GreeterMessage">
+                    <property name="msg" ref="messageString"/>
+                </bean>
+            </property>
+        </bean>
+    </beans>
+
+    <route id="my-route">
+        <from uri="direct:start"/>
+        <bean ref="greeter"/>
+        <to uri="mock:finish"/>
+    </route>
+
+</camel>
+----
+
+A `my-route` route is referring to `greeter` bean which is defined using Spring `<bean>` element.
+
+More examples can be found in xref:manual:ROOT:camel-jbang.adoc#_using_spring_beans_in_camel_xml_dsl[Camel JBang] page.
 
 == See Also
 

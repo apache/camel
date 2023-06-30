@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.transform.TransformerFactory;
@@ -100,7 +99,7 @@ public class ModelParserTest {
     public void testFiles() throws Exception {
         Path dir = getResourceFolder();
         try (Stream<Path> list = Files.list(dir)) {
-            List<Path> files = list.sorted().filter(Files::isRegularFile).collect(Collectors.toList());
+            List<Path> files = list.sorted().filter(Files::isRegularFile).filter(f -> f.endsWith("xml")).toList();
             for (Path path : files) {
                 ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
                 boolean isRest = REST_XMLS.contains(path.getFileName().toString());

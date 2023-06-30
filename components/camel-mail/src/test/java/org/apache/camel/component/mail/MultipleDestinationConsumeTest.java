@@ -44,9 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MultipleDestinationConsumeTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser bar = Mailbox.getOrCreateUser("bar", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String body = "hello world!\r\n";

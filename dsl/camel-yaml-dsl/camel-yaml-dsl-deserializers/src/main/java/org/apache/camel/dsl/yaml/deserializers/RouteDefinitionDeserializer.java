@@ -20,7 +20,6 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
-import org.apache.camel.model.DescriptionDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
@@ -77,7 +76,7 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     target.setId(asText(val));
                     break;
                 case "description":
-                    target.setDescription(new DescriptionDefinition(asText(val)));
+                    target.setDescription(asText(val));
                     break;
                 case "precondition":
                     target.setPrecondition(asText(val));

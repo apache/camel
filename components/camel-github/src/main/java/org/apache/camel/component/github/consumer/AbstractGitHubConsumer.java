@@ -36,7 +36,7 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
 
     private Repository repository;
 
-    public AbstractGitHubConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
+    protected AbstractGitHubConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.robotframework;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         generatedArguments.addFileToArguments(configuration.getLog(), "-l");
         generatedArguments.addFileToArguments(configuration.getReport(), "-r");
         generatedArguments.addFileToArguments(configuration.getDebugFile(), "-b");
-        generatedArguments.addFileToArguments(configuration.getArgumentFile(), "-A");
+        generatedArguments.addFileToArguments(configuration.getArgumentFiles(), "-A");
         generatedArguments.addFileToArguments(configuration.getRunFailed(), "-R");
 
         generatedArguments.addNonEmptyStringToArguments(configuration.getName(), "-N");
@@ -175,7 +174,7 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
         }
 
         if (configuration.getXunitFile() == null) {
-            configuration.setXunitFile(new File("TEST-" + path.replace(' ', '_') + ".xml"));
+            configuration.setXunitFile("TEST-" + path.replace(' ', '_') + ".xml");
         }
         generatedArguments.addFileToArguments(configuration.getXunitFile(), "-x");
         generatedArguments.addFlagToArguments(true, "--xunitskipnoncritical");

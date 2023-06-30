@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation,yaml", title = "YAML Type Filter")
 @XmlRootElement(name = "typeFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class YAMLTypeFilterDefinition {
+public class YAMLTypeFilterDefinition {
 
     @XmlAttribute
     private String value;

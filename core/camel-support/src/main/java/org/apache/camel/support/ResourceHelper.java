@@ -301,7 +301,7 @@ public final class ResourceHelper {
             }
 
             @Override
-            public InputStream getInputStream() throws IOException {
+            public InputStream getInputStream() {
                 return new ByteArrayInputStream(content);
             }
         };

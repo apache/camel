@@ -40,9 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Mail producer concurrent test.
  */
 public class MailProducerConcurrentTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser camel = Mailbox.getOrCreateUser("camel", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser someone = Mailbox.getOrCreateUser("someone", "secret");
 
     @Test

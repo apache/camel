@@ -45,10 +45,11 @@ public class CloudtrailComponent extends DefaultComponent {
         configuration.setLabel(remaining);
         CloudtrailEndpoint endpoint = new CloudtrailEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getCloudTrailClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
+                && configuration.getCloudTrailClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, cloudTrailClient or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, cloudTrailClient or accessKey and secretKey must be specified");
         }
         return endpoint;
     }

@@ -245,6 +245,13 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSimpleThreadId() throws Exception {
+        long id = Thread.currentThread().getId();
+        assertExpression("${threadId}", id);
+        assertExpression("The id is ${threadId}", "The id is " + id);
+    }
+
+    @Test
     public void testSimpleThreadName() throws Exception {
         String name = Thread.currentThread().getName();
         assertExpression("${threadName}", name);
@@ -337,7 +344,7 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testOGNLBodyEmptyList() throws Exception {
         Map<String, List<String>> map = new HashMap<>();
-        map.put("list", new ArrayList<String>());
+        map.put("list", new ArrayList<>());
 
         exchange.getIn().setBody(map);
 
@@ -1978,6 +1985,80 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${bodyOneLine}", "HelloGreatWorld");
         assertExpression("Hi ${bodyOneLine}", "Hi HelloGreatWorld");
         assertExpression("Hi ${bodyOneLine} Again", "Hi HelloGreatWorld Again");
+    }
+
+    @Test
+    public void testJsonPrettyPrint() throws Exception {
+
+        StringBuilder expectedJson = new StringBuilder();
+        expectedJson.append("{");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\"firstName\": \"foo\",");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\"lastName\": \"bar\"");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("}");
+        expectedJson.append(System.lineSeparator());
+
+        exchange.getIn().setBody("{\"firstName\": \"foo\", \"lastName\": \"bar\"}");
+        assertExpression("${prettyBody}", expectedJson.toString());
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson.toString());
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson.toString() + " Again");
+
+        expectedJson = new StringBuilder();
+        expectedJson.append("[");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t{");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"firstName\": \"foo\",");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"lastName\": \"bar\"");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t},");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t{");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"firstName\": \"foo\",");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t\t\"lastName\": \"bar\"");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("\t}");
+        expectedJson.append(System.lineSeparator());
+        expectedJson.append("]");
+        expectedJson.append(System.lineSeparator());
+
+        exchange.getIn()
+                .setBody("[{\"firstName\": \"foo\", \"lastName\": \"bar\"},{\"firstName\": \"foo\", \"lastName\": \"bar\"}]");
+        assertExpression("${prettyBody}", expectedJson.toString());
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedJson.toString());
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedJson.toString() + " Again");
+
+    }
+
+    @Test
+    public void testXMLPrettyPrint() throws Exception {
+        StringBuilder expectedXml = new StringBuilder();
+        expectedXml.append("<person>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  <firstName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("    foo");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  </firstName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  <lastName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("    bar");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("  </lastName>");
+        expectedXml.append(System.lineSeparator());
+        expectedXml.append("</person>");
+
+        exchange.getIn().setBody("<person><firstName>foo</firstName><lastName>bar</lastName></person>");
+
+        assertExpression("${prettyBody}", expectedXml.toString());
+        assertExpression("Hi ${prettyBody}", "Hi " + expectedXml.toString());
+        assertExpression("Hi ${prettyBody} Again", "Hi " + expectedXml.toString() + " Again");
     }
 
     @Test

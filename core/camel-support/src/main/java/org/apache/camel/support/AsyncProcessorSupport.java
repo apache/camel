@@ -26,14 +26,6 @@ import org.apache.camel.support.service.ServiceSupport;
 public abstract class AsyncProcessorSupport extends ServiceSupport implements AsyncProcessor {
 
     @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorAwaitManager awaitManager
                 = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());

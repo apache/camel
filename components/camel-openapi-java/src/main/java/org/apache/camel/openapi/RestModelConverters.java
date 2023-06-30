@@ -60,11 +60,11 @@ public class RestModelConverters {
             // File is a special type in OAS2 / OAS3 (no model)
             return null;
         } else {
-            return readClassOpenApi3(oasDocument, clazz);
+            return readClassOpenApi3(clazz);
         }
     }
 
-    private List<? extends Schema> readClassOpenApi3(OpenAPI oasDocument, Class<?> clazz) {
+    private List<? extends Schema> readClassOpenApi3(Class<?> clazz) {
         String name = clazz.getName();
         if (!name.contains(".")) {
             return null;

@@ -107,7 +107,7 @@ public class OpenAPI3to2 {
             }
         }
         if (openApi3.getComponents() != null && openApi3.getComponents().getSecuritySchemes() != null) {
-            convertSecurityDefinitions(openApi2, openApi3.getComponents().getSecuritySchemes());
+            convertSecurityDefinitions(openApi3.getComponents().getSecuritySchemes());
         }
         if (openApi3.getSecurity() != null) {
             for (SecurityRequirement sr : openApi3.getSecurity()) {
@@ -124,7 +124,7 @@ public class OpenAPI3to2 {
         return sreq;
     }
 
-    private void convertSecurityDefinitions(Swagger openApi22, Map<String, SecurityScheme> securitySchemes) {
+    private void convertSecurityDefinitions(Map<String, SecurityScheme> securitySchemes) {
         for (Map.Entry<String, SecurityScheme> entry : securitySchemes.entrySet()) {
             openApi2.addSecurityDefinition(entry.getKey(), convertSecurityScheme(entry.getValue()));
         }
@@ -348,7 +348,7 @@ public class OpenAPI3to2 {
             }
             return headerProp;
         } else {
-            log.warn("Missing schema for Header {}", header.toString());
+            log.warn("Missing schema for Header {}", header);
             return null;
         }
     }
@@ -356,7 +356,7 @@ public class OpenAPI3to2 {
     private List<String> getConsumers(RequestBody requestBody) {
         // set consumes for the op to all keys of contentTypes
         if (requestBody.getContent() != null) {
-            return new java.util.ArrayList<String>(requestBody.getContent().keySet());
+            return new java.util.ArrayList<>(requestBody.getContent().keySet());
         } else {
             return Collections.emptyList();
         }

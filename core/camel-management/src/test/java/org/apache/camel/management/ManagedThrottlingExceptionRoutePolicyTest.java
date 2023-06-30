@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import javax.management.JMX;
@@ -84,6 +86,12 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         String myState = proxy.currentState();
         assertEquals("State closed, failures 0", myState);
 
+        // exception types
+        String[] types = proxy.getExceptionTypes();
+        assertEquals(2, types.length);
+        assertEquals("java.io.IOException", types[0]);
+        assertEquals("java.lang.UnsupportedOperationException", types[1]);
+
         // the route has no failures
         Integer val = proxy.getCurrentFailures();
         assertEquals(0, val.intValue());
@@ -140,7 +148,9 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(10, 1000, 5000, null);
+        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(
+                10, 1000, 5000,
+                List.of(IOException.class, UnsupportedOperationException.class));
         policy.setHalfOpenHandler(new DummyHandler());
 
         return new RouteBuilder() {
@@ -161,7 +171,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         public void process(Exchange exchange) throws Exception {
             // need to sleep a little to cause last failure to be slow
             Thread.sleep(50);
-            throw new RuntimeException("boom!");
+            throw new IOException("boom!");
         }
 
     }

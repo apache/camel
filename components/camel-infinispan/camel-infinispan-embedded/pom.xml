@@ -33,12 +33,6 @@
     <description>Camel Infinispan Embedded support</description>
 
     <dependencies>
-        <!-- infinispan embedded uses caffeine 2.x -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>2.9.3</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-infinispan-common</artifactId>
@@ -47,12 +41,6 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core-jakarta</artifactId>
             <version>${infinispan-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.ben-manes.caffeine</groupId>
-                    <artifactId>caffeine</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -136,19 +124,29 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>infinispan.test.jgroups.protocol</name>
-                            <value>tcp</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

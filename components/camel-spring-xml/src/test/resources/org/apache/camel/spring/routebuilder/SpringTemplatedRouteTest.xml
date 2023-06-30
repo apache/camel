@@ -24,8 +24,7 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <camelContext id="foo" xmlns="http://camel.apache.org/schema/spring">
-        <routeTemplate id="myTemplate">
-            <description>blah blah</description>
+        <routeTemplate id="myTemplate" description="blah blah">
             <templateParameter name="foo"/>
             <templateParameter name="bar"/>
             <route>

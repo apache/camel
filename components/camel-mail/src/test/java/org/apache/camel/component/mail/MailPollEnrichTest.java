@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test with poll enrich
  */
 public class MailPollEnrichTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser bill = Mailbox.getOrCreateUser("bill", "secret");
 
     @Override

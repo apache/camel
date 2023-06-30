@@ -54,8 +54,8 @@ public class RouteControllerAction extends ActionWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
-    String name;
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    String name = "*";
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = IdStateCompletionCandidates.class,
                         description = "Sort by id, or state", defaultValue = "id")

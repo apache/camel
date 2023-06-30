@@ -27,6 +27,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
@@ -41,6 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")
+@XmlType(propOrder = { "whenClauses", "otherwise" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
 
@@ -65,7 +67,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
         // wrap the outputs into a list where we can on the inside control the
         // when/otherwise
         // but make it appear as a list on the outside
-        return new AbstractList<ProcessorDefinition<?>>() {
+        return new AbstractList<>() {
 
             public ProcessorDefinition<?> get(int index) {
                 if (index < whenClauses.size()) {

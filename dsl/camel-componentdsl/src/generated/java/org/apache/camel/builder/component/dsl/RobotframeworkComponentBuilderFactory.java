@@ -91,18 +91,18 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * A text file to read more arguments from.
+         * A text String to read more arguments from.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
-         * @param argumentFile the value to set
+         * @param argumentFiles the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder argumentFile(
-                java.io.File argumentFile) {
-            doSetProperty("argumentFile", argumentFile);
+        default RobotframeworkComponentBuilder argumentFiles(
+                java.lang.String argumentFiles) {
+            doSetProperty("argumentFiles", argumentFiles);
             return this;
         }
         /**
@@ -137,16 +137,17 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * A debug file that is written during execution.
+         * A debug String that is written during execution.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param debugFile the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder debugFile(java.io.File debugFile) {
+        default RobotframeworkComponentBuilder debugFile(
+                java.lang.String debugFile) {
             doSetProperty("debugFile", debugFile);
             return this;
         }
@@ -260,16 +261,16 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the path to the generated log file.
+         * Sets the path to the generated log String.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param log the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder log(java.io.File log) {
+        default RobotframeworkComponentBuilder log(java.lang.String log) {
             doSetProperty("log", log);
             return this;
         }
@@ -400,23 +401,23 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the path to the generated output file.
+         * Sets the path to the generated output String.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param output the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder output(java.io.File output) {
+        default RobotframeworkComponentBuilder output(java.lang.String output) {
             doSetProperty("output", output);
             return this;
         }
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -424,7 +425,7 @@ public interface RobotframeworkComponentBuilderFactory {
          * @return the dsl builder
          */
         default RobotframeworkComponentBuilder outputDirectory(
-                java.io.File outputDirectory) {
+                java.lang.String outputDirectory) {
             doSetProperty("outputDirectory", outputDirectory);
             return this;
         }
@@ -445,16 +446,16 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the path to the generated report file.
+         * Sets the path to the generated report String.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param report the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder report(java.io.File report) {
+        default RobotframeworkComponentBuilder report(java.lang.String report) {
             doSetProperty("report", report);
             return this;
         }
@@ -507,16 +508,17 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Re-run failed tests, based on output.xml file.
+         * Re-run failed tests, based on output.xml String.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param runFailed the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder runFailed(java.io.File runFailed) {
+        default RobotframeworkComponentBuilder runFailed(
+                java.lang.String runFailed) {
             doSetProperty("runFailed", runFailed);
             return this;
         }
@@ -750,7 +752,7 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Show a warning when an invalid file is skipped.
+         * Show a warning when an invalid String is skipped.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -766,19 +768,20 @@ public interface RobotframeworkComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the path to the generated XUnit compatible result file, relative
-         * to outputDirectory. The file is in xml format. By default, the file
-         * name is derived from the testCasesDirectory parameter, replacing
-         * blanks in the directory name by underscores.
+         * Sets the path to the generated XUnit compatible result String,
+         * relative to outputDirectory. The String is in xml format. By default,
+         * the String name is derived from the testCasesDirectory parameter,
+         * replacing blanks in the directory name by underscores.
          * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param xunitFile the value to set
          * @return the dsl builder
          */
-        default RobotframeworkComponentBuilder xunitFile(java.io.File xunitFile) {
+        default RobotframeworkComponentBuilder xunitFile(
+                java.lang.String xunitFile) {
             doSetProperty("xunitFile", xunitFile);
             return this;
         }
@@ -891,10 +894,10 @@ public interface RobotframeworkComponentBuilderFactory {
             switch (name) {
             case "allowContextMapAll": getOrCreateConfiguration((RobotFrameworkComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": getOrCreateConfiguration((RobotFrameworkComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
-            case "argumentFile": getOrCreateConfiguration((RobotFrameworkComponent) component).setArgumentFile((java.io.File) value); return true;
+            case "argumentFiles": getOrCreateConfiguration((RobotFrameworkComponent) component).setArgumentFiles((java.lang.String) value); return true;
             case "combinedTagStats": getOrCreateConfiguration((RobotFrameworkComponent) component).setCombinedTagStats((java.lang.String) value); return true;
             case "criticalTags": getOrCreateConfiguration((RobotFrameworkComponent) component).setCriticalTags((java.lang.String) value); return true;
-            case "debugFile": getOrCreateConfiguration((RobotFrameworkComponent) component).setDebugFile((java.io.File) value); return true;
+            case "debugFile": getOrCreateConfiguration((RobotFrameworkComponent) component).setDebugFile((java.lang.String) value); return true;
             case "document": getOrCreateConfiguration((RobotFrameworkComponent) component).setDocument((java.lang.String) value); return true;
             case "dryrun": getOrCreateConfiguration((RobotFrameworkComponent) component).setDryrun((boolean) value); return true;
             case "excludes": getOrCreateConfiguration((RobotFrameworkComponent) component).setExcludes((java.lang.String) value); return true;
@@ -902,7 +905,7 @@ public interface RobotframeworkComponentBuilderFactory {
             case "includes": getOrCreateConfiguration((RobotFrameworkComponent) component).setIncludes((java.lang.String) value); return true;
             case "listener": getOrCreateConfiguration((RobotFrameworkComponent) component).setListener((java.lang.String) value); return true;
             case "listeners": getOrCreateConfiguration((RobotFrameworkComponent) component).setListeners((java.lang.String) value); return true;
-            case "log": getOrCreateConfiguration((RobotFrameworkComponent) component).setLog((java.io.File) value); return true;
+            case "log": getOrCreateConfiguration((RobotFrameworkComponent) component).setLog((java.lang.String) value); return true;
             case "logLevel": getOrCreateConfiguration((RobotFrameworkComponent) component).setLogLevel((java.lang.String) value); return true;
             case "logTitle": getOrCreateConfiguration((RobotFrameworkComponent) component).setLogTitle((java.lang.String) value); return true;
             case "metadata": getOrCreateConfiguration((RobotFrameworkComponent) component).setMetadata((java.lang.String) value); return true;
@@ -911,14 +914,14 @@ public interface RobotframeworkComponentBuilderFactory {
             case "name": getOrCreateConfiguration((RobotFrameworkComponent) component).setName((java.lang.String) value); return true;
             case "nonCriticalTags": getOrCreateConfiguration((RobotFrameworkComponent) component).setNonCriticalTags((java.lang.String) value); return true;
             case "noStatusReturnCode": getOrCreateConfiguration((RobotFrameworkComponent) component).setNoStatusReturnCode((boolean) value); return true;
-            case "output": getOrCreateConfiguration((RobotFrameworkComponent) component).setOutput((java.io.File) value); return true;
-            case "outputDirectory": getOrCreateConfiguration((RobotFrameworkComponent) component).setOutputDirectory((java.io.File) value); return true;
+            case "output": getOrCreateConfiguration((RobotFrameworkComponent) component).setOutput((java.lang.String) value); return true;
+            case "outputDirectory": getOrCreateConfiguration((RobotFrameworkComponent) component).setOutputDirectory((java.lang.String) value); return true;
             case "randomize": getOrCreateConfiguration((RobotFrameworkComponent) component).setRandomize((java.lang.String) value); return true;
-            case "report": getOrCreateConfiguration((RobotFrameworkComponent) component).setReport((java.io.File) value); return true;
+            case "report": getOrCreateConfiguration((RobotFrameworkComponent) component).setReport((java.lang.String) value); return true;
             case "reportBackground": getOrCreateConfiguration((RobotFrameworkComponent) component).setReportBackground((java.lang.String) value); return true;
             case "reportTitle": getOrCreateConfiguration((RobotFrameworkComponent) component).setReportTitle((java.lang.String) value); return true;
             case "runEmptySuite": getOrCreateConfiguration((RobotFrameworkComponent) component).setRunEmptySuite((boolean) value); return true;
-            case "runFailed": getOrCreateConfiguration((RobotFrameworkComponent) component).setRunFailed((java.io.File) value); return true;
+            case "runFailed": getOrCreateConfiguration((RobotFrameworkComponent) component).setRunFailed((java.lang.String) value); return true;
             case "runMode": getOrCreateConfiguration((RobotFrameworkComponent) component).setRunMode((java.lang.String) value); return true;
             case "skipTeardownOnExit": getOrCreateConfiguration((RobotFrameworkComponent) component).setSkipTeardownOnExit((boolean) value); return true;
             case "splitOutputs": getOrCreateConfiguration((RobotFrameworkComponent) component).setSplitOutputs((java.lang.String) value); return true;
@@ -935,7 +938,7 @@ public interface RobotframeworkComponentBuilderFactory {
             case "variableFiles": getOrCreateConfiguration((RobotFrameworkComponent) component).setVariableFiles((java.lang.String) value); return true;
             case "variables": getOrCreateConfiguration((RobotFrameworkComponent) component).setVariables((java.lang.String) value); return true;
             case "warnOnSkippedFiles": getOrCreateConfiguration((RobotFrameworkComponent) component).setWarnOnSkippedFiles((boolean) value); return true;
-            case "xunitFile": getOrCreateConfiguration((RobotFrameworkComponent) component).setXunitFile((java.io.File) value); return true;
+            case "xunitFile": getOrCreateConfiguration((RobotFrameworkComponent) component).setXunitFile((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RobotFrameworkComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((RobotFrameworkComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((RobotFrameworkComponent) component).setAutowiredEnabled((boolean) value); return true;

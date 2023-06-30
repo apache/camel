@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
@@ -288,7 +287,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                 if (e != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
+                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint, e);
                     }
                     current.setException(null);
                 }
@@ -364,7 +363,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                     : ExchangeHelper.resolveEndpoint(exchange, recipient);
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoints()) {
-                LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
             } else {
                 throw e;
             }
@@ -461,7 +460,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                                 FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
                                 if (e != null) {
                                     if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.",
+                                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint,
                                                 e);
                                     }
                                     current.setException(null);
@@ -566,13 +565,6 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return producerCache.getEndpointUtilizationStatistics();
-    }
-
-    /**
-     * Returns the outbound message if available. Otherwise return the inbound message.
-     */
-    private Message getResultMessage(Exchange exchange) {
-        return exchange.getMessage();
     }
 
     /**

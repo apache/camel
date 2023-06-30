@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package org.apache.camel.builder.endpoint;
 
 import java.util.List;
@@ -32,6 +31,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2Builders,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2Builders,
             org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3Builders,
+            org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQBuilders,
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbBuilders,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskBuilders,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2Builders,
@@ -107,6 +107,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.FhirBuilders,
             org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileBuilders,
             org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchBuilders,
+            org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesBuilders,
             org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.FlatpackBuilders,
             org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkBuilders,
             org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.FopBuilders,
@@ -365,4 +366,3 @@ public interface EndpointBuilderFactory
         };
     }
 }
-//CHECKSTYLE:ON

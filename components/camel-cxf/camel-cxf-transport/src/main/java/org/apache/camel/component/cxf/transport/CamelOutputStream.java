@@ -128,7 +128,7 @@ class CamelOutputStream extends CachedOutputStream {
         Runnable runnable = () -> {
             try {
                 syncInvoke(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 ((PhaseInterceptorChain) outMessage.getInterceptorChain()).abort();
                 outMessage.setContent(Exception.class, e);
                 ((PhaseInterceptorChain) outMessage.getInterceptorChain()).unwind(outMessage);

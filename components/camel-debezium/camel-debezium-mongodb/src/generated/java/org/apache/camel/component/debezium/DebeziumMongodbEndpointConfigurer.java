@@ -86,6 +86,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbSslInvalidHostnameAllowed": target.getConfiguration().setMongodbSslInvalidHostnameAllowed(property(camelContext, boolean.class, value)); return true;
         case "mongodbuser":
         case "mongodbUser": target.getConfiguration().setMongodbUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": target.getConfiguration().setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": target.getConfiguration().setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
@@ -116,6 +120,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalenabledchannels":
+        case "signalEnabledChannels": target.getConfiguration().setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": target.getConfiguration().setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotcollectionfilteroverrides":
@@ -130,6 +138,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotMaxThreads": target.getConfiguration().setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": target.getConfiguration().setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         case "topicnamingstrategy":
@@ -208,6 +218,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbSslInvalidHostnameAllowed": return boolean.class;
         case "mongodbuser":
         case "mongodbUser": return java.lang.String.class;
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return java.lang.String.class;
         case "offsetcommittimeoutms":
@@ -238,6 +252,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalenabledchannels":
+        case "signalEnabledChannels": return java.lang.String.class;
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": return long.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotcollectionfilteroverrides":
@@ -252,6 +270,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
         case "topicnamingstrategy":
@@ -331,6 +351,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbSslInvalidHostnameAllowed": return target.getConfiguration().isMongodbSslInvalidHostnameAllowed();
         case "mongodbuser":
         case "mongodbUser": return target.getConfiguration().getMongodbUser();
+        case "notificationenabledchannels":
+        case "notificationEnabledChannels": return target.getConfiguration().getNotificationEnabledChannels();
+        case "notificationsinktopicname":
+        case "notificationSinkTopicName": return target.getConfiguration().getNotificationSinkTopicName();
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return target.getConfiguration().getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
@@ -361,6 +385,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
+        case "signalenabledchannels":
+        case "signalEnabledChannels": return target.getConfiguration().getSignalEnabledChannels();
+        case "signalpollintervalms":
+        case "signalPollIntervalMs": return target.getConfiguration().getSignalPollIntervalMs();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotcollectionfilteroverrides":
@@ -375,6 +403,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotMaxThreads": return target.getConfiguration().getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
+        case "sourceinfostructmaker":
+        case "sourceinfoStructMaker": return target.getConfiguration().getSourceinfoStructMaker();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
         case "topicnamingstrategy":

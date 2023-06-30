@@ -79,7 +79,7 @@ public class RocketMQProducer extends DefaultAsyncProducer {
             } else {
                 return processInOnly(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;

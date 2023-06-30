@@ -82,7 +82,7 @@ public class DefaultMapStructFinder extends ServiceSupport implements MapStructM
                     answer.incrementAndGet();
                 });
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.debug("Mapper class: {} is not a MapStruct Mapper. Skipping this class.", clazz);
         }
 

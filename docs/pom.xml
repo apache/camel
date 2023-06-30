@@ -44,77 +44,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <!-- we want to copy some adoc files from tooling -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-maven-plugin-doc</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/user-manual/modules/ROOT/pages</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>../tooling/maven/camel-maven-plugin/src/main/docs</directory>
-                                </resource>
-                                <resource>
-                                    <directory>../catalog/camel-report-maven-plugin/src/main/docs</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.12.1</version>
-                <executions>
-                    <execution>
-                        <id>install node and yarn</id>
-                        <goals>
-                            <goal>install-node-and-yarn</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v16.17.1</nodeVersion>
-                            <yarnVersion>v1.22.19</yarnVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>yarn-gulp</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>gulp</arguments>
-                            <skip>${skipOnUnsupported}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>xref-check</id>
-                        <goals>
-                            <goal>xref-check</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>x86</id>
@@ -148,6 +77,84 @@
             <properties>
                 <skipOnUnsupported>false</skipOnUnsupported>
             </properties>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- we want to copy some adoc files from tooling -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-maven-plugin-doc</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/user-manual/modules/ROOT/pages</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../tooling/maven/camel-maven-plugin/src/main/docs</directory>
+                                        </resource>
+                                        <resource>
+                                            <directory>../catalog/camel-report-maven-plugin/src/main/docs</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.12.1</version>
+                        <executions>
+                            <execution>
+                                <id>install node and yarn</id>
+                                <goals>
+                                    <goal>install-node-and-yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>v16.17.1</nodeVersion>
+                                    <yarnVersion>v1.22.19</yarnVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>yarn-gulp</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>gulp</arguments>
+                                    <skip>${skipOnUnsupported}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-package-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>xref-check</id>
+                                <goals>
+                                    <goal>xref-check</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

@@ -119,8 +119,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.DelayDefinition": return new ModelDeserializers.DelayDefinitionDeserializer();
             case "delete": return new ModelDeserializers.DeleteDefinitionDeserializer();
             case "org.apache.camel.model.rest.DeleteDefinition": return new ModelDeserializers.DeleteDefinitionDeserializer();
-            case "description": return new ModelDeserializers.DescriptionDefinitionDeserializer();
-            case "org.apache.camel.model.DescriptionDefinition": return new ModelDeserializers.DescriptionDefinitionDeserializer();
             case "dns-service-discovery": return new ModelDeserializers.DnsServiceCallServiceDiscoveryConfigurationDeserializer();
             case "dnsServiceDiscovery": return new ModelDeserializers.DnsServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.DnsServiceCallServiceDiscoveryConfigurationDeserializer();

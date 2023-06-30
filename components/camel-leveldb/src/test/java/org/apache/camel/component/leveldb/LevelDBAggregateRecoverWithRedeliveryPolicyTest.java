@@ -85,25 +85,23 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // CHECKSTYLE:OFF
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
-                            .completionSize(5).aggregationRepository(getRepo())
-                            // this is the output from the aggregator
-                            .log("aggregated exchange id ${exchangeId} with ${body}")
-                            .to("mock:aggregated")
-                            // simulate errors the first three times
-                            .process(new Processor() {
-                                public void process(Exchange exchange) {
-                                    int count = getCounter(getSerializerType()).incrementAndGet();
-                                    if (count <= 3) {
-                                        throw new IllegalArgumentException("Damn");
-                                    }
+                        .completionSize(5).aggregationRepository(getRepo())
+                        // this is the output from the aggregator
+                        .log("aggregated exchange id ${exchangeId} with ${body}")
+                        .to("mock:aggregated")
+                        // simulate errors the first three times
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                int count = getCounter(getSerializerType()).incrementAndGet();
+                                if (count <= 3) {
+                                    throw new IllegalArgumentException("Damn");
                                 }
-                            })
-                            .to("mock:result")
+                            }
+                        })
+                        .to("mock:result")
                         .end();
-                // CHECKSTYLE:ON
             }
         };
     }

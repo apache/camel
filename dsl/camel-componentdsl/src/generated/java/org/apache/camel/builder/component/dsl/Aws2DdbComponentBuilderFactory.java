@@ -218,6 +218,22 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the DDB client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -346,6 +362,23 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the DDB client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
@@ -444,6 +477,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "lazyStartProducer": ((Ddb2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Ddb2Component) component).setOperation((org.apache.camel.component.aws2.ddb.Ddb2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Ddb2Component) component).setOverrideEndpoint((boolean) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Ddb2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ddb2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Ddb2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ddb2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -452,6 +486,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Ddb2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ddb2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((Ddb2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
             case "autowiredEnabled": ((Ddb2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;

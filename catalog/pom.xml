@@ -43,19 +43,11 @@
         <module>camel-catalog-console</module>
         <module>camel-catalog-lucene</module>
         <module>camel-catalog-maven</module>
+        <module>camel-catalog-maven-grape</module>
         <!-- tooling that depends on catalog -->
         <module>camel-route-parser</module>
         <module>camel-csimple-maven-plugin</module>
         <module>camel-report-maven-plugin</module>
     </modules>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

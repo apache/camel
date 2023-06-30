@@ -130,7 +130,7 @@ namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
 
 final KeyStoreParameters tsParameters = new KeyStoreParameters();
 tsParameters.setPassword("password");
-tsParameters.setResource("sender.ts");
+tsParameters.setResource("sender.truststore");
 
 context.addRoutes(new RouteBuilder() {
     public void configure() {
@@ -171,7 +171,7 @@ Spring XML Sender
 [source,xml]
 --------------------------------------------------------------------------------------------------
 <!--  trust store configuration -->                          
-<camel:keyStoreParameters id="trustStoreParams" resource="./sender.ts" password="password"/>
+<camel:keyStoreParameters id="trustStoreParams" resource="./sender.truststore" password="password"/>
 
 <camelContext id="springXmlSecurityDataFormatTestCamelContext" 
               xmlns="http://camel.apache.org/schema/spring"
@@ -196,7 +196,7 @@ Spring XML Recipient
 ----------------------------------------------------------------------------------------------
 
 <!--  key store configuration -->
-<camel:keyStoreParameters id="keyStoreParams" resource="./recipient.ks" password="password" />
+<camel:keyStoreParameters id="keyStoreParams" resource="./recipient.keystore" password="password" />
 
 <camelContext id="springXmlSecurityDataFormatTestCamelContext" 
               xmlns="http://camel.apache.org/schema/spring"

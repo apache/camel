@@ -114,10 +114,10 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
                                                                                 + "upload the file. However if this causes problems, you can turn this option off.")
     private boolean sendNoop = true;
 
-    public RemoteFileConfiguration() {
+    protected RemoteFileConfiguration() {
     }
 
-    public RemoteFileConfiguration(URI uri) {
+    protected RemoteFileConfiguration(URI uri) {
         configure(uri);
     }
 

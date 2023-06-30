@@ -82,9 +82,9 @@ public class DefaultExecBinding implements ExecBinding {
             argsList = splitToWhiteSpaceSeparatedTokens(s);
         }
 
-        Set<Integer> exitValues = new HashSet<Integer>();
+        Set<Integer> exitValues = new HashSet<>();
         if (exitValuesString != null && exitValuesString.length() > 0) {
-            exitValues = new HashSet<Integer>(splitCommaSeparatedToListOfInts(exitValuesString));
+            exitValues = new HashSet<>(splitCommaSeparatedToListOfInts(exitValuesString));
         }
 
         File outFile = outFilePath == null ? null : new File(outFilePath);

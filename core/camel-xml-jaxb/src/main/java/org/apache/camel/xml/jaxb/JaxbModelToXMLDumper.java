@@ -40,8 +40,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.DelegateEndpoint;
-import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -154,71 +152,50 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders)
             throws Exception {
         String xml = dumpModelAsXml(context, definition);
 
         // if resolving placeholders we parse the xml, and resolve the property
         // placeholders during parsing
-        if (resolvePlaceholders || resolveDelegateEndpoints) {
+        if (resolvePlaceholders) {
             final AtomicBoolean changed = new AtomicBoolean();
             final InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
             final Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-                private String prev;
 
                 @Override
                 public String transform(String text) {
                     String after = text;
-                    if (resolveDelegateEndpoints && "uri".equals(prev)) {
-                        try {
-                            // must resolve placeholder as the endpoint may use
-                            // property placeholders
-                            String uri = context.resolvePropertyPlaceholders(text);
-                            Endpoint endpoint = context.hasEndpoint(uri);
-                            if (endpoint instanceof DelegateEndpoint) {
-                                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
-                                after = endpoint.getEndpointUri();
-                            }
-                        } catch (Exception e) {
-                            // ignore
+
+                    PropertiesComponent pc = context.getPropertiesComponent();
+                    Properties prop = new Properties();
+                    Iterator<?> it = null;
+                    if (definition instanceof RouteDefinition) {
+                        it = ObjectHelper.createIterator(definition);
+                    } else if (definition instanceof RoutesDefinition) {
+                        it = ObjectHelper.createIterator(((RoutesDefinition) definition).getRoutes());
+                    }
+                    while (it != null && it.hasNext()) {
+                        RouteDefinition routeDefinition = (RouteDefinition) it.next();
+                        // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
+                        if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
+                                && routeDefinition.getTemplateParameters() != null) {
+                            prop.putAll(routeDefinition.getTemplateParameters());
                         }
                     }
-
-                    if (resolvePlaceholders) {
-                        PropertiesComponent pc = context.getPropertiesComponent();
-                        Properties prop = new Properties();
-                        Iterator<?> it = null;
-                        if (definition instanceof RouteDefinition) {
-                            it = ObjectHelper.createIterator(definition);
-                        } else if (definition instanceof RoutesDefinition) {
-                            it = ObjectHelper.createIterator(((RoutesDefinition) definition).getRoutes());
-                        }
-                        while (it != null && it.hasNext()) {
-                            RouteDefinition routeDefinition = (RouteDefinition) it.next();
-                            // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
-                            if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
-                                    && routeDefinition.getTemplateParameters() != null) {
-                                prop.putAll(routeDefinition.getTemplateParameters());
-                            }
-                        }
-                        pc.setLocalProperties(prop);
-                        try {
-                            after = context.resolvePropertyPlaceholders(after);
-                        } catch (Exception e) {
-                            // ignore
-                        } finally {
-                            // clear local after the route is dumped
-                            pc.setLocalProperties(null);
-                        }
+                    pc.setLocalProperties(prop);
+                    try {
+                        after = context.resolvePropertyPlaceholders(after);
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        // clear local after the route is dumped
+                        pc.setLocalProperties(null);
                     }
 
                     if (!changed.get()) {
                         changed.set(!text.equals(after));
                     }
-
-                    // okay the previous must be the attribute key with uri, so
-                    // it refers to an endpoint
-                    prev = text;
 
                     return after;
                 }

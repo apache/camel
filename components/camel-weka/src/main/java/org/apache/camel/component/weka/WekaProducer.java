@@ -33,7 +33,6 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
 
-@SuppressWarnings("checkstyle:rightcurly")
 public class WekaProducer extends DefaultProducer {
 
     static final Logger LOG = LoggerFactory.getLogger(WekaProducer.class);

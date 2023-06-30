@@ -167,14 +167,4 @@ public abstract class EventNotifierSupport extends SimpleEventNotifierSupport im
     public void setIgnoreStepEvents(boolean ignoreStepEvents) {
         this.ignoreStepEvents = ignoreStepEvents;
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

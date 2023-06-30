@@ -49,7 +49,7 @@ The camel.main supports 118 options, which are listed below.
 | *camel.main.debugging* | Sets whether debugging is enabled or not. Default is false. | false | boolean
 | *camel.main.description* | Sets the description (intended for humans) of the Camel application. |  | String
 | *camel.main.devConsoleEnabled* | Whether to enable developer console (requires camel-console on classpath). The developer console is only for assisting during development. This is NOT for production usage. | false | boolean
-| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML. | false | boolean
+| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML. |  | String
 | *camel.main.durationHitExitCode* | Sets the exit code for the application if duration was hit |  | int
 | *camel.main.durationMaxAction* | Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is triggered. | shutdown | String
 | *camel.main.durationMaxIdle{zwsp}Seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
@@ -144,6 +144,7 @@ The camel.main supports 118 options, which are listed below.
 | *camel.main.uuidGenerator* | UUID generator to use. default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off (turned off for exchanges - only intended for performance profiling) | default | String
 |===
 
+
 === Camel Thread Pool configurations
 The camel.threadpool supports 8 options, which are listed below.
 
@@ -160,6 +161,7 @@ The camel.threadpool supports 8 options, which are listed below.
 | *camel.threadpool.timeUnit* | Sets the default time unit used for keep alive time |  | TimeUnit
 |===
 
+
 === Camel Health Check configurations
 The camel.health supports 8 options, which are listed below.
 
@@ -175,6 +177,7 @@ The camel.health supports 8 options, which are listed below.
 | *camel.health.registryEnabled* | Whether registry health check is enabled | true | Boolean
 | *camel.health.routesEnabled* | Whether routes health check is enabled | true | Boolean
 |===
+
 
 === Camel Rest-DSL configurations
 The camel.rest supports 27 options, which are listed below.
@@ -211,6 +214,7 @@ The camel.rest supports 27 options, which are listed below.
 | *camel.rest.xmlDataFormat* | Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 |===
 
+
 === Camel AWS Vault configurations
 The camel.vault.aws supports 9 options, which are listed below.
 
@@ -228,6 +232,7 @@ The camel.vault.aws supports 9 options, which are listed below.
 | *camel.vault.aws.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 |===
 
+
 === Camel GCP Vault configurations
 The camel.vault.gcp supports 7 options, which are listed below.
 
@@ -242,6 +247,7 @@ The camel.vault.gcp supports 7 options, which are listed below.
 | *camel.vault.gcp.subscription{zwsp}Name* | Define the Google Pubsub subscription Name to be used when checking for updates |  | String
 | *camel.vault.gcp.useDefault{zwsp}Instance* | Define if we want to use the GCP Client Default Instance or not | false | boolean
 |===
+
 
 === Camel Azure Key Vault configurations
 The camel.vault.azure supports 11 options, which are listed below.
@@ -261,6 +267,7 @@ The camel.vault.azure supports 11 options, which are listed below.
 | *camel.vault.azure.tenantId* | The Tenant Id for accessing Azure Key Vault |  | String
 | *camel.vault.azure.vaultName* | The vault Name in Azure Key Vault |  | String
 |===
+
 
 === Fault Tolerance EIP Circuit Breaker configurations
 The camel.faulttolerance supports 13 options, which are listed below.
@@ -282,6 +289,7 @@ The camel.faulttolerance supports 13 options, which are listed below.
 | *camel.faulttolerance.timeout{zwsp}PoolSize* | Configures the pool size of the thread pool when timeout is enabled. Default value is 10. | 10 | Integer
 | *camel.faulttolerance.timeout{zwsp}ScheduledExecutorService* | References to a custom thread pool to use when timeout is enabled |  | String
 |===
+
 
 === Resilience4j EIP Circuit Breaker configurations
 The camel.resilience4j supports 20 options, which are listed below.
@@ -310,6 +318,7 @@ The camel.resilience4j supports 20 options, which are listed below.
 | *camel.resilience4j.wait{zwsp}DurationInOpenState* | Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open. Default value is 60 seconds. | 60 | Integer
 | *camel.resilience4j.writable{zwsp}StackTraceEnabled* | Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array. This may be used to reduce log spam when the circuit breaker is open as the cause of the exceptions is already known (the circuit breaker is short-circuiting calls). | false | Boolean
 |===
+
 
 === Camel Saga EIP (Long Running Actions) configurations
 The camel.lra supports 4 options, which are listed below.

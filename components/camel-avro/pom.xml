@@ -32,32 +32,7 @@
     <description>Camel Avro data format</description>
 
     <properties>
-</properties>
-
-    <build>
-        <plugins>
-            <!--plugin>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro-maven-plugin</artifactId>
-                <version>${avro-version}</version>
-                <executions>
-                    <execution>
-                        <id>schemas</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>schema</goal>
-                            <goal>protocol</goal>
-                            <goal>idl-protocol</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/test/avro/</sourceDirectory>
-                            <outputDirectory>${project.basedir}/src/test/java/</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin-->
-        </plugins>
-    </build>
+    </properties>
 
     <dependencies>
         <dependency>

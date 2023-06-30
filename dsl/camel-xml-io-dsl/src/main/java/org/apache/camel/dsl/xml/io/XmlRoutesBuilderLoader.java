@@ -16,9 +16,16 @@
  */
 package org.apache.camel.dsl.xml.io;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.w3c.dom.Document;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContextAware;
@@ -60,6 +67,14 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> NAMESPACES = List.of("", NAMESPACE);
 
+    private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
+    private final Map<String, Resource> resourceCache = new ConcurrentHashMap<>();
+    private final Map<String, XmlStreamInfo> xmlInfoCache = new ConcurrentHashMap<>();
+    private final Map<String, BeansDefinition> camelAppCache = new ConcurrentHashMap<>();
+    private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
+
+    private final AtomicInteger counter = new AtomicInteger(0);
+
     public XmlRoutesBuilderLoader() {
         super(EXTENSION);
     }
@@ -69,14 +84,31 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     }
 
     @Override
+    public void preParseRoute(Resource resource) throws Exception {
+        // preparsing is done at early stage, so we have a chance to load additional beans and populate
+        // Camel registry
+        if (preparseDone.getOrDefault(resource.getLocation(), false)) {
+            return;
+        }
+        XmlStreamInfo xmlInfo = xmlInfo(resource);
+        if (xmlInfo.isValid()) {
+            String root = xmlInfo.getRootElementName();
+            if ("beans".equals(root) || "camel".equals(root)) {
+                new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        .parseBeansDefinition()
+                        .ifPresent(bd -> {
+                            registerBeans(resource, bd);
+                            camelAppCache.put(resource.getLocation(), bd);
+                        });
+            }
+        }
+        preparseDone.put(resource.getLocation(), true);
+    }
+
+    @Override
     public RouteBuilder doLoadRouteBuilder(Resource input) throws Exception {
-        final Resource resource = new CachedResource(input);
-        // instead of parsing the document NxM times (for each namespace x root element combination),
-        // we preparse it using XmlStreamDetector and then parse it fully knowing what's inside.
-        // we could even do better, by passing already preparsed information through config file, but
-        // it's getting complicated when using multiple files.
-        XmlStreamDetector detector = new XmlStreamDetector(resource.getInputStream());
-        XmlStreamInfo xmlInfo = detector.information();
+        final Resource resource = resource(input);
+        XmlStreamInfo xmlInfo = xmlInfo(input);
         if (!xmlInfo.isValid()) {
             // should be valid, because we checked it before
             LOG.warn("Invalid XML document: {}", xmlInfo.getProblem().getMessage());
@@ -86,11 +118,18 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
+                String resourceLocation = input.getLocation();
                 switch (xmlInfo.getRootElementName()) {
-                    case "beans", "camel" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
-                                .parseBeansDefinition()
-                                .ifPresent(this::allInOne);
+                    case "beans", "camel" -> {
+                        BeansDefinition def = camelAppCache.get(resourceLocation);
+                        if (def != null) {
+                            configureCamel(def);
+                        } else {
+                            new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                                    .parseBeansDefinition()
+                                    .ifPresent(this::configureCamel);
+                        }
+                    }
                     case "routeTemplate", "routeTemplates" ->
                         new ModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteTemplatesDefinition()
@@ -110,6 +149,13 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     default -> {
                     }
                 }
+
+                // knowing this is the last time an XML may have been parsed, we can clear the cache
+                // (route may get reloaded later)
+                resourceCache.remove(resourceLocation);
+                xmlInfoCache.remove(resourceLocation);
+                camelAppCache.remove(resourceLocation);
+                preparseDone.remove(resourceLocation);
             }
 
             @Override
@@ -124,55 +170,19 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
             }
 
-            private void allInOne(BeansDefinition app) {
-                // selected elements which can be found in camel-spring-xml's <camelContext>
-
-                List<String> packagesToScan = new ArrayList<>();
-                app.getComponentScanning().forEach(cs -> {
-                    packagesToScan.add(cs.getBasePackage());
-                });
-                if (!packagesToScan.isEmpty()) {
-                    Registry registry = getCamelContext().getRegistry();
-                    if (registry != null) {
-                        PackageScanClassResolver scanner
-                                = getCamelContext().getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
-                        Injector injector = getCamelContext().getInjector();
-                        if (scanner != null && injector != null) {
-                            for (String pkg : packagesToScan) {
-                                Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
-                                for (Class<?> c : classes) {
-                                    // should:
-                                    // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
-                                    // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
-                                    // - bind to registry if @org.apache.camel.BindToRegistry is present
-                                    injector.newInstance(c, true);
-                                }
-                            }
-                        }
+            private void configureCamel(BeansDefinition app) {
+                if (!delayedRegistrations.isEmpty()) {
+                    // some of the beans were not available yet, so we have to try register them now
+                    for (RegistryBeanDefinition bean : delayedRegistrations) {
+                        registerBeanDefinition(bean, false);
                     }
+                    delayedRegistrations.clear();
                 }
 
-                for (RegistryBeanDefinition bean : app.getBeans()) {
-                    String type = bean.getType();
-                    String name = bean.getName();
-                    if (name == null || "".equals(name.trim())) {
-                        name = type;
-                    }
-                    if (type != null && !type.startsWith("#")) {
-                        type = "#class:" + type;
-                        try {
-                            final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
-
-                            if (bean.getProperties() != null && !bean.getProperties().isEmpty()) {
-                                PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, bean.getProperties());
-                            }
-                            getCamelContext().getRegistry().unbind(name);
-                            getCamelContext().getRegistry().bind(name, target);
-                        } catch (Exception e) {
-                            LOG.warn("Problem creating bean {}", type, e);
-                        }
-                    }
-                }
+                // we have access to beans and spring beans, but these are already processed
+                // in preParseRoute() and possibly registered in
+                // org.apache.camel.main.BaseMainSupport.postProcessCamelRegistry() (if given Main implementation
+                // decides to do so)
 
                 app.getRests().forEach(r -> {
                     List<RestDefinition> list = new ArrayList<>();
@@ -236,4 +246,102 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
         };
     }
+
+    private Resource resource(Resource resource) {
+        return resourceCache.computeIfAbsent(resource.getLocation(), l -> new CachedResource(resource));
+    }
+
+    private XmlStreamInfo xmlInfo(Resource resource) {
+        return xmlInfoCache.computeIfAbsent(resource.getLocation(), l -> {
+            try {
+                // instead of parsing the document NxM times (for each namespace x root element combination),
+                // we preparse it using XmlStreamDetector and then parse it fully knowing what's inside.
+                // we could even do better, by passing already preparsed information through config file, but
+                // it's getting complicated when using multiple files.
+                XmlStreamDetector detector = new XmlStreamDetector(resource.getInputStream());
+                return detector.information();
+            } catch (IOException e) {
+                XmlStreamInfo invalid = new XmlStreamInfo();
+                invalid.setProblem(e);
+                return invalid;
+            }
+        });
+    }
+
+    private void registerBeans(Resource resource, BeansDefinition app) {
+        // <component-scan> - discover and register beans directly with Camel injection
+        Set<String> packagesToScan = new LinkedHashSet<>();
+        app.getComponentScanning().forEach(cs -> {
+            packagesToScan.add(cs.getBasePackage());
+        });
+        if (!packagesToScan.isEmpty()) {
+            Registry registry = getCamelContext().getRegistry();
+            if (registry != null) {
+                PackageScanClassResolver scanner
+                        = getCamelContext().getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
+                Injector injector = getCamelContext().getInjector();
+                if (scanner != null && injector != null) {
+                    for (String pkg : packagesToScan) {
+                        Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
+                        for (Class<?> c : classes) {
+                            // should:
+                            // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
+                            // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
+                            // - bind to registry if @org.apache.camel.BindToRegistry is present
+                            injector.newInstance(c, true);
+                        }
+                    }
+                }
+            }
+        }
+
+        // <bean>s - register Camel beans directly with Camel injection
+        for (RegistryBeanDefinition bean : app.getBeans()) {
+            registerBeanDefinition(bean, true);
+        }
+
+        // <s:bean>, <s:beans> and <s:alias> elements - all the elements in single BeansDefinition have
+        // one parent org.w3c.dom.Document - and this is what we collect from each resource
+        if (!app.getSpringBeans().isEmpty()) {
+            Document doc = app.getSpringBeans().get(0).getOwnerDocument();
+            // bind as Document, to be picked up later - bean id allows nice sorting
+            // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
+            String id = String.format("spring-document:%05d:%s", counter.incrementAndGet(), resource.getLocation());
+            getCamelContext().getRegistry().bind(id, doc);
+        }
+    }
+
+    /**
+     * Try to instantiate bean from the definition. Depending on the stage ({@link #preParseRoute} or
+     * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
+     *
+     * @param def
+     * @param delayIfFailed
+     */
+    private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
+        String type = def.getType();
+        String name = def.getName();
+        if (name == null || "".equals(name.trim())) {
+            name = type;
+        }
+        if (type != null && !type.startsWith("#")) {
+            type = "#class:" + type;
+            try {
+                final Object target = PropertyBindingSupport.resolveBean(getCamelContext(), type);
+
+                if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+                    PropertyBindingSupport.setPropertiesOnTarget(getCamelContext(), target, def.getProperties());
+                }
+                getCamelContext().getRegistry().unbind(name);
+                getCamelContext().getRegistry().bind(name, target);
+            } catch (Exception e) {
+                if (delayIfFailed) {
+                    delayedRegistrations.add(def);
+                } else {
+                    LOG.warn("Problem creating bean {}", type, e);
+                }
+            }
+        }
+    }
+
 }

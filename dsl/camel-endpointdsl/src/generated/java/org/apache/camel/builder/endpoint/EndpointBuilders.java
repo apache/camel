@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//CHECKSTYLE:OFF
 package org.apache.camel.builder.endpoint;
 
 import javax.annotation.processing.Generated;
@@ -29,6 +28,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory,
@@ -104,6 +104,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory,
@@ -342,4 +343,3 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory {
 
 }
-//CHECKSTYLE:ON

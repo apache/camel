@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.cloudtrail.client;
 
 import org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration;
 import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientIAMOptimizedImpl;
+import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class CloudtrailClientFactory {
      * @return               CloudTrailClient
      */
     public static CloudtrailInternalClient getCloudtrailClient(CloudtrailConfiguration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
-                ? new CloudtrailClientIAMOptimizedImpl(configuration) : new CloudtrailClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new CloudtrailClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new CloudtrailClientIAMProfileOptimizedImpl(configuration);
+        } else {
+            return new CloudtrailClientStandardImpl(configuration);
+        }
     }
 }

@@ -488,7 +488,7 @@ public class NettyHttpComponent extends NettyComponent
             url = url + "?" + query;
         }
 
-        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
 
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating

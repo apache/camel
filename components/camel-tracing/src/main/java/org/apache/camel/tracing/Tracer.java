@@ -198,7 +198,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         SpanDecorator sd = null;
 
         String uri = endpoint.getEndpointUri();
-        String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
+        String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
         if (splitURI[1] != null) {
             String scheme = splitURI[0];
             sd = DECORATORS.get(scheme);

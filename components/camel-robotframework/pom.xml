@@ -17,57 +17,61 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>components</artifactId>
-    <groupId>org.apache.camel</groupId>
-    <version>4.0.0-SNAPSHOT</version>
-  </parent>
-  
-  <artifactId>camel-robotframework</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: RobotFramework</name>
-  <description>Camel RobotFramework Support</description>
+    <parent>
+        <artifactId>components</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <version>4.0.0-SNAPSHOT</version>
+    </parent>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-support</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.robotframework</groupId>
-      <artifactId>robotframework</artifactId>
-      <version>${robotframework-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython</artifactId>
-      <version>${jython-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython-standalone</artifactId>
-      <version>${jython-standalone-version}</version>
-    </dependency>
+    <artifactId>camel-robotframework</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: RobotFramework</name>
+    <description>Camel RobotFramework Support</description>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-junit5</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <profiles>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.robotframework</groupId>
+            <artifactId>robotframework</artifactId>
+            <version>${robotframework-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython</artifactId>
+            <version>${jython-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython-standalone</artifactId>
+            <version>${jython-standalone-version}</version>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <profiles>
         <profile>
-            <id>jdk17-build</id>
+            <id>full</id>
             <activation>
-                <jdk>[17,)</jdk>
+                <property>
+                    <name>!quickly</name>
+                </property>
             </activation>
             <build>
                 <plugins>

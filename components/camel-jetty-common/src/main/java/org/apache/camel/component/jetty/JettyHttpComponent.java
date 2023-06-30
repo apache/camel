@@ -134,7 +134,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     private boolean sendServerVersion = true;
     private QueuedThreadPool defaultQueuedThreadPool;
 
-    public JettyHttpComponent() {
+    protected JettyHttpComponent() {
     }
 
     static class ConnectorRef {

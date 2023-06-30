@@ -30,6 +30,10 @@ import java.io.OutputStream;
  * <p/>
  * It is recommended in the {@link #copy(Exchange)} method to let the copied stream start from the start. If the
  * implementation does not support copy, then return <tt>null</tt>.
+ * <p/>
+ * <b>Important:</b> All the classes from the Camel release that implements {@link StreamCache} is NOT intended for end
+ * users to create as instances, but they are part of Camels
+ * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  */
 public interface StreamCache {
 

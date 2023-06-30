@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +50,7 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
     }
 
     public static String myTransformer(FullHttpRequest request) {
-        String in = request.content().toString(Charset.forName("UTF-8"));
+        String in = request.content().toString(StandardCharsets.UTF_8);
         // release as no longer in use
         request.content().release();
         return "Bye " + in;

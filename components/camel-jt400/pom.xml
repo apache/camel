@@ -43,6 +43,7 @@
             <groupId>net.sf.jt400</groupId>
             <artifactId>jt400</artifactId>
             <version>${jt400-version}</version>
+            <classifier>java11</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

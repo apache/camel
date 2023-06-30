@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -65,7 +65,7 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
      * We can use both a netty http request and response type for transformation
      */
     public static HttpResponse myTransformer(FullHttpRequest request) {
-        String in = request.content().toString(Charset.forName("UTF-8"));
+        String in = request.content().toString(StandardCharsets.UTF_8);
         String reply = "Bye " + in;
 
         request.content().release();

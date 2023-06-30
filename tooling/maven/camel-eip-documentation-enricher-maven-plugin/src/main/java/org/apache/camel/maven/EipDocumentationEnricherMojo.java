@@ -19,12 +19,15 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -198,7 +201,36 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         }
         getLog().info("Enriched " + enriched + " models out of " + typeToNameMap.size() + " models");
 
-        saveToFile(document, outputCamelSchemaFile, XmlHelper.buildTransformer());
+        String xml = transformToXml(document, XmlHelper.buildTransformer());
+        xml = fixXmlOutput(xml);
+        xml = removeEmptyLines(xml);
+
+        saveToFile(document, outputCamelSchemaFile, xml);
+    }
+
+    public static String fixXmlOutput(String xml) {
+        xml = xml.replaceAll("><!\\[CDATA\\[", ">\n<![CDATA[");
+        xml = xml.replaceAll("\\h+<!\\[CDATA\\[", "<![CDATA[");
+        xml = xml.replaceAll("(\\h*)]]><", "]]>\n$1<");
+        return removeEmptyLines(xml);
+    }
+
+    public static String removeEmptyLines(String xml) {
+        StringJoiner sj = new StringJoiner("\n");
+        for (String l : xml.split("\n")) {
+            if (!l.isBlank()) {
+                sj.add(l);
+            }
+        }
+        return sj.toString();
+    }
+
+    private String transformToXml(Document document, Transformer transformer) throws TransformerException {
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        DOMSource source = new DOMSource(document);
+        transformer.transform(source, result);
+        return sw.toString();
     }
 
     private boolean jsonFileExistsForElement(
@@ -267,12 +299,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return baseType.replace("tns:", "");
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer)
-            throws IOException, TransformerException {
+    private void saveToFile(Document document, File outputFile, String xml) throws IOException {
         try (FileOutputStream os = new FileOutputStream(outputFile)) {
-            StreamResult result = new StreamResult(os);
-            DOMSource source = new DOMSource(document);
-            transformer.transform(source, result);
+            os.write(xml.getBytes(StandardCharsets.UTF_8));
         }
     }
 

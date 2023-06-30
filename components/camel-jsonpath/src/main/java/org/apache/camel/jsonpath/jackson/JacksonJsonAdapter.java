@@ -61,7 +61,7 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
         try {
             return mapper.convertValue(body, Map.class);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore because we are attempting to convert
         }
 
@@ -73,7 +73,7 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext().getRegistry());
         try {
             return mapper.writeValueAsString(value);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore because we are attempting to convert
         }
 

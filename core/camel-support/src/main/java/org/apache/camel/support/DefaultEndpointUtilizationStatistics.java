@@ -26,7 +26,6 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     private final int maxCapacity;
     private final Map<String, Long> map;
 
-    @SuppressWarnings("unchecked")
     public DefaultEndpointUtilizationStatistics(int maxCapacity) {
         this.map = LRUCacheFactory.newLRUCache(16, maxCapacity, false);
         this.maxCapacity = maxCapacity;

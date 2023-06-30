@@ -318,7 +318,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (!rs.isClosed()) {
                     rs.close();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by closing result set", sqle);
             }
         }
@@ -330,7 +330,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (!stmt.isClosed()) {
                     stmt.close();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by closing statement", sqle);
             }
         }
@@ -340,7 +340,7 @@ public class JdbcProducer extends DefaultProducer {
         if (con != null) {
             try {
                 con.setAutoCommit(autoCommit);
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by resetting auto commit to its original value", sqle);
             }
         }
@@ -352,7 +352,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (!con.isClosed()) {
                     con.close();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.debug("Error by closing connection", sqle);
             }
         }

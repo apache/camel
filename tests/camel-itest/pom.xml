@@ -403,18 +403,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <derby.stream.error.file>target/derby.log</derby.stream.error.file>
-                    </systemPropertyVariables>
-                    <excludes>
-                        <!-- exclude doc tests as they dont work on CI server -->
-                        <exclude>**/*DocumentationTest.*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <executions>
@@ -422,8 +410,6 @@
                         <id>generate-test-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <fork>${cxf.codegenplugin.forkmode}</fork>
-                            <additionalJvmArgs>-Dlog4j.configurationFile=${project.basedir}/src/test/resources/log4j2.properties ${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
@@ -451,4 +437,30 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <derby.stream.error.file>target/derby.log</derby.stream.error.file>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <!-- exclude doc tests as they dont work on CI server -->
+                                <exclude>**/*DocumentationTest.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

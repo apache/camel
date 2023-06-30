@@ -550,12 +550,13 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
                 kafkaProducer.commitTransaction();
             }
-        } catch (Throwable t) {
-            exchange.setException(t);
-            if (!(t instanceof KafkaException)) {
-                LOG.warn("Abort kafka transaction {} with exchange {} due to {} ", transactionId, exchange.getExchangeId(), t);
-                kafkaProducer.abortTransaction();
-            }
+        } catch (KafkaException e) {
+            exchange.setException(e);
+        } catch (Exception e) {
+            exchange.setException(e);
+            LOG.warn("Abort kafka transaction {} with exchange {} due to {} ", transactionId, exchange.getExchangeId(),
+                    e.getMessage(), e);
+            kafkaProducer.abortTransaction();
         } finally {
             exchange.getUnitOfWork().endTransactedBy(transactionId);
         }

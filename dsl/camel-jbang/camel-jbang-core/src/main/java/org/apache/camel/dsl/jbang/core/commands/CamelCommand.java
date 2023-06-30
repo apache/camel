@@ -41,10 +41,8 @@ public abstract class CamelCommand implements Callable<Integer> {
     private final CamelJBangMain main;
     private File camelDir;
 
-    //CHECKSTYLE:OFF
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
-    //CHECKSTYLE:ON
 
     public CamelCommand(CamelJBangMain main) {
         this.main = main;
@@ -82,10 +80,11 @@ public abstract class CamelCommand implements Callable<Integer> {
                         argSpec instanceof CommandLine.Model.OptionSpec) {
                     CommandLine.Model.OptionSpec optionSpec = (CommandLine.Model.OptionSpec) argSpec;
                     for (String name : optionSpec.names()) {
-                        String placeholder = "$" + StringHelper.after(name, "--");
-                        if (argSpec.getValue() != null &&
-                                argSpec.getValue().toString().contains(placeholder)) {
-                            argSpec.setValue(argSpec.getValue().toString().replace(placeholder, defaultValue));
+                        String placeholder = "#" + StringHelper.after(name, "--");
+                        Object v = argSpec.getValue();
+                        if (v != null &&
+                                v.toString().contains(placeholder)) {
+                            argSpec.setValue(v.toString().replace(placeholder, defaultValue));
                         }
                     }
                 }

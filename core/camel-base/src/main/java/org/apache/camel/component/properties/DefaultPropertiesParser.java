@@ -115,7 +115,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 input = input.replace("?nested=false", "");
             }
             if (nested) {
-                return doParseNested(input, new HashSet<String>());
+                return doParseNested(input, new HashSet<>());
             } else {
                 return doParse(input);
             }

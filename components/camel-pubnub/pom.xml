@@ -55,7 +55,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>${gson-version}</version>
         </dependency>
 
         <!-- logging -->
@@ -75,13 +74,6 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- Override the guava version prescribed by Camel with the one needed by wiremock for tests -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
             <scope>test</scope>
         </dependency>
         <dependency>

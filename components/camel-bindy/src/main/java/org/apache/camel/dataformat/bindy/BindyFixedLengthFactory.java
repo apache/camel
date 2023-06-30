@@ -467,7 +467,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                         fieldLength = Integer.parseInt(resultVals.get(0));
                     }
 
-                    if (fieldLength <= 0 && datafield.delimiter().equals("") && datafield.lengthPos() == 0) {
+                    if (fieldLength <= 0 && datafield.delimiter().isEmpty() && datafield.lengthPos() == 0) {
                         throw new IllegalArgumentException(
                                 "Either a delimiter value or length for the field: "
                                                            + field.getName() + " is mandatory.");

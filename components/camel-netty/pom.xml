@@ -119,19 +119,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <io.netty.leakDetection.level>${io.netty.leakDetection.level}</io.netty.leakDetection.level>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>leaks</id>
@@ -139,6 +126,26 @@
                 <camel.surefire.parallel>false</camel.surefire.parallel>
                 <io.netty.leakDetection.level>PARANOID</io.netty.leakDetection.level>
             </properties>
+        </profile>
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <io.netty.leakDetection.level>${io.netty.leakDetection.level}</io.netty.leakDetection.level>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

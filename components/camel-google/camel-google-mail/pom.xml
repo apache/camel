@@ -46,11 +46,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${google-mail-guava-version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client</artifactId>
             <version>1.42.3</version>
@@ -150,21 +145,17 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <defaultGoal>install</defaultGoal>
 
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
 
             <!-- generate Component source and test source -->
             <plugin>

@@ -98,7 +98,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
      * The catalog directory where the component json files are
      */
     @Parameter(property = "camel.pmp.json-directory",
-               defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+               defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
     private transient String licenseHeader;

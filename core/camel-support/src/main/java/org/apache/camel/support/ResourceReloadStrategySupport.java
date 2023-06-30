@@ -84,15 +84,4 @@ public abstract class ResourceReloadStrategySupport extends ServiceSupport imple
     protected void incFailedCounter() {
         failed++;
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
 }

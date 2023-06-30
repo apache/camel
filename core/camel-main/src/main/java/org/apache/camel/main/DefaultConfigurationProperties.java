@@ -127,7 +127,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
-    private boolean dumpRoutes;
+    @Metadata(enums = "xml,yaml")
+    private String dumpRoutes;
     private Map<String, String> globalOptions;
     // route controller
     private boolean routeControllerSuperviseEnabled;
@@ -1342,20 +1343,20 @@ public abstract class DefaultConfigurationProperties<T> {
         this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
     }
 
-    public boolean isDumpRoutes() {
+    public String getDumpRoutes() {
         return dumpRoutes;
     }
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
-     * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
      * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
      */
-    public void setDumpRoutes(boolean dumpRoutes) {
+    public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
     }
 
@@ -2520,15 +2521,15 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * If enable then Camel will during startup dump all loaded routes (incl rests and route templates) represented as
-     * XML DSL into the log. This is intended for trouble shooting or to assist during development.
+     * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
+     * represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
-     * output and is therefore not recommended to be used for production usage.
+     * output and is therefore not recommended being used for production usage.
      *
-     * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
+     * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
      */
-    public T withDumpRoutes(boolean dumpRoutes) {
+    public T withDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
         return (T) this;
     }

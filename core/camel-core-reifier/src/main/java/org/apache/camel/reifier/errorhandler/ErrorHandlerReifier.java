@@ -52,7 +52,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS
             = new HashMap<>(0);
 
-    protected T definition;
+    protected final T definition;
 
     /**
      * Utility classes should not have a public constructor.

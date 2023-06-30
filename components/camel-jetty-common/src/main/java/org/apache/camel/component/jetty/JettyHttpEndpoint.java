@@ -81,7 +81,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
               description = "To configure security using SSLContextParameters")
     private SSLContextParameters sslContextParameters;
 
-    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) {
+    protected JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) {
         super(uri, component, httpURL);
     }
 

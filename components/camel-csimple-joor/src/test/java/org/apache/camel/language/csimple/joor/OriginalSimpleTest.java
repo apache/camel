@@ -246,6 +246,13 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSimpleThreadId() {
+        long id = Thread.currentThread().getId();
+        assertExpression("${threadId}", id);
+        assertExpression("The id is ${threadId}", "The id is " + id);
+    }
+
+    @Test
     public void testSimpleThreadName() {
         String name = Thread.currentThread().getName();
         assertExpression("${threadName}", name);

@@ -31,12 +31,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Isolated
 public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FileConcurrentWriteAppendSameFileTest.class);
 

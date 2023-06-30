@@ -141,6 +141,22 @@ public interface Lambda2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * The region in which Lambda client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -243,6 +259,41 @@ public interface Lambda2EndpointBuilderFactory {
         default Lambda2EndpointBuilder useDefaultCredentialsProvider(
                 String useDefaultCredentialsProvider) {
             doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Lambda2EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**

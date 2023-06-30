@@ -183,7 +183,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         final EntityManager entityManager
                 = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
-        Boolean rc[] = new Boolean[1];
+        Boolean[] rc = new Boolean[1];
         transactionStrategy.executeInTransaction(() -> {
             if (isJoinTransaction()) {
                 entityManager.joinTransaction();

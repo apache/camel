@@ -17,79 +17,168 @@
 package org.apache.camel.maven.sync.properties;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.regex.Matcher;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.FileUtil;
-import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Copy the properties from a source POM to a different destination POM for syncing purposes.
+ * Copy the properties {@link #sourcePomXml} to {@link #targetPomXml}, applying filters defined in
+ * {@link #propertyIncludes} and {@link #propertyExcludes}.
  */
 @Mojo(name = "sync-properties", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class SyncPropertiesMojo extends AbstractMojo {
 
     /**
-     * The base directory
+     * The path to {@code camel-parent} {@code pom.xml}
+     *
+     * @since 4.0.0
      */
-    @Parameter(defaultValue = "${project.basedir}")
-    protected File baseDir;
+    @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}/parent/pom.xml", property = "camel.camelParentPomXml")
+    private File sourcePomXml;
 
     /**
-     * The Maven project.
+     * The path to {@code camel-dependencies} {@code pom.xml}
+     *
+     * @since 4.0.0
      */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    protected MavenProject project;
+    @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}/camel-dependencies/pom.xml",
+               property = "camel.camelDependenciesPomXml")
+    private File targetPomXml;
+
+    /**
+     * The path to the root {@code pom.xml} of the Camel source tree
+     *
+     * @since 4.0.0
+     */
+    @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}/pom.xml", property = "camel.camelPomXml")
+    private File camelPomXml;
+
+    /**
+     * The encoding to read and write files
+     *
+     * @since 4.0.0
+     */
+    @Parameter(defaultValue = "${project.build.sourceEncoding}", property = "camel.encoding")
+    private String encoding;
+
+    /**
+     * The version of the current Maven module
+     *
+     * @since 4.0.0
+     */
+    @Parameter(defaultValue = "${project.version}")
+    private String version;
+
+    /**
+     * List of regular expressions to select properties from {@link #sourcePomXml}
+     *
+     * @since 4.0.0
+     */
+    @Parameter(defaultValue = ".*-version")
+    private List<String> propertyIncludes;
+
+    /**
+     * List of regular expressions to ignore from {@link #sourcePomXml}
+     *
+     * @since 4.0.0
+     */
+    @Parameter
+    private List<String> propertyExcludes;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File dir = PackageHelper.findCamelDirectory(baseDir, "parent");
-        File sourcePom = new File(dir, "pom.xml");
-        dir = PackageHelper.findCamelDirectory(baseDir, "camel-dependencies");
-        File targetPom = new File(dir, "pom.xml");
+        final Path camelParentPomXmlPath = sourcePomXml.toPath();
+        if (!Files.isRegularFile(camelParentPomXmlPath)) {
+            throw new MojoExecutionException("camelParentPomXml " + sourcePomXml + " does not exist");
+        }
+        final Path camelDependenciesPomXmlPath = targetPomXml.toPath();
+        if (!Files.isRegularFile(camelDependenciesPomXmlPath)) {
+            throw new MojoExecutionException("camelDependenciesPomXml " + targetPomXml + " does not exist");
+        }
+        final Path camelPomXmlPath = camelPomXml.toPath();
+        if (!Files.isRegularFile(camelDependenciesPomXmlPath)) {
+            throw new MojoExecutionException("camelPomXml " + camelPomXml + " does not exist");
+        }
+        final Charset charset = Charset.forName(encoding);
+
+        final Model camelParentPomXmlModel;
+        try (Reader r = Files.newBufferedReader(camelParentPomXmlPath, charset)) {
+            camelParentPomXmlModel = new org.apache.maven.model.io.xpp3.MavenXpp3Reader().read(r);
+        } catch (XmlPullParserException | IOException e) {
+            throw new RuntimeException("Could not parse " + camelParentPomXmlPath, e);
+        }
+
+        final Model camelPomXmlModel;
+        try (Reader r = Files.newBufferedReader(camelPomXmlPath, charset)) {
+            camelPomXmlModel = new org.apache.maven.model.io.xpp3.MavenXpp3Reader().read(r);
+        } catch (XmlPullParserException | IOException e) {
+            throw new RuntimeException("Could not parse " + camelPomXmlPath, e);
+        }
+
+        final String template;
+        try (InputStream in = SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml");
+             Reader r = new InputStreamReader(in, charset)) {
+            template = IOHelper.toString(r);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not read camel-dependencies-template.xml from class path", e);
+        }
+
+        final Predicate<String> includes = toPredicate(propertyIncludes, true);
+        final Predicate<String> excludes = toPredicate(propertyExcludes, false);
+        final String properties = Stream.concat(
+                camelParentPomXmlModel.getProperties().entrySet().stream(),
+                camelPomXmlModel.getProperties().entrySet().stream()
+                        .filter(property -> property.getKey().equals("mycila-license-version")))
+                .filter(property -> includes.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
+                .map(property -> "<" + property.getKey() + ">" + property.getValue() + "</" + property.getKey() + ">")
+                .sorted()
+                .collect(Collectors.joining("\n        "));
 
         try {
-            String sourceStr = IOHelper.toString(ReaderFactory.newXmlReader(Files.newInputStream(sourcePom.toPath())));
-            String targetStr = IOHelper.toString(ReaderFactory
-                    .newXmlReader(SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml")));
-
-            String version = findGroup(sourceStr, "<parent>.*?(?<v><version>.*?</version>).*?</parent>", "v");
-            String properties = findGroup(sourceStr, "(?<p><properties>.*?</properties>)", "p");
-
-            version = version.replaceAll("\\$", "\\\\\\$");
-            properties = properties.replaceAll("\\$", "\\\\\\$");
-
-            targetStr = targetStr.replaceFirst("\\Q<version>@version@</version>\\E", version);
-            targetStr = targetStr.replaceFirst("\\Q<properties>@properties@</properties>\\E", properties);
+            final String camelPropertiesContent = template
+                    .replace("@version@", version)
+                    .replace("@properties@", properties);
 
             // write lines
-            boolean updated = FileUtil.updateFile(targetPom.toPath(), targetStr, StandardCharsets.UTF_8);
+            boolean updated = FileUtil.updateFile(camelDependenciesPomXmlPath, camelPropertiesContent, charset);
             if (updated) {
-                getLog().info("Updated: " + targetPom);
+                getLog().info("Updated: " + camelDependenciesPomXmlPath);
             }
             getLog().debug("Finished.");
-        } catch (Exception ex) {
-            throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
+        } catch (IOException ex) {
+            throw new MojoExecutionException("Could not write to " + camelDependenciesPomXmlPath, ex);
         }
     }
 
-    private String findGroup(String str, String regex, String group) {
-        Matcher m = Pattern.compile(regex, Pattern.DOTALL).matcher(str);
-        if (m.find()) {
-            return m.group(group);
+    static Predicate<String> toPredicate(List<String> regularExpressions, boolean defaultResult) {
+        if (regularExpressions == null || regularExpressions.isEmpty()) {
+            return key -> defaultResult;
+        } else {
+            final List<Pattern> patterns = regularExpressions.stream()
+                    .map(Pattern::compile)
+                    .collect(Collectors.toList());
+            return key -> patterns.stream().anyMatch(pattern -> pattern.matcher(key).matches());
         }
-        return str;
     }
 
 }

@@ -249,7 +249,7 @@ to the requestor session.
 
 [source,java]
 ----
-    from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
+    from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
         .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
         .bean(new MarketOrderStatusService());
 ----
@@ -428,7 +428,7 @@ passes application messages to the trade executor component.
 
 [source,java]
 ----
-from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").
+from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER").
     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived)).
     to("trade-executor:market");
 ----
@@ -439,7 +439,7 @@ since no session ID is specified in the endpoint URI.
 
 [source,java]
 ----
-from("trade-executor:market").to("quickfix:examples/inprocess.cfg");
+from("trade-executor:market").to("quickfix:examples/inprocess.qf.cfg");
 ----
 
 The trader session consumes execution report messages from the market
@@ -447,7 +447,7 @@ and processes them.
 
 [source,java]
 ----
-from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").
+from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET").
     filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EXECUTION_REPORT)).
     bean(new MyTradeExecutionProcessor());
 ----

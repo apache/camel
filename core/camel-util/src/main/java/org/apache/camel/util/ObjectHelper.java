@@ -160,6 +160,21 @@ public final class ObjectHelper {
     }
 
     /**
+     * Asserts that the given {@code value} is neither {@code null} nor an emptyString.
+     *
+     * @param  value                    the value to test
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static String notNullOrEmpty(String value, String name) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(name + " must be specified and non-empty");
+        }
+        return value;
+    }
+
+    /**
      * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
      * @param  value                    the value to test
@@ -473,7 +488,6 @@ public final class ObjectHelper {
      * @param  name the name of the class to load
      * @return      the class or <tt>null</tt> if it could not be loaded
      */
-    //CHECKSTYLE:OFF
     public static Class<?> loadSimpleType(String name) {
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
@@ -522,7 +536,6 @@ public final class ObjectHelper {
         }
         return null;
     }
-    //CHECKSTYLE:ON
 
     /**
      * Loads the given class with the provided classloader (may be null). Will ignore any class not found and return

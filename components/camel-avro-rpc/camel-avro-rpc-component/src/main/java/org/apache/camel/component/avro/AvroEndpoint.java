@@ -41,7 +41,7 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
     @UriParam
     private AvroConfiguration configuration;
 
-    public AvroEndpoint(String endpointUri, Component component, AvroConfiguration configuration) {
+    protected AvroEndpoint(String endpointUri, Component component, AvroConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
     }

@@ -35,20 +35,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Unit test for recipients (To, CC, BCC)
  */
 public class MailRecipientsTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser you = Mailbox.getOrCreateUser("youRecipients", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser camelRiders
             = Mailbox.getOrCreateUser("camelRecipients@riders.org", "camelRecipients", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser easyRiders
             = Mailbox.getOrCreateUser("easyRecipients@riders.org", "easyRecipients", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser me = Mailbox.getOrCreateUser("meRecipients@you.org", "meRecipients", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser someone
             = Mailbox.getOrCreateUser("someoneRecipients@somewhere.org", "someoneRecipients", "secret");
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser to = Mailbox.getOrCreateUser("toRecipients@somewhere.org", "toRecipients", "secret");
 
     @Test

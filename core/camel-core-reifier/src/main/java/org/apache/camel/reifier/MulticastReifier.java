@@ -58,6 +58,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         final AggregationStrategy strategy = createAggregationStrategy();
 
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isSynchronous = parseBoolean(definition.getSynchronous(), false);
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
         boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
@@ -75,9 +76,11 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
 
-        return new MulticastProcessor(
+        MulticastProcessor answer = new MulticastProcessor(
                 camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
                 isStopOnException, timeout, prepare, isShareUnitOfWork, isParallelAggregate);
+        answer.setSynchronous(isSynchronous);
+        return answer;
     }
 
     private AggregationStrategy createAggregationStrategy() {

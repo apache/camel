@@ -50,6 +50,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputLocation": target.getConfiguration().setOutputLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "outputtype":
         case "outputType": target.getConfiguration().setOutputType(property(camelContext, org.apache.camel.component.aws2.athena.Athena2OutputType.class, value)); return true;
+        case "profilecredentialsname":
+        case "profileCredentialsName": target.getConfiguration().setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -68,6 +70,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "waittimeout":
         case "waitTimeout": target.getConfiguration().setWaitTimeout(property(camelContext, long.class, value)); return true;
         case "workgroup":
@@ -113,6 +117,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputLocation": return java.lang.String.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.aws2.athena.Athena2OutputType.class;
+        case "profilecredentialsname":
+        case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -131,6 +137,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return boolean.class;
         case "waittimeout":
         case "waitTimeout": return long.class;
         case "workgroup":
@@ -172,6 +180,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputLocation": return target.getConfiguration().getOutputLocation();
         case "outputtype":
         case "outputType": return target.getConfiguration().getOutputType();
+        case "profilecredentialsname":
+        case "profileCredentialsName": return target.getConfiguration().getProfileCredentialsName();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -190,6 +200,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         case "waittimeout":
         case "waitTimeout": return target.getConfiguration().getWaitTimeout();
         case "workgroup":

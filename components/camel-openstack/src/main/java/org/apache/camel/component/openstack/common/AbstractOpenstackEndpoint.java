@@ -31,7 +31,7 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
     public static final String V2 = "V2";
     public static final String V3 = "V3";
 
-    public AbstractOpenstackEndpoint(String endpointUri, Component component) {
+    protected AbstractOpenstackEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 

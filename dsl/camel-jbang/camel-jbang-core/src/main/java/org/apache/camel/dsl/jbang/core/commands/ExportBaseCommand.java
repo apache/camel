@@ -147,6 +147,9 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Build tool to use (maven or gradle)")
     protected String buildTool;
 
+    @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
+    protected String openapi;
+
     @CommandLine.Option(names = {
             "--dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
@@ -256,6 +259,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
         run.files = files;
+        run.openapi = openapi;
         return run.runSilent();
     }
 
@@ -416,11 +420,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         out = new File(target, source.getName());
                     }
                     if (!java) {
-                        if (camel) {
-                            safeCopy(source, out, true);
-                        }
                         if (kamelet) {
                             out = srcKameletsResourcesDir;
+                            safeCopy(source, out, true);
+                        } else {
                             safeCopy(source, out, true);
                         }
                     } else {

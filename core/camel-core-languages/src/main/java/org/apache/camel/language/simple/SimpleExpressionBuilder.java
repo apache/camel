@@ -16,16 +16,13 @@
  */
 package org.apache.camel.language.simple;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -34,7 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -43,17 +39,16 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 
 /**
  * Expression builder used by the simple language.
@@ -102,28 +97,7 @@ public final class SimpleExpressionBuilder {
             }
 
             private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
-                if (formatter == null) {
-                    formatter = camelContext.getRegistry().findSingleByType(ExchangeFormatter.class);
-                    if (formatter == null) {
-                        // setup exchange formatter to be used for message history dump
-                        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
-                        def.setShowExchangeId(true);
-                        def.setMultiline(true);
-                        def.setShowHeaders(true);
-                        def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
-                        try {
-                            Integer maxChars = CamelContextHelper.parseInteger(camelContext,
-                                    camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
-                            if (maxChars != null) {
-                                def.setMaxChars(maxChars);
-                            }
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
-                        formatter = def;
-                    }
-                }
-                return formatter;
+                return LanguageHelper.getOrCreateExchangeFormatter(camelContext, formatter);
             }
 
             @Override
@@ -555,81 +529,14 @@ public final class SimpleExpressionBuilder {
 
     public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
-        // Capture optional time offsets
-        final List<Long> offsets = new ArrayList<>();
-        Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
-        while (offsetMatcher.find()) {
-            String time = offsetMatcher.group(2).trim();
-            long value = TimeUtils.toMilliSeconds(time);
-            offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
-        }
+        final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
 
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                Date date;
-                if ("now".equals(command)) {
-                    date = new Date();
-                } else if ("exchangeCreated".equals(command)) {
-                    long num = exchange.getCreated();
-                    date = new Date(num);
-                } else if (command.startsWith("header.")) {
-                    String key = command.substring(command.lastIndexOf('.') + 1);
-                    Object obj = exchange.getMessage().getHeader(key);
-                    if (obj instanceof Date) {
-                        date = (Date) obj;
-                    } else if (obj instanceof Long) {
-                        date = new Date((Long) obj);
-                    } else {
-                        date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
-                        if (date == null) {
-                            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
-                        }
-                    }
-                } else if (command.startsWith("exchangeProperty.")) {
-                    String key = command.substring(command.lastIndexOf('.') + 1);
-                    Object obj = exchange.getProperty(key);
-                    if (obj instanceof Date) {
-                        date = (Date) obj;
-                    } else if (obj instanceof Long) {
-                        date = new Date((Long) obj);
-                    } else {
-                        date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
-                        if (date == null) {
-                            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
-                        }
-                    }
-                } else if ("file".equals(command)) {
-                    Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
-                    if (num != null && num > 0) {
-                        date = new Date(num);
-                    } else {
-                        date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
-                        if (date == null) {
-                            throw new IllegalArgumentException(
-                                    "Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
-                        }
-                    }
-                } else {
-                    throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
-                }
+                Date date = evalDate(exchange, command);
 
-                // Apply offsets
-                long dateAsLong = date.getTime();
-                for (long offset : offsets) {
-                    dateAsLong += offset;
-                }
-                date = new Date(dateAsLong);
-
-                if (pattern != null && !pattern.isEmpty()) {
-                    SimpleDateFormat df = new SimpleDateFormat(pattern);
-                    if (timezone != null && !timezone.isEmpty()) {
-                        df.setTimeZone(TimeZone.getTimeZone(timezone));
-                    }
-                    return df.format(date);
-                } else {
-                    return date;
-                }
+                return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
             }
 
             @Override
@@ -643,6 +550,33 @@ public final class SimpleExpressionBuilder {
                 }
             }
         };
+    }
+
+    private static Date evalDate(Exchange exchange, String command) {
+        Date date;
+        if ("now".equals(command)) {
+            date = new Date();
+        } else if ("exchangeCreated".equals(command)) {
+            date = LanguageHelper.dateFromExchangeCreated(exchange);
+        } else if (command.startsWith("header.")) {
+            date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
+        } else if (command.startsWith("exchangeProperty.")) {
+            date = LanguageHelper.dateFromExchangeProperty(exchange, command, (e, o) -> tryConvertingAsDate(e, o, command));
+        } else if ("file".equals(command)) {
+            date = LanguageHelper.dateFromFileLastModified(exchange, command);
+        } else {
+            throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
+        }
+        return date;
+    }
+
+    private static Date tryConvertingAsDate(Exchange exchange, Object obj, String command) {
+        final Date date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
+        if (date == null) {
+            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
+        }
+
+        return date;
     }
 
     public static Expression skipIteratorExpression(final Expression expression, final int skip) {
@@ -1057,7 +991,7 @@ public final class SimpleExpressionBuilder {
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
         private String key;
         private String keySuffix;
-        private String method;
+        private final String method;
         private Expression keyExpression;
         private Expression ognlExpression;
         private Language beanLanguage;

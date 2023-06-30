@@ -96,6 +96,8 @@ converted body can be null.
 
 |bodyOneLine | String | Converts the body to a String and removes all line-breaks so the string is in one line.
 
+|prettyBody | String | Converts the body to a String, and attempts to pretty print if JSon or XML, otherwise the body is returned as the String value.
+
 |originalBody | Object | The original incoming body (only available if allowUseOriginalMessage=true).
 
 |mandatoryBodyAs(_type_) |Type |Converts the body to the given type determined by its
@@ -183,6 +185,9 @@ Exchange is being routed.
 
 |stepId |String |Returns the id of the current step the
 Exchange is being routed.
+
+|threadId |String |Returns the id of the current thread. Can be used for
+logging purpose.
 
 |threadName |String |Returns the name of the current thread. Can be used for
 logging purpose.

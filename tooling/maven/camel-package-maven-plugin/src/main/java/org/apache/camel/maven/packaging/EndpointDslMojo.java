@@ -119,7 +119,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     /**
      * The catalog directory where the component json files are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
     private transient String licenseHeader;
@@ -233,7 +233,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    @SuppressWarnings({ "checkstyle:executablestatementcount", "checkstyle:methodlength" })
     private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, List<Method> staticBuilders)
             throws MojoFailureException {
         String componentClassName = model.getJavaType();
@@ -857,7 +856,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaClass.implementInterface(componentsFactoriesPackageName + "." + factoryName + "." + endpointsName);
         }
 
-        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON",
+        return writeSourceIfChanged(javaClass.printClass(),
                 endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
     }
 
@@ -874,7 +873,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaClass.implementInterface(componentsFactoriesPackageName + "." + Strings.before(factory.getName(), "."));
         }
 
-        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON",
+        return writeSourceIfChanged(javaClass.printClass(),
                 endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
     }
 
@@ -942,7 +941,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         String printClass = javaClass.printClass();
 
-        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + printClass + "\n//CHECKSTYLE:ON",
+        return writeSourceIfChanged(printClass,
                 endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
     }
 

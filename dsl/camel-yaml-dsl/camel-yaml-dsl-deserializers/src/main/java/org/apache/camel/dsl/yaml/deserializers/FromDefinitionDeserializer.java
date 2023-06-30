@@ -30,7 +30,6 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asType;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 
 @YamlType(
@@ -53,7 +52,7 @@ public class FromDefinitionDeserializer implements ConstructNode {
             line = node.getStartMark().get().getLine();
         }
 
-        org.apache.camel.model.DescriptionDefinition desc = null;
+        String desc = null;
         String id = null;
         if (node.getNodeType() == NodeType.MAPPING) {
             final MappingNode mn = (MappingNode) node;
@@ -65,7 +64,7 @@ public class FromDefinitionDeserializer implements ConstructNode {
                         line = tuple.getKeyNode().getStartMark().get().getLine() + 1;
                     }
                 } else if ("description".equals(key)) {
-                    desc = asType(tuple.getValueNode(), org.apache.camel.model.DescriptionDefinition.class);
+                    desc = asText(tuple.getValueNode());
                 } else if ("id".equals(key)) {
                     id = asText(tuple.getValueNode());
                 }

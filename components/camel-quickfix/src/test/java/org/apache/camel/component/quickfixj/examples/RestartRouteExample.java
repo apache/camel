@@ -50,7 +50,7 @@ public class RestartRouteExample {
         RouteBuilder routes = new RouteBuilder() {
             @Override
             public void configure() {
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").routeId("foo")
+                from("quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:MARKET->TRADER").routeId("foo")
                         .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EMAIL))
                         .bean(new CountDownLatchDecrementer("message", receivedMessageLatch));
             }
@@ -61,7 +61,7 @@ public class RestartRouteExample {
         LOG.info("Starting Camel context");
         context.start();
 
-        String marketUri = "quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET";
+        String marketUri = "quickfix:examples/inprocess.qf.cfg?sessionID=FIX.4.2:TRADER->MARKET";
         Producer producer = context.getEndpoint(marketUri).createProducer();
 
         Email email = TestSupport.createEmailMessage("Example");

@@ -10,7 +10,6 @@ ContextScanDefinition
 ConvertBodyDefinition
 DataFormatDefinition
 DelayDefinition
-DescriptionDefinition
 DynamicRouterDefinition
 EnrichDefinition
 ErrorHandlerDefinition

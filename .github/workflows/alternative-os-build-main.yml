@@ -46,7 +46,7 @@ jobs:
           java-version: 17
           cache: 'maven'
       - name: mvn sourcecheck ${{ matrix.os }}
-        run: mvn -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -P'format,fastinstall' -DskipTests verify
+        run: ./mvnw -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -Dquickly verify
       - name: Archive logs ${{ matrix.os }}
         uses: actions/upload-artifact@v3
         if: always()

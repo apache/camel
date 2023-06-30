@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test allowing end users to set additional mail.xxx properties.
  */
 public class AdditionalMailPropertiesTest extends CamelTestSupport {
-    @SuppressWarnings({ "checkstyle:ConstantName" })
     private static final MailboxUser user = Mailbox.getOrCreateUser("additionalMailProperties");
 
     @Test

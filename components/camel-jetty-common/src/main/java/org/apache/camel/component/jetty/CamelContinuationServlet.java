@@ -185,7 +185,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 // set timeout on initial
                 asyncContext.setTimeout(continuationTimeout.longValue());
             }
-            asyncContext.addListener(new ExpiredListener(consumer), request, response);
+            asyncContext.addListener(new ExpiredListener(), request, response);
 
             // are we suspended and a request is dispatched initially?
             if (consumer.isSuspended() && isInitial(request)) {
@@ -303,13 +303,6 @@ public class CamelContinuationServlet extends CamelServlet {
     }
 
     private class ExpiredListener implements AsyncListener {
-
-        private HttpConsumer consumer;
-
-        public ExpiredListener(HttpConsumer consumer) {
-            this.consumer = consumer;
-        }
-
         @Override
         public void onComplete(AsyncEvent event) throws IOException {
         }

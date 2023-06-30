@@ -74,7 +74,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
-    public ConsulClientConfiguration() {
+    protected ConsulClientConfiguration() {
     }
 
     public String getUrl() {
