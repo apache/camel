@@ -356,7 +356,7 @@ public class OpenAPI3to2 {
     private List<String> getConsumers(RequestBody requestBody) {
         // set consumes for the op to all keys of contentTypes
         if (requestBody.getContent() != null) {
-            return new java.util.ArrayList<String>(requestBody.getContent().keySet());
+            return new java.util.ArrayList<>(requestBody.getContent().keySet());
         } else {
             return Collections.emptyList();
         }
