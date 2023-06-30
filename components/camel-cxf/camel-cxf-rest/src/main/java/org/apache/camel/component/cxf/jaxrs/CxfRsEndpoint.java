@@ -387,7 +387,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         if (this.isSkipFaultLogging()) {
             if (factory.getProperties() == null) {
-                factory.setProperties(new HashMap<String, Object>());
+                factory.setProperties(new HashMap<>());
             }
             factory.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
@@ -698,7 +698,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      * Set the feature list to the CxfRs endpoint.
      */
     public void setFeatures(List<Feature> features) {
-        this.features = new ArrayList<Feature>(features);
+        this.features = new ArrayList<>(features);
     }
 
     public Map<String, Object> getProperties() {
