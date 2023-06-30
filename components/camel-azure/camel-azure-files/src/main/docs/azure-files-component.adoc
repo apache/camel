@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: azure-files
 
 *Since Camel {since}*
 
@@ -308,7 +307,3 @@ permission is needed).
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
-
-
-
-include::spring-boot:partial$starter.adoc[]
