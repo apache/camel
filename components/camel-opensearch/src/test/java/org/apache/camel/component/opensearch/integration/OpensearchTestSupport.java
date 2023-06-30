@@ -16,19 +16,32 @@
  */
 package org.apache.camel.component.opensearch.integration;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.opensearch.OpensearchComponent;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableContext;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.camel.test.infra.opensearch.services.OpenSearchService;
 import org.apache.camel.test.infra.opensearch.services.OpenSearchServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.opensearch.client.RestClient;
@@ -40,19 +53,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class OpensearchTestSupport extends CamelTestSupport {
+public abstract class OpensearchTestSupport implements CamelTestSupportHelper, ConfigurableRoute, ConfigurableContext {
 
+    @Order(1)
     @RegisterExtension
-    protected static OpenSearchService service = OpenSearchServiceFactory.createSingletonService();
+    public static final OpenSearchService service = OpenSearchServiceFactory.createSingletonService();
+
+    @Order(2)
+    @RegisterExtension
+    public static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
     protected static String clusterName = "docker-cluster";
-    protected static RestClient restClient;
-    protected static OpenSearchClient client;
     private static final Logger LOG = LoggerFactory.getLogger(OpensearchTestSupport.class);
 
-    @Override
-    protected void setupResources() throws Exception {
-        super.setupResources();
+    protected RestClient restClient;
+    protected OpenSearchClient client;
+
+    private String prefix;
+
+    @BeforeEach
+    public void beforeEach(TestInfo testInfo) {
         HttpHost host
                 = new HttpHost(service.getOpenSearchHost(), service.getPort(), "http");
         final RestClientBuilder builder = RestClient.builder(host);
@@ -66,27 +86,33 @@ public class OpensearchTestSupport extends CamelTestSupport {
                 });
         restClient = builder.build();
         client = new OpenSearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
+
+        // make use of the test method name to avoid collision
+        prefix = testInfo.getDisplayName().toLowerCase() + "-";
     }
 
-    @Override
-    protected void cleanupResources() throws Exception {
-        super.cleanupResources();
+    @AfterEach
+    public void afterEach() throws IOException {
         if (restClient != null) {
             restClient.close();
         }
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final OpensearchComponent openSearchComponent = new OpensearchComponent();
-        openSearchComponent.setHostAddresses(String.format("%s:%d", service.getOpenSearchHost(), service.getPort()));
-        openSearchComponent.setUser(service.getUsername());
-        openSearchComponent.setPassword(service.getPassword());
+    public CamelContextExtension getCamelContextExtension() {
+        return contextExtension;
+    }
 
-        CamelContext context = super.createCamelContext();
-        context.addComponent("opensearch", openSearchComponent);
+    protected String getPrefix() {
+        return prefix;
+    }
 
-        return context;
+    protected CamelContext camelContext() {
+        return getCamelContextExtension().getContext();
+    }
+
+    protected ProducerTemplate template() {
+        return getCamelContextExtension().getProducerTemplate();
     }
 
     /**
@@ -94,7 +120,7 @@ public class OpensearchTestSupport extends CamelTestSupport {
      * slower), we need to make sure there's no side effect of the same used data through creating unique indexes.
      */
     Map<String, String> createIndexedData(String... additionalPrefixes) {
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         // take over any potential prefixes we may have been asked for
         if (additionalPrefixes.length > 0) {
@@ -114,12 +140,30 @@ public class OpensearchTestSupport extends CamelTestSupport {
         return map;
     }
 
-    String createPrefix() {
-        // make use of the test method name to avoid collision
-        return getCurrentTestName().toLowerCase() + "-";
-    }
-
     RestClient getClient() {
         return restClient;
     }
+
+    @ContextFixture
+    @Override
+    public void configureContext(CamelContext context) {
+        final OpensearchComponent openSearchComponent = new OpensearchComponent();
+        openSearchComponent.setHostAddresses(String.format("%s:%d", service.getOpenSearchHost(), service.getPort()));
+        openSearchComponent.setUser(service.getUsername());
+        openSearchComponent.setPassword(service.getPassword());
+
+        context.addComponent("opensearch", openSearchComponent);
+    }
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+    protected abstract RouteBuilder createRouteBuilder();
 }

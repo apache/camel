@@ -35,40 +35,40 @@ class OpensearchIndexIT extends OpensearchTestSupport {
     @Test
     void testIndex() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
     }
 
     @Test
     void testIndexDeleteWithBuilder() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        boolean exists = template.requestBody("direct:exists", null, Boolean.class);
+        boolean exists = template().requestBody("direct:exists", null, Boolean.class);
         assertTrue(exists, "index should be present");
 
         DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder().index("twitter");
-        Boolean status = template.requestBody("direct:deleteIndex", builder, Boolean.class);
+        Boolean status = template().requestBody("direct:deleteIndex", builder, Boolean.class);
         assertEquals(true, status, "status should be 200");
 
-        exists = template.requestBody("direct:exists", null, Boolean.class);
+        exists = template().requestBody("direct:exists", null, Boolean.class);
         assertFalse(exists, "index should be absent");
     }
 
     @Test
     void testIndexDeleteWithString() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        boolean exists = template.requestBody("direct:exists", null, Boolean.class);
+        boolean exists = template().requestBody("direct:exists", null, Boolean.class);
         assertTrue(exists, "index should be present");
 
-        Boolean status = template.requestBody("direct:deleteIndex", "twitter", Boolean.class);
+        Boolean status = template().requestBody("direct:deleteIndex", "twitter", Boolean.class);
         assertEquals(true, status, "status should be 200");
 
-        exists = template.requestBody("direct:exists", null, Boolean.class);
+        exists = template().requestBody("direct:exists", null, Boolean.class);
         assertFalse(exists, "index should be absent");
     }
 
@@ -79,7 +79,7 @@ class OpensearchIndexIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Index);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
     }
 
@@ -91,21 +91,21 @@ class OpensearchIndexIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(OpensearchConstants.PARAM_INDEX_ID, "123");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
         assertEquals("123", indexId, "indexId should be equals to the provided id");
     }
 
     @Test
     void testExists() {
-        boolean exists = template.requestBodyAndHeader(
+        boolean exists = template().requestBodyAndHeader(
                 "direct:exists", null, OpensearchConstants.PARAM_INDEX_NAME, "test_exists", Boolean.class);
         assertFalse(exists, "index should be absent");
 
         Map<String, String> map = createIndexedData();
-        template.sendBodyAndHeader("direct:index", map, OpensearchConstants.PARAM_INDEX_NAME, "test_exists");
+        template().sendBodyAndHeader("direct:index", map, OpensearchConstants.PARAM_INDEX_NAME, "test_exists");
 
-        exists = template.requestBodyAndHeader(
+        exists = template().requestBodyAndHeader(
                 "direct:exists", null, OpensearchConstants.PARAM_INDEX_NAME, "test_exists", Boolean.class);
         assertTrue(exists, "index should be present");
     }

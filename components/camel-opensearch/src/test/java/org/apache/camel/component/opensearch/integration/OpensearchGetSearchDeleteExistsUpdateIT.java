@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,7 +30,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.component.opensearch.OpensearchOperation;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.Result;
@@ -67,11 +65,11 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     void testIndexWithMap() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
@@ -83,11 +81,11 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testIndexWithString() {
         //first, Index a value
-        String indexId = template.requestBody("direct:index", "{\"testIndexWithString\": \"some-value\"}", String.class);
+        String indexId = template().requestBody("direct:index", "{\"testIndexWithString\": \"some-value\"}", String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
@@ -98,12 +96,12 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testIndexWithReader() {
         //first, Index a value
-        String indexId = template.requestBody("direct:index", new StringReader("{\"testIndexWithReader\": \"some-value\"}"),
+        String indexId = template().requestBody("direct:index", new StringReader("{\"testIndexWithReader\": \"some-value\"}"),
                 String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
@@ -114,12 +112,12 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testIndexWithBytes() {
         //first, Index a value
-        String indexId = template.requestBody("direct:index",
+        String indexId = template().requestBody("direct:index",
                 "{\"testIndexWithBytes\": \"some-value\"}".getBytes(StandardCharsets.UTF_8), String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
@@ -130,13 +128,13 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testIndexWithInputStream() {
         //first, Index a value
-        String indexId = template.requestBody("direct:index",
+        String indexId = template().requestBody("direct:index",
                 new ByteArrayInputStream("{\"testIndexWithInputStream\": \"some-value\"}".getBytes(StandardCharsets.UTF_8)),
                 String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
@@ -154,11 +152,11 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         product.setName("Guinness book of records 2021");
 
         //first, Index a value
-        String indexId = template.requestBody("direct:index-product", product, String.class);
+        String indexId = template().requestBody("direct:index-product", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBodyAndHeader("direct:get", indexId,
+        GetResponse<?> response = template().requestBodyAndHeader("direct:get", indexId,
                 OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
@@ -172,11 +170,11 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     void testGetWithString() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source());
@@ -192,11 +190,11 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         product.setDescription("The book of the year!");
         product.setName("Guinness book of records 1890");
 
-        String indexId = template.requestBody("direct:index", product, String.class);
+        String indexId = template().requestBody("direct:index", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBodyAndHeader(
+        GetResponse<?> response = template().requestBodyAndHeader(
                 "direct:get", indexId, OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
@@ -209,12 +207,12 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     void testMGetWithString() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
         @SuppressWarnings("unchecked")
-        List<MultiGetResponseItem<?>> response = template.requestBody("direct:multiget", List.of(indexId), List.class);
+        List<MultiGetResponseItem<?>> response = template().requestBody("direct:multiget", List.of(indexId), List.class);
         assertNotNull(response, "response should not be null");
         assertEquals(1, response.size(), "response should contain one result");
         assertTrue(response.get(0).isResult());
@@ -232,12 +230,12 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         product.setDescription("The book of the year!");
         product.setName("Guinness book of records 1890");
 
-        String indexId = template.requestBody("direct:index", product, String.class);
+        String indexId = template().requestBody("direct:index", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
         @SuppressWarnings("unchecked")
-        List<MultiGetResponseItem<?>> response = template.requestBodyAndHeader(
+        List<MultiGetResponseItem<?>> response = template().requestBodyAndHeader(
                 "direct:multiget", List.of(indexId), OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class, List.class);
         assertNotNull(response, "response should not be null");
         assertEquals(1, response.size(), "response should contain one result");
@@ -252,33 +250,33 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     void testDeleteWithString() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
 
         //now, perform Delete
-        Result deleteResponse = template.requestBody("direct:delete", indexId, Result.class);
+        Result deleteResponse = template().requestBody("direct:delete", indexId, Result.class);
         assertNotNull(deleteResponse, "response should not be null");
 
         //now, verify GET fails to find the indexed value
-        response = template.requestBody("direct:get", indexId, GetResponse.class);
+        response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNull(response.source(), "response source should be null");
     }
 
     @Test
-    void testSearchWithMapQuery() {
+    void testSearchWithMapQuery() throws Exception {
         //first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithMapQuery1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithMapQuery2", "bar");
         Map<String, Object> headers = Map.of(
                 OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Bulk,
                 OpensearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
+        template().requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
                 String.class);
 
         // No match
@@ -288,38 +286,40 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         match.put("match", actualQuery);
         Map<String, Object> query = new HashMap<>();
         query.put("query", match);
-        HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
+        HitsMetadata<?> response = template().requestBody("direct:search", query, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
         assertEquals(0, response.total().value(), "response hits should be == 0");
 
         // Match
         actualQuery.put("doc.testSearchWithMapQuery1", "foo");
-        // the result may see stale data so use Awaitility
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            HitsMetadata<?> resp = template.requestBody("direct:search", query, HitsMetadata.class);
-            assertNotNull(resp, "response should not be null");
-            assertNotNull(resp.total());
-            assertEquals(1, resp.total().value(), "response hits should be == 1");
-            assertEquals(1, resp.hits().size(), "response hits should be == 1");
-            Object result = resp.hits().get(0).source();
-            assertInstanceOf(ObjectNode.class, result);
-            assertTrue(((ObjectNode) result).has("doc"));
-            JsonNode node = ((ObjectNode) result).get("doc");
-            assertTrue(node.has("testSearchWithMapQuery1"));
-            assertEquals("foo", node.get("testSearchWithMapQuery1").asText());
-        });
+
+        // Delay the execution, because the search is getting stale results
+        Thread.sleep(2000);
+
+        HitsMetadata<?> resp = template().requestBody("direct:search", query, HitsMetadata.class);
+
+        assertNotNull(resp, "response should not be null");
+        assertNotNull(resp.total());
+        assertEquals(1, resp.total().value(), "response hits should be == 1");
+        assertEquals(1, resp.hits().size(), "response hits should be == 1");
+        Object result = resp.hits().get(0).source();
+        assertInstanceOf(ObjectNode.class, result);
+        assertTrue(((ObjectNode) result).has("doc"));
+        JsonNode node = ((ObjectNode) result).get("doc");
+        assertTrue(node.has("testSearchWithMapQuery1"));
+        assertEquals("foo", node.get("testSearchWithMapQuery1").asText());
     }
 
     @Test
-    void testSearchWithStringQuery() {
+    void testSearchWithStringQuery() throws Exception {
         //first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithStringQuery1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithStringQuery2", "bar");
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Bulk);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
+        template().requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
                 String.class);
 
         // No match
@@ -329,10 +329,13 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                 }
                 """;
 
-        HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
+        HitsMetadata<?> response = template().requestBody("direct:search", query, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
         assertEquals(0, response.total().value(), "response hits should be == 0");
+
+        // Delay the execution, because the search is getting stale results
+        Thread.sleep(2000);
 
         // Match
         String q = """
@@ -340,31 +343,29 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                     "query" : { "match" : { "doc.testSearchWithStringQuery1" : "foo" }}
                 }
                 """;
-        // the result may see stale data so use Awaitility
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            HitsMetadata<?> resp = template.requestBody("direct:search", q, HitsMetadata.class);
-            assertNotNull(resp, "response should not be null");
-            assertNotNull(resp.total());
-            assertEquals(1, resp.total().value(), "response hits should be == 1");
-            assertEquals(1, resp.hits().size(), "response hits should be == 1");
-            Object result = resp.hits().get(0).source();
-            assertInstanceOf(ObjectNode.class, result);
-            assertTrue(((ObjectNode) result).has("doc"));
-            JsonNode node = ((ObjectNode) result).get("doc");
-            assertTrue(node.has("testSearchWithStringQuery1"));
-            assertEquals("foo", node.get("testSearchWithStringQuery1").asText());
-        });
+
+        HitsMetadata<?> resp = template().requestBody("direct:search", q, HitsMetadata.class);
+        assertNotNull(resp, "response should not be null");
+        assertNotNull(resp.total());
+        assertEquals(1, resp.total().value(), "response hits should be == 1");
+        assertEquals(1, resp.hits().size(), "response hits should be == 1");
+        Object result = resp.hits().get(0).source();
+        assertInstanceOf(ObjectNode.class, result);
+        assertTrue(((ObjectNode) result).has("doc"));
+        JsonNode node = ((ObjectNode) result).get("doc");
+        assertTrue(node.has("testSearchWithStringQuery1"));
+        assertEquals("foo", node.get("testSearchWithStringQuery1").asText());
     }
 
     @Test
-    void testSearchWithBuilder() {
+    void testSearchWithBuilder() throws Exception {
         //first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithBuilder1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithBuilder2", "bar");
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Bulk);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
+        template().requestBodyAndHeaders("direct:start", List.of(Map.of("doc", map1), Map.of("doc", map2)), headers,
                 String.class);
 
         // No match
@@ -372,36 +373,37 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                 .query(new Query.Builder()
                         .match(new MatchQuery.Builder().field("doc.testSearchWithBuilder1").query(FieldValue.of("bar")).build())
                         .build());
-        HitsMetadata<?> response = template.requestBody("direct:search", builder, HitsMetadata.class);
+        HitsMetadata<?> response = template().requestBody("direct:search", builder, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
         assertEquals(0, response.total().value(), "response hits should be == 0");
 
-        // Match
-        // the result may see stale data so use Awaitility
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            SearchRequest.Builder b = new SearchRequest.Builder()
-                    .query(new Query.Builder()
-                            .match(new MatchQuery.Builder().field("doc.testSearchWithBuilder1").query(FieldValue.of("foo"))
-                                    .build())
-                            .build());
+        // Delay the execution, because the search is getting stale results
+        Thread.sleep(2000);
 
-            HitsMetadata<?> resp = template.requestBody("direct:search", b, HitsMetadata.class);
-            assertNotNull(resp, "response should not be null");
-            assertNotNull(resp.total());
-            assertEquals(1, resp.total().value(), "response hits should be == 1");
-            assertEquals(1, resp.hits().size(), "response hits should be == 1");
-            Object result = resp.hits().get(0).source();
-            assertInstanceOf(ObjectNode.class, result);
-            assertTrue(((ObjectNode) result).has("doc"));
-            JsonNode node = ((ObjectNode) result).get("doc");
-            assertTrue(node.has("testSearchWithBuilder1"));
-            assertEquals("foo", node.get("testSearchWithBuilder1").asText());
-        });
+        SearchRequest.Builder b = new SearchRequest.Builder()
+                .query(new Query.Builder()
+                        .match(new MatchQuery.Builder().field("doc.testSearchWithBuilder1").query(FieldValue.of("foo"))
+                                .build())
+                        .build());
+
+        // Match
+        HitsMetadata<?> resp = template().requestBody("direct:search", b, HitsMetadata.class);
+
+        assertNotNull(resp, "response should not be null");
+        assertNotNull(resp.total());
+        assertEquals(1, resp.total().value(), "response hits should be == 1");
+        assertEquals(1, resp.hits().size(), "response hits should be == 1");
+        Object result = resp.hits().get(0).source();
+        assertInstanceOf(ObjectNode.class, result);
+        assertTrue(((ObjectNode) result).has("doc"));
+        JsonNode node = ((ObjectNode) result).get("doc");
+        assertTrue(node.has("testSearchWithBuilder1"));
+        assertEquals("foo", node.get("testSearchWithBuilder1").asText());
     }
 
     @Test
-    void testSearchWithDocumentType() {
+    void testSearchWithDocumentType() throws Exception {
         //first, Index a value
         Product product1 = new Product();
         product1.setId("book-world-records-2020");
@@ -419,70 +421,72 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Bulk);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
-        template.requestBodyAndHeaders("direct:start", List.of(product1, product2), headers, String.class);
+        template().requestBodyAndHeaders("direct:start", List.of(product1, product2), headers, String.class);
 
         // No match
         SearchRequest.Builder builder = new SearchRequest.Builder()
                 .query(new Query.Builder().match(new MatchQuery.Builder().field("doc.id").query(FieldValue.of("bar")).build())
                         .build());
-        HitsMetadata<?> response = template.requestBodyAndHeader(
+        HitsMetadata<?> response = template().requestBodyAndHeader(
                 "direct:search", builder, OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
         assertEquals(0, response.total().value(), "response hits should be == 0");
 
-        // Match
-        // the result may see stale data so use Awaitility
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            SearchRequest.Builder b = new SearchRequest.Builder()
-                    .query(new Query.Builder().match(new MatchQuery.Builder().field("id").query(FieldValue.of("2020")).build())
-                            .build());
+        SearchRequest.Builder b = new SearchRequest.Builder()
+                .query(new Query.Builder().match(new MatchQuery.Builder().field("id").query(FieldValue.of("2020")).build())
+                        .build());
 
-            HitsMetadata<?> resp = template.requestBodyAndHeader(
-                    "direct:search", b, OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class, HitsMetadata.class);
-            assertNotNull(resp, "response should not be null");
-            assertNotNull(resp.total());
-            assertEquals(1, resp.total().value(), "response hits should be == 1");
-            assertEquals(1, resp.hits().size(), "response hits should be == 1");
-            Object result = resp.hits().get(0).source();
-            assertInstanceOf(Product.class, result);
-            Product p = (Product) result;
-            assertEquals(product1, p);
-        });
+        // Delay the execution, because the search is getting stale results
+        Thread.sleep(2000);
+
+        // Match
+        HitsMetadata<?> resp = template().requestBodyAndHeader("direct:search", b, OpensearchConstants.PARAM_DOCUMENT_CLASS,
+                Product.class, HitsMetadata.class);
+
+        assertNotNull(resp, "response should not be null");
+        assertNotNull(resp.total());
+        assertEquals(1, resp.total().value(), "response hits should be == 1");
+        assertEquals(1, resp.hits().size(), "response hits should be == 1");
+        Object result = resp.hits().get(0).source();
+        assertInstanceOf(Product.class, result);
+        Product p = (Product) result;
+        assertEquals(product1, p);
     }
 
     @Test
-    void testMultiSearch() {
+    void testMultiSearch() throws Exception {
         //first, Index a value
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        // the result may see stale data so use Awaitility
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            //now, verify GET succeeded
-            MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").searches(
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
-            @SuppressWarnings("unchecked")
-            List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
-            assertNotNull(response, "response should not be null");
-            assertEquals(2, response.size(), "response should be == 2");
-            assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
-            assertTrue(response.get(0).isResult());
-            assertNotNull(response.get(0).result());
-            assertTrue(response.get(0).result().hits().total().value() > 0);
-            assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
-            assertTrue(response.get(1).isResult());
-            assertNotNull(response.get(1).result());
-            assertTrue(response.get(1).result().hits().total().value() > 0);
-        });
+        MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").searches(
+                new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
+                        .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
+                new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
+                        .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+
+        // Delay the execution, because the search is getting stale results
+        Thread.sleep(2000);
+
+        @SuppressWarnings("unchecked")
+        List<MultiSearchResponseItem<?>> response = template().requestBody("direct:multiSearch", builder, List.class);
+
+        assertNotNull(response, "response should not be null");
+        assertEquals(2, response.size(), "response should be == 2");
+        assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
+        assertTrue(response.get(0).isResult());
+        assertNotNull(response.get(0).result());
+        assertTrue(response.get(0).result().hits().total().value() > 0);
+        assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
+        assertTrue(response.get(1).isResult());
+        assertNotNull(response.get(1).result());
+        assertTrue(response.get(1).result().hits().total().value() > 0);
     }
 
     @Test
-    void testMultiSearchWithDocumentType() {
+    void testMultiSearchWithDocumentType() throws Exception {
         //first, Index a value
         Product product = new Product();
         product.setId("book-world-records-2022");
@@ -490,58 +494,60 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         product.setPrice(100);
         product.setDescription("The book of the year!");
         product.setName("Guinness book of records 2022");
-        String indexId = template.requestBodyAndHeader("direct:index", product, OpensearchConstants.PARAM_INDEX_NAME,
+        String indexId = template().requestBodyAndHeader("direct:index", product, OpensearchConstants.PARAM_INDEX_NAME,
                 "multi-search", String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        // the result may see stale data so use Awaitility
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            //now, verify GET succeeded
-            MsearchRequest.Builder builder = new MsearchRequest.Builder().index("multi-search").searches(
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
-                    new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
-            @SuppressWarnings("unchecked")
-            List<MultiSearchResponseItem<?>> response = template.requestBodyAndHeaders(
-                    "direct:multiSearch", builder,
-                    Map.of(
-                            OpensearchConstants.PARAM_INDEX_NAME, "multi-search",
-                            OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class),
-                    List.class);
-            assertNotNull(response, "response should not be null");
-            assertEquals(2, response.size(), "response should be == 2");
-            assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
-            assertTrue(response.get(0).isResult());
-            assertNotNull(response.get(0).result());
-            assertTrue(response.get(0).result().hits().total().value() > 0);
-            assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
-            assertTrue(response.get(1).isResult());
-            assertNotNull(response.get(1).result());
-            assertTrue(response.get(1).result().hits().total().value() > 0);
-        });
+        MsearchRequest.Builder builder = new MsearchRequest.Builder().index("multi-search").searches(
+                new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
+                        .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
+                new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
+                        .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+
+        // Delay the execution, because the search is getting stale results
+        Thread.sleep(2000);
+
+        @SuppressWarnings("unchecked")
+        List<MultiSearchResponseItem<?>> response = template().requestBodyAndHeaders(
+                "direct:multiSearch", builder,
+                Map.of(
+                        OpensearchConstants.PARAM_INDEX_NAME, "multi-search",
+                        OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class),
+                List.class);
+
+        assertNotNull(response, "response should not be null");
+        assertEquals(2, response.size(), "response should be == 2");
+        assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
+        assertTrue(response.get(0).isResult());
+        assertNotNull(response.get(0).result());
+        assertTrue(response.get(0).result().hits().total().value() > 0);
+        assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
+        assertTrue(response.get(1).isResult());
+        assertNotNull(response.get(1).result());
+        assertTrue(response.get(1).result().hits().total().value() > 0);
     }
 
     @Test
     void testUpdateWithMap() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         Map<String, String> newMap = new HashMap<>();
-        newMap.put(createPrefix() + "key2", createPrefix() + "value2");
+        String prefix = getPrefix();
+        newMap.put(prefix + "key2", prefix + "value2");
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_INDEX_ID, indexId);
-        indexId = template.requestBodyAndHeaders("direct:update", Map.of("doc", newMap), headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:update", Map.of("doc", newMap), headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         //now, verify GET succeeded
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, response.source(), "response source should be a ObjectNode");
-        assertTrue(((ObjectNode) response.source()).has(createPrefix() + "key2"));
-        assertEquals(createPrefix() + "value2", ((ObjectNode) response.source()).get(createPrefix() + "key2").asText());
+        assertTrue(((ObjectNode) response.source()).has(prefix + "key2"));
+        assertEquals(prefix + "value2", ((ObjectNode) response.source()).get(prefix + "key2").asText());
     }
 
     @Test
@@ -552,11 +558,11 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Index);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.GetById);
-        GetResponse<?> response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
+        GetResponse<?> response = template().requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
     }
@@ -569,12 +575,12 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Index);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
 
-        template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        template().requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Exists);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
-        Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
+        Boolean exists = template().requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
         assertNotNull(exists, "response should not be null");
         assertTrue(exists, "Index should exists");
     }
@@ -584,7 +590,7 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Exists);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter-tweet");
-        Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
+        Boolean exists = template().requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
         assertNotNull(exists, "response should not be null");
         assertFalse(exists, "Index should not exists");
     }
@@ -597,23 +603,23 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Index);
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.GetById);
-        GetResponse<?> response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
+        GetResponse<?> response = template().requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.source(), "response source should not be null");
 
         //now, perform Delete
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Delete);
         Result deleteResponse
-                = template.requestBodyAndHeaders("direct:start", indexId, headers, Result.class);
+                = template().requestBodyAndHeaders("direct:start", indexId, headers, Result.class);
         assertEquals(Result.Deleted, deleteResponse, "response should not be null");
 
         //now, verify GET fails to find the indexed value
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.GetById);
-        response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
+        response = template().requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull(response, "response should not be null");
         assertNull(response.source(), "response source should be null");
     }
@@ -626,32 +632,32 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(OpensearchConstants.PARAM_INDEX_ID, "123");
 
-        String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
         assertEquals("123", indexId, "indexId should be equals to the provided id");
 
         headers.put(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.Update);
 
-        indexId = template.requestBodyAndHeaders("direct:start", Map.of("doc", map), headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:start", Map.of("doc", map), headers, String.class);
         assertNotNull(indexId, "indexId should be set");
         assertEquals("123", indexId, "indexId should be equals to the provided id");
     }
 
     @Test
     void testGetRequestBody() {
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         // given
         GetRequest.Builder builder = new GetRequest.Builder().index(prefix + "foo");
 
         // when
-        String documentId = template.requestBody("direct:index",
+        String documentId = template().requestBody("direct:index",
                 new IndexRequest.Builder<>()
                         .index(prefix + "foo")
                         .id(prefix + "testId")
                         .document(Map.of(prefix + "content", prefix + "hello")),
                 String.class);
-        GetResponse<?> response = template.requestBody("direct:get",
+        GetResponse<?> response = template().requestBody("direct:get",
                 builder.id(documentId), GetResponse.class);
 
         // then
@@ -665,29 +671,29 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
 
     @Test
     void testDeleteWithBuilder() {
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         // given
-        String documentId = template.requestBody("direct:index",
+        String documentId = template().requestBody("direct:index",
                 new IndexRequest.Builder<>()
                         .index(prefix + "foo")
                         .id(prefix + "testId")
                         .document(Map.of(prefix + "content", prefix + "hello")),
                 String.class);
 
-        GetResponse<?> getResponse = template.requestBodyAndHeader(
+        GetResponse<?> getResponse = template().requestBodyAndHeader(
                 "direct:get", documentId, OpensearchConstants.PARAM_INDEX_NAME, prefix + "foo", GetResponse.class);
         assertNotNull(getResponse, "response should not be null");
         assertNotNull(getResponse.source(), "response source should not be null");
 
         // when
         Result response
-                = template.requestBody("direct:delete", new DeleteRequest.Builder().index(prefix + "foo").id(documentId),
+                = template().requestBody("direct:delete", new DeleteRequest.Builder().index(prefix + "foo").id(documentId),
                         Result.class);
 
         // then
         assertThat(response, equalTo(Result.Deleted));
-        getResponse = template.requestBodyAndHeader(
+        getResponse = template().requestBodyAndHeader(
                 "direct:get", documentId, OpensearchConstants.PARAM_INDEX_NAME, prefix + "foo", GetResponse.class);
         assertNotNull(getResponse, "response should not be null");
         assertNull(getResponse.source(), "response source should be null");
@@ -696,17 +702,17 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testUpdateWithString() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
         Object body = String.format("{ \"doc\": {\"%s\" : \"testUpdateWithString-updated\"}}", key);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_INDEX_ID, indexId);
-        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertThat(response.source(), notNullValue());
         ObjectNode node = (ObjectNode) response.source();
         assertThat(node.has(key), equalTo(true));
@@ -716,17 +722,17 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testUpdateWithReader() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
         Object body = new StringReader(String.format("{ \"doc\": {\"%s\" : \"testUpdateWithReader-updated\"}}", key));
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_INDEX_ID, indexId);
-        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertThat(response.source(), notNullValue());
         ObjectNode node = (ObjectNode) response.source();
         assertThat(node.has(key), equalTo(true));
@@ -736,7 +742,7 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testUpdateWithBytes() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
         Object body
@@ -744,10 +750,10 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_INDEX_ID, indexId);
-        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertThat(response.source(), notNullValue());
         ObjectNode node = (ObjectNode) response.source();
         assertThat(node.has(key), equalTo(true));
@@ -757,7 +763,7 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
     @Test
     void testUpdateWithInputStream() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = template().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
         String key = map.keySet().iterator().next();
         Object body = new ByteArrayInputStream(
@@ -766,10 +772,10 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_INDEX_ID, indexId);
-        indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        GetResponse<?> response = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> response = template().requestBody("direct:get", indexId, GetResponse.class);
         assertThat(response.source(), notNullValue());
         ObjectNode node = (ObjectNode) response.source();
         assertThat(node.has(key), equalTo(true));
@@ -785,7 +791,7 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         product.setDescription("The book of the year!");
         product.setName("Guinness book of records 2010");
 
-        String indexId = template.requestBody("direct:index", product, String.class);
+        String indexId = template().requestBody("direct:index", product, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         Product productUpdate = new Product();
@@ -796,10 +802,10 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(OpensearchConstants.PARAM_INDEX_ID, indexId);
         headers.put(OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class);
-        indexId = template.requestBodyAndHeaders("direct:update", productUpdate, headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:update", productUpdate, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        GetResponse<?> response = template.requestBodyAndHeader(
+        GetResponse<?> response = template().requestBodyAndHeader(
                 "direct:get", indexId, OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class, GetResponse.class);
         assertThat(response.source(), notNullValue());
         Product actual = (Product) response.source();

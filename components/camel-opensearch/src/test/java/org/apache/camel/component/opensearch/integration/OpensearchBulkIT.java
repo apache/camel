@@ -60,7 +60,7 @@ class OpensearchBulkIT extends OpensearchTestSupport {
         documents.add(document1);
         documents.add(document2);
 
-        List<?> indexIds = template.requestBody("direct:bulk", documents, List.class);
+        List<?> indexIds = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", documents, List.class);
         assertNotNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
@@ -70,7 +70,7 @@ class OpensearchBulkIT extends OpensearchTestSupport {
         List<String> documents = List.of(
                 "{\"testBulkWithString1\": \"some-value\"}", "{\"testBulkWithString2\": \"some-value\"}");
 
-        List<?> indexIds = template.requestBody("direct:bulk", documents, List.class);
+        List<?> indexIds = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", documents, List.class);
         assertNotNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
@@ -81,7 +81,7 @@ class OpensearchBulkIT extends OpensearchTestSupport {
                 "{\"testBulkWithBytes1\": \"some-value\"}".getBytes(StandardCharsets.UTF_8),
                 "{\"testBulkWithBytes2\": \"some-value\"}".getBytes(StandardCharsets.UTF_8));
 
-        List<?> indexIds = template.requestBody("direct:bulk", documents, List.class);
+        List<?> indexIds = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", documents, List.class);
         assertNotNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
@@ -92,7 +92,7 @@ class OpensearchBulkIT extends OpensearchTestSupport {
                 new StringReader("{\"testBulkWithReader1\": \"some-value\"}"),
                 new StringReader("{\"testBulkWithReader2\": \"some-value\"}"));
 
-        List<?> indexIds = template.requestBody("direct:bulk", documents, List.class);
+        List<?> indexIds = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", documents, List.class);
         assertNotNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
@@ -105,14 +105,14 @@ class OpensearchBulkIT extends OpensearchTestSupport {
                 new ByteArrayInputStream(
                         "{\"testBulkWithInputStream2\": \"some-value\"}".getBytes(StandardCharsets.UTF_8)));
 
-        List<?> indexIds = template.requestBody("direct:bulk", documents, List.class);
+        List<?> indexIds = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", documents, List.class);
         assertNotNull(indexIds, "indexIds should be set");
         assertCollectionSize("Indexed documents should match the size of documents", indexIds, documents.size());
     }
 
     @Test
     void testBulkListRequestBody() {
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         // given
         List<Map<String, String>> request = new ArrayList<>();
@@ -121,7 +121,8 @@ class OpensearchBulkIT extends OpensearchTestSupport {
         valueMap.put("content", prefix + "hello");
         request.add(valueMap);
         // when
-        List<?> indexedDocumentIds = template.requestBody("direct:bulk", request, List.class);
+        List<?> indexedDocumentIds
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", request, List.class);
 
         // then
         assertThat(indexedDocumentIds, notNullValue());
@@ -130,7 +131,7 @@ class OpensearchBulkIT extends OpensearchTestSupport {
 
     @Test
     void testBulkRequestBody() {
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         // given
         BulkRequest.Builder builder = new BulkRequest.Builder();
@@ -142,7 +143,8 @@ class OpensearchBulkIT extends OpensearchTestSupport {
 
         // when
         @SuppressWarnings("unchecked")
-        List<BulkResponseItem> response = template.requestBody("direct:bulk", builder, List.class);
+        List<BulkResponseItem> response
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", builder, List.class);
 
         // then
         assertThat(response, notNullValue());
@@ -153,7 +155,7 @@ class OpensearchBulkIT extends OpensearchTestSupport {
 
     @Test
     void bulkRequestBody() {
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         // given
         BulkRequest.Builder builder = new BulkRequest.Builder();
@@ -164,7 +166,8 @@ class OpensearchBulkIT extends OpensearchTestSupport {
                         .build());
         // when
         @SuppressWarnings("unchecked")
-        List<BulkResponseItem> response = template.requestBody("direct:bulk", builder, List.class);
+        List<BulkResponseItem> response
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", builder, List.class);
 
         // then
         assertThat(response, notNullValue());
@@ -175,18 +178,20 @@ class OpensearchBulkIT extends OpensearchTestSupport {
     void bulkDeleteOperation() {
         // given
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = getCamelContextExtension().getProducerTemplate().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         DeleteOperation.Builder builder = new DeleteOperation.Builder().index("twitter").id(indexId);
         // when
         @SuppressWarnings("unchecked")
-        List<BulkResponseItem> response = template.requestBody("direct:bulk", List.of(builder), List.class);
+        List<BulkResponseItem> response
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", List.of(builder), List.class);
 
         // then
         assertThat(response, notNullValue());
         assertEquals(indexId, response.get(0).id());
-        GetResponse<?> resp = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> resp
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(resp, "response should not be null");
         assertNull(resp.source(), "response source should be null");
     }
@@ -194,17 +199,19 @@ class OpensearchBulkIT extends OpensearchTestSupport {
     @Test
     void bulkCreateOperation() {
         // given
-        String prefix = createPrefix();
+        String prefix = getPrefix();
 
         CreateOperation.Builder<?> builder
                 = new CreateOperation.Builder<>().index("twitter").document(Map.of(prefix + "content", prefix + "hello"));
         // when
         @SuppressWarnings("unchecked")
-        List<BulkResponseItem> response = template.requestBody("direct:bulk", List.of(builder), List.class);
+        List<BulkResponseItem> response
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", List.of(builder), List.class);
 
         // then
         assertThat(response, notNullValue());
-        GetResponse<?> resp = template.requestBody("direct:get", response.get(0).id(), GetResponse.class);
+        GetResponse<?> resp = getCamelContextExtension().getProducerTemplate().requestBody("direct:get", response.get(0).id(),
+                GetResponse.class);
         assertNotNull(resp, "response should not be null");
         assertNotNull(resp.source(), "response source should not be null");
     }
@@ -212,11 +219,13 @@ class OpensearchBulkIT extends OpensearchTestSupport {
     @Test
     void bulkUpdateOperation() {
         Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:index", map, String.class);
+        String indexId = getCamelContextExtension().getProducerTemplate().requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
 
+        String prefix = getPrefix();
+
         Map<String, String> document
-                = Map.of(String.format("%skey2", createPrefix()), String.format("%svalue2", createPrefix()));
+                = Map.of(String.format("%skey2", prefix), String.format("%svalue2", prefix));
 
         UpdateOperation<?> builder = new UpdateOperation.Builder<>()
                 .index("twitter")
@@ -225,16 +234,18 @@ class OpensearchBulkIT extends OpensearchTestSupport {
                 .build();
 
         @SuppressWarnings("unchecked")
-        List<BulkResponseItem> response = template.requestBody("direct:bulk", List.of(builder), List.class);
+        List<BulkResponseItem> response
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:bulk", List.of(builder), List.class);
 
         //now, verify GET succeeded
         assertThat(response, notNullValue());
-        GetResponse<?> resp = template.requestBody("direct:get", indexId, GetResponse.class);
+        GetResponse<?> resp
+                = getCamelContextExtension().getProducerTemplate().requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull(resp, "response should not be null");
         assertNotNull(resp.source(), "response source should not be null");
         assertInstanceOf(ObjectNode.class, resp.source(), "response source should be a ObjectNode");
-        assertTrue(((ObjectNode) resp.source()).has(createPrefix() + "key2"));
-        assertEquals(createPrefix() + "value2", ((ObjectNode) resp.source()).get(createPrefix() + "key2").asText());
+        assertTrue(((ObjectNode) resp.source()).has(prefix + "key2"));
+        assertEquals(prefix + "value2", ((ObjectNode) resp.source()).get(prefix + "key2").asText());
     }
 
     @Override
