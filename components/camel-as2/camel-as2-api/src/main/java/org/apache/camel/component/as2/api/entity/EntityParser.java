@@ -202,7 +202,7 @@ public final class EntityParser {
 
             // Read Text Report Body Part Headers
             Header[] headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
+                    new ArrayList<>());
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType entityContentType = null;
@@ -529,7 +529,7 @@ public final class EntityParser {
 
             // Read Text Report Body Part Headers
             Header[] headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
+                    new ArrayList<>());
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType signedEntityContentType = null;
@@ -560,7 +560,7 @@ public final class EntityParser {
 
             // Read Signature Body Part Headers
             headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
+                    new ArrayList<>());
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType signatureContentType = null;
@@ -637,7 +637,7 @@ public final class EntityParser {
 
             // Read Text Report Body Part Headers
             Header[] headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
+                    new ArrayList<>());
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType textReportContentType = null;
@@ -674,7 +674,7 @@ public final class EntityParser {
 
             // Read Disposition Notification Body Part Headers
             headers = AbstractMessageParser.parseHeaders(inbuffer, -1, -1, BasicLineParser.INSTANCE,
-                    new ArrayList<CharArrayBuffer>());
+                    new ArrayList<>());
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType dispositionNotificationContentType = null;
@@ -766,7 +766,7 @@ public final class EntityParser {
             inbuffer.setCharsetDecoder(charsetDecoder);
 
             List<CharArrayBuffer> dispositionNotificationFields = parseBodyPartFields(inbuffer, boundary,
-                    BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
+                    BasicLineParser.INSTANCE, new ArrayList<>());
 
             AS2MessageDispositionNotificationEntity as2MessageDispositionNotificationEntity
                     = DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
