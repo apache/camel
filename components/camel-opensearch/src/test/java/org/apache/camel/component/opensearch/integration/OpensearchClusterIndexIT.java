@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpensearchClusterIndexIT extends OpensearchTestSupport {
+
     @Test
     void indexWithIpAndPort() throws Exception {
         Map<String, String> map = createIndexedData();
@@ -41,10 +42,10 @@ class OpensearchClusterIndexIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(OpensearchConstants.PARAM_INDEX_ID, "1");
 
-        String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
+        indexId = template().requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         assertTrue(client.get(new GetRequest.Builder().index("twitter").id("1").build(), ObjectNode.class).found(),
@@ -59,7 +60,7 @@ class OpensearchClusterIndexIT extends OpensearchTestSupport {
         headers.put(OpensearchConstants.PARAM_INDEX_NAME, "facebook");
         headers.put(OpensearchConstants.PARAM_INDEX_ID, "4");
 
-        String indexId = template.requestBodyAndHeaders("direct:indexWithSniffer", map, headers, String.class);
+        String indexId = template().requestBodyAndHeaders("direct:indexWithSniffer", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
         assertTrue(client.get(new GetRequest.Builder().index("facebook").id("4").build(), ObjectNode.class).found(),

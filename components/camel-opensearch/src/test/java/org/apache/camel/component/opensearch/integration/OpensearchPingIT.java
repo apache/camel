@@ -25,7 +25,7 @@ class OpensearchPingIT extends OpensearchTestSupport {
 
     @Test
     void testPing() {
-        boolean pingResult = template.requestBody("direct:ping", "test", Boolean.class);
+        boolean pingResult = template().requestBody("direct:ping", "test", Boolean.class);
         assertTrue(pingResult, "indexId should be set");
     }
 

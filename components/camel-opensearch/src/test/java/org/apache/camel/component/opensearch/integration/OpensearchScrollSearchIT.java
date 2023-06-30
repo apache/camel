@@ -54,7 +54,7 @@ class OpensearchScrollSearchIT extends OpensearchTestSupport {
         // add some documents
         for (int i = 0; i < 10; i++) {
             Map<String, String> map = createIndexedData();
-            String indexId = template.requestBody("direct:scroll-index", map, String.class);
+            String indexId = template().requestBody("direct:scroll-index", map, String.class);
             assertNotNull(indexId, "indexId should be set");
         }
 
@@ -65,13 +65,13 @@ class OpensearchScrollSearchIT extends OpensearchTestSupport {
 
         SearchRequest.Builder req = getScrollSearchRequestBuilder(TWITTER_OPENSEARCH_INDEX_NAME);
 
-        Exchange exchange = ExchangeBuilder.anExchange(context)
+        Exchange exchange = ExchangeBuilder.anExchange(camelContext())
                 .withHeader(PARAM_SCROLL_KEEP_ALIVE_MS, 50000)
                 .withHeader(PARAM_SCROLL, true)
                 .withBody(req)
                 .build();
 
-        exchange = template.send("direct:scroll-search", exchange);
+        exchange = template().send("direct:scroll-search", exchange);
 
         try (OpensearchScrollRequestIterator<?> scrollRequestIterator
                 = exchange.getIn().getBody(OpensearchScrollRequestIterator.class)) {
@@ -96,7 +96,7 @@ class OpensearchScrollSearchIT extends OpensearchTestSupport {
         // add some documents
         for (int i = 0; i < 10; i++) {
             Map<String, String> map = createIndexedData();
-            String indexId = template.requestBody("direct:scroll-n-split-index", map, String.class);
+            String indexId = template().requestBody("direct:scroll-n-split-index", map, String.class);
             assertNotNull(indexId, "indexId should be set");
         }
 
@@ -111,8 +111,8 @@ class OpensearchScrollSearchIT extends OpensearchTestSupport {
 
         SearchRequest.Builder req = getScrollSearchRequestBuilder(SPLIT_TWITTER_OPENSEARCH_INDEX_NAME);
 
-        Exchange exchange = ExchangeBuilder.anExchange(context).withBody(req).build();
-        exchange = template.send("direct:scroll-n-split-search", exchange);
+        Exchange exchange = ExchangeBuilder.anExchange(camelContext()).withBody(req).build();
+        exchange = template().send("direct:scroll-n-split-search", exchange);
 
         // wait for aggregation
         mock.assertIsSatisfied();
