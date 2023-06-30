@@ -59,7 +59,7 @@ public class JndiContext implements Context, Serializable {
     private String nameInNamespace = "";
 
     public JndiContext() throws Exception {
-        this(new Hashtable<String, Object>());
+        this(new Hashtable<>());
     }
 
     public JndiContext(Hashtable<String, Object> env) throws Exception {
