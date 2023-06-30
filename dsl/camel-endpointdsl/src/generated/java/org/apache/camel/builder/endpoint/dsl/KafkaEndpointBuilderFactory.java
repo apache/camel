@@ -1309,6 +1309,21 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Location of the kerberos config file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kerberosConfigLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder kerberosConfigLocation(
+                String kerberosConfigLocation) {
+            doSetProperty("kerberosConfigLocation", kerberosConfigLocation);
+            return this;
+        }
+        /**
          * Kerberos kinit command path. Default is /usr/bin/kinit.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -3525,6 +3540,21 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Location of the kerberos config file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kerberosConfigLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder kerberosConfigLocation(
+                String kerberosConfigLocation) {
+            doSetProperty("kerberosConfigLocation", kerberosConfigLocation);
+            return this;
+        }
+        /**
          * Kerberos kinit command path. Default is /usr/bin/kinit.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -4394,6 +4424,21 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
             doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            return this;
+        }
+        /**
+         * Location of the kerberos config file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kerberosConfigLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder kerberosConfigLocation(
+                String kerberosConfigLocation) {
+            doSetProperty("kerberosConfigLocation", kerberosConfigLocation);
             return this;
         }
         /**

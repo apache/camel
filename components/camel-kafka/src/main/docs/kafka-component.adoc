@@ -442,30 +442,11 @@ It would work with JTA `camel-jta` by using `transacted()` and if it involves so
 
 == Setting Kerberos config file
 
-Since kafka clients do not expose a way to configure the `krb5.conf` file directly through their API, you can, if necessary, do this using the JVM system properties.
-
-Through command line:
-[source,bash]
-----
-java -jar myroute.jar -Djava.security.krb5.conf=/path/to/krb5.conf
-----
-
-Through java code:
+Configure the 'krb5.conf' file directly through the API
 [source,java]
 ----
-public class MyRoute extends RouteBuilder {
-    static {
-        System.setProperty("java.security.krb5.conf", "/path/to/krb5.conf");
-    }
-
-    // your route
-
+static {
+    KafkaComponent.setKerberosConfigLocation("path/to/config/file");
 }
 ----
-
-[WARNING]
-====
-Keep in mind that once using system properties that config will be applied to whole JVM so all routes will be affected by this.
-====
-
 include::spring-boot:partial$starter.adoc[]
