@@ -655,7 +655,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private Map<String, String> determineMetadata(final Exchange exchange) {
-        Map<String, String> objectMetadata = new HashMap<String, String>();
+        Map<String, String> objectMetadata = new HashMap<>();
 
         Map<String, String> metadata = exchange.getIn().getHeader(AWS2S3Constants.METADATA, Map.class);
         if (metadata != null) {
