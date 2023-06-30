@@ -33,8 +33,7 @@
     <description>Camel Zookeeper Master Support</description>
 
     <properties>
-        <!-- Zookeeper container is not available on these platforms -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <!-- Zookeeper container is not available on this platform -->
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
@@ -142,6 +141,29 @@
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
                             <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ppc64le</id>
+            <activation>
+                <os>
+                    <arch>ppc64le</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>${skipTests}</skipITs>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                 <zookeeper.container>icr.io/ppc64le-oss/zookeeper-ppc64le:3.5.10</zookeeper.container>
+                           </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
