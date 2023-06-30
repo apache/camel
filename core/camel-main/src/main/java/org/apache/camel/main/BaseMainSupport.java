@@ -657,6 +657,11 @@ public abstract class BaseMainSupport extends BaseService {
             recorder.endStep(step);
         }
 
+        // after the routes are read (org.apache.camel.spi.RoutesBuilderLoader did their work), we may have
+        // new classes defined, so main implementations may have to reconfigure the registry using newly
+        // available bean definitions
+        postProcessCamelRegistry(camelContext, mainConfigurationProperties);
+
         // allow doing custom configuration before camel is started
         for (MainListener listener : listeners) {
             listener.afterConfigure(this);
@@ -896,8 +901,7 @@ public abstract class BaseMainSupport extends BaseService {
         // Spring's ApplicationContext.
         // so here, before configuring Camel Context, we can process the registry and let Main implementations
         // decide how to do it
-        Registry registry = camelContext.getCamelContextExtension().getRegistry();
-        postProcessCamelRegistry(camelContext, config, registry);
+        preProcessCamelRegistry(camelContext, config);
 
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterConfigure(camelContext);
@@ -1152,11 +1156,18 @@ public abstract class BaseMainSupport extends BaseService {
      *
      * @param camelContext
      * @param config
-     * @param registry
      */
-    protected void postProcessCamelRegistry(
-            CamelContext camelContext, MainConfigurationProperties config,
-            Registry registry) {
+    protected void preProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
+    }
+
+    /**
+     * Main implementation may do some additional configuration of the {@link Registry} after loading the routes, but
+     * before the routes are started.
+     *
+     * @param camelContext
+     * @param config
+     */
+    protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
     }
 
     private void setRouteTemplateProperties(
