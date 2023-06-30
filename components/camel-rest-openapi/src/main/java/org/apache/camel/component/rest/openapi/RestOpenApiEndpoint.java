@@ -553,7 +553,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     private Set<URI> getURIs(List<Server> servers) {
-        Set<URI> uris = new java.util.HashSet<URI>();
+        Set<URI> uris = new java.util.HashSet<>();
         if (servers != null) {
             for (Server server : servers) {
                 try {
