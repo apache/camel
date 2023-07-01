@@ -560,15 +560,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <!-- see https://issues.apache.org/jira/browse/MRELEASE-812 -->
-                    <version>2.4.2</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.scm</groupId>
-                            <artifactId>maven-scm-provider-gitexe</artifactId>
-                            <version>1.9</version>
-                        </dependency>
-                    </dependencies>
+                    <version>3.0.1</version>
                     <configuration>
                         <localCheckout>true</localCheckout>
                         <pushChanges>true</pushChanges>
@@ -577,7 +569,7 @@
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
                         <!-- The profile we want to use when doing the release -->
-                        <arguments>-Prelease,apache-release,sourcecheck,hibernate</arguments>
+                        <arguments>-Prelease,sourcecheck,hibernate</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
