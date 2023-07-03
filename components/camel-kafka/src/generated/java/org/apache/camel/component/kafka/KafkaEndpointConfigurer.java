@@ -114,7 +114,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": target.getConfiguration().setMaxPartitionFetchBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollrecords":
         case "maxPollRecords": target.getConfiguration().setMaxPollRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxrequestsize":
@@ -320,7 +320,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": return java.lang.Integer.class;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": return java.lang.Long.class;
+        case "maxPollIntervalMs": return java.lang.Integer.class;
         case "maxpollrecords":
         case "maxPollRecords": return java.lang.Integer.class;
         case "maxrequestsize":
