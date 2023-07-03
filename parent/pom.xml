@@ -384,7 +384,7 @@
         <opensearch-java-client-version>2.5.0</opensearch-java-client-version>
         <opensearch-version>2.8.0</opensearch-version>
         <opensearch-testcontainers-version>2.0.0</opensearch-testcontainers-version>
-        <openstack4j-version>3.10</openstack4j-version>
+        <openstack4j-version>3.11</openstack4j-version>
         <opentelemetry-version>1.26.0</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.37.0.Final</optaplanner-version>
