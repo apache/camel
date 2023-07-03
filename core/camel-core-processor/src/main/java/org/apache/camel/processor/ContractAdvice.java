@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.model.InputTypeDefinition
  * @see org.apache.camel.model.OutputTypeDefinition
  */
-public class ContractAdvice implements CamelInternalProcessorAdvice {
+public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
     private static final Logger LOG = LoggerFactory.getLogger(ContractAdvice.class);
 
     private final Contract contract;

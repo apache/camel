@@ -44,7 +44,7 @@ public final class DmsRegion {
     }
 
     private static Map<String, Region> createStaticFields() {
-        Map<String, Region> map = new HashMap();
+        Map<String, Region> map = new HashMap<>();
         map.put("af-south-1", AF_SOUTH_1);
         map.put("cn-north-4", CN_NORTH_4);
         map.put("cn-north-1", CN_NORTH_1);

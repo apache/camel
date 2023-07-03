@@ -58,7 +58,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
 
     private CamelContext camelContext;
     private final Writer writer;
-    private DefaultRuntimeCamelCatalog catalog;
+    private final DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
     private final Stack<EipModel> models = new Stack<>();
@@ -372,7 +372,6 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
         return arr;
     }
 
-    @SuppressWarnings("unchecked")
     private JsonObject asJSonNode(EipModel model) {
         JsonObject answer = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -388,7 +387,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
             if (value != null) {
                 if (value instanceof Collection<?>) {
                     Collection<?> col = (Collection<?>) value;
-                    List list = new ArrayList<>();
+                    List<Object> list = new ArrayList<>();
                     for (Object v : col) {
                         Object r = v;
                         if (r instanceof EipModel) {
@@ -428,7 +427,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
         // special for choice
         boolean array = isArray(model, name);
         if (array) {
-            List list = (List) model.getMetadata().get(name);
+            List<Object> list = (List<Object>) model.getMetadata().get(name);
             if (list == null) {
                 list = new ArrayList<>();
                 model.getMetadata().put(name, list);

@@ -180,10 +180,9 @@ public class GenerateMojo extends AbstractExecMojo {
                     // parse the java source code and find Camel RouteBuilder classes
                     String fqn = file.getPath();
                     String baseDir = ".";
-                    JavaType out = Roaster.parse(file);
+                    JavaType<?> out = Roaster.parse(file);
                     // we should only parse java classes (not interfaces and enums etc)
-                    if (out instanceof JavaClassSource) {
-                        JavaClassSource clazz = (JavaClassSource) out;
+                    if (out instanceof JavaClassSource clazz) {
                         RouteBuilderParser.parseRouteBuilderCSimpleExpressions(clazz, baseDir, fqn, fileCSimpleExpressions);
                         csimpleExpressions.addAll(fileCSimpleExpressions);
                     }
@@ -247,7 +246,7 @@ public class GenerateMojo extends AbstractExecMojo {
                 classes.forEach(c -> w.write(c.getFqn() + "\n"));
                 String fileName = RESOURCE_FILE;
                 outputResourceDir.mkdirs();
-                boolean saved = updateResource(outputResourceDir.toPath().resolve(RESOURCE_FILE), w.toString());
+                boolean saved = updateResource(outputResourceDir.toPath().resolve(fileName), w.toString());
                 if (saved) {
                     getLog().info("Generated csimple resource file: " + fileName);
                 }

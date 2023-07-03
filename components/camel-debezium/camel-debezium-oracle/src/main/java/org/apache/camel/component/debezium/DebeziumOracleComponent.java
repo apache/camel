@@ -49,7 +49,7 @@ public final class DebeziumOracleComponent extends DebeziumComponent<OracleConne
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(
+    protected DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration> initializeDebeziumEndpoint(
             String uri, OracleConnectorEmbeddedDebeziumConfiguration configuration) {
         return new DebeziumOracleEndpoint(uri, this, configuration);
     }

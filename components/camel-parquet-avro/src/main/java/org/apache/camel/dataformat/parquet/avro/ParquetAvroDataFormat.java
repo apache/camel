@@ -63,7 +63,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
 
         List<?> list = (List<?>) graph;
 
-        try (ParquetWriter writer = AvroParquetWriter.builder(parquetOutputStream)
+        try (ParquetWriter<Object> writer = AvroParquetWriter.builder(parquetOutputStream)
                 .withSchema(ReflectData.AllowNull.get().getSchema(unmarshalType)) // generate nullable fields
                 .withDataModel(ReflectData.get())
                 .withConf(conf)
@@ -85,7 +85,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 DEFAULT_UUID_GENERATOR.generateUuid(),
                 stream.readAllBytes());
 
-        try (ParquetReader reader = AvroParquetReader.builder(parquetInputStream)
+        try (ParquetReader<?> reader = AvroParquetReader.builder(parquetInputStream)
                 .withDataModel(new ReflectData(unmarshalType.getClassLoader()))
                 .disableCompatibility() // always use this (since this is a new project)
                 .withConf(conf)

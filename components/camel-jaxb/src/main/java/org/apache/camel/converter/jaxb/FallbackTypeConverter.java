@@ -163,7 +163,7 @@ public class FallbackTypeConverter {
         if (type.isAssignableFrom(o.getClass())) {
             return type.cast(o);
         } else {
-            return type.cast(((JAXBElement) o).getValue());
+            return type.cast(((JAXBElement<?>) o).getValue());
         }
     }
 

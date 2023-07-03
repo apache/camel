@@ -234,7 +234,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Object approvalBody = incomingMessage.getBody();
 
         final boolean bodyIsIterable = approvalBody instanceof Iterable;
-        final boolean bodyIsIterableButEmpty = bodyIsIterable && !((Iterable) approvalBody).iterator().hasNext();
+        final boolean bodyIsIterableButEmpty = bodyIsIterable && !((Iterable<?>) approvalBody).iterator().hasNext();
 
         // body contains nothing of interest if it's null, holds an empty
         // iterable or cannot be converted to

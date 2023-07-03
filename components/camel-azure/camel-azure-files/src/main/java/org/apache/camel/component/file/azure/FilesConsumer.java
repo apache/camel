@@ -47,7 +47,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     public FilesConsumer(FilesEndpoint endpoint, Processor processor,
                          FilesOperations fileOperations,
-                         GenericFileProcessStrategy processStrategy) {
+                         GenericFileProcessStrategy<?> processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }

@@ -71,7 +71,7 @@ public final class ReflectionHelper {
          *
          * @param clazz the class to operate on
          */
-        void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException;
+        void doWith(Class<?> clazz) throws IllegalArgumentException, IllegalAccessException;
     }
 
     /**
@@ -82,8 +82,8 @@ public final class ReflectionHelper {
      */
     public static void doWithClasses(Class<?> clazz, ClassCallback cc) throws IllegalArgumentException {
         // and then nested classes
-        Class[] classes = clazz.getDeclaredClasses();
-        for (Class aClazz : classes) {
+        Class<?>[] classes = clazz.getDeclaredClasses();
+        for (Class<?> aClazz : classes) {
             try {
                 cc.doWith(aClazz);
             } catch (IllegalAccessException ex) {

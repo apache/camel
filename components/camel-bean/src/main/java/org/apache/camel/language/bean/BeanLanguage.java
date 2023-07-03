@@ -239,7 +239,7 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
 
             if (beanName.startsWith("type:")) {
                 try {
-                    Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName.substring(5));
+                    Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName.substring(5));
                     answer = new BeanExpression(clazz, method);
                 } catch (ClassNotFoundException e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);

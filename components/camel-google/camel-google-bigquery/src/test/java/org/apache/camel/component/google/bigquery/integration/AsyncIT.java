@@ -75,7 +75,7 @@ public class AsyncIT extends BigQueryITSupport {
 
     @Test
     public void sendAsync() throws Exception {
-        List<Map> objects = new ArrayList<>();
+        List<Map<String, String>> objects = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Exchange exchange = new DefaultExchange(context);
             String uuidCol1 = UUID.randomUUID().toString();
@@ -92,7 +92,7 @@ public class AsyncIT extends BigQueryITSupport {
 
         sendResult.assertIsSatisfied(4000);
 
-        for (Map object : objects) {
+        for (Map<String, String> object : objects) {
             assertRowExist(TABLE_ID, object);
         }
     }

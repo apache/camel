@@ -295,8 +295,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 // if no charset and not in appending mode, then we can try
                 // using file directly (optimized)
                 Object body = exchange.getIn().getBody();
-                if (body instanceof WrappedFile) {
-                    WrappedFile wrapped = (WrappedFile) body;
+                if (body instanceof WrappedFile<?> wrapped) {
                     body = wrapped.getFile();
                     if (!(body instanceof File)) {
                         // the wrapped file may be from remote (FTP) which then can store

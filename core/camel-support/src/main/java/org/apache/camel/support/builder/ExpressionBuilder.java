@@ -1309,7 +1309,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Iterator it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
+                Iterator<?> it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
                 if (it != null) {
                     // skip first
                     it.next();

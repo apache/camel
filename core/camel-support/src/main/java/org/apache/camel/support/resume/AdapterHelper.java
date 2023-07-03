@@ -59,8 +59,7 @@ public final class AdapterHelper {
         final ResumeAdapter resumeAdapter = adapterOptional.get();
         LOG.debug("Using the acquired resume adapter: {}", resumeAdapter.getClass().getName());
 
-        if (resumeAdapter instanceof Cacheable) {
-            final Cacheable cacheableAdapter = (Cacheable) resumeAdapter;
+        if (resumeAdapter instanceof Cacheable cacheableAdapter) {
             final ResumeStrategyConfiguration resumeStrategyConfiguration = resumeStrategy.getResumeStrategyConfiguration();
 
             final ResumeCache<?> resumeCache = resumeStrategyConfiguration.getResumeCache();

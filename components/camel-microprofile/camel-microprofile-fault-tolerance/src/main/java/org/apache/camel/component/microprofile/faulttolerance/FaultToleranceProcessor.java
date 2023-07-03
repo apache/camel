@@ -74,7 +74,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 
-    private volatile CircuitBreaker circuitBreaker;
+    private volatile CircuitBreaker<?> circuitBreaker;
     private CamelContext camelContext;
     private String id;
     private String routeId;
@@ -128,11 +128,11 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         this.routeId = routeId;
     }
 
-    public CircuitBreaker getCircuitBreaker() {
+    public CircuitBreaker<?> getCircuitBreaker() {
         return circuitBreaker;
     }
 
-    public void setCircuitBreaker(CircuitBreaker circuitBreaker) {
+    public void setCircuitBreaker(CircuitBreaker<?> circuitBreaker) {
         this.circuitBreaker = circuitBreaker;
     }
 
@@ -253,7 +253,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
 
             // circuit breaker
-            FaultToleranceStrategy target = circuitBreaker;
+            FaultToleranceStrategy<?> target = circuitBreaker;
 
             // 1. bulkhead
             if (config.isBulkheadEnabled()) {
@@ -264,7 +264,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             // 2. timeout
             if (config.isTimeoutEnabled()) {
                 TimeoutWatcher watcher = new ScheduledExecutorTimeoutWatcher(scheduledExecutorService);
-                target = new Timeout(target, "timeout", config.getTimeoutDuration(), watcher);
+                target = new Timeout<>(target, "timeout", config.getTimeoutDuration(), watcher);
             }
             // 3. fallback
             if (fallbackProcessor != null) {

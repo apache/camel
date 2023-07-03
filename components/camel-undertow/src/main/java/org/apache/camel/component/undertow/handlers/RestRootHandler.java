@@ -118,7 +118,7 @@ public class RestRootHandler implements HttpHandler {
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer>> paths = new ArrayList<>();
         for (final UndertowConsumer consumer : consumers) {
             paths.add(new RestConsumerPath(consumer));
         }

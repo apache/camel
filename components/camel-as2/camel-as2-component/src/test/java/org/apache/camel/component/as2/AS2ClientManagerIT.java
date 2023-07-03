@@ -835,13 +835,13 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequest(Map<String, Object> headers) throws Exception {
         HttpEntity responseEntity = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
 
-        return new ImmutableTriple(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
+        return new ImmutableTriple<>(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
     }
 
     private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequest2(Map<String, Object> headers) throws Exception {
         HttpEntity responseEntity = requestBodyAndHeaders("direct://SEND2", EDI_MESSAGE, headers);
 
-        return new ImmutableTriple(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
+        return new ImmutableTriple<>(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
     }
 
     @Override

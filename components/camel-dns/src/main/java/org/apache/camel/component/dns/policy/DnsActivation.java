@@ -86,7 +86,7 @@ public class DnsActivation {
 
         List<String> resolved = new ArrayList<>();
         while (!hostnames.isEmpty()) {
-            NamingEnumeration attributeEnumeration = null;
+            NamingEnumeration<?> attributeEnumeration = null;
             try {
                 String hostname = hostnames.remove(0);
                 InetAddress inetAddress = InetAddress.getByName(hostname);

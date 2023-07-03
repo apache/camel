@@ -48,7 +48,7 @@ public class AddRoutesAtRuntimeTest extends ContextTestSupport {
         // use reflection to test that we do not leak bootstraps when dynamic adding routes
         Method m = AbstractCamelContext.class.getDeclaredMethod("getBootstraps");
         m.setAccessible(true);
-        Assertions.assertEquals(0, ((List) m.invoke(context)).size());
+        Assertions.assertEquals(0, ((List<?>) m.invoke(context)).size());
 
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         context.addRoutes(new MyDynamcRouteBuilder(context, "direct:bar", "mock:bar"));
@@ -57,7 +57,7 @@ public class AddRoutesAtRuntimeTest extends ContextTestSupport {
         assertEquals(3, context.getRoutes().size());
 
         // use reflection to test that we do not leak bootstraps when dynamic adding routes
-        Assertions.assertEquals(0, ((List) m.invoke(context)).size());
+        Assertions.assertEquals(0, ((List<?>) m.invoke(context)).size());
     }
 
     @Override

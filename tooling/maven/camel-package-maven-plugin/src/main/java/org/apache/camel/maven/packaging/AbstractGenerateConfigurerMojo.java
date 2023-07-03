@@ -94,7 +94,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         private boolean builderMethod;
 
-        public ConfigurerOption(String name, Class type, String getter, boolean builderMethod) {
+        public ConfigurerOption(String name, Class<?> type, String getter, boolean builderMethod) {
             // we just use name, type
             setName(name);
             if (byte[].class == type) {
@@ -340,7 +340,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         // filter out duplicates by using a names set that has already added
         Set<String> names = new HashSet<>();
 
-        Class clazz = projectClassLoader.loadClass(fqn);
+        Class<?> clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
         doWithMethods(clazz, m -> {
             boolean deprecated = m.isAnnotationPresent(Deprecated.class);
@@ -360,7 +360,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 String getter = "get" + (builder
                         ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(5)
                         : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4));
-                Class type = m.getParameterTypes()[0];
+                Class<?> type = m.getParameterTypes()[0];
                 if (boolean.class == type || Boolean.class == type) {
                     try {
                         String isGetter = "is" + getter.substring(3);

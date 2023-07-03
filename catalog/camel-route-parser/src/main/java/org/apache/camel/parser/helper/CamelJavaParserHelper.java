@@ -107,7 +107,7 @@ public final class CamelJavaParserHelper {
     }
 
     private static MethodSource<JavaClassSource> findCreateRouteBuilderMethod(JavaClassSource clazz) {
-        MethodSource method = clazz.getMethod("createRouteBuilder");
+        MethodSource<JavaClassSource> method = clazz.getMethod("createRouteBuilder");
         if (method != null && (method.isPublic() || method.isProtected()) && method.getParameters().isEmpty()) {
             return method;
         }
@@ -120,18 +120,15 @@ public final class CamelJavaParserHelper {
         MethodDeclaration md = (MethodDeclaration) method.getInternal();
         Block block = md.getBody();
         if (block != null) {
-            List statements = block.statements();
+            List<?> statements = block.statements();
             for (Object statement : statements) {
                 Statement stmt = (Statement) statement;
                 Expression exp = null;
-                if (stmt instanceof ReturnStatement) {
-                    ReturnStatement rs = (ReturnStatement) stmt;
+                if (stmt instanceof ReturnStatement rs) {
                     exp = rs.getExpression();
-                } else if (stmt instanceof ExpressionStatement) {
-                    ExpressionStatement es = (ExpressionStatement) stmt;
+                } else if (stmt instanceof ExpressionStatement es) {
                     exp = es.getExpression();
-                    if (exp instanceof MethodInvocation) {
-                        MethodInvocation mi = (MethodInvocation) exp;
+                    if (exp instanceof MethodInvocation mi) {
                         for (Object arg : mi.arguments()) {
                             if (arg instanceof ClassInstanceCreation) {
                                 exp = (Expression) arg;
@@ -140,18 +137,15 @@ public final class CamelJavaParserHelper {
                         }
                     }
                 }
-                if (exp instanceof ClassInstanceCreation) {
-                    ClassInstanceCreation cic = (ClassInstanceCreation) exp;
+                if (exp instanceof ClassInstanceCreation cic) {
                     boolean isRouteBuilder = false;
-                    if (cic.getType() instanceof SimpleType) {
-                        SimpleType st = (SimpleType) cic.getType();
+                    if (cic.getType() instanceof SimpleType st) {
                         isRouteBuilder = "RouteBuilder".equals(st.getName().toString());
                     }
                     if (isRouteBuilder && cic.getAnonymousClassDeclaration() != null) {
-                        List body = cic.getAnonymousClassDeclaration().bodyDeclarations();
+                        List<?> body = cic.getAnonymousClassDeclaration().bodyDeclarations();
                         for (Object line : body) {
-                            if (line instanceof MethodDeclaration) {
-                                MethodDeclaration amd = (MethodDeclaration) line;
+                            if (line instanceof MethodDeclaration amd) {
                                 if ("configure".equals(amd.getName().toString())) {
                                     return new AnonymousMethodSource(clazz, amd);
                                 }
@@ -191,8 +185,7 @@ public final class CamelJavaParserHelper {
             if (block != null) {
                 for (Object statement : md.getBody().statements()) {
                     // must be a method call expression
-                    if (statement instanceof ExpressionStatement) {
-                        ExpressionStatement es = (ExpressionStatement) statement;
+                    if (statement instanceof ExpressionStatement es) {
                         Expression exp = es.getExpression();
 
                         List<ParserResult> uris = new ArrayList<>();
@@ -217,8 +210,7 @@ public final class CamelJavaParserHelper {
         if (exp == null) {
             return;
         }
-        if (exp instanceof MethodInvocation) {
-            MethodInvocation mi = (MethodInvocation) exp;
+        if (exp instanceof MethodInvocation mi) {
             doParseCamelUris(clazz, block, mi, uris, consumers, producers, strings, fields, routeIdsOnly);
             // if the method was called on another method, then recursive
             exp = mi.getExpression();
@@ -234,7 +226,7 @@ public final class CamelJavaParserHelper {
         if (routeIdsOnly) {
             // include route id for consumers
             if ("routeId".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 if (args != null) {
                     for (Object arg : args) {
                         if (isValidArgument(arg)) {
@@ -254,7 +246,7 @@ public final class CamelJavaParserHelper {
 
         if (consumers) {
             if ("from".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 if (args != null) {
                     for (Object arg : args) {
                         if (isValidArgument(arg)) {
@@ -264,7 +256,7 @@ public final class CamelJavaParserHelper {
                 }
             }
             if ("fromF".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
@@ -274,7 +266,7 @@ public final class CamelJavaParserHelper {
                 }
             }
             if ("interceptFrom".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
@@ -284,7 +276,7 @@ public final class CamelJavaParserHelper {
                 }
             }
             if ("pollEnrich".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
@@ -297,7 +289,7 @@ public final class CamelJavaParserHelper {
 
         if (producers) {
             if ("to".equals(name) || "toD".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 if (args != null) {
                     for (Object arg : args) {
                         // skip if the arg is a boolean, ExchangePattern or Iterateable, type
@@ -308,7 +300,7 @@ public final class CamelJavaParserHelper {
                 }
             }
             if ("toF".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
@@ -318,7 +310,7 @@ public final class CamelJavaParserHelper {
                 }
             }
             if ("enrich".equals(name) || "wireTap".equals(name)) {
-                List args = mi.arguments();
+                List<?> args = mi.arguments();
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
@@ -336,8 +328,7 @@ public final class CamelJavaParserHelper {
             return false;
         }
         // skip ExchangePattern argument
-        if (arg instanceof QualifiedName) {
-            QualifiedName qn = (QualifiedName) arg;
+        if (arg instanceof QualifiedName qn) {
             String name = qn.getFullyQualifiedName();
             if (name.startsWith("ExchangePattern")) {
                 return false;
@@ -367,10 +358,10 @@ public final class CamelJavaParserHelper {
             }
         }
         if (fields && arg instanceof SimpleName) {
-            FieldSource field = getField(clazz, block, (SimpleName) arg);
+            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) arg);
             if (field != null) {
                 // find the endpoint uri from the annotation
-                AnnotationSource annotation = field.getAnnotation("org.apache.camel.cdi.Uri");
+                AnnotationSource<JavaClassSource> annotation = field.getAnnotation("org.apache.camel.cdi.Uri");
                 if (annotation == null) {
                     annotation = field.getAnnotation("org.apache.camel.EndpointInject");
                 }
@@ -405,10 +396,10 @@ public final class CamelJavaParserHelper {
 
     private static Expression extractExpression(Object annotation) {
         Expression exp = (Expression) annotation;
-        if (exp instanceof SingleMemberAnnotation) {
-            exp = ((SingleMemberAnnotation) exp).getValue();
-        } else if (exp instanceof NormalAnnotation) {
-            List values = ((NormalAnnotation) exp).values();
+        if (exp instanceof SingleMemberAnnotation singleMemberAnnotation) {
+            exp = singleMemberAnnotation.getValue();
+        } else if (exp instanceof NormalAnnotation normalAnnotation) {
+            List<?> values = normalAnnotation.values();
             for (Object value : values) {
                 MemberValuePair pair = (MemberValuePair) value;
                 if ("uri".equals(pair.getName().toString())) {
@@ -428,8 +419,7 @@ public final class CamelJavaParserHelper {
         if (block != null) {
             for (Object statement : block.statements()) {
                 // must be a method call expression
-                if (statement instanceof ExpressionStatement) {
-                    ExpressionStatement es = (ExpressionStatement) statement;
+                if (statement instanceof ExpressionStatement es) {
                     Expression exp = es.getExpression();
 
                     List<ParserResult> expressions = new ArrayList<>();
@@ -451,8 +441,7 @@ public final class CamelJavaParserHelper {
         if (exp == null) {
             return;
         }
-        if (exp instanceof MethodInvocation) {
-            MethodInvocation mi = (MethodInvocation) exp;
+        if (exp instanceof MethodInvocation mi) {
             doParseCamelLanguage(node, clazz, block, mi, expressions, language);
             // if the method was called on another method, then recursive
             exp = mi.getExpression();
@@ -466,7 +455,7 @@ public final class CamelJavaParserHelper {
         String name = mi.getName().getIdentifier();
 
         if (language.equals(name)) {
-            List args = mi.arguments();
+            List<?> args = mi.arguments();
             // the first argument is a string parameter for the language expression
             if (args != null && !args.isEmpty()) {
                 // it is a String type
@@ -477,8 +466,8 @@ public final class CamelJavaParserHelper {
                     boolean predicate = false;
                     Expression parent = mi.getExpression();
                     if (parent == null) {
-                        // maybe its an argument
-                        List list = mi.arguments();
+                        // maybe it's an argument
+                        List<?> list = mi.arguments();
                         // must be a single argument
                         if (list != null && list.size() == 1) {
                             ASTNode o = (ASTNode) list.get(0);
@@ -492,8 +481,7 @@ public final class CamelJavaParserHelper {
                             }
                         }
                     }
-                    if (parent instanceof MethodInvocation) {
-                        MethodInvocation emi = (MethodInvocation) parent;
+                    if (parent instanceof MethodInvocation emi) {
                         String parentName = emi.getName().getIdentifier();
                         predicate = isLanguagePredicate(parentName);
                     }
@@ -508,11 +496,10 @@ public final class CamelJavaParserHelper {
         }
 
         // the language maybe be passed in as an argument
-        List args = mi.arguments();
+        List<?> args = mi.arguments();
         if (args != null) {
             for (Object arg : args) {
-                if (arg instanceof MethodInvocation) {
-                    MethodInvocation ami = (MethodInvocation) arg;
+                if (arg instanceof MethodInvocation ami) {
                     doParseCamelLanguage(node, clazz, block, ami, expressions, language);
                 }
             }
@@ -538,12 +525,11 @@ public final class CamelJavaParserHelper {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     private static FieldSource<JavaClassSource> getField(JavaClassSource clazz, Block block, SimpleName ref) {
         String fieldName = ref.getIdentifier();
         if (fieldName != null) {
             // find field in class
-            FieldSource field = clazz != null ? clazz.getField(fieldName) : null;
+            FieldSource<JavaClassSource> field = clazz != null ? clazz.getField(fieldName) : null;
             if (field == null) {
                 field = findFieldInBlock(clazz, block, fieldName);
             }
@@ -552,38 +538,34 @@ public final class CamelJavaParserHelper {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private static FieldSource<JavaClassSource> findFieldInBlock(JavaClassSource clazz, Block block, String fieldName) {
         for (Object statement : block.statements()) {
             // try local statements first in the block
-            if (statement instanceof VariableDeclarationStatement) {
-                final Type type = ((VariableDeclarationStatement) statement).getType();
-                for (Object obj : ((VariableDeclarationStatement) statement).fragments()) {
-                    if (obj instanceof VariableDeclarationFragment) {
-                        VariableDeclarationFragment fragment = (VariableDeclarationFragment) obj;
+            if (statement instanceof VariableDeclarationStatement variableDeclarationStatement) {
+                final Type type = variableDeclarationStatement.getType();
+                for (Object obj : variableDeclarationStatement.fragments()) {
+                    if (obj instanceof VariableDeclarationFragment fragment) {
                         SimpleName name = fragment.getName();
                         if (name != null && fieldName.equals(name.getIdentifier())) {
-                            return new StatementFieldSource(clazz, fragment, type);
+                            return new StatementFieldSource<>(clazz, fragment, type);
                         }
                     }
                 }
             }
 
-            // okay the field may be burried inside an anonymous inner class as a field declaration
+            // okay the field may be buried inside an anonymous inner class as a field declaration
             // outside the configure method, so lets go back to the parent and see what we can find
             ASTNode node = block.getParent();
             if (node instanceof MethodDeclaration) {
                 node = node.getParent();
             }
             if (node instanceof AnonymousClassDeclaration) {
-                List declarations = ((AnonymousClassDeclaration) node).bodyDeclarations();
+                List<?> declarations = ((AnonymousClassDeclaration) node).bodyDeclarations();
                 for (Object dec : declarations) {
-                    if (dec instanceof FieldDeclaration) {
-                        FieldDeclaration fd = (FieldDeclaration) dec;
+                    if (dec instanceof FieldDeclaration fd) {
                         final Type type = fd.getType();
                         for (Object obj : fd.fragments()) {
-                            if (obj instanceof VariableDeclarationFragment) {
-                                VariableDeclarationFragment fragment = (VariableDeclarationFragment) obj;
+                            if (obj instanceof VariableDeclarationFragment fragment) {
                                 SimpleName name = fragment.getName();
                                 if (name != null && fieldName.equals(name.getIdentifier())) {
                                     return new StatementFieldSource(clazz, fragment, type);
@@ -603,25 +585,24 @@ public final class CamelJavaParserHelper {
             expression = ((ParenthesizedExpression) expression).getExpression();
         }
 
-        if (expression instanceof StringLiteral) {
-            return ((StringLiteral) expression).getLiteralValue();
-        } else if (expression instanceof BooleanLiteral) {
-            return String.valueOf(((BooleanLiteral) expression).booleanValue());
-        } else if (expression instanceof NumberLiteral) {
-            return ((NumberLiteral) expression).getToken();
+        if (expression instanceof StringLiteral stringLiteral) {
+            return stringLiteral.getLiteralValue();
+        } else if (expression instanceof BooleanLiteral booleanLiteral) {
+            return String.valueOf(booleanLiteral.booleanValue());
+        } else if (expression instanceof NumberLiteral numberLiteral) {
+            return numberLiteral.getToken();
         }
 
-        // if it a method invocation then add a dummy value assuming the method invocation will return a valid response
-        if (expression instanceof MethodInvocation) {
-            String name = ((MethodInvocation) expression).getName().getIdentifier();
+        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
+        if (expression instanceof MethodInvocation methodInvocation) {
+            String name = methodInvocation.getName().getIdentifier();
             return "{{" + name + "}}";
         }
 
-        // if its a qualified name (usually a constant field in another class)
+        // if it's a qualified name (usually a constant field in another class)
         // then add a dummy value as we cannot find the field value in other classes and maybe even outside the
         // source code we have access to
-        if (expression instanceof QualifiedName) {
-            QualifiedName qn = (QualifiedName) expression;
+        if (expression instanceof QualifiedName qn) {
             String name = qn.getFullyQualifiedName();
             return "{{" + name + "}}";
         }
@@ -631,7 +612,7 @@ public final class CamelJavaParserHelper {
             if (field != null) {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
-                    for (Annotation ann : field.getAnnotations()) {
+                    for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
                         boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
                                 || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
                         if (valid) {
@@ -647,9 +628,8 @@ public final class CamelJavaParserHelper {
                     // then grab the uri from the first argument
                     VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
                     expression = vdf.getInitializer();
-                    if (expression instanceof MethodInvocation) {
-                        MethodInvocation mi = (MethodInvocation) expression;
-                        List args = mi.arguments();
+                    if (expression instanceof MethodInvocation mi) {
+                        List<?> args = mi.arguments();
                         if (args != null && !args.isEmpty()) {
                             // the first argument has the endpoint uri
                             expression = (Expression) args.get(0);
@@ -661,7 +641,7 @@ public final class CamelJavaParserHelper {
                     VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
                     expression = vdf.getInitializer();
                     if (expression == null) {
-                        // its a field which has no initializer, then add a dummy value assuming the field will be initialized at runtime
+                        // it's a field which has no initializer, then add a dummy value assuming the field will be initialized at runtime
                         return "{{" + field.getName() + "}}";
                     } else {
                         return getLiteralValue(clazz, block, expression);
@@ -672,10 +652,9 @@ public final class CamelJavaParserHelper {
                 final String fieldName = ((SimpleName) expression).getIdentifier();
                 return "{{" + fieldName + "}}";
             }
-        } else if (expression instanceof InfixExpression) {
+        } else if (expression instanceof InfixExpression ie) {
             String answer = null;
             // is it a string that is concat together?
-            InfixExpression ie = (InfixExpression) expression;
             if (InfixExpression.Operator.PLUS.equals(ie.getOperator())) {
 
                 String val1 = getLiteralValue(clazz, block, ie.getLeftOperand());
@@ -694,7 +673,7 @@ public final class CamelJavaParserHelper {
 
                 if (!answer.isEmpty()) {
                     // include extended when we concat on 2 or more lines
-                    List extended = ie.extendedOperands();
+                    List<?> extended = ie.extendedOperands();
                     if (extended != null) {
                         StringBuilder answerBuilder = new StringBuilder(answer);
                         for (Object ext : extended) {
@@ -721,7 +700,7 @@ public final class CamelJavaParserHelper {
         if (expression instanceof NumberLiteral) {
             return true;
         } else if (expression instanceof SimpleName) {
-            FieldSource field = getField(clazz, block, (SimpleName) expression);
+            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
             if (field != null) {
                 return field.getType().isType("int") || field.getType().isType("long")
                         || field.getType().isType("Integer") || field.getType().isType("Long");

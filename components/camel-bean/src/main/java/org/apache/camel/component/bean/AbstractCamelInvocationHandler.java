@@ -133,7 +133,8 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                             String name = header.value();
                             exchange.getIn().setHeader(name, value);
                         } else if (ann.annotationType().isAssignableFrom(Headers.class)) {
-                            Map map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
+                            Map<String, Object> map
+                                    = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
                             if (map != null) {
                                 exchange.getIn().getHeaders().putAll(map);
                             }

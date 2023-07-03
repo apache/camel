@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestConsumerContextPathMatcherTest {
 
-    private static final class MockConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath {
+    private static final class MockConsumerPath implements RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath> {
         private final String method;
         private final String consumerPath;
 
@@ -46,7 +46,7 @@ public class RestConsumerContextPathMatcherTest {
         }
 
         @Override
-        public Object getConsumer() {
+        public MockConsumerPath getConsumer() {
             return null;
         }
 
@@ -58,7 +58,7 @@ public class RestConsumerContextPathMatcherTest {
 
     @Test
     public void testRestConsumerContextPathMatcherWithAmbiguousPaths() {
-        List<RestConsumerContextPathMatcher.ConsumerPath> consumerPaths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
         consumerPaths.add(new MockConsumerPath("GET", "/camel/{a}/b/{c}"));
         consumerPaths.add(new MockConsumerPath("GET", "/camel/a/{b}/{c}"));
 
@@ -71,11 +71,11 @@ public class RestConsumerContextPathMatcherTest {
 
     @Test
     public void testRestConsumerContextPathMatcherSuccess() {
-        List<RestConsumerContextPathMatcher.ConsumerPath> consumerPaths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
         consumerPaths.add(new MockConsumerPath("GET", "/camel/a/b/{c}"));
         consumerPaths.add(new MockConsumerPath("GET", "/camel/aa/{b}/{c}"));
 
-        RestConsumerContextPathMatcher.ConsumerPath path = RestConsumerContextPathMatcher.matchBestPath("GET",
+        RestConsumerContextPathMatcher.ConsumerPath<?> path = RestConsumerContextPathMatcher.matchBestPath("GET",
                 "/camel/a/b/3", consumerPaths);
         assertEquals(path.getConsumerPath(), "/camel/a/b/{c}");
     }

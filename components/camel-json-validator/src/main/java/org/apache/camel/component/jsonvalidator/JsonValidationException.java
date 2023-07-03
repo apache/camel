@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import org.apache.camel.ValidationException;
 
 public class JsonValidationException extends ValidationException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final JsonSchema schema;
@@ -41,7 +43,7 @@ public class JsonValidationException extends ValidationException {
     public JsonValidationException(Exchange exchange, JsonSchema schema, Exception e) {
         super(e.getMessage(), exchange, e);
         this.schema = schema;
-        this.errors = Collections.EMPTY_SET;
+        this.errors = Collections.emptySet();
     }
 
     public JsonSchema getSchema() {

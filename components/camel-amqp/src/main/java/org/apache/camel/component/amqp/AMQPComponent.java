@@ -112,14 +112,14 @@ public class AMQPComponent extends JmsComponent {
      */
     @Metadata(displayName = "Include AMQP Annotations")
     public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
-        if (getConfiguration() instanceof AMQPConfiguration) {
-            ((AMQPConfiguration) getConfiguration()).setIncludeAmqpAnnotations(includeAmqpAnnotations);
+        if (getConfiguration() instanceof AMQPConfiguration amqpConfiguration) {
+            amqpConfiguration.setIncludeAmqpAnnotations(includeAmqpAnnotations);
         }
     }
 
     public boolean isIncludeAmqpAnnotations() {
-        if (getConfiguration() instanceof AMQPConfiguration) {
-            return ((AMQPConfiguration) getConfiguration()).isIncludeAmqpAnnotations();
+        if (getConfiguration() instanceof AMQPConfiguration amqpConfiguration) {
+            return amqpConfiguration.isIncludeAmqpAnnotations();
         }
         return false;
     }

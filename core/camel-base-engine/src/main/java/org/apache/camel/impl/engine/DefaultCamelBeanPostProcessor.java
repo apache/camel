@@ -213,7 +213,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         injectFields(bean, beanName, type -> type.isAssignableFrom(CamelContext.class));
     }
 
-    protected void injectFirstPass(Object bean, String beanName, Function<Class, Boolean> filter) {
+    protected void injectFirstPass(Object bean, String beanName, Function<Class<?>, Boolean> filter) {
         // on first pass do field and methods first
         injectFields(bean, beanName, filter);
         injectMethods(bean, beanName, filter);
@@ -226,7 +226,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
     }
 
-    protected void injectSecondPass(Object bean, String beanName, Function<Class, Boolean> filter) {
+    protected void injectSecondPass(Object bean, String beanName, Function<Class<?>, Boolean> filter) {
         // on second pass do bind to registry beforehand as they may be used by field/method injections below
         if (bindToRegistrySupported()) {
             injectClass(bean, beanName);
@@ -239,7 +239,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         injectMethods(bean, beanName, filter);
     }
 
-    protected void injectFields(final Object bean, final String beanName, Function<Class, Boolean> accept) {
+    protected void injectFields(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
             if (accept != null && !accept.apply(field.getType())) {
                 return;
@@ -277,7 +277,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         });
     }
 
-    protected void injectBindToRegistryFields(final Object bean, final String beanName, Function<Class, Boolean> accept) {
+    protected void injectBindToRegistryFields(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
             if (accept != null && !accept.apply(field.getType())) {
                 return;
@@ -321,7 +321,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                         field.getName(), bean, beanName));
     }
 
-    protected void injectMethods(final Object bean, final String beanName, Function<Class, Boolean> accept) {
+    protected void injectMethods(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
         ReflectionHelper.doWithMethods(bean.getClass(), method -> {
             if (accept != null && !accept.apply(method.getReturnType())) {
                 return;
@@ -337,7 +337,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         });
     }
 
-    protected void injectBindToRegistryMethods(final Object bean, final String beanName, Function<Class, Boolean> accept) {
+    protected void injectBindToRegistryMethods(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
         // sort the methods so the simplest are used first
 
         final List<Method> methods = new ArrayList<>();
@@ -352,13 +352,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             }
         });
 
-        // sort methods on shortest number of parameters as we want to process the most simplest first
+        // sort methods on shortest number of parameters as we want to process the simplest first
         methods.sort(Comparator.comparingInt(Method::getParameterCount));
 
-        // then do a more complex sorting where we check inter-dependency among the methods
+        // then do a more complex sorting where we check inter dependency among the methods
         methods.sort((m1, m2) -> {
-            Class[] types1 = m1.getParameterTypes();
-            Class[] types2 = m2.getParameterTypes();
+            Class<?>[] types1 = m1.getParameterTypes();
+            Class<?>[] types2 = m2.getParameterTypes();
 
             // favour methods that has no parameters
             if (types1.length == 0 && types2.length == 0) {
@@ -369,14 +369,14 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                 return 1;
             }
 
-            // okay then compare so we favour methods that does not use parameter types that are returned from other methods
+            // okay then compare, so we favour methods that does not use parameter types that are returned from other methods
             boolean usedByOthers1 = false;
-            for (Class clazz : types1) {
+            for (Class<?> clazz : types1) {
                 usedByOthers1 |= methods.stream()
                         .anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
             }
             boolean usedByOthers2 = false;
-            for (Class clazz : types2) {
+            for (Class<?> clazz : types2) {
                 usedByOthers2 |= methods.stream()
                         .anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
             }
@@ -404,7 +404,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
             BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
             if (ann != null) {
-                // its a nested class so we dont have a bean instance for it
+                // it is a nested class so we don't have a bean instance for it
                 bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
             }
         });
@@ -536,7 +536,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
     }
 
-    private static boolean isComplexUserType(Class type) {
+    private static boolean isComplexUserType(Class<?> type) {
         // lets consider all non java, as complex types
         return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
     }

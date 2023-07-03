@@ -55,7 +55,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition def
+        ProcessorDefinition<?> def
                 = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
 
         // processor may be null if its anonymous inner class or as lambda
@@ -80,7 +80,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Processor processor = camelContext.getProcessor(id);
-        ProcessorDefinition def
+        ProcessorDefinition<?> def
                 = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getProcessorDefinition(id);
 
         // processor may be null if its anonymous inner class or as lambda

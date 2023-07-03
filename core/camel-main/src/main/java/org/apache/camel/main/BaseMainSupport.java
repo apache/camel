@@ -1306,7 +1306,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         // make defensive copy as we mutate the map
-        Set<String> keys = new LinkedHashSet(properties.keySet());
+        Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // set properties per console
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
@@ -1334,7 +1334,7 @@ public abstract class BaseMainSupport extends BaseService {
         VaultConfiguration target = camelContext.getVaultConfiguration();
 
         // make defensive copy as we mutate the map
-        Set<String> keys = new LinkedHashSet(properties.keySet());
+        Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // set properties per different vault component
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
@@ -1364,7 +1364,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         // make defensive copy as we mutate the map
-        Set<String> keys = new LinkedHashSet(properties.keySet());
+        Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // find names of beans (dot style)
         final Set<String> beansDot
                 = properties.keySet().stream()

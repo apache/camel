@@ -49,7 +49,7 @@ public final class DebeziumSqlserverComponent extends DebeziumComponent<SqlServe
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(
+    protected DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration> initializeDebeziumEndpoint(
             String uri, SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
         return new DebeziumSqlserverEndpoint(uri, this, configuration);
     }

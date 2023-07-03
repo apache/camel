@@ -111,15 +111,15 @@ public final class RouteBuilderParser {
             // is the field annotated with a Camel endpoint
             String uri = null;
             Expression exp = null;
-            for (Annotation ann : field.getAnnotations()) {
+            for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
                 boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
                         || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
                 if (valid) {
                     exp = (Expression) ann.getInternal();
-                    if (exp instanceof SingleMemberAnnotation) {
-                        exp = ((SingleMemberAnnotation) exp).getValue();
-                    } else if (exp instanceof NormalAnnotation) {
-                        List values = ((NormalAnnotation) exp).values();
+                    if (exp instanceof SingleMemberAnnotation singleMemberAnnotation) {
+                        exp = singleMemberAnnotation.getValue();
+                    } else if (exp instanceof NormalAnnotation normalAnnotation) {
+                        List<?> values = normalAnnotation.values();
                         for (Object value : values) {
                             MemberValuePair pair = (MemberValuePair) value;
                             if ("uri".equals(pair.getName().toString())) {
@@ -150,9 +150,9 @@ public final class RouteBuilderParser {
                 Object internal = exp != null ? exp : field.getInternal();
 
                 // find position of field/expression
-                if (internal instanceof ASTNode) {
-                    int pos = ((ASTNode) internal).getStartPosition();
-                    int len = ((ASTNode) internal).getLength();
+                if (internal instanceof ASTNode astNode) {
+                    int pos = astNode.getStartPosition();
+                    int len = astNode.getLength();
                     int line = findLineNumber(clazz.toUnformattedString(), pos);
                     if (line > -1) {
                         detail.setLineNumber(Integer.toString(line));

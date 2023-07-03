@@ -53,7 +53,7 @@ public final class EntityUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityUtils.class);
 
-    private static AtomicLong partNumber = new AtomicLong();
+    private static final AtomicLong partNumber = new AtomicLong();
 
     private EntityUtils() {
     }
@@ -208,11 +208,10 @@ public final class EntityUtils {
     }
 
     public static byte[] getContent(HttpEntity entity) {
-        try {
-            final ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-            entity.writeTo(outstream);
-            outstream.flush();
-            return outstream.toByteArray();
+        try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            entity.writeTo(os);
+            os.flush();
+            return os.toByteArray();
         } catch (Exception e) {
             LOG.debug("failed to get content", e);
             return null;
@@ -221,35 +220,35 @@ public final class EntityUtils {
 
     public static boolean hasEntity(HttpMessage message) {
         boolean hasEntity = false;
-        if (message instanceof HttpEntityEnclosingRequest) {
-            hasEntity = ((HttpEntityEnclosingRequest) message).getEntity() != null;
-        } else if (message instanceof HttpResponse) {
-            hasEntity = ((HttpResponse) message).getEntity() != null;
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            hasEntity = httpEntityEnclosingRequest.getEntity() != null;
+        } else if (message instanceof HttpResponse httpResponse) {
+            hasEntity = httpResponse.getEntity() != null;
         }
         return hasEntity;
     }
 
     public static HttpEntity getMessageEntity(HttpMessage message) {
-        if (message instanceof HttpEntityEnclosingRequest) {
-            return ((HttpEntityEnclosingRequest) message).getEntity();
-        } else if (message instanceof HttpResponse) {
-            return ((HttpResponse) message).getEntity();
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            return httpEntityEnclosingRequest.getEntity();
+        } else if (message instanceof HttpResponse httpResponse) {
+            return httpResponse.getEntity();
         }
         return null;
     }
 
     public static void setMessageEntity(HttpMessage message, HttpEntity entity) {
-        if (message instanceof HttpEntityEnclosingRequest) {
-            ((HttpEntityEnclosingRequest) message).setEntity(entity);
-        } else if (message instanceof HttpResponse) {
-            ((HttpResponse) message).setEntity(entity);
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            httpEntityEnclosingRequest.setEntity(entity);
+        } else if (message instanceof HttpResponse httpResponse) {
+            httpResponse.setEntity(entity);
         }
         Header contentTypeHeader = entity.getContentType();
         if (contentTypeHeader != null) {
             message.setHeader(contentTypeHeader);
         }
-        if (entity instanceof MimeEntity) {
-            Header contentTransferEncodingHeader = ((MimeEntity) entity).getContentTransferEncoding();
+        if (entity instanceof MimeEntity mimeEntity) {
+            Header contentTransferEncodingHeader = mimeEntity.getContentTransferEncoding();
             if (contentTransferEncodingHeader != null) {
                 message.setHeader(contentTransferEncodingHeader);
             }
@@ -278,9 +277,9 @@ public final class EntityUtils {
 
     public static String printEntity(HttpEntity entity) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream ps = new PrintStream(baos, true, "utf-8")) {
+             PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
             printEntity(ps, entity);
-            return baos.toString(StandardCharsets.UTF_8.name());
+            return baos.toString(StandardCharsets.UTF_8);
         }
     }
 

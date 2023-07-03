@@ -649,7 +649,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
                 ((ResumeAware) consumer).setResumeStrategy(resumeStrategy);
             }
 
-            if (consumer instanceof ConsumerListenerAware) {
+            if (consumer instanceof ConsumerListenerAware<?>) {
                 ((ConsumerListenerAware) consumer).setConsumerListener(consumerListener);
             }
         }
