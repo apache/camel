@@ -283,7 +283,7 @@
     <jakarta-mail-version>1.6.7</jakarta-mail-version>
     <jakarta-xml-soap-api-version>1.4.2</jakarta-xml-soap-api-version>
     <jakarta.el-version>3.0.3</jakarta.el-version>
-    <jandex-version>3.0.3</jandex-version>
+    <jandex-version>3.1.0</jandex-version>
     <jansi-version>2.4.0</jansi-version>
     <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
     <jasypt-version>1.9.3</jasypt-version>
