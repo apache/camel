@@ -1592,10 +1592,13 @@ public class StaticEndpointBuilders {
      * Since: 3.21
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
-     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * Syntax: <code>azure-files://account/share</code>
      * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
+     * Path parameter: account (required)
+     * The account to use
+     * 
+     * Path parameter: share (required)
+     * The share to use
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -1603,7 +1606,7 @@ public class StaticEndpointBuilders {
      * Path parameter: directoryName
      * The starting directory
      * 
-     * @param path //account[.host]/share[/dir]
+     * @param path //account/share
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
@@ -1618,10 +1621,13 @@ public class StaticEndpointBuilders {
      * Since: 3.21
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
-     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * Syntax: <code>azure-files://account/share</code>
      * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
+     * Path parameter: account (required)
+     * The account to use
+     * 
+     * Path parameter: share (required)
+     * The share to use
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -1631,7 +1637,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //account[.host]/share[/dir]
+     * @param path //account/share
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
