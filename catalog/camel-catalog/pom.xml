@@ -193,32 +193,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- sync parent/pom.xml with camel-dependencies/pom.xml -->
-                    <plugin>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>sync-properties-maven-plugin</artifactId>
-                        <version>${project.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>sync-properties</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
 </project>

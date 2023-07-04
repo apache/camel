@@ -118,6 +118,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
+        <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
         <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
@@ -464,7 +465,6 @@
                         <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
                             <exclude>**/generated/**</exclude>
-                            <exclude>**/camel-dependencies/**</exclude>
                             <exclude>**/generated.txt</exclude>
                             <exclude>**/*.json</exclude>
                             <exclude>**/README</exclude>
@@ -584,7 +584,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.5.0</version>
+                    <version>${flatten-maven-plugin-version}</version>
                     <executions>
                         <execution>
                             <id>default-cli</id>
