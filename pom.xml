@@ -350,6 +350,7 @@
                             <exclude>**/yarn.lock</exclude>
                             <exclude>**/zkserver*.conf</exclude>
                             <exclude>.mvn/**</exclude>
+                            <exclude>.sdkmanrc</exclude>
                             <exclude>KEYS</exclude>
                             <exclude>camel-sbom/*.xml</exclude>
                             <exclude>doap.rdf</exclude>
