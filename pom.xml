@@ -118,18 +118,22 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
+        <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
+        <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
-        <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
+        <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
+        <license-maven-plugin-version>4.2</license-maven-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
+        <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
+        <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
+        <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
+        <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
         <maven-failsafe-plugin-version>3.1.2</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
-        <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
-        <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
-        <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -139,10 +143,7 @@
         <jaxb-osgi-version>4.0.1</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.1</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.1</jaxb-jxc-version>
-        <mycila-license-version>4.2</mycila-license-version>
-        <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <groovy-version>4.0.12</groovy-version>
-        <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
 
@@ -262,7 +263,7 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>${mycila-license-version}</version>
+                    <version>${license-maven-plugin-version}</version>
                     <configuration>
                         <failIfUnknown>true</failIfUnknown>
                         <header>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt</header>
