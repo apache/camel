@@ -51,8 +51,8 @@
         <module>camel-azure-storage-queue</module>
         <module>camel-azure-cosmosdb</module>
         <module>camel-azure-servicebus</module>
-        <module>camel-azure-key-vault</module>
-        <module>camel-azure-files</module>
+	<module>camel-azure-key-vault</module>
+	<module>camel-azure-files</module>
     </modules>
 
 </project>
