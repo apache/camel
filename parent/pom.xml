@@ -3023,18 +3023,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <configuration>
-                        <buildcommands>
-                            <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
-                        </buildcommands>
-                        <projectnatures>
-                            <nature>org.eclipse.jdt.core.javanature</nature>
-                        </projectnatures>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <attach>true</attach>
