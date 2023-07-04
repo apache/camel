@@ -46,7 +46,7 @@ public class SftpServerHostKeysIT extends SftpServerTestSupport {
             exception = exception.getCause();
         }
 
-        MatcherAssert.assertThat(errorMessages, Matchers.hasItem("Algorithm negotiation fail"));
+        MatcherAssert.assertThat(errorMessages, Matchers.hasItem(Matchers.containsString("Algorithm negotiation fail")));
     }
 
     @Test

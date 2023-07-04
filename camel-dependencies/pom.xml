@@ -267,7 +267,7 @@
         <jool-version>0.9.15</jool-version>
         <jooq-version>3.18.4</jooq-version>
         <joor-version>0.9.14</joor-version>
-        <jsch-version>0.2.1</jsch-version>
+        <jsch-version>0.2.9</jsch-version>
         <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
         <json-patch-version>1.13</json-patch-version>
