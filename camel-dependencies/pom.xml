@@ -72,7 +72,7 @@
         <caffeine-version>3.1.6</caffeine-version>
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <californium-version>2.7.2</californium-version>
-        <cassandra-driver-version>4.15.0</cassandra-driver-version>
+        <cassandra-driver-version>4.16.0</cassandra-driver-version>
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.157</classgraph-version>
