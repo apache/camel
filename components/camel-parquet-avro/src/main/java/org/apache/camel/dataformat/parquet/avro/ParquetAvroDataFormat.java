@@ -35,6 +35,7 @@ import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.avro.AvroParquetWriter;
 import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.ParquetWriter;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 
 import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
 import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
@@ -43,6 +44,8 @@ import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
 public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final DefaultUuidGenerator DEFAULT_UUID_GENERATOR = new DefaultUuidGenerator();
+
+    private CompressionCodecName compressionCodecName = GZIP;
 
     private Class<?> unmarshalType;
 
@@ -67,7 +70,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 .withSchema(ReflectData.AllowNull.get().getSchema(unmarshalType)) // generate nullable fields
                 .withDataModel(ReflectData.get())
                 .withConf(conf)
-                .withCompressionCodec(GZIP)
+                .withCompressionCodec(compressionCodecName)
                 .withWriteMode(OVERWRITE)
                 .build()) {
             for (Object grapElem : list) {
@@ -108,6 +111,19 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     @Override
     protected void doStop() throws Exception {
         // no-op
+    }
+
+    public String getCompressionCodecName() {
+        return compressionCodecName.name();
+    }
+
+    /**
+     * Compression codec to use when marshalling. You can find the supported codecs at
+     * https://github.com/apache/parquet-format/blob/master/Compression.md#codecs. Note that some codecs may require you
+     * to include additional libraries into the classpath.
+     */
+    public void setCompressionCodecName(String compressionCodecName) {
+        this.compressionCodecName = CompressionCodecName.valueOf(compressionCodecName);
     }
 
     public Class<?> getUnmarshalType() {

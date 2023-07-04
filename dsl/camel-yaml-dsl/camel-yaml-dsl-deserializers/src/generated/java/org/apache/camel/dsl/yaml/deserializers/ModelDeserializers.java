@@ -10169,6 +10169,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.ParquetAvroDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "compression-codec-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "unmarshal-type", type = "string")
             }
@@ -10192,6 +10193,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ParquetAvroDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "compression-codec-name": {
+                    String val = asText(node);
+                    target.setCompressionCodecName(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);

@@ -3401,6 +3401,7 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("compressionCodecName", def.getCompressionCodecName());
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
         endElement(name);
     }

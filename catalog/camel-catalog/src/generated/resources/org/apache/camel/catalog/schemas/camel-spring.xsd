@@ -8730,6 +8730,15 @@ false. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="compressionCodecName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Compression codec to use when marshalling. Default value: GZIP
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="unmarshalType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

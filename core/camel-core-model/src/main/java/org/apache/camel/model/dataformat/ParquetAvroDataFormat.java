@@ -34,6 +34,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ParquetAvroDataFormat extends DataFormatDefinition {
 
+    @XmlAttribute
+    @Metadata(defaultValue = "GZIP")
+    private String compressionCodecName;
+
     @XmlTransient
     private Class<?> unmarshalType;
 
@@ -56,8 +60,20 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
 
     private ParquetAvroDataFormat(Builder builder) {
         this();
+        this.compressionCodecName = builder.compressionCodecName;
         this.unmarshalTypeName = builder.unmarshalTypeName;
         this.unmarshalType = builder.unmarshalType;
+    }
+
+    /**
+     * Compression codec to use when marshalling.
+     */
+    public void setCompressionCodecName(String compressionCodecName) {
+        this.compressionCodecName = compressionCodecName;
+    }
+
+    public String getCompressionCodecName() {
+        return compressionCodecName;
     }
 
     public Class<?> getUnmarshalType() {
@@ -88,8 +104,17 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<ParquetAvroDataFormat> {
 
+        private String compressionCodecName;
         private Class<?> unmarshalType;
         private String unmarshalTypeName;
+
+        /**
+         * Compression codec to use when marshalling.
+         */
+        public Builder compressionCodecName(String compressionCodecName) {
+            this.compressionCodecName = compressionCodecName;
+            return this;
+        }
 
         /**
          * Class to use when unmarshalling.

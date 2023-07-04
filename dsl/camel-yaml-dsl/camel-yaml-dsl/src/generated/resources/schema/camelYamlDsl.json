@@ -5371,6 +5371,9 @@
         }, {
           "type" : "object",
           "properties" : {
+            "compressionCodecName" : {
+              "type" : "string"
+            },
             "id" : {
               "type" : "string"
             },

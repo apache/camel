@@ -16,7 +16,8 @@
     "modelJavaType": "org.apache.camel.model.dataformat.ParquetAvroDataFormat"
   },
   "properties": {
-    "unmarshalType": { "index": 0, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },
-    "id": { "index": 1, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "compressionCodecName": { "index": 0, "kind": "attribute", "displayName": "Compression Codec Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "GZIP", "description": "Compression codec to use when marshalling." },
+    "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class to use when unmarshalling." },
+    "id": { "index": 2, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }
