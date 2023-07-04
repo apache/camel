@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-The ParquetAvro Data Format Data Format is a Camel Frameworks's data format implementation based on parquet-avro library for (de)/serialization purposes. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
+The ParquetAvro Data Format is a Camel Framework's data format implementation based on parquet-avro library for (de)/serialization purposes. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
 
 == Parquet Data Format Options
 

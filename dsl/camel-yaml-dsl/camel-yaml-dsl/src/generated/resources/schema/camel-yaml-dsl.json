@@ -5449,6 +5449,9 @@
         }, {
           "type" : "object",
           "properties" : {
+            "compression-codec-name" : {
+              "type" : "string"
+            },
             "id" : {
               "type" : "string"
             },

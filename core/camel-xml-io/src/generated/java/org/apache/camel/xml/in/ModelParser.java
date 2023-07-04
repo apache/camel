@@ -2381,11 +2381,12 @@ public class ModelParser extends BaseParser {
     }
     protected ParquetAvroDataFormat doParseParquetAvroDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ParquetAvroDataFormat(), (def, key, val) -> {
-            if ("unmarshalType".equals(key)) {
-                def.setUnmarshalTypeName(val);
-                return true;
+            switch (key) {
+                case "compressionCodecName": def.setCompressionCodecName(val); break;
+                case "unmarshalType": def.setUnmarshalTypeName(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
-            return identifiedTypeAttributeHandler().accept(def, key, val);
+            return true;
         }, noElementHandler(), noValueHandler());
     }
     protected ProtobufDataFormat doParseProtobufDataFormat() throws IOException, XmlPullParserException {
