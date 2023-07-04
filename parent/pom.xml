@@ -283,7 +283,7 @@
         <libthrift-version>0.18.1</libthrift-version>
         <jodatime2-version>2.11.1</jodatime2-version>
         <jolokia-version>1.7.2</jolokia-version>
-        <jolt-version>0.1.7</jolt-version>
+        <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <jooq-version>3.18.4</jooq-version>
         <joor-version>0.9.14</joor-version>
