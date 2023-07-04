@@ -547,7 +547,7 @@ public interface KafkaComponentBuilderFactory {
          * considered failed and the group will rebalance in order to reassign
          * the partitions to another member.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -555,7 +555,7 @@ public interface KafkaComponentBuilderFactory {
          * @return the dsl builder
          */
         default KafkaComponentBuilder maxPollIntervalMs(
-                java.lang.Long maxPollIntervalMs) {
+                java.lang.Integer maxPollIntervalMs) {
             doSetProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
         }
@@ -2163,7 +2163,7 @@ public interface KafkaComponentBuilderFactory {
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;
             case "maxPartitionFetchBytes": getOrCreateConfiguration((KafkaComponent) component).setMaxPartitionFetchBytes((java.lang.Integer) value); return true;
-            case "maxPollIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setMaxPollIntervalMs((java.lang.Long) value); return true;
+            case "maxPollIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setMaxPollIntervalMs((java.lang.Integer) value); return true;
             case "maxPollRecords": getOrCreateConfiguration((KafkaComponent) component).setMaxPollRecords((java.lang.Integer) value); return true;
             case "offsetRepository": getOrCreateConfiguration((KafkaComponent) component).setOffsetRepository((org.apache.camel.spi.StateRepository) value); return true;
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;

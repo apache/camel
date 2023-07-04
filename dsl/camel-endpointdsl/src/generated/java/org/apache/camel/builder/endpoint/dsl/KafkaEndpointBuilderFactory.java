@@ -868,7 +868,7 @@ public interface KafkaEndpointBuilderFactory {
          * considered failed and the group will rebalance in order to reassign
          * the partitions to another member.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -876,7 +876,7 @@ public interface KafkaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default KafkaEndpointConsumerBuilder maxPollIntervalMs(
-                Long maxPollIntervalMs) {
+                Integer maxPollIntervalMs) {
             doSetProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
         }
@@ -889,7 +889,7 @@ public interface KafkaEndpointBuilderFactory {
          * the partitions to another member.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
