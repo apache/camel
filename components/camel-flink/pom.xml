@@ -89,13 +89,6 @@
             </exclusions>
         </dependency>
 
-        <!-- scala -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala-version}</version>
-        </dependency>
-
         <!--testing-->
         <dependency>
             <groupId>org.apache.camel</groupId>

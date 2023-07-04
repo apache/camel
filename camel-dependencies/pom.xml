@@ -401,7 +401,6 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.2</saxon-version>
         <scala-datasonnet-version>2.13.10</scala-datasonnet-version>
-        <scala-version>2.11.12</scala-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
         <shiro-version>1.11.0</shiro-version>
         <slack-api-model-version>1.8.1</slack-api-model-version>
