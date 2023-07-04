@@ -468,7 +468,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
                         <configuration>
                             <skipTests>${skipTests.s390x}</skipTests>
                         </configuration>
@@ -476,7 +475,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${maven-failsafe-plugin-version}</version>
                         <configuration>
                             <skipITs>${skipITs.s390x}</skipITs>
                         </configuration>
@@ -496,7 +494,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
                         <configuration>
                             <skipTests>${skipTests.ppc64le}</skipTests>
                         </configuration>
@@ -504,7 +501,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${maven-failsafe-plugin-version}</version>
                         <configuration>
                             <skipITs>${skipITs.ppc64le}</skipITs>
                         </configuration>

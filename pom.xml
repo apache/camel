@@ -130,7 +130,6 @@
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
         <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
-        <maven-failsafe-plugin-version>3.1.2</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
@@ -426,7 +425,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${maven-failsafe-plugin-version}</version>
+                    <version>${maven-surefire-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

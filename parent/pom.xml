@@ -3373,7 +3373,6 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
                         <configuration>
                             <systemPropertyVariables>
                                 <!-- By default Java's secure RNG uses /dev/random to generate seeds. In
