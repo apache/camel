@@ -125,22 +125,5 @@
             </plugin>
 
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <configuration>
-                        <buildcommands>
-                            <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
-                        </buildcommands>
-                        <projectnatures>
-                            <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
-                        </projectnatures>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>
