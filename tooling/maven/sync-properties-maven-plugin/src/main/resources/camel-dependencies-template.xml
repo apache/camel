@@ -34,32 +34,23 @@
 
     <packaging>pom</packaging>
     <name>Camel :: Dependencies</name>
-    <description>Camel Dependencies POM</description>
+    <description>Version properties used for building and testing Apache Camel</description>
 
-    <!-- sync properties here from parent/pom.xml -->
     <properties>
         @properties@
     </properties>
 
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.mycila</groupId>
-                            <artifactId>license-maven-plugin</artifactId>
-                            <version>${mycila-license-version}</version>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
+    <url>https://camel.apache.org</url>
+    <inceptionYear>2007</inceptionYear>
+    <scm>
+        <connection>scm:git:http://gitbox.apache.org/repos/asf/camel.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=camel.git;a=summary</url>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.apache.org/jira/browse/CAMEL</url>
+    </issueManagement>
+
 </project>
