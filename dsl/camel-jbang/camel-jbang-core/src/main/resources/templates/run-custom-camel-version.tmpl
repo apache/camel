@@ -19,10 +19,10 @@
 
 //JAVA {{ .JavaVersion }}+
 {{ .MavenRepositories }}
-//REPOS mavencentral,apache-snapshot=http://repository.apache.org/content/groups/snapshots/
+//REPOS central=https://repo1.maven.org/maven2,apache-snapshot=http://repository.apache.org/content/groups/snapshots/
 {{ .CamelDependencies }}
 {{ .CamelJBangDependencies }}
-//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:3.20.6}
+//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:3.21.0}
 
 package main;
 
