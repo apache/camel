@@ -45,6 +45,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${google-cloud-bom-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -80,7 +87,6 @@
             <groupId>com.google.api</groupId>
             <artifactId>gax-grpc</artifactId>
             <classifier>testlib</classifier>
-            <version>${google-cloud-functions-gax-grpc-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
