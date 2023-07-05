@@ -50,12 +50,6 @@
             <artifactId>jackson-core</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3-version}</version>
-        </dependency>
-
         <!-- HuaweiCloud SDK v3 -->
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>
@@ -66,6 +60,10 @@
             <groupId>com.huaweicloud.sdk</groupId>
             <artifactId>huaweicloud-sdk-smn</artifactId>
             <version>${huaweicloud-sdk-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- for testing -->
