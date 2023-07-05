@@ -1086,7 +1086,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         Set<String> repositoryURLs = new HashSet<>();
 
         // add maven central first - always
-        centralRepository = new RemoteRepository.Builder("central", "default", MAVEN_CENTRAL_REPO)
+        centralRepository = new RemoteRepository.Builder("mavencentral", "default", MAVEN_CENTRAL_REPO)
                 .setReleasePolicy(defaultPolicy)
                 .setSnapshotPolicy(POLICY_DISABLED)
                 .build();
