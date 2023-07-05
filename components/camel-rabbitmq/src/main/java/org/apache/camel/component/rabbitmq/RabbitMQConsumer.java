@@ -155,13 +155,13 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         if (startConsumerCallable != null) {
             startConsumerCallable.stop();
         }
-        for (RabbitConsumer consumer : this.consumers) {
+        this.consumers.parallelStream().forEach(consumer -> {
             try {
                 ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
                 LOG.warn("Error occurred while stopping consumer. This exception is ignored", e);
             }
-        }
+        });
         this.consumers.clear();
         if (conn != null) {
             LOG.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
