@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.fhir;
 
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -148,7 +147,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse("1998-04-29");
         assertNotEquals(date, patient.getBirthDate());
         this.patient.setBirthDate(date);
-        String url = "Patient?" + Patient.SP_IDENTIFIER + '=' + URLEncoder.encode(this.patient.getId(), "UTF-8");
+        String url = "Patient?" + Patient.SP_RES_ID + '=' + patient.getIdPart();
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IBaseResource
         headers.put("CamelFhir.resource", this.patient);
@@ -169,7 +168,7 @@ public class FhirUpdateIT extends AbstractFhirTestSupport {
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse("1998-04-29");
         assertNotEquals(date, patient.getBirthDate());
         this.patient.setBirthDate(date);
-        String url = "Patient?" + Patient.SP_IDENTIFIER + '=' + URLEncoder.encode(this.patient.getId(), "UTF-8");
+        String url = "Patient?" + Patient.SP_RES_ID + '=' + patient.getIdPart();
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IBaseResource
         headers.put("CamelFhir.resourceAsString", this.fhirContext.newJsonParser().encodeResourceToString(this.patient));
