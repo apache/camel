@@ -35,6 +35,7 @@
 
     <properties>
         <servicemix.legal.version>1.0</servicemix.legal.version>
+        <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
     </properties>
 
     <build>
@@ -46,7 +47,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                         <skip>true</skip>
                     </configuration>
                 </plugin>

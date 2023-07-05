@@ -36,6 +36,7 @@
         <firstVersion>1.0.0</firstVersion>
         <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
         <camel.surefire.parallel.strategy>custom</camel.surefire.parallel.strategy>
+        <camel.surefire.fork.additional-vmargs>-Xmx2G</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -306,7 +307,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <!-- skip file stress tests as they are intended to run manually -->
-                            <argLine>${camel.surefire.fork.vmargs} -Xmx2G</argLine>
                             <excludes>
                                 <exclude>org/apache/camel/component/file/stress/**.java</exclude>
                                 <exclude>**/DistributedCompletionIntervalTest.java</exclude>

@@ -32,6 +32,7 @@
     <description>A pure Java JMS Camel Component</description>
 
     <properties>
+        <camel.surefire.forkTimeout>6000</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -91,25 +92,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkedProcessTimeoutInSeconds>6000</forkedProcessTimeoutInSeconds>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

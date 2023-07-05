@@ -118,47 +118,5 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>jdk17-build</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-opens java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-           </build>
-        </profile>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <childDelegation>false</childDelegation>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <reportFormat>brief</reportFormat>
-                            <useFile>false</useFile>
-                            <runOrder>alphabetical</runOrder>
-                            <!--parallel>classes</parallel>
-                            <perCoreThreadCount>true</perCoreThreadCount>
-                            <threadCount>2</threadCount-->
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 </project>

@@ -812,6 +812,12 @@
                             <failIfNoTests>false</failIfNoTests>
                             <skipTests>true</skipTests>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>none</phase><!-- No need to even load the plugin during releases -->
+                            </execution>
+                        </executions>
                      </plugin>
                 </plugins>
             </build>
