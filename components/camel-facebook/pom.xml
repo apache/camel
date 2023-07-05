@@ -32,6 +32,7 @@
     <description>Camel Facebook Support</description>
 
     <properties>
+        <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -57,29 +58,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

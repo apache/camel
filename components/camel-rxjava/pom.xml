@@ -35,6 +35,9 @@
         <firstVersion>2.22.0</firstVersion>
         <label>reactive,streams</label>
         <title>RxJava</title>
+        
+        <camel.surefire.fork.additional-vmargs>-Xmx2G</camel.surefire.fork.additional-vmargs>
+        <camel.surefire.forkTimeout>120</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -72,27 +75,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>-Xmx2G ${camel.surefire.fork.vmargs}
-                            </argLine>
-                            <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

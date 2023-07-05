@@ -31,26 +31,10 @@
     <name>Camel :: Kudu</name>
     <description>Camel Apache Kudu support</description>
 
+    <properties>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.net=ALL-UNNAMED</camel.surefire.fork.vmargs>
+    </properties>
     <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-opens java.base/java.net=ALL-UNNAMED</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
         <profile>
             <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
             <id>NotLinux</id>
