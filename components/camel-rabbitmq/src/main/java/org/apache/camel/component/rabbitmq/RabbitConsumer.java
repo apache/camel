@@ -33,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
@@ -40,7 +41,7 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consumer {
+class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consumer, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitConsumer.class);
 
@@ -206,6 +207,16 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(),
                 consumer.getEndpoint().getConsumerTag(), false,
                 consumer.getEndpoint().isExclusiveConsumer(), null, this);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        if (channel == null) {
+            return;
+        }
+        if (tag != null && isChannelOpen()) {
+            channel.basicCancel(tag);
+        }
     }
 
     @Override
