@@ -183,7 +183,7 @@
         <google-cloud-bom-version>26.18.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.22.0</google-cloud-functions-bom-version>
         <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
-        <google-cloud-secretmanager-bom-version>2.2.0</google-cloud-secretmanager-bom-version>
+        <google-cloud-secretmanager-bom-version>2.20.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>22.3.2</graaljs-version>
         <graphql-java-version>18.4</graphql-java-version>
         <greenmail-version>2.0.0</greenmail-version>
