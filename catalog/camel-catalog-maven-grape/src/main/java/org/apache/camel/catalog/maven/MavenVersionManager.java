@@ -54,6 +54,14 @@ public class MavenVersionManager implements VersionManager, Closeable {
         this.classLoader = classLoader;
     }
 
+    @Override
+    public ClassLoader getClassLoader() {
+        if (classLoader != null) {
+            return classLoader;
+        }
+        return groovyClassLoader;
+    }
+
     /**
      * Configures the directory for the download cache.
      * <p/>

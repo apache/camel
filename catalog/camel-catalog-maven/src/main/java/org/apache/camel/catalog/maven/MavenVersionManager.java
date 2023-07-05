@@ -75,6 +75,14 @@ public class MavenVersionManager implements VersionManager, Closeable {
         this.classLoader = classLoader;
     }
 
+    @Override
+    public ClassLoader getClassLoader() {
+        if (classLoader != null) {
+            return classLoader;
+        }
+        return helperClassLoader;
+    }
+
     /**
      * Configures the directory for the download cache.
      * <p/>
@@ -179,10 +187,6 @@ public class MavenVersionManager implements VersionManager, Closeable {
     /**
      * Resolves Maven artifact using passed coordinates and use downloaded artifact as one of the URLs in the
      * helperClassLoader, so further Catalog access may load resources from it.
-     *
-     * @param mavenDownloader
-     * @param gav
-     * @param useSnapshots
      */
     private void resolve(MavenDownloader mavenDownloader, String gav, boolean useSnapshots)
             throws MavenResolutionException, MalformedURLException {
