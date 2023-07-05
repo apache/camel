@@ -70,7 +70,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @Metadata(required = true)
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
-    private BlockingQueue queue;
+    private BlockingQueue<Exchange> queue;
     @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE)
     private int size = SedaConstants.QUEUE_SIZE;
 

@@ -512,7 +512,7 @@ public final class CSimpleHelper {
             // they are equal
             return true;
         } else if (leftValue == null || rightValue == null) {
-            // only one of them is null so they are not equal
+            // only one of them is null, so they are not equal
             return false;
         }
         return org.apache.camel.support.ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue,
@@ -596,7 +596,7 @@ public final class CSimpleHelper {
         if (key.startsWith("last")) {
             num = size - 1;
 
-            // maybe its an expression to subtract a number after last
+            // maybe it's an expression to subtract a number after last
             String after = StringHelper.after(key, "-");
             if (after != null) {
                 Integer redux

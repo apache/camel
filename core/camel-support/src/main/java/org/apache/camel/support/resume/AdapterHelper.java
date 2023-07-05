@@ -39,7 +39,7 @@ public final class AdapterHelper {
     private AdapterHelper() {
     }
 
-    public static ResumeAdapter eval(CamelContext context, ResumeAware resumeAware, ResumeStrategy resumeStrategy) {
+    public static ResumeAdapter eval(CamelContext context, ResumeAware<?> resumeAware, ResumeStrategy resumeStrategy) {
         assert context != null;
         assert resumeAware != null;
         assert resumeStrategy != null;

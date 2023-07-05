@@ -41,7 +41,7 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     private String uri;
     private boolean sanitize;
 
-    public ManagedRoutingSlip(CamelContext context, RoutingSlip processor, RoutingSlipDefinition definition) {
+    public ManagedRoutingSlip(CamelContext context, RoutingSlip processor, RoutingSlipDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -70,8 +70,8 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
-    public RoutingSlipDefinition getDefinition() {
-        return (RoutingSlipDefinition) super.getDefinition();
+    public RoutingSlipDefinition<?> getDefinition() {
+        return (RoutingSlipDefinition<?>) super.getDefinition();
     }
 
     @Override

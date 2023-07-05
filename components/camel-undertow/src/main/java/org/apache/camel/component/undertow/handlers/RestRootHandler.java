@@ -136,7 +136,7 @@ public class RestRootHandler implements HttpHandler {
 
                 String consumerPath = consumer.getEndpoint().getHttpURI().getPath();
                 boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
-                // Just make sure the we get the right consumer path first
+                // Just make sure that we get the right consumer path first
                 if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
                     candidates.add(consumer);
                 }

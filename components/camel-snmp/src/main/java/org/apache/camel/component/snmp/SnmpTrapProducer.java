@@ -40,7 +40,7 @@ public class SnmpTrapProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapProducer.class);
 
-    private SnmpEndpoint endpoint;
+    private final SnmpEndpoint endpoint;
 
     private Address targetAddress;
     private USM usm;

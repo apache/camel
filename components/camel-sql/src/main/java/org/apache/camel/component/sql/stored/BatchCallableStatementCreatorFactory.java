@@ -72,8 +72,7 @@ public class BatchCallableStatementCreatorFactory {
         List<SqlParameter> params = new ArrayList<>();
 
         for (Object parameter : template.getParameterList()) {
-            if (parameter instanceof InParameter) {
-                InParameter inputParameter = (InParameter) parameter;
+            if (parameter instanceof InParameter inputParameter) {
 
                 SqlParameter sqlParameter;
                 if (inputParameter.getScale() != null) {

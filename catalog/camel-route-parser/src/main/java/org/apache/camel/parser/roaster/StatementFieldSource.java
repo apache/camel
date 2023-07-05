@@ -88,7 +88,7 @@ public class StatementFieldSource<O extends JavaSource<O>> implements FieldSourc
     }
 
     @Override
-    public boolean hasAnnotation(Class type) {
+    public boolean hasAnnotation(Class<? extends java.lang.annotation.Annotation> type) {
         return false;
     }
 

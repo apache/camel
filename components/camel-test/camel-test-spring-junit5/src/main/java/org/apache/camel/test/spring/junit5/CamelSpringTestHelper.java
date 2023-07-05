@@ -109,6 +109,7 @@ public final class CamelSpringTestHelper {
         }
     }
 
+    @FunctionalInterface
     public interface DoToSpringCamelContextsStrategy {
         void execute(String contextName, SpringCamelContext camelContext) throws Exception;
     }

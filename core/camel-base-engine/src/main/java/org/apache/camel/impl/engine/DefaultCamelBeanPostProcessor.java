@@ -120,8 +120,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
 
         // always do injection of camel context
-        if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
-            CamelContextAware contextAware = (CamelContextAware) bean;
+        if (bean instanceof CamelContextAware contextAware && canSetCamelContext(bean, beanName)) {
             DeferredContextBinding deferredBinding = bean.getClass().getAnnotation(DeferredContextBinding.class);
             CamelContext context = getOrLookupCamelContext();
 
@@ -133,7 +132,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
 
         if (enabled) {
-            // do bean binding on simple types first, and then afterwards on complex types
+            // do bean binding on simple types first, and then afterward on complex types
             injectCamelContextPass(bean, beanName);
             injectFirstPass(bean, beanName, type -> !isComplexUserType(type));
             injectSecondPass(bean, beanName, type -> isComplexUserType(type));
@@ -151,8 +150,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             return bean;
         }
 
-        if (bean instanceof DefaultEndpoint) {
-            DefaultEndpoint defaultEndpoint = (DefaultEndpoint) bean;
+        if (bean instanceof DefaultEndpoint defaultEndpoint) {
             defaultEndpoint.setEndpointUriIfNotSpecified(beanName);
         }
 
@@ -196,8 +194,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     }
 
     protected boolean canSetCamelContext(Object bean, String beanName) {
-        if (bean instanceof CamelContextAware) {
-            CamelContextAware camelContextAware = (CamelContextAware) bean;
+        if (bean instanceof CamelContextAware camelContextAware) {
             CamelContext context = camelContextAware.getCamelContext();
             if (context != null) {
                 LOG.trace("CamelContext already set on bean with id [{}]. Will keep existing CamelContext on bean.", beanName);
@@ -355,7 +352,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         // sort methods on shortest number of parameters as we want to process the simplest first
         methods.sort(Comparator.comparingInt(Method::getParameterCount));
 
-        // then do a more complex sorting where we check inter dependency among the methods
+        // then do a more complex sorting where we check interdependency among the methods
         methods.sort((m1, m2) -> {
             Class<?>[] types1 = m1.getParameterTypes();
             Class<?>[] types2 = m2.getParameterTypes();

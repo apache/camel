@@ -164,7 +164,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (route != null && route.getCamelContext() != null) {
             Boolean disabled = CamelContextHelper.parseBoolean(route.getCamelContext(), definition.getDisabled());
             if (disabled != null && disabled) {
-                return new DisabledReifier(route, definition);
+                return new DisabledReifier<>(route, definition);
             }
         }
 
@@ -353,9 +353,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Will lookup and get the configured {@link ExecutorService} from the given definition.
+     * Will look up and get the configured {@link ExecutorService} from the given definition.
      * <p/>
-     * This method will lookup for configured thread pool in the following order
+     * This method will look up for configured thread pool in the following order
      * <ul>
      * <li>from the definition if any explicit configured executor service.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
@@ -400,10 +400,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
-     * Will lookup and get the configured {@link java.util.concurrent.ScheduledExecutorService} from the given
+     * Will look up and get the configured {@link java.util.concurrent.ScheduledExecutorService} from the given
      * definition.
      * <p/>
-     * This method will lookup for configured thread pool in the following order
+     * This method will look up for configured thread pool in the following order
      * <ul>
      * <li>from the definition if any explicit configured executor service.</li>
      * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
@@ -697,12 +697,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             } else {
                 LOG.trace("{} is part of CircuitBreaker so no error handler is applied", definition);
             }
-        } else if (definition instanceof MulticastDefinition) {
-            // do not use error handler for multicast as it offers fine grained
+        } else if (definition instanceof MulticastDefinition def) {
+            // do not use error handler for multicast as it offers fine-grained
             // error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an
             // error handler on the multicast parent
-            MulticastDefinition def = (MulticastDefinition) definition;
             boolean isShareUnitOfWork = parseBoolean(def.getShareUnitOfWork(), false);
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
@@ -906,7 +905,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @throws IllegalArgumentException is thrown if lookup of aggregation strategy in
      *                                  {@link org.apache.camel.spi.Registry} was not found
      */
-    public AggregationStrategy getConfiguredAggregationStrategy(AggregationStrategyAwareDefinition definition) {
+    public AggregationStrategy getConfiguredAggregationStrategy(AggregationStrategyAwareDefinition<?> definition) {
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = lookupByName(definition.getAggregationStrategyRef());

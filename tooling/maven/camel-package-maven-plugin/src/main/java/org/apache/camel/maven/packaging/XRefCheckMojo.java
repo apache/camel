@@ -70,7 +70,7 @@ public class XRefCheckMojo extends AbstractMojo {
         try (Reader r = Files.newBufferedReader(path.resolve(PLAYBOOK))) {
             site = (Map) yaml.loadFromReader(r);
         }
-        Map<String, String> attributes = (Map) ((Map) site.get("asciidoc")).get("attributes");
+        Map<String, String> attributes = (Map<String, String>) ((Map) site.get("asciidoc")).get("attributes");
         if (attributes != null) {
             attributes = attributes.entrySet().stream()
                     .collect(Collectors.toMap(e -> "{" + e.getKey() + "}", Map.Entry::getValue));

@@ -280,9 +280,8 @@ public abstract class BaseMainSupport extends BaseService {
             for (Class<?> clazz : found) {
                 // lets use Camel's injector so the class has some support for dependency injection
                 Object config = camelContext.getInjector().newInstance(clazz);
-                if (config instanceof CamelConfiguration) {
-                    LOG.debug("Discovered CamelConfiguration class: {}", clazz);
-                    CamelConfiguration cc = (CamelConfiguration) config;
+                if (config instanceof CamelConfiguration cc) {
+                    LOG.debug("Discovered CamelConfiguration class: {}", cc);
                     mainConfigurationProperties.addConfiguration(cc);
                 }
             }
@@ -302,7 +301,7 @@ public abstract class BaseMainSupport extends BaseService {
                     // ignore
                 }
                 if (!mainClass) {
-                    // lets use Camel's injector so the class has some support for dependency injection
+                    // let's use Camel's injector so the class has some support for dependency injection
                     CamelConfiguration config = camelContext.getInjector().newInstance(configClazz);
                     mainConfigurationProperties.addConfiguration(config);
                 }
@@ -411,11 +410,10 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private void scheduleRefresh(CamelContext camelContext, String key, long vc) throws Exception {
+    private void scheduleRefresh(CamelContext camelContext, String key, long period) throws Exception {
         final Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
                 .newInstance(key, Runnable.class);
         if (task.isPresent()) {
-            long period = vc;
             Runnable r = task.get();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));

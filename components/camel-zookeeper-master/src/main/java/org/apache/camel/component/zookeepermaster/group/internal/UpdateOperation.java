@@ -22,7 +22,7 @@ class UpdateOperation<T extends NodeState> implements Operation {
     private final ZooKeeperGroup<T> cache;
     private final T node;
 
-    UpdateOperation(ZooKeeperGroup cache, T node) {
+    UpdateOperation(ZooKeeperGroup<T> cache, T node) {
         this.cache = cache;
         this.node = node;
     }

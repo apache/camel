@@ -69,16 +69,15 @@ final class IntrospectionSupport {
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     // use a cache to speedup introspecting for known classes during startup
-    // use a weak cache as we dont want the cache to keep around as it reference classes
+    // use a weak cache as we don't want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    @SuppressWarnings("unchecked")
     private static final Map<Class<?>, BeanIntrospection.ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     static {
-        // exclude all java.lang.Object methods as we dont want to invoke them
+        // exclude all java.lang.Object methods as we don't want to invoke them
         EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
-        // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
+        // exclude all java.lang.reflect.Proxy methods as we don't want to invoke them
         EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
     }
 
@@ -123,8 +122,7 @@ final class IntrospectionSupport {
      * Clears the introspection cache.
      */
     static void clearCache() {
-        if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
-            LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
+        if (LOG.isDebugEnabled() && CACHE instanceof LRUCache<Class<?>, BeanIntrospection.ClassInfo> localCache) {
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(),
                     localCache.getMisses(), localCache.getEvicted());
         }
@@ -196,7 +194,7 @@ final class IntrospectionSupport {
             // a setXXX can also be a builder pattern so check for its return type is itself
             return type.equals(Void.TYPE) || allowBuilderPattern && ObjectHelper.isSubclass(self, type);
         }
-        // or if its a builder method
+        // or if it's a builder method
         if (allowBuilderPattern && parameterCount == 1 && ObjectHelper.isSubclass(self, type)) {
             return true;
         }

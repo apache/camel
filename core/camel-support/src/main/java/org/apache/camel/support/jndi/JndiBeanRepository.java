@@ -37,14 +37,14 @@ import org.apache.camel.spi.BeanRepository;
 public class JndiBeanRepository implements BeanRepository {
 
     private Context context;
-    private Map environment;
+    private Map<?, ?> environment;
     private final boolean standalone;
 
     public JndiBeanRepository() {
         this.standalone = false;
     }
 
-    public JndiBeanRepository(Map environment) {
+    public JndiBeanRepository(Map<?, ?> environment) {
         this.environment = environment;
         this.standalone = false;
     }

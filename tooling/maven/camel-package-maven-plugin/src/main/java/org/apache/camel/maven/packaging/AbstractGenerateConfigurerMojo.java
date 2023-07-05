@@ -167,7 +167,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             Index index = readJandexIndex(project);
             for (String clazz : classes) {
                 ClassInfo ci = index.getClassByName(DotName.createSimple(clazz));
-                AnnotationInstance ai = ci != null ? ci.classAnnotation(CONFIGURER) : null;
+                AnnotationInstance ai = ci != null ? ci.declaredAnnotation(CONFIGURER) : null;
                 if (ai != null) {
                     addToSets(ai, bootstrapAndExtendedSet, clazz, bootstrapSet, extendedSet, set);
                 } else {
@@ -367,7 +367,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                         clazz.getMethod(isGetter, null);
                         getter = isGetter;
                     } catch (Exception e) {
-                        // ignore as its then assumed to be get
+                        // ignore as its then assumed to get
                     }
                 }
 

@@ -101,15 +101,15 @@ public class TransientResumeStrategy implements ResumeStrategy {
         // this is NO-OP
     }
 
-    public static ResumeStrategyConfigurationBuilder<ResumeStrategyConfigurationBuilder, ResumeStrategyConfiguration> configurationBuilder() {
+    public static ResumeStrategyConfigurationBuilder<ResumeStrategyConfigurationBuilder<?, ?>, ResumeStrategyConfiguration> configurationBuilder() {
         return new ResumeStrategyConfigurationBuilder<>() {
             @Override
-            public ResumeStrategyConfigurationBuilder withCacheFillPolicy(Cacheable.FillPolicy cacheFillPolicy) {
+            public ResumeStrategyConfigurationBuilder<?, ?> withCacheFillPolicy(Cacheable.FillPolicy cacheFillPolicy) {
                 return this;
             }
 
             @Override
-            public ResumeStrategyConfigurationBuilder withResumeCache(ResumeCache<?> resumeCache) {
+            public ResumeStrategyConfigurationBuilder<?, ?> withResumeCache(ResumeCache<?> resumeCache) {
                 return this;
             }
 
@@ -133,7 +133,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     public static ResumeCache<Object> createSimpleCache() {
         return new ResumeCache<>() {
-            private Map<Object, Object> cache = new HashMap<>();
+            private final Map<Object, Object> cache = new HashMap<>();
 
             @Override
             public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {
@@ -179,7 +179,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
             @Override
             public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
-                for (Map.Entry e : cache.entrySet()) {
+                for (Map.Entry<Object, Object> e : cache.entrySet()) {
                     if (!action.apply(e.getKey(), e.getValue())) {
                         cache.remove(e.getKey());
                     }

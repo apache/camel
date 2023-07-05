@@ -76,8 +76,7 @@ public class GenericFile<T> implements WrappedFile<T> {
      * @param source the source
      * @param result the result
      */
-    @SuppressWarnings("unchecked")
-    public void copyFrom(GenericFile source, GenericFile result) {
+    public void copyFrom(GenericFile<T> source, GenericFile<T> result) {
         result.setCopyFromAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());

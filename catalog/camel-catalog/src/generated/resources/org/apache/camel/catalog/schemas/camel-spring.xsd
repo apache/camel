@@ -439,7 +439,7 @@ Enriches a message with data from a secondary resource
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel error handling.
+Error handler settings
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -11749,7 +11749,7 @@ To control how to shutdown the route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To control how to shutdown the route.
+To control how to shut down the route.
 ]]>
             </xs:documentation>
           </xs:annotation>

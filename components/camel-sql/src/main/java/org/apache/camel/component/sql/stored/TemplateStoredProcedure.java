@@ -40,8 +40,8 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
     private final Template template;
 
-    private List<InParameter> inParameterList = new ArrayList<>();
-    private List<InOutParameter> inOutParameterList = new ArrayList<>();
+    private final List<InParameter> inParameterList = new ArrayList<>();
+    private final List<InOutParameter> inOutParameterList = new ArrayList<>();
 
     public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template, boolean function) {
         setJdbcTemplate(jdbcTemplate);
@@ -50,8 +50,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
         setSql(template.getProcedureName());
 
         for (Object parameter : template.getParameterList()) {
-            if (parameter instanceof InParameter) {
-                InParameter inputParameter = (InParameter) parameter;
+            if (parameter instanceof InParameter inputParameter) {
                 SqlParameter sqlParameter;
                 if (inputParameter.getScale() != null) {
                     sqlParameter = new SqlParameter(
@@ -65,8 +64,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
                 declareParameter(sqlParameter);
                 inParameterList.add(inputParameter);
-            } else if (parameter instanceof InOutParameter) {
-                InOutParameter inOutParameter = (InOutParameter) parameter;
+            } else if (parameter instanceof InOutParameter inOutParameter) {
                 SqlInOutParameter sqlInOutParameter;
                 if (inOutParameter.getScale() != null) {
                     sqlInOutParameter = new SqlInOutParameter(
@@ -80,8 +78,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
                 declareParameter(sqlInOutParameter);
                 inOutParameterList.add(inOutParameter);
-            } else if (parameter instanceof OutParameter) {
-                OutParameter outParameter = (OutParameter) parameter;
+            } else if (parameter instanceof OutParameter outParameter) {
                 SqlOutParameter sqlOutParameter;
                 if (outParameter.getScale() != null) {
                     sqlOutParameter = new SqlOutParameter(
@@ -101,7 +98,7 @@ public class TemplateStoredProcedure extends StoredProcedure {
         compile();
     }
 
-    public Map execute(Exchange exchange, Object rowData) {
+    public Map<String, Object> execute(Exchange exchange, Object rowData) {
         Map<String, Object> params = new HashMap<>();
 
         for (InParameter inParameter : inParameterList) {

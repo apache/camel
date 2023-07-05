@@ -42,7 +42,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeTemplate")
 @XmlType(propOrder = { "templateParameters", "templateBeans", "route" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
+public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteTemplateDefinition> {
 
     @XmlTransient
     private Consumer<RouteTemplateContext> configurer;

@@ -43,13 +43,13 @@ public class RedisConfiguration {
     @UriParam
     private String channels;
     @UriParam
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<?, ?> redisTemplate;
     @UriParam(label = "consumer,advanced")
     private RedisMessageListenerContainer listenerContainer;
     @UriParam
     private RedisConnectionFactory connectionFactory;
     @UriParam
-    private RedisSerializer serializer;
+    private RedisSerializer<?> serializer;
 
     public Command getCommand() {
         return command;
@@ -86,14 +86,14 @@ public class RedisConfiguration {
         this.host = host;
     }
 
-    public RedisTemplate getRedisTemplate() {
+    public RedisTemplate<?, ?> getRedisTemplate() {
         return redisTemplate != null ? redisTemplate : createDefaultTemplate();
     }
 
     /**
      * Reference to a pre-configured RedisTemplate instance to use.
      */
-    public void setRedisTemplate(RedisTemplate redisTemplate) {
+    public void setRedisTemplate(RedisTemplate<?, ?> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -130,14 +130,14 @@ public class RedisConfiguration {
         return connectionFactory != null ? connectionFactory : createDefaultConnectionFactory();
     }
 
-    public RedisSerializer getSerializer() {
+    public RedisSerializer<?> getSerializer() {
         return serializer != null ? serializer : createDefaultSerializer();
     }
 
     /**
      * Reference to a pre-configured RedisSerializer instance to use.
      */
-    public void setSerializer(RedisSerializer serializer) {
+    public void setSerializer(RedisSerializer<?> serializer) {
         this.serializer = serializer;
     }
 
@@ -156,8 +156,8 @@ public class RedisConfiguration {
         return jedisConnectionFactory;
     }
 
-    private RedisTemplate createDefaultTemplate() {
-        redisTemplate = new RedisTemplate();
+    private RedisTemplate<?, ?> createDefaultTemplate() {
+        redisTemplate = new RedisTemplate<>();
         redisTemplate.setDefaultSerializer(getSerializer());
         redisTemplate.setConnectionFactory(getConnectionFactory());
         redisTemplate.afterPropertiesSet();
@@ -173,7 +173,7 @@ public class RedisConfiguration {
         return listenerContainer;
     }
 
-    private RedisSerializer createDefaultSerializer() {
+    private RedisSerializer<?> createDefaultSerializer() {
         serializer = new JdkSerializationRedisSerializer();
         return serializer;
     }
