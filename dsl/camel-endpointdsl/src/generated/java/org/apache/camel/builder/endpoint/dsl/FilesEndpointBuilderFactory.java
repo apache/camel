@@ -427,34 +427,6 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * part of service SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sdd the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sdd(String sdd) {
-            doSetProperty("sdd", sdd);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param se the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder se(String se) {
-            doSetProperty("se", se);
-            return this;
-        }
-        /**
          * Shared key (storage account key).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -466,146 +438,6 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointConsumerBuilder sharedKey(String sharedKey) {
             doSetProperty("sharedKey", sharedKey);
-            return this;
-        }
-        /**
-         * part of service SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param si the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder si(String si) {
-            doSetProperty("si", si);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sig the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sig(String sig) {
-            doSetProperty("sig", sig);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sip the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sip(String sip) {
-            doSetProperty("sip", sip);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sp the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sp(String sp) {
-            doSetProperty("sp", sp);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param spr the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder spr(String spr) {
-            doSetProperty("spr", spr);
-            return this;
-        }
-        /**
-         * part of service SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sr the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sr(String sr) {
-            doSetProperty("sr", sr);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param srt the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder srt(String srt) {
-            doSetProperty("srt", srt);
-            return this;
-        }
-        /**
-         * part of account SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param ss the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder ss(String ss) {
-            doSetProperty("ss", ss);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param st the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder st(String st) {
-            doSetProperty("st", st);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sv the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder sv(String sv) {
-            doSetProperty("sv", sv);
             return this;
         }
         /**
@@ -2045,6 +1877,174 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
+         * part of service SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sdd the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sdd(String sdd) {
+            doSetProperty("sdd", sdd);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param se the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder se(String se) {
+            doSetProperty("se", se);
+            return this;
+        }
+        /**
+         * part of service SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param si the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder si(String si) {
+            doSetProperty("si", si);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sig the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sig(String sig) {
+            doSetProperty("sig", sig);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sip the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sip(String sip) {
+            doSetProperty("sip", sip);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sp the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sp(String sp) {
+            doSetProperty("sp", sp);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param spr the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder spr(String spr) {
+            doSetProperty("spr", spr);
+            return this;
+        }
+        /**
+         * part of service SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sr the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sr(String sr) {
+            doSetProperty("sr", sr);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param srt the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder srt(String srt) {
+            doSetProperty("srt", srt);
+            return this;
+        }
+        /**
+         * part of account SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param ss the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder ss(String ss) {
+            doSetProperty("ss", ss);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param st the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder st(String st) {
+            doSetProperty("st", st);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sv the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointConsumerBuilder sv(String sv) {
+            doSetProperty("sv", sv);
+            return this;
+        }
+        /**
          * To shuffle the list of files (sort in random order).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2958,34 +2958,6 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * part of service SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sdd the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointProducerBuilder sdd(String sdd) {
-            doSetProperty("sdd", sdd);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param se the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointProducerBuilder se(String se) {
-            doSetProperty("se", se);
-            return this;
-        }
-        /**
          * Shared key (storage account key).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -3004,7 +2976,35 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
+         * 
+         * @param sdd the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder sdd(String sdd) {
+            doSetProperty("sdd", sdd);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param se the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder se(String se) {
+            doSetProperty("se", se);
+            return this;
+        }
+        /**
+         * part of service SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
          * 
          * @param si the value to set
          * @return the dsl builder
@@ -3018,7 +3018,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sig the value to set
          * @return the dsl builder
@@ -3032,7 +3032,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sip the value to set
          * @return the dsl builder
@@ -3046,7 +3046,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sp the value to set
          * @return the dsl builder
@@ -3060,7 +3060,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param spr the value to set
          * @return the dsl builder
@@ -3074,7 +3074,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sr the value to set
          * @return the dsl builder
@@ -3088,7 +3088,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param srt the value to set
          * @return the dsl builder
@@ -3102,7 +3102,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param ss the value to set
          * @return the dsl builder
@@ -3116,7 +3116,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param st the value to set
          * @return the dsl builder
@@ -3130,7 +3130,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sv the value to set
          * @return the dsl builder
@@ -3732,34 +3732,6 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * part of service SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param sdd the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointBuilder sdd(String sdd) {
-            doSetProperty("sdd", sdd);
-            return this;
-        }
-        /**
-         * part of SAS token.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: both
-         * 
-         * @param se the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointBuilder se(String se) {
-            doSetProperty("se", se);
-            return this;
-        }
-        /**
          * Shared key (storage account key).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -3778,7 +3750,35 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
+         * 
+         * @param sdd the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointBuilder sdd(String sdd) {
+            doSetProperty("sdd", sdd);
+            return this;
+        }
+        /**
+         * part of SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param se the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointBuilder se(String se) {
+            doSetProperty("se", se);
+            return this;
+        }
+        /**
+         * part of service SAS token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
          * 
          * @param si the value to set
          * @return the dsl builder
@@ -3792,7 +3792,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sig the value to set
          * @return the dsl builder
@@ -3806,7 +3806,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sip the value to set
          * @return the dsl builder
@@ -3820,7 +3820,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sp the value to set
          * @return the dsl builder
@@ -3834,7 +3834,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param spr the value to set
          * @return the dsl builder
@@ -3848,7 +3848,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sr the value to set
          * @return the dsl builder
@@ -3862,7 +3862,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param srt the value to set
          * @return the dsl builder
@@ -3876,7 +3876,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param ss the value to set
          * @return the dsl builder
@@ -3890,7 +3890,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param st the value to set
          * @return the dsl builder
@@ -3904,7 +3904,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: both
+         * Group: security
          * 
          * @param sv the value to set
          * @return the dsl builder
@@ -4139,7 +4139,7 @@ public interface FilesEndpointBuilderFactory {
          * Camel Azure Files Component
          * 
          * Category: cloud,file
-         * Since: 3.21
+         * Since: 3.22
          * Maven coordinates: org.apache.camel:camel-azure-files
          * 
          * @return the dsl builder for the headers' name.
@@ -4152,10 +4152,10 @@ public interface FilesEndpointBuilderFactory {
          * Camel Azure Files Component
          * 
          * Category: cloud,file
-         * Since: 3.21
+         * Since: 3.22
          * Maven coordinates: org.apache.camel:camel-azure-files
          * 
-         * Syntax: <code>azure-files://account/share</code>
+         * Syntax: <code>azure-files:account/share</code>
          * 
          * Path parameter: account (required)
          * The account to use
@@ -4169,7 +4169,7 @@ public interface FilesEndpointBuilderFactory {
          * Path parameter: directoryName
          * The starting directory
          * 
-         * @param path //account/share
+         * @param path account/share
          * @return the dsl builder
          */
         default FilesEndpointBuilder azureFiles(String path) {
@@ -4180,10 +4180,10 @@ public interface FilesEndpointBuilderFactory {
          * Camel Azure Files Component
          * 
          * Category: cloud,file
-         * Since: 3.21
+         * Since: 3.22
          * Maven coordinates: org.apache.camel:camel-azure-files
          * 
-         * Syntax: <code>azure-files://account/share</code>
+         * Syntax: <code>azure-files:account/share</code>
          * 
          * Path parameter: account (required)
          * The account to use
@@ -4199,7 +4199,7 @@ public interface FilesEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path //account/share
+         * @param path account/share
          * @return the dsl builder
          */
         default FilesEndpointBuilder azureFiles(
