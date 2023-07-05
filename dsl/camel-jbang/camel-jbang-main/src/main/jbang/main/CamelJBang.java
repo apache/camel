@@ -18,7 +18,7 @@
  */
 
 //JAVA 11+
-//REPOS mavencentral,apache-snapshot=http://repository.apache.org/content/groups/snapshots/
+//REPOS central=https://repo1.maven.org/maven2,apache-snapshot=http://repository.apache.org/content/groups/snapshots/
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.20.4}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.20.4}
 //DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:3.20.4}
