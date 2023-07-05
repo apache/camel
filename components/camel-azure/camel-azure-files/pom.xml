@@ -28,16 +28,18 @@
 
     <artifactId>camel-azure-files</artifactId>
     <packaging>jar</packaging>
-
     <name>Camel :: Azure Files</name>
     <description>Camel Azure Files Component</description>
+
+    <properties>
+        <supportLevel>Preview</supportLevel>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-file-share</artifactId>
