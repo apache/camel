@@ -15,7 +15,7 @@
     "version": "3.21.0-SNAPSHOT",
     "scheme": "azure-files",
     "extendsScheme": "file",
-    "syntax": "azure-files:\/\/account[.host]\/share[\/dir]",
+    "syntax": "azure-files:\/\/account\/share",
     "async": false,
     "api": false,
     "consumerOnly": false,
@@ -38,7 +38,8 @@
     "CamelFileHost": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The remote hostname.", "constantName": "org.apache.camel.component.file.azure.FilesHeaders#FILE_HOST" }
   },
   "properties": {
-    "host": { "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.file.azure.FilesConfiguration", "configurationField": "configuration", "description": "Hostname of the FTP server" },
+    "account": { "kind": "path", "displayName": "Account", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.file.azure.FilesConfiguration", "configurationField": "configuration", "description": "The account to use" },
+    "share": { "kind": "path", "displayName": "Share", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.file.azure.FilesConfiguration", "configurationField": "configuration", "description": "The share to use" },
     "port": { "kind": "path", "displayName": "Port", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.file.azure.FilesConfiguration", "configurationField": "configuration", "description": "Port of the FTP server" },
     "directoryName": { "kind": "path", "displayName": "Directory Name", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.file.azure.FilesConfiguration", "configurationField": "configuration", "description": "The starting directory" },
     "disconnect": { "kind": "parameter", "displayName": "Disconnect", "group": "common", "label": "common", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop, then you need to stop the consumer\/route instead." },

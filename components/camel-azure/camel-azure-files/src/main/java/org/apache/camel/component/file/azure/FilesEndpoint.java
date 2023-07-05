@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 
 // , extendsScheme = "file"   in FTPS but AzureBlob does not have it
 @UriEndpoint(firstVersion = "3.21.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
-             syntax = FilesComponent.SCHEME + "://account[.host]/share[/dir]", category = {
+             syntax = FilesComponent.SCHEME + "://account/share", category = {
                      Category.CLOUD, Category.FILE },
              headersClass = FilesHeaders.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
@@ -45,12 +45,12 @@ import org.apache.camel.util.ObjectHelper;
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
-                              + "bufferSize,moveExisting,username")
+                              + "bufferSize,moveExisting,username,host")
 @ManagedResource(description = "Camel Azure Files endpoint")
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
-    // camel-package-maven-plugin: Missing @UriPath on endpoint 
+    // camel-package-maven-plugin: Missing @UriPath on endpoint
     @UriParam
     protected FilesConfiguration configuration;
 

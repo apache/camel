@@ -19,8 +19,10 @@ package org.apache.camel.component.file.azure;
 import java.net.URI;
 
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class FilesConfiguration extends RemoteFileConfiguration {
@@ -31,7 +33,12 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "both", description = "Shared key (storage account key)", secret = true)
     private String sharedKey;
 
+    @UriPath(name = "account", description = "The account to use")
+    @Metadata(required = true)
     private String account;
+
+    @UriPath(name = "share", description = "The share to use")
+    @Metadata(required = true)
     private String share;
 
     public FilesConfiguration() {
