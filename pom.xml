@@ -132,8 +132,6 @@
         <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.16.0</versions-maven-plugin-version>
-        <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
-        <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
         <jaxb-core-version>4.0.1</jaxb-core-version>
         <jaxb-impl-version>4.0.1</jaxb-impl-version>
