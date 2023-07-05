@@ -118,18 +118,20 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
-        <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
         <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.2</license-maven-plugin-version>
+        <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
+        <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
+        <versions-maven-plugin-version>2.16.0</versions-maven-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
@@ -541,7 +543,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>${maven-release-plugin-version}</version>
                     <configuration>
                         <localCheckout>true</localCheckout>
                         <pushChanges>true</pushChanges>
@@ -558,7 +560,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.16.0</version>
+                    <version>${versions-maven-plugin-version}</version>
                 </plugin>
 
                 <plugin>
