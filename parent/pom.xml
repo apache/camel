@@ -434,7 +434,7 @@
         <smallrye-health-version>4.0.2</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.2.4</smallrye-fault-tolerance-version>
         <snakeyaml-version>2.0</snakeyaml-version>
-        <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
+        <snakeyaml-engine-version>2.6</snakeyaml-engine-version>
         <snmp4j-version>2.8.15</snmp4j-version>
         <splunk-version>1.9.0_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
