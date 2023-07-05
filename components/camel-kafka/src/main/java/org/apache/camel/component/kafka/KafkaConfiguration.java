@@ -110,7 +110,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long pollTimeoutMs = 5000L;
     @UriParam(label = "consumer", javaType = "java.time.Duration")
-    private Long maxPollIntervalMs;
+    private Integer maxPollIntervalMs;
     // auto.offset.reset1
     @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
     private String autoOffsetReset = "latest";
@@ -1582,7 +1582,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.pollTimeoutMs = pollTimeoutMs;
     }
 
-    public Long getMaxPollIntervalMs() {
+    public Integer getMaxPollIntervalMs() {
         return maxPollIntervalMs;
     }
 
@@ -1592,7 +1592,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * expiration of this timeout, then the consumer is considered failed and the group will rebalance in order to
      * reassign the partitions to another member.
      */
-    public void setMaxPollIntervalMs(Long maxPollIntervalMs) {
+    public void setMaxPollIntervalMs(Integer maxPollIntervalMs) {
         this.maxPollIntervalMs = maxPollIntervalMs;
     }
 
