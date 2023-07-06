@@ -90,13 +90,17 @@ You can bind the `JiraRestClientFactory` with name *JiraRestClientFactory* in th
 
 == Authentication
 
-Camel-jira supports *https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/[Basic Authentication]*, *https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[OAuth 3 legged authentication]* and *https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html*.
+Camel-jira supports the following forms of authentication:
 
-We recommend to use OAuth whenever possible, as it provides the best security for your users and system.
+* https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/[Basic Authentication]
+* https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[OAuth 3 legged authentication]
+* https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html[Personal Token]*
+
+We recommend to use OAuth or Personal token whenever possible, as it provides the best security for your users and system.
 
 === Basic authentication requirements:
 
-* An username and a password or the API Token. Verify if the Jira server installation supports the use of https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/[API Tokens] instead of the user's password. This way the user's password is not exposed.
+* An username and a password.
 
 === OAuth authentication requirements:
 
@@ -110,10 +114,9 @@ to generate the client private key, consumer key, verification code and access t
 
 === Personal access token authentication requirements:
 
-Follow the tutorial in https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html
-to generate an access token bearer.
+Follow the tutorial to generate the https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html[Personal Token].
 
-* An access token
+* You have to set only the personal token in the `access-token` parameter.
 
 == JQL:
 
@@ -168,9 +171,10 @@ Required:
 Optional:
 
 * `IssueAssignee`: the assignee user
+* `IssueAssigneeId`: the assignee user id
 * `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
 * `IssueComponents`: A list of string with the valid component names.
-* `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.
+* `IssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
 * `IssueDescription`: The description of the issue.
 
 == AddComment
@@ -209,6 +213,7 @@ Required:
 * `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
 * `IssueSummary`: The summary of the issue.
 * `IssueAssignee`: the assignee user
+* `IssueAssigneeId`: the assignee user id
 * `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
 * `IssueComponents`: A list of string with the valid component names.
 * `IssueDescription`: The description of the issue.
@@ -216,7 +221,7 @@ Required:
 == Watcher
 
 * `IssueKey`: The issue key identifier.
-* `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.
+* `IssueWatchersAdd`: A list of strings with the usernames (or id) to add to the watcher list.
 * `IssueWatchersRemove`: A list of strings with the usernames to remove from the watcher list.
 
 == WatchUpdates (consumer)
