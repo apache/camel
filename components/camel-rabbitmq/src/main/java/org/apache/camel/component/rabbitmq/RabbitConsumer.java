@@ -33,7 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Suspendable;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
@@ -41,7 +40,7 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consumer, Suspendable {
+class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitConsumer.class);
 
@@ -49,6 +48,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     private Channel channel;
     private String tag;
     private volatile String consumerTag;
+    private boolean cancelled;
 
     private final Semaphore lock = new Semaphore(1);
 
@@ -209,13 +209,13 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
+    protected void cancelChannel() throws Exception {
         if (channel == null) {
             return;
         }
-        if (tag != null && isChannelOpen()) {
+        if (tag != null && isChannelOpen() && !cancelled) {
             channel.basicCancel(tag);
+            cancelled = true;
         }
     }
 
@@ -224,7 +224,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         if (channel == null) {
             return;
         }
-        if (tag != null && isChannelOpen()) {
+        if (tag != null && isChannelOpen() && !cancelled) {
             channel.basicCancel(tag);
         }
         try {

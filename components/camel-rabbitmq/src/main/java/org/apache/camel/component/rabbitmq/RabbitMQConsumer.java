@@ -157,6 +157,13 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         }
         for (RabbitConsumer consumer : this.consumers) {
             try {
+                consumer.cancelChannel();
+            } catch (Exception e) {
+                LOG.warn("Error occurred while cancelling consumer. This exception is ignored", e);
+            }
+        }
+        for (RabbitConsumer consumer : this.consumers) {
+            try {
                 ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
                 LOG.warn("Error occurred while stopping consumer. This exception is ignored", e);
@@ -170,25 +177,9 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         }
     }
 
-    /**
-     * If needed, suspend Channels
-     */
-    private void suspendChannel() throws IOException {
-        if (startConsumerCallable != null) {
-            startConsumerCallable.stop();
-        }
-        for (RabbitConsumer consumer : this.consumers) {
-            try {
-                ServiceHelper.suspendService(consumer);
-            } catch (Exception e) {
-                LOG.warn("Error occurred while suspending consumer. This exception is ignored", e);
-            }
-        }
-    }
-
     @Override
     protected void doSuspend() throws Exception {
-        suspendChannel();
+        closeConnectionAndChannel();
     }
 
     @Override
