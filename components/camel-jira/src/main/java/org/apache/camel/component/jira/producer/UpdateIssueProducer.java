@@ -21,8 +21,11 @@ import java.util.List;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.IssueFieldId;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Priority;
+import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
+import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
@@ -30,6 +33,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE_ID;
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_COMPONENTS;
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_ID;
@@ -56,6 +60,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         String issueTypeName = exchange.getIn().getHeader(ISSUE_TYPE_NAME, String.class);
         String summary = exchange.getIn().getHeader(ISSUE_SUMMARY, String.class);
         String assigneeName = exchange.getIn().getHeader(ISSUE_ASSIGNEE, String.class);
+        String assigneeId = exchange.getIn().getHeader(ISSUE_ASSIGNEE_ID, String.class);
         String priorityName = exchange.getIn().getHeader(ISSUE_PRIORITY_NAME, String.class);
         Long priorityId = exchange.getIn().getHeader(ISSUE_PRIORITY_ID, Long.class);
         String components = exchange.getIn().getHeader(ISSUE_COMPONENTS, String.class);
@@ -101,6 +106,9 @@ public class UpdateIssueProducer extends DefaultProducer {
         }
         if (assigneeName != null) {
             builder.setAssigneeName(assigneeName);
+        } else if (assigneeId != null) {
+            builder.setFieldInput(
+                    new FieldInput(IssueFieldId.ASSIGNEE_FIELD, ComplexIssueInputFieldValue.with("id", assigneeId)));
         }
         IssueRestClient issueClient = client.getIssueClient();
         issueClient.updateIssue(issueKey, builder.build()).claim();
