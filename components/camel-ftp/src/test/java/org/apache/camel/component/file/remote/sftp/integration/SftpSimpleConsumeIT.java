@@ -48,7 +48,8 @@ public class SftpSimpleConsumeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true").routeId("foo").noAutoStartup()
+                     + "?username=admin&password=admin&delay=10000&disconnect=true&knownHostsFile="
+                     + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

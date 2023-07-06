@@ -80,7 +80,8 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
     public void testSftpSimpleSubPathProduceThroughProxy() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub?username=admin&password=admin&proxy=#proxy",
+                                   + "/mysub?username=admin&password=admin&proxy=#proxy&knownHostsFile="
+                                   + service.getKnownHostsFile(),
                 "Bye World", Exchange.FILE_NAME,
                 "bye.txt");
 
@@ -92,7 +93,8 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleTwoSubPathProduceThroughProxy() {
         template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub/myother?username=admin&password=admin&proxy=#proxy",
+                                   + "/mysub/myother?username=admin&password=admin&proxy=#proxy&knownHostsFile="
+                                   + service.getKnownHostsFile(),
                 "Farewell World",
                 Exchange.FILE_NAME, "farewell.txt");
 

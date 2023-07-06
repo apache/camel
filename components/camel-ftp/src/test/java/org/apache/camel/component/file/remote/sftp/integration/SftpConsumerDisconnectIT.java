@@ -88,7 +88,8 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delete=true")
+                     + "?username=admin&password=admin&delete=true&knownHostsFile="
+                     + service.getKnownHostsFile())
                         .routeId("foo").noAutoStartup().process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

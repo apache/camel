@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpProducerMoveExistingIT extends SftpServerTestSupport {
 
     private String getFtpUrl() {
-        return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/move?password=admin&fileExist=Move";
+        return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/move?password=admin&fileExist=Move&knownHostsFile="
+               + service.getKnownHostsFile();
     }
 
     @BeforeEach
