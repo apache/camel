@@ -3,7 +3,7 @@
 :shortname: azure-files
 :artifactid: camel-azure-files
 :description: Camel Azure Files Component
-:since: 3.21
+:since: 3.22
 :supportlevel: Preview
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Events and get notified on Events changes.
 :since: 3.20
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes

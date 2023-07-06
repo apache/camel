@@ -15,13 +15,14 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class FilesEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = "://account[.host]/share[/dir]";
+    private static final String BASE = ":account/share";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(100);
+        Set<String> props = new HashSet<>(101);
+        props.add("account");
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -53,7 +54,6 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("filterFile");
         props.add("flatten");
         props.add("greedy");
-        props.add("host");
         props.add("idempotent");
         props.add("idempotentKey");
         props.add("idempotentRepository");
@@ -100,6 +100,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("sdd");
         props.add("se");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("share");
         props.add("sharedKey");
         props.add("shuffle");
         props.add("si");
@@ -155,7 +156,8 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "account", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "share", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, false, copy);
         uri = buildPathParameter(syntax, uri, "directoryName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);

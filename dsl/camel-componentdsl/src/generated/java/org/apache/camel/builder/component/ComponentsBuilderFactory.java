@@ -512,7 +512,7 @@ public interface ComponentsBuilderFactory {
      * Camel Azure Files Component
      * 
      * Category: cloud,file
-     * Since: 3.21
+     * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
      * @return the dsl builder

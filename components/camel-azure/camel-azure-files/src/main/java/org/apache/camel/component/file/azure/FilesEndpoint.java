@@ -34,9 +34,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-// , extendsScheme = "file"   in FTPS but AzureBlob does not have it
-@UriEndpoint(firstVersion = "3.21.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
-             syntax = FilesComponent.SCHEME + "://account[.host]/share[/dir]", category = {
+@UriEndpoint(firstVersion = "3.22.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
+             syntax = FilesComponent.SCHEME + ":account/share", category = {
                      Category.CLOUD, Category.FILE },
              headersClass = FilesHeaders.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
@@ -45,18 +44,16 @@ import org.apache.camel.util.ObjectHelper;
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
-                              + "bufferSize,moveExisting,username")
+                              + "bufferSize,moveExisting,username,host")
 @ManagedResource(description = "Camel Azure Files endpoint")
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
-    // camel-package-maven-plugin: Missing @UriPath on endpoint 
+    // camel-package-maven-plugin: Missing @UriPath on endpoint
     @UriParam
     protected FilesConfiguration configuration;
-
     @UriParam
     protected FilesToken token = new FilesToken();
-
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
 
@@ -71,7 +68,6 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     @Override
     public String getScheme() {
-        // TODO or name of component bean?
         return FilesComponent.SCHEME;
     }
 
@@ -130,7 +126,7 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
 
     @Override
     public void setConfiguration(GenericFileConfiguration configuration) {
-        if (configuration == null || !(configuration instanceof FilesConfiguration)) {
+        if (!(configuration instanceof FilesConfiguration)) {
             throw new IllegalArgumentException("FilesConfiguration expected.");
         }
         super.setConfiguration(configuration);

@@ -4,7 +4,7 @@
 :artifactid: camel-swift
 :description: Encode and decode SWIFT MT messages.
 :since: 3.20
-:supportlevel: Preview
+:supportlevel: Stable
 //Manually maintained attributes
 :camel-spring-boot-name: swift
 

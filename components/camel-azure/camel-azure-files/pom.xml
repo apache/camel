@@ -23,18 +23,16 @@
     <parent>  
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>3.22.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-files</artifactId>
     <packaging>jar</packaging>
-
     <name>Camel :: Azure Files</name>
     <description>Camel Azure Files Component</description>
 
     <properties>
-        <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>
@@ -42,7 +40,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-file-share</artifactId>
