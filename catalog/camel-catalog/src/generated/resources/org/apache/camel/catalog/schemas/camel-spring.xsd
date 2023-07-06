@@ -8743,7 +8743,8 @@ Compression codec to use when marshalling. Default value: GZIP
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Class to use when unmarshalling.
+Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling
+and input objects are assumed as GenericRecords for marshalling.
 ]]>
             </xs:documentation>
           </xs:annotation>
