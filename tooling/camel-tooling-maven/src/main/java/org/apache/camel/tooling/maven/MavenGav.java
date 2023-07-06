@@ -17,7 +17,7 @@
 package org.apache.camel.tooling.maven;
 
 /**
- * Maven GAV model with parsing support and speacial rules for some names:
+ * Maven GAV model with parsing support and special rules for some names:
  * <ul>
  * <li>{@code camel:core -> org.apache.camel:camel-core}</li>
  * <li>{@code camel-xxx -> org.apache.camel:camel-xxx}</li>
