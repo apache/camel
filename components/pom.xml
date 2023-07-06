@@ -313,6 +313,7 @@
         <module>camel-swagger-java</module>
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
+        <module>camel-opensearch</module>
         <module>camel-syslog</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>

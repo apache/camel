@@ -1,0 +1,278 @@
+= OpenSearch Component
+:doctitle: OpenSearch
+:shortname: opensearch
+:artifactid: camel-opensearch
+:description: Send requests to OpenSearch via Java Client API.
+:since: 4.0
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: opensearch
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OpenSearch component allows you to interface with an
+https://opensearch.org/[OpenSearch] 2.8.x API using the Java API Client library.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-opensearch</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+opensearch://clusterName[?options]
+----
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Message Operations
+
+The following https://opensearch.org/ operations are currently supported. Simply
+set an endpoint URI option or exchange header with a key of "operation"
+and a value set to one of the following. Some operations also require
+other parameters or the message body to be set.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|operation |message body |description
+
+|Index |*Map*, *String*, *byte[]*, *Reader*, *InputStream* or *IndexRequest.Builder* content to index |Adds content to an index and returns the content's indexId in the body.
+You can set the name of the target index by setting the message header with the key "indexName".
+You can set the indexId by setting the message header with
+the key "indexId".
+
+|GetById |*String* or *GetRequest.Builder* index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a GetResponse object in the body.
+You can set the name of the target index by setting the message header with the key "indexName".
+You can set the type of document by setting the message header with
+the key "documentClass".
+
+|Delete |*String* or *DeleteRequest.Builder* index id of content to delete |Deletes the specified indexName and returns a Result object in the body.
+You can set the name of the target index by setting the message header with the key "indexName".
+
+|DeleteIndex |*String* or *DeleteIndexRequest.Builder* index name of the index to delete |Deletes the specified indexName and returns a status code in the body.
+You can set the name of the target index by setting the message header with the key "indexName".
+
+|Bulk |*Iterable* or *BulkRequest.Builder* of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
+You can set the name of the target index by setting the message header with the key "indexName".
+
+|Search |*Map*, *String* or *SearchRequest.Builder* |Search the content with the map of query string.
+You can set the name of the target index by setting the message header with the key "indexName".
+You can set the number of hits to return by setting the message header with the key "size".
+You can set the starting document offset by setting the message header with the key "from".
+
+|MultiSearch |*MsearchRequest.Builder* |Multiple search in one
+
+|MultiGet |*Iterable<String>* or *MgetRequest.Builder* the id of the document to retrieve |Multiple get in one
+
+You can set the name of the target index by setting the message header with the key "indexName".
+
+|Exists |None |Checks whether the index exists or not and returns a Boolean flag in the body.
+
+You must set the name of the target index by setting the message header with the key "indexName".
+
+|Update |*byte[]*, *InputStream*, *String*, *Reader*, *Map* or any document type content to update |Updates content to an index and returns the content's indexId in the body.
+You can set the name of the target index by setting the message header with the key "indexName".
+You can set the indexId by setting the message header with
+the key "indexId".
+
+|Ping |None  |Pings the OpenSearch cluster and returns true if the ping succeeded, false otherwise
+
+|===
+
+== Configure the component and enable basic authentication
+To use the OpenSearch component it has to be configured with a minimum configuration.
+
+[source,java]
+----
+OpensearchComponent opensearchComponent = new OpensearchComponent();
+opensearchComponent.setHostAddresses("opensearch-host:9200");
+camelContext.addComponent("opensearch", opensearchComponent);
+----
+
+For basic authentication with OpenSearch or using reverse http proxy in front of the OpenSearch cluster, simply setup
+basic authentication and SSL on the component like the example below
+
+[source,java]
+----
+OpenSearchComponent opensearchComponent = new OpenSearchComponent();
+opensearchComponent.setHostAddresses("opensearch-host:9200");
+opensearchComponent.setUser("opensearchuser");
+opensearchComponent.setPassword("secure!!");
+
+camelContext.addComponent("opensearch", opensearchComponent);
+----
+
+== Index Example
+
+Below is a simple INDEX example
+
+[source,java]
+----
+from("direct:index")
+  .to("opensearch://opensearch?operation=Index&indexName=twitter");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:index"/>
+    <to uri="opensearch://opensearch?operation=Index&amp;indexName=twitter"/>
+</route>
+----
+
+*For this operation you'll need to specify a indexId header.*
+
+A client would simply need to pass a body message containing a Map to
+the route. The result body contains the indexId created.
+
+[source,java]
+----
+Map<String, String> map = new HashMap<String, String>();
+map.put("content", "test");
+String indexId = template.requestBody("direct:index", map, String.class);
+----
+
+== Search Example
+
+Searching on specific field(s) and value use the Operation ´Search´.
+Pass in the query JSON String or the Map
+
+[source,java]
+----
+from("direct:search")
+  .to("opensearch://opensearch?operation=Search&indexName=twitter");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:search"/>
+    <to uri="opensearch://opensearch?operation=Search&amp;indexName=twitter"/>
+</route>
+----
+
+[source,java]
+----
+String query = "{\"query\":{\"match\":{\"doc.content\":\"new release of ApacheCamel\"}}}";
+HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
+
+----
+
+Search on specific field(s) using Map.
+
+[source,java]
+----
+Map<String, Object> actualQuery = new HashMap<>();
+actualQuery.put("doc.content", "new release of ApacheCamel");
+
+Map<String, Object> match = new HashMap<>();
+match.put("match", actualQuery);
+
+Map<String, Object> query = new HashMap<>();
+query.put("query", match);
+HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
+
+----
+
+Search using OpenSearch scroll api in order to fetch all results.
+
+[source,java]
+----
+from("direct:search")
+  .to("opensearch://opensearch?operation=Search&indexName=twitter&useScroll=true&scrollKeepAliveMs=30000");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:search"/>
+    <to uri="opensearch://opensearch?operation=Search&amp;indexName=twitter&amp;useScroll=true&amp;scrollKeepAliveMs=30000"/>
+</route>
+----
+
+[source,java]
+----
+String query = "{\"query\":{\"match\":{\"doc.content\":\"new release of ApacheCamel\"}}}";
+try (OpenSearchScrollRequestIterator response = template.requestBody("direct:search", query, OpenSearchScrollRequestIterator.class)) {
+    // do something smart with results
+}
+----
+
+xref:eips:split-eip.adoc[Split EIP] can also be used.
+
+[source,java]
+----
+from("direct:search")
+  .to("opensearch://opensearch?operation=Search&indexName=twitter&useScroll=true&scrollKeepAliveMs=30000")
+  .split()
+  .body()
+  .streaming()
+  .to("mock:output")
+  .end();
+----
+
+== MultiSearch Example
+
+MultiSearching on specific field(s) and value use the Operation ´MultiSearch´.
+Pass in the MultiSearchRequest instance
+
+[source,java]
+----
+from("direct:multiSearch")
+  .to("opensearch://opensearch?operation=MultiSearch");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:multiSearch"/>
+    <to uri="opensearch://opensearch?operation=MultiSearch"/>
+</route>
+----
+
+MultiSearch on specific field(s) 
+
+[source,java]
+----
+MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").searches(
+        new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
+                .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
+        new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
+                .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
+----
+
+== Document type
+
+For all the search operations, it is possible to indicate the type of document to retrieve in order to get the result already unmarshalled with the expected type.
+
+The document type can be set using the header "documentClass" or via the uri parameter of the same name.
