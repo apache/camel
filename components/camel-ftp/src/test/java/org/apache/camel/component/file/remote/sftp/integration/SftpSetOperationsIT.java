@@ -33,7 +33,8 @@ public class SftpSetOperationsIT extends SftpServerTestSupport {
     public void testSftpSetOperations() {
         String preferredAuthentications = "password,publickey";
         String uri = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&ciphers=aes256-ctr" + "&preferredAuthentications=password,publickey";
+                     + "?username=admin&password=admin&ciphers=aes256-ctr&knownHostsFile="
+                     + service.getKnownHostsFile() + "&preferredAuthentications=password,publickey";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload
