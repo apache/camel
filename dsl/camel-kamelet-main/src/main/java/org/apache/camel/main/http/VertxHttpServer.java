@@ -120,11 +120,12 @@ public final class VertxHttpServer {
 
             // after camel is started then add event notifier
             camelContext.addStartupListener(new StartupListener() {
+
+                private volatile Set<HttpEndpointModel> last;
+
                 @Override
                 public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
                     camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
-
-                        private Set<HttpEndpointModel> last;
 
                         @Override
                         public boolean isEnabled(CamelEvent event) {
