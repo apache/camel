@@ -861,6 +861,19 @@ public interface JiraEndpointBuilderFactory {
         private static final JiraHeaderNameBuilder INSTANCE = new JiraHeaderNameBuilder();
 
         /**
+         * The assignee's id of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueAssigneeId}.
+         */
+        public String issueAssigneeId() {
+            return "IssueAssigneeId";
+        }
+
+        /**
          * The assignee's name of the issue.
          * 
          * The option is a: {@code String} type.
