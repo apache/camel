@@ -132,3 +132,16 @@ And in Spring Boot you can enable this in the `application.properties` file:
 camel.springboot.backlog-tracing = true
 ----
 
+=== Tracing payloads of InputStream types
+
+Beware that when enabling backlog tracing, and the message payloads is streaming types (such as `java.io.InputStream`),
+then the backlog tracer will read the payload and make a copy as a _trace_ that are stored in the backlog tracer.
+Then monitoring tooling is able to view these _traced_ events.
+
+When working with `InputStream` types then Camel has xref:stream-caching.adoc[] that is able to automatic
+make such types _safe_ to use as they are cached and able to be _re-read_. See more details at xref:stream-caching.adoc[].
+
+However, Camel's stream caching is **ONLY** for message body. Having message headers of type `InputStream` is discouraged
+and not common use. If you add custom message headers, then its recommended to **NOT** use streaming types, but
+convert these headers into `String` or `byte[]` or other standard Java types that are in-memory and _safe_ to re-read.
+
