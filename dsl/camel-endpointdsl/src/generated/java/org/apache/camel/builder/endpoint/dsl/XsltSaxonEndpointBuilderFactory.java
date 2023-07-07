@@ -16,11 +16,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.processing.Generated;
-
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.component.xslt.XsltMessageLogger;
 
 /**
  * Transform XML payloads using an XSLT template using Saxon.
@@ -400,38 +403,6 @@ public interface XsltSaxonEndpointBuilderFactory {
             return this;
         }
         /**
-         * A consumer to messages generated during XSLT transformations.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.xslt.MessageConsumer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param xsltMessageLogger the value to set
-         * @return the dsl builder
-         */
-        default AdvancedXsltSaxonEndpointBuilder messageConsumer(
-                XsltMessageLogger xsltMessageLogger) {
-            doSetProperty("xsltMessageLogger", xsltMessageLogger);
-            return this;
-        }
-        /**
-         * A consumer to messages generated during XSLT transformations.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.xslt.MessageConsumer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param messageConsumer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedXsltSaxonEndpointBuilder messageConsumer(
-                String messageConsumer) {
-            doSetProperty("messageConsumer", messageConsumer);
-            return this;
-        }
-        /**
          * Allows you to use a custom
          * org.apache.camel.builder.xml.ResultHandlerFactory which is capable of
          * using custom org.apache.camel.builder.xml.ResultHandler types.
@@ -667,6 +638,38 @@ public interface XsltSaxonEndpointBuilderFactory {
          */
         default AdvancedXsltSaxonEndpointBuilder uriResolver(String uriResolver) {
             doSetProperty("uriResolver", uriResolver);
+            return this;
+        }
+        /**
+         * A consumer to messages generated during XSLT transformations.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltMessageLogger&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param xsltMessageLogger the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXsltSaxonEndpointBuilder xsltMessageLogger(
+                org.apache.camel.component.xslt.XsltMessageLogger xsltMessageLogger) {
+            doSetProperty("xsltMessageLogger", xsltMessageLogger);
+            return this;
+        }
+        /**
+         * A consumer to messages generated during XSLT transformations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltMessageLogger&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param xsltMessageLogger the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXsltSaxonEndpointBuilder xsltMessageLogger(
+                String xsltMessageLogger) {
+            doSetProperty("xsltMessageLogger", xsltMessageLogger);
             return this;
         }
     }
