@@ -31,9 +31,9 @@ import net.sf.saxon.jaxp.TransformerImpl;
 import net.sf.saxon.lib.StandardMessageHandler;
 import net.sf.saxon.str.UnicodeWriter;
 import net.sf.saxon.str.UnicodeWriterToWriter;
+import org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.XsltMessageLogger;
-import org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
 
 public class XsltSaxonBuilder extends XsltBuilder {
