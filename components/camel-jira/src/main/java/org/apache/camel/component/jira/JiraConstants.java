@@ -26,6 +26,8 @@ public interface JiraConstants {
     String JIRA_URL = "jiraUrl";
     String PRIVATE_KEY = "privateKey";
     String CONSUMER_KEY = "consumerKey";
+    @Metadata(label = "producer", description = "The assignee's id of the issue", javaType = "String")
+    String ISSUE_ASSIGNEE_ID = "IssueAssigneeId";
     @Metadata(label = "producer", description = "The assignee's name of the issue", javaType = "String")
     String ISSUE_ASSIGNEE = "IssueAssignee";
     @Metadata(label = "producer", description = "The comma separated list of the issue's components", javaType = "String")
