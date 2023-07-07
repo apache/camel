@@ -157,6 +157,13 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         }
         for (RabbitConsumer consumer : this.consumers) {
             try {
+                consumer.cancelChannel();
+            } catch (Exception e) {
+                LOG.warn("Error occurred while cancelling consumer. This exception is ignored", e);
+            }
+        }
+        for (RabbitConsumer consumer : this.consumers) {
+            try {
                 ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
                 LOG.warn("Error occurred while stopping consumer. This exception is ignored", e);

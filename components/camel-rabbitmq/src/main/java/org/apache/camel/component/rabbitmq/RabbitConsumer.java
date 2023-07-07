@@ -48,6 +48,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     private Channel channel;
     private String tag;
     private volatile String consumerTag;
+    private boolean cancelled;
 
     private final Semaphore lock = new Semaphore(1);
 
@@ -208,12 +209,22 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
+    protected void cancelChannel() throws Exception {
+        if (channel == null) {
+            return;
+        }
+        if (tag != null && isChannelOpen() && !cancelled) {
+            channel.basicCancel(tag);
+            cancelled = true;
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
         if (channel == null) {
             return;
         }
-        if (tag != null && isChannelOpen()) {
+        if (tag != null && isChannelOpen() && !cancelled) {
             channel.basicCancel(tag);
         }
         try {
