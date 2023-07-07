@@ -88,7 +88,8 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class to use when unmarshalling.
+     * Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for
+     * unmarshalling and input objects are assumed as GenericRecords for marshalling.
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
