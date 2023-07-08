@@ -39,7 +39,7 @@ import org.xml.sax.ext.LexicalHandler;
  */
 public class StAX2SAXSource extends SAXSource implements XMLReader {
 
-    private XMLStreamReader streamReader;
+    private final XMLStreamReader streamReader;
 
     private ContentHandler contentHandler;
 
