@@ -58,7 +58,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
 
     private CamelContext camelContext;
     private final Writer writer;
-    private DefaultRuntimeCamelCatalog catalog;
+    private final DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
     private final Stack<EipModel> models = new Stack<>();
