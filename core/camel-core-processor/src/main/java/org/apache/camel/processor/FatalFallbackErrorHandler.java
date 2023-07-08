@@ -42,7 +42,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
 
     private static final Logger LOG = LoggerFactory.getLogger(FatalFallbackErrorHandler.class);
 
-    private boolean deadLetterChannel;
+    private final boolean deadLetterChannel;
 
     public FatalFallbackErrorHandler(Processor processor) {
         this(processor, false);

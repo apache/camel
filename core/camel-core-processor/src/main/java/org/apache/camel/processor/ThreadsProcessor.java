@@ -59,7 +59,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
     private final CamelContext camelContext;
     private final ExecutorService executorService;
     private final ThreadPoolRejectedPolicy rejectedPolicy;
-    private volatile boolean shutdownExecutorService;
+    private final boolean shutdownExecutorService;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
 
     private final class ProcessCall implements Runnable, Rejectable {

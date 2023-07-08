@@ -25,7 +25,7 @@ class Element<E> implements TimeoutHandler {
     /**
      * The contained object.
      */
-    private E object;
+    private final E object;
 
     /**
      * Not <code>null</code> if this element is currently beeing scheduled for timing out.
