@@ -133,7 +133,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     public static ResumeCache<Object> createSimpleCache() {
         return new ResumeCache<>() {
-            private Map<Object, Object> cache = new HashMap<>();
+            private final Map<Object, Object> cache = new HashMap<>();
 
             @Override
             public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {

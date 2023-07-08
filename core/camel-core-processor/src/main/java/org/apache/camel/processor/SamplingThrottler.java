@@ -49,9 +49,9 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
     private long periodInMillis;
     private TimeUnit units;
     private long timeOfLastExchange;
-    private StopProcessor stopper = new StopProcessor();
+    private final StopProcessor stopper = new StopProcessor();
     private final Object calculationLock = new Object();
-    private SampleStats sampled = new SampleStats();
+    private final SampleStats sampled = new SampleStats();
 
     public SamplingThrottler(long messageFrequency) {
         if (messageFrequency <= 0) {

@@ -81,7 +81,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         private final int index;
         private final Endpoint endpoint;
         private final AsyncProducer producer;
-        private Processor prepared;
+        private final Processor prepared;
         private final Exchange exchange;
         private final ProducerCache producerCache;
         private final ExchangePattern pattern;
