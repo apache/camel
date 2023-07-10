@@ -248,7 +248,7 @@ public class KafkaFetchRecords implements Runnable {
             if (krbLocation != null) {
                 System.setProperty("java.security.krb5.conf", krbLocation);
             }
-            
+
             // init client id which we may need to get from the kafka producer via reflection
             if (clientId == null) {
                 clientId = getKafkaProps().getProperty(CommonClientConfigs.CLIENT_ID_CONFIG);
