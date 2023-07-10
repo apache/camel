@@ -347,7 +347,7 @@ public class NotifyBuilder {
     public NotifyBuilder wereSentTo(final String endpointUri) {
         // insert in start of stack but after the previous wereSentTo
         stack.add(wereSentToIndex++, new EventPredicateSupport() {
-            private ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<>();
+            private final ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<>();
 
             @Override
             public boolean isAbstract() {
@@ -398,7 +398,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenReceived(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCreated(Exchange exchange) {
@@ -478,9 +478,9 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenDoneByIndex(final int index) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
             private String id;
-            private AtomicBoolean done = new AtomicBoolean();
+            private final AtomicBoolean done = new AtomicBoolean();
 
             @Override
             public boolean onExchangeCreated(Exchange exchange) {
@@ -539,7 +539,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
@@ -574,7 +574,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenFailed(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeFailed(Exchange exchange) {
@@ -609,7 +609,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenExactlyDone(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
@@ -651,7 +651,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenExactlyCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
@@ -684,7 +684,7 @@ public class NotifyBuilder {
      */
     public NotifyBuilder whenExactlyFailed(final int number) {
         stack.add(new EventPredicateSupport() {
-            private AtomicInteger current = new AtomicInteger();
+            private final AtomicInteger current = new AtomicInteger();
 
             @Override
             public boolean onExchangeFailed(Exchange exchange) {

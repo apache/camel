@@ -78,7 +78,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-platform-http-vertx</artifactId>
+            <artifactId>camel-platform-http-main</artifactId>
             <exclusions>
                 <!-- avoid WARN logs from netty -->
                 <exclusion>
@@ -98,6 +98,13 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-vertx-http</artifactId>
+            <exclusions>
+                <!-- avoid WARN logs from netty -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-resolver-dns</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

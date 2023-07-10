@@ -145,6 +145,25 @@ The camel.main supports 118 options, which are listed below.
 |===
 
 
+=== Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
+The camel.server supports 10 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.server.devConsoleEnabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
+| *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
+| *camel.server.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health | false | boolean
+| *camel.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
+| *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
+| *camel.server.path* | Context-path to use for embedded HTTP server | / | String
+| *camel.server.port* | Port to use for binding embedded HTTP server | 8080 | int
+| *camel.server.uploadEnabled* | Whether to enable file upload via HTTP (not intended for production use). This functionality is for development to be able to reload Camel routes and code with source changes (if reload is enabled). If enabled then you can upload/delete files via HTTP PUT/DELETE on context-path: /q/upload/\{name}. You must also configure the uploadSourceDir option. | false | boolean
+| *camel.server.uploadSourceDir* | Source directory when upload is enabled. |  | String
+| *camel.server.useGlobalSsl{zwsp}ContextParameters* | Whether to use global SSL configuration for securing the embedded HTTP server. | false | boolean
+|===
+
+
 === Camel Thread Pool configurations
 The camel.threadpool supports 8 options, which are listed below.
 

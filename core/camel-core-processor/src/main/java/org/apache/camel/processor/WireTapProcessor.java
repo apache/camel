@@ -64,7 +64,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
     private final ExchangePattern exchangePattern;
     private final boolean copy;
     private final ExecutorService executorService;
-    private volatile boolean shutdownExecutorService;
+    private final boolean shutdownExecutorService;
     private final LongAdder taskCount = new LongAdder();
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;

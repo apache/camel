@@ -78,7 +78,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     private boolean reverse;
     private boolean allowDuplicates;
     private Predicate completionPredicate;
-    private Expression expression;
+    private final Expression expression;
 
     private final CamelContext camelContext;
     private final AsyncProcessor processor;
@@ -405,11 +405,11 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
      */
     private class BatchSender extends Thread {
 
-        private Queue<Exchange> queue;
-        private Lock queueLock = new ReentrantLock();
+        private final Queue<Exchange> queue;
+        private final Lock queueLock = new ReentrantLock();
         private final AtomicBoolean exchangeEnqueued = new AtomicBoolean();
         private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<>();
-        private Condition exchangeEnqueuedCondition = queueLock.newCondition();
+        private final Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
         BatchSender() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));

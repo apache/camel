@@ -16,11 +16,24 @@
  */
 package org.apache.camel.component.xslt.saxon;
 
+import java.io.Writer;
+import java.util.Properties;
+
 import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stax.StAXSource;
 
+import net.sf.saxon.jaxp.TemplatesImpl;
+import net.sf.saxon.jaxp.TransformerImpl;
+import net.sf.saxon.lib.StandardMessageHandler;
+import net.sf.saxon.str.UnicodeWriter;
+import net.sf.saxon.str.UnicodeWriterToWriter;
 import org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl;
 import org.apache.camel.component.xslt.XsltBuilder;
+import org.apache.camel.component.xslt.XsltMessageLogger;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
 
 public class XsltSaxonBuilder extends XsltBuilder {
@@ -55,5 +68,67 @@ public class XsltSaxonBuilder extends XsltBuilder {
     @Override
     protected XmlSourceHandlerFactoryImpl createXmlSourceHandlerFactoryImpl() {
         return new SaxonXmlSourceHandlerFactoryImpl();
+    }
+
+    @Override
+    protected Templates createTemplates(TransformerFactory factory, Source source) throws TransformerConfigurationException {
+        final Templates templates = super.createTemplates(factory, source);
+        if (templates instanceof TemplatesImpl && getXsltMessageLogger() != null) {
+            return new MessageDelegatingTemplates((TemplatesImpl) templates, getXsltMessageLogger());
+        }
+        return templates;
+    }
+
+    private static class MessageConsumerWriter extends Writer {
+
+        private final XsltMessageLogger xsltMessageLogger;
+
+        public MessageConsumerWriter(XsltMessageLogger xsltMessageLogger) {
+            this.xsltMessageLogger = xsltMessageLogger;
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) {
+            if (len > 0) {
+                xsltMessageLogger.accept(String.copyValueOf(cbuf, off, len));
+            }
+        }
+
+        @Override
+        public void flush() {
+        }
+
+        @Override
+        public void close() {
+            flush();
+        }
+    }
+
+    static class MessageDelegatingTemplates implements Templates {
+
+        private final TemplatesImpl delegated;
+
+        private final XsltMessageLogger xsltMessageLogger;
+
+        MessageDelegatingTemplates(TemplatesImpl templates, XsltMessageLogger xsltMessageLogger) {
+            this.delegated = templates;
+            this.xsltMessageLogger = xsltMessageLogger;
+        }
+
+        @Override
+        public Transformer newTransformer() throws TransformerConfigurationException {
+            final TransformerImpl transformer = (TransformerImpl) delegated.newTransformer();
+            final StandardMessageHandler standardMessageHandler = new StandardMessageHandler(transformer.getConfiguration());
+            final UnicodeWriter writer = new UnicodeWriterToWriter(new MessageConsumerWriter(xsltMessageLogger));
+            standardMessageHandler.setUnicodeWriter(writer);
+            transformer.getUnderlyingXsltTransformer().setMessageHandler(standardMessageHandler);
+
+            return transformer;
+        }
+
+        @Override
+        public Properties getOutputProperties() {
+            return delegated.getOutputProperties();
+        }
     }
 }

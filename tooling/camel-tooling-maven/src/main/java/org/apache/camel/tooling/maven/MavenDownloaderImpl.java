@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.support.DIRegistry;
+import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
@@ -71,8 +72,10 @@ import org.apache.maven.settings.io.SettingsWriter;
 import org.apache.maven.settings.validation.DefaultSettingsValidator;
 import org.apache.maven.settings.validation.SettingsValidator;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -150,6 +153,7 @@ import org.eclipse.aether.named.providers.FileLockNamedLockFactory;
 import org.eclipse.aether.named.providers.LocalReadWriteLockNamedLockFactory;
 import org.eclipse.aether.named.providers.LocalSemaphoreNamedLockFactory;
 import org.eclipse.aether.named.providers.NoopNamedLockFactory;
+import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.AuthenticationSelector;
 import org.eclipse.aether.repository.LocalRepository;
@@ -252,6 +256,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     // comma-separated list of additional repositories to use
     private String repos;
     private boolean fresh;
+    private RemoteArtifactDownloadListener remoteArtifactDownloadListener;
 
     private boolean apacheSnapshotsIncluded;
 
@@ -322,6 +327,11 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     @Override
+    public void setRemoteArtifactDownloadListener(RemoteArtifactDownloadListener remoteArtifactDownloadListener) {
+        this.remoteArtifactDownloadListener = remoteArtifactDownloadListener;
+    }
+
+    @Override
     public List<MavenArtifact> resolveArtifacts(
             List<String> dependencyGAVs, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots)
@@ -359,6 +369,33 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             Dependency dependency = new Dependency(ar.getArtifact(), "compile", false);
             collectRequest.addDependency(dependency);
             //collectRequest.addManagedDependency(...);
+        }
+
+        if (remoteArtifactDownloadListener != null && repositorySystemSession instanceof DefaultRepositorySystemSession) {
+            DefaultRepositorySystemSession drss = (DefaultRepositorySystemSession) repositorySystemSession;
+            drss.setRepositoryListener(new AbstractRepositoryListener() {
+                private final StopWatch watch = new StopWatch();
+
+                @Override
+                public void artifactDownloading(RepositoryEvent event) {
+                    watch.restart();
+                }
+
+                @Override
+                public void artifactDownloaded(RepositoryEvent event) {
+                    if (event.getArtifact() != null) {
+                        Artifact a = event.getArtifact();
+
+                        ArtifactRepository ar = event.getRepository();
+                        String url = ar instanceof RemoteRepository ? ((RemoteRepository) ar).getUrl() : null;
+                        String id = ar != null ? ar.getId() : null;
+                        long elapsed = watch.takenAndRestart();
+                        String version = a.isSnapshot() ? a.getBaseVersion() : a.getVersion();
+                        remoteArtifactDownloadListener.artifactDownloaded(a.getGroupId(), a.getArtifactId(), version,
+                                id, url, elapsed);
+                    }
+                }
+            });
         }
 
         if (transitively) {

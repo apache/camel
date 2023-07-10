@@ -22,6 +22,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.avro.AvroRuntimeException;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericContainer;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -35,6 +40,9 @@ import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.avro.AvroParquetWriter;
 import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.ParquetWriter;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
 import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
@@ -42,7 +50,11 @@ import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
 @Dataformat("parquetAvro")
 public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ParquetAvroDataFormat.class);
+
     private static final DefaultUuidGenerator DEFAULT_UUID_GENERATOR = new DefaultUuidGenerator();
+
+    private CompressionCodecName compressionCodecName = GZIP;
 
     private Class<?> unmarshalType;
 
@@ -51,7 +63,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        // marshal from the Java object (graph) to the parquet-avro type
+        // marshal from the Java object or GenericRecord (graph) to the parquet-avro type
         Configuration conf = new Configuration();
 
         FileSystem.get(conf).setWriteChecksum(false);
@@ -63,11 +75,26 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
 
         List<?> list = (List<?>) graph;
 
+        Schema schema = null;
+        GenericData model = null;
+        if (unmarshalType != null) {
+            try {
+                schema = ReflectData.AllowNull.get().getSchema(unmarshalType); // generate nullable fields
+                model = ReflectData.get();
+            } catch (AvroRuntimeException e) {
+                LOG.warn("Fall back to use GenericRecord instead of POJO for marshalling", e);
+            }
+        }
+        if (schema == null) {
+            schema = GenericContainer.class.cast(list.get(0)).getSchema();
+            model = GenericData.get();
+        }
+
         try (ParquetWriter<Object> writer = AvroParquetWriter.builder(parquetOutputStream)
-                .withSchema(ReflectData.AllowNull.get().getSchema(unmarshalType)) // generate nullable fields
-                .withDataModel(ReflectData.get())
+                .withSchema(schema)
+                .withDataModel(model)
                 .withConf(conf)
-                .withCompressionCodec(GZIP)
+                .withCompressionCodec(compressionCodecName)
                 .withWriteMode(OVERWRITE)
                 .build()) {
             for (Object grapElem : list) {
@@ -77,7 +104,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        // unmarshal from the input stream of parquet-avro to Java object (graph)
+        // unmarshal from the input stream of parquet-avro to Java object or GenericRecord (graph)
         List<Object> parquetObjects = new ArrayList<>();
         Configuration conf = new Configuration();
 
@@ -85,14 +112,20 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 DEFAULT_UUID_GENERATOR.generateUuid(),
                 stream.readAllBytes());
 
+        Class<?> type = GenericRecord.class;
+        GenericData model = GenericData.get();
+        if (unmarshalType != null) {
+            type = unmarshalType;
+            model = new ReflectData(unmarshalType.getClassLoader());
+        }
+
         try (ParquetReader<?> reader = AvroParquetReader.builder(parquetInputStream)
-                .withDataModel(new ReflectData(unmarshalType.getClassLoader()))
+                .withDataModel(model)
                 .disableCompatibility() // always use this (since this is a new project)
                 .withConf(conf)
                 .build()) {
-
             Object pojo;
-            while ((pojo = unmarshalType.cast(reader.read())) != null) {
+            while ((pojo = type.cast(reader.read())) != null) {
                 parquetObjects.add(pojo);
             }
         }
@@ -108,6 +141,19 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     @Override
     protected void doStop() throws Exception {
         // no-op
+    }
+
+    public String getCompressionCodecName() {
+        return compressionCodecName.name();
+    }
+
+    /**
+     * Compression codec to use when marshalling. You can find the supported codecs at
+     * https://github.com/apache/parquet-format/blob/master/Compression.md#codecs. Note that some codecs may require you
+     * to include additional libraries into the classpath.
+     */
+    public void setCompressionCodecName(String compressionCodecName) {
+        this.compressionCodecName = CompressionCodecName.valueOf(compressionCodecName);
     }
 
     public Class<?> getUnmarshalType() {

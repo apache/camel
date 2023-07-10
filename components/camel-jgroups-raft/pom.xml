@@ -32,6 +32,7 @@
     <description>Camel jgroups-raft support</description>
 
     <properties>
+        <camel.surefire.fork.additional-vmargs>-Djava.net.preferIPv4Stack=true</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -84,7 +85,6 @@
                             <systemPropertyVariables>
                                 <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
                             </systemPropertyVariables>
-                            <argLine>${camel.surefire.fork.vmargs} -Djava.net.preferIPv4Stack=true</argLine>
                         </configuration>
                     </plugin>
                 </plugins>

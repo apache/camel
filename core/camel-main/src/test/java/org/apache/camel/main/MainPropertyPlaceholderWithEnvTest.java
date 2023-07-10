@@ -33,9 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class MainPropertyPlaceholderWithEnvTest {
 
-    public static final String ENV_PROPERTY_PLACEHOLDER_LOCATION = MainHelper.toEnvVar(Main.PROPERTY_PLACEHOLDER_LOCATION);
-    public static final String ENV_INITIAL_PROPERTIES_LOCATION = MainHelper.toEnvVar(Main.INITIAL_PROPERTIES_LOCATION);
-    public static final String ENV_OVERRIDE_PROPERTIES_LOCATION = MainHelper.toEnvVar(Main.OVERRIDE_PROPERTIES_LOCATION);
+    public static final String ENV_PROPERTY_PLACEHOLDER_LOCATION
+            = MainHelper.toEnvVar(MainConstants.PROPERTY_PLACEHOLDER_LOCATION);
+    public static final String ENV_INITIAL_PROPERTIES_LOCATION = MainHelper.toEnvVar(MainConstants.INITIAL_PROPERTIES_LOCATION);
+    public static final String ENV_OVERRIDE_PROPERTIES_LOCATION
+            = MainHelper.toEnvVar(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
 
     private static final Map<String, String> THE_CASE_INSENSITIVE_ENVIRONMENT = new HashMap<>();
 
@@ -58,7 +60,7 @@ public class MainPropertyPlaceholderWithEnvTest {
     @Test
     public void testPropertyPlaceholderOrdering() {
         envVariable(ENV_PROPERTY_PLACEHOLDER_LOCATION, "classpath:default.properties");
-        sysVariable(Main.PROPERTY_PLACEHOLDER_LOCATION, "classpath:user.properties");
+        sysVariable(MainConstants.PROPERTY_PLACEHOLDER_LOCATION, "classpath:user.properties");
 
         Main main = new Main();
         try {
@@ -85,7 +87,7 @@ public class MainPropertyPlaceholderWithEnvTest {
     @Test
     public void testInitialPropertiesOrdering() {
         envVariable(ENV_INITIAL_PROPERTIES_LOCATION, "classpath:default.properties");
-        sysVariable(Main.INITIAL_PROPERTIES_LOCATION, "classpath:user.properties");
+        sysVariable(MainConstants.INITIAL_PROPERTIES_LOCATION, "classpath:user.properties");
 
         Main main = new Main();
         try {
@@ -146,7 +148,7 @@ public class MainPropertyPlaceholderWithEnvTest {
     @Test
     public void testOverridePropertiesOrdering() {
         envVariable(ENV_OVERRIDE_PROPERTIES_LOCATION, "classpath:default.properties");
-        sysVariable(Main.OVERRIDE_PROPERTIES_LOCATION, "classpath:user.properties");
+        sysVariable(MainConstants.OVERRIDE_PROPERTIES_LOCATION, "classpath:user.properties");
 
         Main main = new Main();
         try {

@@ -547,7 +547,7 @@ public interface KafkaComponentBuilderFactory {
          * considered failed and the group will rebalance in order to reassign
          * the partitions to another member.
          * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -555,7 +555,7 @@ public interface KafkaComponentBuilderFactory {
          * @return the dsl builder
          */
         default KafkaComponentBuilder maxPollIntervalMs(
-                java.lang.Long maxPollIntervalMs) {
+                java.lang.Integer maxPollIntervalMs) {
             doSetProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
         }
@@ -1601,7 +1601,7 @@ public interface KafkaComponentBuilderFactory {
          * Factory to use for creating
          * org.apache.kafka.clients.consumer.KafkaConsumer and
          * org.apache.kafka.clients.producer.KafkaProducer instances. This
-         * allows to configure a custom factory to create instances with logic
+         * allows configuring a custom factory to create instances with logic
          * that extends the vanilla Kafka clients.
          * 
          * The option is a:
@@ -1686,6 +1686,21 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder kerberosBeforeReloginMinTime(
                 java.lang.Integer kerberosBeforeReloginMinTime) {
             doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            return this;
+        }
+        /**
+         * Location of the kerberos config file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kerberosConfigLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder kerberosConfigLocation(
+                java.lang.String kerberosConfigLocation) {
+            doSetProperty("kerberosConfigLocation", kerberosConfigLocation);
             return this;
         }
         /**
@@ -2163,7 +2178,7 @@ public interface KafkaComponentBuilderFactory {
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;
             case "maxPartitionFetchBytes": getOrCreateConfiguration((KafkaComponent) component).setMaxPartitionFetchBytes((java.lang.Integer) value); return true;
-            case "maxPollIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setMaxPollIntervalMs((java.lang.Long) value); return true;
+            case "maxPollIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setMaxPollIntervalMs((java.lang.Integer) value); return true;
             case "maxPollRecords": getOrCreateConfiguration((KafkaComponent) component).setMaxPollRecords((java.lang.Integer) value); return true;
             case "offsetRepository": getOrCreateConfiguration((KafkaComponent) component).setOffsetRepository((org.apache.camel.spi.StateRepository) value); return true;
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;
@@ -2221,6 +2236,7 @@ public interface KafkaComponentBuilderFactory {
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;
+            case "kerberosConfigLocation": getOrCreateConfiguration((KafkaComponent) component).setKerberosConfigLocation((java.lang.String) value); return true;
             case "kerberosInitCmd": getOrCreateConfiguration((KafkaComponent) component).setKerberosInitCmd((java.lang.String) value); return true;
             case "kerberosPrincipalToLocalRules": getOrCreateConfiguration((KafkaComponent) component).setKerberosPrincipalToLocalRules((java.lang.String) value); return true;
             case "kerberosRenewJitter": getOrCreateConfiguration((KafkaComponent) component).setKerberosRenewJitter((java.lang.Double) value); return true;

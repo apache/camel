@@ -29,6 +29,9 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -44,7 +47,8 @@ import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSe
  * This class implement a basic Vert.x Web based server that can be used by the {@link VertxPlatformHttpEngine} on
  * platforms that do not provide Vert.x based http services.
  */
-public class VertxPlatformHttpServer extends ServiceSupport implements CamelContextAware {
+@ManagedResource(description = "Vert.x HTTP Server")
+public class VertxPlatformHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpServer.class);
 
     private final VertxPlatformHttpServerConfiguration configuration;
@@ -113,6 +117,34 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
             this.context.getExecutorServiceManager().shutdown(this.executor);
             this.executor = null;
         }
+    }
+
+    @ManagedAttribute(description = "HTTP port number")
+    public int getPort() {
+        if (server != null) {
+            return server.actualPort();
+        }
+        return configuration.getBindPort();
+    }
+
+    @ManagedAttribute(description = "HTTP hostname")
+    public String getHost() {
+        return configuration.getBindHost();
+    }
+
+    @ManagedAttribute(description = "HTTP context-path")
+    public String getPath() {
+        return configuration.getPath();
+    }
+
+    @ManagedAttribute(description = "HTTP maximum HTTP body size")
+    public Long getMaxBodySize() {
+        return configuration.getMaxBodySize();
+    }
+
+    @ManagedAttribute(description = "Should SSL be used from global SSL configuration")
+    public boolean isUseGlobalSslContextParameters() {
+        return configuration.isUseGlobalSslContextParameters();
     }
 
     // *******************************

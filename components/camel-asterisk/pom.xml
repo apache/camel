@@ -32,6 +32,7 @@
     <description>Camel Asterisk to interact with an Asterisk PBX Server</description>
 
     <properties>
+        <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
     </properties>
 
     <dependencies>
@@ -64,28 +65,4 @@
         </dependency>
 
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkCount>1</forkCount>
-                            <reuseForks>false</reuseForks>
-                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

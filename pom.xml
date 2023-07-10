@@ -118,30 +118,27 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
 
-        <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
+        <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
+        <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
+        <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
+        <license-maven-plugin-version>4.2</license-maven-plugin-version>
+        <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
-        <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
-        <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
-        <maven-failsafe-plugin-version>3.1.2</maven-failsafe-plugin-version>
-        <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
-        <surefire.version>${maven-surefire-plugin-version}</surefire.version>
-        <java-diff-utils-version>4.7</java-diff-utils-version>
-        <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
         <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
+        <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
+        <maven-invoker-plugin-version>3.6.0</maven-invoker-plugin-version>
+        <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
+        <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.1.0</maven-remote-resources-plugin-version>
+        <maven-surefire-plugin-version>3.1.2</maven-surefire-plugin-version>
+        <versions-maven-plugin-version>2.16.0</versions-maven-plugin-version>
 
-        <!-- eclipse plugin need the jaxb in this pom.xml file -->
-        <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
-        <jakarta-xml-bind-api-version>4.0.0</jakarta-xml-bind-api-version>
         <jaxb-core-version>4.0.1</jaxb-core-version>
         <jaxb-impl-version>4.0.1</jaxb-impl-version>
         <jaxb-osgi-version>4.0.1</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.1</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.1</jaxb-jxc-version>
-        <mycila-license-version>4.2</mycila-license-version>
-        <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
-        <groovy-version>4.0.12</groovy-version>
-        <cyclonedx-maven-plugin-version>2.7.9</cyclonedx-maven-plugin-version>
+        <groovy-version>4.0.13</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
 
@@ -261,7 +258,7 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>${mycila-license-version}</version>
+                    <version>${license-maven-plugin-version}</version>
                     <configuration>
                         <failIfUnknown>true</failIfUnknown>
                         <header>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt</header>
@@ -417,22 +414,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <version>2.10</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.camel</groupId>
-                            <artifactId>camel-buildtools</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <downloadSources>true</downloadSources>
-                        <downloadJavadocs>false</downloadJavadocs>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-enforcer-plugin-version}</version>
                 </plugin>
@@ -444,7 +425,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${maven-failsafe-plugin-version}</version>
+                    <version>${maven-surefire-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -464,7 +445,6 @@
                         <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
                             <exclude>**/generated/**</exclude>
-                            <exclude>**/camel-dependencies/**</exclude>
                             <exclude>**/generated.txt</exclude>
                             <exclude>**/*.json</exclude>
                             <exclude>**/README</exclude>
@@ -561,7 +541,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>${maven-release-plugin-version}</version>
                     <configuration>
                         <localCheckout>true</localCheckout>
                         <pushChanges>true</pushChanges>
@@ -578,13 +558,13 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.16.0</version>
+                    <version>${versions-maven-plugin-version}</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.5.0</version>
+                    <version>${flatten-maven-plugin-version}</version>
                     <executions>
                         <execution>
                             <id>default-cli</id>
@@ -832,6 +812,12 @@
                             <failIfNoTests>false</failIfNoTests>
                             <skipTests>true</skipTests>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>none</phase><!-- No need to even load the plugin during releases -->
+                            </execution>
+                        </executions>
                      </plugin>
                 </plugins>
             </build>

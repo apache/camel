@@ -82,7 +82,8 @@ public class SftpSimpleConsumeThroughProxyIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
+                     + "?username=admin&password=admin&delay=10000&disconnect=true&proxy=#proxy&knownHostsFile="
+                     + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

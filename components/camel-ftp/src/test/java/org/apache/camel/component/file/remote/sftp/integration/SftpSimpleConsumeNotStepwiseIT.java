@@ -28,7 +28,8 @@ public class SftpSimpleConsumeNotStepwiseIT extends SftpSimpleConsumeIT {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&stepwise=false").routeId("foo")
+                     + "?username=admin&password=admin&delay=10000&disconnect=true&stepwise=false&knownHostsFile="
+                     + service.getKnownHostsFile()).routeId("foo")
                         .noAutoStartup().to("mock:result");
             }
         };

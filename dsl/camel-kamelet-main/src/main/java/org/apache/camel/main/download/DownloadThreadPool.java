@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -34,8 +35,13 @@ import org.slf4j.Logger;
  */
 class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
 
+    private final MavenDependencyDownloader downloader;
     private CamelContext camelContext;
     private volatile ExecutorService executorService;
+
+    public DownloadThreadPool(MavenDependencyDownloader downloader) {
+        this.downloader = downloader;
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -70,15 +76,25 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
             }
         }
 
-        // only report at INFO if downloading took > 1s because loading from cache is faster
-        // and then it is not downloaded over the internet
-        long taken = watch.taken();
-        String msg = "Downloaded: " + gav + " (took: "
-                     + TimeUtils.printDuration(taken, true) + ")";
-        if (taken < 1000) {
-            log.debug(msg);
-        } else {
+        MavenGav a = MavenGav.parseGav(gav);
+        DownloadRecord record = downloader.getDownloadState(a.getGroupId(), a.getArtifactId(), a.getVersion());
+        if (record != null) {
+            long taken = watch.taken();
+            String url = record.repoUrl();
+            String id = record.repoId();
+            String msg = "Downloaded: " + gav + " (took: "
+                         + TimeUtils.printDuration(taken, true) + ") from: " + id + "@" + url;
             log.info(msg);
+        } else {
+            long taken = watch.taken();
+            String msg = "Resolved: " + gav + " (took: "
+                         + TimeUtils.printDuration(taken, true) + ")";
+            if (taken > 2000) {
+                // slow resolving then log
+                log.info(msg);
+            } else {
+                log.debug(msg);
+            }
         }
     }
 

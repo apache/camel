@@ -32,6 +32,7 @@
     <description>Camel MINA support</description>
 
     <properties>
+        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
     </properties>
 
     <dependencies>
@@ -96,7 +97,6 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
                             <excludes>
                                 <!-- This test just show the shutdown error -->
                                 <exclude>**/MinaProducerShutdownTest.*</exclude>

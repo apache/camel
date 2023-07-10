@@ -1589,10 +1589,10 @@ public class StaticEndpointBuilders {
      * Camel Azure Files Component
      * 
      * Category: cloud,file
-     * Since: 3.21
+     * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
-     * Syntax: <code>azure-files://account/share</code>
+     * Syntax: <code>azure-files:account/share</code>
      * 
      * Path parameter: account (required)
      * The account to use
@@ -1606,7 +1606,7 @@ public class StaticEndpointBuilders {
      * Path parameter: directoryName
      * The starting directory
      * 
-     * @param path //account/share
+     * @param path account/share
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
@@ -1618,10 +1618,10 @@ public class StaticEndpointBuilders {
      * Camel Azure Files Component
      * 
      * Category: cloud,file
-     * Since: 3.21
+     * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
-     * Syntax: <code>azure-files://account/share</code>
+     * Syntax: <code>azure-files:account/share</code>
      * 
      * Path parameter: account (required)
      * The account to use
@@ -1637,7 +1637,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //account/share
+     * @param path account/share
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
@@ -9730,8 +9730,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * There are 3 enums and the value can be one of: counter,
-     * distribution_summary, timer
+     * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9759,8 +9758,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * There are 3 enums and the value can be one of: counter,
-     * distribution_summary, timer
+     * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics

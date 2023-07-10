@@ -23,8 +23,11 @@ import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueFieldId;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Priority;
+import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
+import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
@@ -50,6 +53,7 @@ public class AddIssueProducer extends DefaultProducer {
         String summary = exchange.getIn().getHeader(ISSUE_SUMMARY, String.class);
         // optional fields
         String assigneeName = exchange.getIn().getHeader(ISSUE_ASSIGNEE, String.class);
+        String assigneeId = exchange.getIn().getHeader(ISSUE_ASSIGNEE_ID, String.class);
         String priorityName = exchange.getIn().getHeader(ISSUE_PRIORITY_NAME, String.class);
         Long priorityId = exchange.getIn().getHeader(ISSUE_PRIORITY_ID, Long.class);
         String components = exchange.getIn().getHeader(ISSUE_COMPONENTS, String.class);
@@ -105,6 +109,9 @@ public class AddIssueProducer extends DefaultProducer {
         }
         if (assigneeName != null) {
             builder.setAssigneeName(assigneeName);
+        } else if (assigneeId != null) {
+            builder.setFieldInput(
+                    new FieldInput(IssueFieldId.ASSIGNEE_FIELD, ComplexIssueInputFieldValue.with("id", assigneeId)));
         }
 
         IssueRestClient issueClient = client.getIssueClient();

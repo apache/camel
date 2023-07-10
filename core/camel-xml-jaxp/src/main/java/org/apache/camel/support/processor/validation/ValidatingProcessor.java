@@ -69,7 +69,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
     private boolean failOnNullBody = true;
     private boolean failOnNullHeader = true;
     private String headerName;
-    private XMLConverterHelper converter = new XMLConverterHelper();
+    private final XMLConverterHelper converter = new XMLConverterHelper();
 
     public ValidatingProcessor() {
         schemaReader = new SchemaReader();

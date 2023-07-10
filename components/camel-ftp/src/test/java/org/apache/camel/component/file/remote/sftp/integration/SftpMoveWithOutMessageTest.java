@@ -75,9 +75,13 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
             public void configure() {
                 from("seda:trigger")
                         .pollEnrich(
-                                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay=10000&disconnect=true&move=archive")
+                                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay="
+                                    + "10000&disconnect=true&move=archive&knownHostsFile="
+                                    + service.getKnownHostsFile())
                         .pollEnrich(
-                                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay=10000&disconnect=true&move=archive")
+                                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay="
+                                    + "10000&disconnect=true&move=archive&knownHostsFile="
+                                    + service.getKnownHostsFile())
                         .process(processor);
             }
         } };

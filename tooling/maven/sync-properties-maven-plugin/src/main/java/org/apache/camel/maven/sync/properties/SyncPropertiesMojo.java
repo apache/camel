@@ -39,6 +39,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -57,12 +58,13 @@ public class SyncPropertiesMojo extends AbstractMojo {
     private File sourcePomXml;
 
     /**
-     * The path to {@code camel-dependencies} {@code pom.xml}
+     * The path to the generated {@code camel-dependencies} {@code pom.xml} file that will be installed and deployed
+     * instead of the {@code camel-dependencies} {@code pom.xml} file available in the source tree.
      *
      * @since 4.0.0
      */
-    @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}/camel-dependencies/pom.xml",
-               property = "camel.camelDependenciesPomXml")
+    @Parameter(defaultValue = "${project.build.directory}/generated-pom.xml",
+               property = "camel.targetPomXml")
     private File targetPomXml;
 
     /**
@@ -105,18 +107,23 @@ public class SyncPropertiesMojo extends AbstractMojo {
     @Parameter
     private List<String> propertyExcludes;
 
+    /**
+     * The Maven project.
+     *
+     * @since 4.0.0
+     */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Path camelParentPomXmlPath = sourcePomXml.toPath();
         if (!Files.isRegularFile(camelParentPomXmlPath)) {
             throw new MojoExecutionException("camelParentPomXml " + sourcePomXml + " does not exist");
         }
-        final Path camelDependenciesPomXmlPath = targetPomXml.toPath();
-        if (!Files.isRegularFile(camelDependenciesPomXmlPath)) {
-            throw new MojoExecutionException("camelDependenciesPomXml " + targetPomXml + " does not exist");
-        }
+        final Path resultPath = targetPomXml.toPath();
         final Path camelPomXmlPath = camelPomXml.toPath();
-        if (!Files.isRegularFile(camelDependenciesPomXmlPath)) {
+        if (!Files.isRegularFile(camelPomXmlPath)) {
             throw new MojoExecutionException("camelPomXml " + camelPomXml + " does not exist");
         }
         final Charset charset = Charset.forName(encoding);
@@ -160,13 +167,16 @@ public class SyncPropertiesMojo extends AbstractMojo {
                     .replace("@properties@", properties);
 
             // write lines
-            boolean updated = FileUtil.updateFile(camelDependenciesPomXmlPath, camelPropertiesContent, charset);
+            boolean updated = FileUtil.updateFile(resultPath, camelPropertiesContent, charset);
             if (updated) {
-                getLog().info("Updated: " + camelDependenciesPomXmlPath);
+                getLog().info("Updated: " + resultPath);
             }
             getLog().debug("Finished.");
+
+            project.setPomFile(resultPath.toFile());
+
         } catch (IOException ex) {
-            throw new MojoExecutionException("Could not write to " + camelDependenciesPomXmlPath, ex);
+            throw new MojoExecutionException("Could not write to " + resultPath, ex);
         }
     }
 

@@ -33,6 +33,7 @@
     <description>Camel servlet transport support</description>
 
     <properties>
+        <camel.surefire.fork.vmargs>--add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED</camel.surefire.fork.vmargs>
     </properties>
 
     <dependencies>
@@ -118,23 +119,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>jdk17-build</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-opens java.base/sun.net.www.protocol.http=ALL-UNNAMED</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

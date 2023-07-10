@@ -32,6 +32,10 @@
     <name>Camel :: Maven Plugins :: Camel EIP Documentation Enricher Plugin</name>
     <description>Adds documentation to camel xsd schema</description>
 
+    <properties>
+        <camel.surefire.fork.additional-vmargs>--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -167,27 +171,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-opens java.base/java.io=ALL-UNNAMED --add-opens
-                                java.base/java.lang=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

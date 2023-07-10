@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -35,8 +38,8 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
     // use utf-8 as original payload with 00e6 which is a danish ae letter
     private byte[] utf = "ABC\u00e6D\uD867\uDE3DE\uD83C\uDFF3".getBytes(StandardCharsets.UTF_8);
 
-    @Test
-    public void testFileProducerCharsetUTFOptimized() throws Exception {
+    @BeforeEach
+    public void createData() throws IOException {
         testDirectory("input", true);
 
         log.debug("utf: {}", new String(utf, StandardCharsets.UTF_8));
@@ -47,13 +50,21 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         try (OutputStream fos = Files.newOutputStream(testFile("input/input.txt"))) {
             fos.write(utf);
         }
+    }
 
+    @Test
+    public void testFileProducerCharsetUTFOptimized() throws Exception {
         oneExchangeDone.matchesWaitTime();
 
         assertTrue(Files.exists(testFile("output.txt")), "File should exist");
 
         byte[] data = Files.readAllBytes(testFile("output.txt"));
         assertArrayEquals(utf, data);
+    }
+
+    @AfterEach
+    public void deleteData() {
+        deleteDirectory(testDirectory().toFile());
     }
 
     @Override

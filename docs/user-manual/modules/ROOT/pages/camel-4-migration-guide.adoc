@@ -130,6 +130,10 @@ The xref:tracer.adoc[Tracer] and xref:backlog-tracer.adoc[Backlog Tracer] no lon
 from routes that was created by Rest DSL or route templates or Kamelets. You can turn this on, by setting
 `traceTemplates=true` in the tracer.
 
+The xref:backlog-tracer.adoc[Backlog Tracer] has been enhanced and _fixed_ to trace message headers (also streaming types).
+This means that previously headers of type `InputStream` was not traced before, but is now included. This could mean that
+the header stream is positioned at end, and logging the header afterward, may appear as the header value is empty.
+
 == UseOriginalMessage / UseOriginalBody
 
 When `useOriginalMessage` or `useOriginalBody` is enabled in `OnException`, `OnCompletion` or error handlers,
@@ -293,6 +297,19 @@ The `io.fabric8:kubernetes-client` library has been upgraded and some deprecated
 
 For example `replaceConfigMap` is now `updateConfigMap`, `replacePod` is now `updatePod` etc. The corresponding 
 constants in class `KubernetesOperations` are also renamed. `REPLACE_CONFIGMAP_OPERATION` is now `UPDATE_CONFIGMAP_OPERATION`, `REPLACE_POD_OPERATION` is now `UPDATE_POD_OPERATION` etc.
+
+=== camel-main
+
+The following constants has been moved from `BaseMainSupport` / `Main` to `MainConstants`:
+
+|===
+| Old Name | New Name
+| Main.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION | MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION
+| Main.INITIAL_PROPERTIES_LOCATION | MainConstants.INITIAL_PROPERTIES_LOCATION
+| Main.OVERRIDE_PROPERTIES_LOCATION | MainConstants.OVERRIDE_PROPERTIES_LOCATION
+| Main.PROPERTY_PLACEHOLDER_LOCATION | MainConstants.PROPERTY_PLACEHOLDER_LOCATION
+|===
+
 
 === camel-micrometer
 

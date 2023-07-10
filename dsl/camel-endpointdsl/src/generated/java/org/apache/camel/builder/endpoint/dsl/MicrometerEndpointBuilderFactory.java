@@ -205,8 +205,8 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * There are 3 enums and the value can be one of: counter,
-         * distribution_summary, timer
+         * There are 3 enums and the value can be one of: counter, summary,
+         * timer
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
@@ -233,8 +233,8 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * There are 3 enums and the value can be one of: counter,
-         * distribution_summary, timer
+         * There are 3 enums and the value can be one of: counter, summary,
+         * timer
          * 
          * Path parameter: metricsName (required)
          * Name of metrics

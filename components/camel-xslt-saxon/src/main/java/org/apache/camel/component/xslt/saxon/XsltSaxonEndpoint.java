@@ -233,9 +233,13 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setAllowStAX(allowStAX);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
 
+        if (getXsltMessageLogger() != null) {
+            xslt.setXsltMessageLogger(getXsltMessageLogger());
+        }
+
         configureOutput(xslt, getOutput().name());
 
-        // any additional transformer parameters then make a copy to avoid side-effects
+        // any additional transformer parameters then make a copy to avoid side effects
         if (getParameters() != null) {
             Map<String, Object> copy = new HashMap<>(getParameters());
             xslt.setParameters(copy);

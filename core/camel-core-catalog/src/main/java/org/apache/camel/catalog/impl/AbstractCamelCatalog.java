@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -884,21 +883,7 @@ public abstract class AbstractCamelCatalog {
 
             if (!copy.isEmpty()) {
                 // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
-                copy.replaceAll((key, val) -> {
-                    if (val == null) {
-                        return val;
-                    }
-                    BaseOptionModel option = rows.get(key);
-                    if (option == null) {
-                        return val;
-                    }
-
-                    if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
-                        return "RAW(" + val + ")";
-                    }
-
-                    return val;
-                });
+                copy.replaceAll((key, val) -> wrapRAW(key, val, rows));
 
                 boolean hasQuestionMark = sb.toString().contains("?");
                 // the last option may already contain a ? char, if so we should use & instead of ?
@@ -986,25 +971,7 @@ public abstract class AbstractCamelCatalog {
 
             if (!copy.isEmpty()) {
                 // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
-                copy.replaceAll(new BiFunction<String, String, String>() {
-                    @Override
-                    public String apply(String key, String val) {
-
-                        if (val == null) {
-                            return val;
-                        }
-                        BaseOptionModel option = rows.get(key);
-                        if (option == null) {
-                            return val;
-                        }
-
-                        if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
-                            return "RAW(" + val + ")";
-                        }
-
-                        return val;
-                    }
-                });
+                copy.replaceAll((key, val) -> wrapRAW(key, val, rows));
 
                 // the last option may already contain a ? char, if so we should use & instead of ?
                 sb.append(hasQuestionmark ? ampersand : '?');
@@ -1025,6 +992,22 @@ public abstract class AbstractCamelCatalog {
             // its empty without anything
             return scheme;
         }
+    }
+
+    private static String wrapRAW(String key, String val, Map<String, BaseOptionModel> rows) {
+        if (val == null) {
+            return val;
+        }
+        BaseOptionModel option = rows.get(key);
+        if (option == null) {
+            return val;
+        }
+
+        if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
+            return "RAW(" + val + ")";
+        }
+
+        return val;
     }
 
     private static String[] syntaxKeys(String syntax) {

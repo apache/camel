@@ -34,7 +34,7 @@ public class SftpSetCipherIT extends SftpServerTestSupport {
         String cipher = "aes256-ctr";
         String uri
                 = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&ciphers="
-                  + cipher;
+                  + cipher + "&knownHostsFile=" + service.getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload

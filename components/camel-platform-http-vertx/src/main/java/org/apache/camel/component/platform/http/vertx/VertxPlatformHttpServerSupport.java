@@ -51,7 +51,7 @@ public final class VertxPlatformHttpServerSupport {
         BodyHandler bodyHandler = BodyHandler.create();
 
         if (configuration.getMaxBodySize() != null) {
-            bodyHandler.setBodyLimit(configuration.getMaxBodySize().longValueExact());
+            bodyHandler.setBodyLimit(configuration.getMaxBodySize());
         }
 
         bodyHandler.setHandleFileUploads(configuration.getBodyHandler().isHandleFileUploads());

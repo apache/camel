@@ -640,6 +640,38 @@ public interface XsltSaxonEndpointBuilderFactory {
             doSetProperty("uriResolver", uriResolver);
             return this;
         }
+        /**
+         * A consumer to messages generated during XSLT transformations.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltMessageLogger&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param xsltMessageLogger the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXsltSaxonEndpointBuilder xsltMessageLogger(
+                org.apache.camel.component.xslt.XsltMessageLogger xsltMessageLogger) {
+            doSetProperty("xsltMessageLogger", xsltMessageLogger);
+            return this;
+        }
+        /**
+         * A consumer to messages generated during XSLT transformations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltMessageLogger&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param xsltMessageLogger the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXsltSaxonEndpointBuilder xsltMessageLogger(
+                String xsltMessageLogger) {
+            doSetProperty("xsltMessageLogger", xsltMessageLogger);
+            return this;
+        }
     }
 
     public interface XsltSaxonBuilders {
