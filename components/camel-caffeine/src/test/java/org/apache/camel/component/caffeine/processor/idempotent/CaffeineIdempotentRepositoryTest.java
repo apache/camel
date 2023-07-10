@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -114,7 +113,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
         // c is a duplicate
 
         // should be started
-        assertEquals(true, repo.getStatus().isStarted(), "Should be started");
+        assertTrue(repo.getStatus().isStarted(), "Should be started");
 
         // send 3 message with one duplicated key (key01)
         template.sendBodyAndHeader("direct://in", "a", "messageId", key01);
