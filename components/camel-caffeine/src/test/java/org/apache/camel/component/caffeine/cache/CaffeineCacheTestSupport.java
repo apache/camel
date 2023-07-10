@@ -90,7 +90,7 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
                 .collect(Collectors.toMap(i -> i + "-" + generateRandomString(), i -> i + "-" + generateRandomString()));
     }
 
-    class DummyRemovalListener implements RemovalListener<Object, Object> {
+    static class DummyRemovalListener implements RemovalListener<Object, Object> {
 
         @Override
         public void onRemoval(Object key, Object value, RemovalCause cause) {

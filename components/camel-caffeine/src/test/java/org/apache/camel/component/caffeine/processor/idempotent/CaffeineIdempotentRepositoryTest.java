@@ -54,7 +54,7 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
         // try to add the same key again
         assertFalse(repo.add(key01));
 
-        // try to add an other one
+        // try to add another one
         assertTrue(repo.add(key02));
         assertTrue(repo.getCache().asMap().containsKey(key02));
     }
