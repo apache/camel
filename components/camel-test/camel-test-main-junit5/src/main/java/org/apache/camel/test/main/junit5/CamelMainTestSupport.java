@@ -17,8 +17,8 @@
 package org.apache.camel.test.main.junit5;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.main.MainConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
         final String locations = getPropertyPlaceholderLocationsFromFileName();
         if (locations == null) {
             LOG.debug("Use the default property placeholder location");
-            return BaseMainSupport.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
+            return MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
         }
         LOG.debug("Use the following property placeholder locations: {}", locations);
         return locations;

@@ -1,0 +1,28 @@
+= Platform Http Main Component
+:doctitle: Platform Http Main
+:shortname: platform-http-main
+:artifactid: camel-platform-http-main
+:description: Platform HTTP for standalone Camel Main applications
+:since: 4.0
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The camel-platform-http-main is an embedded HTTP server for `camel-main` standalone applications.
+
+The embedded HTTP server is using VertX from the `camel-platform-http-vertx` dependency.
+
+== Enabling
+
+The HTTP server for `camel-main` (is default disabled), and you need to explicit enable this
+by setting `camel.server.enabled=true` in application.properties.
+
+== Auto detection from classpath
+
+To use this implementation all you need to do is to add the `camel-platform-http-main` dependency to the classpath,
+and the platform http component should auto-detect this.
+
+== See More
+
+- xref:platform-http-vertx.adoc[Platform HTTP Vert.x]

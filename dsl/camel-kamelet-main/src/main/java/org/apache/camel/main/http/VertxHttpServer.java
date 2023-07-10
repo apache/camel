@@ -45,9 +45,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupListener;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
-import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
-import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
@@ -71,7 +70,7 @@ import org.slf4j.LoggerFactory;
 public final class VertxHttpServer {
 
     static VertxPlatformHttpRouter router;
-    static VertxPlatformHttpServer server;
+    static MainHttpServer server;
     static PlatformHttpComponent phc;
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxHttpServer.class);
@@ -108,12 +107,11 @@ public final class VertxHttpServer {
         }
 
         try {
-            VertxPlatformHttpServerConfiguration config = new VertxPlatformHttpServerConfiguration();
-            config.setPort(port);
-            server = new VertxPlatformHttpServer(config);
-            camelContext.addService(server);
+            server = new MainHttpServer();
+            server.setCamelContext(camelContext);
+            server.setPort(port);
             server.start();
-            router = VertxPlatformHttpRouter.lookup(camelContext);
+            router = server.getRouter();
             if (phc == null) {
                 phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
             }

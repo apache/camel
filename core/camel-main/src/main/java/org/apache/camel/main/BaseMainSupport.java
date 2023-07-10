@@ -42,6 +42,7 @@ import org.apache.camel.Configuration;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.StartupStep;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
@@ -95,11 +96,6 @@ import static org.apache.camel.util.StringHelper.matches;
  */
 public abstract class BaseMainSupport extends BaseService {
 
-    public static final String DEFAULT_PROPERTY_PLACEHOLDER_LOCATION = "classpath:application.properties;optional=true";
-    public static final String INITIAL_PROPERTIES_LOCATION = "camel.main.initial-properties-location";
-    public static final String OVERRIDE_PROPERTIES_LOCATION = "camel.main.override-properties-location";
-    public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
-
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
     protected final List<MainListener> listeners = new ArrayList<>();
@@ -108,7 +104,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected String propertyPlaceholderLocations;
-    protected String defaultPropertyPlaceholderLocation = DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
+    protected String defaultPropertyPlaceholderLocation = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
     protected boolean standalone = true;
@@ -342,7 +338,7 @@ public abstract class BaseMainSupport extends BaseService {
             String locations = propertyPlaceholderLocations;
             if (locations == null) {
                 locations
-                        = MainHelper.lookupPropertyFromSysOrEnv(PROPERTY_PLACEHOLDER_LOCATION)
+                        = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROPERTY_PLACEHOLDER_LOCATION)
                                 .orElse(defaultPropertyPlaceholderLocation);
             }
             if (locations != null) {
@@ -350,7 +346,7 @@ public abstract class BaseMainSupport extends BaseService {
             }
             if (!Objects.equals(locations, "false")) {
                 pc.addLocation(locations);
-                if (DEFAULT_PROPERTY_PLACEHOLDER_LOCATION.equals(locations)) {
+                if (MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION.equals(locations)) {
                     LOG.debug("Using properties from: {}", locations);
                 } else {
                     // if not default location then log at INFO
@@ -359,12 +355,12 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
-        final Properties ip = tryLoadProperties(initialProperties, INITIAL_PROPERTIES_LOCATION, camelContext);
+        final Properties ip = tryLoadProperties(initialProperties, MainConstants.INITIAL_PROPERTIES_LOCATION, camelContext);
         if (ip != null) {
             pc.setInitialProperties(ip);
         }
 
-        final Properties op = tryLoadProperties(overrideProperties, OVERRIDE_PROPERTIES_LOCATION, camelContext);
+        final Properties op = tryLoadProperties(overrideProperties, MainConstants.OVERRIDE_PROPERTIES_LOCATION, camelContext);
         if (op != null) {
             pc.setOverrideProperties(op);
         }
@@ -946,6 +942,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties beansProperties = new OrderedLocationProperties();
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
+        OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
             if (key.startsWith("camel.context.")) {
@@ -1020,6 +1017,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 globalOptions.put(loc, optionKey(option), value);
+            } else if (key.startsWith("camel.server.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(13);
+                validateOptionAndValue(key, option, value);
+                httpServerProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1041,12 +1044,10 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
             setPropertiesOnTarget(camelContext, camelContext, contextProperties, "camel.context.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-
             setPropertiesOnTarget(camelContext, camelContext.getCamelContextExtension(), contextProperties,
-                    "camel.context.extension",
+                    "camel.context.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
-
         if (!restProperties.isEmpty() || mainConfigurationProperties.hasRestConfiguration()) {
             RestConfigurationProperties rest = mainConfigurationProperties.rest();
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
@@ -1054,13 +1055,17 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
             camelContext.setRestConfiguration(rest);
         }
-
+        if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
+            LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
+            setHttpServerProperties(camelContext, httpServerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
         if (!vaultProperties.isEmpty() || mainConfigurationProperties.hasVaultConfiguration()) {
             LOG.debug("Auto-configuring Vault from loaded properties: {}", vaultProperties.size());
             setVaultProperties(camelContext, vaultProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
-
         if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
@@ -1143,6 +1148,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!lraProperties.isEmpty()) {
             lraProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.lra.{}={}", k, v);
+            });
+        }
+        if (!httpServerProperties.isEmpty()) {
+            httpServerProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.server.{}={}", k, v);
             });
         }
 
@@ -1321,6 +1331,30 @@ public abstract class BaseMainSupport extends BaseService {
             setPropertiesOnTarget(camelContext, console, config, "camel.devConsole." + name + ".", failIfNotSet, true,
                     autoConfiguredProperties);
         }
+    }
+
+    private void setHttpServerProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        HttpServerConfigurationProperties server = mainConfigurationProperties.httpServer();
+
+        setPropertiesOnTarget(camelContext, server, properties, "camel.server.",
+                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+
+        if (!server.isEnabled()) {
+            // http server is disabled
+            return;
+        }
+
+        // auto-detect camel-platform-http-main on classpath
+        MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
+        // create http server as a service managed by camel context
+        Service http = sf.newHttpServer(server);
+        // force eager starting as embedded http server is used for
+        // container platform to check readiness and need to be started eager
+        camelContext.addService(http, true, true);
     }
 
     private void setVaultProperties(
@@ -1514,9 +1548,9 @@ public abstract class BaseMainSupport extends BaseService {
             Properties propENV = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
             // special handling of these so remove them
             // ENV variables cannot use dash so replace with dot
-            propENV.remove(INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
-            propENV.remove(OVERRIDE_PROPERTIES_LOCATION.replace('-', '.'));
-            propENV.remove(PROPERTY_PLACEHOLDER_LOCATION.replace('-', '.'));
+            propENV.remove(MainConstants.INITIAL_PROPERTIES_LOCATION.replace('-', '.'));
+            propENV.remove(MainConstants.OVERRIDE_PROPERTIES_LOCATION.replace('-', '.'));
+            propENV.remove(MainConstants.PROPERTY_PLACEHOLDER_LOCATION.replace('-', '.'));
             if (!propENV.isEmpty()) {
                 prop.putAll("ENV", propENV);
             }
@@ -1525,12 +1559,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
             Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
             // special handling of these so remove them
-            propJVM.remove(INITIAL_PROPERTIES_LOCATION);
-            propJVM.remove(StringHelper.dashToCamelCase(INITIAL_PROPERTIES_LOCATION));
-            propJVM.remove(OVERRIDE_PROPERTIES_LOCATION);
-            propJVM.remove(StringHelper.dashToCamelCase(OVERRIDE_PROPERTIES_LOCATION));
-            propJVM.remove(PROPERTY_PLACEHOLDER_LOCATION);
-            propJVM.remove(StringHelper.dashToCamelCase(PROPERTY_PLACEHOLDER_LOCATION));
+            propJVM.remove(MainConstants.INITIAL_PROPERTIES_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(MainConstants.INITIAL_PROPERTIES_LOCATION));
+            propJVM.remove(MainConstants.OVERRIDE_PROPERTIES_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(MainConstants.OVERRIDE_PROPERTIES_LOCATION));
+            propJVM.remove(MainConstants.PROPERTY_PLACEHOLDER_LOCATION);
+            propJVM.remove(StringHelper.dashToCamelCase(MainConstants.PROPERTY_PLACEHOLDER_LOCATION));
             if (!propJVM.isEmpty()) {
                 prop.putAll("SYS", propJVM);
             }
@@ -1827,6 +1861,18 @@ public abstract class BaseMainSupport extends BaseService {
 
             // add as service so its discover by saga eip
             camelContext.addService(answer, true, false);
+        }
+        return answer;
+    }
+
+    private static MainHttpServerFactory resolveMainHttpServerFactory(CamelContext camelContext) throws Exception {
+        // lookup in service registry first
+        MainHttpServerFactory answer = camelContext.getRegistry().findSingleByType(MainHttpServerFactory.class);
+        if (answer == null) {
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance(MainConstants.PLATFORM_HTTP_SERVER, MainHttpServerFactory.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
         }
         return answer;
     }
