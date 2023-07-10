@@ -69,7 +69,7 @@ abstract class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport 
         contextExtension.getContext().getRouteController().stopRoute("foo");
         to.expectedMessageCount(0);
 
-        // Third step: While our route is stopped, we send 3 records more to Kafka test topic
+        // Third step: While our route is stopped, we send 3 records more to a Kafka test topic
         sendRecords(5, 8, topic);
 
         to.assertIsSatisfied(3000);
@@ -77,7 +77,7 @@ abstract class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport 
         to.reset();
 
         // Fourth step: We start again our route, since we have been committing the offsets from the first step,
-        // we will expect to consume from the latest committed offset e.g from offset 5
+        // we will expect to consume from the latest committed offset (e.g.: from offset 5()
         contextExtension.getContext().getRouteController().startRoute("foo");
         setupPostExecutionExpectations();
 
@@ -103,7 +103,7 @@ abstract class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport 
         contextExtension.getContext().getRouteController().stopRoute("foo");
         to.expectedMessageCount(0);
 
-        // Third step: While our route is stopped, we send 3 records more to Kafka test topic
+        // Third step: While our route is stopped, we send 3 records more to a Kafka test topic
         sendRecords(5, 8, topic);
 
         to.assertIsSatisfied(3000);
@@ -111,7 +111,7 @@ abstract class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport 
         to.reset();
 
         // Fourth step: We start again our route, since we have been committing the offsets from the first step,
-        // we will expect to consume from the latest committed offset e.g from offset 5
+        // we will expect to consume from the latest committed offset (e.g.: from offset 5)
         contextExtension.getContext().getRouteController().startRoute("foo");
         setupPostExecutionExpectations();
 
