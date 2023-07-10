@@ -92,7 +92,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         // If a topic is not defined in the KafkaConfiguration (set as option parameter) but only in the uri,
         // it can happen that it is not set correctly in the configuration of the endpoint.
         // Therefore, the topic is added after setProperties method
-        // and an null check to avoid overwriting a value from the configuration.
+        // and a null check to avoid overwriting a value from the configuration.
         if (endpoint.getConfiguration().getTopic() == null) {
             endpoint.getConfiguration().setTopic(remaining);
         }
@@ -143,7 +143,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
     /**
      * Factory to use for creating {@link org.apache.kafka.clients.consumer.KafkaConsumer} and
-     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows to configure a custom factory to
+     * {@link org.apache.kafka.clients.producer.KafkaProducer} instances. This allows configuring a custom factory to
      * create instances with logic that extends the vanilla Kafka clients.
      */
     public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
