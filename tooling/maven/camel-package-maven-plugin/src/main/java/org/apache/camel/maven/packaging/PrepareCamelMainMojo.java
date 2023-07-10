@@ -278,7 +278,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getGroups().add(new MainGroupModel(
                     "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
-                    "camel.server", "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
+                    "camel.server",
+                    "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
                     "org.apache.camel.main.HttpServerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
