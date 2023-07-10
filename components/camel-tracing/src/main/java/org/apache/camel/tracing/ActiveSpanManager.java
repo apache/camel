@@ -151,19 +151,32 @@ public final class ActiveSpanManager {
         private final AutoCloseable inner;
         private boolean closed;
 
+        private Throwable exceptionForStacktrace;
+
         public ScopeWrapper(AutoCloseable inner, long startThreadId) {
             this.startThreadId = startThreadId;
             this.inner = inner;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Created scope {}", inner);
+                this.exceptionForStacktrace = new RuntimeException("To see where this scope got created");
+            }
         }
 
         @Override
         public void close() throws Exception {
             if (!closed && Thread.currentThread().getId() == startThreadId) {
                 closed = true;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing scope {}", inner);
+                }
                 inner.close();
             } else {
                 LOG.debug("not closing scope, closed - {}, started on thread - '{}', current thread - '{}'",
                         closed, startThreadId, Thread.currentThread().getId());
+                if (LOG.isTraceEnabled() && this.exceptionForStacktrace != null) {
+                    LOG.trace("Stacktrace of where we are", new RuntimeException());
+                    LOG.trace("Stacktrace of where the scope was created", this.exceptionForStacktrace);
+                }
             }
         }
     }
