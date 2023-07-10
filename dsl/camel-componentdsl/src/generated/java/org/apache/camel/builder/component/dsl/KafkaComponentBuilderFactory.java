@@ -1601,7 +1601,7 @@ public interface KafkaComponentBuilderFactory {
          * Factory to use for creating
          * org.apache.kafka.clients.consumer.KafkaConsumer and
          * org.apache.kafka.clients.producer.KafkaProducer instances. This
-         * allows to configure a custom factory to create instances with logic
+         * allows configuring a custom factory to create instances with logic
          * that extends the vanilla Kafka clients.
          * 
          * The option is a:
