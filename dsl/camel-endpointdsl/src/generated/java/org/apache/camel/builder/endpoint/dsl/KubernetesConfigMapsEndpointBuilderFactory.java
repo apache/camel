@@ -107,6 +107,21 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The namespace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default KubernetesConfigMapsEndpointConsumerBuilder namespace(
+                String namespace) {
+            doSetProperty("namespace", namespace);
+            return this;
+        }
+        /**
          * The port name, used for ServiceCall EIP.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -240,21 +255,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         default KubernetesConfigMapsEndpointConsumerBuilder labelValue(
                 String labelValue) {
             doSetProperty("labelValue", labelValue);
-            return this;
-        }
-        /**
-         * The namespace.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param namespace the value to set
-         * @return the dsl builder
-         */
-        default KubernetesConfigMapsEndpointConsumerBuilder namespace(
-                String namespace) {
-            doSetProperty("namespace", namespace);
             return this;
         }
         /**
@@ -734,6 +734,21 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The namespace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default KubernetesConfigMapsEndpointProducerBuilder namespace(
+                String namespace) {
+            doSetProperty("namespace", namespace);
+            return this;
+        }
+        /**
          * The port name, used for ServiceCall EIP.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1139,6 +1154,20 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
+         * The namespace.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default KubernetesConfigMapsEndpointBuilder namespace(String namespace) {
+            doSetProperty("namespace", namespace);
             return this;
         }
         /**
