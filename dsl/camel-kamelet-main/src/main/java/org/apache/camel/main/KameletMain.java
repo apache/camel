@@ -60,7 +60,6 @@ import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
-import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.spi.ClassResolver;
@@ -410,15 +409,13 @@ public class KameletMain extends MainCommandLineSupport {
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
         if (port != null) {
-            VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()), stub);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withPort(Integer.parseInt(port.toString()));
         }
         boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
-        if (console && port == null) {
-            // use default port 8080 if console is enabled
-            VertxHttpServer.registerServer(answer, 8080, stub);
-        }
         if (console) {
-            VertxHttpServer.registerConsole(answer);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withDevConsoleEnabled(true);
         }
 
         // always enable developer console as it is needed by camel-cli-connector
@@ -441,12 +438,13 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
-        if (health && port == null) {
-            // use default port 8080 if console is enabled
-            VertxHttpServer.registerServer(answer, 8080, stub);
-        }
         if (health) {
-            VertxHttpServer.registerHealthCheck(answer);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withHealthCheckEnabled(true);
+        }
+        if (stub) {
+            // stub should not include http server
+            configure().httpServer().withEnabled(false);
         }
 
         // need to setup jfr early
@@ -511,7 +509,9 @@ public class KameletMain extends MainCommandLineSupport {
             if (sourceDir != null) {
                 if (console || health) {
                     // allow to upload source via http when HTTP console enabled
-                    VertxHttpServer.registerUploadSourceDir(answer, sourceDir);
+                    configure().httpServer().withEnabled(true);
+                    configure().httpServer().withUploadEnabled(true);
+                    configure().httpServer().withUploadSourceDir(sourceDir);
                 }
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");

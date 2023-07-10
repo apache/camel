@@ -228,8 +228,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      * <tt>camelContext.setDevConsole(true);</tt> If enabled then you can access a basic developer console on
      * context-path: /q/dev.
      */
-    public HttpServerConfigurationProperties withDevConsumeEnabled(boolean devConsumeEnabled) {
-        this.devConsoleEnabled = devConsumeEnabled;
+    public HttpServerConfigurationProperties withDevConsoleEnabled(boolean devConsoleEnabled) {
+        this.devConsoleEnabled = devConsoleEnabled;
         return this;
     }
 
