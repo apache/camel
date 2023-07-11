@@ -123,7 +123,7 @@ class ExportCamelMain extends Export {
         // copy local lib JARs
         copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, new File(BUILD_DIR, "pom.xml"), deps, packageName);
+            createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps, packageName);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
@@ -139,7 +139,7 @@ class ExportCamelMain extends Export {
         return 0;
     }
 
-    private void createMavenPom(File settings, File pom, Set<String> deps, String packageName) throws Exception {
+    private void createMavenPom(File settings, File profile, File pom, Set<String> deps, String packageName) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-pom.tmpl");
@@ -241,7 +241,44 @@ class ExportCamelMain extends Export {
 
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
+        // include kubernetes?
+        context = enrichMavenPomKubernetes(context, settings, profile);
+
         IOHelper.writeText(context, new FileOutputStream(pom, false));
+    }
+
+    protected String enrichMavenPomKubernetes(String context, File settings, File profile) throws Exception {
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+
+        // is kubernetes included?
+        Properties prop = new CamelCaseOrderedProperties();
+        if (profile.exists()) {
+            RuntimeUtil.loadProperties(prop, profile);
+        }
+        boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
+        if (jkube) {
+            // include all jib/jkube/label properties
+            for (String key : prop.stringPropertyNames()) {
+                String value = prop.getProperty(key);
+                boolean accept = key.startsWith("jkube.") || key.startsWith("jib.") || key.startsWith("label.");
+                if (accept) {
+                    sb1.append(String.format("        <%s>%s</%s>%n", key, value, key));
+                }
+            }
+
+            InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
+            String context2 = IOHelper.loadText(is);
+            int port = httpServerPort(settings);
+            if (port == -1) {
+                port = 8080;
+            }
+            sb2.append(context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port)));
+        }
+
+        context = context.replaceFirst("\\{\\{ \\.CamelKubernetesProperties }}", sb1.toString());
+        context = context.replaceFirst("\\{\\{ \\.CamelKubernetesPlugins }}", sb2.toString());
+        return context;
     }
 
     @Override
