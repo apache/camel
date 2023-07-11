@@ -64,39 +64,6 @@ jobs:
         shell: bash
         run: |
           [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
-      - id: test
-        name: Quick test execution for affected components
-        uses: ./.github/actions/quick-test
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          start-commit: ${{ github.event.pull_request.base.sha }}
-          end-commit: ${{ github.event.after }}
-  incremental-build:
-    if: github.repository == 'apache/camel'
-    # Mark as optional since it is experimental
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '17' ]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-      - id: install-packages
-        uses: ./.github/actions/install-packages
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.java }}
-          cache: 'maven'
-      - name: mvn build
-        uses: ./.github/actions/incremental-build
-        with:
-          mode: build
-          pr-id: ${{ github.event.number }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: mvn test
         uses: ./.github/actions/incremental-build
         with:
