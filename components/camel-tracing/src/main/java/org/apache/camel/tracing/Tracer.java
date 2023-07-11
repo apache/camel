@@ -273,7 +273,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     SpanAdapter span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Tracing: start client span={}", span);
+                            LOG.trace("Tracing: stop client span={}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         ActiveSpanManager.deactivate(ese.getExchange());
