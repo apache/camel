@@ -41,6 +41,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tracing.SpanDecorator;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,11 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
         this.expected = expected;
+    }
+
+    @AfterEach
+    void noLeakingContext() {
+        Assertions.assertSame(Context.root(), Context.current(), "There must be no leaking span after test");
     }
 
     @Override

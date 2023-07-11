@@ -119,7 +119,10 @@ public final class ActiveSpanManager {
         public Holder(Holder parent, SpanAdapter span) {
             this.parent = parent;
             this.span = span;
-            this.scope = new ScopeWrapper(span.makeCurrent(), Thread.currentThread().getId());
+            this.scope = span.makeCurrent();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Tracing: started scope={}", this.scope);
+            }
         }
 
         public Holder getParent() {
@@ -131,39 +134,13 @@ public final class ActiveSpanManager {
         }
 
         private void closeScope() {
-            if (scope != null) {
-                try {
-                    scope.close();
-                } catch (Exception e) {
-                    LOG.debug("Failed to close span scope", e);
+            try {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Tracing: closing scope={}", this.scope);
                 }
-                this.scope = null;
-            }
-        }
-    }
-
-    /**
-     * Makes closing scopes idempotent and prevents restoring scope on the wrong thread: Should be removed if
-     * https://github.com/open-telemetry/opentelemetry-java/issues/5055 is fixed.
-     */
-    private static class ScopeWrapper implements AutoCloseable {
-        private final long startThreadId;
-        private final AutoCloseable inner;
-        private boolean closed;
-
-        public ScopeWrapper(AutoCloseable inner, long startThreadId) {
-            this.startThreadId = startThreadId;
-            this.inner = inner;
-        }
-
-        @Override
-        public void close() throws Exception {
-            if (!closed && Thread.currentThread().getId() == startThreadId) {
-                closed = true;
-                inner.close();
-            } else {
-                LOG.debug("not closing scope, closed - {}, started on thread - '{}', current thread - '{}'",
-                        closed, startThreadId, Thread.currentThread().getId());
+                scope.close();
+            } catch (Exception e) {
+                LOG.debug("Failed to close span scope", e);
             }
         }
     }
