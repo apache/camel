@@ -426,7 +426,7 @@
         <scala-datasonnet-version>2.13.11</scala-datasonnet-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
         <shiro-version>1.11.0</shiro-version>
-        <slack-api-model-version>1.29.2</slack-api-model-version>
+        <slack-api-model-version>1.30.0</slack-api-model-version>
         <slf4j-api-version>2.0.7</slf4j-api-version>
         <slf4j-version>2.0.7</slf4j-version>
         <smack-version>4.3.5</smack-version>
