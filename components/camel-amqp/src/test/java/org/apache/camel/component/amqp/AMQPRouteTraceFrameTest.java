@@ -44,7 +44,7 @@ public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
     private MockEndpoint resultEndpoint;
 
-    private String expectedBody = "Hello there!";
+    private final String expectedBody = "Hello there!";
     private ProducerTemplate template;
 
     @BeforeEach
@@ -64,7 +64,7 @@ public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
     @ContextFixture
     public void configureContext(CamelContext context) {
-        System.setProperty(AMQPConnectionDetails.AMQP_PORT, service.brokerPort() + "");
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
         context.getRegistry().bind("amqpConnection", discoverAMQP(context));
 
         JmsConnectionFactory connectionFactory
