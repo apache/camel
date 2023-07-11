@@ -103,6 +103,17 @@ class ExportCamelMain extends Export {
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
             }
+            // are we using http then enable embedded HTTP server (if not explicit configured already)
+            int port = httpServerPort(settings);
+            if (port != -1 && !prop.containsKey("camel.server.enabled")) {
+                prop.put("camel.server.enabled", "true");
+                if (port != 8080 && !prop.containsKey("camel.server.port")) {
+                    prop.put("camel.server.port", port);
+                }
+                if (!prop.containsKey("camel.server.health-check-enabled")) {
+                    prop.put("camel.server.health-check-enabled", "true");
+                }
+            }
             return prop;
         });
         // create main class
@@ -242,10 +253,12 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
 
-        // if platform-http is included then we need vertx as implementation
-        if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-platform-http-vertx"))) {
+        // if platform-http is included then we need to switch to use camel-platform-http-main as implementation
+        if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-platform-http-main"))) {
+            answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http:"));
+            answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http-vertx:"));
             // version does not matter
-            answer.add("mvn:org.apache.camel:camel-platform-http-vertx:1.0-SNAPSHOT");
+            answer.add("mvn:org.apache.camel:camel-platform-http-main:1.0-SNAPSHOT");
         }
 
         return answer;

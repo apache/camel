@@ -630,6 +630,18 @@ abstract class ExportBaseCommand extends CamelCommand {
         return false;
     }
 
+    protected static int httpServerPort(File settings) {
+        try {
+            List<String> lines = Files.readAllLines(settings.toPath());
+            String port = lines.stream().filter(l -> l.startsWith("camel.jbang.platform-http.port="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
+            return Integer.parseInt(port);
+        } catch (Exception e) {
+            // ignore
+        }
+        return -1;
+    }
+
     protected static void safeCopy(File source, File target, boolean override) throws Exception {
         if (!source.exists()) {
             return;
