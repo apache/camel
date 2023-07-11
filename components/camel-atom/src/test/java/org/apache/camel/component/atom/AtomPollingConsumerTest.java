@@ -76,7 +76,7 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
             public void configure() {
                 from("atom:file:src/test/data/feed.atom?splitEntries=false").to("mock:result");
 
-                // this is a bit weird syntax that normally is not used using the feedUri parameter
+                // this is a bit weird syntax that normally is not using the feedUri parameter
                 from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false").to("mock:result2");
             }
         };
