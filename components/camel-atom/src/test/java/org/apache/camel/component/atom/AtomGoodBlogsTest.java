@@ -60,7 +60,7 @@ public class AtomGoodBlogsTest {
         return new RouteBuilder() {
             public void configure() {
                 // We pool the atom feeds from the source for further processing in the seda queue
-                // we set the delay to 1 second for each pool as this is a unit test also and we can
+                // we set the delay to 1 second for each pool as this is a unit test also, and we can
                 // not wait the default poll interval of 60 seconds.
                 // Using splitEntries=true will during polling only fetch one Atom Entry at any given time.
                 // As the feed.atom file contains 7 entries, using this will require 7 polls to fetch the entire
@@ -108,7 +108,7 @@ public class AtomGoodBlogsTest {
     /**
      * Services for blogs
      */
-    public class BlogService {
+    public static class BlogService {
 
         /**
          * Tests the blogs if its a good blog entry or not
@@ -118,8 +118,7 @@ public class AtomGoodBlogsTest {
             String title = entry.getTitle();
 
             // We like blogs about Camel
-            boolean good = title.toLowerCase().contains("camel");
-            return good;
+            return title.toLowerCase().contains("camel");
         }
 
     }

@@ -28,8 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for UpdatedDateFilter
@@ -56,9 +57,9 @@ public class UpdatedDateFilterTest {
             boolean valid = filter.isValidEntry(entry);
             // only the 3 last should be true
             if (i > 3) {
-                assertEquals(false, valid, "not valid");
+                assertFalse(valid, "not valid");
             } else {
-                assertEquals(true, valid, "valid");
+                assertTrue(valid, "valid");
             }
         }
     }
