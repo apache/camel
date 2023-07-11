@@ -601,6 +601,80 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the logical name of the application. The application name may be
+         * used by the client to identify the application to the server, for use
+         * in server logs, slow query logs, and profile collection. Default:
+         * null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param appName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder appName(String appName) {
+            doSetProperty("appName", appName);
+            return this;
+        }
+        /**
+         * Specifies one or more compression algorithms that the driver will
+         * attempt to use to compress requests sent to the connected MongoDB
+         * instance. Possible values include: zlib, snappy, and zstd. Default:
+         * null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressors the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder compressors(
+                String compressors) {
+            doSetProperty("compressors", compressors);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver waits for a connection to open before timing out. A value of 0
+         * instructs the driver to never time out while waiting for a connection
+         * to open. Default: 10000 (10 seconds).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder connectTimeoutMS(
+                Integer connectTimeoutMS) {
+            doSetProperty("connectTimeoutMS", connectTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver waits for a connection to open before timing out. A value of 0
+         * instructs the driver to never time out while waiting for a connection
+         * to open. Default: 10000 (10 seconds).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder connectTimeoutMS(
+                String connectTimeoutMS) {
+            doSetProperty("connectTimeoutMS", connectTimeoutMS);
+            return this;
+        }
+        /**
          * MongoDB tailable cursors will block until new data arrives. If no new
          * data is inserted, after some time the cursor will be automatically
          * freed and closed by the MongoDB server. The client is expected to
@@ -642,6 +716,41 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
             doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            return this;
+        }
+        /**
+         * Specifies that the driver must connect to the host directly. Default:
+         * false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param directConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder directConnection(
+                boolean directConnection) {
+            doSetProperty("directConnection", directConnection);
+            return this;
+        }
+        /**
+         * Specifies that the driver must connect to the host directly. Default:
+         * false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param directConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder directConnection(
+                String directConnection) {
+            doSetProperty("directConnection", directConnection);
             return this;
         }
         /**
@@ -688,6 +797,345 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * heartbeatFrequencyMS controls when the driver checks the state of the
+         * MongoDB deployment. Specify the interval (in milliseconds) between
+         * checks, counted from the end of the previous check until the
+         * beginning of the next one. Default: Single-threaded drivers: 60
+         * seconds. Multi-threaded drivers: 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatFrequencyMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder heartbeatFrequencyMS(
+                Integer heartbeatFrequencyMS) {
+            doSetProperty("heartbeatFrequencyMS", heartbeatFrequencyMS);
+            return this;
+        }
+        /**
+         * heartbeatFrequencyMS controls when the driver checks the state of the
+         * MongoDB deployment. Specify the interval (in milliseconds) between
+         * checks, counted from the end of the previous check until the
+         * beginning of the next one. Default: Single-threaded drivers: 60
+         * seconds. Multi-threaded drivers: 10 seconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatFrequencyMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder heartbeatFrequencyMS(
+                String heartbeatFrequencyMS) {
+            doSetProperty("heartbeatFrequencyMS", heartbeatFrequencyMS);
+            return this;
+        }
+        /**
+         * If true the driver will assume that it's connecting to MongoDB
+         * through a load balancer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param loadBalanced the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder loadBalanced(
+                boolean loadBalanced) {
+            doSetProperty("loadBalanced", loadBalanced);
+            return this;
+        }
+        /**
+         * If true the driver will assume that it's connecting to MongoDB
+         * through a load balancer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param loadBalanced the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder loadBalanced(
+                String loadBalanced) {
+            doSetProperty("loadBalanced", loadBalanced);
+            return this;
+        }
+        /**
+         * The size (in milliseconds) of the latency window for selecting among
+         * multiple suitable MongoDB instances. Default: 15 milliseconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 15
+         * Group: advanced
+         * 
+         * @param localThresholdMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder localThresholdMS(
+                Integer localThresholdMS) {
+            doSetProperty("localThresholdMS", localThresholdMS);
+            return this;
+        }
+        /**
+         * The size (in milliseconds) of the latency window for selecting among
+         * multiple suitable MongoDB instances. Default: 15 milliseconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 15
+         * Group: advanced
+         * 
+         * @param localThresholdMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder localThresholdMS(
+                String localThresholdMS) {
+            doSetProperty("localThresholdMS", localThresholdMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of connections a pool may be
+         * establishing concurrently. Default: 2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: advanced
+         * 
+         * @param maxConnecting the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxConnecting(
+                Integer maxConnecting) {
+            doSetProperty("maxConnecting", maxConnecting);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of connections a pool may be
+         * establishing concurrently. Default: 2.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: advanced
+         * 
+         * @param maxConnecting the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxConnecting(
+                String maxConnecting) {
+            doSetProperty("maxConnecting", maxConnecting);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will allow a pooled connection to idle before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can allow a pooled collection to be idle.
+         * Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxIdleTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxIdleTimeMS(
+                Integer maxIdleTimeMS) {
+            doSetProperty("maxIdleTimeMS", maxIdleTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will allow a pooled connection to idle before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can allow a pooled collection to be idle.
+         * Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxIdleTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxIdleTimeMS(
+                String maxIdleTimeMS) {
+            doSetProperty("maxIdleTimeMS", maxIdleTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will continue to use a pooled connection before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can keep a pooled connection open. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxLifeTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxLifeTimeMS(
+                Integer maxLifeTimeMS) {
+            doSetProperty("maxLifeTimeMS", maxLifeTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will continue to use a pooled connection before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can keep a pooled connection open. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxLifeTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxLifeTimeMS(
+                String maxLifeTimeMS) {
+            doSetProperty("maxLifeTimeMS", maxLifeTimeMS);
+            return this;
+        }
+        /**
+         * The maximum number of connections in the connection pool. The default
+         * value is 100.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxPoolSize(
+                Integer maxPoolSize) {
+            doSetProperty("maxPoolSize", maxPoolSize);
+            return this;
+        }
+        /**
+         * The maximum number of connections in the connection pool. The default
+         * value is 100.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxPoolSize(
+                String maxPoolSize) {
+            doSetProperty("maxPoolSize", maxPoolSize);
+            return this;
+        }
+        /**
+         * Specifies, in seconds, how stale a secondary can be before the driver
+         * stops communicating with that secondary. The minimum value is either
+         * 90 seconds or the heartbeat frequency plus 10 seconds, whichever is
+         * greater. For more information, see the server documentation for the
+         * maxStalenessSeconds option. Not providing a parameter or explicitly
+         * specifying -1 indicates that there should be no staleness check for
+         * secondaries. Default: -1.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param maxStalenessSeconds the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxStalenessSeconds(
+                Integer maxStalenessSeconds) {
+            doSetProperty("maxStalenessSeconds", maxStalenessSeconds);
+            return this;
+        }
+        /**
+         * Specifies, in seconds, how stale a secondary can be before the driver
+         * stops communicating with that secondary. The minimum value is either
+         * 90 seconds or the heartbeat frequency plus 10 seconds, whichever is
+         * greater. For more information, see the server documentation for the
+         * maxStalenessSeconds option. Not providing a parameter or explicitly
+         * specifying -1 indicates that there should be no staleness check for
+         * secondaries. Default: -1.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param maxStalenessSeconds the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder maxStalenessSeconds(
+                String maxStalenessSeconds) {
+            doSetProperty("maxStalenessSeconds", maxStalenessSeconds);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of connections that must exist at any
+         * moment in a single connection pool. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param minPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder minPoolSize(
+                Integer minPoolSize) {
+            doSetProperty("minPoolSize", minPoolSize);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of connections that must exist at any
+         * moment in a single connection pool. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param minPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder minPoolSize(
+                String minPoolSize) {
+            doSetProperty("minPoolSize", minPoolSize);
+            return this;
+        }
+        /**
          * Configure how MongoDB clients route read operations to the members of
          * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
          * SECONDARY, SECONDARY_PREFERRED or NEAREST.
@@ -703,6 +1151,345 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointConsumerBuilder readPreference(
                 String readPreference) {
             doSetProperty("readPreference", readPreference);
+            return this;
+        }
+        /**
+         * A representation of a tag set as a comma-separated list of
+         * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
+         * stripped from beginning and end of all keys and values. To specify a
+         * list of tag sets, using multiple readPreferenceTags, e.g.
+         * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param readPreferenceTags the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder readPreferenceTags(
+                String readPreferenceTags) {
+            doSetProperty("readPreferenceTags", readPreferenceTags);
+            return this;
+        }
+        /**
+         * Specifies that the connection string provided includes multiple
+         * hosts. When specified, the driver attempts to find all members of
+         * that set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param replicaSet the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder replicaSet(
+                String replicaSet) {
+            doSetProperty("replicaSet", replicaSet);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported read operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryReads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder retryReads(
+                boolean retryReads) {
+            doSetProperty("retryReads", retryReads);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported read operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryReads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder retryReads(
+                String retryReads) {
+            doSetProperty("retryReads", retryReads);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported write operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryWrites the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder retryWrites(
+                boolean retryWrites) {
+            doSetProperty("retryWrites", retryWrites);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported write operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryWrites the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder retryWrites(
+                String retryWrites) {
+            doSetProperty("retryWrites", retryWrites);
+            return this;
+        }
+        /**
+         * Specifies how long (in milliseconds) to block for server selection
+         * before throwing an exception. Default: 30,000 milliseconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param serverSelectionTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder serverSelectionTimeoutMS(
+                Integer serverSelectionTimeoutMS) {
+            doSetProperty("serverSelectionTimeoutMS", serverSelectionTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies how long (in milliseconds) to block for server selection
+         * before throwing an exception. Default: 30,000 milliseconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param serverSelectionTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder serverSelectionTimeoutMS(
+                String serverSelectionTimeoutMS) {
+            doSetProperty("serverSelectionTimeoutMS", serverSelectionTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will wait to send or receive a request before timing out. A
+         * value of 0 instructs the driver to never time out while waiting to
+         * send or receive a request. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param socketTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder socketTimeoutMS(
+                Integer socketTimeoutMS) {
+            doSetProperty("socketTimeoutMS", socketTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will wait to send or receive a request before timing out. A
+         * value of 0 instructs the driver to never time out while waiting to
+         * send or receive a request. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param socketTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder socketTimeoutMS(
+                String socketTimeoutMS) {
+            doSetProperty("socketTimeoutMS", socketTimeoutMS);
+            return this;
+        }
+        /**
+         * The maximum number of hosts from the SRV record to connect to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param srvMaxHosts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder srvMaxHosts(
+                Integer srvMaxHosts) {
+            doSetProperty("srvMaxHosts", srvMaxHosts);
+            return this;
+        }
+        /**
+         * The maximum number of hosts from the SRV record to connect to.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param srvMaxHosts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder srvMaxHosts(
+                String srvMaxHosts) {
+            doSetProperty("srvMaxHosts", srvMaxHosts);
+            return this;
+        }
+        /**
+         * Specifies the service name of the SRV resource recordsthe driver
+         * retrieves to construct your seed list. You must use the DNS Seed List
+         * Connection Format in your connection URI to use this option. Default:
+         * mongodb.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: mongodb
+         * Group: advanced
+         * 
+         * @param srvServiceName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder srvServiceName(
+                String srvServiceName) {
+            doSetProperty("srvServiceName", srvServiceName);
+            return this;
+        }
+        /**
+         * Specifies that all communication with MongoDB instances should use
+         * TLS. Supersedes the ssl option. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Specifies that all communication with MongoDB instances should use
+         * TLS. Supersedes the ssl option. Default: false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder tls(String tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Specifies that the driver should allow invalid hostnames in the
+         * certificate for TLS connections. Supersedes
+         * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
+         * setting tlsAllowInvalidHostnames to true. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tlsAllowInvalidHostnames the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder tlsAllowInvalidHostnames(
+                boolean tlsAllowInvalidHostnames) {
+            doSetProperty("tlsAllowInvalidHostnames", tlsAllowInvalidHostnames);
+            return this;
+        }
+        /**
+         * Specifies that the driver should allow invalid hostnames in the
+         * certificate for TLS connections. Supersedes
+         * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
+         * setting tlsAllowInvalidHostnames to true. Default: false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tlsAllowInvalidHostnames the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder tlsAllowInvalidHostnames(
+                String tlsAllowInvalidHostnames) {
+            doSetProperty("tlsAllowInvalidHostnames", tlsAllowInvalidHostnames);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds that a thread
+         * may wait for a connection to become available. Default: 120000 (120
+         * seconds).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: advanced
+         * 
+         * @param waitQueueTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder waitQueueTimeoutMS(
+                Integer waitQueueTimeoutMS) {
+            doSetProperty("waitQueueTimeoutMS", waitQueueTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds that a thread
+         * may wait for a connection to become available. Default: 120000 (120
+         * seconds).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: advanced
+         * 
+         * @param waitQueueTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder waitQueueTimeoutMS(
+                String waitQueueTimeoutMS) {
+            doSetProperty("waitQueueTimeoutMS", waitQueueTimeoutMS);
             return this;
         }
         /**
@@ -759,6 +1546,45 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
             doSetProperty("writeResultAsHeader", writeResultAsHeader);
+            return this;
+        }
+        /**
+         * Specifies the degree of compression that Zlib should use to decrease
+         * the size of requests to the connected MongoDB instance. The level can
+         * range from -1 to 9, with lower values compressing faster (but
+         * resulting in larger requests) and larger values compressing slower
+         * (but resulting in smaller requests). Default: null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param zlibCompressionLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder zlibCompressionLevel(
+                Integer zlibCompressionLevel) {
+            doSetProperty("zlibCompressionLevel", zlibCompressionLevel);
+            return this;
+        }
+        /**
+         * Specifies the degree of compression that Zlib should use to decrease
+         * the size of requests to the connected MongoDB instance. The level can
+         * range from -1 to 9, with lower values compressing faster (but
+         * resulting in larger requests) and larger values compressing slower
+         * (but resulting in smaller requests). Default: null.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param zlibCompressionLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder zlibCompressionLevel(
+                String zlibCompressionLevel) {
+            doSetProperty("zlibCompressionLevel", zlibCompressionLevel);
             return this;
         }
     }
@@ -1073,6 +1899,80 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the logical name of the application. The application name may be
+         * used by the client to identify the application to the server, for use
+         * in server logs, slow query logs, and profile collection. Default:
+         * null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param appName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder appName(String appName) {
+            doSetProperty("appName", appName);
+            return this;
+        }
+        /**
+         * Specifies one or more compression algorithms that the driver will
+         * attempt to use to compress requests sent to the connected MongoDB
+         * instance. Possible values include: zlib, snappy, and zstd. Default:
+         * null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressors the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder compressors(
+                String compressors) {
+            doSetProperty("compressors", compressors);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver waits for a connection to open before timing out. A value of 0
+         * instructs the driver to never time out while waiting for a connection
+         * to open. Default: 10000 (10 seconds).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder connectTimeoutMS(
+                Integer connectTimeoutMS) {
+            doSetProperty("connectTimeoutMS", connectTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver waits for a connection to open before timing out. A value of 0
+         * instructs the driver to never time out while waiting for a connection
+         * to open. Default: 10000 (10 seconds).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder connectTimeoutMS(
+                String connectTimeoutMS) {
+            doSetProperty("connectTimeoutMS", connectTimeoutMS);
+            return this;
+        }
+        /**
          * MongoDB tailable cursors will block until new data arrives. If no new
          * data is inserted, after some time the cursor will be automatically
          * freed and closed by the MongoDB server. The client is expected to
@@ -1114,6 +2014,41 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
             doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            return this;
+        }
+        /**
+         * Specifies that the driver must connect to the host directly. Default:
+         * false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param directConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder directConnection(
+                boolean directConnection) {
+            doSetProperty("directConnection", directConnection);
+            return this;
+        }
+        /**
+         * Specifies that the driver must connect to the host directly. Default:
+         * false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param directConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder directConnection(
+                String directConnection) {
+            doSetProperty("directConnection", directConnection);
             return this;
         }
         /**
@@ -1160,6 +2095,345 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * heartbeatFrequencyMS controls when the driver checks the state of the
+         * MongoDB deployment. Specify the interval (in milliseconds) between
+         * checks, counted from the end of the previous check until the
+         * beginning of the next one. Default: Single-threaded drivers: 60
+         * seconds. Multi-threaded drivers: 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatFrequencyMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder heartbeatFrequencyMS(
+                Integer heartbeatFrequencyMS) {
+            doSetProperty("heartbeatFrequencyMS", heartbeatFrequencyMS);
+            return this;
+        }
+        /**
+         * heartbeatFrequencyMS controls when the driver checks the state of the
+         * MongoDB deployment. Specify the interval (in milliseconds) between
+         * checks, counted from the end of the previous check until the
+         * beginning of the next one. Default: Single-threaded drivers: 60
+         * seconds. Multi-threaded drivers: 10 seconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatFrequencyMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder heartbeatFrequencyMS(
+                String heartbeatFrequencyMS) {
+            doSetProperty("heartbeatFrequencyMS", heartbeatFrequencyMS);
+            return this;
+        }
+        /**
+         * If true the driver will assume that it's connecting to MongoDB
+         * through a load balancer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param loadBalanced the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder loadBalanced(
+                boolean loadBalanced) {
+            doSetProperty("loadBalanced", loadBalanced);
+            return this;
+        }
+        /**
+         * If true the driver will assume that it's connecting to MongoDB
+         * through a load balancer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param loadBalanced the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder loadBalanced(
+                String loadBalanced) {
+            doSetProperty("loadBalanced", loadBalanced);
+            return this;
+        }
+        /**
+         * The size (in milliseconds) of the latency window for selecting among
+         * multiple suitable MongoDB instances. Default: 15 milliseconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 15
+         * Group: advanced
+         * 
+         * @param localThresholdMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder localThresholdMS(
+                Integer localThresholdMS) {
+            doSetProperty("localThresholdMS", localThresholdMS);
+            return this;
+        }
+        /**
+         * The size (in milliseconds) of the latency window for selecting among
+         * multiple suitable MongoDB instances. Default: 15 milliseconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 15
+         * Group: advanced
+         * 
+         * @param localThresholdMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder localThresholdMS(
+                String localThresholdMS) {
+            doSetProperty("localThresholdMS", localThresholdMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of connections a pool may be
+         * establishing concurrently. Default: 2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: advanced
+         * 
+         * @param maxConnecting the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxConnecting(
+                Integer maxConnecting) {
+            doSetProperty("maxConnecting", maxConnecting);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of connections a pool may be
+         * establishing concurrently. Default: 2.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: advanced
+         * 
+         * @param maxConnecting the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxConnecting(
+                String maxConnecting) {
+            doSetProperty("maxConnecting", maxConnecting);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will allow a pooled connection to idle before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can allow a pooled collection to be idle.
+         * Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxIdleTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxIdleTimeMS(
+                Integer maxIdleTimeMS) {
+            doSetProperty("maxIdleTimeMS", maxIdleTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will allow a pooled connection to idle before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can allow a pooled collection to be idle.
+         * Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxIdleTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxIdleTimeMS(
+                String maxIdleTimeMS) {
+            doSetProperty("maxIdleTimeMS", maxIdleTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will continue to use a pooled connection before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can keep a pooled connection open. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxLifeTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxLifeTimeMS(
+                Integer maxLifeTimeMS) {
+            doSetProperty("maxLifeTimeMS", maxLifeTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will continue to use a pooled connection before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can keep a pooled connection open. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxLifeTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxLifeTimeMS(
+                String maxLifeTimeMS) {
+            doSetProperty("maxLifeTimeMS", maxLifeTimeMS);
+            return this;
+        }
+        /**
+         * The maximum number of connections in the connection pool. The default
+         * value is 100.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxPoolSize(
+                Integer maxPoolSize) {
+            doSetProperty("maxPoolSize", maxPoolSize);
+            return this;
+        }
+        /**
+         * The maximum number of connections in the connection pool. The default
+         * value is 100.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxPoolSize(
+                String maxPoolSize) {
+            doSetProperty("maxPoolSize", maxPoolSize);
+            return this;
+        }
+        /**
+         * Specifies, in seconds, how stale a secondary can be before the driver
+         * stops communicating with that secondary. The minimum value is either
+         * 90 seconds or the heartbeat frequency plus 10 seconds, whichever is
+         * greater. For more information, see the server documentation for the
+         * maxStalenessSeconds option. Not providing a parameter or explicitly
+         * specifying -1 indicates that there should be no staleness check for
+         * secondaries. Default: -1.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param maxStalenessSeconds the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxStalenessSeconds(
+                Integer maxStalenessSeconds) {
+            doSetProperty("maxStalenessSeconds", maxStalenessSeconds);
+            return this;
+        }
+        /**
+         * Specifies, in seconds, how stale a secondary can be before the driver
+         * stops communicating with that secondary. The minimum value is either
+         * 90 seconds or the heartbeat frequency plus 10 seconds, whichever is
+         * greater. For more information, see the server documentation for the
+         * maxStalenessSeconds option. Not providing a parameter or explicitly
+         * specifying -1 indicates that there should be no staleness check for
+         * secondaries. Default: -1.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param maxStalenessSeconds the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder maxStalenessSeconds(
+                String maxStalenessSeconds) {
+            doSetProperty("maxStalenessSeconds", maxStalenessSeconds);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of connections that must exist at any
+         * moment in a single connection pool. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param minPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder minPoolSize(
+                Integer minPoolSize) {
+            doSetProperty("minPoolSize", minPoolSize);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of connections that must exist at any
+         * moment in a single connection pool. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param minPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder minPoolSize(
+                String minPoolSize) {
+            doSetProperty("minPoolSize", minPoolSize);
+            return this;
+        }
+        /**
          * Configure how MongoDB clients route read operations to the members of
          * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
          * SECONDARY, SECONDARY_PREFERRED or NEAREST.
@@ -1175,6 +2449,345 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointProducerBuilder readPreference(
                 String readPreference) {
             doSetProperty("readPreference", readPreference);
+            return this;
+        }
+        /**
+         * A representation of a tag set as a comma-separated list of
+         * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
+         * stripped from beginning and end of all keys and values. To specify a
+         * list of tag sets, using multiple readPreferenceTags, e.g.
+         * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param readPreferenceTags the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder readPreferenceTags(
+                String readPreferenceTags) {
+            doSetProperty("readPreferenceTags", readPreferenceTags);
+            return this;
+        }
+        /**
+         * Specifies that the connection string provided includes multiple
+         * hosts. When specified, the driver attempts to find all members of
+         * that set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param replicaSet the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder replicaSet(
+                String replicaSet) {
+            doSetProperty("replicaSet", replicaSet);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported read operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryReads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder retryReads(
+                boolean retryReads) {
+            doSetProperty("retryReads", retryReads);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported read operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryReads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder retryReads(
+                String retryReads) {
+            doSetProperty("retryReads", retryReads);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported write operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryWrites the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder retryWrites(
+                boolean retryWrites) {
+            doSetProperty("retryWrites", retryWrites);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported write operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryWrites the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder retryWrites(
+                String retryWrites) {
+            doSetProperty("retryWrites", retryWrites);
+            return this;
+        }
+        /**
+         * Specifies how long (in milliseconds) to block for server selection
+         * before throwing an exception. Default: 30,000 milliseconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param serverSelectionTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder serverSelectionTimeoutMS(
+                Integer serverSelectionTimeoutMS) {
+            doSetProperty("serverSelectionTimeoutMS", serverSelectionTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies how long (in milliseconds) to block for server selection
+         * before throwing an exception. Default: 30,000 milliseconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param serverSelectionTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder serverSelectionTimeoutMS(
+                String serverSelectionTimeoutMS) {
+            doSetProperty("serverSelectionTimeoutMS", serverSelectionTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will wait to send or receive a request before timing out. A
+         * value of 0 instructs the driver to never time out while waiting to
+         * send or receive a request. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param socketTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder socketTimeoutMS(
+                Integer socketTimeoutMS) {
+            doSetProperty("socketTimeoutMS", socketTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will wait to send or receive a request before timing out. A
+         * value of 0 instructs the driver to never time out while waiting to
+         * send or receive a request. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param socketTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder socketTimeoutMS(
+                String socketTimeoutMS) {
+            doSetProperty("socketTimeoutMS", socketTimeoutMS);
+            return this;
+        }
+        /**
+         * The maximum number of hosts from the SRV record to connect to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param srvMaxHosts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder srvMaxHosts(
+                Integer srvMaxHosts) {
+            doSetProperty("srvMaxHosts", srvMaxHosts);
+            return this;
+        }
+        /**
+         * The maximum number of hosts from the SRV record to connect to.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param srvMaxHosts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder srvMaxHosts(
+                String srvMaxHosts) {
+            doSetProperty("srvMaxHosts", srvMaxHosts);
+            return this;
+        }
+        /**
+         * Specifies the service name of the SRV resource recordsthe driver
+         * retrieves to construct your seed list. You must use the DNS Seed List
+         * Connection Format in your connection URI to use this option. Default:
+         * mongodb.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: mongodb
+         * Group: advanced
+         * 
+         * @param srvServiceName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder srvServiceName(
+                String srvServiceName) {
+            doSetProperty("srvServiceName", srvServiceName);
+            return this;
+        }
+        /**
+         * Specifies that all communication with MongoDB instances should use
+         * TLS. Supersedes the ssl option. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Specifies that all communication with MongoDB instances should use
+         * TLS. Supersedes the ssl option. Default: false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder tls(String tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Specifies that the driver should allow invalid hostnames in the
+         * certificate for TLS connections. Supersedes
+         * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
+         * setting tlsAllowInvalidHostnames to true. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tlsAllowInvalidHostnames the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder tlsAllowInvalidHostnames(
+                boolean tlsAllowInvalidHostnames) {
+            doSetProperty("tlsAllowInvalidHostnames", tlsAllowInvalidHostnames);
+            return this;
+        }
+        /**
+         * Specifies that the driver should allow invalid hostnames in the
+         * certificate for TLS connections. Supersedes
+         * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
+         * setting tlsAllowInvalidHostnames to true. Default: false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tlsAllowInvalidHostnames the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder tlsAllowInvalidHostnames(
+                String tlsAllowInvalidHostnames) {
+            doSetProperty("tlsAllowInvalidHostnames", tlsAllowInvalidHostnames);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds that a thread
+         * may wait for a connection to become available. Default: 120000 (120
+         * seconds).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: advanced
+         * 
+         * @param waitQueueTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder waitQueueTimeoutMS(
+                Integer waitQueueTimeoutMS) {
+            doSetProperty("waitQueueTimeoutMS", waitQueueTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds that a thread
+         * may wait for a connection to become available. Default: 120000 (120
+         * seconds).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: advanced
+         * 
+         * @param waitQueueTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder waitQueueTimeoutMS(
+                String waitQueueTimeoutMS) {
+            doSetProperty("waitQueueTimeoutMS", waitQueueTimeoutMS);
             return this;
         }
         /**
@@ -1231,6 +2844,45 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
             doSetProperty("writeResultAsHeader", writeResultAsHeader);
+            return this;
+        }
+        /**
+         * Specifies the degree of compression that Zlib should use to decrease
+         * the size of requests to the connected MongoDB instance. The level can
+         * range from -1 to 9, with lower values compressing faster (but
+         * resulting in larger requests) and larger values compressing slower
+         * (but resulting in smaller requests). Default: null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param zlibCompressionLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder zlibCompressionLevel(
+                Integer zlibCompressionLevel) {
+            doSetProperty("zlibCompressionLevel", zlibCompressionLevel);
+            return this;
+        }
+        /**
+         * Specifies the degree of compression that Zlib should use to decrease
+         * the size of requests to the connected MongoDB instance. The level can
+         * range from -1 to 9, with lower values compressing faster (but
+         * resulting in larger requests) and larger values compressing slower
+         * (but resulting in smaller requests). Default: null.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param zlibCompressionLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointProducerBuilder zlibCompressionLevel(
+                String zlibCompressionLevel) {
+            doSetProperty("zlibCompressionLevel", zlibCompressionLevel);
             return this;
         }
     }
@@ -1494,6 +3146,79 @@ public interface MongoDbEndpointBuilderFactory {
             return (MongoDbEndpointBuilder) this;
         }
         /**
+         * Sets the logical name of the application. The application name may be
+         * used by the client to identify the application to the server, for use
+         * in server logs, slow query logs, and profile collection. Default:
+         * null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param appName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder appName(String appName) {
+            doSetProperty("appName", appName);
+            return this;
+        }
+        /**
+         * Specifies one or more compression algorithms that the driver will
+         * attempt to use to compress requests sent to the connected MongoDB
+         * instance. Possible values include: zlib, snappy, and zstd. Default:
+         * null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param compressors the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder compressors(String compressors) {
+            doSetProperty("compressors", compressors);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver waits for a connection to open before timing out. A value of 0
+         * instructs the driver to never time out while waiting for a connection
+         * to open. Default: 10000 (10 seconds).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder connectTimeoutMS(
+                Integer connectTimeoutMS) {
+            doSetProperty("connectTimeoutMS", connectTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver waits for a connection to open before timing out. A value of 0
+         * instructs the driver to never time out while waiting for a connection
+         * to open. Default: 10000 (10 seconds).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder connectTimeoutMS(
+                String connectTimeoutMS) {
+            doSetProperty("connectTimeoutMS", connectTimeoutMS);
+            return this;
+        }
+        /**
          * MongoDB tailable cursors will block until new data arrives. If no new
          * data is inserted, after some time the cursor will be automatically
          * freed and closed by the MongoDB server. The client is expected to
@@ -1538,6 +3263,41 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies that the driver must connect to the host directly. Default:
+         * false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param directConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder directConnection(
+                boolean directConnection) {
+            doSetProperty("directConnection", directConnection);
+            return this;
+        }
+        /**
+         * Specifies that the driver must connect to the host directly. Default:
+         * false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param directConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder directConnection(
+                String directConnection) {
+            doSetProperty("directConnection", directConnection);
+            return this;
+        }
+        /**
          * Sets whether this endpoint will attempt to dynamically resolve the
          * target database and collection from the incoming Exchange properties.
          * Can be used to override at runtime the database and collection
@@ -1579,6 +3339,339 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * heartbeatFrequencyMS controls when the driver checks the state of the
+         * MongoDB deployment. Specify the interval (in milliseconds) between
+         * checks, counted from the end of the previous check until the
+         * beginning of the next one. Default: Single-threaded drivers: 60
+         * seconds. Multi-threaded drivers: 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatFrequencyMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder heartbeatFrequencyMS(
+                Integer heartbeatFrequencyMS) {
+            doSetProperty("heartbeatFrequencyMS", heartbeatFrequencyMS);
+            return this;
+        }
+        /**
+         * heartbeatFrequencyMS controls when the driver checks the state of the
+         * MongoDB deployment. Specify the interval (in milliseconds) between
+         * checks, counted from the end of the previous check until the
+         * beginning of the next one. Default: Single-threaded drivers: 60
+         * seconds. Multi-threaded drivers: 10 seconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatFrequencyMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder heartbeatFrequencyMS(
+                String heartbeatFrequencyMS) {
+            doSetProperty("heartbeatFrequencyMS", heartbeatFrequencyMS);
+            return this;
+        }
+        /**
+         * If true the driver will assume that it's connecting to MongoDB
+         * through a load balancer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param loadBalanced the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder loadBalanced(boolean loadBalanced) {
+            doSetProperty("loadBalanced", loadBalanced);
+            return this;
+        }
+        /**
+         * If true the driver will assume that it's connecting to MongoDB
+         * through a load balancer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param loadBalanced the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder loadBalanced(String loadBalanced) {
+            doSetProperty("loadBalanced", loadBalanced);
+            return this;
+        }
+        /**
+         * The size (in milliseconds) of the latency window for selecting among
+         * multiple suitable MongoDB instances. Default: 15 milliseconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 15
+         * Group: advanced
+         * 
+         * @param localThresholdMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder localThresholdMS(
+                Integer localThresholdMS) {
+            doSetProperty("localThresholdMS", localThresholdMS);
+            return this;
+        }
+        /**
+         * The size (in milliseconds) of the latency window for selecting among
+         * multiple suitable MongoDB instances. Default: 15 milliseconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 15
+         * Group: advanced
+         * 
+         * @param localThresholdMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder localThresholdMS(
+                String localThresholdMS) {
+            doSetProperty("localThresholdMS", localThresholdMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of connections a pool may be
+         * establishing concurrently. Default: 2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: advanced
+         * 
+         * @param maxConnecting the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxConnecting(
+                Integer maxConnecting) {
+            doSetProperty("maxConnecting", maxConnecting);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of connections a pool may be
+         * establishing concurrently. Default: 2.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: advanced
+         * 
+         * @param maxConnecting the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxConnecting(
+                String maxConnecting) {
+            doSetProperty("maxConnecting", maxConnecting);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will allow a pooled connection to idle before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can allow a pooled collection to be idle.
+         * Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxIdleTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxIdleTimeMS(
+                Integer maxIdleTimeMS) {
+            doSetProperty("maxIdleTimeMS", maxIdleTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will allow a pooled connection to idle before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can allow a pooled collection to be idle.
+         * Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxIdleTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxIdleTimeMS(
+                String maxIdleTimeMS) {
+            doSetProperty("maxIdleTimeMS", maxIdleTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will continue to use a pooled connection before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can keep a pooled connection open. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxLifeTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxLifeTimeMS(
+                Integer maxLifeTimeMS) {
+            doSetProperty("maxLifeTimeMS", maxLifeTimeMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will continue to use a pooled connection before closing the
+         * connection. A value of 0 indicates that there is no upper bound on
+         * how long the driver can keep a pooled connection open. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param maxLifeTimeMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxLifeTimeMS(
+                String maxLifeTimeMS) {
+            doSetProperty("maxLifeTimeMS", maxLifeTimeMS);
+            return this;
+        }
+        /**
+         * The maximum number of connections in the connection pool. The default
+         * value is 100.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxPoolSize(Integer maxPoolSize) {
+            doSetProperty("maxPoolSize", maxPoolSize);
+            return this;
+        }
+        /**
+         * The maximum number of connections in the connection pool. The default
+         * value is 100.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxPoolSize(String maxPoolSize) {
+            doSetProperty("maxPoolSize", maxPoolSize);
+            return this;
+        }
+        /**
+         * Specifies, in seconds, how stale a secondary can be before the driver
+         * stops communicating with that secondary. The minimum value is either
+         * 90 seconds or the heartbeat frequency plus 10 seconds, whichever is
+         * greater. For more information, see the server documentation for the
+         * maxStalenessSeconds option. Not providing a parameter or explicitly
+         * specifying -1 indicates that there should be no staleness check for
+         * secondaries. Default: -1.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param maxStalenessSeconds the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxStalenessSeconds(
+                Integer maxStalenessSeconds) {
+            doSetProperty("maxStalenessSeconds", maxStalenessSeconds);
+            return this;
+        }
+        /**
+         * Specifies, in seconds, how stale a secondary can be before the driver
+         * stops communicating with that secondary. The minimum value is either
+         * 90 seconds or the heartbeat frequency plus 10 seconds, whichever is
+         * greater. For more information, see the server documentation for the
+         * maxStalenessSeconds option. Not providing a parameter or explicitly
+         * specifying -1 indicates that there should be no staleness check for
+         * secondaries. Default: -1.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param maxStalenessSeconds the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder maxStalenessSeconds(
+                String maxStalenessSeconds) {
+            doSetProperty("maxStalenessSeconds", maxStalenessSeconds);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of connections that must exist at any
+         * moment in a single connection pool. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param minPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder minPoolSize(Integer minPoolSize) {
+            doSetProperty("minPoolSize", minPoolSize);
+            return this;
+        }
+        /**
+         * Specifies the minimum number of connections that must exist at any
+         * moment in a single connection pool. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param minPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder minPoolSize(String minPoolSize) {
+            doSetProperty("minPoolSize", minPoolSize);
+            return this;
+        }
+        /**
          * Configure how MongoDB clients route read operations to the members of
          * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
          * SECONDARY, SECONDARY_PREFERRED or NEAREST.
@@ -1594,6 +3687,338 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointBuilder readPreference(
                 String readPreference) {
             doSetProperty("readPreference", readPreference);
+            return this;
+        }
+        /**
+         * A representation of a tag set as a comma-separated list of
+         * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
+         * stripped from beginning and end of all keys and values. To specify a
+         * list of tag sets, using multiple readPreferenceTags, e.g.
+         * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param readPreferenceTags the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder readPreferenceTags(
+                String readPreferenceTags) {
+            doSetProperty("readPreferenceTags", readPreferenceTags);
+            return this;
+        }
+        /**
+         * Specifies that the connection string provided includes multiple
+         * hosts. When specified, the driver attempts to find all members of
+         * that set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param replicaSet the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder replicaSet(String replicaSet) {
+            doSetProperty("replicaSet", replicaSet);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported read operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryReads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder retryReads(boolean retryReads) {
+            doSetProperty("retryReads", retryReads);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported read operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryReads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder retryReads(String retryReads) {
+            doSetProperty("retryReads", retryReads);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported write operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryWrites the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder retryWrites(boolean retryWrites) {
+            doSetProperty("retryWrites", retryWrites);
+            return this;
+        }
+        /**
+         * Specifies that the driver must retry supported write operations if
+         * they fail due to a network error. Default: true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param retryWrites the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder retryWrites(String retryWrites) {
+            doSetProperty("retryWrites", retryWrites);
+            return this;
+        }
+        /**
+         * Specifies how long (in milliseconds) to block for server selection
+         * before throwing an exception. Default: 30,000 milliseconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param serverSelectionTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder serverSelectionTimeoutMS(
+                Integer serverSelectionTimeoutMS) {
+            doSetProperty("serverSelectionTimeoutMS", serverSelectionTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies how long (in milliseconds) to block for server selection
+         * before throwing an exception. Default: 30,000 milliseconds.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param serverSelectionTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder serverSelectionTimeoutMS(
+                String serverSelectionTimeoutMS) {
+            doSetProperty("serverSelectionTimeoutMS", serverSelectionTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will wait to send or receive a request before timing out. A
+         * value of 0 instructs the driver to never time out while waiting to
+         * send or receive a request. Default: 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param socketTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder socketTimeoutMS(
+                Integer socketTimeoutMS) {
+            doSetProperty("socketTimeoutMS", socketTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds, the Java
+         * driver will wait to send or receive a request before timing out. A
+         * value of 0 instructs the driver to never time out while waiting to
+         * send or receive a request. Default: 0.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param socketTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder socketTimeoutMS(
+                String socketTimeoutMS) {
+            doSetProperty("socketTimeoutMS", socketTimeoutMS);
+            return this;
+        }
+        /**
+         * The maximum number of hosts from the SRV record to connect to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param srvMaxHosts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder srvMaxHosts(Integer srvMaxHosts) {
+            doSetProperty("srvMaxHosts", srvMaxHosts);
+            return this;
+        }
+        /**
+         * The maximum number of hosts from the SRV record to connect to.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param srvMaxHosts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder srvMaxHosts(String srvMaxHosts) {
+            doSetProperty("srvMaxHosts", srvMaxHosts);
+            return this;
+        }
+        /**
+         * Specifies the service name of the SRV resource recordsthe driver
+         * retrieves to construct your seed list. You must use the DNS Seed List
+         * Connection Format in your connection URI to use this option. Default:
+         * mongodb.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: mongodb
+         * Group: advanced
+         * 
+         * @param srvServiceName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder srvServiceName(
+                String srvServiceName) {
+            doSetProperty("srvServiceName", srvServiceName);
+            return this;
+        }
+        /**
+         * Specifies that all communication with MongoDB instances should use
+         * TLS. Supersedes the ssl option. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Specifies that all communication with MongoDB instances should use
+         * TLS. Supersedes the ssl option. Default: false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder tls(String tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Specifies that the driver should allow invalid hostnames in the
+         * certificate for TLS connections. Supersedes
+         * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
+         * setting tlsAllowInvalidHostnames to true. Default: false.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tlsAllowInvalidHostnames the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder tlsAllowInvalidHostnames(
+                boolean tlsAllowInvalidHostnames) {
+            doSetProperty("tlsAllowInvalidHostnames", tlsAllowInvalidHostnames);
+            return this;
+        }
+        /**
+         * Specifies that the driver should allow invalid hostnames in the
+         * certificate for TLS connections. Supersedes
+         * sslInvalidHostNameAllowed. Has the same effect as tlsInsecure by
+         * setting tlsAllowInvalidHostnames to true. Default: false.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tlsAllowInvalidHostnames the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder tlsAllowInvalidHostnames(
+                String tlsAllowInvalidHostnames) {
+            doSetProperty("tlsAllowInvalidHostnames", tlsAllowInvalidHostnames);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds that a thread
+         * may wait for a connection to become available. Default: 120000 (120
+         * seconds).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: advanced
+         * 
+         * @param waitQueueTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder waitQueueTimeoutMS(
+                Integer waitQueueTimeoutMS) {
+            doSetProperty("waitQueueTimeoutMS", waitQueueTimeoutMS);
+            return this;
+        }
+        /**
+         * Specifies the maximum amount of time, in milliseconds that a thread
+         * may wait for a connection to become available. Default: 120000 (120
+         * seconds).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: advanced
+         * 
+         * @param waitQueueTimeoutMS the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder waitQueueTimeoutMS(
+                String waitQueueTimeoutMS) {
+            doSetProperty("waitQueueTimeoutMS", waitQueueTimeoutMS);
             return this;
         }
         /**
@@ -1649,6 +4074,45 @@ public interface MongoDbEndpointBuilderFactory {
         default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
             doSetProperty("writeResultAsHeader", writeResultAsHeader);
+            return this;
+        }
+        /**
+         * Specifies the degree of compression that Zlib should use to decrease
+         * the size of requests to the connected MongoDB instance. The level can
+         * range from -1 to 9, with lower values compressing faster (but
+         * resulting in larger requests) and larger values compressing slower
+         * (but resulting in smaller requests). Default: null.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param zlibCompressionLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder zlibCompressionLevel(
+                Integer zlibCompressionLevel) {
+            doSetProperty("zlibCompressionLevel", zlibCompressionLevel);
+            return this;
+        }
+        /**
+         * Specifies the degree of compression that Zlib should use to decrease
+         * the size of requests to the connected MongoDB instance. The level can
+         * range from -1 to 9, with lower values compressing faster (but
+         * resulting in larger requests) and larger values compressing slower
+         * (but resulting in smaller requests). Default: null.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param zlibCompressionLevel the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMongoDbEndpointBuilder zlibCompressionLevel(
+                String zlibCompressionLevel) {
+            doSetProperty("zlibCompressionLevel", zlibCompressionLevel);
             return this;
         }
     }
