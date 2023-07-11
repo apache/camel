@@ -269,6 +269,7 @@ class ExportCamelMain extends Export {
 
             InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
             String context2 = IOHelper.loadText(is);
+            IOHelper.close(is);
             int port = httpServerPort(settings);
             if (port == -1) {
                 port = 8080;
@@ -276,8 +277,8 @@ class ExportCamelMain extends Export {
             sb2.append(context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port)));
         }
 
-        context = context.replaceFirst("\\{\\{ \\.CamelKubernetesProperties }}", sb1.toString());
-        context = context.replaceFirst("\\{\\{ \\.CamelKubernetesPlugins }}", sb2.toString());
+        context = context.replace("{{ .CamelKubernetesProperties }}", sb1.toString());
+        context = context.replace("{{ .CamelKubernetesPlugins }}", sb2.toString());
         return context;
     }
 
