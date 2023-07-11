@@ -175,8 +175,8 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
      * invalid kafka configurations. Unfortunately, kafka-client does not separate this kind of errors.
      *
      * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts then
-     * set this option and Camel will then when giving up terminate the consumer. To try again, you can manually restart the consumer
-     * by stopping, and starting the route.
+     * set this option and Camel will then when giving up terminate the consumer. To try again, you can manually restart
+     * the consumer by stopping, and starting the route.
      */
     public void setCreateConsumerBackoffMaxAttempts(int createConsumerBackoffMaxAttempts) {
         this.createConsumerBackoffMaxAttempts = createConsumerBackoffMaxAttempts;
@@ -204,9 +204,9 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
      * Error during subscribing the consumer to the kafka topic could be temporary errors due to network issues, and
      * could potentially be recoverable.
      *
-     * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts, then
-     * set this option and Camel will then when giving up terminate the consumer. You can manually restart the consumer
-     * by stopping and starting the route, to try again.
+     * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts,
+     * then set this option and Camel will then when giving up terminate the consumer. You can manually restart the
+     * consumer by stopping and starting the route, to try again.
      */
     public void setSubscribeConsumerBackoffMaxAttempts(int subscribeConsumerBackoffMaxAttempts) {
         this.subscribeConsumerBackoffMaxAttempts = subscribeConsumerBackoffMaxAttempts;

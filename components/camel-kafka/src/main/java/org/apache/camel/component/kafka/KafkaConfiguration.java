@@ -824,8 +824,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * <tt>false</tt> then the consumer continues to the next message and processes it. If the option is <tt>true</tt>
      * then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then
      * re-attempt to process this message. However this can lead to endless processing of the same message if its bound
-     * to fail every time, eg a poison message. Therefore it is recommended to deal with that for example by using Camel's
-     * error handler.
+     * to fail every time, eg a poison message. Therefore it is recommended to deal with that for example by using
+     * Camel's error handler.
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
@@ -889,8 +889,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     /**
      * Before each retry, the producer refreshes the metadata of relevant topics to see if a new leader has been
-     * elected. Since the leader election takes a bit of time, this property specifies the amount of time that the producer
-     * waits before refreshing the metadata.
+     * elected. Since the leader election takes a bit of time, this property specifies the amount of time that the
+     * producer waits before refreshing the metadata.
      */
     public void setRetryBackoffMs(Integer retryBackoffMs) {
         this.retryBackoffMs = retryBackoffMs;
@@ -1220,8 +1220,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The location of the key store file. This is optional for the client and can be used for two-way authentication for
-     * the client.
+     * The location of the key store file. This is optional for the client and can be used for two-way authentication
+     * for the client.
      */
     public void setSslKeystoreLocation(String sslKeystoreLocation) {
         this.sslKeystoreLocation = sslKeystoreLocation;
@@ -1232,8 +1232,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The store password for the key store file. This is optional for the client and only needed if sslKeystoreLocation' is
-     * configured. Key store password is not supported for PEM format.
+     * The store password for the key store file. This is optional for the client and only needed if
+     * sslKeystoreLocation' is configured. Key store password is not supported for PEM format.
      */
     public void setSslKeystorePassword(String sslKeystorePassword) {
         this.sslKeystorePassword = sslKeystorePassword;
@@ -1399,9 +1399,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * request. Normally this occurs only under load when records arrive faster than they can be sent out. However in
      * some circumstances the client may want to reduce the number of requests even under moderate load. This setting
      * accomplishes this by adding a small amount of artificial delay that is, rather than immediately sending out a
-     * record the producer will wait for up to the given delay to allow other records to be sent so that they can
-     * be batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the
-     * upper bound on the delay for batching: once we get batch.size worth of records for a partition it will be sent
+     * record the producer will wait for up to the given delay to allow other records to be sent so that they can be
+     * batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the upper
+     * bound on the delay for batching: once we get batch.size worth of records for a partition it will be sent
      * immediately regardless of this setting, however if we have fewer than this many bytes accumulated for this
      * partition we will 'linger' for the specified time waiting for more records to show up. This setting defaults to 0
      * (i.e. no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests sent
@@ -1663,8 +1663,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Set if KafkaConsumer will read from the beginning or the end on startup: SeekPolicy.BEGINNING: read from the beginning.
-     * SeekPolicy.END: read from the end.
+     * Set if KafkaConsumer will read from the beginning or the end on startup: SeekPolicy.BEGINNING: read from the
+     * beginning. SeekPolicy.END: read from the end.
      */
     public void setSeekTo(SeekPolicy seekTo) {
         this.seekTo = seekTo;
