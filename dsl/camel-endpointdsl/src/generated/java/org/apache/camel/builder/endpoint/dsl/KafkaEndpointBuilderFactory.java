@@ -376,7 +376,7 @@ public interface KafkaEndpointBuilderFactory {
          * message that caused a failure, and then re-attempt to process this
          * message. However this can lead to endless processing of the same
          * message if its bound to fail every time, eg a poison message.
-         * Therefore its recommended to deal with that for example by using
+         * Therefore it is recommended to deal with that for example by using
          * Camel's error handler.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -400,7 +400,7 @@ public interface KafkaEndpointBuilderFactory {
          * message that caused a failure, and then re-attempt to process this
          * message. However this can lead to endless processing of the same
          * message if its bound to fail every time, eg a poison message.
-         * Therefore its recommended to deal with that for example by using
+         * Therefore it is recommended to deal with that for example by using
          * Camel's error handler.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -799,7 +799,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Deserializer class for key that implements the Deserializer
+         * Deserializer class for the key that implements the Deserializer
          * interface.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1073,9 +1073,9 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set if KafkaConsumer will read from beginning or end on startup:
-         * SeekPolicy.BEGINNING: read from beginning. SeekPolicy.END: read from
-         * end.
+         * Set if KafkaConsumer will read from the beginning or the end on
+         * startup: SeekPolicy.BEGINNING: read from the beginning.
+         * SeekPolicy.END: read from the end.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.kafka.SeekPolicy&lt;/code&gt;
@@ -1092,9 +1092,9 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set if KafkaConsumer will read from beginning or end on startup:
-         * SeekPolicy.BEGINNING: read from beginning. SeekPolicy.END: read from
-         * end.
+         * Set if KafkaConsumer will read from the beginning or the end on
+         * startup: SeekPolicy.BEGINNING: read from the beginning.
+         * SeekPolicy.END: read from the end.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.kafka.SeekPolicy&lt;/code&gt;
@@ -1633,8 +1633,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The location of the key store file. This is optional for client and
-         * can be used for two-way authentication for client.
+         * The location of the key store file. This is optional for the client
+         * and can be used for two-way authentication for the client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1649,7 +1649,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The store password for the key store file. This is optional for
+         * The store password for the key store file. This is optional for the
          * client and only needed if sslKeystoreLocation' is configured. Key
          * store password is not supported for PEM format.
          * 
@@ -2573,7 +2573,7 @@ public interface KafkaEndpointBuilderFactory {
          * accomplishes this by adding a small amount of artificial delay that
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
-         * that the sends can be batched together. This can be thought of as
+         * that they can be batched together. This can be thought of as
          * analogous to Nagle's algorithm in TCP. This setting gives the upper
          * bound on the delay for batching: once we get batch.size worth of
          * records for a partition it will be sent immediately regardless of
@@ -2605,7 +2605,7 @@ public interface KafkaEndpointBuilderFactory {
          * accomplishes this by adding a small amount of artificial delay that
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
-         * that the sends can be batched together. This can be thought of as
+         * that they can be batched together. This can be thought of as
          * analogous to Nagle's algorithm in TCP. This setting gives the upper
          * bound on the delay for batching: once we get batch.size worth of
          * records for a partition it will be sent immediately regardless of
@@ -2638,7 +2638,7 @@ public interface KafkaEndpointBuilderFactory {
          * serializers or partitioner is not counted against this timeout). For
          * partitionsFor() this timeout bounds the time spent waiting for
          * metadata if it is unavailable. The transaction-related methods always
-         * block, but may timeout if the transaction coordinator could not be
+         * block, but may time out if the transaction coordinator could not be
          * discovered or did not respond within the timeout.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -2662,7 +2662,7 @@ public interface KafkaEndpointBuilderFactory {
          * serializers or partitioner is not counted against this timeout). For
          * partitionsFor() this timeout bounds the time spent waiting for
          * metadata if it is unavailable. The transaction-related methods always
-         * block, but may timeout if the transaction coordinator could not be
+         * block, but may time out if the transaction coordinator could not be
          * discovered or did not respond within the timeout.
          * 
          * The option will be converted to a
@@ -2934,9 +2934,9 @@ public interface KafkaEndpointBuilderFactory {
          * requests whenever multiple records are being sent to the same
          * partition. This helps performance on both the client and the server.
          * This configuration controls the default batch size in bytes. No
-         * attempt will be made to batch records larger than this size.Requests
+         * attempt will be made to batch records larger than this size. Requests
          * sent to brokers will contain multiple batches, one for each partition
-         * with data available to be sent.A small batch size will make batching
+         * with data available to be sent. A small batch size will make batching
          * less common and may reduce throughput (a batch size of zero will
          * disable batching entirely). A very large batch size may use memory a
          * bit more wastefully as we will always allocate a buffer of the
@@ -2960,9 +2960,9 @@ public interface KafkaEndpointBuilderFactory {
          * requests whenever multiple records are being sent to the same
          * partition. This helps performance on both the client and the server.
          * This configuration controls the default batch size in bytes. No
-         * attempt will be made to batch records larger than this size.Requests
+         * attempt will be made to batch records larger than this size. Requests
          * sent to brokers will contain multiple batches, one for each partition
-         * with data available to be sent.A small batch size will make batching
+         * with data available to be sent. A small batch size will make batching
          * less common and may reduce throughput (a batch size of zero will
          * disable batching entirely). A very large batch size may use memory a
          * bit more wastefully as we will always allocate a buffer of the
@@ -3267,9 +3267,9 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * Before each retry, the producer refreshes the metadata of relevant
-         * topics to see if a new leader has been elected. Since leader election
-         * takes a bit of time, this property specifies the amount of time that
-         * the producer waits before refreshing the metadata.
+         * topics to see if a new leader has been elected. Since the leader
+         * election takes a bit of time, this property specifies the amount of
+         * time that the producer waits before refreshing the metadata.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -3286,9 +3286,9 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * Before each retry, the producer refreshes the metadata of relevant
-         * topics to see if a new leader has been elected. Since leader election
-         * takes a bit of time, this property specifies the amount of time that
-         * the producer waits before refreshing the metadata.
+         * topics to see if a new leader has been elected. Since the leader
+         * election takes a bit of time, this property specifies the amount of
+         * time that the producer waits before refreshing the metadata.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -3864,8 +3864,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The location of the key store file. This is optional for client and
-         * can be used for two-way authentication for client.
+         * The location of the key store file. This is optional for the client
+         * and can be used for two-way authentication for the client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -3880,7 +3880,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The store password for the key store file. This is optional for
+         * The store password for the key store file. This is optional for the
          * client and only needed if sslKeystoreLocation' is configured. Key
          * store password is not supported for PEM format.
          * 
@@ -4746,8 +4746,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The location of the key store file. This is optional for client and
-         * can be used for two-way authentication for client.
+         * The location of the key store file. This is optional for the client
+         * and can be used for two-way authentication for the client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4762,7 +4762,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The store password for the key store file. This is optional for
+         * The store password for the key store file. This is optional for the
          * client and only needed if sslKeystoreLocation' is configured. Key
          * store password is not supported for PEM format.
          * 
