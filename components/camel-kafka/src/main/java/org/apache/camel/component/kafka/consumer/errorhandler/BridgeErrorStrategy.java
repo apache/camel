@@ -47,7 +47,7 @@ public class BridgeErrorStrategy implements PollExceptionStrategy {
 
         // use bridge error handler to route with exception
         recordFetcher.getBridge().handleException(exception);
-        // skip this poison message and seek to next message
+        // skip this poison message and seek to the next message
         SeekUtil.seekToNextOffset(consumer, partitionLastOffset);
 
         if (exception instanceof AuthenticationException || exception instanceof AuthorizationException) {

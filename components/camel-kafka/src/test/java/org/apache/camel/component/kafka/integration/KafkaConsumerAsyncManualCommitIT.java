@@ -159,7 +159,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
         MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         // Fourth step: We start again our route, since we have been committing the offsets from the first step,
-        // we will expect to consume from the latest committed offset i.e. from offset 5
+        // we will expect to consume from the latest committed offset (i.e., from offset 5)
         context.getRouteController().startRoute("foo");
 
         to.expectedMessageCount(3);
