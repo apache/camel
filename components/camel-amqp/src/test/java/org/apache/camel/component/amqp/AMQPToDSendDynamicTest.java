@@ -51,8 +51,8 @@ public class AMQPToDSendDynamicTest extends AMQPTestSupport {
     }
 
     @BeforeAll
-    static void startContext() throws Exception {
-        System.setProperty(AMQPConnectionDetails.AMQP_PORT, service.brokerPort() + "");
+    static void startContext() {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
     }
 
     @BeforeEach
@@ -63,7 +63,7 @@ public class AMQPToDSendDynamicTest extends AMQPTestSupport {
 
     @ContextFixture
     public void configureContext(CamelContext camelContext) {
-        System.setProperty(AMQPConnectionDetails.AMQP_PORT, service.brokerPort() + "");
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
 
         camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
     }

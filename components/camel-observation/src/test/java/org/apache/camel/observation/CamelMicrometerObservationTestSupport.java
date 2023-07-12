@@ -57,7 +57,9 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tracing.SpanDecorator;
+import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +87,11 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
     CamelMicrometerObservationTestSupport(SpanTestData[] expected) {
         this.expected = expected;
+    }
+
+    @AfterEach
+    void noLeakingContext() {
+        Assertions.assertThat(Context.current()).as("There must be no leaking span after test").isSameAs(Context.root());
     }
 
     @Override

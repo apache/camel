@@ -32,7 +32,7 @@ public class CaffeineLoadCacheTestSupport extends CamelTestSupport {
 
             @Override
             public Integer load(String key) {
-                return Integer.valueOf(key) + 1;
+                return Integer.parseInt(key) + 1;
             }
         };
         return cache = Caffeine.newBuilder().build(cl);

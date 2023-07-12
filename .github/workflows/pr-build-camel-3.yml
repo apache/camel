@@ -24,6 +24,7 @@ on:
       - camel-3.18.x
       - camel-3.x
     paths-ignore:
+      - .github/**
       - README.md
       - SECURITY.md
       - Jenkinsfile

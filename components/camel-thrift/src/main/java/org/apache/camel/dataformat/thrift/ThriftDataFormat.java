@@ -186,14 +186,14 @@ public class ThriftDataFormat extends ServiceSupport
         Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
         if (TBase.class.isAssignableFrom(instanceClass)) {
             try {
-                return (TBase) instanceClass.newInstance();
+                return (TBase) instanceClass.getDeclaredConstructor().newInstance();
             } catch (final Exception ex) {
                 throw new CamelException(
-                        "Can't set the defaultInstance of ThriftDataFormat with " + className + ", caused by " + ex);
+                        "Cannot set the defaultInstance of ThriftDataFormat with " + className + ", caused by " + ex);
             }
         } else {
             throw new CamelException(
-                    "Can't set the defaultInstance of ThriftDataFormat with " + className
+                    "Cannot set the defaultInstance of ThriftDataFormat with " + className
                                      + ", as the class is not a subClass of org.apache.thrift.TBase");
         }
     }
