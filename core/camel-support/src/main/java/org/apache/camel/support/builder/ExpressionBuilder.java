@@ -1309,7 +1309,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Iterator it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
+                Iterator<?> it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
                 if (it != null) {
                     // skip first
                     it.next();
@@ -1705,8 +1705,7 @@ public class ExpressionBuilder {
                 StringBuilder buffer = new StringBuilder();
                 Collection<?> col = optimized != null ? optimized : expressions;
                 for (Object obj : col) {
-                    if (obj instanceof Expression) {
-                        Expression expression = (Expression) obj;
+                    if (obj instanceof Expression expression) {
                         String text = expression.evaluate(exchange, String.class);
                         if (text != null) {
                             buffer.append(text);

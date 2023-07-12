@@ -276,9 +276,8 @@ public abstract class BaseMainSupport extends BaseService {
             for (Class<?> clazz : found) {
                 // lets use Camel's injector so the class has some support for dependency injection
                 Object config = camelContext.getInjector().newInstance(clazz);
-                if (config instanceof CamelConfiguration) {
-                    LOG.debug("Discovered CamelConfiguration class: {}", clazz);
-                    CamelConfiguration cc = (CamelConfiguration) config;
+                if (config instanceof CamelConfiguration cc) {
+                    LOG.debug("Discovered CamelConfiguration class: {}", cc);
                     mainConfigurationProperties.addConfiguration(cc);
                 }
             }
@@ -298,7 +297,7 @@ public abstract class BaseMainSupport extends BaseService {
                     // ignore
                 }
                 if (!mainClass) {
-                    // lets use Camel's injector so the class has some support for dependency injection
+                    // let's use Camel's injector so the class has some support for dependency injection
                     CamelConfiguration config = camelContext.getInjector().newInstance(configClazz);
                     mainConfigurationProperties.addConfiguration(config);
                 }
@@ -407,11 +406,10 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private void scheduleRefresh(CamelContext camelContext, String key, long vc) throws Exception {
+    private void scheduleRefresh(CamelContext camelContext, String key, long period) throws Exception {
         final Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
                 .newInstance(key, Runnable.class);
         if (task.isPresent()) {
-            long period = vc;
             Runnable r = task.get();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
@@ -1316,7 +1314,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         // make defensive copy as we mutate the map
-        Set<String> keys = new LinkedHashSet(properties.keySet());
+        Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // set properties per console
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
@@ -1368,7 +1366,7 @@ public abstract class BaseMainSupport extends BaseService {
         VaultConfiguration target = camelContext.getVaultConfiguration();
 
         // make defensive copy as we mutate the map
-        Set<String> keys = new LinkedHashSet(properties.keySet());
+        Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // set properties per different vault component
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
@@ -1398,7 +1396,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         // make defensive copy as we mutate the map
-        Set<String> keys = new LinkedHashSet(properties.keySet());
+        Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // find names of beans (dot style)
         final Set<String> beansDot
                 = properties.keySet().stream()

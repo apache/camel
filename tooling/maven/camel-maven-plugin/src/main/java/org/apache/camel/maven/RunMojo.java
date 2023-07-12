@@ -152,7 +152,7 @@ public class RunMojo extends AbstractExecMojo {
     private ArtifactRepository localRepository;
 
     @Parameter(property = "project.remoteArtifactRepositories")
-    private List remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     @Component
     private MavenProjectBuilder projectBuilder;
@@ -299,7 +299,7 @@ public class RunMojo extends AbstractExecMojo {
 
         String skip = System.getProperties().getProperty("maven.test.skip");
         if (skip == null || "false".equals(skip)) {
-            // lets log a INFO about how to skip tests if you want to so you can run faster
+            // lets log a INFO about how to skip tests if you want to, so you can run faster
             getLog().info("You can skip tests from the command line using: mvn " + goal() + " -Dmaven.test.skip=true");
         }
 
@@ -966,7 +966,7 @@ public class RunMojo extends AbstractExecMojo {
                     this.remoteRepositories,
                     this.localRepository);
 
-            // get all of the dependencies for the executable project
+            // get all the dependencies for the executable project
             List<Dependency> dependencies = executableProject.getDependencies();
 
             // make Artifacts of all the dependencies

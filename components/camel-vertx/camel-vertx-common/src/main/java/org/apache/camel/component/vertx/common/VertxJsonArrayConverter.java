@@ -58,7 +58,7 @@ public final class VertxJsonArrayConverter {
     }
 
     @Converter
-    public static JsonArray toJsonArray(List list) {
+    public static JsonArray toJsonArray(List<?> list) {
         return new JsonArray(list);
     }
 
@@ -89,7 +89,7 @@ public final class VertxJsonArrayConverter {
     }
 
     @Converter
-    public static List toList(JsonArray jsonArray) {
+    public static List<?> toList(JsonArray jsonArray) {
         return jsonArray.getList();
     }
 

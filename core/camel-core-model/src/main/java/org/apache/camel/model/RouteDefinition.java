@@ -630,7 +630,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @param  clazz Class object of the input type
      * @return       the builder
      */
-    public RouteDefinition inputType(Class clazz) {
+    public RouteDefinition inputType(Class<?> clazz) {
         inputType = new InputTypeDefinition().javaClass(clazz).validate(false);
         return this;
     }
@@ -645,7 +645,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @param  clazz Class object of the input type
      * @return       the builder
      */
-    public RouteDefinition inputTypeWithValidate(Class clazz) {
+    public RouteDefinition inputTypeWithValidate(Class<?> clazz) {
         inputType = new InputTypeDefinition().javaClass(clazz).validate(true);
         return this;
     }
@@ -690,13 +690,13 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @param  clazz Class object of the output type
      * @return       the builder
      */
-    public RouteDefinition outputType(Class clazz) {
+    public RouteDefinition outputType(Class<?> clazz) {
         outputType = new OutputTypeDefinition().javaClass(clazz).validate(false);
         return this;
     }
 
     /**
-     * Declare the expected data type of the ouput message by Java class with content validation enabled. If the actual
+     * Declare the expected data type of the output message by Java class with content validation enabled. If the actual
      * message type is different at runtime, camel look for a required {@link org.apache.camel.spi.Transformer} and
      * apply if exists, and then applies {@link org.apache.camel.spi.Validator} as well.
      *
@@ -705,7 +705,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @param  clazz Class object of the output type
      * @return       the builder
      */
-    public RouteDefinition outputTypeWithValidate(Class clazz) {
+    public RouteDefinition outputTypeWithValidate(Class<?> clazz) {
         outputType = new OutputTypeDefinition().javaClass(clazz).validate(true);
         return this;
     }
@@ -1086,14 +1086,14 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * To control how to shutdown the route.
+     * To control how to shut down the route.
      */
     public String getShutdownRunningTask() {
         return shutdownRunningTask;
     }
 
     /**
-     * To control how to shutdown the route.
+     * To control how to shut down the route.
      */
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",

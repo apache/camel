@@ -33,11 +33,11 @@ import org.apache.camel.util.KeyValueHolder;
  */
 public class InstrumentationInterceptStrategy implements ManagementInterceptStrategy {
 
-    private Map<NamedNode, PerformanceCounter> registeredCounters;
-    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors;
+    private final Map<NamedNode, PerformanceCounter> registeredCounters;
+    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors;
 
     public InstrumentationInterceptStrategy(Map<NamedNode, PerformanceCounter> registeredCounters,
-                                            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors) {
+                                            Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor<?>>> wrappedProcessors) {
         this.registeredCounters = registeredCounters;
         this.wrappedProcessors = wrappedProcessors;
     }
@@ -49,13 +49,13 @@ public class InstrumentationInterceptStrategy implements ManagementInterceptStra
 
     @Override
     public InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target) {
-        InstrumentationProcessor instrumentationProcessor
+        InstrumentationProcessor<?> instrumentationProcessor
                 = new DefaultInstrumentationProcessor(definition.getShortName(), target);
         PerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
             // add it to the mapping of wrappers so we can later change it to a
             // decorated counter when we register the processor
-            KeyValueHolder<NamedNode, InstrumentationProcessor> holder
+            KeyValueHolder<NamedNode, InstrumentationProcessor<?>> holder
                     = new KeyValueHolder<>(definition, instrumentationProcessor);
             wrappedProcessors.put(target, holder);
         }

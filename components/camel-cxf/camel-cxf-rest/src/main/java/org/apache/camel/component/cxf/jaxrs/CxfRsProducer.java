@@ -701,7 +701,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
 
                 if (genericType != null && !genericType.equals(Void.TYPE)) {
-                    GenericType genericTypeClone = new GenericType(this.genericType);
+                    GenericType<?> genericTypeClone = new GenericType<>(this.genericType);
                     exchange.getMessage()
                             .setBody(binding.bindResponseToCamelBody(response.readEntity(genericTypeClone), exchange));
                 } else if (responseClass != null && !responseClass.equals(Void.TYPE)) {
@@ -872,8 +872,8 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         public void start() {
-            if (cache instanceof LRUCache) {
-                ((LRUCache) cache).resetStatistics();
+            if (cache instanceof LRUCache<?, ?> lruCache) {
+                lruCache.resetStatistics();
             }
         }
 

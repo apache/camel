@@ -123,7 +123,6 @@ public final class JaxbHelper {
      * If the route has been built with endpoint-dsl, then the model will not have uri set which then cannot be included
      * in the JAXB model dump
      */
-    @SuppressWarnings("unchecked")
     public static void resolveEndpointDslUris(RouteDefinition route) {
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
@@ -416,8 +415,7 @@ public final class JaxbHelper {
 
         // can either be routes or a single route
         TemplatedRoutesDefinition answer;
-        if (result instanceof TemplatedRouteDefinition) {
-            TemplatedRouteDefinition templatedRoute = (TemplatedRouteDefinition) result;
+        if (result instanceof TemplatedRouteDefinition templatedRoute) {
             answer = new TemplatedRoutesDefinition();
             answer.getTemplatedRoutes().add(templatedRoute);
         } else if (result instanceof TemplatedRoutesDefinition) {
@@ -462,8 +460,7 @@ public final class JaxbHelper {
 
         // can either be routes or a single route
         RestsDefinition answer;
-        if (result instanceof RestDefinition) {
-            RestDefinition rest = (RestDefinition) result;
+        if (result instanceof RestDefinition rest) {
             answer = new RestsDefinition();
             answer.getRests().add(rest);
         } else if (result instanceof RestsDefinition) {

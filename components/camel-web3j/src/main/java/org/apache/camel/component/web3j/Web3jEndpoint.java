@@ -55,7 +55,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
     private String nodeAddress;
 
     @UriParam
-    private Web3jConfiguration configuration;
+    private final Web3jConfiguration configuration;
 
     public Web3jEndpoint(String uri, String remaining, Web3jComponent component, Web3jConfiguration configuration) {
         super(uri, component);
@@ -138,7 +138,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
         return filter;
     }
 
-    private static void addTopics(Filter filter, List<String> topics) {
+    private static void addTopics(Filter<?> filter, List<String> topics) {
         if (topics != null) {
             for (String topic : topics) {
                 if (topic != null && topic.length() > 0) {

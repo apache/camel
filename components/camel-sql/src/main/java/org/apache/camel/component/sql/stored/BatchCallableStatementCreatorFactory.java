@@ -43,7 +43,7 @@ public class BatchCallableStatementCreatorFactory {
         this.callableStatementCreatorFactory = new CallableStatementCreatorFactory(formatSql(), createParams());
     }
 
-    public void addParameter(CallableStatement callableStatement, Map batchRow) throws SQLException {
+    public void addParameter(CallableStatement callableStatement, Map<String, ?> batchRow) throws SQLException {
         int i = 1;
         for (SqlParameter parameter : getSqlParameterList()) {
             StatementCreatorUtils.setParameterValue(callableStatement, i, parameter, batchRow.get(parameter.getName()));
@@ -72,8 +72,7 @@ public class BatchCallableStatementCreatorFactory {
         List<SqlParameter> params = new ArrayList<>();
 
         for (Object parameter : template.getParameterList()) {
-            if (parameter instanceof InParameter) {
-                InParameter inputParameter = (InParameter) parameter;
+            if (parameter instanceof InParameter inputParameter) {
 
                 SqlParameter sqlParameter;
                 if (inputParameter.getScale() != null) {

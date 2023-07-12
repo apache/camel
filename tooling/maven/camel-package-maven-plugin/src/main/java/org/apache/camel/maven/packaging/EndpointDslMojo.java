@@ -888,25 +888,24 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 String sourceCode = loadText(file);
                 JavaClassSource source = (JavaClassSource) Roaster.parse(sourceCode);
                 // add existing methods
-                for (MethodSource ms : source.getMethods()) {
+                for (MethodSource<?> ms : source.getMethods()) {
                     boolean exist = methods.stream().anyMatch(
                             m -> m.getName().equals(ms.getName()) && m.getParameters().size() == ms.getParameters().size());
                     if (!exist) {
-                        // the existing file has a method we dont have so create a method and add
+                        // the existing file has a method we don't have, so create a method and add
                         Method method = new Method();
                         if (ms.isStatic()) {
                             method.setStatic();
                         }
                         method.setPublic();
                         method.setName(ms.getName());
-                        // roaster dont preserve the message body with nicely formatted space after comma
+                        // roaster don't preserve the message body with nicely formatted space after comma
                         String body = ms.getBody();
                         body = COMMA_PRESERVER_PATTERN.matcher(body).replaceAll(", $1");
                         method.setBody(body);
                         method.setReturnType(getQualifiedType(ms.getReturnType()));
                         for (Object o : ms.getParameters()) {
-                            if (o instanceof ParameterSource) {
-                                ParameterSource ps = (ParameterSource) o;
+                            if (o instanceof ParameterSource<?> ps) {
                                 method.addParameter(getQualifiedType(ps.getType()), ps.getName());
                             }
                         }
@@ -945,7 +944,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
     }
 
-    private static String getQualifiedType(Type type) {
+    private static String getQualifiedType(Type<?> type) {
         String val = type.getQualifiedName();
         if (val.startsWith("java.lang.")) {
             val = val.substring(10);
@@ -954,7 +953,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     @Deprecated
-    protected static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
+    protected static String extractJavaDoc(String sourceCode, MethodSource<?> ms) throws IOException {
         return JavadocUtil.extractJavaDoc(sourceCode, ms);
     }
 
@@ -969,7 +968,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // load components
-        return Arrays.stream(files).sorted().collect(Collectors.toUnmodifiableList());
+        return Arrays.stream(files).sorted().toList();
     }
 
     private static String camelCaseLower(String s) {
@@ -1013,7 +1012,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return getComponentNameFromType(type) + "EndpointBuilder";
     }
 
-    private Class generateDummyClass(String clazzName) {
+    private Class<?> generateDummyClass(String clazzName) {
         return getProjectClassLoader().generateDummyClass(clazzName);
     }
 

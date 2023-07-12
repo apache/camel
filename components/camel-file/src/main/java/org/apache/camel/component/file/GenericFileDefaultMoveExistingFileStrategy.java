@@ -35,7 +35,7 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+    public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException {
 
         // need to evaluate using a dummy and simulate the file first, to have

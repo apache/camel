@@ -26,9 +26,9 @@ import org.apache.camel.support.EventNotifierSupport;
 public class RouteCoverageEventNotifier extends EventNotifierSupport {
 
     private final String testClassName;
-    private final Function testMethodName;
+    private final Function<RouteCoverageEventNotifier, String> testMethodName;
 
-    public RouteCoverageEventNotifier(String testClassName, Function testMethodName) {
+    public RouteCoverageEventNotifier(String testClassName, Function<RouteCoverageEventNotifier, String> testMethodName) {
         this.testClassName = testClassName;
         this.testMethodName = testMethodName;
         setIgnoreCamelContextEvents(false);
@@ -43,7 +43,7 @@ public class RouteCoverageEventNotifier extends EventNotifierSupport {
     @Override
     public void notify(CamelEvent event) throws Exception {
         CamelContext context = ((CamelContextStoppingEvent) event).getContext();
-        String testName = (String) testMethodName.apply(this);
+        String testName = testMethodName.apply(this);
         RouteCoverageDumper.dumpRouteCoverage(context, testClassName, testName);
     }
 

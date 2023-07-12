@@ -198,7 +198,7 @@ public interface ActivemqComponentBuilderFactory {
         }
         /**
          * Enables or disables whether a PooledConnectionFactory will be used so
-         * that when messages are sent to ActiveMQ from outside of a message
+         * that when messages are sent to ActiveMQ from outside a message
          * consuming thread, pooling will be used rather than the default with
          * the Spring JmsTemplate which will create a new connection, session,
          * producer for each message then close them all down again. The default
@@ -219,7 +219,7 @@ public interface ActivemqComponentBuilderFactory {
         }
         /**
          * Enables or disables whether a Spring SingleConnectionFactory will be
-         * used so that when messages are sent to ActiveMQ from outside of a
+         * used so that when messages are sent to ActiveMQ from outside a
          * message consuming thread, pooling will be used rather than the
          * default with the Spring JmsTemplate which will create a new
          * connection, session, producer for each message then close them all

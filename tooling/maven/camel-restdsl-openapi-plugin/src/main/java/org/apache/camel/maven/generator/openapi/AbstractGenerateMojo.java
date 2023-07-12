@@ -351,7 +351,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             LoaderOptions options = new LoaderOptions();
             options.setTagInspector(new TrustedTagInspector());
             Yaml loader = new Yaml(new SafeConstructor(options));
-            Map map = loader.load(is);
+            Map<?, ?> map = loader.load(is);
             JsonNode node = mapper.convertValue(map, JsonNode.class);
             return (OasDocument) Library.readDocument(node);
         } else {

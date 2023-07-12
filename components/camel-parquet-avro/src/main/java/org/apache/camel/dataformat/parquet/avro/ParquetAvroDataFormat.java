@@ -90,7 +90,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
             model = GenericData.get();
         }
 
-        try (ParquetWriter writer = AvroParquetWriter.builder(parquetOutputStream)
+        try (ParquetWriter<Object> writer = AvroParquetWriter.builder(parquetOutputStream)
                 .withSchema(schema)
                 .withDataModel(model)
                 .withConf(conf)
@@ -119,7 +119,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
             model = new ReflectData(unmarshalType.getClassLoader());
         }
 
-        try (ParquetReader reader = AvroParquetReader.builder(parquetInputStream)
+        try (ParquetReader<?> reader = AvroParquetReader.builder(parquetInputStream)
                 .withDataModel(model)
                 .disableCompatibility() // always use this (since this is a new project)
                 .withConf(conf)

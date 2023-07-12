@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.dto.approval;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,13 +37,13 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Res
 @JsonDeserialize(using = ApprovalResultDeserializer.class)
 public final class ApprovalResult implements Serializable, Iterable<Result> {
 
-    public static final class ApprovalResultDeserializer extends JsonDeserializer {
+    public static final class ApprovalResultDeserializer extends JsonDeserializer<ApprovalResult> {
 
-        private static final TypeReference<List<Result>> RESULTS_TYPE = new TypeReference<List<Result>>() {
+        private static final TypeReference<List<Result>> RESULTS_TYPE = new TypeReference<>() {
         };
 
         @Override
-        public Object deserialize(final JsonParser parser, final DeserializationContext context)
+        public ApprovalResult deserialize(final JsonParser parser, final DeserializationContext context)
                 throws IOException {
             final List<Result> results = parser.readValueAs(RESULTS_TYPE);
 
@@ -53,6 +54,7 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
     public static final class Result implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private final List<String> actorIds;
@@ -114,6 +116,7 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
 
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final List<Result> results;

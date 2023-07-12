@@ -495,7 +495,7 @@ public class RestOpenApiReader {
 
                 // set type on parameter
                 if (!"body".equals(parameter.getIn())) {
-                    Schema schema = new Schema();
+                    Schema schema = new Schema<>();
                     final boolean isArray = getValue(camelContext, param.getDataType()).equalsIgnoreCase("array");
                     final List<String> allowableValues = getValue(camelContext, param.getAllowableValuesAsStringList());
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
@@ -579,7 +579,7 @@ public class RestOpenApiReader {
                     reqBody.setDescription(getValue(camelContext, param.getDescription()));
                     op.setRequestBody(reqBody);
                     String type = getValue(camelContext, param.getDataType() != null ? param.getDataType() : verb.getType());
-                    Schema bodySchema = null;
+                    Schema<?> bodySchema = null;
                     if (type != null) {
                         if (type.endsWith("[]")) {
                             type = type.substring(0, type.length() - 2);
@@ -638,7 +638,7 @@ public class RestOpenApiReader {
                     Content responseContent = new Content();
                     MediaType contentType = new MediaType();
                     responseContent.addMediaType(produce, contentType);
-                    Schema model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi);
+                    Schema<?> model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi);
                     contentType.setSchema(model);
                     response.setContent(responseContent);
                     // response.description = "Output type";
@@ -680,7 +680,7 @@ public class RestOpenApiReader {
             }
         } else if (Objects.equals(parameterSchema.getType(), "array")) {
 
-            Schema<?> itemsSchema = null;
+            Schema<?> itemsSchema;
 
             if (Integer.class.equals(type)) {
                 itemsSchema = new IntegerSchema();
@@ -893,8 +893,8 @@ public class RestOpenApiReader {
         return className;
     }
 
-    private Schema modelTypeAsProperty(String typeName, OpenAPI openApi) {
-        Schema prop = null;
+    private Schema<?> modelTypeAsProperty(String typeName, OpenAPI openApi) {
+        Schema<?> prop = null;
         boolean array = typeName.endsWith("[]");
         if (array) {
             typeName = typeName.substring(0, typeName.length() - 2);
@@ -929,13 +929,13 @@ public class RestOpenApiReader {
         }
 
         if (array) {
-            Schema items = new Schema();
+            Schema<?> items = new Schema<>();
             if (ref != null) {
                 items.set$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
             }
             prop = new ArraySchema().items(items);
         } else if (prop == null) {
-            prop = new Schema().$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
+            prop = new Schema<>().$ref(OAS30_SCHEMA_DEFINITION_PREFIX + ref);
         }
         return prop;
     }
@@ -949,18 +949,18 @@ public class RestOpenApiReader {
      */
     private void appendModels(Class<?> clazz, OpenAPI openApi) {
         RestModelConverters converters = new RestModelConverters();
-        List<? extends Schema> models = converters.readClass(openApi, clazz);
+        List<? extends Schema<?>> models = converters.readClass(openApi, clazz);
         if (models == null) {
             return;
         }
         if (openApi.getComponents() == null) {
             openApi.setComponents(new Components());
         }
-        for (Schema newSchema : models) {
+        for (Schema<?> newSchema : models) {
             // favor keeping any existing model that has the vendor extension in the model
             boolean addSchema = true;
             if (openApi.getComponents().getSchemas() != null) {
-                Schema existing = openApi.getComponents().getSchemas().get(newSchema.getName());
+                Schema<?> existing = openApi.getComponents().getSchemas().get(newSchema.getName());
                 if (existing != null) {
                     // check classname extension
                     Object oldClassName = getClassNameExtension(existing);
@@ -1030,7 +1030,7 @@ public class RestOpenApiReader {
         });
         // Remap the names
         for (Map.Entry<String, String> namePair : names.entrySet()) {
-            Schema schema = document.getComponents().getSchemas().get(namePair.getKey());
+            Schema<?> schema = document.getComponents().getSchemas().get(namePair.getKey());
             if (schema != null) {
                 document.getComponents().getSchemas().remove(namePair.getKey());
                 document.getComponents().addSchemas(namePair.getValue(), schema);
@@ -1106,7 +1106,7 @@ public class RestOpenApiReader {
                 filterSchema(schema.getItems(), params, cookies, headers);
             }
             if (schema.getProperties() != null) {
-                for (Schema propSchema : (Collection<Schema>) schema.getProperties().values()) {
+                for (Schema<?> propSchema : (Collection<Schema>) schema.getProperties().values()) {
                     filterSchema(propSchema, params, cookies, headers);
                 }
             }

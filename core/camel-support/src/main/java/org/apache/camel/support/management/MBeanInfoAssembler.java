@@ -60,7 +60,7 @@ public class MBeanInfoAssembler implements Service {
     private final BeanIntrospection beanIntrospection;
 
     // use a cache to speedup gathering JMX MBeanInfo for known classes
-    // use a weak cache as we dont want the cache to keep around as it reference classes
+    // use a weak cache as we don't want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
@@ -76,10 +76,9 @@ public class MBeanInfoAssembler implements Service {
     @Override
     public void stop() {
         if (cache != null) {
-            if (LOG.isDebugEnabled() && cache instanceof LRUCache) {
-                LRUCache cache = (LRUCache) this.cache;
-                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(),
-                        cache.getMisses(), cache.getEvicted());
+            if (LOG.isDebugEnabled() && cache instanceof LRUCache<Class<?>, MBeanAttributesAndOperations> lruCache) {
+                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", lruCache.size(), lruCache.getHits(),
+                        lruCache.getMisses(), lruCache.getEvicted());
             }
             cache.clear();
         }
@@ -123,21 +122,21 @@ public class MBeanInfoAssembler implements Service {
         // extract details from default managed bean
         if (defaultManagedBean != null) {
             extractAttributesAndOperations(camelContext, defaultManagedBean.getClass(), attributes, operations);
-            extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
-            extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
+            extractMbeanAttributes(attributes, mBeanAttributes, mBeanOperations);
+            extractMbeanOperations(operations, mBeanOperations);
             extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
         }
 
         // extract details from custom managed bean
         if (customManagedBean != null) {
             extractAttributesAndOperations(camelContext, customManagedBean.getClass(), attributes, operations);
-            extractMbeanAttributes(customManagedBean, attributes, mBeanAttributes, mBeanOperations);
-            extractMbeanOperations(customManagedBean, operations, mBeanOperations);
+            extractMbeanAttributes(attributes, mBeanAttributes, mBeanOperations);
+            extractMbeanOperations(operations, mBeanOperations);
             extractMbeanNotifications(customManagedBean, mBeanNotifications);
         }
 
         // create the ModelMBeanInfo
-        String name = getName(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
+        String name = getName(customManagedBean != null ? customManagedBean : defaultManagedBean);
         String description = getDescription(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
         ModelMBeanAttributeInfo[] arrayAttributes
                 = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[0]);
@@ -157,7 +156,7 @@ public class MBeanInfoAssembler implements Service {
             Set<ManagedOperationInfo> operations) {
         MBeanAttributesAndOperations cached = cache.get(managedClass);
         if (cached == null) {
-            doExtractAttributesAndOperations(camelContext, managedClass, attributes, operations);
+            doExtractAttributesAndOperations(managedClass, attributes, operations);
             cached = new MBeanAttributesAndOperations();
             cached.attributes = new LinkedHashMap<>(attributes);
             cached.operations = new LinkedHashSet<>(operations);
@@ -175,10 +174,10 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void doExtractAttributesAndOperations(
-            CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
+            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
             Set<ManagedOperationInfo> operations) {
         // extract the class
-        doDoExtractAttributesAndOperations(camelContext, managedClass, attributes, operations);
+        doDoExtractAttributesAndOperations(managedClass, attributes, operations);
 
         // and then any sub classes
         if (managedClass.getSuperclass() != null) {
@@ -186,7 +185,7 @@ public class MBeanInfoAssembler implements Service {
             // skip any JDK classes
             if (!clazz.getName().startsWith("java")) {
                 LOG.trace("Extracting attributes and operations from sub class: {}", clazz);
-                doExtractAttributesAndOperations(camelContext, clazz, attributes, operations);
+                doExtractAttributesAndOperations(clazz, attributes, operations);
             }
         }
 
@@ -199,13 +198,13 @@ public class MBeanInfoAssembler implements Service {
                     continue;
                 }
                 LOG.trace("Extracting attributes and operations from implemented interface: {}", clazz);
-                doExtractAttributesAndOperations(camelContext, clazz, attributes, operations);
+                doExtractAttributesAndOperations(clazz, attributes, operations);
             }
         }
     }
 
     private void doDoExtractAttributesAndOperations(
-            CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
+            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
             Set<ManagedOperationInfo> operations) {
         LOG.trace("Extracting attributes and operations from class: {}", managedClass);
 
@@ -270,7 +269,7 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void extractMbeanAttributes(
-            Object managedBean, Map<String, ManagedAttributeInfo> attributes,
+            Map<String, ManagedAttributeInfo> attributes,
             Set<ModelMBeanAttributeInfo> mBeanAttributes, Set<ModelMBeanOperationInfo> mBeanOperations)
             throws IntrospectionException {
 
@@ -305,11 +304,11 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void extractMbeanOperations(
-            Object managedBean, Set<ManagedOperationInfo> operations, Set<ModelMBeanOperationInfo> mBeanOperations) {
+            Set<ManagedOperationInfo> operations, Set<ModelMBeanOperationInfo> mBeanOperations) {
         for (ManagedOperationInfo info : operations) {
-            ModelMBeanOperationInfo mbean = new ModelMBeanOperationInfo(info.getDescription(), info.getOperation());
+            ModelMBeanOperationInfo mbean = new ModelMBeanOperationInfo(info.description(), info.operation());
             Descriptor opDesc = mbean.getDescriptor();
-            opDesc.setField("mask", info.isMask() ? "true" : "false");
+            opDesc.setField("mask", info.mask() ? "true" : "false");
             mbean.setDescriptor(opDesc);
             mBeanOperations.add(mbean);
             LOG.trace("Assembled operation: {}", mbean);
@@ -333,7 +332,7 @@ public class MBeanInfoAssembler implements Service {
         return mr != null ? mr.description() : "";
     }
 
-    private String getName(Object managedBean, String objectName) {
+    private String getName(Object managedBean) {
         return managedBean.getClass().getName();
     }
 
@@ -387,28 +386,7 @@ public class MBeanInfoAssembler implements Service {
         }
     }
 
-    private static final class ManagedOperationInfo {
-        private final String description;
-        private final Method operation;
-        private final boolean mask;
-
-        private ManagedOperationInfo(String description, Method operation, boolean mask) {
-            this.description = description;
-            this.operation = operation;
-            this.mask = mask;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public Method getOperation() {
-            return operation;
-        }
-
-        public boolean isMask() {
-            return mask;
-        }
+    private record ManagedOperationInfo(String description, Method operation, boolean mask) {
 
         @Override
         public String toString() {

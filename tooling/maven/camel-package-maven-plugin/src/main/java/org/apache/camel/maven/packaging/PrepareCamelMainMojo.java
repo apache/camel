@@ -75,7 +75,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
         fields.forEach(f -> {
-            AnnotationSource as = f.getAnnotation(Metadata.class);
+            AnnotationSource<?> as = f.getAnnotation(Metadata.class);
             String name = f.getName();
             String javaType = f.getType().getQualifiedName();
             String sourceType = clazz.getQualifiedName();

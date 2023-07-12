@@ -23,6 +23,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * Send and receive messages from Redis.
@@ -46,8 +47,10 @@ public class RedisEndpoint extends DefaultEndpoint {
             defaultCommand = Command.SET;
         }
 
+        @SuppressWarnings("unchecked")
+        RedisTemplate<String, Object> redisTemplate = (RedisTemplate<String, Object>) configuration.getRedisTemplate();
         return new RedisProducer(
-                this, RedisConstants.COMMAND, defaultCommand.name(), new RedisClient(configuration.getRedisTemplate()));
+                this, RedisConstants.COMMAND, defaultCommand.name(), new RedisClient(redisTemplate));
     }
 
     @Override

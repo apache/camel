@@ -137,8 +137,8 @@ abstract class CsvUnmarshaller {
             try {
                 reader = new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange));
                 CSVParser parser = new CSVParser(reader, format);
-                CsvIterator answer = new CsvIterator(parser, converter);
-                // add to UoW so we can close the iterator so it can release any resources
+                CsvIterator<?> answer = new CsvIterator<>(parser, converter);
+                // add to UoW, so we can close the iterator, so it can release any resources
                 exchange.getExchangeExtension().addOnCompletion(new CsvUnmarshalOnCompletion(answer));
                 return answer;
             } catch (Exception e) {

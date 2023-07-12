@@ -156,7 +156,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // make sure we sort the classes in case one inherit from the other
         classes.sort(this::compareClasses);
 
-        Map<Class, ComponentModel> models = new HashMap<>();
+        Map<Class<?>, ComponentModel> models = new HashMap<>();
         for (Class<?> classElement : classes) {
             UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
             String scheme = uriEndpoint.scheme();
@@ -183,7 +183,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private void processSchemas(
-            Map<Class, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label, String[] schemes,
+            Map<Class<?>, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label,
+            String[] schemes,
             String[] titles, String[] extendsSchemes) {
         for (int i = 0; i < schemes.length; i++) {
             final String alias = schemes[i];
@@ -205,7 +206,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private ComponentModel collectParentData(Map<Class, ComponentModel> models, Class<?> classElement) {
+    private ComponentModel collectParentData(Map<Class<?>, ComponentModel> models, Class<?> classElement) {
         ComponentModel parentData = null;
         final Class<?> superclass = classElement.getSuperclass();
 

@@ -36,10 +36,10 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed EndpointRegistry")
 public class ManagedEndpointRegistry extends ManagedService implements ManagedEndpointRegistryMBean {
-    private final EndpointRegistry endpointRegistry;
+    private final EndpointRegistry<?> endpointRegistry;
     private boolean sanitize;
 
-    public ManagedEndpointRegistry(CamelContext context, EndpointRegistry endpointRegistry) {
+    public ManagedEndpointRegistry(CamelContext context, EndpointRegistry<?> endpointRegistry) {
         super(context, endpointRegistry);
         this.endpointRegistry = endpointRegistry;
     }
@@ -50,7 +50,7 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
         sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
     }
 
-    public EndpointRegistry getEndpointRegistry() {
+    public EndpointRegistry<?> getEndpointRegistry() {
         return endpointRegistry;
     }
 
@@ -85,7 +85,6 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public TabularData listEndpoints() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEndpointsTabularType());

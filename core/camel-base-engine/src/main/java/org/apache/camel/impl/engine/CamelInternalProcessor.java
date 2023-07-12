@@ -171,7 +171,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     @Override
     public <T> T getAdvice(Class<T> type) {
-        for (CamelInternalProcessorAdvice task : advices) {
+        for (CamelInternalProcessorAdvice<?> task : advices) {
             Object advice = unwrap(task);
             if (type.isInstance(advice)) {
                 return type.cast(advice);
@@ -438,7 +438,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice to keep the {@link InflightRepository} up to date.
      */
-    public static class RouteInflightRepositoryAdvice implements CamelInternalProcessorAdvice {
+    public static class RouteInflightRepositoryAdvice implements CamelInternalProcessorAdvice<Object> {
 
         private final InflightRepository inflightRepository;
         private final String id;
@@ -468,7 +468,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice to execute any {@link RoutePolicy} a route may have been configured with.
      */
-    public static class RoutePolicyAdvice implements CamelInternalProcessorAdvice {
+    public static class RoutePolicyAdvice implements CamelInternalProcessorAdvice<Object> {
 
         private final Logger log = LoggerFactory.getLogger(getClass());
         private final List<RoutePolicy> routePolicies;
@@ -489,8 +489,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
          * @return        <tt>true</tt> to run
          */
         boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
-            if (policy instanceof StatefulService) {
-                StatefulService ss = (StatefulService) policy;
+            if (policy instanceof StatefulService ss) {
                 return ss.isRunAllowed();
             }
             return true;
@@ -902,7 +901,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice that stores the node id and label of the processor that is processing the exchange.
      */
-    public static class NodeHistoryAdvice implements CamelInternalProcessorAdvice {
+    public static class NodeHistoryAdvice implements CamelInternalProcessorAdvice<String> {
 
         private final String id;
         private final String label;
@@ -923,7 +922,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         @Override
-        public void after(Exchange exchange, Object data) throws Exception {
+        public void after(Exchange exchange, String data) throws Exception {
             exchange.getExchangeExtension().setHistoryNodeId(null);
             exchange.getExchangeExtension().setHistoryNodeLabel(null);
             exchange.getExchangeExtension().setHistoryNodeSource(null);
@@ -1022,7 +1021,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice for delaying
      */
-    public static class DelayerAdvice implements CamelInternalProcessorAdvice {
+    public static class DelayerAdvice implements CamelInternalProcessorAdvice<Object> {
 
         private final Logger log = LoggerFactory.getLogger(getClass());
         private final long delay;
@@ -1058,7 +1057,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice for tracing
      */
-    public static class TracingAdvice implements CamelInternalProcessorAdvice {
+    public static class TracingAdvice implements CamelInternalProcessorAdvice<Object> {
 
         private final Tracer tracer;
         private final NamedNode processorDefinition;
@@ -1183,20 +1182,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     public static Object unwrap(CamelInternalProcessorAdvice<?> advice) {
-        if (advice instanceof CamelInternalProcessorAdviceWrapper) {
-            return ((CamelInternalProcessorAdviceWrapper) advice).unwrap();
+        if (advice instanceof CamelInternalProcessorAdviceWrapper<?> wrapped) {
+            return wrapped.unwrap();
         } else {
             return advice;
         }
     }
 
-    static class CamelInternalProcessorAdviceWrapper<T> implements CamelInternalProcessorAdvice<T>, Ordered {
-
-        final InstrumentationProcessor<T> instrumentationProcessor;
-
-        public CamelInternalProcessorAdviceWrapper(InstrumentationProcessor<T> instrumentationProcessor) {
-            this.instrumentationProcessor = instrumentationProcessor;
-        }
+    record CamelInternalProcessorAdviceWrapper<T> (
+            InstrumentationProcessor<T> instrumentationProcessor) implements CamelInternalProcessorAdvice<T>, Ordered {
 
         InstrumentationProcessor<T> unwrap() {
             return instrumentationProcessor;

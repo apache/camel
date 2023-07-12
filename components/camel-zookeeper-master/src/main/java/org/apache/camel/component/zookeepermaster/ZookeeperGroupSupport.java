@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.zookeepermaster.group.DefaultGroupFactoryStrategy;
 import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.ManagedGroupFactory;
+import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -35,10 +36,10 @@ import org.apache.curator.retry.RetryOneTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZookeeperGroupSupport extends ServiceSupport
+public class ZookeeperGroupSupport<T extends NodeState> extends ServiceSupport
         implements CamelContextAware, Callable<CuratorFramework>, ConnectionStateListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ZookeeperComponentSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZookeeperComponentSupport.class);
 
     private static final String ZOOKEEPER_URL = "zookeeper.url";
     private static final String ZOOKEEPER_PASSWORD = "zookeeper.password";
@@ -78,11 +79,11 @@ public class ZookeeperGroupSupport extends ServiceSupport
         return managedGroupFactory.getCurator();
     }
 
-    public Group<CamelNodeState> createGroup(String path) {
+    public Group<T> createGroup(String path) {
         if (managedGroupFactory == null) {
             throw new IllegalStateException("Component is not started");
         }
-        return managedGroupFactory.createGroup(path, CamelNodeState.class);
+        return (Group<T>) managedGroupFactory.createGroup(path, CamelNodeState.class);
     }
 
     /**

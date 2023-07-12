@@ -73,28 +73,26 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedCamelInternalProcessor.class);
     private static final Object[] EMPTY_STATES = new Object[0];
-    private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final AsyncProcessorAwaitManager awaitManager;
     private final ShutdownStrategy shutdownStrategy;
-    private final List<CamelInternalProcessorAdvice> advices;
+    private final List<CamelInternalProcessorAdvice<?>> advices;
     private byte statefulAdvices;
 
-    public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice... advices) {
-        this.camelContext = camelContext;
+    public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice<?>... advices) {
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.awaitManager = PluginHelper.getAsyncProcessorAwaitManager(camelContext);
         this.shutdownStrategy = camelContext.getShutdownStrategy();
 
         if (advices != null) {
             this.advices = new ArrayList<>(advices.length);
-            for (CamelInternalProcessorAdvice advice : advices) {
+            for (CamelInternalProcessorAdvice<?> advice : advices) {
                 this.advices.add(advice);
                 if (advice.hasState()) {
                     statefulAdvices++;
                 }
             }
-            // ensure advices are sorted so they are in the order we want
+            // ensure advices are sorted, so they are in the order we want
             this.advices.sort(OrderedComparator.get());
         } else {
             this.advices = null;
@@ -155,7 +153,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0, j = 0; i < advices.size(); i++) {
-            CamelInternalProcessorAdvice task = advices.get(i);
+            CamelInternalProcessorAdvice<?> task = advices.get(i);
             try {
                 Object state = task.before(exchange);
                 if (task.hasState()) {
@@ -249,10 +247,9 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
-            // so you can step straight to the finally block and invoke the callback
+            // so you can step straight to the finally-block and invoke the callback
 
             if (resultProcessor != null) {
                 try {

@@ -512,7 +512,7 @@ public final class CSimpleHelper {
             // they are equal
             return true;
         } else if (leftValue == null || rightValue == null) {
-            // only one of them is null so they are not equal
+            // only one of them is null, so they are not equal
             return false;
         }
         return org.apache.camel.support.ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue,
@@ -577,14 +577,12 @@ public final class CSimpleHelper {
             if (num != null && num >= 0 && size > 0 && size > num - 1) {
                 obj = Array.get(obj, num);
             }
-        } else if (obj instanceof List) {
-            List list = (List) obj;
+        } else if (obj instanceof List<?> list) {
             Integer num = indexAsNumber(context, key, list.size());
             if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
                 obj = list.get(num);
             }
-        } else if (obj instanceof Map) {
-            Map map = (Map) obj;
+        } else if (obj instanceof Map<?, ?> map) {
             obj = map.get(key);
         } else {
             // object not a collection type
@@ -598,7 +596,7 @@ public final class CSimpleHelper {
         if (key.startsWith("last")) {
             num = size - 1;
 
-            // maybe its an expression to subtract a number after last
+            // maybe it's an expression to subtract a number after last
             String after = StringHelper.after(key, "-");
             if (after != null) {
                 Integer redux

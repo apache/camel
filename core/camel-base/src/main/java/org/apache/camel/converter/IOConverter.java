@@ -67,8 +67,8 @@ public final class IOConverter {
     }
 
     @Converter(order = 1)
-    public static InputStream toInputStream(Stream stream, Exchange exchange) {
-        Iterator it = stream.iterator();
+    public static InputStream toInputStream(Stream<?> stream, Exchange exchange) {
+        Iterator<?> it = stream.iterator();
         return new InputStreamIterator(exchange.getContext().getTypeConverter(), it);
     }
 

@@ -168,8 +168,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         this.deleteOrphanLockFiles = deleteOrphanLockFiles;
     }
 
-    private static void deleteLockFiles(
-            File dir, boolean recursive, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter,
+    private static <T> void deleteLockFiles(
+            File dir, boolean recursive, String endpointPath, GenericFileFilter<T> filter, GenericFileFilter<T> antFilter,
             Pattern excludePattern,
             Pattern includePattern) {
         File[] files = dir.listFiles();
@@ -218,10 +218,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @SuppressWarnings("unchecked")
-    private static boolean acceptFile(
-            File file, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter, Pattern excludePattern,
+    private static <T> boolean acceptFile(
+            File file, String endpointPath, GenericFileFilter<T> filter, GenericFileFilter<T> antFilter, Pattern excludePattern,
             Pattern includePattern) {
-        GenericFile gf = new GenericFile();
+        GenericFile gf = new GenericFile<>();
         gf.setEndpointPath(endpointPath);
         gf.setFile(file);
         gf.setFileNameOnly(file.getName());

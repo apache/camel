@@ -52,7 +52,7 @@ public class AttachFileProducer extends DefaultProducer {
         if (body instanceof File) {
             file = (File) body;
         } else {
-            WrappedFile wf = exchange.getIn().getBody(WrappedFile.class);
+            WrappedFile<?> wf = exchange.getIn().getBody(WrappedFile.class);
             if (wf != null && wf.getFile() instanceof File) {
                 file = (File) wf.getFile();
             }

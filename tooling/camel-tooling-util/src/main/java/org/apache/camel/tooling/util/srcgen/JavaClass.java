@@ -157,18 +157,17 @@ public class JavaClass {
     public Annotation addAnnotation(String type) {
         try {
             Class<?> cl = getClassLoader().loadClass(type);
-            return addAnnotation(cl);
+            return addAnnotation((Class<? extends java.lang.annotation.Annotation>) cl);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Unable to parse type", e);
         }
     }
 
-    public Annotation addAnnotation(Class<?> type) {
+    public <A extends java.lang.annotation.Annotation> Annotation addAnnotation(Class<A> type) {
         if (!java.lang.annotation.Annotation.class.isAssignableFrom(type)) {
             throw new IllegalStateException("Not an annotation: " + type.getName());
         }
-        @SuppressWarnings("unchecked")
-        Annotation ann = new Annotation((Class) type);
+        Annotation ann = new Annotation(type);
         annotations.add(ann);
         return ann;
     }
@@ -439,7 +438,7 @@ public class JavaClass {
         }
     }
 
-    private void addImports(Set<String> imports, Class clazz) {
+    private void addImports(Set<String> imports, Class<?> clazz) {
         if (clazz != null) {
             if (clazz.isArray()) {
                 addImports(imports, clazz.getComponentType());

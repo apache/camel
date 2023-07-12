@@ -101,7 +101,7 @@ public class CodeRestGenerator extends CamelCommand {
     private JsonNode readNodeFromYaml() throws FileNotFoundException {
         final ObjectMapper mapper = new ObjectMapper();
         Yaml loader = new Yaml(new SafeConstructor(new LoaderOptions()));
-        Map map = loader.load(new FileInputStream(Paths.get(input).toFile()));
+        Map<?, ?> map = loader.load(new FileInputStream(Paths.get(input).toFile()));
         return mapper.convertValue(map, JsonNode.class);
     }
 

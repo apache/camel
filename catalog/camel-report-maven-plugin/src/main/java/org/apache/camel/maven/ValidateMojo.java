@@ -594,10 +594,9 @@ public class ValidateMojo extends AbstractExecMojo {
             // parse the java source code and find Camel RouteBuilder classes
             String fqn = file.getPath();
             String baseDir = ".";
-            JavaType out = Roaster.parse(file);
+            JavaType<?> out = Roaster.parse(file);
             // we should only parse java classes (not interfaces and enums etc)
-            if (out instanceof JavaClassSource) {
-                JavaClassSource clazz = (JavaClassSource) out;
+            if (out instanceof JavaClassSource clazz) {
                 RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
                 RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);
                 if (duplicateRouteId) {

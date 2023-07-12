@@ -96,12 +96,12 @@ import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParamet
 
 public class Web3jProducer extends HeaderSelectorProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jProducer.class);
-    private Web3j web3j;
+    private final Web3j web3j;
     private Quorum quorum;
-    private Web3jConfiguration configuration;
+    private final Web3jConfiguration configuration;
 
     public Web3jProducer(Web3jEndpoint endpoint, final Web3jConfiguration configuration) {
-        super(endpoint, Web3jConstants.OPERATION, () -> configuration.getOperationOrDefault());
+        super(endpoint, Web3jConstants.OPERATION, configuration::getOperationOrDefault);
         web3j = endpoint.getWeb3j();
         this.configuration = configuration;
         if (web3j instanceof Quorum) {
@@ -1109,7 +1109,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
-    private void setRequestId(Message message, Request request) {
+    private void setRequestId(Message message, Request<?, ?> request) {
         final Long id = message.getHeader(Web3jConstants.ID, Long.class);
         LOG.debug("setRequestId {}", id);
         if (id != null) {
@@ -1117,7 +1117,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
-    private boolean checkForError(Message message, Response response) {
+    private boolean checkForError(Message message, Response<?> response) {
         if (response.hasError()) {
             int code = response.getError().getCode();
             String data = response.getError().getData();

@@ -26,7 +26,7 @@ import org.apache.camel.spi.NormalizedEndpointUri;
  */
 public final class NormalizedUri extends ValueHolder<String> implements NormalizedEndpointUri {
 
-    // must extends ValueHolder to let this class be used as key for Camels endpoint registry
+    // must extend ValueHolder to let this class be used as key for Camels endpoint registry
 
     private NormalizedUri(String value) {
         super(value);

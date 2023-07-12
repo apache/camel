@@ -41,7 +41,6 @@ import co.elastic.clients.elasticsearch.core.MsearchResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
-import co.elastic.clients.elasticsearch.core.UpdateResponse;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
@@ -384,10 +383,10 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
      * Updates asynchronously a document.
      */
     private void processUpdateAsync(ActionContext ctx, Class<?> documentClass) {
-        UpdateRequest.Builder updateRequestBuilder = ctx.getMessage().getBody(UpdateRequest.Builder.class);
+        UpdateRequest.Builder<?, ?> updateRequestBuilder = ctx.getMessage().getBody(UpdateRequest.Builder.class);
         onComplete(
                 ctx.getClient().update(updateRequestBuilder.build(), documentClass)
-                        .thenApply(r -> ((UpdateResponse<?>) r).id()),
+                        .thenApply(WriteResponseBase::id),
                 ctx);
     }
 

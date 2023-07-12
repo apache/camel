@@ -97,7 +97,7 @@ public final class JavadocUtil {
         }
     }
 
-    public static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
+    public static String extractJavaDoc(String sourceCode, MethodSource<?> ms) throws IOException {
         // the javadoc is mangled by roaster (sadly it does not preserve newlines and original formatting)
         // so we need to load it from the original source file
         Object internal = ms.getJavaDoc().getInternal();

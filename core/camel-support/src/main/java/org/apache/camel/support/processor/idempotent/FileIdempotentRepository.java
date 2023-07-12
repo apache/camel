@@ -181,8 +181,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     public void clear() {
         synchronized (cache) {
             cache.clear();
-            if (cache instanceof LRUCache) {
-                ((LRUCache) cache).cleanUp();
+            if (cache instanceof LRUCache<String, Object> lruCache) {
+                lruCache.cleanUp();
             }
             // clear file store
             clearStore();
@@ -272,8 +272,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     public synchronized void reset() throws IOException {
         synchronized (cache) {
             // run the cleanup task first
-            if (cache instanceof LRUCache) {
-                ((LRUCache) cache).cleanUp();
+            if (cache instanceof LRUCache<String, Object> lruCache) {
+                lruCache.cleanUp();
             }
             cache.clear();
             loadStore();
@@ -445,8 +445,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      */
     protected void cleanup() {
         // run the cleanup task first
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).cleanUp();
+        if (cache instanceof LRUCache<String, Object> lruCache) {
+            lruCache.cleanUp();
         }
     }
 
@@ -503,8 +503,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     protected void doStop() throws Exception {
         // run the cleanup task first
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).cleanUp();
+        if (cache instanceof LRUCache<String, Object> lruCache) {
+            lruCache.cleanUp();
         }
 
         cache.clear();

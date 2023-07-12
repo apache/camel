@@ -64,8 +64,8 @@ public abstract class AbstractGeneratorMojoTest {
         mojo.componentPackage = COMPONENT_PACKAGE;
         mojo.project = new MavenProject((Model) null) {
             @Override
-            public List getTestClasspathElements() {
-                return Collections.EMPTY_LIST;
+            public List<String> getTestClasspathElements() {
+                return Collections.emptyList();
             }
 
             @Override
@@ -103,7 +103,6 @@ public abstract class AbstractGeneratorMojoTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldAddCompilationRootsByDefault() throws Exception {
         AbstractSourceGeneratorMojo mojo = createGeneratorMojo();
         assumeTrue(mojo != null, "Ignored because createGeneratorMojo is not implemented");

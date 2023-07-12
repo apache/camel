@@ -84,17 +84,15 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void stop() {
-        if (cachePredicate instanceof LRUCache) {
+        if (cachePredicate instanceof LRUCache<String, Predicate> cache) {
             if (LOG.isDebugEnabled()) {
-                LRUCache cache = (LRUCache) cachePredicate;
                 LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
                         cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
             cachePredicate.clear();
         }
-        if (cacheExpression instanceof LRUCache) {
+        if (cacheExpression instanceof LRUCache<String, Expression> cache) {
             if (LOG.isDebugEnabled()) {
-                LRUCache cache = (LRUCache) cacheExpression;
                 LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
                         cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }

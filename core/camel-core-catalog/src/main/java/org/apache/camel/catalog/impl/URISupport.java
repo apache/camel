@@ -409,14 +409,13 @@ public final class URISupport {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
                 boolean first = true;
-                for (Object o : options.keySet()) {
+                for (String key : options.keySet()) {
                     if (first) {
                         first = false;
                     } else {
                         rc.append(ampersand);
                     }
 
-                    String key = (String) o;
                     Object value = options.get(key);
 
                     // use the value as a String
@@ -480,8 +479,7 @@ public final class URISupport {
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
             return false;
-        } else if (value instanceof String) {
-            String text = (String) value;
+        } else if (value instanceof String text) {
             return text.trim().length() > 0;
         } else {
             return true;

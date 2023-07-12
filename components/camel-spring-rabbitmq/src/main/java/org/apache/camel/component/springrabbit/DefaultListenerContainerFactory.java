@@ -69,7 +69,7 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
             // use a custom
             listener.setAdviceChain(endpoint.getRetry());
         } else {
-            RetryInterceptorBuilder builder = RetryInterceptorBuilder.stateless();
+            RetryInterceptorBuilder<?, ?> builder = RetryInterceptorBuilder.stateless();
             if (endpoint.getMaximumRetryAttempts() > 0) {
                 builder.retryPolicy(new SimpleRetryPolicy(endpoint.getMaximumRetryAttempts()));
             }

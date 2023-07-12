@@ -35,14 +35,14 @@ import org.apache.camel.spi.ValidatorRegistry;
 
 @ManagedResource(description = "Managed ValidatorRegistry")
 public class ManagedValidatorRegistry extends ManagedService implements ManagedValidatorRegistryMBean {
-    private final ValidatorRegistry validatorRegistry;
+    private final ValidatorRegistry<?> validatorRegistry;
 
-    public ManagedValidatorRegistry(CamelContext context, ValidatorRegistry validatorRegistry) {
+    public ManagedValidatorRegistry(CamelContext context, ValidatorRegistry<?> validatorRegistry) {
         super(context, validatorRegistry);
         this.validatorRegistry = validatorRegistry;
     }
 
-    public ValidatorRegistry getValidatorRegistry() {
+    public ValidatorRegistry<?> getValidatorRegistry() {
         return validatorRegistry;
     }
 
@@ -77,7 +77,6 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public TabularData listValidators() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listValidatorsTabularType());

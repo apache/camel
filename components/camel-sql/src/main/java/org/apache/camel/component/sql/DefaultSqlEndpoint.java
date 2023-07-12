@@ -465,8 +465,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     public List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
             Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = rowMapperFactory.newBeanRowMapper(outputClazz);
-            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
+            RowMapper<?> rowMapper = rowMapperFactory.newBeanRowMapper(outputClazz);
+            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor<>(rowMapper);
             return mapper.extractData(rs);
         } else {
             RowMapper rowMapper = rowMapperFactory.newColumnRowMapper();
@@ -475,7 +475,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Object queryForObject(ResultSet rs) throws SQLException {
         Object result = null;
         if (outputClass == null) {
@@ -497,8 +496,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             }
         } else {
             Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = rowMapperFactory.newBeanRowMapper(outputClzz);
-            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
+            RowMapper<?> rowMapper = rowMapperFactory.newBeanRowMapper(outputClzz);
+            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor<>(rowMapper);
             List<?> data = mapper.extractData(rs);
             if (data.size() > 1) {
                 throw new SQLDataException(
@@ -512,14 +511,13 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public ResultSetIterator queryForStreamList(Connection connection, Statement statement, ResultSet rs) throws SQLException {
         if (outputClass == null) {
-            RowMapper rowMapper = rowMapperFactory.newColumnRowMapper();
+            RowMapper<?> rowMapper = rowMapperFactory.newColumnRowMapper();
             return new ResultSetIterator(connection, statement, rs, rowMapper);
         } else {
             Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
-            RowMapper rowMapper = rowMapperFactory.newBeanRowMapper(outputClzz);
+            RowMapper<?> rowMapper = rowMapperFactory.newBeanRowMapper(outputClzz);
             return new ResultSetIterator(connection, statement, rs, rowMapper);
         }
     }

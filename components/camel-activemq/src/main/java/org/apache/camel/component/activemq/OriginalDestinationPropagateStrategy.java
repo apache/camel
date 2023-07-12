@@ -40,8 +40,7 @@ public class OriginalDestinationPropagateStrategy implements MessageCreatedStrat
         if (exchange.getIn() instanceof JmsMessage) {
             JmsMessage msg = exchange.getIn(JmsMessage.class);
             Message jms = msg.getJmsMessage();
-            if (jms instanceof ActiveMQMessage && message instanceof ActiveMQMessage) {
-                ActiveMQMessage amq = (ActiveMQMessage) jms;
+            if (jms instanceof ActiveMQMessage amq && message instanceof ActiveMQMessage) {
                 if (amq.getOriginalDestination() == null) {
                     ActiveMQDestination from = amq.getDestination();
                     if (from != null) {

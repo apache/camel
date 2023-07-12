@@ -330,16 +330,16 @@ class BeanValidatorRouteTest extends CamelTestSupport {
     }
 
     private void setLicensePlates(Object cars, String licensePlate) {
-        if (cars instanceof Car) {
-            ((Car) cars).setLicensePlate(licensePlate);
+        if (cars instanceof Car car) {
+            car.setLicensePlate(licensePlate);
         } else {
             ((Iterable) cars).forEach(car -> ((Car) car).setLicensePlate(licensePlate));
         }
     }
 
     private void setManufacturer(Object cars, String manufacturer) {
-        if (cars instanceof Car) {
-            ((Car) cars).setManufacturer(manufacturer);
+        if (cars instanceof Car car) {
+            car.setManufacturer(manufacturer);
         } else {
             ((Iterable) cars).forEach(car -> ((Car) car).setManufacturer(manufacturer));
         }

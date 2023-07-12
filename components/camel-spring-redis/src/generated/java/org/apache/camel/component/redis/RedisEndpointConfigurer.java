@@ -90,5 +90,15 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "redistemplate":
+        case "redisTemplate": return java.lang.Object.class;
+        case "serializer": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

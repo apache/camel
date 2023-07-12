@@ -58,7 +58,7 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
                 ResumeAdapter adapter = resumeStrategy.getAdapter();
 
                 if (adapter instanceof EntryFilter) {
-                    valid = ((EntryFilter) adapter).isValidEntry(entry);
+                    valid = ((EntryFilter<E>) adapter).isValidEntry(entry);
                 }
             }
             if (valid) {

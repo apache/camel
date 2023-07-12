@@ -78,9 +78,9 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     /**
      * Enables or disables whether a Spring {@link SingleConnectionFactory} will be used so that when messages are sent
-     * to ActiveMQ from outside of a message consuming thread, pooling will be used rather than the default with the
-     * Spring {@link JmsTemplate} which will create a new connection, session, producer for each message then close them
-     * all down again.
+     * to ActiveMQ from outside a message consuming thread, pooling will be used rather than the default with the Spring
+     * {@link JmsTemplate} which will create a new connection, session, producer for each message then close them all
+     * down again.
      * <p/>
      * The default value is false and a pooled connection is used by default.
      */
@@ -115,7 +115,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
      * <br/>
      * This option can be set to <tt>true</tt> to trust all packages (eg whitelist is *).
      * <p/>
-     * See more details at: http://activemq.apache.org/objectmessage.html
+     * See more details at:
+     * <a href="http://activemq.apache.org/objectmessage.html">http://activemq.apache.org/objectmessage.html</a>
      */
     public void setTrustAllPackages(boolean trustAllPackages) {
         this.trustAllPackages = trustAllPackages;
@@ -140,12 +141,10 @@ public class ActiveMQConfiguration extends JmsConfiguration {
         ActiveMQConnectionFactory acf = null;
 
         ConnectionFactory target = connectionFactory;
-        if (target instanceof CachingConnectionFactory) {
-            CachingConnectionFactory ccf = (CachingConnectionFactory) target;
+        if (target instanceof CachingConnectionFactory ccf) {
             target = ccf.getTargetConnectionFactory();
         }
-        if (target instanceof DelegatingConnectionFactory) {
-            DelegatingConnectionFactory dcf = (DelegatingConnectionFactory) target;
+        if (target instanceof DelegatingConnectionFactory dcf) {
             target = dcf.getTargetConnectionFactory();
         }
         if (target instanceof ActiveMQConnectionFactory) {
@@ -197,8 +196,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     protected ConnectionFactory createPooledConnectionFactory(ActiveMQConnectionFactory connectionFactory) {
         try {
-            Class type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
-            Constructor constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);
+            Class<?> type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
+            Constructor<?> constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);
             return (ConnectionFactory) constructor.newInstance(connectionFactory);
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to instantiate PooledConnectionFactory: " + e, e);

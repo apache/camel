@@ -41,14 +41,14 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     private String uri;
     private boolean sanitize;
 
-    public ManagedDynamicRouter(CamelContext context, DynamicRouter processor, DynamicRouterDefinition definition) {
+    public ManagedDynamicRouter(CamelContext context, DynamicRouter processor, DynamicRouterDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
 
     @Override
-    public DynamicRouterDefinition getDefinition() {
-        return (DynamicRouterDefinition) super.getDefinition();
+    public DynamicRouterDefinition<?> getDefinition() {
+        return (DynamicRouterDefinition<?>) super.getDefinition();
     }
 
     @Override

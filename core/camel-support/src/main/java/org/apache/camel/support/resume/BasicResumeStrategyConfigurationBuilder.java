@@ -29,7 +29,7 @@ import org.apache.camel.resume.cache.ResumeCache;
  * @param <Y> The type of the {@link ResumeStrategyConfiguration} that will be built by the builder
  */
 public abstract class BasicResumeStrategyConfigurationBuilder<
-        T extends BasicResumeStrategyConfigurationBuilder, Y extends ResumeStrategyConfiguration>
+        T extends BasicResumeStrategyConfigurationBuilder<T, Y>, Y extends ResumeStrategyConfiguration>
         implements ResumeStrategyConfigurationBuilder<T, Y> {
     protected Cacheable.FillPolicy cacheFillPolicy = Cacheable.FillPolicy.MAXIMIZING;
     protected ResumeCache<?> resumeCache;
