@@ -19,9 +19,9 @@ package org.apache.camel.component.twitter.timeline;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import twitter4j.Paging;
-import twitter4j.Status;
 import twitter4j.TwitterException;
+import twitter4j.v1.Paging;
+import twitter4j.v1.Status;
 
 public class UserListConsumerHandler extends AbstractStatusConsumerHandler {
     private final String user;
@@ -37,13 +37,13 @@ public class UserListConsumerHandler extends AbstractStatusConsumerHandler {
     @Override
     protected List<Status> doPoll() throws TwitterException {
         Paging paging = getLastIdPaging();
-        log.trace("doPoll.getUserListStatuses(user={}, list={}, sinceId={})", user, list, paging.getSinceId());
-        return getTwitter().getUserListStatuses(user, list, paging);
+        log.trace("doPoll.getUserListStatuses(user={}, list={}, sinceId={})", user, list, paging.sinceId);
+        return getTwitter().v1().list().getUserListStatuses(user, list, paging);
     }
 
     @Override
     protected List<Status> doDirect() throws TwitterException {
-        Paging paging = new Paging(getLastId());
-        return getTwitter().getUserListStatuses(user, list, paging);
+        Paging paging = Paging.ofSinceId(getLastId());
+        return getTwitter().v1().list().getUserListStatuses(user, list, paging);
     }
 }

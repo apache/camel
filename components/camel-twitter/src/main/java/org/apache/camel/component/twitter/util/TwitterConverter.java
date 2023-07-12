@@ -17,11 +17,11 @@
 package org.apache.camel.component.twitter.util;
 
 import org.apache.camel.Converter;
-import twitter4j.DirectMessage;
-import twitter4j.Status;
-import twitter4j.Trend;
-import twitter4j.Trends;
-import twitter4j.UserList;
+import twitter4j.v1.DirectMessage;
+import twitter4j.v1.Status;
+import twitter4j.v1.Trend;
+import twitter4j.v1.Trends;
+import twitter4j.v1.UserList;
 
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.

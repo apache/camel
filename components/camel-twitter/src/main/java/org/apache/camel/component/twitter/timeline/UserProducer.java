@@ -22,8 +22,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.Status;
-import twitter4j.StatusUpdate;
+import twitter4j.v1.Status;
+import twitter4j.v1.StatusUpdate;
 
 /**
  * Produces text as a status update.
@@ -62,14 +62,14 @@ public class UserProducer extends DefaultProducer {
     }
 
     private Status updateStatus(StatusUpdate status) throws Exception {
-        Status response = endpoint.getProperties().getTwitter().updateStatus(status);
+        Status response = endpoint.getProperties().getTwitter().v1().tweets().updateStatus(status);
         LOG.debug("Updated status: {}", status);
         LOG.debug("Status id: {}", response.getId());
         return response;
     }
 
     private Status updateStatus(String status) throws Exception {
-        Status response = endpoint.getProperties().getTwitter().updateStatus(status);
+        Status response = endpoint.getProperties().getTwitter().v1().tweets().updateStatus(status);
         LOG.debug("Updated status: {}", status);
         LOG.debug("Status id: {}", response.getId());
         return response;
