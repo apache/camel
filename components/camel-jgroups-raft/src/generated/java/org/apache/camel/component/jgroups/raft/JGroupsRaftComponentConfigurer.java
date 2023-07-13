@@ -34,7 +34,7 @@ public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport im
         case "raftid":
         case "raftId": target.setRaftId(property(camelContext, java.lang.String.class, value)); return true;
         case "statemachine":
-        case "stateMachine": target.setStateMachine(property(camelContext, org.jgroups.protocols.raft.StateMachine.class, value)); return true;
+        case "stateMachine": target.setStateMachine(property(camelContext, org.jgroups.raft.StateMachine.class, value)); return true;
         default: return false;
         }
     }
@@ -55,7 +55,7 @@ public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport im
         case "raftid":
         case "raftId": return java.lang.String.class;
         case "statemachine":
-        case "stateMachine": return org.jgroups.protocols.raft.StateMachine.class;
+        case "stateMachine": return org.jgroups.raft.StateMachine.class;
         default: return null;
         }
     }

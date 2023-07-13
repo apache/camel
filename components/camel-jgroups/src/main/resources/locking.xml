@@ -28,8 +28,6 @@
             ucast_send_buf_size="5M"
             mcast_recv_buf_size="5M"
             mcast_send_buf_size="5M"
-            max_bundle_size="64K"
-            enable_diagnostics="true"
             thread_naming_pattern="cl"
 
             thread_pool.min_threads="0"
@@ -56,8 +54,7 @@
               conn_expiry_timeout="0"/>
     <pbcast.STABLE desired_avg_gossip="50000"
                    max_bytes="4M"/>
-    <pbcast.GMS print_local_addr="true" join_timeout="2000"
-                view_bundling="true"/>
+    <pbcast.GMS print_local_addr="true" join_timeout="2000"/>
     <UFC max_credits="2M"
          min_threshold="0.4"/>
     <MFC max_credits="2M"

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CamelRoleChangeListener implements RAFT.RoleChange {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelRoleChangeListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelRoleChangeListener.class);
 
     private final JGroupsRaftConsumer consumer;
     private final JGroupsRaftEndpoint endpoint;
@@ -50,10 +50,6 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
                 break;
             case Follower:
                 exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.FOLLOWER);
-                processExchange(role, exchange);
-                break;
-            case Candidate:
-                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.CANDIDATE);
                 processExchange(role, exchange);
                 break;
             default:

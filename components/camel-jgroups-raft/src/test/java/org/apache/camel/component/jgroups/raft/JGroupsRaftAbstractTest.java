@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.jgroups.Address;
 import org.jgroups.raft.RaftHandle;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,9 +31,8 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, int.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_IS_LEADER, boolean.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LAST_APPLIED, int.class));
-        assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS, Address.class));
+        //assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS, Address.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE, int.class));
-        assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE_BYTE, int.class));
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_RAFT_ID, String.class));
     }
 

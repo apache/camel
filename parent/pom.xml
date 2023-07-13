@@ -275,8 +275,8 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
         <jgit-version>6.6.0.202305301015-r</jgit-version>
-        <jgroups-version>4.2.17.Final</jgroups-version>
-        <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
+        <jgroups-version>5.2.16.Final</jgroups-version>
+        <jgroups-raft-version>1.0.11.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>5.2.5</jira-rest-client-api-version>

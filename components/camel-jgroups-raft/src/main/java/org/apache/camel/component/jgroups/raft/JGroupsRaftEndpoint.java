@@ -30,8 +30,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.jgroups.JChannel;
-import org.jgroups.protocols.raft.StateMachine;
 import org.jgroups.raft.RaftHandle;
+import org.jgroups.raft.StateMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +85,7 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_CURRENT_TERM, resolvedRaftHandle.currentTerm());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_IS_LEADER, resolvedRaftHandle.isLeader());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LAST_APPLIED, resolvedRaftHandle.lastApplied());
-        exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LEADER_ADDRESS, resolvedRaftHandle.leader());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE, resolvedRaftHandle.logSize());
-        exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_LOG_SIZE_BYTE, resolvedRaftHandle.logSizeInBytes());
         exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_RAFT_ID, resolvedRaftHandle.raftId());
     }
 

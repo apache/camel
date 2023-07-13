@@ -21,11 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JGroupsComponentTest extends CamelTestSupport {
 
@@ -34,10 +34,6 @@ public class JGroupsComponentTest extends CamelTestSupport {
     static final String CLUSTER_NAME = "CLUSTER_NAME";
 
     static final String MESSAGE = "MESSAGE";
-
-    static final String SAMPLE_CHANNEL_PROPERTY = "enable_diagnostics=true";
-
-    static final String SAMPLE_CHANNEL_PROPERTIES = String.format("UDP(%s)", SAMPLE_CHANNEL_PROPERTY);
 
     static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s", CLUSTER_NAME);
 
@@ -90,21 +86,12 @@ public class JGroupsComponentTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(MESSAGE);
 
         // When
-        Message message = new Message(null, MESSAGE);
+        Message message = new ObjectMessage(null, MESSAGE);
         message.setSrc(null);
         clientChannel.send(message);
 
         // Then
         mockEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void shouldConfigureChannelWithProperties() {
-        // When
-        JGroupsEndpoint endpoint = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI, JGroupsEndpoint.class);
-
-        // Then
-        assertTrue(endpoint.getResolvedChannel().getProperties().contains(SAMPLE_CHANNEL_PROPERTY));
     }
 
     @Test
