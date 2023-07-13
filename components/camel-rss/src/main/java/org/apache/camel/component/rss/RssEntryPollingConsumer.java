@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.Collections;
-
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
