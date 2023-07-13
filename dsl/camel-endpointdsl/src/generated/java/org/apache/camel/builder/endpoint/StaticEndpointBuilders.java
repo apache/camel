@@ -291,6 +291,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -315,6 +317,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -2349,6 +2353,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -2373,6 +2379,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4455,6 +4463,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path type:resourceUri
      * @return the dsl builder
@@ -4480,6 +4490,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4603,6 +4615,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -4627,6 +4641,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4969,6 +4985,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: queryString (required)
      * BigQuery standard SQL query
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path projectId:queryString
      * @return the dsl builder
@@ -4992,6 +5010,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: queryString (required)
      * BigQuery standard SQL query
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -7887,6 +7907,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -7911,6 +7933,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8026,6 +8050,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8050,6 +8076,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8077,6 +8105,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8101,6 +8131,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8128,6 +8160,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8152,6 +8186,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8179,6 +8215,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8203,6 +8241,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9223,6 +9263,8 @@ public class StaticEndpointBuilders {
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path languageName:resourceUri
      * @return the dsl builder
@@ -9251,6 +9293,8 @@ public class StaticEndpointBuilders {
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10074,6 +10118,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -10098,6 +10144,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10125,6 +10173,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -10149,6 +10199,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11644,6 +11696,8 @@ public class StaticEndpointBuilders {
      * lookup the configuration file in the registry. bean will call a method on
      * a bean to be used as the configuration. For bean you can specify the
      * method name after dot, eg bean:myBean.myMethod
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path configurationName
      * @return the dsl builder
@@ -11670,6 +11724,8 @@ public class StaticEndpointBuilders {
      * lookup the configuration file in the registry. bean will call a method on
      * a bean to be used as the configuration. For bean you can specify the
      * method name after dot, eg bean:myBean.myMethod
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11970,6 +12026,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -11994,6 +12052,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12322,6 +12382,8 @@ public class StaticEndpointBuilders {
      * Path parameter: path (required)
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path path
      * @return the dsl builder
@@ -12343,6 +12405,8 @@ public class StaticEndpointBuilders {
      * Path parameter: path (required)
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13371,6 +13435,8 @@ public class StaticEndpointBuilders {
      * Path parameter: query (required)
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path query
      * @return the dsl builder
@@ -13392,6 +13458,8 @@ public class StaticEndpointBuilders {
      * Path parameter: query (required)
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13414,7 +13482,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>sql-stored:template</code>
      * 
      * Path parameter: template (required)
-     * Sets the StoredProcedure template to perform
+     * Sets the stored procedure template to perform. You can externalize the
+     * template by using file: or classpath: as prefix and specify the location
+     * of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path template
      * @return the dsl builder
@@ -13434,7 +13506,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>sql-stored:template</code>
      * 
      * Path parameter: template (required)
-     * Sets the StoredProcedure template to perform
+     * Sets the stored procedure template to perform. You can externalize the
+     * template by using file: or classpath: as prefix and specify the location
+     * of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13701,6 +13777,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -13725,6 +13803,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14264,6 +14344,8 @@ public class StaticEndpointBuilders {
      * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -14286,6 +14368,8 @@ public class StaticEndpointBuilders {
      * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14313,6 +14397,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -14337,6 +14423,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

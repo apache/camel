@@ -389,6 +389,8 @@ public interface ValidatorEndpointBuilderFactory {
          * URL to a local resource on the classpath, or a reference to lookup a
          * bean in the Registry, or a full URL to a remote resource or resource
          * on the file system which contains the XSD to validate against.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path resourceUri
          * @return the dsl builder
@@ -410,6 +412,8 @@ public interface ValidatorEndpointBuilderFactory {
          * URL to a local resource on the classpath, or a reference to lookup a
          * bean in the Registry, or a full URL to a remote resource or resource
          * on the file system which contains the XSD to validate against.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

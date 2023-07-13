@@ -719,6 +719,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (!baseDesc.endsWith(".")) {
             baseDescBuilder.append(".");
         }
+        if (option.isSupportFileReference()) {
+            baseDescBuilder.append("\n");
+            baseDescBuilder.append(
+                    "\nThis option can also be loaded from an existing file, by prefixing with file: or classpath: followed by the location of the file.");
+        }
         baseDescBuilder.append("\n@@REPLACE_ME@@");
         if (option.isMultiValue()) {
             baseDescBuilder.append("\nThe option is multivalued, and you can use the ")

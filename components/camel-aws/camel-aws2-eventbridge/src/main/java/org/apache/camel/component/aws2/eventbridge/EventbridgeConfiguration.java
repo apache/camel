@@ -50,6 +50,7 @@ public class EventbridgeConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
     @UriParam
+    @Metadata(supportFileReference = true)
     private String eventPatternFile;
     @UriParam(defaultValue = "false")
     private boolean overrideEndpoint;

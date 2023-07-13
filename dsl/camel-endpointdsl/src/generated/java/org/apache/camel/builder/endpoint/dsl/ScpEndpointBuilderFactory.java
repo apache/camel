@@ -228,6 +228,9 @@ public interface ScpEndpointBuilderFactory {
          * verification. You can prefix with classpath: to load the file from
          * classpath instead of file system.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security

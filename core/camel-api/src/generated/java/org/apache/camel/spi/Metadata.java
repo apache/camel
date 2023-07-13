@@ -149,4 +149,10 @@ public @interface Metadata {
      * </pre>
      */
     String[] applicableFor() default {};
+
+    /**
+     * Whether the option can refer to a file by using file: or classpath: as prefix and specify the location of the
+     * file.
+     */
+    boolean supportFileReference() default false;
 }

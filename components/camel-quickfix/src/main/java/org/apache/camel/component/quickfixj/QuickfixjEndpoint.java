@@ -59,7 +59,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
     @UriPath
-    @Metadata(required = true)
+    @Metadata(required = true, supportFileReference = true)
     private String configurationName;
     @UriParam
     private String sessionID;

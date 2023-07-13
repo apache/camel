@@ -59,7 +59,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     @Metadata(required = false, defaultValue = "delim")
     private FlatpackType type;
     @UriPath
-    @Metadata(required = true)
+    @Metadata(required = true, supportFileReference = true)
     private String resourceUri;
 
     @UriParam(defaultValue = "true")

@@ -69,7 +69,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private String propertiesRef;
     @Metadata
     private Map properties;
-    @Metadata
+    @Metadata(supportFileReference = true)
     private String propertiesFile;
     @Metadata(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;

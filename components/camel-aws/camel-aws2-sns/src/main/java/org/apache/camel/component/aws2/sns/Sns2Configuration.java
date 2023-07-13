@@ -63,6 +63,7 @@ public class Sns2Configuration implements Cloneable {
     @UriParam
     private String subject;
     @UriParam
+    @Metadata(supportFileReference = true)
     private String policy;
     @UriParam
     private String messageStructure;

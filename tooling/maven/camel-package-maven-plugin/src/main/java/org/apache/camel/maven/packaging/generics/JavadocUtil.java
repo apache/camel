@@ -67,6 +67,10 @@ public final class JavadocUtil {
                         descSb.append(" <strong>deprecated</strong>");
                     }
                     descSb.append("\n").append(option.getDescription());
+                    if (option.isSupportFileReference()) {
+                        descSb.append(
+                                "\nThis option can also be loaded from an existing file, by prefixing with file: or classpath: followed by the location of the file.");
+                    }
                     if (option.getDefaultValue() != null) {
                         descSb.append("\nDefault value: ").append(option.getDefaultValue());
                     }

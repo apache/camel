@@ -20,6 +20,7 @@ import java.net.URI;
 import java.security.KeyPair;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -36,12 +37,14 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
     @UriParam(label = "security", secret = true)
+    @Metadata(supportFileReference = true)
     private String knownHostsUri;
     @UriParam(label = "security", secret = true)
     private byte[] knownHosts;
     @UriParam(label = "security", secret = true)
     private String privateKeyFile;
     @UriParam(label = "security", secret = true)
+    @Metadata(supportFileReference = true)
     private String privateKeyUri;
     @UriParam(label = "security", secret = true)
     private byte[] privateKey;

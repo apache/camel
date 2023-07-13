@@ -48,7 +48,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"
                            + " or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.")
-    @Metadata(required = true)
+    @Metadata(required = true, supportFileReference = true)
     private String resourceUri;
     @UriParam(defaultValue = XMLConstants.W3C_XML_SCHEMA_NS_URI, label = "advanced",
               description = "Configures the W3C XML Schema Namespace URI.")

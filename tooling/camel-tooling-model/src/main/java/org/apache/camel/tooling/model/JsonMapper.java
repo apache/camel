@@ -457,6 +457,7 @@ public final class JsonMapper {
         option.setDescription(mp.getString("description"));
         option.setGetterMethod(mp.getString("getterMethod"));
         option.setSetterMethod(mp.getString("setterMethod"));
+        option.setSupportFileReference(mp.getBooleanOrDefault("supportFileReference", false));
     }
 
     private static void parseGroup(JsonObject mp, MainGroupModel option) {
@@ -533,6 +534,10 @@ public final class JsonMapper {
         prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
         prop.put("defaultValue", option.getDefaultValue());
+        if (option.isSupportFileReference()) {
+            // only include if supported to not regen all files
+            prop.put("supportFileReference", option.isSupportFileReference());
+        }
         prop.put("asPredicate", option.isAsPredicate());
         prop.put("configurationClass", option.getConfigurationClass());
         prop.put("configurationField", option.getConfigurationField());

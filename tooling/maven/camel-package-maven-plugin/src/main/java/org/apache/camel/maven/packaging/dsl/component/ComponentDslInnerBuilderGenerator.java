@@ -95,6 +95,11 @@ public final class ComponentDslInnerBuilderGenerator {
         if (!desc.endsWith(".")) {
             desc += ".";
         }
+        if (componentOptionModel.isSupportFileReference()) {
+            desc += "\n";
+            desc += "\nThis option can also be loaded from an existing file, by prefixing with file: or classpath: followed by the location of the file.";
+        }
+
         desc += "\n";
         desc += "\nThe option is a: <code>" + JavadocHelper.xmlEncode(componentOptionModel.getJavaType()) + "</code> type.";
         desc += "\n";

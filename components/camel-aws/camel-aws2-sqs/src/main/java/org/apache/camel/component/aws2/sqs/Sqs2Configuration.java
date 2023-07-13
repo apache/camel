@@ -107,6 +107,7 @@ public class Sqs2Configuration implements Cloneable {
     @UriParam(label = "queue")
     private Integer receiveMessageWaitTimeSeconds;
     @UriParam(label = "queue")
+    @Metadata(supportFileReference = true)
     private String policy;
     @UriParam(label = "queue")
     private String queueUrl;

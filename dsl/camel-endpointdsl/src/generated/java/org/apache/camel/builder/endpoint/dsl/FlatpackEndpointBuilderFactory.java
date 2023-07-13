@@ -1437,6 +1437,8 @@ public interface FlatpackEndpointBuilderFactory {
          * Path parameter: resourceUri (required)
          * URL for loading the flatpack mapping file from classpath or file
          * system
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path type:resourceUri
          * @return the dsl builder
@@ -1462,6 +1464,8 @@ public interface FlatpackEndpointBuilderFactory {
          * Path parameter: resourceUri (required)
          * URL for loading the flatpack mapping file from classpath or file
          * system
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

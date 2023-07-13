@@ -43,16 +43,16 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     private CallableStatementWrapperFactory wrapperFactory;
     private JdbcTemplate jdbcTemplate;
 
-    @UriPath(description = "Sets the StoredProcedure template to perform")
-    @Metadata(required = true)
+    @UriPath(description = "Sets the stored procedure template to perform. You can externalize the template by using file: or classpath: as prefix and specify the location of the file.")
+    @Metadata(required = true, supportFileReference = true)
     private String template;
     @UriParam(description = "Sets the DataSource to use to communicate with the database.")
     private DataSource dataSource;
     @UriParam(description = "Enables or disables batch mode")
     private boolean batch;
-    @UriParam(description = "Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.")
+    @UriParam(description = "Whether to use the message body as the stored procedure template and then headers for parameters. If this option is enabled then the template in the uri is not used.")
     private boolean useMessageBodyForTemplate;
-    @UriParam(description = "If set, will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing")
+    @UriParam(description = "If set, will ignore the results of the stored procedure template and use the existing IN message as the OUT message for the continuation of processing")
     private boolean noop;
     @UriParam(description = "Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored"
                             + " in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header"

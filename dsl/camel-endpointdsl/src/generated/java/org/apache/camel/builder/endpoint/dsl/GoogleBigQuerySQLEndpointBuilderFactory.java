@@ -185,6 +185,8 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * Path parameter: queryString (required)
          * BigQuery standard SQL query
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path projectId:queryString
          * @return the dsl builder
@@ -207,6 +209,8 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * Path parameter: queryString (required)
          * BigQuery standard SQL query
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

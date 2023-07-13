@@ -35,7 +35,7 @@ public class MyBatisComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private SqlSessionFactory sqlSessionFactory;
-    @Metadata(defaultValue = "SqlMapConfig.xml")
+    @Metadata(defaultValue = "SqlMapConfig.xml", supportFileReference = true)
     private String configurationUri = "SqlMapConfig.xml";
 
     @Override

@@ -387,6 +387,9 @@ public interface ElasticsearchEndpointBuilderFactory {
          * loaded by default from classpath, but you can prefix with classpath:,
          * file:, or http: to load the resource from different systems.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security

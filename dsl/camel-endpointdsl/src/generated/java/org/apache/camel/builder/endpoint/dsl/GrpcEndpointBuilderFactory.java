@@ -444,6 +444,9 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The X.509 certificate chain file resource in PEM format link.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -472,6 +475,9 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file resource in PEM format link.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -524,6 +530,9 @@ public interface GrpcEndpointBuilderFactory {
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -539,6 +548,9 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1021,6 +1033,9 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The X.509 certificate chain file resource in PEM format link.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -1049,6 +1064,9 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file resource in PEM format link.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1101,6 +1119,9 @@ public interface GrpcEndpointBuilderFactory {
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -1116,6 +1137,9 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1407,6 +1431,9 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The X.509 certificate chain file resource in PEM format link.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -1435,6 +1462,9 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file resource in PEM format link.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1486,6 +1516,9 @@ public interface GrpcEndpointBuilderFactory {
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -1501,6 +1534,9 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

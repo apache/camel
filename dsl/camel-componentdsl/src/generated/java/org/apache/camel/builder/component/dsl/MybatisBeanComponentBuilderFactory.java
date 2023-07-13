@@ -56,6 +56,9 @@ public interface MybatisBeanComponentBuilderFactory {
          * Location of MyBatis xml configuration file. The default value is:
          * SqlMapConfig.xml loaded from the classpath.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SqlMapConfig.xml

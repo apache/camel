@@ -2254,6 +2254,9 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts file (loaded from classpath by default), so that
          * the SFTP endpoint can do host key verification.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -2361,6 +2364,9 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file (loaded from classpath by default) so that
          * the SFTP endpoint can do private key verification.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4117,6 +4123,9 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts file (loaded from classpath by default), so that
          * the SFTP endpoint can do host key verification.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -4224,6 +4233,9 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file (loaded from classpath by default) so that
          * the SFTP endpoint can do private key verification.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -5620,6 +5632,9 @@ public interface SftpEndpointBuilderFactory {
          * Sets the known_hosts file (loaded from classpath by default), so that
          * the SFTP endpoint can do host key verification.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
@@ -5727,6 +5742,9 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file (loaded from classpath by default) so that
          * the SFTP endpoint can do private key verification.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

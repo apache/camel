@@ -78,6 +78,24 @@ public interface HazelcastSetEndpointBuilderFactory {
             return this;
         }
         /**
+         * Hazelcast configuration file.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hazelcastConfigUri the value to set
+         * @return the dsl builder
+         */
+        default HazelcastSetEndpointConsumerBuilder hazelcastConfigUri(
+                String hazelcastConfigUri) {
+            doSetProperty("hazelcastConfigUri", hazelcastConfigUri);
+            return this;
+        }
+        /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
@@ -300,6 +318,24 @@ public interface HazelcastSetEndpointBuilderFactory {
             return this;
         }
         /**
+         * Hazelcast configuration file.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hazelcastConfigUri the value to set
+         * @return the dsl builder
+         */
+        default HazelcastSetEndpointProducerBuilder hazelcastConfigUri(
+                String hazelcastConfigUri) {
+            doSetProperty("hazelcastConfigUri", hazelcastConfigUri);
+            return this;
+        }
+        /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
@@ -454,6 +490,24 @@ public interface HazelcastSetEndpointBuilderFactory {
         default HazelcastSetEndpointBuilder defaultOperation(
                 String defaultOperation) {
             doSetProperty("defaultOperation", defaultOperation);
+            return this;
+        }
+        /**
+         * Hazelcast configuration file.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param hazelcastConfigUri the value to set
+         * @return the dsl builder
+         */
+        default HazelcastSetEndpointBuilder hazelcastConfigUri(
+                String hazelcastConfigUri) {
+            doSetProperty("hazelcastConfigUri", hazelcastConfigUri);
             return this;
         }
         /**

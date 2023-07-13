@@ -58,6 +58,7 @@ public class ElasticsearchConfiguration {
     @UriParam(label = "security")
     private boolean enableSSL;
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String certificatePath;
     @UriParam
     private boolean useScroll;

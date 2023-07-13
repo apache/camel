@@ -48,6 +48,7 @@ public abstract class BaseOptionModel {
     protected String configurationField;
     protected String description;
     protected String nestedType;  // optional and currently only used by configurer
+    protected boolean supportFileReference;
 
     // todo: move this as a helper method
     protected boolean newGroup; // special for documentation rendering
@@ -274,6 +275,14 @@ public abstract class BaseOptionModel {
 
     public void setNestedType(String nestedType) {
         this.nestedType = nestedType;
+    }
+
+    public boolean isSupportFileReference() {
+        return supportFileReference;
+    }
+
+    public void setSupportFileReference(boolean supportFileReference) {
+        this.supportFileReference = supportFileReference;
     }
 
     public String getShortGroup() {
