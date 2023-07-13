@@ -179,7 +179,12 @@ public final class ReflectionHelper {
 
     public static void setField(Field f, Object instance, Object value) {
         try {
-            boolean oldAccessible = f.canAccess(instance);
+            boolean oldAccessible = false;
+            try {
+                oldAccessible = f.canAccess(instance);
+            } catch (Exception e) {
+                // ignore
+            }
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
                 f.setAccessible(true);
@@ -195,7 +200,12 @@ public final class ReflectionHelper {
 
     public static Object getField(Field f, Object instance) {
         try {
-            boolean oldAccessible = f.canAccess(instance);
+            boolean oldAccessible = false;
+            try {
+                oldAccessible = f.canAccess(instance);
+            } catch (Exception e) {
+                // ignore
+            }
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
                 f.setAccessible(true);
