@@ -32,6 +32,10 @@ The strategy has the following options:
 | enabled | true
 | Whether stream caching is enabled
 
+| allowClasses | | To filter stream caching of a given set of allowed/denied classes. By default, all classes that are `java.io.InputStream` is allowed. Multiple class names can be separated by comma.
+
+| denyClasses | | To filter stream caching of a given set of allowed/denied classes. By default, all classes that are `java.io.InputStream` is allowed. Multiple class names can be separated by comma.
+
 | spoolEnabled | false
 | Whether spool to disk is enabled
 
