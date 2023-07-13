@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 119 options, which are listed below.
+The camel.main supports 121 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -120,8 +120,10 @@ The camel.main supports 119 options, which are listed below.
 | *camel.main.startupRecorder{zwsp}Profile* | To use a specific Java Flight Recorder profile configuration, such as default or profile. The default is default. | default | String
 | *camel.main.startupRecorder{zwsp}Recording* | To enable Java Flight Recorder to start a recording and automatic dump the recording to disk after startup is complete. This requires that camel-jfr is on the classpath, and to enable this option. | false | boolean
 | *camel.main.startupSummaryLevel* | Controls the level of information logged during startup (and shutdown) of CamelContext. | Default | StartupSummaryLevel
+| *camel.main.streamCachingAllow{zwsp}Classes* | To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream is allowed. Multiple class names can be separated by comma. |  | String
 | *camel.main.streamCachingAny{zwsp}SpoolRules* | Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true. | false | boolean
 | *camel.main.streamCachingBuffer{zwsp}Size* | Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096. |  | int
+| *camel.main.streamCachingDeny{zwsp}Classes* | To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream is allowed. Multiple class names can be separated by comma. |  | String
 | *camel.main.streamCaching{zwsp}Enabled* | Sets whether stream caching is enabled or not. While stream types (like StreamSource, InputStream and Reader) are commonly used in messaging for performance reasons, they also have an important drawback: they can only be read once. In order to be able to work with message content multiple times, the stream needs to be cached. Streams are cached in memory only (by default). If streamCachingSpoolEnabled=true, then, for large stream messages (over 128 KB by default) will be cached in a temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer necessary. Default is true. | true | boolean
 | *camel.main.streamCachingRemove{zwsp}SpoolDirectoryWhenStopping* | Whether to remove stream caching temporary directory when stopping. This option is default true. | true | boolean
 | *camel.main.streamCachingSpool{zwsp}Cipher* | Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted. |  | String

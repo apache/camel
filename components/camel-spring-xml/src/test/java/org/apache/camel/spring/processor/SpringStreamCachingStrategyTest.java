@@ -34,11 +34,16 @@ public class SpringStreamCachingStrategyTest extends SpringTestSupport {
 
     @Test
     public void testStreamCaching() {
+        context.getStreamCachingStrategy().start();
+
         assertTrue(context.getStreamCachingStrategy().isEnabled());
         assertEquals(normalizePath("target/cachedir"),
                 normalizePath(context.getStreamCachingStrategy().getSpoolDirectory().toString()));
         assertEquals(Integer.valueOf(4096).intValue(), context.getStreamCachingStrategy().getBufferSize());
         assertEquals(Long.valueOf(8192).longValue(), context.getStreamCachingStrategy().getSpoolThreshold());
+        assertEquals("java.io.ByteArrayInputStream",
+                context.getStreamCachingStrategy().getAllowClasses().iterator().next().getName());
+        assertEquals("java.io.Reader", context.getStreamCachingStrategy().getDenyClasses().iterator().next().getName());
     }
 
 }

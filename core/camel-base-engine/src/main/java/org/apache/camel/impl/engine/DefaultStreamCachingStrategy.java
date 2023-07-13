@@ -19,7 +19,10 @@ package org.apache.camel.impl.engine;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -44,6 +47,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     private CamelContext camelContext;
     private boolean enabled;
+    private String allowClassNames;
+    private String denyClassNames;
+    private Collection<Class<?>> allowClasses;
+    private Collection<Class<?>> denyClasses;
     private boolean spoolEnabled;
     private File spoolDirectory;
     private transient String spoolDirectoryName = "${java.io.tmpdir}/camel/camel-tmp-#uuid#";
@@ -75,6 +82,34 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public Collection<Class<?>> getAllowClasses() {
+        return allowClasses;
+    }
+
+    public void setAllowClasses(Class<?>... allowClasses) {
+        this.allowClasses = List.of(allowClasses);
+    }
+
+    @Override
+    public void setAllowClasses(String names) {
+        this.allowClassNames = names;
+    }
+
+    @Override
+    public Collection<Class<?>> getDenyClasses() {
+        return denyClasses;
+    }
+
+    public void setDenyClasses(Class<?>... denyClasses) {
+        this.denyClasses = List.of(denyClasses);
+    }
+
+    @Override
+    public void setDenyClasses(String names) {
+        this.denyClassNames = names;
     }
 
     @Override
@@ -223,7 +258,27 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         // try convert to stream cache
         Object body = message.getBody();
         if (body != null) {
-            cache = camelContext.getTypeConverter().convertTo(StreamCache.class, message.getExchange(), body);
+            boolean allowed = allowClasses == null && denyClasses == null;
+            if (!allowed) {
+                Class<?> source = body.getClass();
+                if (denyClasses != null && allowClasses != null) {
+                    // deny takes precedence
+                    allowed = !isAssignableFrom(source, denyClasses);
+                    if (allowed) {
+                        allowed = isAssignableFrom(source, allowClasses);
+                    }
+                } else if (denyClasses != null) {
+                    allowed = !isAssignableFrom(source, denyClasses);
+                } else {
+                    allowed = isAssignableFrom(source, allowClasses);
+                }
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Cache stream from class: {} is {}", source, allowed ? "allowed" : "denied");
+                }
+            }
+            if (allowed) {
+                cache = camelContext.getTypeConverter().convertTo(StreamCache.class, message.getExchange(), body);
+            }
         }
         if (cache != null) {
             if (LOG.isTraceEnabled()) {
@@ -242,6 +297,15 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             }
         }
         return cache;
+    }
+
+    protected static boolean isAssignableFrom(Class<?> source, Collection<Class<?>> targets) {
+        for (Class<?> target : targets) {
+            if (target.isAssignableFrom(source)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected String resolveSpoolDirectory(String path) {
@@ -286,6 +350,27 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         if (!enabled) {
             LOG.debug("StreamCaching is not enabled");
             return;
+        }
+
+        if (allowClassNames != null) {
+            if (allowClasses == null) {
+                allowClasses = new ArrayList<>();
+            }
+            for (String name : allowClassNames.split(",")) {
+                name = name.trim();
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name);
+                allowClasses.add(clazz);
+            }
+        }
+        if (denyClassNames != null) {
+            if (denyClasses == null) {
+                denyClasses = new ArrayList<>();
+            }
+            for (String name : denyClassNames.split(",")) {
+                name = name.trim();
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name);
+                denyClasses.add(clazz);
+            }
         }
 
         if (spoolUsedHeapMemoryThreshold > 99) {

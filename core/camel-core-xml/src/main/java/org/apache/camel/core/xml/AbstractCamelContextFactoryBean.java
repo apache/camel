@@ -751,6 +751,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // stream-caching is default enabled
             getContext().getStreamCachingStrategy().setEnabled(true);
         }
+        String allowClasses = CamelContextHelper.parseText(getContext(), streamCaching.getAllowClasses());
+        if (allowClasses != null) {
+            getContext().getStreamCachingStrategy().setAllowClasses(allowClasses);
+        }
+        String denyClasses = CamelContextHelper.parseText(getContext(), streamCaching.getDenyClasses());
+        if (denyClasses != null) {
+            getContext().getStreamCachingStrategy().setDenyClasses(denyClasses);
+        }
         Boolean spoolEnabled = CamelContextHelper.parseBoolean(getContext(), streamCaching.getSpoolEnabled());
         if (spoolEnabled != null) {
             getContext().getStreamCachingStrategy().setSpoolEnabled(spoolEnabled);
