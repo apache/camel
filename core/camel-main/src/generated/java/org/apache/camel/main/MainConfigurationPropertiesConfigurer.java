@@ -213,10 +213,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StartupRecorderRecording": target.setStartupRecorderRecording(property(camelContext, boolean.class, value)); return true;
         case "startupsummarylevel":
         case "StartupSummaryLevel": target.setStartupSummaryLevel(property(camelContext, org.apache.camel.StartupSummaryLevel.class, value)); return true;
+        case "streamcachingallowclasses":
+        case "StreamCachingAllowClasses": target.setStreamCachingAllowClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": target.setStreamCachingAnySpoolRules(property(camelContext, boolean.class, value)); return true;
         case "streamcachingbuffersize":
         case "StreamCachingBufferSize": target.setStreamCachingBufferSize(property(camelContext, int.class, value)); return true;
+        case "streamcachingdenyclasses":
+        case "StreamCachingDenyClasses": target.setStreamCachingDenyClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "streamcachingenabled":
         case "StreamCachingEnabled": target.setStreamCachingEnabled(property(camelContext, boolean.class, value)); return true;
         case "streamcachingremovespooldirectorywhenstopping":
@@ -456,10 +460,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StartupRecorderRecording": return boolean.class;
         case "startupsummarylevel":
         case "StartupSummaryLevel": return org.apache.camel.StartupSummaryLevel.class;
+        case "streamcachingallowclasses":
+        case "StreamCachingAllowClasses": return java.lang.String.class;
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return boolean.class;
         case "streamcachingbuffersize":
         case "StreamCachingBufferSize": return int.class;
+        case "streamcachingdenyclasses":
+        case "StreamCachingDenyClasses": return java.lang.String.class;
         case "streamcachingenabled":
         case "StreamCachingEnabled": return boolean.class;
         case "streamcachingremovespooldirectorywhenstopping":
@@ -700,10 +708,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StartupRecorderRecording": return target.isStartupRecorderRecording();
         case "startupsummarylevel":
         case "StartupSummaryLevel": return target.getStartupSummaryLevel();
+        case "streamcachingallowclasses":
+        case "StreamCachingAllowClasses": return target.getStreamCachingAllowClasses();
         case "streamcachinganyspoolrules":
         case "StreamCachingAnySpoolRules": return target.isStreamCachingAnySpoolRules();
         case "streamcachingbuffersize":
         case "StreamCachingBufferSize": return target.getStreamCachingBufferSize();
+        case "streamcachingdenyclasses":
+        case "StreamCachingDenyClasses": return target.getStreamCachingDenyClasses();
         case "streamcachingenabled":
         case "StreamCachingEnabled": return target.isStreamCachingEnabled();
         case "streamcachingremovespooldirectorywhenstopping":
