@@ -450,19 +450,6 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
 
         /**
-         * The Raft log size in bytes.
-         * 
-         * The option is a: {@code int} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code JGROUPSRAFT_LOG_SIZE_BYTE}.
-         */
-        public String jgroupsraftLogSizeByte() {
-            return "JGROUPSRAFT_LOG_SIZE_BYTE";
-        }
-
-        /**
          * The Raft id of the node.
          * 
          * The option is a: {@code String} type.

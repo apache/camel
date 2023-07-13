@@ -223,8 +223,8 @@ public interface QuartzComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether or not the scheduler should be auto started. This options is
-         * default true.
+         * Whether the scheduler should be auto started. This option is default
+         * true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
