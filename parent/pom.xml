@@ -67,9 +67,9 @@
         <atlasmap-version>2.5.2</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmosphere-version>3.0.3</atmosphere-version>
-        <avro-version>1.11.1</avro-version>
-        <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
-        <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
+        <avro-version>1.11.2</avro-version>
+        <avro-ipc-jetty-version>1.11.2</avro-ipc-jetty-version>
+        <avro-ipc-netty-version>1.11.2</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
         <aws-java-sdk2-version>2.20.102</aws-java-sdk2-version>
         <aws-xray-version>2.14.0</aws-xray-version>
