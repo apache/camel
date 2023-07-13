@@ -34,7 +34,6 @@
     <properties>
         <firstVersion>3.21</firstVersion>
         <supportLevel>Experimental</supportLevel>
-        <zeebe.version>8.1.9</zeebe.version>
     </properties>
 
     <dependencies>
