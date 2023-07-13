@@ -373,7 +373,7 @@
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <okclient-version>3.14.9</okclient-version>
-        <olingo2-version>2.0.11</olingo2-version>
+        <olingo2-version>2.0.12</olingo2-version>
         <olingo4-version>4.9.0</olingo4-version>
         <ognl-version>3.3.4</ognl-version>
         <openapi-generator>6.6.0</openapi-generator>
