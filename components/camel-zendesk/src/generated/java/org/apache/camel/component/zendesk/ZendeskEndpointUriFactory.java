@@ -21,7 +21,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(142);
+        Set<String> props = new HashSet<>(149);
         props.add("active");
         props.add("article");
         props.add("articleAttachments");
@@ -41,10 +41,13 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("category");
         props.add("categoryId");
         props.add("categoryId0");
+        props.add("categoryId1");
         props.add("category_id");
         props.add("comment");
         props.add("commentId");
         props.add("content");
+        props.add("contentTag");
+        props.add("contentTagId");
         props.add("contentType");
         props.add("delay");
         props.add("email");
@@ -54,6 +57,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("externalId");
         props.add("externalId0");
         props.add("externalId0s");
+        props.add("externalIds");
         props.add("field");
         props.add("file");
         props.add("fileName");
@@ -86,6 +90,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("methodName");
         props.add("monitorId");
         props.add("name");
+        props.add("namePrefix");
         props.add("newPassword");
         props.add("notifySubscribers");
         props.add("oauthToken");
@@ -101,6 +106,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("organization_membership_id");
         props.add("organizations");
         props.add("page");
+        props.add("pageSize");
         props.add("password");
         props.add("permissionGroup");
         props.add("pollStrategy");
@@ -121,6 +127,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("searchTerm");
         props.add("section");
         props.add("sectionId");
+        props.add("sectionId0");
         props.add("sendEmptyMessageWhenIdle");
         props.add("serverUrl");
         props.add("sortBy");

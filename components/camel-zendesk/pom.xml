@@ -160,7 +160,7 @@
                                             <replacement>triggerId0</replacement>
                                         </substitution>
                                         <substitution>
-                                            <method>createUploadArticle</method>
+                                            <method>createUploadArticle|showArticleTranslation</method>
                                             <argType>long</argType>
                                             <argName>articleId</argName>
                                             <replacement>articleId0</replacement>
@@ -188,6 +188,18 @@
                                             <argType>java.lang.String</argType>
                                             <argName>categoryId</argName>
                                             <replacement>categoryId0</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>showCategoryTranslation</method>
+                                            <argType>long</argType>
+                                            <argName>categoryId</argName>
+                                            <replacement>categoryId1</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>showSectionTranslation</method>
+                                            <argType>long</argType>
+                                            <argName>sectionId</argName>
+                                            <replacement>sectionId0</replacement>
                                         </substitution>
                                     </substitutions>
                                 </api>
