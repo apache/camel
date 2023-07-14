@@ -125,7 +125,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
                 .getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
 
         for (int i = 0; i < 10; i++) {
-            createFile(testPath(), i + "");
+            createFile(testPath(), String.valueOf(i));
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -135,32 +135,32 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file-watch://" + testPath())
+                fromF("file-watch://%s", testPath())
                         .routeId("watchAll")
                         .to("mock:watchAll");
 
-                from("file-watch://" + testPath() + "?events=CREATE&antInclude=*.txt")
+                fromF("file-watch://%s?events=CREATE&antInclude=*.txt", testPath())
                         .routeId("onlyTxtInRoot")
                         .to("mock:onlyTxtInRoot");
 
-                from("file-watch://" + testPath() + "?events=CREATE&antInclude=*/*.txt")
+                fromF("file-watch://%s?events=CREATE&antInclude=*/*.txt", testPath())
                         .routeId("onlyTxtInSubdirectory")
                         .to("mock:onlyTxtInSubdirectory");
 
-                from("file-watch://" + testPath() + "?events=CREATE&antInclude=**/*.txt")
+                fromF("file-watch://%s?events=CREATE&antInclude=**/*.txt", testPath())
                         .routeId("onlyTxtAnywhere")
                         .to("mock:onlyTxtAnywhere");
 
-                from("file-watch://" + testPath() + "?events=CREATE")
+                fromF("file-watch://%s?events=CREATE", testPath())
                         .to("mock:watchCreate");
 
-                from("file-watch://" + testPath() + "?events=MODIFY")
+                fromF("file-watch://%s?events=MODIFY", testPath())
                         .to("mock:watchModify");
 
-                from("file-watch://" + testPath() + "?events=DELETE,CREATE")
+                fromF("file-watch://%s?events=DELETE,CREATE", testPath())
                         .to("mock:watchDeleteOrCreate");
 
-                from("file-watch://" + testPath() + "?events=DELETE,MODIFY")
+                fromF("file-watch://%s?events=DELETE,MODIFY", testPath())
                         .to("mock:watchDeleteOrModify");
             }
         };

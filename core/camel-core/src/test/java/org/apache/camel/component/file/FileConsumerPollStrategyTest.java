@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.time.Duration;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,10 +67,8 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
 
         oneExchangeDone.matchesWaitTime();
 
-        // give file consumer a bit time
-        Thread.sleep(20);
-
-        assertTrue(event.startsWith("rollbackcommit"));
+        // give the file consumer a bit of time
+        Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertTrue(event.startsWith("rollbackcommit")));
     }
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
