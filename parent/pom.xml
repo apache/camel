@@ -420,7 +420,7 @@
         <roaster-version>2.28.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>4.9.7</rocketmq-version>
-        <rome-version>1.18.0</rome-version>
+        <rome-version>2.1.0</rome-version>
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.3</saxon-version>
         <scala-datasonnet-version>2.13.11</scala-datasonnet-version>
