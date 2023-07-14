@@ -384,28 +384,6 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
     }
 
-    /**
-     * Configures security vaults such as AWS, Azure, Google and Hashicorp.
-     */
-    protected void configureVault(CamelContext camelContext) throws Exception {
-        VaultConfiguration vc = camelContext.getVaultConfiguration();
-        if (vc == null) {
-            return;
-        }
-
-        if (vc.aws().isRefreshEnabled()) {
-            scheduleRefresh(camelContext, "aws-secret-refresh", vc.aws().getRefreshPeriod());
-        }
-
-        if (vc.gcp().isRefreshEnabled()) {
-            scheduleRefresh(camelContext, "gcp-secret-refresh", vc.gcp().getRefreshPeriod());
-        }
-
-        if (vc.azure().isRefreshEnabled()) {
-            scheduleRefresh(camelContext, "azure-secret-refresh", vc.azure().getRefreshPeriod());
-        }
-    }
-
     private void scheduleRefresh(CamelContext camelContext, String key, long period) throws Exception {
         final Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
                 .newInstance(key, Runnable.class);
@@ -642,8 +620,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         configureLifecycle(camelContext);
-
-        configureVault(camelContext);
 
         if (standalone) {
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
