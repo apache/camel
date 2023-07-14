@@ -1132,14 +1132,13 @@ public abstract class BaseMainSupport extends BaseService {
 
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
+        // and configure vault
+        DefaultConfigurationConfigurer.configureVault(camelContext);
     }
 
     /**
      * Main implementation may do some additional configuration of the {@link Registry} before it's used to
      * (re)configure Camel context.
-     *
-     * @param camelContext
-     * @param config
      */
     protected void preProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
     }
@@ -1147,9 +1146,6 @@ public abstract class BaseMainSupport extends BaseService {
     /**
      * Main implementation may do some additional configuration of the {@link Registry} after loading the routes, but
      * before the routes are started.
-     *
-     * @param camelContext
-     * @param config
      */
     protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
     }
