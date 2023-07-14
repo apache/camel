@@ -16,30 +16,39 @@
  */
 package org.apache.camel.component.file;
 
+import java.time.Duration;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerFileNameFilterTest extends ContextTestSupport {
+    private final String fileUri = fileUri();
+
+    @BeforeEach
+    void sendMessages() {
+        template.sendBodyAndHeader(fileUri, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri, "<customer>123</customer>", Exchange.FILE_NAME, "customer.xml");
+        template.sendBodyAndHeader(fileUri, "<book>Camel Rocks</book>", Exchange.FILE_NAME, "book.xml");
+        template.sendBodyAndHeader(fileUri, "Bye World", Exchange.FILE_NAME, "bye.txt");
+    }
 
     @Test
     public void testFileConsumer() throws Exception {
-        getMockEndpoint("mock:txt").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:txt");
+        mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(fileUri(), "<customer>123</customer>", Exchange.FILE_NAME, "customer.xml");
-        template.sendBodyAndHeader(fileUri(), "<book>Camel Rocks</book>", Exchange.FILE_NAME, "book.xml");
-        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
-
-        assertMockEndpointsSatisfied();
+        mockEndpoint.assertIsSatisfied(Duration.ofSeconds(2).toMillis());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&fileName=${file:onlyname.noext}.txt"))
                         .to("mock:txt");
             }
