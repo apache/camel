@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.spi.PooledObjectFactory;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,7 +74,8 @@ class PooledExchangeTest extends ContextTestSupport {
                 = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
         assertEquals(1, stat.getCreatedCounter());
         assertEquals(2, stat.getAcquiredCounter());
-        assertEquals(3, stat.getReleasedCounter());
+
+        Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertEquals(3, stat.getReleasedCounter()));
         assertEquals(0, stat.getDiscardedCounter());
     }
 
