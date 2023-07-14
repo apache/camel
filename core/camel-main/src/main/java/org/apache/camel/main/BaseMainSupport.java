@@ -388,73 +388,6 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
     }
 
-    /**
-     * Configures security vaults such as AWS, Azure, Google and Hashicorp.
-     */
-    protected void configureVault(CamelContext camelContext) throws Exception {
-        VaultConfiguration vc = camelContext.getVaultConfiguration();
-        if (vc == null) {
-            return;
-        }
-
-        if (vc.aws().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
-                    .getPeriodTaskResolver().newInstance("aws-secret-refresh", Runnable.class);
-            if (task.isPresent()) {
-                long period = vc.aws().getRefreshPeriod();
-                Runnable r = task.get();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-                }
-                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                    // refresh is enabled then we need to automatically enable context-reload as well
-                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                    camelContext.addService(reloader);
-                }
-                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
-                scheduler.schedulePeriodTask(r, period);
-            }
-        }
-
-        if (vc.gcp().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
-                    .getPeriodTaskResolver().newInstance("gcp-secret-refresh", Runnable.class);
-            if (task.isPresent()) {
-                long period = vc.gcp().getRefreshPeriod();
-                Runnable r = task.get();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-                }
-                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                    // refresh is enabled then we need to automatically enable context-reload as well
-                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                    camelContext.addService(reloader);
-                }
-                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
-                scheduler.schedulePeriodTask(r, period);
-            }
-        }
-
-        if (vc.azure().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
-                    .getPeriodTaskResolver().newInstance("azure-secret-refresh", Runnable.class);
-            if (task.isPresent()) {
-                long period = vc.azure().getRefreshPeriod();
-                Runnable r = task.get();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-                }
-                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                    // refresh is enabled then we need to automatically enable context-reload as well
-                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                    camelContext.addService(reloader);
-                }
-                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
-                scheduler.schedulePeriodTask(r, period);
-            }
-        }
-    }
-
     protected void autoconfigure(CamelContext camelContext) throws Exception {
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
@@ -690,8 +623,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         configureLifecycle(camelContext);
-
-        configureVault(camelContext);
 
         if (standalone) {
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
