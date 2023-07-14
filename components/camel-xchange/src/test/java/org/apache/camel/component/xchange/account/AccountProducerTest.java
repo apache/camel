@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeComponent;
 import org.apache.camel.component.xchange.XChangeTestSupport;
 import org.junit.jupiter.api.Test;
+import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.Wallet;
@@ -75,6 +76,7 @@ public class AccountProducerTest extends XChangeTestSupport {
 
     private boolean hasAPICredentials() {
         XChangeComponent component = context().getComponent("xchange", XChangeComponent.class);
-        return component.getXChange("binance").getExchangeSpecification().getApiKey() != null;
+        ExchangeSpecification exchangeSpecification = component.getXChange("binance").getExchangeSpecification();
+        return exchangeSpecification.getApiKey() != null;
     }
 }
