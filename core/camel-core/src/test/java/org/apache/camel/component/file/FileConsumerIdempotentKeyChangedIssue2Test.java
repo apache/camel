@@ -44,7 +44,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
 
         // wait a bit to allow the consumer to poll once and see a non-changed
         // file
-        Thread.sleep(50);
+        Thread.sleep(250);
 
         template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
 
