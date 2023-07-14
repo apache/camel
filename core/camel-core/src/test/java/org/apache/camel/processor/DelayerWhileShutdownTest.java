@@ -16,9 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,13 +30,20 @@ import org.junit.jupiter.api.Test;
  */
 public class DelayerWhileShutdownTest extends ContextTestSupport {
 
+    private final Phaser phaser = new Phaser(2);
+
+    @BeforeEach
+    void sendEarly() {
+        template.sendBody("seda:a", "Long delay");
+        template.sendBody("seda:b", "Short delay");
+    }
+
     @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Short delay");
 
-        template.sendBody("seda:a", "Long delay");
-        template.sendBody("seda:b", "Short delay");
+        phaser.awaitAdvanceInterruptibly(0, 5000, TimeUnit.SECONDS);
 
         assertMockEndpointsSatisfied();
     }
@@ -41,8 +52,8 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").delay(500).to("mock:result");
-                from("seda:b").delay(1).to("mock:result");
+                from("seda:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(1000).to("mock:result");
+                from("seda:b").process(e -> phaser.arriveAndAwaitAdvance()).delay(1).to("mock:result");
             }
         };
     }
