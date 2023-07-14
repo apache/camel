@@ -52,7 +52,8 @@ public class OperationVisitorTest {
                                                         + "        .name(\"param\")\n"
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
                                                         + "        .required(false)\n"
-                                                        + "      .endParam()}\n");
+                                                        + "      .endParam()\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -79,7 +80,8 @@ public class OperationVisitorTest {
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
                                                         + "        .required(false)\n"
                                                         + "      .endParam()\n"
-                                                        + "      .to(\"direct:rest1\")}\n");
+                                                        + "      .to(\"direct:rest1\")\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -106,7 +108,8 @@ public class OperationVisitorTest {
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
                                                         + "        .required(false)\n"
                                                         + "      .endParam()\n"
-                                                        + "      .to(\"direct:rest1\")}\n");
+                                                        + "      .to(\"direct:rest1\")\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -128,7 +131,8 @@ public class OperationVisitorTest {
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
                                                         + "        .defaultValue(\"default\")\n"
                                                         + "        .required(false)\n"
-                                                        + "      .endParam()}\n");
+                                                        + "      .endParam()\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -150,7 +154,8 @@ public class OperationVisitorTest {
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
                                                         + "        .allowableValues(\"one,two,three\")\n"
                                                         + "        .required(false)\n"
-                                                        + "      .endParam()}\n");
+                                                        + "      .endParam()\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -172,7 +177,8 @@ public class OperationVisitorTest {
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
                                                         + "        .dataType(\"integer\")\n"
                                                         + "        .required(false)\n"
-                                                        + "      .endParam()}\n");
+                                                        + "      .endParam()\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -191,7 +197,8 @@ public class OperationVisitorTest {
                                                         + "        .name(\"param\")\n"
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
                                                         + "        .required(false)\n"
-                                                        + "      .endParam()}\n");
+                                                        + "      .endParam()\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -217,7 +224,8 @@ public class OperationVisitorTest {
                                                         + "        .name(\"param\")\n"
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
                                                         + "        .required(false)\n"
-                                                        + "      .endParam()}\n");
+                                                        + "      .endParam()\n"
+                                                        + "    }\n");
     }
 
     @Test
@@ -248,7 +256,8 @@ public class OperationVisitorTest {
                                                         + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
                                                         + "        .required(false)\n"
                                                         + "      .endParam()\n"
-                                                        + "      .to(\"seda:my-operation\")}\n");
+                                                        + "      .to(\"seda:my-operation\")\n"
+                                                        + "    }\n");
     }
 
 }
