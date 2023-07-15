@@ -107,8 +107,13 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
     }
 
     private RedeliveryPolicy resolveRedeliveryPolicy(DeadLetterChannelDefinition definition, CamelContext camelContext) {
+        if (definition.hasRedeliveryPolicy() && definition.getRedeliveryPolicyRef() != null) {
+            throw new IllegalArgumentException(
+                    "Cannot have both redeliveryPolicy and redeliveryPolicyRef set at the same time.");
+        }
+
         RedeliveryPolicy answer = null;
-        RedeliveryPolicyDefinition def = definition.getRedeliveryPolicy();
+        RedeliveryPolicyDefinition def = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : null;
         if (def == null && definition.getRedeliveryPolicyRef() != null) {
             // ref may point to a definition
             def = lookupByNameAndType(definition.getRedeliveryPolicyRef(), RedeliveryPolicyDefinition.class);
