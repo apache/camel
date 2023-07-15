@@ -139,4 +139,37 @@ class ErrorHandlerTest extends YamlTestSupport {
             context.getErrorHandlerFactory() instanceof NoErrorHandlerDefinition
     }
 
+    def "error-handler (redelivery policy ref)"() {
+        setup:
+        loadRoutes """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                  - name: myPolicy
+                    type: org.apache.camel.processor.errorhandler.RedeliveryPolicy
+                    properties:
+                      maximumRedeliveries: 3
+                      logStackTrace: true
+                - error-handler:
+                    default-error-handler:
+                      useOriginalMessage: true 
+                      redelivery-policy-ref: myPolicy
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process:
+                          ref: "myFailingProcessor"
+            """
+
+        when:
+        context.start()
+        then:
+        with(context.getCamelContextExtension().getErrorHandlerFactory(), DefaultErrorHandlerDefinition) {
+            useOriginalMessage == "true"
+            hasRedeliveryPolicy() == false
+            redeliveryPolicyRef == "myPolicy"
+        }
+    }
+
+
 }
