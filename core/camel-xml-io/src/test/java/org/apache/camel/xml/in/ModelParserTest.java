@@ -68,11 +68,10 @@ public class ModelParserTest {
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> REST_XMLS
             = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
-    private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
-    private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
-    private static final List<String> BEANS_XMLS
-            = Arrays.asList("beansEmpty.xml", "beansWithProperties.xml", "beansWithSpringNS.xml");
-    private static final List<String> ROUTE_CONFIGURATION_XMLS = Arrays.asList("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
+    private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
+    private static final List<String> TEMPLATED_ROUTE_XMLS = Arrays.asList("barTemplatedRoute.xml");
+    private static final List<String> ROUTE_CONFIGURATION_XMLS
+            = Arrays.asList("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
