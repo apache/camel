@@ -72,7 +72,6 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
         }
     }
 
-
     @Test
     public void testRecipientList() throws InterruptedException, TimeoutException {
         for (int i = 0; i < 10; i++) {

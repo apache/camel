@@ -100,8 +100,13 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
     }
 
     private RedeliveryPolicy resolveRedeliveryPolicy(DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
+        if (definition.hasRedeliveryPolicy() && definition.getRedeliveryPolicyRef() != null) {
+            throw new IllegalArgumentException(
+                    "Cannot have both redeliveryPolicy and redeliveryPolicyRef set at the same time.");
+        }
+
         RedeliveryPolicy answer = null;
-        RedeliveryPolicyDefinition def = definition.getRedeliveryPolicy();
+        RedeliveryPolicyDefinition def = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : null;
         if (def != null) {
             answer = ErrorHandlerReifier.createRedeliveryPolicy(def, camelContext, null);
         }

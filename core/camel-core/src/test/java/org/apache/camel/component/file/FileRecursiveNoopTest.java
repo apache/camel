@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.concurrent.atomic.LongAdder;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
