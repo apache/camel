@@ -23,7 +23,6 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -67,11 +66,13 @@ public class ModelParserTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
     private static final List<String> REST_XMLS
-            = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
-    private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
-    private static final List<String> TEMPLATED_ROUTE_XMLS = Arrays.asList("barTemplatedRoute.xml");
+            = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
+    private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
+    private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
+    private static final List<String> BEANS_XMLS
+            = List.of("beansEmpty.xml", "beansWithProperties.xml", "beansWithSpringNS.xml");
     private static final List<String> ROUTE_CONFIGURATION_XMLS
-            = Arrays.asList("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
+            = List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
