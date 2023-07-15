@@ -58,6 +58,7 @@ public class ModelParserTest {
             = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = Arrays.asList("barTemplatedRoute.xml");
+    private static final List<String> ROUTE_CONFIGURATION_XMLS = Arrays.asList("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
     @Test
     public void testNoNamespace() throws Exception {
@@ -96,6 +97,7 @@ public class ModelParserTest {
                 boolean isRest = REST_XMLS.contains(path.getFileName().toString());
                 boolean isTemplate = TEMPLATE_XMLS.contains(path.getFileName().toString());
                 boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
+                boolean isConfiguration = ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                     assertNotNull(rests);
@@ -105,6 +107,9 @@ public class ModelParserTest {
                 } else if (isTemplatedRoute) {
                     TemplatedRoutesDefinition templatedRoutes = parser.parseTemplatedRoutesDefinition().orElse(null);
                     assertNotNull(templatedRoutes);
+                } else if (isConfiguration) {
+                    RouteConfigurationsDefinition configurations = parser.parseRouteConfigurationsDefinition().orElse(null);
+                    assertNotNull(configurations);
                 } else {
                     RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
                     assertNotNull(routes);
