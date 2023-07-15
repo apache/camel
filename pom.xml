@@ -183,18 +183,6 @@
             </releases>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <build>
         <defaultGoal>install</defaultGoal>
@@ -807,6 +795,18 @@
                     </releases>
                 </repository>
             </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>apache.snapshots</id>
+                    <url>https://repository.apache.org/snapshots/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
         <profile>
             <!-- The full profile contains mojos *not* essential for the quick build. -->
