@@ -164,7 +164,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
         context.start()
         then:
-        with(context.getCamelContextExtension().getErrorHandlerFactory(), DefaultErrorHandlerDefinition) {
+        with(context.getErrorHandlerFactory(), DefaultErrorHandlerDefinition) {
             useOriginalMessage == "true"
             hasRedeliveryPolicy() == false
             redeliveryPolicyRef == "myPolicy"
