@@ -126,7 +126,7 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         other.setRetryWhileRef(getRetryWhileRef());
         other.setUseOriginalBody(getUseOriginalBody());
         other.setUseOriginalMessage(getUseOriginalMessage());
-        if (getRedeliveryPolicy() != null) {
+        if (hasRedeliveryPolicy()) {
             other.setRedeliveryPolicy(getRedeliveryPolicy().copy());
         }
     }
@@ -393,6 +393,10 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
             redeliveryPolicy = createRedeliveryPolicy();
         }
         return redeliveryPolicy;
+    }
+
+    public boolean hasRedeliveryPolicy() {
+        return redeliveryPolicy != null;
     }
 
     /**
@@ -786,6 +790,17 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
      */
     public DefaultErrorHandlerDefinition onExceptionOccurredRef(String onExceptionOccurredRef) {
         setOnExceptionOccurredRef(onExceptionOccurredRef);
+        return this;
+    }
+
+    /**
+     * Sets a reference to a {@link RedeliveryPolicy} to be used for redelivery settings.
+     *
+     * @param  redeliveryPolicyRef the redelivrey policy reference
+     * @return                     the builder
+     */
+    public DefaultErrorHandlerDefinition redeliveryPolicyRef(String redeliveryPolicyRef) {
+        setRedeliveryPolicyRef(redeliveryPolicyRef);
         return this;
     }
 

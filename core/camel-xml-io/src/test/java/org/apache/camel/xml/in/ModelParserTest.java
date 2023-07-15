@@ -29,11 +29,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -43,7 +46,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModelParserTest {
 
@@ -198,6 +204,42 @@ public class ModelParserTest {
         Assertions.assertEquals(1, verb.getParams().size());
         ParamDefinition param = verb.getParams().get(0);
         Assertions.assertEquals(4, param.getAllowableValues().size());
+    }
+
+    @Test
+    public void testErrorHandler() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "errorHandlerConfiguration.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        RouteConfigurationsDefinition routes = parser.parseRouteConfigurationsDefinition().orElse(null);
+        assertNotNull(routes);
+        assertEquals(1, routes.getRouteConfigurations().size());
+
+        RouteConfigurationDefinition cfg = routes.getRouteConfigurations().get(0);
+        assertInstanceOf(DeadLetterChannelDefinition.class, cfg.getErrorHandler().getErrorHandlerType());
+        DeadLetterChannelDefinition dlc = (DeadLetterChannelDefinition) cfg.getErrorHandler().getErrorHandlerType();
+        assertEquals("mock:dead", dlc.getDeadLetterUri());
+        assertTrue(dlc.hasRedeliveryPolicy());
+        assertEquals("2", dlc.getRedeliveryPolicy().getMaximumRedeliveries());
+        assertEquals("123", dlc.getRedeliveryPolicy().getRedeliveryDelay());
+        assertEquals("false", dlc.getRedeliveryPolicy().getLogStackTrace());
+    }
+
+    @Test
+    public void testErrorHandlerRedeliveryPolicyRef() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "errorHandlerConfigurationRedeliveryPolicyRef.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        RouteConfigurationsDefinition routes = parser.parseRouteConfigurationsDefinition().orElse(null);
+        assertNotNull(routes);
+        assertEquals(1, routes.getRouteConfigurations().size());
+
+        RouteConfigurationDefinition cfg = routes.getRouteConfigurations().get(0);
+        assertInstanceOf(DeadLetterChannelDefinition.class, cfg.getErrorHandler().getErrorHandlerType());
+        DeadLetterChannelDefinition dlc = (DeadLetterChannelDefinition) cfg.getErrorHandler().getErrorHandlerType();
+        assertEquals("mock:dead", dlc.getDeadLetterUri());
+        assertFalse(dlc.hasRedeliveryPolicy());
+        assertEquals("myPolicy", dlc.getRedeliveryPolicyRef());
     }
 
     private Path getResourceFolder() {
