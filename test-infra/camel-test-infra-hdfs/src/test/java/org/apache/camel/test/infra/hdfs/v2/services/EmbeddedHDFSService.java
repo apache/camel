@@ -17,15 +17,14 @@
 
 package org.apache.camel.test.infra.hdfs.v2.services;
 
-import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContainerLocalHDFSService implements HDFSService, ContainerService<HDFSContainer> {
-    private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalHDFSService.class);
+public class EmbeddedHDFSService implements HDFSService {
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedHDFSService.class);
     private final HDFSContainer container;
 
-    public ContainerLocalHDFSService() {
+    public EmbeddedHDFSService() {
         container = new HDFSContainer();
     }
 
@@ -37,11 +36,6 @@ public class ContainerLocalHDFSService implements HDFSService, ContainerService<
     @Override
     public int getPort() {
         return container.getPort();
-    }
-
-    @Override
-    public HDFSContainer getContainer() {
-        return container;
     }
 
     @Override

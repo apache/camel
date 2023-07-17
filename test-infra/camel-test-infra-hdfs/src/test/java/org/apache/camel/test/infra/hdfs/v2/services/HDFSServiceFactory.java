@@ -54,7 +54,7 @@ public final class HDFSServiceFactory {
         static final HDFSService INSTANCE;
         static {
             SimpleTestServiceBuilder<HDFSService> instance = builder();
-            instance.addLocalMapping(() -> new SingletonHDFSService(new ContainerLocalHDFSService(), "hdfs"));
+            instance.addLocalMapping(() -> new SingletonHDFSService(new EmbeddedHDFSService(), "hdfs"));
             INSTANCE = instance.build();
         }
     }
