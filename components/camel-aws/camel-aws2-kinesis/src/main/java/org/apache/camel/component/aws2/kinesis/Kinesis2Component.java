@@ -45,7 +45,7 @@ public class Kinesis2Component extends DefaultComponent {
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
+        if (!configuration.isUseDefaultCredentialsProvider()
                 && !configuration.isUseProfileCredentialsProvider()
                 && configuration.getAmazonKinesisClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
