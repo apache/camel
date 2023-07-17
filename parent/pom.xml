@@ -383,7 +383,7 @@
         <opensearch-version>2.8.0</opensearch-version>
         <opensearch-testcontainers-version>2.0.0</opensearch-testcontainers-version>
         <openstack4j-version>3.11</openstack4j-version>
-        <opentelemetry-version>1.26.0</opentelemetry-version>
+        <opentelemetry-version>1.28.0</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.41.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
