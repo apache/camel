@@ -396,7 +396,7 @@
         <plc4x-version>0.10.0</plc4x-version>
         <pooled-jms-version>3.1.0</pooled-jms-version>
         <properties-maven-plugin-version>1.1.0</properties-maven-plugin-version>
-        <proto-google-common-protos-version>2.21.0</proto-google-common-protos-version>
+        <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.23.4</protobuf-version>
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
