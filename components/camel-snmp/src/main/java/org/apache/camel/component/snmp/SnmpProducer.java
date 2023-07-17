@@ -18,7 +18,6 @@ package org.apache.camel.component.snmp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
@@ -98,7 +97,9 @@ public class SnmpProducer extends DefaultProducer {
         super.doStop();
 
         try {
-            SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            if (this.usm != null) {
+                SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            }
         } finally {
             this.targetAddress = null;
             this.usm = null;
@@ -146,9 +147,9 @@ public class SnmpProducer extends DefaultProducer {
                         }
                         PDU response = responseEvent.getResponse();
                         String nextOid = null;
-                        Vector<? extends VariableBinding> variableBindings = response.getVariableBindings();
+                        List<? extends VariableBinding> variableBindings = response.getVariableBindings();
                         for (int i = 0; i < variableBindings.size(); i++) {
-                            VariableBinding variableBinding = variableBindings.elementAt(i);
+                            VariableBinding variableBinding = variableBindings.get(i);
                             nextOid = variableBinding.getOid().toDottedString();
                             if (!nextOid.startsWith(oid.toDottedString())) {
                                 matched = false;
