@@ -127,7 +127,6 @@
         <datasonnet-mapper-version>2.5.2-jakarta4</datasonnet-mapper-version>
         <debezium-version>2.3.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.33</debezium-mysql-connector-version>
-        <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.18.0</directory-watcher-version>
@@ -3098,11 +3097,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-report-plugin</artifactId>
                     <version>${maven-surefire-report-plugin-version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.servicemix.tooling</groupId>
-                    <artifactId>depends-maven-plugin</artifactId>
-                    <version>1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
