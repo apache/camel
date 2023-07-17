@@ -76,7 +76,7 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
         final java.io.InputStream result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
 
         assertNotNull(result, "resource result");
-        LOG.debug("resource: " + result);
+        LOG.debug("Result: {}", result);
     }
 
     @Override
