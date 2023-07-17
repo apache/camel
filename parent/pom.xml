@@ -214,7 +214,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.23.3.1</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.47</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.48</huaweicloud-sdk-version>
         <ical4j-version>3.2.11</ical4j-version>
         <icu4j-version>73.2</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
