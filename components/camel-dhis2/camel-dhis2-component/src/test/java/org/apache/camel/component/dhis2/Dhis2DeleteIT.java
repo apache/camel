@@ -66,7 +66,7 @@ public class Dhis2DeleteIT extends AbstractDhis2TestSupport {
         assertEquals(404, remoteDhis2ClientException.getHttpStatusCode());
 
         assertNotNull(result, "resource result");
-        LOG.debug("resource: " + result);
+        LOG.debug("Result: {}", result);
     }
 
     @Override
