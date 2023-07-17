@@ -3105,15 +3105,6 @@
                     <version>1.2</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>2.1</version>
-                    <configuration>
-                        <path>/</path>
-                        <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>${build-helper-maven-plugin-version}</version>
