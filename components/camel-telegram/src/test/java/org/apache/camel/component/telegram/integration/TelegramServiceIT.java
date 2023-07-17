@@ -88,7 +88,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setText("This is a <b>HTML</b> <i>auto-generated</i> message from the Bot");
         msg.setParseMode(TelegramParseMode.HTML.getCode());
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setText("This is a *Markdown* _auto-generated_ message from the Bot");
         msg.setParseMode(TelegramParseMode.MARKDOWN.getCode());
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
 
         msg.setReplyMarkup(replyMarkup);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -180,7 +180,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
 
         msg.setReplyMarkup(replyMarkup);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -192,7 +192,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setParseMode("Markdown");
         msg.setDisableNotification(false);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -204,7 +204,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -251,7 +251,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setCaption("Photo");
         msg.setDisableNotification(false);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -263,7 +263,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("audio.mp3");
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -296,7 +296,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("video.mp4");
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -331,7 +331,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.txt");
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
