@@ -288,7 +288,7 @@
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.21</johnzon-version>
         <jslt-version>0.1.14</jslt-version>
-        <jsmpp-version>2.3.11</jsmpp-version>
+        <jsmpp-version>3.0.0</jsmpp-version>
         <jsch-version>0.2.9</jsch-version>
         <json-api>1.0</json-api>
         <jsonassert-version>1.5.1</jsonassert-version>
