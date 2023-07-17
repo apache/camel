@@ -1189,7 +1189,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
     }
 
-    record CamelInternalProcessorAdviceWrapper<T> (
+    record CamelInternalProcessorAdviceWrapper<T>(
             InstrumentationProcessor<T> instrumentationProcessor) implements CamelInternalProcessorAdvice<T>, Ordered {
 
         InstrumentationProcessor<T> unwrap() {
