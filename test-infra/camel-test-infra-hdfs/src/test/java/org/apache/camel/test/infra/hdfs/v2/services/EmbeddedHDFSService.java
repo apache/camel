@@ -24,8 +24,8 @@ public class EmbeddedHDFSService implements HDFSService {
     private static final Logger LOG = LoggerFactory.getLogger(EmbeddedHDFSService.class);
     private final HDFSContainer container;
 
-    public EmbeddedHDFSService() {
-        container = new HDFSContainer();
+    public EmbeddedHDFSService(int port) {
+        container = new HDFSContainer(port);
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.hdfs.v2.services.HDFSService;
 import org.apache.camel.test.infra.hdfs.v2.services.HDFSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HdfsProducerConsumerIntegrationIT extends CamelTestSupport {
     @RegisterExtension
-    public static HDFSService service = HDFSServiceFactory.createSingletonService();
+    public static HDFSService service = HDFSServiceFactory.createSingletonService(AvailablePortFinder.getNextAvailable());
 
     private static final int ITERATIONS = 400;
 

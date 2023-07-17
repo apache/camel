@@ -38,6 +38,8 @@ public final class HDFSServiceFactory {
         }
     }
 
+    private static HDFSService INSTANCE;
+
     private HDFSServiceFactory() {
 
     }
@@ -46,16 +48,13 @@ public final class HDFSServiceFactory {
         return new SimpleTestServiceBuilder<>("hdfs");
     }
 
-    public static HDFSService createSingletonService() {
-        return SingletonServiceHolder.INSTANCE;
-    }
-
-    private static class SingletonServiceHolder {
-        static final HDFSService INSTANCE;
-        static {
+    public static HDFSService createSingletonService(int port) {
+        if (INSTANCE == null) {
             SimpleTestServiceBuilder<HDFSService> instance = builder();
-            instance.addLocalMapping(() -> new SingletonHDFSService(new EmbeddedHDFSService(), "hdfs"));
+            instance.addLocalMapping(() -> new SingletonHDFSService(new EmbeddedHDFSService(port), "hdfs"));
             INSTANCE = instance.build();
         }
+
+        return INSTANCE;
     }
 }
