@@ -247,6 +247,11 @@ The number of enums for `org.apache.camel.Category` has been reduced from 83 to 
 that are using removed values need to choose one of the remainder values. We have done this to consolidate
 the number of categories of all components in the Camel community.
 
+=== camel-atom
+
+The `camel-atom` component has changed the 3rd party atom client from Apache Abdera to RSSReader.
+This means the feed object is changed from `org.apache.abdera.model.Feed` to `com.apptasticsoftware.rssreader.Item`.
+
 === camel-azure-cosmosdb
 
 The `itemPartitionKey` has been updated. It's now a String a not a PartitionKey anymore. More details in CAMEL-19222.
