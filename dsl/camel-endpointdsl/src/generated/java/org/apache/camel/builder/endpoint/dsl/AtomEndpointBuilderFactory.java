@@ -646,40 +646,6 @@ public interface AtomEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
-        /**
-         * Sets the password to be used for basic authentication when polling
-         * from a HTTP feed.Notice: Basic authentication is not a secured
-         * method, and is not recommended to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AtomEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Sets the username to be used for basic authentication when polling
-         * from a HTTP feed. Notice: Basic authentication is not a secured
-         * method, and is not recommended to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AtomEndpointBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
     }
 
     /**
@@ -943,10 +909,9 @@ public interface AtomEndpointBuilderFactory {
         private static final AtomHeaderNameBuilder INSTANCE = new AtomHeaderNameBuilder();
 
         /**
-         * When consuming the org.apache.abdera.model.Feed object is set to this
-         * header.
+         * When consuming the List object is set to this header.
          * 
-         * The option is a: {@code org.apache.abdera.model.Feed} type.
+         * The option is a: {@code java.util.List} type.
          * 
          * Group: consumer
          * 

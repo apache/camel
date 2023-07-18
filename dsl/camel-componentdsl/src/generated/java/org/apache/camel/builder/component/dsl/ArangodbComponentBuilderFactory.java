@@ -209,6 +209,20 @@ public interface ArangodbComponentBuilderFactory {
             return this;
         }
         /**
+         * To use an existing ArangDB client.
+         * 
+         * The option is a: &lt;code&gt;com.arangodb.ArangoDB&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param arangoDB the value to set
+         * @return the dsl builder
+         */
+        default ArangodbComponentBuilder arangoDB(com.arangodb.ArangoDB arangoDB) {
+            doSetProperty("arangoDB", arangoDB);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -292,6 +306,7 @@ public interface ArangodbComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((ArangoDbComponent) component).setOperation((org.apache.camel.component.arangodb.ArangoDbOperation) value); return true;
             case "port": getOrCreateConfiguration((ArangoDbComponent) component).setPort((int) value); return true;
             case "vertexCollection": getOrCreateConfiguration((ArangoDbComponent) component).setVertexCollection((java.lang.String) value); return true;
+            case "arangoDB": ((ArangoDbComponent) component).setArangoDB((com.arangodb.ArangoDB) value); return true;
             case "autowiredEnabled": ((ArangoDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((ArangoDbComponent) component).setPassword((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((ArangoDbComponent) component).setUser((java.lang.String) value); return true;
