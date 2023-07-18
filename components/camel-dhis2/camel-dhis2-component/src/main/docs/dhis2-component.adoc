@@ -100,6 +100,7 @@ The get/collection API method has the parameters listed in the table below:
 | Parameter | Description | Type
 | path | Resource URL path | String
 | itemType | Fully-qualified Java class name to deserialise items into| String
+| arrayName | JSON property name holding the array to read | String
 | paging | Turn paging on/off | Boolean
 | fields | Comma-delimited list of fields to fetch | String
 | filter | Search criteria | String
@@ -120,7 +121,7 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=organisationUnits&itemType=org.hisp.dhis.api.model.v2_39_1.OrganisationUnit&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .to("dhis2://get/collection?path=organisationUnits&itemType=org.hisp.dhis.api.model.v2_39_1.OrganisationUnit&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
             .split().body().log("${body}");
     }
 }
@@ -138,7 +139,7 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=organisationUnits&fields=code&itemType=org.hisp.dhis.api.model.v2_39_1.OrganisationUnit&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .to("dhis2://get/collection?path=organisationUnits&fields=code&itemType=org.hisp.dhis.api.model.v2_39_1.OrganisationUnit&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
             .split().body().log("${body}");
     }
 }
@@ -156,7 +157,7 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&itemType=org.hisp.dhis.api.model.v2_39_1.User&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&itemType=org.hisp.dhis.api.model.v2_39_1.User&arrayName=users&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
             .split().body().log("${body}");
     }
 }
@@ -217,13 +218,13 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:postResource")
-            .process(exchange -> exchange.getMessage().setBody(new DataValueSet().withCompleteDate(
+            .setBody(exchange -> new DataValueSet().withCompleteDate(
                     ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT))
                                                                    .withOrgUnit("O6uvpzGd5pu")
                                                                    .withDataSet("lyLU2wR22tC").withPeriod(PeriodBuilder.monthOf(new Date(), -1))
                                                                    .withDataValues(
-                                                                       List.of(new DataValue__1().withDataElement("aIJZ2d2QgVV").withValue("20")))))
-            .to("dhis2://post/resource?path=dataValueSets&inBody=resource&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+                                                                       List.of(new DataValue__1().withDataElement("aIJZ2d2QgVV").withValue("20"))))
+            .to("dhis2://post/resource?path=dataValueSets&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
             .unmarshal().json(ImportReportWebMessageResponse.class)
             .choice()
             .when(exchange -> !exchange.getMessage().getBody(ImportReportWebMessageResponse.class).getStatus().get().equals(DescriptiveWebMessage.Status.OK))
