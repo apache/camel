@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.arangodb.integration;
 
+import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.arangodb.services.ArangoDBService;
 import org.apache.camel.test.infra.arangodb.services.ArangoDBServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class BaseArangoDb extends CamelTestSupport {
+
     @RegisterExtension
     public static ArangoDBService service = ArangoDBServiceFactory.createService();
 
@@ -37,24 +36,28 @@ public class BaseArangoDb extends CamelTestSupport {
     protected static final String GRAPH_NAME = "graphTest";
     protected static final String VERTEX_COLLECTION_NAME = "vertexTest";
     protected static final String EDGE_COLLECTION_NAME = "edgeTest";
-    protected static ArangoDB arangoDb;
-    protected static ArangoDatabase arangoDatabase;
-
-    @BeforeAll
-    public static void doBeforeAll() {
-        arangoDb = new ArangoDB.Builder().build();
-        arangoDb.createDatabase(DbName.of(DATABASE_NAME));
-        arangoDatabase = arangoDb.db(DbName.of(DATABASE_NAME));
-    }
-
-    @AfterAll
-    public static void doAfterAll() {
-        arangoDb.shutdown();
-    }
+    protected ArangoDB arangoDb;
+    protected ArangoDatabase arangoDatabase;
+    protected ArangoCollection collection;
 
     @Override
     protected CamelContext createCamelContext() {
         CamelContext ctx = new DefaultCamelContext();
+
+        arangoDb = new ArangoDB.Builder().host("localhost", 8529).build();
+
+        // drop any existing database to start clean
+        if (arangoDb.getDatabases().contains(DATABASE_NAME)) {
+            arangoDatabase = arangoDb.db(DATABASE_NAME);
+            arangoDatabase.drop();
+        }
+
+        arangoDb.createDatabase(DATABASE_NAME);
+        arangoDatabase = arangoDb.db(DATABASE_NAME);
+        arangoDatabase.createCollection(COLLECTION_NAME);
+        collection = arangoDatabase.collection(COLLECTION_NAME);
+
+        ctx.getRegistry().bind("arangoDB", arangoDb);
         ctx.getPropertiesComponent().setLocation("classpath:arango.test.properties");
         return ctx;
     }

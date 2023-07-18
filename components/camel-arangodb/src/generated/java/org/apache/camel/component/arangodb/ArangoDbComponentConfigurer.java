@@ -28,6 +28,8 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "arangodb":
+        case "arangoDB": target.setArangoDB(property(camelContext, com.arangodb.ArangoDB.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.arangodb.ArangoDbConfiguration.class, value)); return true;
@@ -50,8 +52,15 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"arangoDB"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "arangodb":
+        case "arangoDB": return com.arangodb.ArangoDB.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.arangodb.ArangoDbConfiguration.class;
@@ -77,6 +86,8 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "arangodb":
+        case "arangoDB": return target.getArangoDB();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();

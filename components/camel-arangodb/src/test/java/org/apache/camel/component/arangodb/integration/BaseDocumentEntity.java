@@ -16,22 +16,37 @@
  */
 package org.apache.camel.component.arangodb.integration;
 
-import com.arangodb.ArangoCollection;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BaseCollection extends BaseArangoDb {
+public abstract class BaseDocumentEntity {
 
-    protected ArangoCollection collection;
+    @JsonProperty("_key")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String key;
 
-    @BeforeEach
-    public void beforeEach() {
-        arangoDatabase.createCollection(COLLECTION_NAME);
-        collection = arangoDatabase.collection(COLLECTION_NAME);
+    @JsonProperty("_id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String id;
+
+    @JsonProperty("_rev")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String rev;
+
+    public BaseDocumentEntity(String key) {
+        this.key = key;
     }
 
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
+    public String getKey() {
+        return key;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getRev() {
+        return rev;
+    }
+
 }

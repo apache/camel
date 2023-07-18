@@ -16,24 +16,19 @@
  */
 package org.apache.camel.component.arangodb.integration;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentUpdateEntity;
-import com.arangodb.entity.MultiDocumentEntity;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_UPDATE;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
                           disabledReason = "Apache CI nodes are too resource constrained for this test")
-public class ArangoCollectionUpdateIT extends BaseCollection {
+public class ArangoCollectionUpdateIT extends BaseArangoDb {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -69,48 +64,7 @@ public class ArangoCollectionUpdateIT extends BaseCollection {
                 BaseDocument.class);
         assertEquals(myObject.getKey(), actualResult.getKey());
         assertEquals("hello", actualResult.getAttribute("foo"));
-        assertEquals(Long.valueOf(42), actualResult.getAttribute("gg"));
-    }
-
-    @Test
-    public void testUpdateMultipleDocuments() {
-        TestDocumentEntity test1 = new TestDocumentEntity();
-        test1.setFoo("bar1");
-
-        TestDocumentEntity test2 = new TestDocumentEntity();
-        test2.setFoo("bar2");
-        test2.setNumber(10);
-
-        collection.insertDocument(test1);
-        collection.insertDocument(test2);
-
-        test1.setNumber(20);
-        test2.setFoo("bar2.2");
-
-        List<TestDocumentEntity> documents = new ArrayList<>();
-        documents.add(test1);
-        documents.add(test2);
-
-        Exchange result = template.request("direct:update", exchange -> {
-            exchange.getMessage().setBody(documents);
-            exchange.getMessage().setHeader(MULTI_UPDATE, true);
-        });
-        assertTrue(result.getMessage().getBody() instanceof MultiDocumentEntity);
-        MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>> updateDocs
-                = (MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>>) result.getMessage().getBody();
-        assertFalse(updateDocs.getDocuments().isEmpty());
-
-        TestDocumentEntity test1Updated = collection.getDocument(test1.getKey(), TestDocumentEntity.class);
-        assertNotNull(test1Updated);
-        assertNotEquals(test1.getRev(), test1Updated.getRev());
-        assertEquals(test1.getFoo(), test1Updated.getFoo());
-        assertEquals(test1.getNumber(), test1Updated.getNumber());
-
-        TestDocumentEntity test2Updated = collection.getDocument(test2.getKey(), TestDocumentEntity.class);
-        assertNotNull(test2Updated);
-        assertNotEquals(test2.getRev(), test2Updated.getRev());
-        assertEquals(test2.getFoo(), test2Updated.getFoo());
-        assertEquals(test2.getNumber(), test2Updated.getNumber());
+        assertEquals(42, actualResult.getAttribute("gg"));
     }
 
 }

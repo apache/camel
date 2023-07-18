@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import com.arangodb.util.MapBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
                           disabledReason = "Apache CI nodes are too resource constrained for this test")
-public class ArangoCollectionQueryIT extends BaseCollection {
+public class ArangoCollectionQueryIT extends BaseArangoDb {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -60,9 +59,7 @@ public class ArangoCollectionQueryIT extends BaseCollection {
         collection.insertDocument(test3);
 
         String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.foo == @foo AND t.number == @number RETURN t";
-        Map<String, Object> bindVars = new MapBuilder().put("foo", test.getFoo())
-                .put("number", test.getNumber())
-                .get();
+        Map<String, Object> bindVars = Map.of("foo", test.getFoo(), "number", test.getNumber());
 
         Exchange result = template.request("direct:query", exchange -> {
             exchange.getMessage().setHeader(AQL_QUERY, query);

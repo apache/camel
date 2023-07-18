@@ -24,10 +24,6 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.MultiDocumentEntity;
-import com.arangodb.util.MapBuilder;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.ValueType;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -40,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
                           disabledReason = "Apache CI nodes are too resource constrained for this test")
-public class ArangoCollectionSaveIT extends BaseCollection {
+public class ArangoCollectionSaveIT extends BaseArangoDb {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -68,7 +64,7 @@ public class ArangoCollectionSaveIT extends BaseCollection {
                 BaseDocument.class);
         assertEquals(docCreated.getKey(), actualResult.getKey());
         assertEquals("Foo", actualResult.getAttribute("a"));
-        assertEquals(Long.valueOf(42), actualResult.getAttribute("b"));
+        assertEquals(42, actualResult.getAttribute("b"));
     }
 
     @Test
@@ -111,44 +107,6 @@ public class ArangoCollectionSaveIT extends BaseCollection {
     }
 
     @Test
-    public void insertOneVPack() {
-        final VPackBuilder builder = new VPackBuilder();
-        builder.add(ValueType.OBJECT).add("foo", "bar").close();
-        Exchange result = template.request("direct:insert", exchange -> {
-            exchange.getMessage().setBody(builder.slice());
-            exchange.getMessage().setHeader("abc", "def");
-        });
-        assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
-        DocumentCreateEntity<VPackSlice> docCreated = (DocumentCreateEntity<VPackSlice>) result.getMessage().getBody();
-        assertNotNull(docCreated.getKey());
-
-        TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
-                TestDocumentEntity.class);
-        assertEquals("bar", actualResult.getFoo());
-        assertEquals(docCreated.getKey(), actualResult.getKey());
-
-    }
-
-    @Test
-    public void insertOneJson() {
-        String jsonDoc = "{\"foo\":\"bar\"}";
-        final VPackBuilder builder = new VPackBuilder();
-        builder.add(ValueType.OBJECT).add("foo", "bar").close();
-        Exchange result = template.request("direct:insert", exchange -> {
-            exchange.getMessage().setBody(jsonDoc);
-            exchange.getMessage().setHeader("abc", "def");
-        });
-        assertTrue(result.getMessage().getBody() instanceof DocumentCreateEntity);
-        DocumentCreateEntity<VPackSlice> docCreated = (DocumentCreateEntity<VPackSlice>) result.getMessage().getBody();
-        assertNotNull(docCreated.getKey());
-
-        TestDocumentEntity actualResult = collection.getDocument(docCreated.getKey(),
-                TestDocumentEntity.class);
-        assertEquals("bar", actualResult.getFoo());
-        assertEquals(docCreated.getKey(), actualResult.getKey());
-    }
-
-    @Test
     public void insertMultipleBeanDocuments() {
         TestDocumentEntity test1 = new TestDocumentEntity("bar1");
 
@@ -163,9 +121,8 @@ public class ArangoCollectionSaveIT extends BaseCollection {
         assertTrue(result.getMessage().getBody() instanceof MultiDocumentEntity);
 
         String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.foo == @foo RETURN t";
-        Map<String, Object> bindVars = new MapBuilder().put("foo", test1.getFoo()).get();
-        ArangoCursor<TestDocumentEntity> cursor = arangoDatabase.query(query, bindVars, null,
-                TestDocumentEntity.class);
+        Map<String, Object> bindVars = Map.of("foo", test1.getFoo());
+        ArangoCursor<TestDocumentEntity> cursor = arangoDatabase.query(query, TestDocumentEntity.class, bindVars, null);
         cursor.forEachRemaining(test1Inserted -> {
             assertNotNull(test1Inserted);
             assertNotNull(test1Inserted.getKey());
@@ -175,18 +132,15 @@ public class ArangoCollectionSaveIT extends BaseCollection {
 
         });
 
-        bindVars = new MapBuilder().put("foo", test2.getFoo()).get();
-        cursor = arangoDatabase.query(query, bindVars, null,
-                TestDocumentEntity.class);
+        bindVars = Map.of("foo", test2.getFoo());
+        cursor = arangoDatabase.query(query, TestDocumentEntity.class, bindVars, null);
         cursor.forEachRemaining(test2Inserted -> {
             assertNotNull(test2Inserted);
             assertNotNull(test2Inserted.getKey());
             assertNotNull(test2Inserted.getRev());
             assertEquals(test2.getFoo(), test2Inserted.getFoo());
             assertEquals(test2.getNumber(), test2Inserted.getNumber());
-
         });
-
     }
 
 }
