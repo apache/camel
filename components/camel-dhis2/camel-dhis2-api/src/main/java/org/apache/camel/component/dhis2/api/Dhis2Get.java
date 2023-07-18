@@ -76,7 +76,8 @@ public class Dhis2Get {
     }
 
     public <T> Iterator<T> collection(
-            String path, String itemType, Boolean paging, String fields, String filter, RootJunctionEnum rootJunction,
+            String path, String itemType, String arrayName, Boolean paging, String fields, String filter,
+            RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
         Iterable<T> iterable;
@@ -89,12 +90,10 @@ public class Dhis2Get {
         }
 
         if (itemType == null) {
-            iterable = (Iterable<T>) iteratorDhis2Response
-                    .returnAs(Map.class, path);
+            iterable = (Iterable<T>) iteratorDhis2Response.returnAs(Map.class, arrayName);
         } else {
             try {
-                iterable = (Iterable<T>) iteratorDhis2Response
-                        .returnAs(Class.forName(itemType), path);
+                iterable = (Iterable<T>) iteratorDhis2Response.returnAs(Class.forName(itemType), arrayName);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
