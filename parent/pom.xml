@@ -64,7 +64,7 @@
         <assertj-version>3.24.2</assertj-version>
         <asterisk-java-version>3.39.0</asterisk-java-version>
         <atlasmap-version>2.5.2</atlasmap-version>
-        <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
+        <atlassian-fugue-version>5.0.0</atlassian-fugue-version>
         <atmosphere-version>3.0.3</atmosphere-version>
         <avro-version>1.11.2</avro-version>
         <avro-ipc-jetty-version>1.11.2</avro-ipc-jetty-version>
