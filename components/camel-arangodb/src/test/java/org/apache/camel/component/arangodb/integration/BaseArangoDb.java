@@ -20,16 +20,28 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.arangodb.services.ArangoDBService;
 import org.apache.camel.test.infra.arangodb.services.ArangoDBServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class BaseArangoDb extends CamelTestSupport {
+public abstract class BaseArangoDb implements ConfigurableRoute, CamelTestSupportHelper {
 
+    @Order(1)
     @RegisterExtension
     public static ArangoDBService service = ArangoDBServiceFactory.createService();
+    @Order(2)
+    @RegisterExtension
+    public static final CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
 
     protected static final String DATABASE_NAME = "dbTest";
     protected static final String COLLECTION_NAME = "camelTest";
@@ -39,11 +51,15 @@ public class BaseArangoDb extends CamelTestSupport {
     protected ArangoDB arangoDb;
     protected ArangoDatabase arangoDatabase;
     protected ArangoCollection collection;
+    protected ProducerTemplate template;
 
-    @Override
-    protected CamelContext createCamelContext() {
-        CamelContext ctx = new DefaultCamelContext();
+    @BeforeEach
+    void beforeEach() {
+        this.template = getCamelContextExtension().getProducerTemplate();
+    }
 
+    @ContextFixture
+    public void createCamelContext(CamelContext ctx) {
         arangoDb = new ArangoDB.Builder().host("localhost", 8529).build();
 
         // drop any existing database to start clean
@@ -59,6 +75,22 @@ public class BaseArangoDb extends CamelTestSupport {
 
         ctx.getRegistry().bind("arangoDB", arangoDb);
         ctx.getPropertiesComponent().setLocation("classpath:arango.test.properties");
-        return ctx;
     }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    protected abstract RouteBuilder createRouteBuilder() throws Exception;
 }

@@ -23,6 +23,7 @@ import com.arangodb.util.RawJson;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -37,17 +38,15 @@ public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
 
     private BaseDocument myObject;
 
-    @Override
-    protected CamelContext createCamelContext() {
-        CamelContext ctx = super.createCamelContext();
+    @ContextFixture
+    public void createCamelContext(CamelContext ctx) {
+        super.createCamelContext(ctx);
 
         myObject = new BaseDocument();
         myObject.setKey("myKey");
         myObject.addAttribute("foo", "bar");
 
         collection.insertDocument(myObject);
-
-        return ctx;
     }
 
     @Override
