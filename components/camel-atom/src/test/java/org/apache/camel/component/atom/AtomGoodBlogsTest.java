@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.abdera.model.Entry;
+import com.apptasticsoftware.rssreader.Item;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -114,8 +114,8 @@ public class AtomGoodBlogsTest {
          * Tests the blogs if its a good blog entry or not
          */
         public boolean isGoodBlog(Exchange exchange) {
-            Entry entry = exchange.getIn().getBody(Entry.class);
-            String title = entry.getTitle();
+            Item entry = exchange.getIn().getBody(Item.class);
+            String title = entry.getTitle().get();
 
             // We like blogs about Camel
             return title.toLowerCase().contains("camel");

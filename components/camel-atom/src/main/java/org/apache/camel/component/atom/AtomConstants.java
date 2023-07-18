@@ -24,10 +24,11 @@ import org.apache.camel.spi.Metadata;
 public final class AtomConstants {
 
     /**
-     * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.
+     * Header key for the List of {@link com.apptasticsoftware.rssreader.Item} object is stored on the in message on the
+     * exchange.
      */
-    @Metadata(description = "When consuming the `org.apache.abdera.model.Feed` object is set to this header.",
-              javaType = "org.apache.abdera.model.Feed")
+    @Metadata(description = "When consuming the List<com.apptasticsoftware.rssreader.Item> object is set to this header.",
+              javaType = "java.util.List")
     public static final String ATOM_FEED = "CamelAtomFeed";
 
     private AtomConstants() {
