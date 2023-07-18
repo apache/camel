@@ -58,7 +58,7 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
         final java.util.Iterator result = requestBodyAndHeaders("direct://COLLECTION", null, headers);
 
         assertNotNull(result, "collection result");
-        LOG.debug("collection: " + result);
+        LOG.debug("collection: {}", result);
     }
 
     @Test
