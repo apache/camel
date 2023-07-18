@@ -343,6 +343,7 @@
                         </excludes>
                         <mapping>
                             <Adapter>CAMEL_PROPERTIES_STYLE</Adapter>
+                            <conf>SCRIPT_STYLE</conf>
                             <Dockerfile.jvm>SCRIPT_STYLE</Dockerfile.jvm>
                             <Dockerfile.legacy-jar>SCRIPT_STYLE</Dockerfile.legacy-jar>
                             <Dockerfile.native-micro>SCRIPT_STYLE</Dockerfile.native-micro>
