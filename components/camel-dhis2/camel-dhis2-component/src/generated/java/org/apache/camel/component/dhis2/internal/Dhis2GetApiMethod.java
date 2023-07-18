@@ -25,6 +25,7 @@ public enum Dhis2GetApiMethod implements ApiMethod {
         "collection",
         arg("path", String.class),
         arg("itemType", String.class),
+        arg("arrayName", String.class),
         arg("paging", Boolean.class),
         arg("fields", String.class),
         arg("filter", String.class),
