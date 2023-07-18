@@ -21,14 +21,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,35 +44,42 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
+public class RouteWatcherReloadStrategyTest implements CamelTestSupportHelper {
+
+    @RegisterExtension
+    private static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteWatcherReloadStrategyTest.class);
 
     private RouteWatcherReloadStrategy reloadStrategy;
+    private CamelContext context;
+    private ProducerTemplate template;
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+    @ContextFixture
+    public void setupContext(CamelContext camelContext) throws Exception {
         reloadStrategy = new RouteWatcherReloadStrategy();
         reloadStrategy.setFolder("target/dummy");
         reloadStrategy.setPattern("*.xml");
         // to make unit test faster
         reloadStrategy.setPollTimeout(100);
-        context.addService(reloadStrategy);
-        return context;
+        camelContext.addService(reloadStrategy);
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    public void setUp() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
     }
 
     @Test
     public void testAddNewRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
-
-        context.start();
 
         // there are 0 routes to begin with
         assertEquals(0, context.getRoutes().size());
