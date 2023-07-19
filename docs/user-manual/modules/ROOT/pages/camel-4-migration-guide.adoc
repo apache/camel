@@ -239,6 +239,12 @@ To use attributes instead:
 </circuitBreaker>
 ----
 
+== OpenAPI Maven Plugin
+
+The `camel-restdsl-openapi-plugin` Maven plugin now uses `platform-http` as the default rest component
+in the generated Rest DSL code. Previously the default was servlet. However, platform-http is a better
+default that works out of the box with Spring Boot and Quarkus.
+
 == Component changes
 
 === Category

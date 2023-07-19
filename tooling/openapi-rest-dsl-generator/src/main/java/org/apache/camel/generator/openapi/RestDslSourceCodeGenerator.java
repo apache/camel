@@ -103,10 +103,14 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(configure);
 
-        if (restComponent != null) {
+        boolean restConfig = restComponent != null || restContextPath != null || clientRequestValidation;
+        if (restConfig) {
             configure.addCode("\n");
-            configure.addCode("restConfiguration().component(\"" + restComponent + "\")");
-            if (restContextPath != null) {
+            configure.addCode("restConfiguration()");
+            if (ObjectHelper.isNotEmpty(restComponent)) {
+                configure.addCode(".component(\"" + restComponent + "\")");
+            }
+            if (ObjectHelper.isNotEmpty(restContextPath)) {
                 configure.addCode(".contextPath(\"" + restContextPath + "\")");
             }
             if (ObjectHelper.isNotEmpty(apiContextPath)) {

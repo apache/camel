@@ -365,15 +365,15 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         if (comp != null) {
             getLog().info("Detected Camel Rest component from classpath: " + comp);
         } else {
-            comp = "servlet";
+            comp = "platform-http";
 
             String gid = "org.apache.camel";
-            String aid = "camel-servlet";
+            String aid = "camel-platform-http";
 
             // is it spring boot?
             if (detectSpringBootFromClasspath()) {
                 gid = "org.apache.camel.springboot";
-                aid = "camel-servlet-starter";
+                aid = "camel-platform-http-starter";
             }
 
             String dep = "\n\t\t<dependency>"
@@ -385,7 +385,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             }
             dep += "\n\t\t</dependency>\n";
 
-            getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
+            getLog().info("Cannot detect Rest component from classpath. Will use platform-http as Rest component.");
             getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
         }
 
