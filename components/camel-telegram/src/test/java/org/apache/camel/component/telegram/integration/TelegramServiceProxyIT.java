@@ -64,12 +64,10 @@ public class TelegramServiceProxyIT extends TelegramTestSupport {
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
-        Assertions.assertDoesNotThrow(() ->
-                template.requestBody(
+        Assertions.assertDoesNotThrow(() -> template.requestBody(
                 String.format("telegram://bots?chatId=%s&proxyHost=%s&proxyPort=%s&proxyType=%s", chatId, proxyHost, proxyPort,
                         proxyType),
-                msg)
-        );
+                msg));
     }
 
 }

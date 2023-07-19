@@ -80,7 +80,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
 
         assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "A"),
-            "Should have thrown an exception");
+                "Should have thrown an exception");
 
         assertMockEndpointsSatisfied();
     }
