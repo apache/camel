@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.Objects;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,6 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
@@ -41,6 +44,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     private Kinesis2Configuration configuration;
 
     private KinesisClient kinesisClient;
+    private KinesisAsyncClient kinesisAsyncClient;
 
     public Kinesis2Endpoint(String uri, Kinesis2Configuration configuration, Kinesis2Component component) {
         super(uri, component);
@@ -53,9 +57,17 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         if (!configuration.isCborEnabled()) {
             System.setProperty(CBOR_ENABLED.property(), "false");
         }
-        kinesisClient = configuration.getAmazonKinesisClient() != null
-                ? configuration.getAmazonKinesisClient()
-                : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
+
+        if (configuration.isAsyncClient() &&
+                Objects.isNull(configuration.getAmazonKinesisClient())) {
+            kinesisAsyncClient = KinesisClientFactory
+                    .getKinesisAsyncClient(configuration)
+                    .getKinesisAsyncClient();
+        } else {
+            kinesisClient = configuration.getAmazonKinesisClient() != null
+                    ? configuration.getAmazonKinesisClient()
+                    : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
+        }
 
         if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
                 || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
@@ -70,6 +82,8 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
         if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
             if (kinesisClient != null) {
                 kinesisClient.close();
+            } else if (Objects.nonNull(kinesisAsyncClient)) {
+                kinesisAsyncClient.close();
             }
         }
         if (!configuration.isCborEnabled()) {
@@ -93,6 +107,10 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     public KinesisClient getClient() {
         return kinesisClient;
+    }
+
+    public KinesisAsyncClient getAsyncClient() {
+        return kinesisAsyncClient;
     }
 
     public Kinesis2Configuration getConfiguration() {
