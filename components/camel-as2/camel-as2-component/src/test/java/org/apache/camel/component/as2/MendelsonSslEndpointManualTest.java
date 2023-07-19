@@ -24,6 +24,7 @@ import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
@@ -124,5 +125,10 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
                 "Sending done. If you used Mendelson settings for connection, " +
                   "you can check your message in http://testas2.mendelson-e-c.com:8080/webas2/ " +
                   "Login guest, password guest");
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return null;
     }
 }
