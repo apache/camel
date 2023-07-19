@@ -74,7 +74,7 @@
         </dependency>
 
         <!-- these optional dependencies are needed because exec plugin
-             doesn't obbey the plugin's dependencies and only supports
+             doesn't obey the plugin's dependencies and only supports
              compile and runtime dependencies -->
         <dependency>
             <groupId>com.beanit</groupId>
@@ -87,6 +87,15 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>${jakarta-xml-bind-api-version}</version>
             <optional>true</optional>
+        </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
 

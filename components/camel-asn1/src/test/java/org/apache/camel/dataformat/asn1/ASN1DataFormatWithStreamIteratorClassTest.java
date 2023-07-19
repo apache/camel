@@ -21,18 +21,27 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport {
+public class ASN1DataFormatWithStreamIteratorClassTest implements CamelTestSupportHelper, ConfigurableRoute {
+
+    @RegisterExtension
+    public static final CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     private ASN1DataFormat asn1;
     private String fileName = "src/test/resources/asn1_data/SMS_SINGLE.tt";
@@ -43,7 +52,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
         File testFile = new File(fileName);
         ByteArrayInputStream bais = ASN1DataFormatTestHelper.reteriveByteArrayInputStream(testFile);
 
-        template.sendBody(directEndpointName, bais);
+        camelContextExtension.getProducerTemplate().sendBody(directEndpointName, bais);
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
@@ -52,7 +61,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(camelContextExtension.getContext());
     }
 
     @Test
@@ -72,7 +81,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
         File testFile = new File(fileName);
         ByteArrayInputStream bais = ASN1DataFormatTestHelper.reteriveByteArrayInputStream(testFile);
 
-        template.sendBody(directEndpointName, bais);
+        camelContextExtension.getProducerTemplate().sendBody(directEndpointName, bais);
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
@@ -88,7 +97,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
             // fos.close();
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(camelContextExtension.getContext());
     }
 
     @Test
@@ -109,7 +118,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
         File testFile = new File("src/test/resources/after_unmarshal_marshal_SMS_SINGLE.tt");
         ByteArrayInputStream bais = ASN1DataFormatTestHelper.reteriveByteArrayInputStream(testFile);
 
-        template.sendBody("direct:unmarshal", bais);
+        camelContextExtension.getProducerTemplate().sendBody("direct:unmarshal", bais);
 
         List<Exchange> exchanges = getMockEndpoint("mock:unmarshal").getExchanges();
 
@@ -118,7 +127,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(camelContextExtension.getContext());
     }
 
     private void baseDoubleUnmarshalTest(String firstMockEnpointName, String secondMockEnpointName, String directEndpointName)
@@ -129,7 +138,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
         File testFile = new File(fileName);
         ByteArrayInputStream bais = ASN1DataFormatTestHelper.reteriveByteArrayInputStream(testFile);
 
-        template.sendBody(directEndpointName, bais);
+        camelContextExtension.getProducerTemplate().sendBody(directEndpointName, bais);
 
         List<Exchange> exchangesFirst = getMockEndpoint(firstMockEnpointName).getExchanges();
 
@@ -153,7 +162,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         assertEquals(secondUnmarshalledCdr.toString(), firstUnmarshalledCdr.toString());
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(camelContextExtension.getContext());
     }
 
     @Test
@@ -167,8 +176,14 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
 
@@ -199,7 +214,6 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
                         .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class))
                         .streaming().to("mock:secondunmarshaldsl");
             }
-        };
+        });
     }
-
 }

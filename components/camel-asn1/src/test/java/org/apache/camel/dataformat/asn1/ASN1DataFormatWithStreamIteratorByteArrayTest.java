@@ -18,45 +18,54 @@ package org.apache.camel.dataformat.asn1;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupport {
+public class ASN1DataFormatWithStreamIteratorByteArrayTest implements CamelTestSupportHelper, ConfigurableRoute {
+
+    @RegisterExtension
+    public static final CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     private ASN1DataFormat asn1;
-    private String fileName = "src/test/resources/asn1_data/SMS_SINGLE.tt";
 
     private void baseASN1DataFormatWithStreamIteratorByteArrayTest(String mockEnpointName, String directEndpointName)
             throws Exception {
         getMockEndpoint(mockEnpointName).expectedMessageCount(1);
 
+        String fileName = "src/test/resources/asn1_data/SMS_SINGLE.tt";
         File testFile = new File(fileName);
         ByteArrayInputStream bais = ASN1DataFormatTestHelper.reteriveByteArrayInputStream(testFile);
 
-        template.sendBody(directEndpointName, bais);
+        camelContextExtension.getProducerTemplate().sendBody(directEndpointName, bais);
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
         assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             byte[] arr = exchange.getIn().getBody(byte[].class);
-            assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile), arr));
-            assertTrue(ASN1Primitive.fromByteArray(arr) instanceof ASN1Primitive);
+            assertArrayEquals(FileUtils.readFileToByteArray(testFile), arr);
+            assertNotNull(ASN1Primitive.fromByteArray(arr));
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(camelContextExtension.getContext());
     }
 
     @Test
@@ -80,8 +89,14 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
 
@@ -97,7 +112,6 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
                 from("direct:unmarshalthenmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming()
                         .marshal().asn1(true).to("mock:marshaldsl");
             }
-        };
+        });
     }
-
 }
