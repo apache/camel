@@ -22,6 +22,7 @@ import org.wildfly.security.auth.server.SecurityDomain;
 /**
  * Instance of this interface has to be provided as `securityConfiguration` parameter into camel-undertow.
  */
+@Deprecated
 public interface ElytronSercurityConfiguration {
 
     /**

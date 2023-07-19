@@ -28,7 +28,7 @@
 
     <artifactId>camel-elytron</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Elytron</name>
+    <name>Camel :: Elytron (deprecated)</name>
     <description>Elytron Security Provider for camel-undertow</description>
 
     <properties>
