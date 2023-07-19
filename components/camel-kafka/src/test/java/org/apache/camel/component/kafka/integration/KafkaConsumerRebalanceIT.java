@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
     private static final String TOPIC = "offset-rebalance";
 
-    private CountDownLatch messagesLatch = new CountDownLatch(1);
+    private final CountDownLatch messagesLatch = new CountDownLatch(1);
 
     @BindToRegistry("offset")
-    private OffsetStateRepository offsetStateRepository = new OffsetStateRepository(messagesLatch);
+    private final OffsetStateRepository offsetStateRepository = new OffsetStateRepository(messagesLatch);
 
     @Test
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
@@ -67,7 +67,7 @@ public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
 
     public static class OffsetStateRepository implements StateRepository<String, String> {
         private static final Logger LOG = LoggerFactory.getLogger(OffsetStateRepository.class);
-        CountDownLatch messagesLatch;
+        final CountDownLatch messagesLatch;
 
         public OffsetStateRepository(CountDownLatch messagesLatch) {
             this.messagesLatch = messagesLatch;

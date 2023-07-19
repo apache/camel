@@ -67,7 +67,7 @@ public class KafkaConsumerAuthInvalidWithReconnectIT {
     private static ContainerLocalAuthKafkaService service;
 
     @RegisterExtension
-    private static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+    private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 

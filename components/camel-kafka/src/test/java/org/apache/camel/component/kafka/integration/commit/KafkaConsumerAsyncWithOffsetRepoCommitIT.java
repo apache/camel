@@ -33,7 +33,7 @@ public class KafkaConsumerAsyncWithOffsetRepoCommitIT extends BaseManualCommitTe
     public static final String TOPIC = "testAsyncCommitWithOffsetRepoTest";
 
     @BindToRegistry("stateRepository")
-    private static MemoryStateRepository stateRepository = new MemoryStateRepository();
+    private static final MemoryStateRepository stateRepository = new MemoryStateRepository();
 
     @AfterEach
     public void after() {

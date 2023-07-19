@@ -33,7 +33,7 @@ class KafkaConsumerSyncWithOffsetRepoCommitIT extends BaseManualCommitTestSuppor
     public static final String TOPIC = "testManualCommitSyncWithOffsetRepoTest";
 
     @BindToRegistry("stateRepository")
-    private static MemoryStateRepository stateRepository = new MemoryStateRepository();
+    private static final MemoryStateRepository stateRepository = new MemoryStateRepository();
 
     @AfterEach
     public void after() {

@@ -31,9 +31,9 @@ import org.junit.jupiter.api.Test;
 public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempotentTestSupport {
     public static final String TOPIC = "testidemp3";
 
-    private int size = 200;
+    private final int size = 200;
     @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository kafkaIdempotentRepository
+    private final KafkaIdempotentRepository kafkaIdempotentRepository
             = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
 
     @BeforeEach

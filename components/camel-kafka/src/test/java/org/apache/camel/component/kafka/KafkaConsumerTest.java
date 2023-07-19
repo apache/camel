@@ -30,14 +30,14 @@ import static org.mockito.Mockito.when;
 
 public class KafkaConsumerTest {
 
-    private KafkaConfiguration configuration = mock(KafkaConfiguration.class);
-    private KafkaClientFactory clientFactory = mock(KafkaClientFactory.class);
-    private KafkaComponent component = mock(KafkaComponent.class);
-    private KafkaEndpoint endpoint = mock(KafkaEndpoint.class);
-    private Processor processor = mock(Processor.class);
-    private CamelContext context = mock(CamelContext.class);
-    private ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
-    private ExchangeFactory ef = mock(ExchangeFactory.class);
+    private final KafkaConfiguration configuration = mock(KafkaConfiguration.class);
+    private final KafkaClientFactory clientFactory = mock(KafkaClientFactory.class);
+    private final KafkaComponent component = mock(KafkaComponent.class);
+    private final KafkaEndpoint endpoint = mock(KafkaEndpoint.class);
+    private final Processor processor = mock(Processor.class);
+    private final CamelContext context = mock(CamelContext.class);
+    private final ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
+    private final ExchangeFactory ef = mock(ExchangeFactory.class);
 
     @Test
     public void consumerRequiresBootstrapServers() {

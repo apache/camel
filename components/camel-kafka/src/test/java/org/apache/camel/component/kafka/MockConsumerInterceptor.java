@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MockConsumerInterceptor implements ConsumerInterceptor<String, String> {
-    public static ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
+    public static final ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(MockConsumerInterceptor.class);
 

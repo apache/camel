@@ -62,7 +62,7 @@ public class KafkaConsumerAuthManualTest {
     private static final int MESSAGE_COUNT = Integer.valueOf(System.getProperty("kafka.manual.test.message.count", "5"));
 
     @RegisterExtension
-    private static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+    private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
     private static volatile int receivedMessages;
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 

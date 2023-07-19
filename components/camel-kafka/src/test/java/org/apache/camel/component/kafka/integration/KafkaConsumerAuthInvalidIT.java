@@ -75,10 +75,10 @@ public class KafkaConsumerAuthInvalidIT {
 
     @Order(1)
     @RegisterExtension
-    private static KafkaService service = KafkaServiceFactory.createSingletonService();
+    private static final KafkaService service = KafkaServiceFactory.createSingletonService();
     @Order(2)
     @RegisterExtension
-    private static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+    private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
