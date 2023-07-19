@@ -67,7 +67,8 @@ public class Kinesis2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "false", description = "If we want to a KinesisAsyncClient instance set it to true")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "If we want to a KinesisAsyncClient instance set it to true")
     private boolean asyncClient;
     @UriParam(label = "common", defaultValue = "true",
               description = "This option will set the CBOR_ENABLED property during the execution")

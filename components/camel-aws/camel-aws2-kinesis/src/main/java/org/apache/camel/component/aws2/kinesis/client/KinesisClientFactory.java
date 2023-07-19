@@ -35,8 +35,8 @@ public final class KinesisClientFactory {
     /**
      * Return the correct aws Kinesis client (based on remote vs local).
      *
-     * @param configuration configuration
-     * @return KinesisClient
+     * @param  configuration configuration
+     * @return               KinesisClient
      */
     public static KinesisInternalClient getKinesisClient(Kinesis2Configuration configuration) {
         if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
@@ -51,8 +51,8 @@ public final class KinesisClientFactory {
     /**
      * Return the standard aws Kinesis Async client.
      *
-     * @param configuration configuration
-     * @return KinesisAsyncClient
+     * @param  configuration configuration
+     * @return               KinesisAsyncClient
      */
     public static KinesisAsyncInternalClient getKinesisAsyncClient(Kinesis2Configuration configuration) {
         if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {

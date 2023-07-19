@@ -32,6 +32,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": getOrCreateConfiguration(target).setAmazonKinesisClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisClient.class, value)); return true;
+        case "asyncclient":
+        case "asyncClient": getOrCreateConfiguration(target).setAsyncClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -88,6 +90,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": return java.lang.String.class;
         case "amazonkinesisclient":
         case "amazonKinesisClient": return software.amazon.awssdk.services.kinesis.KinesisClient.class;
+        case "asyncclient":
+        case "asyncClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -140,6 +144,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonkinesisclient":
         case "amazonKinesisClient": return getOrCreateConfiguration(target).getAmazonKinesisClient();
+        case "asyncclient":
+        case "asyncClient": return getOrCreateConfiguration(target).isAsyncClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

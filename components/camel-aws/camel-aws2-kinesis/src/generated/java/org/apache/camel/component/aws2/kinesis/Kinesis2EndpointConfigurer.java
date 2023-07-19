@@ -25,6 +25,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": target.getConfiguration().setAmazonKinesisClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisClient.class, value)); return true;
+        case "asyncclient":
+        case "asyncClient": target.getConfiguration().setAsyncClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -111,6 +113,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return java.lang.String.class;
         case "amazonkinesisclient":
         case "amazonKinesisClient": return software.amazon.awssdk.services.kinesis.KinesisClient.class;
+        case "asyncclient":
+        case "asyncClient": return boolean.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -193,6 +197,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonkinesisclient":
         case "amazonKinesisClient": return target.getConfiguration().getAmazonKinesisClient();
+        case "asyncclient":
+        case "asyncClient": return target.getConfiguration().isAsyncClient();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":

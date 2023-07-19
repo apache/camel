@@ -69,6 +69,21 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder asyncClient(boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -468,6 +483,7 @@ public interface Aws2KinesisComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
+            case "asyncClient": getOrCreateConfiguration((Kinesis2Component) component).setAsyncClient((boolean) value); return true;
             case "cborEnabled": getOrCreateConfiguration((Kinesis2Component) component).setCborEnabled((boolean) value); return true;
             case "configuration": ((Kinesis2Component) component).setConfiguration((org.apache.camel.component.aws2.kinesis.Kinesis2Configuration) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Kinesis2Component) component).setOverrideEndpoint((boolean) value); return true;

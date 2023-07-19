@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.aws2.kinesis.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
 import org.apache.camel.component.aws2.kinesis.client.KinesisAsyncInternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
@@ -33,8 +32,8 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage an AWS Kinesis Async client for all users to use (enabling temporary creds). This implementation is for remote instances to manage the
- * credentials on their own (eliminating credential rotations)
+ * Manage an AWS Kinesis Async client for all users to use (enabling temporary creds). This implementation is for remote
+ * instances to manage the credentials on their own (eliminating credential rotations)
  */
 public class KinesisAsyncClientIAMOptimizedImpl implements KinesisAsyncInternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisAsyncClientIAMOptimizedImpl.class);
