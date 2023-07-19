@@ -17,41 +17,36 @@
 
 package org.apache.camel.component.rocketmq;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.rocketmq.infra.EmbeddedRocketMQServer;
+import org.apache.camel.test.infra.rocketmq.services.RocketMQService;
+import org.apache.camel.test.infra.rocketmq.services.RocketMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.rocketmq.broker.BrokerController;
-import org.apache.rocketmq.namesrv.NamesrvController;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class RocketMQRouteTest extends CamelTestSupport {
 
     public static final String EXPECTED_MESSAGE = "hello, RocketMQ.";
 
-    private static final int NAMESRV_PORT = 59876;
-
-    private static final String NAMESRV_ADDR = "127.0.0.1:" + NAMESRV_PORT;
-
     private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1&sendTag=startTag";
 
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
-    private static NamesrvController namesrvController;
-
-    private static BrokerController brokerController;
-
     private MockEndpoint resultEndpoint;
+
+    @RegisterExtension
+    public static RocketMQService rocketMQService = RocketMQServiceFactory.createService();
 
     @BeforeAll
     static void beforeAll() throws Exception {
-        namesrvController = EmbeddedRocketMQServer.createAndStartNamesrv(NAMESRV_PORT);
-        brokerController = EmbeddedRocketMQServer.createAndStartBroker(NAMESRV_ADDR);
-        EmbeddedRocketMQServer.createTopic(NAMESRV_ADDR, "DefaultCluster", "START_TOPIC");
+        rocketMQService.createTopic("START_TOPIC");
     }
 
     @Override
@@ -65,7 +60,7 @@ public class RocketMQRouteTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         RocketMQComponent rocketMQComponent = new RocketMQComponent();
-        rocketMQComponent.setNamesrvAddr(NAMESRV_ADDR);
+        rocketMQComponent.setNamesrvAddr(rocketMQService.nameserverAddress());
         camelContext.addComponent("rocketmq", rocketMQComponent);
         return camelContext;
     }
@@ -93,8 +88,7 @@ public class RocketMQRouteTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void afterAll() {
-        brokerController.shutdown();
-        namesrvController.shutdown();
+    public static void afterAll() throws IOException, InterruptedException {
+        rocketMQService.deleteTopic("START_TOPIC");
     }
 }

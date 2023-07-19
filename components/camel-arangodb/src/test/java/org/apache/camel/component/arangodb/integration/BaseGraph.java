@@ -32,7 +32,7 @@ import com.arangodb.model.CollectionCreateOptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-public class BaseGraph extends BaseArangoDb {
+public abstract class BaseGraph extends BaseArangoDb {
 
     protected static ArangoCollection edgesCollection;
     protected static ArangoCollection verticesCollection;

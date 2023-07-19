@@ -39,7 +39,6 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
@@ -65,7 +64,6 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -91,7 +89,6 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
-        case "password": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "repeatcount":
@@ -117,7 +114,6 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -144,7 +140,6 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
-        case "password": return target.getPassword();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":
@@ -170,7 +165,6 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "username": return target.getUsername();
         default: return null;
         }
     }

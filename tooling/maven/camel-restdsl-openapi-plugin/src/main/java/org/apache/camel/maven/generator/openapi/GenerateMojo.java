@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.generator.openapi.RestDslSourceCodeGenerator;
@@ -57,7 +57,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OasDocument openapi;
+        OpenApiDocument openapi;
         try {
             openapi = readOpenApiDoc(specificationUri);
         } catch (Exception e1) {

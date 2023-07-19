@@ -14,26 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.rocketmq.common;
 
-package org.apache.camel.component.atom;
+public final class RocketMQProperties {
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+    public static final String ROCKETMQ_VERSION_PROPERTY = "itest.rocketmq.container.image.version";
+    public static final String ROCKETMQ_IMAGE_PROPERTY = "itest.rocketmq.container.image";
+    public static final int ROCKETMQ_NAMESRV_PORT = 9876;
+    public static final int ROCKETMQ_BROKER1_PORT = 10909;
+    public static final int ROCKETMQ_BROKER2_PORT = 10911;
+    public static final int ROCKETMQ_BROKER3_PORT = 10912;
 
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+    private RocketMQProperties() {
 
-import org.apache.commons.io.FileUtils;
-
-public class MyHttpServlet extends HttpServlet {
-
-    private static final long serialVersionUID = 5594945031962091041L;
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/feed.atom"),
-                StandardCharsets.UTF_8));
     }
 }

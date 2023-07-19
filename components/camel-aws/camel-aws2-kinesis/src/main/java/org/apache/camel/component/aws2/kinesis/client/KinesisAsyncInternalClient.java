@@ -14,27 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.component.aws2.kinesis.client;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 
 /**
- * Unit test for AtomProducer.
+ * Manage the required actions of a Kinesis Async client for either local or remote.
  */
-@DisabledOnOs(OS.AIX)
-public class AtomProducerTest extends CamelTestSupport {
-
-    @Test
-    void testNotYetImplemented() {
-        Endpoint ep = context.getEndpoint("atom:file://target/out.atom");
-
-        assertThrows(UnsupportedOperationException.class, () -> ep.createProducer());
-    }
-
+public interface KinesisAsyncInternalClient {
+    /**
+     * Returns a Kinesis Async client.
+     *
+     * @return KinesisAsyncClient client
+     */
+    KinesisAsyncClient getKinesisAsyncClient();
 }

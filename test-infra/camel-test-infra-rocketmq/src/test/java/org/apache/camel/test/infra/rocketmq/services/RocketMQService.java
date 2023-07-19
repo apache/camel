@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.rocketmq.services;
 
-package org.apache.camel.component.rss;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 
-import org.apache.commons.io.FileUtils;
+public interface RocketMQService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
+    String nameserverAddress();
 
-public class MyHttpServlet extends HttpServlet {
-
-    private static final long serialVersionUID = 5594945031962091041L;
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/rss20.xml"), StandardCharsets.UTF_8));
+    default String defaultCluster() {
+        return "DefaultCluster";
     }
+
+    void createTopic(String topic);
+
+    void deleteTopic(String topic) throws IOException, InterruptedException;
 }

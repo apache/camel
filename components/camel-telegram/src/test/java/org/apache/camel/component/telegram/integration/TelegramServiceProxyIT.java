@@ -20,6 +20,7 @@ import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.util.TelegramApiConfig;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -63,10 +64,10 @@ public class TelegramServiceProxyIT extends TelegramTestSupport {
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
-        template.requestBody(
+        Assertions.assertDoesNotThrow(() -> template.requestBody(
                 String.format("telegram://bots?chatId=%s&proxyHost=%s&proxyPort=%s&proxyType=%s", chatId, proxyHost, proxyPort,
                         proxyType),
-                msg);
+                msg));
     }
 
 }

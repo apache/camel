@@ -42,41 +42,32 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
     @Test
     public void testCollection() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
         headers.put("CamelDhis2.path", "organisationUnits");
-        // parameter type is String
         headers.put("CamelDhis2.itemType", "org.hisp.dhis.api.model.v2_39_1.OrganisationUnit");
-        // parameter type is Boolean
+        headers.put("CamelDhis2.arrayName", "organisationUnits");
         headers.put("CamelDhis2.paging", true);
-        // parameter type is String
         headers.put("CamelDhis2.fields", null);
-        // parameter type is String
         headers.put("CamelDhis2.filter", null);
-        // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
         final java.util.Iterator result = requestBodyAndHeaders("direct://COLLECTION", null, headers);
 
         assertNotNull(result, "collection result");
-        LOG.debug("collection: " + result);
+        LOG.debug("collection: {}", result);
     }
 
     @Test
     public void testResource() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
         headers.put("CamelDhis2.path", String.format("organisationUnits/%s", Environment.ORG_UNIT_ID));
-        // parameter type is String
         headers.put("CamelDhis2.fields", null);
-        // parameter type is String
         headers.put("CamelDhis2.filter", null);
-        // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", null);
 
         final java.io.InputStream result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
 
         assertNotNull(result, "resource result");
-        LOG.debug("resource: " + result);
+        LOG.debug("Result: {}", result);
     }
 
     @Override

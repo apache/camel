@@ -23,13 +23,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslGeneratorV3Test {
 
-    static OasDocument document;
+    static OpenApi30Document document;
 
     final Instant generated = Instant.parse("2017-10-17T00:00:00.000Z");
 
@@ -75,7 +74,7 @@ public class RestDslGeneratorV3Test {
                 .withIndent("\t")
                 .withSourceCodeTimestamps()
                 .withOperationFilter("find*,deletePet,updatePet")
-                .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+                .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId())
                 .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteFilterV3.txt").toURI();
@@ -93,7 +92,7 @@ public class RestDslGeneratorV3Test {
                 .withPackageName("com.example")
                 .withIndent("\t")
                 .withSourceCodeTimestamps()
-                .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+                .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId())
                 .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteV3.txt").toURI();
@@ -119,10 +118,9 @@ public class RestDslGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = RestDslGeneratorTest.class.getResourceAsStream("openapi-spec.json")) {
-            final JsonNode node = mapper.readTree(is);
-            document = (OasDocument) Library.readDocument(node);
+            String json = IOHelper.loadText(is);
+            document = (OpenApi30Document) Library.readDocumentFromJSONString(json);
         }
     }
 }

@@ -122,7 +122,7 @@
         <flatten-maven-plugin-version>1.5.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.2</license-maven-plugin-version>
-        <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
+        <maven-assembly-plugin-version>3.6.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.6.0</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.3.0</maven-enforcer-plugin-version>
@@ -183,18 +183,6 @@
             </releases>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <build>
         <defaultGoal>install</defaultGoal>
@@ -355,6 +343,7 @@
                         </excludes>
                         <mapping>
                             <Adapter>CAMEL_PROPERTIES_STYLE</Adapter>
+                            <conf>SCRIPT_STYLE</conf>
                             <Dockerfile.jvm>SCRIPT_STYLE</Dockerfile.jvm>
                             <Dockerfile.legacy-jar>SCRIPT_STYLE</Dockerfile.legacy-jar>
                             <Dockerfile.native-micro>SCRIPT_STYLE</Dockerfile.native-micro>
@@ -807,6 +796,18 @@
                     </releases>
                 </repository>
             </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>apache.snapshots</id>
+                    <url>https://repository.apache.org/snapshots/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
         <profile>
             <!-- The full profile contains mojos *not* essential for the quick build. -->

@@ -67,6 +67,8 @@ public class Kinesis2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
+    @UriParam(label = "common", defaultValue = "false", description = "If we want to a KinesisAsyncClient instance set it to true")
+    private boolean asyncClient;
     @UriParam(label = "common", defaultValue = "true",
               description = "This option will set the CBOR_ENABLED property during the execution")
     private boolean cborEnabled = true;
@@ -247,6 +249,14 @@ public class Kinesis2Configuration implements Cloneable {
 
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
+    }
+
+    public boolean isAsyncClient() {
+        return asyncClient;
+    }
+
+    public void setAsyncClient(boolean asyncClient) {
+        this.asyncClient = asyncClient;
     }
 
     // *************************************************

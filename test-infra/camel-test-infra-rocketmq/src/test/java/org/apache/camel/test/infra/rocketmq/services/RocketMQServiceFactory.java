@@ -14,24 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb.integration;
+package org.apache.camel.test.infra.rocketmq.services;
 
-import com.arangodb.ArangoCollection;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
-public class BaseCollection extends BaseArangoDb {
+public final class RocketMQServiceFactory {
+    private RocketMQServiceFactory() {
 
-    protected ArangoCollection collection;
-
-    @BeforeEach
-    public void beforeEach() {
-        arangoDatabase.createCollection(COLLECTION_NAME);
-        collection = arangoDatabase.collection(COLLECTION_NAME);
     }
 
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
+    public static SimpleTestServiceBuilder<RocketMQService> builder() {
+        return new SimpleTestServiceBuilder<>("rocketmq");
+    }
+
+    public static RocketMQService createService() {
+        return builder()
+                .addLocalMapping(RocketMQContainer::new)
+                .build();
     }
 }

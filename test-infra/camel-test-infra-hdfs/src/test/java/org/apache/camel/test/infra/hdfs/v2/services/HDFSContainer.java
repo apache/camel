@@ -16,42 +16,45 @@
  */
 package org.apache.camel.test.infra.hdfs.v2.services;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.MiniDFSCluster;
-import org.testcontainers.containers.GenericContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class HDFSContainer extends GenericContainer {
+public class HDFSContainer {
+    private static final Logger LOG = LoggerFactory.getLogger(HDFSContainer.class);
 
+    private final int port;
     private MiniDFSCluster cluster;
 
-    @Override
+    public HDFSContainer(int port) {
+        this.port = port;
+    }
+
     public void start() {
         try {
             Configuration conf = new Configuration();
             conf.set("dfs.namenode.fs-limits.max-directory-items", "1048576");
             cluster = new MiniDFSCluster.Builder(conf)
-                    .nameNodePort(AvailablePortFinder.getNextAvailable())
+                    .nameNodePort(port)
                     .numDataNodes(3)
                     .format(true)
                     .build();
         } catch (Throwable e) {
-            logger().warn("Couldn't start HDFS cluster. Test is not started, but passed!", e);
+            LOG.warn("Couldn't start HDFS cluster. Test is not started, but passed!", e);
         }
     }
 
-    @Override
     public void stop() {
         try {
             if (cluster != null) {
                 cluster.shutdown();
             }
         } catch (Exception e) {
-            logger().warn("Error shutting down the HDFS container", e);
+            LOG.warn("Error shutting down the HDFS container", e);
         }
     }
 
-    @Override
     public String getHost() {
         return "localhost";
     }

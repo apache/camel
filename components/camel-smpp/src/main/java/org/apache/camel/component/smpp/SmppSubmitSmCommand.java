@@ -36,6 +36,7 @@ import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SubmitSmResult;
 
 public class SmppSubmitSmCommand extends SmppSmCommand {
 
@@ -48,15 +49,16 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         SubmitSm[] submitSms = createSubmitSm(exchange);
         List<String> messageIDs = new ArrayList<>(submitSms.length);
 
+        String messageID = null;
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];
-            String messageID;
+            messageID = null;
             if (log.isDebugEnabled()) {
                 log.debug("Sending short message {} for exchange id '{}'...", i, exchange.getExchangeId());
             }
 
             try {
-                messageID = session.submitShortMessage(
+                SubmitSmResult result = session.submitShortMessage(
                         submitSm.getServiceType(),
                         TypeOfNumber.valueOf(submitSm.getSourceAddrTon()),
                         NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()),
@@ -75,11 +77,16 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
                         (byte) 0,
                         submitSm.getShortMessage(),
                         submitSm.getOptionalParameters());
+                if (result != null) {
+                    messageID = result.getMessageId();
+                }
             } catch (Exception e) {
                 throw new SmppException(e);
             }
 
-            messageIDs.add(messageID);
+            if (messageID != null) {
+                messageIDs.add(messageID);
+            }
         }
 
         if (log.isDebugEnabled()) {

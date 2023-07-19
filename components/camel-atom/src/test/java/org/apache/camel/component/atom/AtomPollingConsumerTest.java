@@ -18,7 +18,7 @@ package org.apache.camel.component.atom;
 
 import java.util.List;
 
-import org.apache.abdera.model.Feed;
+import com.apptasticsoftware.rssreader.Item;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,10 +48,11 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
         Message in = exchange.getIn();
         assertNotNull(in);
         assertTrue(in.getBody() instanceof List);
-        assertTrue(in.getHeader(AtomConstants.ATOM_FEED) instanceof Feed);
+        assertTrue(in.getHeader(AtomConstants.ATOM_FEED) instanceof List);
 
-        Feed feed = in.getHeader(AtomConstants.ATOM_FEED, Feed.class);
-        assertEquals("James Strachan", feed.getAuthor().getName());
+        List feed = in.getHeader(AtomConstants.ATOM_FEED, List.class);
+        Item item = (Item) feed.get(0);
+        assertEquals("James Strachan", item.getAuthor().get());
 
         List<?> entries = in.getBody(List.class);
         assertEquals(7, entries.size());
@@ -76,7 +77,7 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
             public void configure() {
                 from("atom:file:src/test/data/feed.atom?splitEntries=false").to("mock:result");
 
-                // this is a bit weird syntax that normally is not used using the feedUri parameter
+                // this is a bit weird syntax that normally is not using the feedUri parameter
                 from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false").to("mock:result2");
             }
         };

@@ -41,10 +41,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -126,7 +126,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter
     String basePath;
 
-    @Parameter(defaultValue = "3.0.42")
+    @Parameter(defaultValue = "3.0.46")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -313,7 +313,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         return null;
     }
 
-    OasDocument readOpenApiDoc(String specificationUri) throws Exception {
+    OpenApiDocument readOpenApiDoc(String specificationUri) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         URL inputSpecRemoteUrl = inputSpecRemoteUrl(specificationUri);
@@ -352,11 +352,11 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             options.setTagInspector(new TrustedTagInspector());
             Yaml loader = new Yaml(new SafeConstructor(options));
             Map<?, ?> map = loader.load(is);
-            JsonNode node = mapper.convertValue(map, JsonNode.class);
-            return (OasDocument) Library.readDocument(node);
+            ObjectNode node = mapper.convertValue(map, ObjectNode.class);
+            return (OpenApiDocument) Library.readDocument(node);
         } else {
-            JsonNode node = mapper.readTree(is);
-            return (OasDocument) Library.readDocument(node);
+            ObjectNode node = (ObjectNode) mapper.readTree(is);
+            return (OpenApiDocument) Library.readDocument(node);
         }
     }
 

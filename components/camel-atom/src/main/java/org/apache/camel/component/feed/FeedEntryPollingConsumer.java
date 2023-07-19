@@ -20,16 +20,12 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.resume.ResumeAdapter;
-import org.apache.camel.resume.ResumeAware;
-import org.apache.camel.resume.ResumeStrategy;
 
 /**
  * Consumer to poll feeds and return each entry from the feed step by step.
  */
-public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer implements ResumeAware<ResumeStrategy> {
+public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer {
     protected int entryIndex;
-    protected ResumeStrategy resumeStrategy;
     @SuppressWarnings("rawtypes")
     protected List<E> list;
     protected boolean throttleEntries;
@@ -53,21 +49,11 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
             E entry = list.get(entryIndex--);
             polledMessages++;
 
-            boolean valid = true;
-            if (resumeStrategy != null) {
-                ResumeAdapter adapter = resumeStrategy.getAdapter();
-
-                if (adapter instanceof EntryFilter) {
-                    valid = ((EntryFilter<E>) adapter).isValidEntry(entry);
-                }
-            }
-            if (valid) {
-                Exchange exchange = endpoint.createExchange(feed, entry);
-                getProcessor().process(exchange);
-                if (this.throttleEntries) {
-                    // return and wait for the next poll to continue from last time (this consumer is stateful)
-                    return polledMessages;
-                }
+            Exchange exchange = endpoint.createExchange(feed, entry);
+            getProcessor().process(exchange);
+            if (this.throttleEntries) {
+                // return and wait for the next poll to continue from last time (this consumer is stateful)
+                return polledMessages;
             }
         }
 
@@ -76,21 +62,6 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
         resetList();
 
         return polledMessages;
-    }
-
-    @Override
-    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
-        this.resumeStrategy = resumeStrategy;
-    }
-
-    @Override
-    public ResumeStrategy getResumeStrategy() {
-        return resumeStrategy;
-    }
-
-    @Override
-    public String adapterFactoryService() {
-        return "atom-adapter-factory";
     }
 
     protected abstract void resetList();

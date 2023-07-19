@@ -16,9 +16,12 @@
  */
 package org.apache.camel.generator.openapi;
 
-import io.apicurio.datamodels.openapi.models.OasInfo;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30DocumentImpl;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Info;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30InfoImpl;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Server;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30ServerImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,58 +30,64 @@ public class RestDslSourceCodeGeneratorV3Test {
 
     @Test
     public void shouldCreatePackageNamesFromHostnames() {
-        final Oas30Document openapi = new Oas30Document();
-        openapi.addServer("http://api.example.org/", "test server url");
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        OpenApi30Server server = new OpenApi30ServerImpl();
+        server.setUrl("http://api.example.org/");
+        server.setDescription("test server url");
+        openapi.addServer(server);
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi)).isEqualTo("org.example.api");
     }
 
     @Test
     public void shouldCreatePackageNamesFromHostnamesWithPorts() {
-        final Oas30Document openapi = new Oas30Document();
-        openapi.addServer("http://api.example.org:8080/", "test server url");
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        OpenApi30Server server = new OpenApi30ServerImpl();
+        server.setUrl("http://api.example.org:8080/");
+        server.setDescription("test server url");
+        openapi.addServer(server);
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi)).isEqualTo("org.example.api");
     }
 
     @Test
     public void shouldGenerateClassNameFromTitle() {
-        final Oas30Document openapi = new Oas30Document();
-        final OasInfo info = new Oas30Info();
-        info.title = "Example API";
-        openapi.info = info;
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        final OpenApi30Info info = new OpenApi30InfoImpl();
+        info.setTitle("Example API");
+        openapi.setInfo(info);
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi)).isEqualTo("ExampleAPI");
     }
 
     @Test
     public void shouldGenerateClassNameFromTitleWithNonValidJavaIdentifiers() {
-        final Oas30Document openapi = new Oas30Document();
-        final OasInfo info = new Oas30Info();
-        info.title = "Example-API 2.0";
-        openapi.info = info;
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        final OpenApi30Info info = new OpenApi30InfoImpl();
+        info.setTitle("Example-API 2.0");
+        openapi.setInfo(info);
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi)).isEqualTo("ExampleAPI20");
     }
 
     @Test
     public void shouldUseDefaultClassNameIfInfoOrTitleIsNotPresent() {
-        final Oas30Document openapi = new Oas30Document();
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
                 .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
 
-        openapi.info = new Oas30Info();
+        openapi.setInfo(new OpenApi30InfoImpl());
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
                 .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
     public void shouldUseDefaultClassNameIfTitleContainsOnlyNonValidJavaIdentifiers() {
-        final Oas30Document openapi = new Oas30Document();
-        final OasInfo info = new Oas30Info();
-        info.title = "\\%/4";
-        openapi.info = info;
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        final OpenApi30Info info = new OpenApi30InfoImpl();
+        info.setTitle("\\%/4");
+        openapi.setInfo(info);
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(openapi))
                 .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
@@ -86,8 +95,11 @@ public class RestDslSourceCodeGeneratorV3Test {
 
     @Test
     public void shouldUseDefaultPackageNameForLocalhost() {
-        final Oas30Document openapi = new Oas30Document();
-        openapi.addServer("http://localhost", "test server url");
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        OpenApi30Server server = new OpenApi30ServerImpl();
+        server.setUrl("http://localhost");
+        server.setDescription("test server url");
+        openapi.addServer(server);
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
                 .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
@@ -95,8 +107,11 @@ public class RestDslSourceCodeGeneratorV3Test {
 
     @Test
     public void shouldUseDefaultPackageNameForLocalhostWithPort() {
-        final Oas30Document openapi = new Oas30Document();
-        openapi.addServer("http://localhost:8080", "test server url");
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
+        OpenApi30Server server = new OpenApi30ServerImpl();
+        server.setUrl("http://localhost:8080");
+        server.setDescription("test server url");
+        openapi.addServer(server);
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
                 .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
@@ -104,7 +119,7 @@ public class RestDslSourceCodeGeneratorV3Test {
 
     @Test
     public void shouldUseDefaultPackageNameIfNoHostIsSpecified() {
-        final Oas30Document openapi = new Oas30Document();
+        final OpenApi30Document openapi = new OpenApi30DocumentImpl();
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(openapi))
                 .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
