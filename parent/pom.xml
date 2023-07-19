@@ -251,7 +251,7 @@
         <jakarta-xml-bind-api-version>4.0.0</jakarta-xml-bind-api-version>
         <jakarta-xml-soap-api-version>3.0.0</jakarta-xml-soap-api-version>
         <jakarta-xml-ws-api-version>4.0.0</jakarta-xml-ws-api-version>
-        <glassfish-javax-json>1.0.4</glassfish-javax-json>
+        <glassfish-javax-json>1.1.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>4.0.3</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>3.1.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
