@@ -45,11 +45,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -972,8 +972,8 @@ public class Run extends CamelCommand {
         } else {
             mapper = new ObjectMapper();
         }
-        JsonNode node = mapper.readTree(file);
-        OasDocument document = (OasDocument) Library.readDocument(node);
+        ObjectNode node = (ObjectNode) mapper.readTree(file);
+        OpenApiDocument document = (OpenApiDocument) Library.readDocument(node);
         RuntimeUtil.setRootLoggingLevel("off");
         try {
             try (CamelContext context = new DefaultCamelContext()) {
