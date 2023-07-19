@@ -86,13 +86,6 @@ public interface Web3jConstants {
 
     String QUORUM_ETH_SEND_TRANSACTION = "QUORUM_ETH_SEND_TRANSACTION";
     String QUORUM_NODE_INFO = "QUORUM_NODE_INFO";
-    String QUORUM_CANONICAL_HASH = "QUORUM_CANONICAL_HASH";
-    String QUORUM_VOTE = "QUORUM_VOTE";
-    String QUORUM_MAKE_BLOCK = "QUORUM_MAKE_BLOCK";
-    String QUORUM_PAUSE_BLOCK_MAKER = "QUORUM_PAUSE_BLOCK_MAKER";
-    String QUORUM_RESUME_BLOCK_MAKER = "QUORUM_RESUME_BLOCK_MAKER";
-    String QUORUM_IS_BLOCK_MAKER = "QUORUM_IS_BLOCK_MAKER";
-    String QUORUM_IS_VOTER = "QUORUM_IS_VOTER";
     String QUORUM_GET_PRIVATE_PAYLOAD = "QUORUM_GET_PRIVATE_PAYLOAD";
 
     String ETH_LOG_OBSERVABLE = "ETH_LOG_OBSERVABLE";
@@ -103,12 +96,6 @@ public interface Web3jConstants {
     String BLOCK_OBSERVABLE = "BLOCK_OBSERVABLE";
     String REPLAY_BLOCKS_OBSERVABLE = "REPLAY_BLOCKS_OBSERVABLE";
     String REPLAY_TRANSACTIONS_OBSERVABLE = "REPLAY_TRANSACTIONS_OBSERVABLE";
-    String CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE = "CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE";
-    String CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE = "CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE";
-    String CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE
-            = "CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE";
-    String CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE
-            = "CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE";
 
     @Metadata(label = "producer", description = "The id", javaType = "Long")
     String ID = "ID";
@@ -203,6 +190,9 @@ public interface Web3jConstants {
     @Metadata(label = "producer", description = "A transaction privateFor nodes with public keys in a Quorum network",
               javaType = "List<String>")
     String PRIVATE_FOR = "PRIVATE_FOR";
+    @Metadata(label = "producer", description = "A transaction privateFrom",
+              javaType = "String")
+    String PRIVATE_FROM = "PRIVATE_FROM";
 
     @Metadata(label = "producer", description = "The error code", javaType = "int")
     String ERROR_CODE = "ERROR_CODE";

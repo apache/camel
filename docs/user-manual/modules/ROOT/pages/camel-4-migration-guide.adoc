@@ -313,6 +313,11 @@ The `io.fabric8:kubernetes-client` library has been upgraded and some deprecated
 For example `replaceConfigMap` is now `updateConfigMap`, `replacePod` is now `updatePod` etc. The corresponding 
 constants in class `KubernetesOperations` are also renamed. `REPLACE_CONFIGMAP_OPERATION` is now `UPDATE_CONFIGMAP_OPERATION`, `REPLACE_POD_OPERATION` is now `UPDATE_POD_OPERATION` etc.
 
+=== camel-web3j
+
+The `camel-web3j` has upgrade web3j JAR from 3.x to 5.0 which has many API changes, and so
+some previous API calls are no long provided.
+
 === camel-main
 
 The following constants has been moved from `BaseMainSupport` / `Main` to `MainConstants`:
