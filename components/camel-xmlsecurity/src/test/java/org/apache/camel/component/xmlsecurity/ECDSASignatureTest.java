@@ -41,6 +41,7 @@ import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 /**
  * Test for the ECDSA algorithms
  */
+@Disabled("Cannot run on newer JDKs like JDK11+ and org.apache.santuario:xmlsec:2.2.4 onwards (see also https://issues.apache.org/jira/browse/SANTUARIO-581)")
 public class ECDSASignatureTest extends CamelTestSupport {
 
     private static String payload;
