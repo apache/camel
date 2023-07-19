@@ -32,10 +32,6 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>A Camel Amazon Kinesis Web Service Component Version 2</description>
 
-    <properties>
-        <amazon-kinesis-common-version>2.5.1</amazon-kinesis-common-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
