@@ -160,9 +160,9 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
         final ArgumentCaptor<GetRecordsRequest> getRecordsReqCap = ArgumentCaptor.forClass(GetRecordsRequest.class);
 
-        verify(kinesisClient, times(1)).getShardIterator(any(GetShardIteratorRequest.class));
+        verify(kinesisClient, times(2)).getShardIterator(any(GetShardIteratorRequest.class));
         verify(kinesisClient, times(2)).getRecords(getRecordsReqCap.capture());
         assertThat(getRecordsReqCap.getAllValues().get(0).shardIterator(), is("shardIterator"));
-        assertThat(getRecordsReqCap.getAllValues().get(1).shardIterator(), is("nextShardIterator"));
+        assertThat(getRecordsReqCap.getAllValues().get(1).shardIterator(), is("shardIterator"));
     }
 }
