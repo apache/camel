@@ -42,7 +42,7 @@ public class KafkaComponentTest {
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    private CamelContext context = contextExtension.getContext();
+    private final CamelContext context = contextExtension.getContext();
 
     @AfterEach
     void clear() {

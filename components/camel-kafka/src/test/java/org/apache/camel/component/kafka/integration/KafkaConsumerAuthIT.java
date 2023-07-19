@@ -147,7 +147,7 @@ public class KafkaConsumerAuthIT {
     @Timeout(30)
     @Order(1)
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException, ExecutionException {
+    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
         MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         String propagatedHeaderKey = "PropagatedCustomHeader";

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OffsetCacheTest {
-    private OffsetCache offsetCache = new OffsetCache();
+    private final OffsetCache offsetCache = new OffsetCache();
 
     @Order(1)
     @Test

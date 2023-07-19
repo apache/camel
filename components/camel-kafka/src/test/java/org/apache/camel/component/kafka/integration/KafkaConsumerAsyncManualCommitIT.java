@@ -53,9 +53,9 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAsyncManualCommitIT.class);
 
     @BindToRegistry("testFactory")
-    private KafkaManualCommitFactory manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
+    private final KafkaManualCommitFactory manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
 
-    private CamelContext context = contextExtension.getContext();
+    private final CamelContext context = contextExtension.getContext();
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 

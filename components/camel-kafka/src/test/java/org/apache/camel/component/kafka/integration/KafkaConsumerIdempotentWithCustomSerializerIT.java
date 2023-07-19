@@ -31,10 +31,10 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
 
     public static final String TOPIC = "idempt2";
 
-    private int size = 200;
+    private final int size = 200;
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository kafkaIdempotentRepository
+    private final KafkaIdempotentRepository kafkaIdempotentRepository
             = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
 
     @BeforeEach

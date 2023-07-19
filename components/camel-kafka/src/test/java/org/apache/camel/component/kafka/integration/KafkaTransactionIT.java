@@ -71,14 +71,14 @@ public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(SEQUENTIAL_TRANSACTION_URI).to("kafka:" + TOPIC_TRANSACTION + "?requestRequiredAcks=-1"
                                                     + "&additional-properties[transactional.id]=1234"
                                                     + "&additional-properties[enable.idempotence]=true"
                                                     + "&additional-properties[retries]=5")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 if (body.contains("fail")) {
                                     throw new RuntimeException("fail process message " + body);

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class DefaultKafkaHeaderSerializerTest {
 
-    private DefaultKafkaHeaderSerializer serializer = new DefaultKafkaHeaderSerializer();
+    private final DefaultKafkaHeaderSerializer serializer = new DefaultKafkaHeaderSerializer();
 
     @ParameterizedTest
     @MethodSource("primeNumbers")

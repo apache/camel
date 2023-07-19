@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class KafkaIdempotentRepositoryEagerIT extends SimpleIdempotentTest {
 
     @BindToRegistry("kafkaIdempotentRepositoryEager")
-    private KafkaIdempotentRepository idempotentRepository
+    private final KafkaIdempotentRepository idempotentRepository
             = new KafkaIdempotentRepository("TEST_EAGER_" + UUID.randomUUID(), service.getBootstrapServers());
 
     @Override

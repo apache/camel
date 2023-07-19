@@ -57,12 +57,12 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseEmbeddedKafkaTest
     private static final Logger LOG = LoggerFactory.getLogger(KafkaPausableConsumerCircuitBreakerIT.class);
 
     private static final int SIMULATED_FAILURES = 5;
-    private static LongAdder count = new LongAdder();
+    private static final LongAdder count = new LongAdder();
     private static ScheduledExecutorService executorService;
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     /*
-     * This is used by pausable to determine whether or not to pause. If returning true, processing continues. If
+     * This is used by pausable to determine whether to pause. If returning true, processing continues. If
      * returning false, processing pauses.
      */
     private static boolean canContinue() {
