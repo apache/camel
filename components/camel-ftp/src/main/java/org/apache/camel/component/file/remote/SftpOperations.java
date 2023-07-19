@@ -577,8 +577,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     success = buildDirectoryChunks(directory);
                 }
 
-                // after creating directory, we may set chmod on the file
-                chmodOfDirectory(directory);
+                // only after successfully creating directory, we may set chmod on the file
+                if (success) {
+                    chmodOfDirectory(directory);
+                }
             }
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
@@ -619,8 +621,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     // ignore keep trying to create the rest of the path
                 }
 
-                // after creating directory, we may set chmod on the file
-                chmodOfDirectory(directory);
+                // only after successfully creating directory, we may set chmod on the file
+                if (success) {
+                    chmodOfDirectory(directory);
+                }
             }
         }
 
