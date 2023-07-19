@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,13 +35,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
@@ -112,9 +111,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                             case silent:
                                 break;
                             case fail:
-                                LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(),
+                                LOG.info("Shard Iterator reaches CLOSE status:{} {}",
+                                        getEndpoint().getConfiguration().getStreamName(),
                                         getEndpoint().getConfiguration().getShardId());
-                                throw new IllegalStateException(new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), shard.shardId()));
+                                throw new IllegalStateException(
+                                        new ReachedClosedStatusException(
+                                                getEndpoint().getConfiguration().getStreamName(), shard.shardId()));
                             default:
                                 throw new IllegalArgumentException("Unsupported shard closed strategy");
                         }
@@ -153,6 +155,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         // request.
         if (currentShardIterator == null) {
             var shardId = shard.shardId();
+
             isShardClosed = shard.sequenceNumberRange().endingSequenceNumber() != null;
 
             LOG.debug("ShardId is: {}", shardId);
@@ -225,7 +228,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private boolean hasSequenceNumber() {
         return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
                 && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+                        || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 
     @Override
