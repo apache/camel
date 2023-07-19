@@ -79,7 +79,7 @@ public class KinesisConsumerClosedShardWithSilentTest {
         shardList.add(shard);
 
         when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
-                .nextShardIterator("nextShardIterator")
+                .nextShardIterator("shardIterator")
                 .records(
                         Record.builder().sequenceNumber("1").data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
                                 .build(),
