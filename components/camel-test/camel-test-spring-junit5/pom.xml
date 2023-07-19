@@ -36,7 +36,6 @@
         <firstVersion>3.0.0</firstVersion>
         <label>testing,java,spring</label>
         <title>Test Spring JUnit5</title>
-        <spring-version>6.0.2</spring-version>
     </properties>
 
     <dependencies>
