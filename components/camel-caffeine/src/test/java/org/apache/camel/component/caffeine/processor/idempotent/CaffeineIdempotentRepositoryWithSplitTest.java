@@ -16,23 +16,35 @@
  */
 package org.apache.camel.component.caffeine.processor.idempotent;
 
-import java.util.UUID;
-
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CaffeineIdempotentRepositoryWithSplitTest extends CamelTestSupport {
+public class CaffeineIdempotentRepositoryWithSplitTest implements ConfigurableRoute, CamelTestSupportHelper {
 
     private CaffeineIdempotentRepository repo;
 
-    @Override
-    protected void doPreSetup() throws Exception {
-        super.doPreSetup();
+    protected CamelContext context;
 
-        repo = new CaffeineIdempotentRepository("test");
+    protected ProducerTemplate template;
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
+    @BeforeEach
+    void setupContext(){
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
     }
 
     @Test
@@ -42,16 +54,26 @@ public class CaffeineIdempotentRepositoryWithSplitTest extends CamelTestSupport 
         resultEndpoint.expectedMessageCount(numberUniqueMessages);
 
         for (int i = 0; i < numberUniqueMessages; i++) {
-            template().sendBody("direct:idempotentRoute", String.valueOf(i));
+            template.sendBody("direct:idempotentRoute", String.valueOf(i));
             if (i > 0) {
-                template().sendBody("direct:idempotentRoute", String.valueOf(i - 1));
+                template.sendBody("direct:idempotentRoute", String.valueOf(i - 1));
             }
         }
         resultEndpoint.assertIsSatisfied();
     }
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RoutesBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RoutesBuilder createRouteBuilder() {
+        repo = new CaffeineIdempotentRepository("test");
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -64,7 +86,8 @@ public class CaffeineIdempotentRepositoryWithSplitTest extends CamelTestSupport 
         };
     }
 
-    protected static String generateRandomString() {
-        return UUID.randomUUID().toString();
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

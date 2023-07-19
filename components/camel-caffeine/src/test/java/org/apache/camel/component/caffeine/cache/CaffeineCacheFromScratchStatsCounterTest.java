@@ -18,15 +18,32 @@ package org.apache.camel.component.caffeine.cache;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
+public class CaffeineCacheFromScratchStatsCounterTest implements ConfigurableRoute, CamelTestSupportHelper {
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
+    protected CamelContext context;
+
+    @BeforeEach
+    void setupContext(){
+        context = camelContextExtension.getContext();
+    }
 
     private final MetricRegistry metricRegistry = new MetricRegistry();
     @BindToRegistry("statsCounter")
@@ -69,6 +86,15 @@ public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
     // ****************************
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -79,5 +105,10 @@ public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
                         .to("mock:result-get");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

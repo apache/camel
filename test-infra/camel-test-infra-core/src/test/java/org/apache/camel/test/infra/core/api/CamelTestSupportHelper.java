@@ -17,9 +17,7 @@
 
 package org.apache.camel.test.infra.core.api;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.*;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.core.CamelContextExtension;
@@ -59,4 +57,10 @@ public interface CamelTestSupportHelper {
 
         return exchange;
     }
+
+    default FluentProducerTemplate fluentTemplate() {
+        return getCamelContextExtension().getContext().createFluentProducerTemplate();
+    }
+
+
 }

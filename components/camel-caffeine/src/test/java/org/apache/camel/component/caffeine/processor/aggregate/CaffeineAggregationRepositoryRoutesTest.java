@@ -20,22 +20,34 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RoutesBuilder;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
+public class CaffeineAggregationRepositoryRoutesTest implements ConfigurableRoute, CamelTestSupportHelper {
     private static final String ENDPOINT_MOCK = "mock:result";
     private static final String ENDPOINT_DIRECT = "direct:one";
     private static final int[] VALUES = generateRandomArrayOfInt(10, 0, 30);
     private static final int SUM = IntStream.of(VALUES).reduce(0, (a, b) -> a + b);
     private static final String CORRELATOR = "CORRELATOR";
+
+    protected CamelContext context;
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
+    @BeforeEach
+    void setupContext(){
+        context = camelContextExtension.getContext();
+    }
 
     @EndpointInject(ENDPOINT_MOCK)
     private MockEndpoint mock;
@@ -69,7 +81,16 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() {
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -98,5 +119,10 @@ public class CaffeineAggregationRepositoryRoutesTest extends CamelTestSupport {
         CaffeineAggregationRepository repository = new CaffeineAggregationRepository();
 
         return repository;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

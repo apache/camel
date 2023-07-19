@@ -21,23 +21,40 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
+public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport implements ConfigurableRoute, CamelTestSupportHelper  {
 
     // ****************************
     // Clear
     // ****************************
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
+    protected CamelContext context;
+
+    @BeforeEach
+    void setupContext(){
+        context = camelContextExtension.getContext();
+    }
 
     @Test
     void testCacheClear() throws Exception {
@@ -263,6 +280,15 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
     // ****************************
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -272,5 +298,10 @@ public class CaffeineCacheProducerTest extends CaffeineCacheTestSupport {
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

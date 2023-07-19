@@ -16,11 +16,32 @@
  */
 package org.apache.camel.component.caffeine.cache;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CaffeineCacheProducerCacheNameTest extends CaffeineCacheTestSupport {
+public class CaffeineCacheProducerCacheNameTest implements ConfigurableRoute, CamelTestSupportHelper {
+
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
+    protected CamelContext context;
+    protected ProducerTemplate template;
+
+    @BeforeEach
+    void setupContext(){
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+    }
 
     @Test
     public void testCacheName() throws Exception {
@@ -33,6 +54,15 @@ public class CaffeineCacheProducerCacheNameTest extends CaffeineCacheTestSupport
     }
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -44,5 +74,10 @@ public class CaffeineCacheProducerCacheNameTest extends CaffeineCacheTestSupport
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }
