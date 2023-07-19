@@ -43,9 +43,9 @@
             <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
-            <groupId>software.amazon.kinesis</groupId>
-            <artifactId>amazon-kinesis-client</artifactId>
-            <version>${amazon-kinesis-common-version}</version>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>netty-nio-client</artifactId>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
