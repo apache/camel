@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <version>4.4.2</version>
+            <version>5.1.1</version>
             <!-- force jar type -->
             <type>jar</type>
         </dependency>
