@@ -16,12 +16,13 @@
  */
 package org.apache.camel.generator.openapi;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 import org.apache.camel.model.rest.RestsDefinition;
 
 public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGenerator> {
 
-    RestDslDefinitionGenerator(final OasDocument document) {
+    RestDslDefinitionGenerator(final OpenApiDocument document) {
         super(document);
     }
 
@@ -31,7 +32,10 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
         final PathVisitor<RestsDefinition> restDslStatement
                 = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
 
-        document.paths.getPathItems().forEach(restDslStatement::visit);
+        for (String name : document.getPaths().getItemNames()) {
+            OpenApiPathItem item = document.getPaths().getItem(name);
+            restDslStatement.visit(name, item);
+        }
 
         return emitter.result();
     }

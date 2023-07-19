@@ -81,7 +81,7 @@
               <blueprint>true</blueprint>
               <filterOperation>find*,deletePet,updatePet</filterOperation>
               <configOptions>
-                <dateLibrary>java8</dateLibrary>
+                <dateLibrary>java11</dateLibrary>
               </configOptions>
             </configuration>
           </execution>

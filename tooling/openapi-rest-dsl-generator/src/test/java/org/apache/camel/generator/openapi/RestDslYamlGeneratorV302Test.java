@@ -22,11 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslYamlGeneratorV302Test {
 
-    static OasDocument document;
+    static OpenApiDocument document;
 
     @Test
     public void shouldGenerateYamlWithAllowedValues() throws Exception {
@@ -54,8 +54,8 @@ public class RestDslYamlGeneratorV302Test {
     public static void readOpenApiDoc() throws Exception {
         final ObjectMapper mapper = new YAMLMapper();
         try (InputStream is = RestDslYamlGeneratorV302Test.class.getResourceAsStream("petstore-v3.yaml")) {
-            final JsonNode node = mapper.readTree(is);
-            document = (OasDocument) Library.readDocument(node);
+            final ObjectNode node = (ObjectNode) mapper.readTree(is);
+            document = (OpenApiDocument) Library.readDocument(node);
         }
     }
 

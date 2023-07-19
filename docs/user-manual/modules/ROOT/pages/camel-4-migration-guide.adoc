@@ -247,6 +247,10 @@ The number of enums for `org.apache.camel.Category` has been reduced from 83 to 
 that are using removed values need to choose one of the remainder values. We have done this to consolidate
 the number of categories of all components in the Camel community.
 
+=== camel-openapi-rest-dsl-generator
+
+This dsl-generator has updated the underlying model classes (`apicurio-data-models`) from 1.1.27 to 2.0.3.
+
 === camel-atom
 
 The `camel-atom` component has changed the 3rd party atom client from Apache Abdera to RSSReader.

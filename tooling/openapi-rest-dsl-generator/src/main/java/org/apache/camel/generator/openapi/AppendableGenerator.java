@@ -19,11 +19,11 @@ package org.apache.camel.generator.openapi;
 import java.io.IOException;
 
 import com.squareup.javapoet.JavaFile;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 
 final class AppendableGenerator extends RestDslSourceCodeGenerator<Appendable> {
 
-    AppendableGenerator(final OasDocument document) {
+    AppendableGenerator(final OpenApiDocument document) {
         super(document);
     }
 

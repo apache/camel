@@ -48,7 +48,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.support.PluginHelper;
@@ -60,7 +61,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     private static final String[] FIELD_ORDER
             = new String[] { "id", "path", "description", "consumes", "produces", "type", "outType", "param" };
 
-    RestDslYamlGenerator(final OasDocument document) {
+    RestDslYamlGenerator(final OpenApiDocument document) {
         super(document);
     }
 
@@ -75,7 +76,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 basePath, emitter, filter,
                 destinationGenerator());
 
-        document.paths.getPathItems().forEach(restDslStatement::visit);
+        for (String name : document.getPaths().getItemNames()) {
+            OpenApiPathItem item = document.getPaths().getItem(name);
+            restDslStatement.visit(name, item);
+        }
 
         final RestsDefinition rests = emitter.result();
         final String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, rests);
