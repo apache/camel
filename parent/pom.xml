@@ -483,7 +483,7 @@
         <yetus-audience-annotations-version>0.14.1</yetus-audience-annotations-version>
         <zeebe.version>8.2.8</zeebe.version>
         <zendesk-client-version>0.22.1</zendesk-client-version>
-        <zookeeper-version>3.8.1</zookeeper-version>
+        <zookeeper-version>3.8.2</zookeeper-version>
         <zxing-version>3.5.1</zxing-version>
     </properties>
 
