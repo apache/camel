@@ -1,0 +1,7 @@
+com.atlassian.event
+com.atlassian.httpclient
+com.atlassian.jira
+com.atlassian.platform
+com.atlassian.pom
+com.atlassian.sal
+io.atlassian.fugue

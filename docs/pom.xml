@@ -37,9 +37,9 @@
 
     <repositories>
         <repository>
-            <id>atlassian-public</id>
-            <url>https://packages.atlassian.com/maven-external</url>
-            <name>Atlassian Public Repo</name>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
