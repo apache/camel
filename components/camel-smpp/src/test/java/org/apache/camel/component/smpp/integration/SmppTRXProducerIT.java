@@ -138,7 +138,11 @@ class SmppTRXProducerIT extends CamelTestSupport {
                             "&messageReceiverRouteId=testMessageReceiverRouteId");
 
                 from("direct:messageReceiver").id("testMessageReceiverRouteId")
-                        .to("mock:result");
+                        .choice()
+                            .when(simple("${header.CamelSmppSourceAddr} == '555'"))
+                                .to("mock:garbage") // SMPPServerSimulator.run send a test message, ignore it
+                        .otherwise()
+                            .to("mock:result");
 
                 from("direct:messageReceiver2").id("testMessageReceiverRouteId2")
                         .to("mock:result2");

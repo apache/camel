@@ -17,10 +17,28 @@
 package org.apache.camel.test.infra.pulsar.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class PulsarServiceFactory {
     private PulsarServiceFactory() {
 
+    }
+
+    public static class SingletonPulsarService extends SingletonService<PulsarService> implements PulsarService {
+
+        public SingletonPulsarService(PulsarService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getPulsarAdminUrl() {
+            return getService().getPulsarAdminUrl();
+        }
+
+        @Override
+        public String getPulsarBrokerUrl() {
+            return getService().getPulsarBrokerUrl();
+        }
     }
 
     public static SimpleTestServiceBuilder<PulsarService> builder() {
@@ -31,6 +49,12 @@ public final class PulsarServiceFactory {
         return builder()
                 .addLocalMapping(PulsarLocalContainerService::new)
                 .addRemoteMapping(PulsarRemoteService::new)
+                .build();
+    }
+
+    public static PulsarService createSingletonService() {
+        return builder()
+                .addLocalMapping(() -> new SingletonPulsarService(new PulsarLocalContainerService(), "pulsar"))
                 .build();
     }
 }

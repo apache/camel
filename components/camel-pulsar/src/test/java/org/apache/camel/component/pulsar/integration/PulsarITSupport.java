@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class PulsarITSupport extends CamelTestSupport {
     @RegisterExtension
-    static PulsarService service = PulsarServiceFactory.createService();
+    static PulsarService service = PulsarServiceFactory.createSingletonService();
 
     public String getPulsarBrokerUrl() {
         return service.getPulsarBrokerUrl();
