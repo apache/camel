@@ -152,7 +152,6 @@
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
-        <module>camel-hyperledger-aries</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
@@ -308,7 +307,6 @@
         <module>camel-weather</module>
         <module>camel-web3j</module>
         <module>camel-webhook</module>
-        <module>camel-weka</module>
         <module>camel-whatsapp</module>
         <module>camel-wordpress</module>
         <module>camel-workday</module>

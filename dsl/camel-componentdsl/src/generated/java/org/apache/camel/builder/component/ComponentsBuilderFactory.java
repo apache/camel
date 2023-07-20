@@ -1957,19 +1957,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
-     * Hyperledger Aries (camel-hyperledger-aries)
-     * Camel support for Hyperledger Aries
-     * 
-     * Category: blockchain,security
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.HyperledgerAriesComponentBuilder hyperledgerAries() {
-        return org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.hyperledgerAries();
-    }
-    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -4202,19 +4189,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.WebhookComponentBuilder webhook() {
         return org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.webhook();
-    }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: blockchain
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.WekaComponentBuilder weka() {
-        return org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.weka();
     }
     /**
      * WhatsApp (camel-whatsapp)

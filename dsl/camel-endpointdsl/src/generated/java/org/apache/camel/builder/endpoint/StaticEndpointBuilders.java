@@ -6698,49 +6698,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Hyperledger Aries (camel-hyperledger-aries)
-     * Camel support for Hyperledger Aries
-     * 
-     * Category: blockchain,security
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
-     * 
-     * Syntax: <code>hyperledger-aries:walletName</code>
-     * 
-     * Path parameter: walletName (required)
-     * The wallet to connect to
-     * 
-     * @param path walletName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.HyperledgerAriesEndpointBuilder hyperledgerAries(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder("hyperledger-aries", path);
-    }
-    /**
-     * Hyperledger Aries (camel-hyperledger-aries)
-     * Camel support for Hyperledger Aries
-     * 
-     * Category: blockchain,security
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
-     * 
-     * Syntax: <code>hyperledger-aries:walletName</code>
-     * 
-     * Path parameter: walletName (required)
-     * The wallet to connect to
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path walletName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.HyperledgerAriesEndpointBuilder hyperledgerAries(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -14711,53 +14668,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: blockchain
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * Syntax: <code>weka:command</code>
-     * 
-     * Path parameter: command (required)
-     * The command to use.
-     * There are 7 enums and the value can be one of: filter, model, read,
-     * write, push, pop, version
-     * 
-     * @param path command
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder("weka", path);
-    }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: blockchain
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * Syntax: <code>weka:command</code>
-     * 
-     * Path parameter: command (required)
-     * The command to use.
-     * There are 7 enums and the value can be one of: filter, model, read,
-     * write, push, pop, version
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path command
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * WhatsApp (camel-whatsapp)

@@ -1,1 +1,0 @@
-../../../../../components/camel-weka/src/main/docs/weka-component.adoc
