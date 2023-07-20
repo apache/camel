@@ -131,6 +131,8 @@ function main() {
       fi
     fi
   fi
+
+  ./parse_errors.sh $log
 }
 
 main "$@"
