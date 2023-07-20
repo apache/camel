@@ -57,6 +57,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-bom</artifactId>
+            <version>${camunda-version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>zeebe-client-java</artifactId>
             <version>${zeebe.version}</version>
