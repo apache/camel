@@ -132,7 +132,7 @@ function main() {
     fi
   fi
 
-  ./parse_errors.sh $log
+  ./.github/actions/incremental-build/parse_errors.sh $log
 }
 
 main "$@"
