@@ -23,7 +23,7 @@ public enum DriveFilesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Files.Copy.class,
         "copy",
         arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.File.class)),
+        arg("file", com.google.api.services.drive.model.File.class)),
 
     DELETE(
         com.google.api.services.drive.Drive.Files.Delete.class,
@@ -52,23 +52,34 @@ public enum DriveFilesApiMethod implements ApiMethod {
     INSERT(
         com.google.api.services.drive.Drive.Files.Insert.class,
         "insert",
-        arg("content", com.google.api.services.drive.model.File.class)),
+        arg("file", com.google.api.services.drive.model.File.class)),
 
     INSERT_1(
         com.google.api.services.drive.Drive.Files.Insert.class,
         "insert",
-        arg("content", com.google.api.services.drive.model.File.class),
+        arg("file", com.google.api.services.drive.model.File.class),
         arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Files.List.class,
         "list"),
 
+    LIST_LABELS(
+        com.google.api.services.drive.Drive.Files.ListLabels.class,
+        "listLabels",
+        arg("fileId", String.class)),
+
+    MODIFY_LABELS(
+        com.google.api.services.drive.Drive.Files.ModifyLabels.class,
+        "modifyLabels",
+        arg("fileId", String.class),
+        arg("modifyLabelsRequest", com.google.api.services.drive.model.ModifyLabelsRequest.class)),
+
     PATCH(
         com.google.api.services.drive.Drive.Files.Patch.class,
         "patch",
         arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.File.class)),
+        arg("file", com.google.api.services.drive.model.File.class)),
 
     TOUCH(
         com.google.api.services.drive.Drive.Files.Touch.class,
@@ -89,20 +100,20 @@ public enum DriveFilesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Files.Update.class,
         "update",
         arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.File.class)),
+        arg("file", com.google.api.services.drive.model.File.class)),
 
     UPDATE_1(
         com.google.api.services.drive.Drive.Files.Update.class,
         "update",
         arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.File.class),
+        arg("file", com.google.api.services.drive.model.File.class),
         arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
 
     WATCH(
         com.google.api.services.drive.Drive.Files.Watch.class,
         "watch",
         arg("fileId", String.class),
-        arg("contentChannel", com.google.api.services.drive.model.Channel.class));
+        arg("channel", com.google.api.services.drive.model.Channel.class));
 
     private final ApiMethod apiMethod;
 

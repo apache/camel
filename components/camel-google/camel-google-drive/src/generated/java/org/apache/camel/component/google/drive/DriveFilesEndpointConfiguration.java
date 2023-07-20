@@ -15,18 +15,18 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "drive-files", 
            description = "The files collection of methods",
-           apiMethods = {@ApiMethod(methodName = "copy", description="Creates a copy of the specified file", signatures={"com.google.api.services.drive.Drive$Files$Copy copy(String fileId, com.google.api.services.drive.model.File content)"}), @ApiMethod(methodName = "delete", description="Permanently deletes a file by ID", signatures={"com.google.api.services.drive.Drive$Files$Delete delete(String fileId)"}), @ApiMethod(methodName = "emptyTrash", description="Permanently deletes all of the user's trashed files", signatures={"com.google.api.services.drive.Drive$Files$EmptyTrash emptyTrash()"}), @ApiMethod(methodName = "export", description="Exports a Google Workspace document to the requested MIME type and returns exported byte content", signatures={"com.google.api.services.drive.Drive$Files$Export export(String fileId, String mimeType)"}), @ApiMethod(methodName = "generateIds", description="Generates a set of file IDs which can be provided in insert or copy requests", signatures={"com.google.api.services.drive.Drive$Files$GenerateIds generateIds()"}), @ApiMethod(methodName = "get", description="Gets a file's metadata or content by ID", signatures={"com.google.api.services.drive.Drive$Files$Get get(String fileId)"}), @ApiMethod(methodName = "insert", description="Insert a new file", signatures={"com.google.api.services.drive.Drive$Files$Insert insert(com.google.api.services.drive.model.File content)", "com.google.api.services.drive.Drive$Files$Insert insert(com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), @ApiMethod(methodName = "list", description="Lists the user's files", signatures={"com.google.api.services.drive.Drive$Files$List list()"}), @ApiMethod(methodName = "patch", description="Updates a file's metadata and/or content", signatures={"com.google.api.services.drive.Drive$Files$Patch patch(String fileId, com.google.api.services.drive.model.File content)"}), @ApiMethod(methodName = "touch", description="Set the file's updated time to the current server time", signatures={"com.google.api.services.drive.Drive$Files$Touch touch(String fileId)"}), @ApiMethod(methodName = "trash", description="Moves a file to the trash", signatures={"com.google.api.services.drive.Drive$Files$Trash trash(String fileId)"}), @ApiMethod(methodName = "untrash", description="Restores a file from the trash", signatures={"com.google.api.services.drive.Drive$Files$Untrash untrash(String fileId)"}), @ApiMethod(methodName = "update", description="Updates a file's metadata and/or content", signatures={"com.google.api.services.drive.Drive$Files$Update update(String fileId, com.google.api.services.drive.model.File content)", "com.google.api.services.drive.Drive$Files$Update update(String fileId, com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), @ApiMethod(methodName = "watch", description="Subscribe to changes on a file", signatures={"com.google.api.services.drive.Drive$Files$Watch watch(String fileId, com.google.api.services.drive.model.Channel content)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "copy", description="Creates a copy of the specified file", signatures={"com.google.api.services.drive.Drive$Files$Copy copy(String fileId, com.google.api.services.drive.model.File content)"}), @ApiMethod(methodName = "delete", description="Permanently deletes a file by ID", signatures={"com.google.api.services.drive.Drive$Files$Delete delete(String fileId)"}), @ApiMethod(methodName = "emptyTrash", description="Permanently deletes all of the user's trashed files", signatures={"com.google.api.services.drive.Drive$Files$EmptyTrash emptyTrash()"}), @ApiMethod(methodName = "export", description="Exports a Google Workspace document to the requested MIME type and returns exported byte content", signatures={"com.google.api.services.drive.Drive$Files$Export export(String fileId, String mimeType)"}), @ApiMethod(methodName = "generateIds", description="Generates a set of file IDs which can be provided in insert or copy requests", signatures={"com.google.api.services.drive.Drive$Files$GenerateIds generateIds()"}), @ApiMethod(methodName = "get", description="Gets a file's metadata or content by ID", signatures={"com.google.api.services.drive.Drive$Files$Get get(String fileId)"}), @ApiMethod(methodName = "insert", description="Insert a new file", signatures={"com.google.api.services.drive.Drive$Files$Insert insert(com.google.api.services.drive.model.File content)", "com.google.api.services.drive.Drive$Files$Insert insert(com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), @ApiMethod(methodName = "list", description="Lists the user's files", signatures={"com.google.api.services.drive.Drive$Files$List list()"}), @ApiMethod(methodName = "listLabels", description="Lists the labels on a file", signatures={"com.google.api.services.drive.Drive$Files$ListLabels listLabels(String fileId)"}), @ApiMethod(methodName = "modifyLabels", description="Modifies the set of labels on a file", signatures={"com.google.api.services.drive.Drive$Files$ModifyLabels modifyLabels(String fileId, com.google.api.services.drive.model.ModifyLabelsRequest content)"}), @ApiMethod(methodName = "patch", description="Updates a file's metadata and/or content", signatures={"com.google.api.services.drive.Drive$Files$Patch patch(String fileId, com.google.api.services.drive.model.File content)"}), @ApiMethod(methodName = "touch", description="Set the file's updated time to the current server time", signatures={"com.google.api.services.drive.Drive$Files$Touch touch(String fileId)"}), @ApiMethod(methodName = "trash", description="Moves a file to the trash", signatures={"com.google.api.services.drive.Drive$Files$Trash trash(String fileId)"}), @ApiMethod(methodName = "untrash", description="Restores a file from the trash", signatures={"com.google.api.services.drive.Drive$Files$Untrash untrash(String fileId)"}), @ApiMethod(methodName = "update", description="Updates a file's metadata and/or content", signatures={"com.google.api.services.drive.Drive$Files$Update update(String fileId, com.google.api.services.drive.model.File content)", "com.google.api.services.drive.Drive$Files$Update update(String fileId, com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), @ApiMethod(methodName = "watch", description="Subscribes to changes to a file", signatures={"com.google.api.services.drive.Drive$Files$Watch watch(String fileId, com.google.api.services.drive.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class DriveFilesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The com.google.api.services.drive.model.File"), @ApiMethod(methodName = "insert", description="The com.google.api.services.drive.model.File media metadata or null if none"), @ApiMethod(methodName = "patch", description="The com.google.api.services.drive.model.File"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.File media metadata or null if none")})
-    private com.google.api.services.drive.model.File content;
-    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.drive.model.Channel")})
-    private com.google.api.services.drive.model.Channel contentChannel;
+    private com.google.api.services.drive.model.Channel channel;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The ID of the file to copy"), @ApiMethod(methodName = "delete", description="The ID of the file to delete"), @ApiMethod(methodName = "export", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID for the file in question"), @ApiMethod(methodName = "patch", description="The ID of the file to update"), @ApiMethod(methodName = "touch", description="The ID of the file to update"), @ApiMethod(methodName = "trash", description="The ID of the file to trash"), @ApiMethod(methodName = "untrash", description="The ID of the file to untrash"), @ApiMethod(methodName = "update", description="The ID of the file to update"), @ApiMethod(methodName = "watch", description="The ID for the file in question")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The com.google.api.services.drive.model.File"), @ApiMethod(methodName = "insert", description="The com.google.api.services.drive.model.File media metadata or null if none"), @ApiMethod(methodName = "patch", description="The com.google.api.services.drive.model.File"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.File media metadata or null if none")})
+    private com.google.api.services.drive.model.File file;
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The ID of the file to copy"), @ApiMethod(methodName = "delete", description="The ID of the file to delete"), @ApiMethod(methodName = "export", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID for the file in question"), @ApiMethod(methodName = "listLabels", description="The ID of the file"), @ApiMethod(methodName = "modifyLabels", description="The ID of the file for which the labels are modified"), @ApiMethod(methodName = "patch", description="The ID of the file to update"), @ApiMethod(methodName = "touch", description="The ID of the file to update"), @ApiMethod(methodName = "trash", description="The ID of the file to trash"), @ApiMethod(methodName = "untrash", description="The ID of the file to untrash"), @ApiMethod(methodName = "update", description="The ID of the file to update"), @ApiMethod(methodName = "watch", description="The ID for the file in question")})
     private String fileId;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "insert", description="The media HTTP content or null if none"), @ApiMethod(methodName = "update", description="The media HTTP content or null if none")})
@@ -34,21 +34,24 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "export", description="The MIME type of the format requested for this export")})
     private String mimeType;
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modifyLabels", description="The com.google.api.services.drive.model.ModifyLabelsRequest")})
+    private com.google.api.services.drive.model.ModifyLabelsRequest modifyLabelsRequest;
 
-    public com.google.api.services.drive.model.File getContent() {
-        return content;
+    public com.google.api.services.drive.model.Channel getChannel() {
+        return channel;
     }
 
-    public void setContent(com.google.api.services.drive.model.File content) {
-        this.content = content;
+    public void setChannel(com.google.api.services.drive.model.Channel channel) {
+        this.channel = channel;
     }
 
-    public com.google.api.services.drive.model.Channel getContentChannel() {
-        return contentChannel;
+    public com.google.api.services.drive.model.File getFile() {
+        return file;
     }
 
-    public void setContentChannel(com.google.api.services.drive.model.Channel contentChannel) {
-        this.contentChannel = contentChannel;
+    public void setFile(com.google.api.services.drive.model.File file) {
+        this.file = file;
     }
 
     public String getFileId() {
@@ -73,5 +76,13 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public com.google.api.services.drive.model.ModifyLabelsRequest getModifyLabelsRequest() {
+        return modifyLabelsRequest;
+    }
+
+    public void setModifyLabelsRequest(com.google.api.services.drive.model.ModifyLabelsRequest modifyLabelsRequest) {
+        this.modifyLabelsRequest = modifyLabelsRequest;
     }
 }

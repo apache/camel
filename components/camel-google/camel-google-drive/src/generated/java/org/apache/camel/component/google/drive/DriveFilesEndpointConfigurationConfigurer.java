@@ -23,15 +23,16 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("AccessToken", java.lang.String.class);
         map.put("ApiName", org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class);
         map.put("ApplicationName", java.lang.String.class);
+        map.put("Channel", com.google.api.services.drive.model.Channel.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
-        map.put("Content", com.google.api.services.drive.model.File.class);
-        map.put("ContentChannel", com.google.api.services.drive.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("File", com.google.api.services.drive.model.File.class);
         map.put("FileId", java.lang.String.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
         map.put("MethodName", java.lang.String.class);
         map.put("MimeType", java.lang.String.class);
+        map.put("ModifyLabelsRequest", com.google.api.services.drive.model.ModifyLabelsRequest.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -48,16 +49,16 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
         case "applicationname":
         case "ApplicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "channel":
+        case "Channel": target.setChannel(property(camelContext, com.google.api.services.drive.model.Channel.class, value)); return true;
         case "clientid":
         case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "content":
-        case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.File.class, value)); return true;
-        case "contentchannel":
-        case "ContentChannel": target.setContentChannel(property(camelContext, com.google.api.services.drive.model.Channel.class, value)); return true;
         case "delegate":
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "file":
+        case "File": target.setFile(property(camelContext, com.google.api.services.drive.model.File.class, value)); return true;
         case "fileid":
         case "FileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
         case "mediacontent":
@@ -66,6 +67,8 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "mimetype":
         case "MimeType": target.setMimeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "modifylabelsrequest":
+        case "ModifyLabelsRequest": target.setModifyLabelsRequest(property(camelContext, com.google.api.services.drive.model.ModifyLabelsRequest.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
@@ -90,16 +93,16 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "ApiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
         case "applicationname":
         case "ApplicationName": return java.lang.String.class;
+        case "channel":
+        case "Channel": return com.google.api.services.drive.model.Channel.class;
         case "clientid":
         case "ClientId": return java.lang.String.class;
         case "clientsecret":
         case "ClientSecret": return java.lang.String.class;
-        case "content":
-        case "Content": return com.google.api.services.drive.model.File.class;
-        case "contentchannel":
-        case "ContentChannel": return com.google.api.services.drive.model.Channel.class;
         case "delegate":
         case "Delegate": return java.lang.String.class;
+        case "file":
+        case "File": return com.google.api.services.drive.model.File.class;
         case "fileid":
         case "FileId": return java.lang.String.class;
         case "mediacontent":
@@ -108,6 +111,8 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "MethodName": return java.lang.String.class;
         case "mimetype":
         case "MimeType": return java.lang.String.class;
+        case "modifylabelsrequest":
+        case "ModifyLabelsRequest": return com.google.api.services.drive.model.ModifyLabelsRequest.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
@@ -128,16 +133,16 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "ApiName": return target.getApiName();
         case "applicationname":
         case "ApplicationName": return target.getApplicationName();
+        case "channel":
+        case "Channel": return target.getChannel();
         case "clientid":
         case "ClientId": return target.getClientId();
         case "clientsecret":
         case "ClientSecret": return target.getClientSecret();
-        case "content":
-        case "Content": return target.getContent();
-        case "contentchannel":
-        case "ContentChannel": return target.getContentChannel();
         case "delegate":
         case "Delegate": return target.getDelegate();
+        case "file":
+        case "File": return target.getFile();
         case "fileid":
         case "FileId": return target.getFileId();
         case "mediacontent":
@@ -146,6 +151,8 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "MethodName": return target.getMethodName();
         case "mimetype":
         case "MimeType": return target.getMimeType();
+        case "modifylabelsrequest":
+        case "ModifyLabelsRequest": return target.getModifyLabelsRequest();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
         case "scopes":
