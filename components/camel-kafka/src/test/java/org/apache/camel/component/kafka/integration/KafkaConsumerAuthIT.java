@@ -19,7 +19,6 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.CamelContext;

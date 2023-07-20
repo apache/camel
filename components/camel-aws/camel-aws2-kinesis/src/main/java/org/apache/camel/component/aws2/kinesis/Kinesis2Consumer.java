@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,13 +35,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
@@ -100,7 +99,6 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                     } else {
                         result = getClient().getRecords(req);
                     }
-
 
                     try {
                         Queue<Exchange> exchanges = createExchanges(result.records());
@@ -237,7 +235,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private boolean hasSequenceNumber() {
         return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
                 && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+                        || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 
     @Override

@@ -44,7 +44,8 @@ public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSuppor
     private final int size = 200;
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private final KafkaIdempotentRepository testIdempotent = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
+    private final KafkaIdempotentRepository testIdempotent
+            = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
 
     @BeforeEach
     public void before() {
