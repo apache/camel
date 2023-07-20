@@ -30,6 +30,7 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,7 +47,7 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("data.yaml")) {
 
             ProducerTemplate template = context.createProducerTemplate();
-            String result = template.requestBody("direct:back", is, String.class);
+            String result = assertDoesNotThrow(() -> template.requestBody("direct:back", is, String.class));
             assertNotNull(result);
             assertEquals("{name=Colm, location=Dublin}", result.trim());
 

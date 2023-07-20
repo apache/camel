@@ -21,13 +21,14 @@ import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SnakeYAMLUnmarshalTypeTest extends CamelTestSupport {
     @Test
     public void testUnmarshal() {
-        Object result = template.requestBody("direct:unmarshal", "name: Camel");
+        Object result = assertDoesNotThrow(() -> template.requestBody("direct:unmarshal", "name: Camel"));
         assertNotNull(result);
         assertTrue(result instanceof TestPojo);
     }

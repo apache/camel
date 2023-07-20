@@ -23,92 +23,88 @@ import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.apache.camel.component.snakeyaml.model.UnsafePojo;
 import org.yaml.snakeyaml.constructor.ConstructorException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public final class SnakeYAMLTypeFilterHelper {
     private SnakeYAMLTypeFilterHelper() {
     }
 
     static void testSafeConstructor(ProducerTemplate template) {
-        try {
-            template.sendBody(
-                    "direct:safe-constructor",
-                    "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
 
-            fail("As SnakeYAML uses SafeConstructor, custom types should not be allowed");
-        } catch (CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof ConstructorException);
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(
+                        "direct:safe-constructor",
+                        "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"),
+                "As SnakeYAML uses SafeConstructor, custom types should not be allowed");
+
+        assertTrue(ex.getCause() instanceof ConstructorException);
     }
 
     static void testTypeConstructor(ProducerTemplate template) {
-        Object result = template.requestBody(
+        Object result = assertDoesNotThrow(() -> template.requestBody(
                 "direct:type-constructor",
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
+                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"));
 
         assertNotNull(result);
         assertTrue(result instanceof TestPojo);
 
-        try {
-            template.sendBody(
-                    "direct:type-constructor",
-                    "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}");
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(
+                        "direct:type-constructor",
+                        "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}"),
+                "As SnakeYAML filters class is can unmarshall, UnsafePojo should not be allowed");
 
-            fail("As SnakeYAML filters class is can unmarshall, UnsafePojo should not be allowed");
-        } catch (CamelExecutionException e) {
-            // Wrapped by SnakeYAML
-            assertTrue(e.getCause() instanceof ConstructorException);
-            // Thrown by SnakeYAMLDataFormat
-            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-        }
+        // Wrapped by SnakeYAML
+        assertTrue(ex.getCause() instanceof ConstructorException);
+        // Thrown by SnakeYAMLDataFormat
+        assertTrue(ex.getCause().getCause() instanceof IllegalArgumentException);
     }
 
     static void testTypeConstructorFromDefinition(ProducerTemplate template) {
         Object result;
 
         // TestPojo --> from definition type:
-        result = template.requestBody(
+        result = assertDoesNotThrow(() -> template.requestBody(
                 "direct:type-constructor-strdef",
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
+                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"));
 
         assertNotNull(result);
         assertTrue(result instanceof TestPojo);
 
         // RexPojo --> from definition rex:
-        result = template.requestBody(
+        result = assertDoesNotThrow(() -> template.requestBody(
                 "direct:type-constructor-strdef",
-                "!!org.apache.camel.component.snakeyaml.model.RexPojo {name: Camel}");
+                "!!org.apache.camel.component.snakeyaml.model.RexPojo {name: Camel}"));
 
         assertNotNull(result);
         assertTrue(result instanceof RexPojo);
 
-        try {
-            template.sendBody(
-                    "direct:type-constructor-strdef",
-                    "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}");
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(
+                        "direct:type-constructor-strdef",
+                        "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}"),
+                "As SnakeYAML filters class is can unmarshall, UnsafePojo should not be allowed");
 
-            fail("As SnakeYAML filters class is can unmarshall, UnsafePojo should not be allowed");
-        } catch (CamelExecutionException e) {
-            // Wrapped by SnakeYAML
-            assertTrue(e.getCause() instanceof ConstructorException);
-            // Thrown by SnakeYAMLDataFormat
-            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-        }
+        // Wrapped by SnakeYAML
+        assertTrue(ex.getCause() instanceof ConstructorException);
+        // Thrown by SnakeYAMLDataFormat
+        assertTrue(ex.getCause().getCause() instanceof IllegalArgumentException);
     }
 
     static void testAllowAllConstructor(ProducerTemplate template) {
-        Object testPojo = template.requestBody(
+        Object testPojo = assertDoesNotThrow(() -> template.requestBody(
                 "direct:all-constructor",
-                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
+                "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}"));
 
         assertNotNull(testPojo);
         assertTrue(testPojo instanceof TestPojo);
 
-        Object unsafePojo = template.requestBody(
+        Object unsafePojo = assertDoesNotThrow(() -> template.requestBody(
                 "direct:all-constructor",
-                "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}");
+                "!!org.apache.camel.component.snakeyaml.model.UnsafePojo {name: Camel}"));
 
         assertNotNull(unsafePojo);
         assertTrue(unsafePojo instanceof UnsafePojo);
