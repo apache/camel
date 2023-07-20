@@ -158,18 +158,6 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <!-- camel-jira -->
-        <repository>
-            <id>atlassian-public</id>
-            <url>https://packages.atlassian.com/maven-external</url>
-            <name>Atlassian Public Repo</name>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
     </repositories>
 
     <build>
