@@ -18,7 +18,7 @@
 
 LOG_FILE=$1
 
-temp=$(cat $log | grep "ERROR\].org" | grep "Time elapsed" | awk -F ' '  ' {print $3}' | sed 's/^/| /' | sed 's/$/ |/')
+temp=$(cat $log | egrep "ERROR\].org" | grep "Time elapsed" | awk -F ' '  '{print $2}' | sed 's/^/| /' | sed 's/$/ |/')
 
 if [[ ! -z "$temp" ]] ; then
   echo -e "| Failed Test |\n| --- |" > "$GITHUB_STEP_SUMMARY"
