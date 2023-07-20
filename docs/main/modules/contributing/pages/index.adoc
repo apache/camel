@@ -206,6 +206,7 @@ Other guidelines include:
 * Please also avoid unnecessary changes, like reordering methods and fields, which will make your PR harder to review.
 * When submitting a performance improvement, providing JMH test data as evidence or adding a JMH-based test on the https://github.com/apache/camel-performance-tests/[camel-performance-tests] repository is strongly recommended.
 * Be responsive, assume good intent and respect the https://www.apache.org/foundation/policies/conduct.html[Code of Conduct]
+* When contributing components, please make sure that their dependencies are available in the https://search.maven.org[Maven Central]. We do not accept contributions if the dependencies are not publicly available.
 
 Following these guidelines will help you in getting your contribution accepted.
 
