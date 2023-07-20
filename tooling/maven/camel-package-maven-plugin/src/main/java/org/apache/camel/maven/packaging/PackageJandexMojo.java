@@ -34,10 +34,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexWriter;
 import org.jboss.jandex.Indexer;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generate a Jandex index for classes compiled as part of the current project.

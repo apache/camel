@@ -36,8 +36,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.mvel2.templates.TemplateRuntime;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Prepares camel-main by updating main documentation.

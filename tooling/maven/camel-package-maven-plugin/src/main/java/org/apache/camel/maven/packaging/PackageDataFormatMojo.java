@@ -51,11 +51,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in

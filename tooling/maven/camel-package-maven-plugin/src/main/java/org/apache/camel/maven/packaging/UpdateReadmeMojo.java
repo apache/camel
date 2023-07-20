@@ -55,6 +55,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
@@ -62,7 +63,6 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
 import org.jboss.forge.roaster.model.source.AnnotationElementSource;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.mvel2.templates.TemplateRuntime;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
