@@ -23,5 +23,8 @@ temp=$(cat $log | egrep "ERROR\].org" | grep "Time elapsed" | awk -F ' '  '{prin
 if [[ ! -z "$temp" ]] ; then
   echo -e "| Failed Test |\n| --- |" > "$GITHUB_STEP_SUMMARY"
   echo "$temp"  >> "$GITHUB_STEP_SUMMARY"
+  exit 1
 fi
+
+exit 0
 
