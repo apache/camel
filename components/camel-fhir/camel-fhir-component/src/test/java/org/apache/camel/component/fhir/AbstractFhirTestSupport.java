@@ -50,10 +50,6 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
     @BeforeEach
     public void cleanFhirServerState() {
-        if (patientExists()) {
-            deletePatient();
-            Assumptions.assumeFalse(patientExists(), "The test cannot proceed: a patient should not exist");
-        }
         createPatient();
         Assumptions.assumeTrue(patientExists(), "The test cannot proceed: a patient was just created and it should exist");
     }

@@ -41,9 +41,9 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerPatternInIT.class);
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-foo";
-    private static final String TOPIC_TWO_URI = "persistent://public/default/camel-bar";
-    private static final String TOPIC_PATTERN_URI = "persistent://public/default/camel-.*";
+    private static final String TOPIC_URI = "persistent://public/default/PulsarConsumerPatternInIT/camel-foo";
+    private static final String TOPIC_TWO_URI = "persistent://public/default/PulsarConsumerPatternInIT/camel-bar";
+    private static final String TOPIC_PATTERN_URI = "persistent://public/default/PulsarConsumerPatternInIT/camel-.*";
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_PATTERN_URI + "?topicsPattern=true"
