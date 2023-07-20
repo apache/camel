@@ -37,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
@@ -63,78 +65,116 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
         var processedExchangeCount = new AtomicInteger(0);
 
-        getShardList()
-                .parallelStream()
-                .forEach(shard -> {
+        if (!getEndpoint().getConfiguration().getShardId().isEmpty()) {
+            var request = DescribeStreamRequest
+                    .builder()
+                    .streamName(getEndpoint().getConfiguration().getStreamName())
+                    .build();
+            DescribeStreamResponse response = null;
+            if (getEndpoint().getConfiguration().isAsyncClient()) {
+                try {
+                    response = getAsyncClient()
+                            .describeStream(request)
+                            .get();
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                response = getClient().describeStream(request);
+            }
 
-                    String shardIterator = null;
-                    try {
-                        shardIterator = getShardIterator(shard);
-                    } catch (ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    if (shardIterator == null) {
-                        // probably closed. Returning 0 as nothing was processed
-                        processedExchangeCount.set(0);
-                    }
-
-                    GetRecordsRequest req = GetRecordsRequest
-                            .builder()
-                            .shardIterator(shardIterator)
-                            .limit(getEndpoint()
+            var shard = response
+                    .streamDescription()
+                    .shards()
+                    .stream()
+                    .filter(shardItem -> shardItem
+                            .shardId()
+                            .equalsIgnoreCase(getEndpoint()
                                     .getConfiguration()
-                                    .getMaxResultsPerRequest())
-                            .build();
+                                    .getShardId()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("The shard can't be found"));
 
-                    GetRecordsResponse result = null;
-                    if (getEndpoint().getConfiguration().isAsyncClient()) {
-                        try {
-                            result = getAsyncClient()
-                                    .getRecords(req)
-                                    .get();
-                        } catch (ExecutionException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        result = getClient().getRecords(req);
-                    }
+            fetchAndPrepareRecordsForCamel(shard, processedExchangeCount);
 
-                    try {
-                        Queue<Exchange> exchanges = createExchanges(result.records());
-                        processedExchangeCount.getAndSet(processBatch(CastUtils.cast(exchanges)));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    // May cache the last successful sequence number, and pass it to the
-                    // getRecords request. That way, on the next poll, we start from where
-                    // we left off, however, I don't know what happens to subsequent
-                    // exchanges when an earlier exchange fails.
-
-                    var currentShardIterator = result.nextShardIterator();
-                    if (isShardClosed) {
-                        switch (getEndpoint().getConfiguration().getShardClosed()) {
-                            case ignore:
-                                LOG.warn("The shard {} is in closed state", currentShardIterator);
-                                break;
-                            case silent:
-                                break;
-                            case fail:
-                                LOG.info("Shard Iterator reaches CLOSE status:{} {}",
-                                        getEndpoint().getConfiguration().getStreamName(),
-                                        getEndpoint().getConfiguration().getShardId());
-                                throw new IllegalStateException(
-                                        new ReachedClosedStatusException(
-                                                getEndpoint().getConfiguration().getStreamName(), shard.shardId()));
-                            default:
-                                throw new IllegalArgumentException("Unsupported shard closed strategy");
-                        }
-                    }
-
-                });
+        } else {
+            getShardList()
+                    .parallelStream()
+                    .forEach(shard -> {
+                        fetchAndPrepareRecordsForCamel(shard, processedExchangeCount);
+                    });
+        }
 
         return processedExchangeCount.get();
+    }
+
+    private void fetchAndPrepareRecordsForCamel(
+            final Shard shard,
+            AtomicInteger processedExchangeCount) {
+        String shardIterator = null;
+        try {
+            shardIterator = getShardIterator(shard);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (shardIterator == null) {
+            // probably closed. Returning 0 as nothing was processed
+            processedExchangeCount.set(0);
+        }
+
+        GetRecordsRequest req = GetRecordsRequest
+                .builder()
+                .shardIterator(shardIterator)
+                .limit(getEndpoint()
+                        .getConfiguration()
+                        .getMaxResultsPerRequest())
+                .build();
+
+        GetRecordsResponse result = null;
+        if (getEndpoint().getConfiguration().isAsyncClient()) {
+            try {
+                result = getAsyncClient()
+                        .getRecords(req)
+                        .get();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            result = getClient().getRecords(req);
+        }
+
+        try {
+            Queue<Exchange> exchanges = createExchanges(result.records());
+            processedExchangeCount.getAndSet(processBatch(CastUtils.cast(exchanges)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // May cache the last successful sequence number, and pass it to the
+        // getRecords request. That way, on the next poll, we start from where
+        // we left off, however, I don't know what happens to subsequent
+        // exchanges when an earlier exchange fails.
+
+        var currentShardIterator = result.nextShardIterator();
+        if (isShardClosed) {
+            switch (getEndpoint().getConfiguration().getShardClosed()) {
+                case ignore:
+                    LOG.warn("The shard {} is in closed state", currentShardIterator);
+                    break;
+                case silent:
+                    break;
+                case fail:
+                    LOG.info("Shard Iterator reaches CLOSE status:{} {}",
+                            getEndpoint().getConfiguration().getStreamName(),
+                            getEndpoint().getConfiguration().getShardId());
+                    throw new IllegalStateException(
+                            new ReachedClosedStatusException(
+                                    getEndpoint().getConfiguration().getStreamName(), shard.shardId()));
+                default:
+                    throw new IllegalArgumentException("Unsupported shard closed strategy");
+            }
+        }
     }
 
     @Override
