@@ -33,7 +33,6 @@
     <description>Camel Parent POM</description>
 
     <properties>
-        <amazon-kinesis-common-version>2.5.1</amazon-kinesis-common-version>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <camel.surefire.fork.additional-vmargs></camel.surefire.fork.additional-vmargs><!-- Empty by default -->
         <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError ${camel.surefire.fork.additional-vmargs}</camel.surefire.fork.vmargs>
