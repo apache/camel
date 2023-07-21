@@ -597,6 +597,10 @@ public class Run extends CamelCommand {
             // run in another JVM with different camel version (foreground or background)
             boolean custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
             if (custom) {
+                // regular camel versions can also be a milestone or release candidate
+                custom = !camelVersion.matches(".*-(RC|M)\\d$");
+            }
+            if (custom) {
                 // custom camel distribution
                 return runCustomCamelVersion(main);
             } else {
