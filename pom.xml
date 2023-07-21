@@ -518,7 +518,8 @@
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
                         <!-- The profile we want to use when doing the release -->
-                        <arguments>-Prelease,sourcecheck,hibernate</arguments>
+                        <!-- do not run full -->
+                        <arguments>-Prelease,-full</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
@@ -723,6 +724,32 @@
                             </execution>
                         </executions>
                      </plugin>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>license-format</id>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                                <phase>none</phase><!-- No need to even load the plugin during releases -->
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.revelc.code.formatter</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>code-format</id>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                                <phase>none</phase><!-- No need to even load the plugin during releases -->
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
