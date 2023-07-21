@@ -143,6 +143,11 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
                                               + "UNT+23+00000000000117'\n"
                                               + "UNZ+1+00000000000778'";
 
+    private static AS2SignedDataGenerator gen;
+
+    private static KeyPair issueKP;
+    private static X509Certificate issueCert;
+
     private static KeyPair signingKP;
     private static X509Certificate signingCert;
     private static List<X509Certificate> certList;
@@ -150,6 +155,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
     private static KeyPair decryptingKP;
 
     private static SSLContext clientSslContext;
+    private static SSLContext serverSslContext;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -400,6 +406,8 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         kpg.initialize(1024, new SecureRandom());
         String hackerIssueDN = "O=Hackers Unlimited Ltd., C=US";
         var hackerIssueKP = kpg.generateKeyPair();
+        var hackerissueCert = Utils.makeCertificate(
+                hackerIssueKP, hackerIssueDN, hackerIssueKP, hackerIssueDN);
         String hackerSigningDN = "CN=John Doe, E=j.doe@sharklasers.com, O=Self Signed, C=US";
         var hackerSigningKP = kpg.generateKeyPair();
         var hackerSigningCert = Utils.makeCertificate(
@@ -627,8 +635,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
                 new IssuerAndSerialNumber(new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
-        AS2SignedDataGenerator gen = SigningUtils.createSigningGenerator(AS2SignatureAlgorithm.SHA256WITHRSA,
-                certList.toArray(new X509Certificate[0]),
+        gen = SigningUtils.createSigningGenerator(AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new X509Certificate[0]),
                 signingKP.getPrivate());
         gen.addCertificates(certs);
 
@@ -643,8 +650,8 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         kpg.initialize(1024, new SecureRandom());
 
         String issueDN = "O=Punkhorn Software, C=US";
-        KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(
+        issueKP = kpg.generateKeyPair();
+        issueCert = Utils.makeCertificate(
                 issueKP, issueDN, issueKP, issueDN);
 
         //
@@ -680,7 +687,8 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(clientSSLTrustManagers);
 
-        return sslContextParameters.createSSLContext(context);
+        SSLContext sslContext = sslContextParameters.createSSLContext(context);
+        return sslContext;
     }
 
     public SSLContext setupServerContext(CamelContext context) throws Exception {
@@ -702,17 +710,20 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
 
-        return sslContextParameters.createSSLContext(context);
+        SSLContext sslContext = sslContextParameters.createSSLContext(context);
+        return sslContext;
     }
 
     @Override
-    public void configureContext(CamelContext context) throws Exception {
-        clientSslContext = setupClientContext(context);
-        SSLContext serverSslContext = setupClientContext(context);
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        this.clientSslContext = setupClientContext(context);
+        this.serverSslContext = setupClientContext(context);
         AS2Component as2Component = (AS2Component) context.getComponent("as2");
         AS2Configuration configuration = as2Component.getConfiguration();
         configuration.setSslContext(serverSslContext);
         configuration.setDecryptingPrivateKey(decryptingKP.getPrivate());
+        return context;
     }
 
     @Override
