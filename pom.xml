@@ -227,6 +227,9 @@
                         <failIfUnknown>true</failIfUnknown>
                         <header>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header.txt</header>
                         <excludes>
+                            <exclude>release.properties</exclude>
+                            <exclude>**/pom.xml.tag</exclude>
+                            <exclude>**/pom.xml.releaseBackup</exclude>
                             <exclude>**/*.MockMaker</exclude>
                             <exclude>**/*.adm</exclude>
                             <exclude>**/*.adoc.template</exclude>
