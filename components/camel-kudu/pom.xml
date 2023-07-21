@@ -61,6 +61,17 @@
                 <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
             </properties>
         </profile>
+        <profile>
+            <!-- kudu-binary is only available for Linux or macOS on x86 64 -->
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <os.detected.classifier>linux-x86_64</os.detected.classifier> <!-- Fake classifier to allow dependency resolution. kudu-binary will not be executed anyway on Windows -->
+            </properties>
+        </profile>
     </profiles>
 
     <dependencies>
