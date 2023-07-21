@@ -28,9 +28,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
@@ -41,6 +44,7 @@ import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.SequenceNumberRange;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
+import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,8 +54,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class KinesisConsumerClosedShardWithSilentTest {
-
     @Mock
     private KinesisClient kinesisClient;
     @Mock
@@ -111,6 +115,16 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @Test
     public void itDoesNotMakeADescribeStreamRequestIfShardIdIsSet() throws Exception {
+
+        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
+        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
+        ArrayList<Shard> shardList = new ArrayList<>();
+        shardList.add(shard);
+
+        when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
+                .thenReturn(DescribeStreamResponse.builder()
+                        .streamDescription(StreamDescription.builder().shards(shardList).build()).build());
+
         underTest.getEndpoint().getConfiguration().setShardId("shardId");
 
         underTest.poll();
