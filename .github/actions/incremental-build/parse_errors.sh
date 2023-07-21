@@ -18,13 +18,8 @@
 
 LOG_FILE=$1
 
-temp=$(cat $log | egrep "ERROR\].org" | grep "Time elapsed" | awk -F ' '  '{print $2}' | sed 's/^/| /' | sed 's/$/ |/')
+failed_summary=$(cat $LOG_FILE | egrep "FAILURE|ERROR" | grep "Time elapsed"| egrep "^org" | sed 's/\!//g' | awk -F ' ' '{printf "| %s | %s%s | %s |\n", $1,$5,$6, $8}')
 
-if [[ ! -z "$temp" ]] ; then
-  echo -e "| Failed Test |\n| --- |" > "$GITHUB_STEP_SUMMARY"
-  echo "$temp"  >> "$GITHUB_STEP_SUMMARY"
-  exit 1
+if [[ ! -z "$failed_summary" ]] ; then
+  echo "$failed_summary"  >> "$GITHUB_STEP_SUMMARY"
 fi
-
-exit 0
-

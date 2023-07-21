@@ -43,6 +43,7 @@ function main() {
   local mode=${2}
   local log="incremental-${mode}.log"
   local prId=${3}
+  local ret=0
 
   echo "Searching for affected projects"
   local projects
@@ -85,6 +86,7 @@ function main() {
     if [[ ${buildAll} = "true" ]] ; then
       echo "Building all projects"
       $mavenBinary -l $log $MVND_OPTS -DskipTests install
+      ret=$?
     else
       local buildDependents
       buildDependents=$(hasLabel ${prId} "build-dependents")
@@ -98,9 +100,11 @@ function main() {
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
         $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -amd -am
+        ret=$?
       else
         echo "Launching fast build command against the projects ${pl} and their dependencies"
         $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -am
+        ret=$?
       fi
     fi
     [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
@@ -125,14 +129,19 @@ function main() {
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "There are too many projects to test so only the affected projects are tested"
         $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
+        ret=$?
       else
         echo "Testing the affected projects and the projects that depend on them"
         $mavenBinary -l $log $MVND_OPTS install -pl "$pl" -amd
+        ret=$?
       fi
     fi
   fi
 
-  ./.github/actions/incremental-build/parse_errors.sh $log
+  echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
+  find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+
+  exit $ret
 }
 
 main "$@"
