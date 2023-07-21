@@ -75,7 +75,7 @@
         <dependency>
             <groupId>javax.json</groupId>
             <artifactId>javax.json-api</artifactId>
-            <version>${json-api}</version>
+            <version>${javax-json-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
