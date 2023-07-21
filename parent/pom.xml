@@ -283,7 +283,7 @@
         <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>3.0.0</jsmpp-version>
         <jsch-version>0.2.9</jsch-version>
-        <json-api>1.0</json-api>
+        <javax-json-api-version>1.1.4</javax-json-api-version>
         <jsonassert-version>1.5.1</jsonassert-version>
         <json-path-version>2.8.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
