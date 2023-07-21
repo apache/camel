@@ -21,7 +21,6 @@ service.
 AWS2 Kinesis component also supports Synchronous and Asynchronous Client which means you choose what fits best your requirements,
 so if you need the connection (client) to be async there's a property of 'asyncClient' (in DSL also can be found) needs to be turned true.
 
-
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be

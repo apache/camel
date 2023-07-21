@@ -219,7 +219,19 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         }
 
         resume(request);
-        GetShardIteratorResponse result = getClient().getShardIterator(request.build());
+
+        GetShardIteratorResponse result = null;
+        if (getEndpoint().getConfiguration().isAsyncClient()) {
+            try {
+                result = getAsyncClient()
+                        .getShardIterator(request.build())
+                        .get();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            result = getClient().getShardIterator(request.build());
+        }
 
         return result.shardIterator();
     }
