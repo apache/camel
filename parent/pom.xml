@@ -213,11 +213,11 @@
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.23.3.1</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.49</huaweicloud-sdk-version>
-        <ical4j-version>3.2.11</ical4j-version>
+        <ical4j-version>3.2.12</ical4j-version>
         <icu4j-version>73.2</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.12.Final</infinispan-version>
+        <infinispan-version>14.0.13.Final</infinispan-version>
         <influx-java-driver-version>2.23</influx-java-driver-version>
         <influx-client-java-driver-version>6.9.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
@@ -283,7 +283,7 @@
         <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>3.0.0</jsmpp-version>
         <jsch-version>0.2.9</jsch-version>
-        <json-api>1.0</json-api>
+        <javax-json-api-version>1.1.4</javax-json-api-version>
         <jsonassert-version>1.5.1</jsonassert-version>
         <json-path-version>2.8.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
@@ -357,7 +357,7 @@
         <mybatis-version>3.5.13</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.94.Final</netty-version>
+        <netty-version>4.1.95.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.86</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.31</nimbus-jose-jwt>
