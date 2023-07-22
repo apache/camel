@@ -68,5 +68,11 @@
             <version>${derby-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${derby-version}</version>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
 </project>
