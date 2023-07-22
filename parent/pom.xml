@@ -261,7 +261,7 @@
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>4.4.3</jedis-client-version>
-        <jetcd-version>0.7.6</jetcd-version>
+        <jetcd-version>0.7.5</jetcd-version>
         <jetty-version>11.0.15</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
