@@ -31,7 +31,7 @@ public class JdbcAggregationRepositoryAlotDataTest extends AbstractJdbcAggregati
         Exchange exchange = new DefaultExchange(context);
         for (int i = 0; i < 100; i++) {
             exchange.getIn().setBody("counter:" + i);
-            exchange = repoAddAndGet(key, exchange);
+            exchange = repoAddAndGet(key, exchange, false);
         }
 
         // Get it back..
@@ -46,7 +46,7 @@ public class JdbcAggregationRepositoryAlotDataTest extends AbstractJdbcAggregati
                 Exchange exchange = new DefaultExchange(context);
                 exchange.getIn().setBody("counter:" + i);
                 String key = i % 2 == 0 ? "foo" : "bar";
-                repoAddAndGet(key, exchange);
+                repoAddAndGet(key, exchange, false);
             }
         });
     }
@@ -57,7 +57,7 @@ public class JdbcAggregationRepositoryAlotDataTest extends AbstractJdbcAggregati
             Exchange exchange = new DefaultExchange(context);
             exchange.getIn().setBody("counter:" + i);
             String key = "key" + i;
-            repoAddAndGet(key, exchange);
+            repoAddAndGet(key, exchange, false);
         }
 
         // Get it back..

@@ -19,7 +19,9 @@ package org.apache.camel.processor.aggregate.jdbc;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 
 public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTestSupport {
@@ -65,9 +67,35 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
     }
 
     protected Exchange repoAddAndGet(String key, Exchange exchange) {
-        repo.add(context, key, exchange);
-        // recover the exchange with the new version to be able to add again
-        exchange = repo.get(context, key);
+        return repoAddAndGet(key, exchange, true);
+    }
+
+    protected Exchange repoAddAndGet(String key, Exchange exchange, boolean optimistic) {
+        int retry = optimistic ? 5 : 1;
+        while (retry-- > 0) {
+            try {
+                repo.add(context, key, exchange);
+                // recover the exchange with the new version to be able to add again
+                exchange = repo.get(context, key);
+                return exchange;
+            } catch (Exception e) {
+                if (optimistic) {
+                    OptimisticLockingAggregationRepository.OptimisticLockingException ole
+                            = ObjectHelper.getException(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+                                    e);
+                    if (ole != null) {
+                        // okay lets try again
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException ex) {
+                            // ignore
+                        }
+                        continue;
+                    }
+                }
+                throw e;
+            }
+        }
         return exchange;
     }
 
