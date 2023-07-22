@@ -86,10 +86,6 @@
             <version>${maven-shared-utils-plugin-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-dependency-tree</artifactId>
         </dependency>
