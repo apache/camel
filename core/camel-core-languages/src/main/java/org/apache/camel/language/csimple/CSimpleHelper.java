@@ -49,7 +49,7 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
-import org.apache.camel.util.xml.XmlPrettyPrinter;
+import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
 /**
  * A set of helper as static imports for the Camel compiled simple language.

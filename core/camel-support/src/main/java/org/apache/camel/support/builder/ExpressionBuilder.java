@@ -55,7 +55,7 @@ import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
-import org.apache.camel.util.xml.XmlPrettyPrinter;
+import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
