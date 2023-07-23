@@ -518,8 +518,7 @@
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
                         <!-- The profile we want to use when doing the release -->
-                        <!-- do not run full -->
-                        <arguments>-Prelease,-full</arguments>
+                        <arguments>-Prelease</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
