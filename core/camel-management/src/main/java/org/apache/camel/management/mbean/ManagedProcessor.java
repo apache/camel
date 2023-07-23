@@ -42,7 +42,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     private final ProcessorDefinition<?> definition;
     private final String id;
     private final int nodeLevel;
-    private String stepId;
+    private final String stepId;
     private Route route;
     private String sourceLocation;
 

@@ -100,8 +100,8 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
-    protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
-    protected OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();
+    protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
+    protected final OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected String propertyPlaceholderLocations;
     protected String defaultPropertyPlaceholderLocation = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;

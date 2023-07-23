@@ -160,9 +160,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
     @XmlTransient
-    private List<RoutesBuilder> builders = new ArrayList<>();
+    private final List<RoutesBuilder> builders = new ArrayList<>();
     @XmlTransient
-    private ClassLoader contextClassLoaderOnStart;
+    private final ClassLoader contextClassLoaderOnStart;
     @XmlTransient
     private final AtomicBoolean routesSetupDone = new AtomicBoolean();
 

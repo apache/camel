@@ -43,7 +43,7 @@ public final class FileUtil {
      */
     private static final String USER_DIR_KEY = "user.dir";
     private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
-    private static boolean windowsOs = initWindowsOs();
+    private static final boolean IS_WINDOWS = initWindowsOs();
 
     private FileUtil() {
         // Utils method
@@ -80,7 +80,7 @@ public final class FileUtil {
      * Returns true, if the OS is windows
      */
     public static boolean isWindows() {
-        return windowsOs;
+        return IS_WINDOWS;
     }
 
     public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {

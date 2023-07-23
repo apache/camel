@@ -55,7 +55,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected AsyncProducer producer;
-    protected Endpoint destination;
+    protected final Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
     protected String id;
     protected String routeId;
