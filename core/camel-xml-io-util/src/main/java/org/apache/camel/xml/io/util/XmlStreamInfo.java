@@ -37,18 +37,18 @@ public class XmlStreamInfo {
     String rootElementNamespace;
 
     /** Prefix to namespace mapping. default prefix is available as empty String (and not as null) */
-    Map<String, String> namespaceMapping = new HashMap<>();
+    final Map<String, String> namespaceMapping = new HashMap<>();
 
     /**
      * Attributes of the root element. Keys are full qualified names of the attributes and each attribute may be
      * available as two keys: {@code prefix:localName} or {@code {namespaceURI}localName}
      */
-    Map<String, String> attributes = new HashMap<>();
+    final Map<String, String> attributes = new HashMap<>();
 
     /**
      * Trimmed and unparsed lines starting with Camel-recognized modeline markers (now: {@code camel-k:}).
      */
-    List<String> modelines = new ArrayList<>();
+    final List<String> modelines = new ArrayList<>();
 
     public boolean isValid() {
         return problem == null;

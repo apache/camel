@@ -239,7 +239,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     private Expression completionSizeExpression;
     private boolean completionFromBatchConsumer;
     private boolean completionOnNewCorrelationGroup;
-    private AtomicInteger batchConsumerCounter = new AtomicInteger();
+    private final AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
     private boolean discardOnAggregationFailure;
     private boolean forceCompletionOnStop;

@@ -36,11 +36,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class SagaProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
 
-    protected CamelSagaService sagaService;
+    protected final CamelSagaService sagaService;
 
-    protected CamelSagaStep step;
+    protected final CamelSagaStep step;
 
-    protected SagaCompletionMode completionMode;
+    protected final SagaCompletionMode completionMode;
 
     private String id;
     private String routeId;
