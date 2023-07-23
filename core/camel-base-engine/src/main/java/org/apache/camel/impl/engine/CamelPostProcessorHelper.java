@@ -337,7 +337,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     }
                     return answer;
                 }
-                throw new NoSuchBeanException(name, type.getName());
+                throw new NoSuchBeanException(null, type.getName());
             } else if (found.size() > 1) {
                 throw new NoSuchBeanException(
                         "Found " + found.size() + " beans of type: " + type + ". Only one bean expected.");
