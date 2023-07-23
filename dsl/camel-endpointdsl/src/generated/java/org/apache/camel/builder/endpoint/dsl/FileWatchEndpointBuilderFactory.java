@@ -125,7 +125,8 @@ public interface FileWatchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of events to watch.
+         * Comma separated list of events to watch. Possible values:
+         * CREATE,MODIFY,DELETE.
          * 
          * The option is a:
          * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.file.watch.constants.FileEventEnum&amp;gt;&lt;/code&gt; type.
@@ -142,7 +143,8 @@ public interface FileWatchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma separated list of events to watch.
+         * Comma separated list of events to watch. Possible values:
+         * CREATE,MODIFY,DELETE.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.file.watch.constants.FileEventEnum&amp;gt;&lt;/code&gt; type.

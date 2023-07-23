@@ -44,8 +44,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     private String path;
 
     @UriParam(label = "consumer",
-              enums = "CREATE,MODIFY,DELETE",
-              description = "Comma separated list of events to watch.",
+              description = "Comma separated list of events to watch. Possible values: CREATE,MODIFY,DELETE",
               defaultValue = "CREATE,MODIFY,DELETE")
     private Set<FileEventEnum> events = EnumSet.copyOf(Arrays.asList(FileEventEnum.values()));
 
