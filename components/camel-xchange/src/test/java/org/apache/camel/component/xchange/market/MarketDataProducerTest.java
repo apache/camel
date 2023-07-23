@@ -27,7 +27,7 @@ import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CUR
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-        disabledReason = "These tests do no run reliably on the Apache CI")
+                          disabledReason = "These tests do no run reliably on the Apache CI")
 public class MarketDataProducerTest extends XChangeTestSupport {
 
     @Override

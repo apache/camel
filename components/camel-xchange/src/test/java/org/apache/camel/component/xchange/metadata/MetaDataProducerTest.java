@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-        disabledReason = "These tests do no run reliably on the Apache CI")
+                          disabledReason = "These tests do no run reliably on the Apache CI")
 public class MetaDataProducerTest extends XChangeTestSupport {
 
     @Override

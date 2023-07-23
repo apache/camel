@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-        disabledReason = "These tests do no run reliably on the Apache CI")
+                          disabledReason = "These tests do no run reliably on the Apache CI")
 public class AccountProducerTest extends XChangeTestSupport {
 
     @Override
