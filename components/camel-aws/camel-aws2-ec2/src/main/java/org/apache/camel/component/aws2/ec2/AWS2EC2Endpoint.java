@@ -26,7 +26,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS Elastic Compute Cloud (EC2)",
              syntax = "aws2-ec2:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = AWS2EC2Constants.class)
-public class AWS2EC2Endpoint extends ScheduledPollEndpoint {
+public class AWS2EC2Endpoint extends DefaultEndpoint {
 
     private Ec2Client ec2Client;
     private ComponentsHealthCheckRepository healthCheckRepository;
