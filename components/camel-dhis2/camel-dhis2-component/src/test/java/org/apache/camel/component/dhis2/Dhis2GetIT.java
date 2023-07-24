@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2GetApiMethod;
-import org.apache.camel.converter.stream.InputStreamCache;
 import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
