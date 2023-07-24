@@ -81,6 +81,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "fileExist": target.setFileExist(property(camelContext, org.apache.camel.component.file.GenericFileExist.class, value)); return true;
         case "filename":
         case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "filenameencoding":
+        case "filenameEncoding": target.getConfiguration().setFilenameEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "filter": target.setFilter(property(camelContext, org.apache.camel.component.file.GenericFileFilter.class, value)); return true;
         case "filterdirectory":
         case "filterDirectory": target.setFilterDirectory(property(camelContext, java.lang.String.class, value)); return true;
@@ -311,6 +313,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "fileExist": return org.apache.camel.component.file.GenericFileExist.class;
         case "filename":
         case "fileName": return java.lang.String.class;
+        case "filenameencoding":
+        case "filenameEncoding": return java.lang.String.class;
         case "filter": return org.apache.camel.component.file.GenericFileFilter.class;
         case "filterdirectory":
         case "filterDirectory": return java.lang.String.class;
@@ -542,6 +546,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "fileExist": return target.getFileExist();
         case "filename":
         case "fileName": return target.getFileName();
+        case "filenameencoding":
+        case "filenameEncoding": return target.getConfiguration().getFilenameEncoding();
         case "filter": return target.getFilter();
         case "filterdirectory":
         case "filterDirectory": return target.getFilterDirectory();

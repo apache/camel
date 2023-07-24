@@ -27,12 +27,13 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 @Component("kafka")
-public class KafkaComponent extends DefaultComponent implements SSLContextParametersAware {
+public class KafkaComponent extends HealthCheckComponent implements SSLContextParametersAware {
 
     @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();

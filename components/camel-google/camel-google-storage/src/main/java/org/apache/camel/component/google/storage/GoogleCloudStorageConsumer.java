@@ -73,6 +73,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new GoogleCloudStorageConsumerHealthCheck(this, getRouteId());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
+                    && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
 

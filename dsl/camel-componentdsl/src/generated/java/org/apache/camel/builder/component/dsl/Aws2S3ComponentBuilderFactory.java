@@ -916,6 +916,56 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1019,6 +1069,9 @@ public interface Aws2S3ComponentBuilderFactory {
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
             case "useSSES3": getOrCreateConfiguration((AWS2S3Component) component).setUseSSES3((boolean) value); return true;
             case "autowiredEnabled": ((AWS2S3Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((AWS2S3Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((AWS2S3Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((AWS2S3Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((AWS2S3Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWS2S3Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

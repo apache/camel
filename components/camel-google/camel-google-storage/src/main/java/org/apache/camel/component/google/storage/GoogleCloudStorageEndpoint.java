@@ -67,6 +67,11 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public GoogleCloudStorageComponent getComponent() {
+        return (GoogleCloudStorageComponent) super.getComponent();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 

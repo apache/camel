@@ -92,7 +92,7 @@ public class MyRouteBuilder extends RouteBuilder {
 
 Signatures:
 
-* java.util.Iterator collection(java.lang.String path, java.lang.String itemType, java.lang.Boolean paging, java.lang.String fields, java.lang.String filter, java.util.Map<String, Object> queryParams)
+* java.util.Iterator collection(java.lang.String path, java.lang.Boolean paging, java.lang.String fields, java.lang.String filter, java.util.Map<String, Object> queryParams)
 
 The get/collection API method has the parameters listed in the table below:
 
@@ -100,7 +100,6 @@ The get/collection API method has the parameters listed in the table below:
 |===
 | Parameter | Description | Type
 | path | Resource URL path | String
-| itemType | Fully-qualified Java class name to deserialise items into| String
 | arrayName | JSON property name holding the array to read | String
 | paging | Turn paging on/off | Boolean
 | fields | Comma-delimited list of fields to fetch | String
@@ -122,8 +121,8 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=organisationUnits&itemType=org.hisp.dhis.api.model.v2_39_1.OrganisationUnit&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
-            .split().body().log("${body}");
+            .to("dhis2://get/collection?path=organisationUnits&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .split().body().unmarshal().json(org.hisp.dhis.api.model.v2_39_1.OrganisationUnit.class).log("${body}");
     }
 }
 ----
@@ -140,8 +139,10 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=organisationUnits&fields=code&itemType=org.hisp.dhis.api.model.v2_39_1.OrganisationUnit&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
-            .split().body().log("${body}");
+            .to("dhis2://get/collection?path=organisationUnits&fields=code&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .split().body()
+            .unmarshal().json(org.hisp.dhis.api.model.v2_39_1.OrganisationUnit.class)
+            .log("${body}");
     }
 }
 ----
@@ -158,8 +159,10 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&itemType=org.hisp.dhis.api.model.v2_39_1.User&arrayName=users&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
-            .split().body().log("${body}");
+            .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&arrayName=users&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .split().body()
+            .unmarshal().json(org.hisp.dhis.api.model.v2_39_1.User.class)
+            .log("${body}");
     }
 }
 ----

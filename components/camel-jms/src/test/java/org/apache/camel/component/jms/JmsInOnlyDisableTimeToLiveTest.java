@@ -27,8 +27,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jms.IllegalStateException;
 
 public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsInOnlyDisableTimeToLiveTest.class);
 
     @Order(2)
     @RegisterExtension
@@ -144,17 +149,25 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
             // loop to empty queue
             while (true) {
                 // receive the message from the queue, wait at most 2 sec
-                String msg = consumer.receiveBody("activemq:JmsInOnlyDisableTimeToLiveTest.in", 2000, String.class);
-                if (msg == null) {
-                    // no more messages in queue
-                    break;
+                try {
+                    String msg = consumer.receiveBody("activemq:JmsInOnlyDisableTimeToLiveTest.in", 2000, String.class);
+                    if (msg == null) {
+                        // no more messages in queue
+                        break;
+                    }
+                    // do something with body
+                    msg = "Hello " + msg;
+
+                    // send it to the next queue
+                    producer.sendBodyAndHeader("activemq:JmsInOnlyDisableTimeToLiveTest.out", msg, "number", count++);
+                } catch (IllegalStateException e) {
+                    if (e.getCause() instanceof jakarta.jms.IllegalStateException) {
+                        // session is closed
+                        LOG.warn("JMS Session is closed");
+                        break;
+                    }
                 }
 
-                // do something with body
-                msg = "Hello " + msg;
-
-                // send it to the next queue
-                producer.sendBodyAndHeader("activemq:JmsInOnlyDisableTimeToLiveTest.out", msg, "number", count++);
             }
         }
     }

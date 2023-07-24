@@ -88,6 +88,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new AWS2S3ConsumerHealthCheck(this, getRouteId());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
 

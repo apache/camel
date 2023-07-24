@@ -88,6 +88,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "headerserializer":
         case "headerSerializer": getOrCreateConfiguration(target).setHeaderSerializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
@@ -312,6 +318,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "headerserializer":
         case "headerSerializer": return org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return java.lang.Integer.class;
         case "interceptorclasses":
@@ -532,6 +544,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
         case "headerserializer":
         case "headerSerializer": return getOrCreateConfiguration(target).getHeaderSerializer();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "interceptorclasses":

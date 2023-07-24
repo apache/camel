@@ -23,6 +23,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -106,6 +107,11 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         configureConsumer(consumer);
         consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         return consumer;
+    }
+
+    @Override
+    public Sqs2Component getComponent() {
+        return (Sqs2Component) super.getComponent();
     }
 
     private boolean isDefaultAwsHost() {

@@ -131,6 +131,7 @@ public class KafkaConsumer extends DefaultConsumer
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
 

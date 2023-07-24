@@ -37,6 +37,12 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": getOrCreateConfiguration(target).setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -83,6 +89,12 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
         case "overrideendpoint":
@@ -125,6 +137,12 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return getOrCreateConfiguration(target).getMaxResultsPerRequest();
         case "overrideendpoint":

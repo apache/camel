@@ -22,10 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Component("aws2-s3")
-public class AWS2S3Component extends DefaultComponent {
+public class AWS2S3Component extends HealthCheckComponent {
     @Metadata
     private AWS2S3Configuration configuration = new AWS2S3Configuration();
 

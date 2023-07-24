@@ -40,6 +40,7 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError.StandardCode;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.CastUtils;
 
 @ManagedResource(description = "Managed Component")
@@ -90,6 +91,35 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     @Override
     public Object getInstance() {
         return component;
+    }
+
+    @Override
+    public boolean isHealthCheckSupported() {
+        return component instanceof HealthCheckComponent;
+    }
+
+    @Override
+    public boolean isHealthCheckEnabled() {
+        if (component instanceof HealthCheckComponent) {
+            return ((HealthCheckComponent) component).isHealthCheckEnabled();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isHealthCheckConsumerEnabled() {
+        if (component instanceof HealthCheckComponent) {
+            return ((HealthCheckComponent) component).isHealthCheckConsumerEnabled();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isHealthCheckProducerEnabled() {
+        if (component instanceof HealthCheckComponent) {
+            return ((HealthCheckComponent) component).isHealthCheckProducerEnabled();
+        }
+        return false;
     }
 
     @Override
