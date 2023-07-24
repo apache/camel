@@ -63,6 +63,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "initialsequenceid":
         case "initialSequenceId": target.getPulsarConfiguration().setInitialSequenceId(property(camelContext, long.class, value)); return true;
+        case "keysharedpolicy":
+        case "keySharedPolicy": target.getPulsarConfiguration().setKeySharedPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxpendingmessages":
@@ -152,6 +154,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "initialsequenceid":
         case "initialSequenceId": return long.class;
+        case "keysharedpolicy":
+        case "keySharedPolicy": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxpendingmessages":
@@ -242,6 +246,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return target.getExchangePattern();
         case "initialsequenceid":
         case "initialSequenceId": return target.getPulsarConfiguration().getInitialSequenceId();
+        case "keysharedpolicy":
+        case "keySharedPolicy": return target.getPulsarConfiguration().getKeySharedPolicy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxpendingmessages":

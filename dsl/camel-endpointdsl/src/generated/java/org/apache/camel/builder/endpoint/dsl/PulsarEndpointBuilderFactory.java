@@ -314,6 +314,21 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Policy to use by consumer when using key-shared subscription type.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param keySharedPolicy the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder keySharedPolicy(
+                String keySharedPolicy) {
+            doSetProperty("keySharedPolicy", keySharedPolicy);
+            return this;
+        }
+        /**
          * Maximum number of times that a message will be redelivered before
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.

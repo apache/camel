@@ -71,6 +71,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deadLetterTopic": getOrCreateConfiguration(target).setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "initialsequenceid":
         case "initialSequenceId": getOrCreateConfiguration(target).setInitialSequenceId(property(camelContext, long.class, value)); return true;
+        case "keysharedpolicy":
+        case "keySharedPolicy": getOrCreateConfiguration(target).setKeySharedPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxpendingmessages":
@@ -170,6 +172,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deadLetterTopic": return java.lang.String.class;
         case "initialsequenceid":
         case "initialSequenceId": return long.class;
+        case "keysharedpolicy":
+        case "keySharedPolicy": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxpendingmessages":
@@ -265,6 +269,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deadLetterTopic": return getOrCreateConfiguration(target).getDeadLetterTopic();
         case "initialsequenceid":
         case "initialSequenceId": return getOrCreateConfiguration(target).getInitialSequenceId();
+        case "keysharedpolicy":
+        case "keySharedPolicy": return getOrCreateConfiguration(target).getKeySharedPolicy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxpendingmessages":

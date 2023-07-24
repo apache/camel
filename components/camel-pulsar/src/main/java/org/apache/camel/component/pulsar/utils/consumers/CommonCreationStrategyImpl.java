@@ -26,6 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
+import org.apache.pulsar.client.api.KeySharedPolicy;
 
 public final class CommonCreationStrategyImpl {
 
@@ -37,6 +38,15 @@ public final class CommonCreationStrategyImpl {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
         ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer();
+        if (endpointConfiguration.getKeySharedPolicy() != null) {
+            if ("AUTO_SPLIT".equalsIgnoreCase(endpointConfiguration.getKeySharedPolicy())) {
+                builder.keySharedPolicy(KeySharedPolicy.autoSplitHashRange());
+            } else if ("STICKY".equalsIgnoreCase(endpointConfiguration.getKeySharedPolicy())) {
+                builder.keySharedPolicy(KeySharedPolicy.stickyHashRange());
+            } else {
+                throw new IllegalArgumentException("Unsupported KeySharedPolicy: " + endpointConfiguration.getKeySharedPolicy());
+            }
+        }
         if (endpointConfiguration.isTopicsPattern()) {
             builder.topicsPattern(pulsarEndpoint.getUri());
             if (endpointConfiguration.getSubscriptionTopicsMode() != null) {
