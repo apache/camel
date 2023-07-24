@@ -41,6 +41,8 @@ public final class FlatpackConverterLoader implements TypeConverterLoader, Camel
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
+        addTypeConverter(registry, java.lang.String.class, net.sf.flatpack.DataSet.class, false,
+            (type, exchange, value) -> org.apache.camel.component.flatpack.FlatpackConverter.toString((net.sf.flatpack.DataSet) value));
         addTypeConverter(registry, java.util.List.class, net.sf.flatpack.DataSet.class, false,
             (type, exchange, value) -> org.apache.camel.component.flatpack.FlatpackConverter.toList((net.sf.flatpack.DataSet) value));
         addTypeConverter(registry, java.util.Map.class, net.sf.flatpack.DataSet.class, false,
