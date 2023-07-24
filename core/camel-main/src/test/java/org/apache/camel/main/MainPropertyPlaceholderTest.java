@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -33,7 +34,7 @@ public class MainPropertyPlaceholderTest {
             main.setDefaultPropertyPlaceholderLocation("false");
             main.start();
             main.getCamelContext().resolvePropertyPlaceholders("{{hello}}");
-            fail("Expected IllegalArgumentException");
+            Assertions.assertDoesNotThrow( () -> fail("Expected IllegalArgumentException"));
         } catch (IllegalArgumentException e) {
             // ok
         } finally {
