@@ -23,6 +23,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -147,12 +148,8 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         file.setAbsoluteFilePath(testFile("boom.txt").toString());
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
-        try {
-            strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
-            fail("Should have thrown an exception");
-        } catch (GenericFileOperationFailedException e) {
-            // expected
-        }
+
+        Assertions.assertThrows(GenericFileOperationFailedException.class, () -> strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file), "Should have thrown an exception");
 
         assertEquals(3, deleteCounter, "Should have tried to delete file 3 times");
         assertEquals(3, existsCounter, "Should have tried to delete file 3 times");

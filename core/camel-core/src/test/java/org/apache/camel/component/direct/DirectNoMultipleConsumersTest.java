@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.direct;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.TestSupport;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -42,13 +42,8 @@ public class DirectNoMultipleConsumersTest extends TestSupport {
             }
         });
 
-        try {
-            container.start();
-            fail("Should have thrown an FailedToStartRouteException");
-        } catch (Exception e) {
-            // expected
-        } finally {
-            container.stop();
-        }
+        Assertions.assertThrows(FailedToStartRouteException.class, () -> container.start(), "Should have thrown an FailedToStartRouteException");
+
+        container.stop();
     }
 }
