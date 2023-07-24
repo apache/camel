@@ -22,10 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Component("google-storage")
-public class GoogleCloudStorageComponent extends DefaultComponent {
+public class GoogleCloudStorageComponent extends HealthCheckComponent {
 
     @Metadata
     private GoogleCloudStorageConfiguration configuration = new GoogleCloudStorageConfiguration();

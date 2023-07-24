@@ -42,6 +42,12 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "downloadfilename":
         case "downloadFileName": getOrCreateConfiguration(target).setDownloadFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "filter": getOrCreateConfiguration(target).setFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -87,6 +93,12 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "downloadfilename":
         case "downloadFileName": return java.lang.String.class;
         case "filter": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -128,6 +140,12 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "downloadfilename":
         case "downloadFileName": return getOrCreateConfiguration(target).getDownloadFileName();
         case "filter": return getOrCreateConfiguration(target).getFilter();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includefolders":

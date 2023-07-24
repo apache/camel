@@ -82,6 +82,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public AWS2S3Component getComponent() {
+        return (AWS2S3Component) super.getComponent();
+    }
+
+    @Override
     public void doStart() throws Exception {
         super.doStart();
 

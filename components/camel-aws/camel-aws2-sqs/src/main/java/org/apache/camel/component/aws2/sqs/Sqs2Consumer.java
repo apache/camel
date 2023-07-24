@@ -378,9 +378,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new Sqs2ConsumerHealthCheck(this, getRouteId());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
-
     }
 
     @Override

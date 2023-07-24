@@ -301,6 +301,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new Kinesis2ConsumerHealthCheck(this, getRouteId());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
 

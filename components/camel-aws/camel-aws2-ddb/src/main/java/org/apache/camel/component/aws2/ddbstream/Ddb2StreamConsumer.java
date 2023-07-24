@@ -46,7 +46,6 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
     private final Map<String, String> lastSeenSequenceNumbers = new HashMap<>();
 
     private WritableHealthCheckRepository healthCheckRepository;
-
     private Ddb2StreamConsumerHealthCheck consumerHealthCheck;
 
     public Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor) {
@@ -123,6 +122,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new Ddb2StreamConsumerHealthCheck(this, getRouteId());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
     }
