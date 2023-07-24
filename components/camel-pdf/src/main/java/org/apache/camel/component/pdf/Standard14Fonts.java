@@ -24,8 +24,6 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 /**
  * The 14 standard fonts by name. Created here because there is no way to get a standard font by name in {@code pdfbox}
  * 2.0
- *
- * @author <a href="https://github.com/ppalaga">Peter Palaga</a>
  */
 public final class Standard14Fonts {
     private static final Map<String, PDType1Font> FONTS_BY_NAME = new HashMap<>();
