@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.time.Duration;
@@ -167,6 +168,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 LOG.trace("Channel isn't connected, trying to recreate and connect.");
                 channel = (ChannelSftp) session.openChannel("sftp");
 
+                if (endpoint.getConfiguration().getFilenameEncoding() != null) {
+                    Charset ch = Charset.forName(endpoint.getConfiguration().getFilenameEncoding());
+                    LOG.trace("Using filename encoding: {}", ch);
+                    channel.setFilenameEncoding(ch);
+                }
                 if (endpoint.getConfiguration().getConnectTimeout() > 0) {
                     LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
                     channel.connect(endpoint.getConfiguration().getConnectTimeout());

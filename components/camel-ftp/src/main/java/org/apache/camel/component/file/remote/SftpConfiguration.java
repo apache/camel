@@ -84,6 +84,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String serverHostKeys;
     @UriParam(label = "security")
     private String publicKeyAcceptedAlgorithms;
+    @UriParam(label = "advanced")
+    private String filenameEncoding;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -394,5 +396,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setPublicKeyAcceptedAlgorithms(String publicKeyAcceptedAlgorithms) {
         this.publicKeyAcceptedAlgorithms = publicKeyAcceptedAlgorithms;
+    }
+
+    public String getFilenameEncoding() {
+        return filenameEncoding;
+    }
+
+    /**
+     * Encoding to use for FTP client when parsing filenames. By default, UTF-8 is used.
+     */
+    public void setFilenameEncoding(String filenameEncoding) {
+        this.filenameEncoding = filenameEncoding;
     }
 }
