@@ -58,7 +58,17 @@ public final class CommonCreationStrategyImpl {
             builder.messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer));
         }
 
-        if (endpointConfiguration.getMaxRedeliverCount() != null) {
+        if (endpointConfiguration.isEnableRetry()) {
+            // retry mode
+            builder.enableRetry(true);
+            DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
+                    .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
+            if (endpointConfiguration.getRetryLetterTopic() != null) {
+                policy.retryLetterTopic(endpointConfiguration.getRetryLetterTopic());
+            }
+            builder.deadLetterPolicy(policy.build());
+        } else if (endpointConfiguration.getMaxRedeliverCount() != null) {
+            // or potentially dead-letter-topic mode
             DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
                     .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
             if (endpointConfiguration.getDeadLetterTopic() != null) {

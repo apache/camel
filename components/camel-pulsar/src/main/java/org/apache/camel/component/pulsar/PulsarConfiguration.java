@@ -82,6 +82,12 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "consumer",
               description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
     private String deadLetterTopic;
+    @UriParam(label = "consumer",
+            description = "To enable retry letter topic mode. The default retry letter topic uses this format: topicname-subscriptionname-RETRY")
+    private boolean enableRetry;
+    @UriParam(label = "consumer",
+            description = "Name of the topic to use in retry mode. Note: if not set, default topic name will be topicName-subscriptionName-RETRY")
+    private String retryLetterTopic;
     @UriParam(label = "consumer", defaultValue = "true",
               description = "Whether to use the `messageListener` interface, or to receive messages using a separate thread pool")
     private boolean messageListener = true;
@@ -513,6 +519,22 @@ public class PulsarConfiguration implements Cloneable {
 
     public void setDeadLetterTopic(String deadLetterTopic) {
         this.deadLetterTopic = deadLetterTopic;
+    }
+
+    public boolean isEnableRetry() {
+        return enableRetry;
+    }
+
+    public void setEnableRetry(boolean enableRetry) {
+        this.enableRetry = enableRetry;
+    }
+
+    public String getRetryLetterTopic() {
+        return retryLetterTopic;
+    }
+
+    public void setRetryLetterTopic(String retryLetterTopic) {
+        this.retryLetterTopic = retryLetterTopic;
     }
 
     public boolean isMessageListener() {

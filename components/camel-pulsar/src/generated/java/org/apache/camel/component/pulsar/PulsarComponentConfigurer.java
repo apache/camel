@@ -69,6 +69,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerQueueSize": getOrCreateConfiguration(target).setConsumerQueueSize(property(camelContext, int.class, value)); return true;
         case "deadlettertopic":
         case "deadLetterTopic": getOrCreateConfiguration(target).setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "enableretry":
+        case "enableRetry": getOrCreateConfiguration(target).setEnableRetry(property(camelContext, boolean.class, value)); return true;
         case "initialsequenceid":
         case "initialSequenceId": getOrCreateConfiguration(target).setInitialSequenceId(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -101,6 +103,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pulsarMessageReceiptFactory": target.setPulsarMessageReceiptFactory(property(camelContext, org.apache.camel.component.pulsar.PulsarMessageReceiptFactory.class, value)); return true;
         case "readcompacted":
         case "readCompacted": getOrCreateConfiguration(target).setReadCompacted(property(camelContext, boolean.class, value)); return true;
+        case "retrylettertopic":
+        case "retryLetterTopic": getOrCreateConfiguration(target).setRetryLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": getOrCreateConfiguration(target).setSendTimeoutMs(property(camelContext, int.class, value)); return true;
         case "serviceurl":
@@ -168,6 +172,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerQueueSize": return int.class;
         case "deadlettertopic":
         case "deadLetterTopic": return java.lang.String.class;
+        case "enableretry":
+        case "enableRetry": return boolean.class;
         case "initialsequenceid":
         case "initialSequenceId": return long.class;
         case "lazystartproducer":
@@ -200,6 +206,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pulsarMessageReceiptFactory": return org.apache.camel.component.pulsar.PulsarMessageReceiptFactory.class;
         case "readcompacted":
         case "readCompacted": return boolean.class;
+        case "retrylettertopic":
+        case "retryLetterTopic": return java.lang.String.class;
         case "sendtimeoutms":
         case "sendTimeoutMs": return int.class;
         case "serviceurl":
@@ -263,6 +271,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "consumerQueueSize": return getOrCreateConfiguration(target).getConsumerQueueSize();
         case "deadlettertopic":
         case "deadLetterTopic": return getOrCreateConfiguration(target).getDeadLetterTopic();
+        case "enableretry":
+        case "enableRetry": return getOrCreateConfiguration(target).isEnableRetry();
         case "initialsequenceid":
         case "initialSequenceId": return getOrCreateConfiguration(target).getInitialSequenceId();
         case "lazystartproducer":
@@ -295,6 +305,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pulsarMessageReceiptFactory": return target.getPulsarMessageReceiptFactory();
         case "readcompacted":
         case "readCompacted": return getOrCreateConfiguration(target).isReadCompacted();
+        case "retrylettertopic":
+        case "retryLetterTopic": return getOrCreateConfiguration(target).getRetryLetterTopic();
         case "sendtimeoutms":
         case "sendTimeoutMs": return getOrCreateConfiguration(target).getSendTimeoutMs();
         case "serviceurl":

@@ -57,6 +57,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerQueueSize": target.getPulsarConfiguration().setConsumerQueueSize(property(camelContext, int.class, value)); return true;
         case "deadlettertopic":
         case "deadLetterTopic": target.getPulsarConfiguration().setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "enableretry":
+        case "enableRetry": target.getPulsarConfiguration().setEnableRetry(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -89,6 +91,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "producerName": target.getPulsarConfiguration().setProducerName(property(camelContext, java.lang.String.class, value)); return true;
         case "readcompacted":
         case "readCompacted": target.getPulsarConfiguration().setReadCompacted(property(camelContext, boolean.class, value)); return true;
+        case "retrylettertopic":
+        case "retryLetterTopic": target.getPulsarConfiguration().setRetryLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": target.getPulsarConfiguration().setSendTimeoutMs(property(camelContext, int.class, value)); return true;
         case "serviceurl":
@@ -146,6 +150,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerQueueSize": return int.class;
         case "deadlettertopic":
         case "deadLetterTopic": return java.lang.String.class;
+        case "enableretry":
+        case "enableRetry": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -178,6 +184,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "producerName": return java.lang.String.class;
         case "readcompacted":
         case "readCompacted": return boolean.class;
+        case "retrylettertopic":
+        case "retryLetterTopic": return java.lang.String.class;
         case "sendtimeoutms":
         case "sendTimeoutMs": return int.class;
         case "serviceurl":
@@ -236,6 +244,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerQueueSize": return target.getPulsarConfiguration().getConsumerQueueSize();
         case "deadlettertopic":
         case "deadLetterTopic": return target.getPulsarConfiguration().getDeadLetterTopic();
+        case "enableretry":
+        case "enableRetry": return target.getPulsarConfiguration().isEnableRetry();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -268,6 +278,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "producerName": return target.getPulsarConfiguration().getProducerName();
         case "readcompacted":
         case "readCompacted": return target.getPulsarConfiguration().isReadCompacted();
+        case "retrylettertopic":
+        case "retryLetterTopic": return target.getPulsarConfiguration().getRetryLetterTopic();
         case "sendtimeoutms":
         case "sendTimeoutMs": return target.getPulsarConfiguration().getSendTimeoutMs();
         case "serviceurl":
