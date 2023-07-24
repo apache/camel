@@ -22,14 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import software.amazon.awssdk.regions.Region;
 
 /**
  * For working with Amazon SQS SDK v2.
  */
 @Component("aws2-sqs")
-public class Sqs2Component extends DefaultComponent {
+public class Sqs2Component extends HealthCheckComponent {
     @Metadata
     private Sqs2Configuration configuration = new Sqs2Configuration();
 

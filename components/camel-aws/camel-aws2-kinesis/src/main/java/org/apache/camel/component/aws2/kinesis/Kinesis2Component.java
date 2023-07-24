@@ -22,10 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Component("aws2-kinesis")
-public class Kinesis2Component extends DefaultComponent {
+public class Kinesis2Component extends HealthCheckComponent {
 
     @Metadata
     private Kinesis2Configuration configuration = new Kinesis2Configuration();

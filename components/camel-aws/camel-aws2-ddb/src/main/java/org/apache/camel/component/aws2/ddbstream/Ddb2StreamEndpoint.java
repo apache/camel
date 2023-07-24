@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.ddbstream;
 import java.net.URI;
 
 import org.apache.camel.Category;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -85,6 +86,11 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
             }
         }
         super.doStop();
+    }
+
+    @Override
+    public Ddb2StreamComponent getComponent() {
+        return (Ddb2StreamComponent) super.getComponent();
     }
 
     public Ddb2StreamConfiguration getConfiguration() {

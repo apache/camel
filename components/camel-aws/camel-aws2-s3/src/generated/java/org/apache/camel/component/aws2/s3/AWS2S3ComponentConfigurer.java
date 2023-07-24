@@ -72,6 +72,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "forcepathstyle":
         case "forcePathStyle": getOrCreateConfiguration(target).setForcePathStyle(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "ignorebody":
         case "ignoreBody": getOrCreateConfiguration(target).setIgnoreBody(property(camelContext, boolean.class, value)); return true;
         case "includebody":
@@ -186,6 +192,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "fileName": return java.lang.String.class;
         case "forcepathstyle":
         case "forcePathStyle": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "ignorebody":
         case "ignoreBody": return boolean.class;
         case "includebody":
@@ -296,6 +308,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "forcepathstyle":
         case "forcePathStyle": return getOrCreateConfiguration(target).isForcePathStyle();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "ignorebody":
         case "ignoreBody": return getOrCreateConfiguration(target).isIgnoreBody();
         case "includebody":

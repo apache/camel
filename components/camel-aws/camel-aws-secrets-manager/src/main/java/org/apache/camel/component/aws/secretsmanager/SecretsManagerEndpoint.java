@@ -62,6 +62,11 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public SecretsManagerComponent getComponent() {
+        return (SecretsManagerComponent) super.getComponent();
+    }
+
+    @Override
     public void doStart() throws Exception {
         super.doStart();
 
@@ -74,6 +79,7 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
 
         if (healthCheckRepository != null) {
             clientHealthCheck = new SecretsManagerClientHealthCheck(this, getId());
+            clientHealthCheck.setEnabled(getComponent().isHealthCheckEnabled() && getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
     }
