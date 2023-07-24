@@ -3225,6 +3225,22 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Encoding to use for FTP client when parsing filenames. By default,
+         * UTF-8 is used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param filenameEncoding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointConsumerBuilder filenameEncoding(
+                String filenameEncoding) {
+            doSetProperty("filenameEncoding", filenameEncoding);
+            return this;
+        }
+        /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
@@ -4939,6 +4955,22 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Encoding to use for FTP client when parsing filenames. By default,
+         * UTF-8 is used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param filenameEncoding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder filenameEncoding(
+                String filenameEncoding) {
+            doSetProperty("filenameEncoding", filenameEncoding);
+            return this;
+        }
+        /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
@@ -6102,6 +6134,22 @@ public interface SftpEndpointBuilderFactory {
         default AdvancedSftpEndpointBuilder existDirCheckUsingLs(
                 String existDirCheckUsingLs) {
             doSetProperty("existDirCheckUsingLs", existDirCheckUsingLs);
+            return this;
+        }
+        /**
+         * Encoding to use for FTP client when parsing filenames. By default,
+         * UTF-8 is used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param filenameEncoding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointBuilder filenameEncoding(
+                String filenameEncoding) {
+            doSetProperty("filenameEncoding", filenameEncoding);
             return this;
         }
         /**
