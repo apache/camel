@@ -177,6 +177,12 @@ from("direct:get-orders")
     .bean(OrderService.class,"findOrderById(${header.orderId})");
 ----------------------------
 
+== BypassExpression
+
+The `JCachePolicy` can be configured with an `Expression` that can per `Exchange` determine whether
+to look up the value from the cache or bypass. If the expression is evaluated to `false` then the route
+is executed as normal, and the returned value is inserted into the cache for future lookup.
+
 == Camel XML DSL examples
 
 == Use JCachePolicy in an XML route
