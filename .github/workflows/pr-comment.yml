@@ -1,0 +1,75 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: PR Comment Build
+
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  pr_commented:
+    name: PR comment
+    if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/component-test') }}
+    permissions:
+      pull-requests: write # to comment on a pull request
+      actions: read # to download artifact
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17' ]
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `:robot: The Apache Camel test robot will run the tests for you :+1:`
+            })
+      - name: Retrieve sha
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.issue.number
+            });
+            core.exportVariable('pr_sha', pr.data.head.sha)
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.pr_sha }}
+      - id: install-packages
+        uses: ./.github/actions/install-packages
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+      - id: test
+        name: Component test execution
+        uses: ./.github/actions/component-test
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.run_id }}
+          pr-id: ${{ github.event.issue.number }}
+          comment-id: ${{ github.event.comment.id }}
+          comment-body: ${{ github.event.comment.body }}
