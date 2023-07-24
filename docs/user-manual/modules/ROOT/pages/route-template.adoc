@@ -285,9 +285,9 @@ Then notice how the simple predicate is using _simple fluent builder_ `simple("{
 This is **not supported** with route templates and would not work when creating multiple routes from the template.
 
 Instead, the simple expression should be a literal String value _only_ as follows:
-
+----
     .when(simple("'{{color}}' == 'red'")
-
+----
 === Using hardcoded node IDs in route templates
 
 If route templates contains hardcoded node IDs then routes created from templates will use the same IDs
