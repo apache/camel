@@ -75,76 +75,6 @@ public interface FileWatchComponentBuilderFactory {
             return this;
         }
         /**
-         * The number of concurrent consumers. Increase this value, if your
-         * route is slow to prevent buffering in queue.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default FileWatchComponentBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
-         * emitting duplicate events on some platforms. For working with large
-         * files and if you dont need detect multiple modifications per second
-         * per file, use #lastModifiedTimeFileHasher. You can also provide
-         * custom implementation in registry.
-         * 
-         * The option is a:
-         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
-         * 
-         * Default: #murmur3FFileHasher
-         * Group: consumer
-         * 
-         * @param fileHasher the value to set
-         * @return the dsl builder
-         */
-        default FileWatchComponentBuilder fileHasher(
-                io.methvin.watcher.hashing.FileHasher fileHasher) {
-            doSetProperty("fileHasher", fileHasher);
-            return this;
-        }
-        /**
-         * The number of threads polling WatchService. Increase this value, if
-         * you see OVERFLOW messages in log.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param pollThreads the value to set
-         * @return the dsl builder
-         */
-        default FileWatchComponentBuilder pollThreads(int pollThreads) {
-            doSetProperty("pollThreads", pollThreads);
-            return this;
-        }
-        /**
-         * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 2147483647
-         * Group: consumer
-         * 
-         * @param queueSize the value to set
-         * @return the dsl builder
-         */
-        default FileWatchComponentBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
-            return this;
-        }
-        /**
          * Enables or disables file hashing to detect duplicate events. If you
          * disable this, you can get some events multiple times on some
          * platforms and JDKs. Check java.nio.file.WatchService limitations for
@@ -183,6 +113,76 @@ public interface FileWatchComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * The number of concurrent consumers. Increase this value, if your
+         * route is slow to prevent buffering in queue.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default FileWatchComponentBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
+         * emitting duplicate events on some platforms. For working with large
+         * files and if you dont need detect multiple modifications per second
+         * per file, use #lastModifiedTimeFileHasher. You can also provide
+         * custom implementation in registry.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
+         * 
+         * Default: #murmur3FFileHasher
+         * Group: advanced
+         * 
+         * @param fileHasher the value to set
+         * @return the dsl builder
+         */
+        default FileWatchComponentBuilder fileHasher(
+                io.methvin.watcher.hashing.FileHasher fileHasher) {
+            doSetProperty("fileHasher", fileHasher);
+            return this;
+        }
+        /**
+         * The number of threads polling WatchService. Increase this value, if
+         * you see OVERFLOW messages in log.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param pollThreads the value to set
+         * @return the dsl builder
+         */
+        default FileWatchComponentBuilder pollThreads(int pollThreads) {
+            doSetProperty("pollThreads", pollThreads);
+            return this;
+        }
+        /**
+         * Maximum size of queue between WatchService and consumer. Unbounded by
+         * default.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2147483647
+         * Group: advanced
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default FileWatchComponentBuilder queueSize(int queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
     }
 
     class FileWatchComponentBuilderImpl
@@ -201,12 +201,12 @@ public interface FileWatchComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((FileWatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "useFileHashing": ((FileWatchComponent) component).setUseFileHashing((boolean) value); return true;
+            case "autowiredEnabled": ((FileWatchComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "concurrentConsumers": ((FileWatchComponent) component).setConcurrentConsumers((int) value); return true;
             case "fileHasher": ((FileWatchComponent) component).setFileHasher((io.methvin.watcher.hashing.FileHasher) value); return true;
             case "pollThreads": ((FileWatchComponent) component).setPollThreads((int) value); return true;
             case "queueSize": ((FileWatchComponent) component).setQueueSize((int) value); return true;
-            case "useFileHashing": ((FileWatchComponent) component).setUseFileHashing((boolean) value); return true;
-            case "autowiredEnabled": ((FileWatchComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

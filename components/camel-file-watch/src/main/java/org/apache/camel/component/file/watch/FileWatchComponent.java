@@ -31,22 +31,22 @@ import org.apache.camel.support.DefaultComponent;
 @Component("file-watch")
 public class FileWatchComponent extends DefaultComponent {
 
-    @Metadata(label = "consumer",
+    @Metadata(label = "advanced",
               description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
               defaultValue = "1")
     private int concurrentConsumers = 1;
 
-    @Metadata(label = "consumer",
+    @Metadata(label = "advanced",
               description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
               defaultValue = "" + Integer.MAX_VALUE)
     private int queueSize = Integer.MAX_VALUE;
 
-    @Metadata(label = "consumer",
+    @Metadata(label = "advanced",
               description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
               defaultValue = "1")
     private int pollThreads = 1;
 
-    @Metadata(label = "consumer",
+    @Metadata(label = "advanced",
               description = "Reference to io.methvin.watcher.hashing.FileHasher. "
                             + "This prevents emitting duplicate events on some platforms. "
                             + "For working with large files and if you dont need detect multiple modifications per second per file, "
@@ -54,8 +54,7 @@ public class FileWatchComponent extends DefaultComponent {
               defaultValue = "#murmur3FFileHasher")
     private FileHasher fileHasher = FileHasher.DEFAULT_FILE_HASHER;
 
-    @Metadata(label = "consumer",
-              description = "Enables or disables file hashing to detect duplicate events. "
+    @Metadata(description = "Enables or disables file hashing to detect duplicate events. "
                             + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
                             + "Check java.nio.file.WatchService limitations for your target platform.",
               defaultValue = "true")
@@ -104,13 +103,6 @@ public class FileWatchComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FileWatchEndpoint endpoint = new FileWatchEndpoint(uri, remaining, this);
-
-        // CAMEL-13954: Due to the auto generated property configurator, this intends to set it manually instead of relying on the auto generated property configurator
-        if (parameters.containsKey("events")) {
-            endpoint.setEvents(parameters.get("events").toString());
-            parameters.remove("events");
-        }
-
         setProperties(endpoint, parameters);
         return endpoint;
     }

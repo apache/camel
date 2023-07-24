@@ -91,61 +91,10 @@ public interface FileWatchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of concurrent consumers. Increase this value, if your
-         * route is slow to prevent buffering in queue.
+         * Comma separated list of events to watch. Possible values:
+         * CREATE,MODIFY,DELETE.
          * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * The number of concurrent consumers. Increase this value, if your
-         * route is slow to prevent buffering in queue.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Comma separated list of events to watch.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.file.watch.constants.FileEventEnum&amp;gt;&lt;/code&gt; type.
-         * 
-         * Default: CREATE,MODIFY,DELETE
-         * Group: consumer
-         * 
-         * @param events the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder events(
-                Set<org.apache.camel.component.file.watch.constants.FileEventEnum> events) {
-            doSetProperty("events", events);
-            return this;
-        }
-        /**
-         * Comma separated list of events to watch.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.file.watch.constants.FileEventEnum&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CREATE,MODIFY,DELETE
          * Group: consumer
@@ -155,111 +104,6 @@ public interface FileWatchEndpointBuilderFactory {
          */
         default FileWatchEndpointBuilder events(String events) {
             doSetProperty("events", events);
-            return this;
-        }
-        /**
-         * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
-         * emitting duplicate events on some platforms. For working with large
-         * files and if you dont need detect multiple modifications per second
-         * per file, use #lastModifiedTimeFileHasher. You can also provide
-         * custom implementation in registry.
-         * 
-         * The option is a:
-         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
-         * 
-         * Default: #murmur3FFileHasher
-         * Group: consumer
-         * 
-         * @param fileHasher the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder fileHasher(
-                io.methvin.watcher.hashing.FileHasher fileHasher) {
-            doSetProperty("fileHasher", fileHasher);
-            return this;
-        }
-        /**
-         * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
-         * emitting duplicate events on some platforms. For working with large
-         * files and if you dont need detect multiple modifications per second
-         * per file, use #lastModifiedTimeFileHasher. You can also provide
-         * custom implementation in registry.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
-         * 
-         * Default: #murmur3FFileHasher
-         * Group: consumer
-         * 
-         * @param fileHasher the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder fileHasher(String fileHasher) {
-            doSetProperty("fileHasher", fileHasher);
-            return this;
-        }
-        /**
-         * The number of threads polling WatchService. Increase this value, if
-         * you see OVERFLOW messages in log.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param pollThreads the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder pollThreads(int pollThreads) {
-            doSetProperty("pollThreads", pollThreads);
-            return this;
-        }
-        /**
-         * The number of threads polling WatchService. Increase this value, if
-         * you see OVERFLOW messages in log.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param pollThreads the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder pollThreads(String pollThreads) {
-            doSetProperty("pollThreads", pollThreads);
-            return this;
-        }
-        /**
-         * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 2147483647
-         * Group: consumer
-         * 
-         * @param queueSize the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
-            return this;
-        }
-        /**
-         * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 2147483647
-         * Group: consumer
-         * 
-         * @param queueSize the value to set
-         * @return the dsl builder
-         */
-        default FileWatchEndpointBuilder queueSize(String queueSize) {
-            doSetProperty("queueSize", queueSize);
             return this;
         }
         /**
@@ -456,6 +300,145 @@ public interface FileWatchEndpointBuilderFactory {
         default AdvancedFileWatchEndpointBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * The number of concurrent consumers. Increase this value, if your
+         * route is slow to prevent buffering in queue.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * The number of concurrent consumers. Increase this value, if your
+         * route is slow to prevent buffering in queue.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder concurrentConsumers(
+                String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
+         * emitting duplicate events on some platforms. For working with large
+         * files and if you dont need detect multiple modifications per second
+         * per file, use #lastModifiedTimeFileHasher. You can also provide
+         * custom implementation in registry.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
+         * 
+         * Default: #murmur3FFileHasher
+         * Group: advanced
+         * 
+         * @param fileHasher the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder fileHasher(
+                io.methvin.watcher.hashing.FileHasher fileHasher) {
+            doSetProperty("fileHasher", fileHasher);
+            return this;
+        }
+        /**
+         * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
+         * emitting duplicate events on some platforms. For working with large
+         * files and if you dont need detect multiple modifications per second
+         * per file, use #lastModifiedTimeFileHasher. You can also provide
+         * custom implementation in registry.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
+         * 
+         * Default: #murmur3FFileHasher
+         * Group: advanced
+         * 
+         * @param fileHasher the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder fileHasher(String fileHasher) {
+            doSetProperty("fileHasher", fileHasher);
+            return this;
+        }
+        /**
+         * The number of threads polling WatchService. Increase this value, if
+         * you see OVERFLOW messages in log.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param pollThreads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder pollThreads(int pollThreads) {
+            doSetProperty("pollThreads", pollThreads);
+            return this;
+        }
+        /**
+         * The number of threads polling WatchService. Increase this value, if
+         * you see OVERFLOW messages in log.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: advanced
+         * 
+         * @param pollThreads the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder pollThreads(String pollThreads) {
+            doSetProperty("pollThreads", pollThreads);
+            return this;
+        }
+        /**
+         * Maximum size of queue between WatchService and consumer. Unbounded by
+         * default.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2147483647
+         * Group: advanced
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder queueSize(int queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * Maximum size of queue between WatchService and consumer. Unbounded by
+         * default.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2147483647
+         * Group: advanced
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileWatchEndpointBuilder queueSize(String queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
     }

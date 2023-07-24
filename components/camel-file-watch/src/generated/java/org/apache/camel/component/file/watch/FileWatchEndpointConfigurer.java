@@ -29,7 +29,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "events": target.setEvents(property(camelContext, java.util.Set.class, value)); return true;
+        case "events": target.setEvents(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -58,7 +58,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
-        case "events": return java.util.Set.class;
+        case "events": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -102,14 +102,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "recursive": return target.isRecursive();
         case "usefilehashing":
         case "useFileHashing": return target.isUseFileHashing();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "events": return org.apache.camel.component.file.watch.constants.FileEventEnum.class;
         default: return null;
         }
     }

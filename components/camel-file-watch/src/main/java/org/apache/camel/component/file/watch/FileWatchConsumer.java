@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -32,10 +34,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.watch.constants.FileEvent;
+import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.file.watch.utils.PathUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.AntPathMatcher;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ public class FileWatchConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileWatchConsumer.class);
 
+    private final Set<FileEventEnum> events = new HashSet<>();
     private ExecutorService watchDirExecutorService;
     private ExecutorService pollExecutorService;
     private LinkedBlockingQueue<FileEvent> eventQueue;
@@ -63,6 +66,16 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         antPathMatcher = new AntPathMatcher();
         baseDirectory = Paths.get(getEndpoint().getPath()).toAbsolutePath();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        for (String event : getEndpoint().getEvents().split(",")) {
+            FileEventEnum fe = FileEventEnum.valueOf(event);
+            events.add(fe);
+        }
     }
 
     @Override
@@ -165,10 +178,8 @@ public class FileWatchConsumer extends DefaultConsumer {
     }
 
     private boolean matchFilters(FileEvent fileEvent) {
-        if (ObjectHelper.isNotEmpty(getEndpoint().getEvents())) {
-            if (!getEndpoint().getEvents().contains(fileEvent.getEventType())) {
-                return false;
-            }
+        if (!events.isEmpty() && !events.contains(fileEvent.getEventType())) {
+            return false;
         }
 
         if (!getEndpoint().isRecursive()) {
