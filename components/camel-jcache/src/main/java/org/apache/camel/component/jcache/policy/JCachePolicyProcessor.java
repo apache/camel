@@ -33,12 +33,15 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     private final CamelContext camelContext;
     private Cache cache;
     private Expression keyExpression;
+    private Expression bypassExpression;
 
-    public JCachePolicyProcessor(CamelContext camelContext, Cache cache, Expression keyExpression, Processor processor) {
+    public JCachePolicyProcessor(CamelContext camelContext, Cache cache, Expression keyExpression, Expression bypassExpression,
+                                 Processor processor) {
         super(processor);
         this.camelContext = camelContext;
         this.cache = cache;
         this.keyExpression = keyExpression;
+        this.bypassExpression = bypassExpression;
     }
 
     @Override
@@ -59,20 +62,25 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                 return super.process(exchange, callback);
             }
 
-            //Check if cache contains the key
-            Object value = cache.get(key);
-            if (value != null) {
-                // use the cached object in the Exchange without calling the rest of the route
-                LOG.debug("Cached object is found, skipping the route - key:{}, exchange:{}", key, exchange.getExchangeId());
+            Boolean bypass = bypassExpression != null ? bypassExpression.evaluate(exchange, Boolean.class) : Boolean.FALSE;
+            if (!Boolean.TRUE.equals(bypass)) {
+                //Check if cache contains the key
+                Object value = cache.get(key);
+                if (value != null) {
+                    // use the cached object in the Exchange without calling the rest of the route
+                    LOG.debug("Cached object is found, skipping the route - key:{}, exchange:{}", key,
+                            exchange.getExchangeId());
 
-                exchange.getMessage().setBody(value);
+                    exchange.getMessage().setBody(value);
 
-                callback.done(true);
-                return true;
+                    callback.done(true);
+                    return true;
+                }
+                //Not found in cache. Continue route.
+                LOG.debug("No cached object is found, continue route - key:{}, exchange:{}", key, exchange.getExchangeId());
+            } else {
+                LOG.debug("Bypassing cache - key:{}, exchange:{}", key, exchange.getExchangeId());
             }
-
-            //Not found in cache. Continue route.
-            LOG.debug("No cached object is found, continue route - key:{}, exchange:{}", key, exchange.getExchangeId());
 
             return super.process(exchange, new AsyncCallback() {
                 @Override
@@ -135,5 +143,13 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
 
     public void setKeyExpression(Expression keyExpression) {
         this.keyExpression = keyExpression;
+    }
+
+    public Expression getBypassExpression() {
+        return bypassExpression;
+    }
+
+    public void setBypassExpression(Expression bypassExpression) {
+        this.bypassExpression = bypassExpression;
     }
 }
