@@ -19,7 +19,6 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MainSupportCommandLineTest {
@@ -45,20 +44,20 @@ public class MainSupportCommandLineTest {
     }
 
     @Test
-    public void testMainSupport() {
+    public void testMainSupport() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1" }));
+        my.run(new String[] { "-d", "1" });
     }
 
     @Test
     public void testMainSupportMaxMessages() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-d", "1", "-dm", "2" }));
+        my.run(new String[] { "-d", "1", "-dm", "2" });
     }
 
     @Test
     public void testMainSupportHelp() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        Assertions.assertDoesNotThrow(() -> my.run(new String[] { "-h" }));
+        my.run(new String[] { "-h" });
     }
 }

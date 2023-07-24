@@ -34,7 +34,7 @@ public class MainPropertyPlaceholderTest {
             main.setDefaultPropertyPlaceholderLocation("false");
             main.start();
             main.getCamelContext().resolvePropertyPlaceholders("{{hello}}");
-            Assertions.assertDoesNotThrow( () -> fail("Expected IllegalArgumentException"));
+            fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // ok
         } finally {
