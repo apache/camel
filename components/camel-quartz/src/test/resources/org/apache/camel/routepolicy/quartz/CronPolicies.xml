@@ -27,19 +27,19 @@
   <bean id="defaultPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy"/>
 
   <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
-    <property name="routeStartTime" value="*/3 * * * * ?"/>
+    <property name="routeStartTime" value="*/1 * * * * ?"/>
   </bean>
 
   <bean id="stopPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
-    <property name="routeStopTime" value="*/3 * * * * ?"/>
+    <property name="routeStopTime" value="*/1 * * * * ?"/>
   </bean>
 
   <bean id="suspendPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
-    <property name="routeSuspendTime" value="*/3 * * * * ?"/>
+    <property name="routeSuspendTime" value="*/1 * * * * ?"/>
   </bean>
 
   <bean id="resumePolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
-    <property name="routeResumeTime" value="*/3 * * * * ?"/>
+    <property name="routeResumeTime" value="*/1 * * * * ?"/>
   </bean>
 
   <bean id="direct" class="org.apache.camel.component.direct.DirectComponent">
