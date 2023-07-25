@@ -826,6 +826,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             if (routes.add(holder)) {
                 holder.get().setRouteController(DefaultSupervisingRouteController.this);
                 holder.get().setAutoStartup(false);
+                holder.get().getProperties().put(Route.SUPERVISED, true); // mark route as being supervised
 
                 if (contextStarted.get()) {
                     LOG.debug("Context is already started: attempt to start route {}", route.getId());
