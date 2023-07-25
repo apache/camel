@@ -271,6 +271,21 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Policy to use by consumer when using key-shared subscription type.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param keySharedPolicy the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder keySharedPolicy(
+                java.lang.String keySharedPolicy) {
+            doSetProperty("keySharedPolicy", keySharedPolicy);
+            return this;
+        }
+        /**
          * Maximum number of times that a message will be redelivered before
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
@@ -833,6 +848,7 @@ public interface PulsarComponentBuilderFactory {
             case "consumerNamePrefix": getOrCreateConfiguration((PulsarComponent) component).setConsumerNamePrefix((java.lang.String) value); return true;
             case "consumerQueueSize": getOrCreateConfiguration((PulsarComponent) component).setConsumerQueueSize((int) value); return true;
             case "deadLetterTopic": getOrCreateConfiguration((PulsarComponent) component).setDeadLetterTopic((java.lang.String) value); return true;
+            case "keySharedPolicy": getOrCreateConfiguration((PulsarComponent) component).setKeySharedPolicy((java.lang.String) value); return true;
             case "maxRedeliverCount": getOrCreateConfiguration((PulsarComponent) component).setMaxRedeliverCount((java.lang.Integer) value); return true;
             case "messageListener": getOrCreateConfiguration((PulsarComponent) component).setMessageListener((boolean) value); return true;
             case "negativeAckRedeliveryBackoff": getOrCreateConfiguration((PulsarComponent) component).setNegativeAckRedeliveryBackoff((org.apache.pulsar.client.api.RedeliveryBackoff) value); return true;

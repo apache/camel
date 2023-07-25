@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.api.BatcherBuilder;
 import org.apache.pulsar.client.api.CompressionType;
+import org.apache.pulsar.client.api.KeySharedPolicy;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
 import org.apache.pulsar.client.api.RedeliveryBackoff;
@@ -88,6 +89,8 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "1",
               description = "Number of threads to receive and handle messages when using a separate thread pool")
     private int numberOfConsumerThreads = 1;
+    @UriParam(label = "consumer", enums = "AUTO_SPLIT,STICKY", description = "Policy to use by consumer when using key-shared subscription type.")
+    private String keySharedPolicy;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer",
@@ -532,6 +535,14 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setNumberOfConsumerThreads(int numberOfConsumerThreads) {
         this.numberOfConsumerThreads = numberOfConsumerThreads;
+    }
+
+    public String getKeySharedPolicy() {
+        return keySharedPolicy;
+    }
+
+    public void setKeySharedPolicy(String keySharedPolicy) {
+        this.keySharedPolicy = keySharedPolicy;
     }
 
     public String getServiceUrl() {
