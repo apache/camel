@@ -20,13 +20,14 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Consumer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.jupiter.api.Disabled;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -63,8 +64,10 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
             context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
-            Thread.sleep(5000);
-            assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+            });
+
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
@@ -95,17 +98,13 @@ public class SimpleScheduledRoutePolicyTest {
             });
             context.start();
 
-            Thread.sleep(4000);
+            // wait for route to stop
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(ServiceHelper.isStopped(context.getRoute("test").getConsumer()));
+            });
 
-            assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
+            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"));
 
-            boolean consumerStopped = false;
-            try {
-                template.sendBody("direct:start", "Ready or not, Here, I come");
-            } catch (CamelExecutionException e) {
-                consumerStopped = true;
-            }
-            assertTrue(consumerStopped);
             context.getComponent("quartz", QuartzComponent.class).stop();
         }
     }
@@ -133,10 +132,13 @@ public class SimpleScheduledRoutePolicyTest {
             });
             context.start();
 
-            Thread.sleep(4000);
+            // wait for route to suspend
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
+            });
 
-            boolean consumerSuspended = false;
             assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"));
+
             context.getComponent("quartz", QuartzComponent.class).stop();
         }
     }
@@ -172,7 +174,11 @@ public class SimpleScheduledRoutePolicyTest {
             assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
-            Thread.sleep(4000);
+            // wait for route to resume/start
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(ServiceHelper.isStarted(context.getRoute("test").getConsumer()));
+            });
+
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
@@ -183,7 +189,6 @@ public class SimpleScheduledRoutePolicyTest {
     @Nested
     class SimpleTest5 extends NoBuilderTest {
 
-        @Disabled("Currently this test is flaky")
         @Test
         public void testScheduledSuspendAndResumeRoutePolicy() throws Exception {
             MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
@@ -211,12 +216,20 @@ public class SimpleScheduledRoutePolicyTest {
                 }
             });
             context.start();
-            Thread.sleep(1000);
+
+            // wait for route to suspend
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
+            });
 
             assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
-            Thread.sleep(4000);
+            // wait for route to resume/start
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(ServiceHelper.isStarted(context.getRoute("test").getConsumer()));
+            });
+
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
@@ -252,12 +265,24 @@ public class SimpleScheduledRoutePolicyTest {
                 }
             });
             context.start();
-            Thread.sleep(1000);
+
+            // policy will suspend consumer after approx 1 second
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(
+                    () -> {
+                        Consumer consumer = context.getRoute("test").getConsumer();
+                        return ServiceHelper.isSuspended(consumer);
+                    });
 
             assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
-            Thread.sleep(4000);
+            // policy will start consumer after approx 4 second
+            Awaitility.await().atMost(10, TimeUnit.SECONDS).until(
+                    () -> {
+                        Consumer consumer = context.getRoute("test").getConsumer();
+                        return ServiceHelper.isStarted(consumer);
+                    });
+
             template.sendBody("direct:start", "Ready or not, Here, I come");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
@@ -291,8 +316,11 @@ public class SimpleScheduledRoutePolicyTest {
                 });
                 context.start();
 
-                Thread.sleep(5000);
-                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+                // wait for route to start
+                Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                    assertTrue(ServiceHelper.isStarted(context.getRoute("test").getConsumer()));
+                });
+
                 template.sendBody("direct:start", "Ready or not, Here, I come");
 
                 context.getComponent("quartz", QuartzComponent.class).stop();
@@ -336,8 +364,11 @@ public class SimpleScheduledRoutePolicyTest {
 
                 template.sendBody("direct:start", "Hello World");
 
-                Thread.sleep(5000);
-                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("dynamic"));
+                // wait for route to start
+                Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                    assertTrue(ServiceHelper.isStarted(context.getRoute("dynamic").getConsumer()));
+                });
+
                 template.sendBody("direct:dynamic", "Ready or not, Here, I come");
 
                 context.getComponent("quartz", QuartzComponent.class).stop();
