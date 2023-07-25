@@ -191,7 +191,6 @@ public class KafkaComponentTest {
         props.put(ProducerConfig.LINGER_MS_CONFIG, "0");
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "60000");
         props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, "1048576");
-        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
         props.put(ProducerConfig.RECEIVE_BUFFER_CONFIG, "32768");
         props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "30000");
         props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "120000");
@@ -206,6 +205,7 @@ public class KafkaComponentTest {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false");
+        props.put(ProducerConfig.PARTITIONER_IGNORE_KEYS_CONFIG, "false");
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
 
         return props;

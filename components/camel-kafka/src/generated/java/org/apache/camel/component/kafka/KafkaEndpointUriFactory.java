@@ -21,7 +21,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(104);
+        Set<String> props = new HashSet<>(105);
         props.add("additionalProperties");
         props.add("allowManualCommit");
         props.add("autoCommitEnable");
@@ -81,6 +81,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("partitionAssignor");
         props.add("partitionKey");
         props.add("partitioner");
+        props.add("partitionerIgnoreKeys");
         props.add("pollOnError");
         props.add("pollTimeoutMs");
         props.add("producerBatchSize");

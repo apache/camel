@@ -136,6 +136,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": target.getConfiguration().setPartitionerIgnoreKeys(property(camelContext, boolean.class, value)); return true;
         case "pollonerror":
         case "pollOnError": target.getConfiguration().setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
@@ -344,6 +346,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return boolean.class;
         case "pollonerror":
         case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
@@ -553,6 +557,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return target.getConfiguration().getPartitionKey();
         case "partitioner": return target.getConfiguration().getPartitioner();
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return target.getConfiguration().isPartitionerIgnoreKeys();
         case "pollonerror":
         case "pollOnError": return target.getConfiguration().getPollOnError();
         case "polltimeoutms":

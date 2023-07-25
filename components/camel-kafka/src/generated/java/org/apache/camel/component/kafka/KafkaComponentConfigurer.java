@@ -152,6 +152,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": getOrCreateConfiguration(target).setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": getOrCreateConfiguration(target).setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": getOrCreateConfiguration(target).setPartitionerIgnoreKeys(property(camelContext, boolean.class, value)); return true;
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": target.setPollExceptionStrategy(property(camelContext, org.apache.camel.component.kafka.PollExceptionStrategy.class, value)); return true;
         case "pollonerror":
@@ -382,6 +384,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return boolean.class;
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": return org.apache.camel.component.kafka.PollExceptionStrategy.class;
         case "pollonerror":
@@ -608,6 +612,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": return getOrCreateConfiguration(target).getPartitionKey();
         case "partitioner": return getOrCreateConfiguration(target).getPartitioner();
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return getOrCreateConfiguration(target).isPartitionerIgnoreKeys();
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": return target.getPollExceptionStrategy();
         case "pollonerror":

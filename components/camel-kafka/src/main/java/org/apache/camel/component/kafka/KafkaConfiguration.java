@@ -149,8 +149,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String isolationLevel;
 
     // Producer configuration properties
-    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
-    private String partitioner = KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
+    @UriParam(label = "producer")
+    private String partitioner;
+
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean partitionerIgnoreKeys;
+
     @UriParam(label = "producer", defaultValue = "100")
     private Integer retryBackoffMs = 100;
 
@@ -375,6 +379,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ProducerConfig.MAX_BLOCK_MS_CONFIG, getMaxBlockMs());
         addPropertyIfNotEmpty(props, ProducerConfig.MAX_REQUEST_SIZE_CONFIG, getMaxRequestSize());
         addPropertyIfNotEmpty(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, getPartitioner());
+        addPropertyIfNotEmpty(props, ProducerConfig.PARTITIONER_IGNORE_KEYS_CONFIG, isPartitionerIgnoreKeys());
         addPropertyIfNotEmpty(props, ProducerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotEmpty(props, ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, getRequestTimeoutMs());
         addPropertyIfNotEmpty(props, ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, getDeliveryTimeoutMs());
@@ -660,6 +665,18 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setPartitioner(String partitioner) {
         this.partitioner = partitioner;
+    }
+
+    /**
+     * Whether the message keys should be ignored when computing partition. This setting has effect only when
+     * {@link #partitioner} is not set
+     */
+    public boolean isPartitionerIgnoreKeys() {
+        return partitionerIgnoreKeys;
+    }
+
+    public void setPartitionerIgnoreKeys(boolean partitionerIgnoreKeys) {
+        this.partitionerIgnoreKeys = partitionerIgnoreKeys;
     }
 
     public String getTopic() {
