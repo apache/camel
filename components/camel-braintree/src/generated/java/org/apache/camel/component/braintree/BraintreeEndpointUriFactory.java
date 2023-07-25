@@ -21,13 +21,14 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(44);
+        Set<String> props = new HashSet<>(46);
         props.add("accessToken");
         props.add("amount");
         props.add("apiName");
         props.add("associationFilterId");
         props.add("challenge");
         props.add("cloneRequest");
+        props.add("connectRequest");
         props.add("content");
         props.add("currencyRequest");
         props.add("customerId");
@@ -66,6 +67,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
         props.add("subscriptionId");
         props.add("textEvidenceRequest");
         props.add("token");
+        props.add("transactionRequest");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("accessToken");
