@@ -50,10 +50,10 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long startTime = System.currentTimeMillis() + 3000L;
+                    long startTime = System.currentTimeMillis() + 500;
                     policy.setRouteStartDate(new Date(startTime));
                     policy.setRouteStartRepeatCount(1);
-                    policy.setRouteStartRepeatInterval(3000);
+                    policy.setRouteStartRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
@@ -62,9 +62,9 @@ public class SimpleScheduledRoutePolicyTest {
                 }
             });
             context.start();
-            context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
+            context.getRouteController().stopRoute("test");
 
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
             });
 
@@ -85,10 +85,10 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long startTime = System.currentTimeMillis() + 3000;
+                    long startTime = System.currentTimeMillis() + 500;
                     policy.setRouteStopDate(new Date(startTime));
                     policy.setRouteStopRepeatCount(1);
-                    policy.setRouteStopRepeatInterval(3000);
+                    policy.setRouteStopRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
@@ -99,7 +99,7 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
 
             // wait for route to stop
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertTrue(ServiceHelper.isStopped(context.getRoute("test").getConsumer()));
             });
 
@@ -119,10 +119,10 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long startTime = System.currentTimeMillis() + 3000L;
+                    long startTime = System.currentTimeMillis() + 500;
                     policy.setRouteSuspendDate(new Date(startTime));
                     policy.setRouteSuspendRepeatCount(1);
-                    policy.setRouteSuspendRepeatInterval(3000);
+                    policy.setRouteSuspendRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
@@ -133,7 +133,7 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
 
             // wait for route to suspend
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
             });
 
@@ -156,10 +156,10 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long startTime = System.currentTimeMillis() + 3000L;
+                    long startTime = System.currentTimeMillis() + 1000;
                     policy.setRouteResumeDate(new Date(startTime));
                     policy.setRouteResumeRepeatCount(1);
-                    policy.setRouteResumeRepeatInterval(3000);
+                    policy.setRouteResumeRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
@@ -175,7 +175,7 @@ public class SimpleScheduledRoutePolicyTest {
                     "Should have thrown an exception");
 
             // wait for route to resume/start
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertTrue(ServiceHelper.isStarted(context.getRoute("test").getConsumer()));
             });
 
@@ -200,14 +200,14 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long suspendTime = System.currentTimeMillis() + 1000L;
+                    long suspendTime = System.currentTimeMillis() + 500;
                     policy.setRouteSuspendDate(new Date(suspendTime));
                     policy.setRouteSuspendRepeatCount(0);
-                    policy.setRouteSuspendRepeatInterval(3000);
-                    long resumeTime = System.currentTimeMillis() + 4000L;
+                    policy.setRouteSuspendRepeatInterval(1000);
+                    long resumeTime = System.currentTimeMillis() + 2000;
                     policy.setRouteResumeDate(new Date(resumeTime));
                     policy.setRouteResumeRepeatCount(1);
-                    policy.setRouteResumeRepeatInterval(3000);
+                    policy.setRouteResumeRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
@@ -218,7 +218,7 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
 
             // wait for route to suspend
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
             });
 
@@ -226,7 +226,7 @@ public class SimpleScheduledRoutePolicyTest {
                     "Should have thrown an exception");
 
             // wait for route to resume/start
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertTrue(ServiceHelper.isStarted(context.getRoute("test").getConsumer()));
             });
 
@@ -250,13 +250,13 @@ public class SimpleScheduledRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                    long suspendTime = System.currentTimeMillis() + 1000L;
+                    long suspendTime = System.currentTimeMillis() + 500;
                     policy.setRouteSuspendDate(new Date(suspendTime));
                     policy.setRouteSuspendRepeatCount(0);
-                    long startTime = System.currentTimeMillis() + 4000L;
+                    long startTime = System.currentTimeMillis() + 2000;
                     policy.setRouteStartDate(new Date(startTime));
                     policy.setRouteResumeRepeatCount(1);
-                    policy.setRouteResumeRepeatInterval(3000);
+                    policy.setRouteResumeRepeatInterval(1000);
 
                     from("direct:start")
                             .routeId("test")
@@ -266,7 +266,6 @@ public class SimpleScheduledRoutePolicyTest {
             });
             context.start();
 
-            // policy will suspend consumer after approx 1 second
             Awaitility.await().atMost(5, TimeUnit.SECONDS).until(
                     () -> {
                         Consumer consumer = context.getRoute("test").getConsumer();
@@ -276,8 +275,7 @@ public class SimpleScheduledRoutePolicyTest {
             assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
                     "Should have thrown an exception");
 
-            // policy will start consumer after approx 4 second
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).until(
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(
                     () -> {
                         Consumer consumer = context.getRoute("test").getConsumer();
                         return ServiceHelper.isStarted(consumer);
@@ -302,10 +300,10 @@ public class SimpleScheduledRoutePolicyTest {
                 context.addRoutes(new RouteBuilder() {
                     public void configure() {
                         SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                        long startTime = System.currentTimeMillis() + 3000L;
+                        long startTime = System.currentTimeMillis() + 500;
                         policy.setRouteStartDate(new Date(startTime));
                         policy.setRouteStartRepeatCount(1);
-                        policy.setRouteStartRepeatInterval(3000);
+                        policy.setRouteStartRepeatInterval(1000);
 
                         from("direct:start")
                                 .routeId("test")
@@ -317,7 +315,7 @@ public class SimpleScheduledRoutePolicyTest {
                 context.start();
 
                 // wait for route to start
-                Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                     assertTrue(ServiceHelper.isStarted(context.getRoute("test").getConsumer()));
                 });
 
@@ -347,7 +345,7 @@ public class SimpleScheduledRoutePolicyTest {
                                     @Override
                                     public void configure() throws Exception {
                                         SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
-                                        long startTime = System.currentTimeMillis() + 3000L;
+                                        long startTime = System.currentTimeMillis() + 500;
                                         policy.setRouteStartDate(new Date(startTime));
 
                                         from("direct:dynamic")
@@ -365,7 +363,7 @@ public class SimpleScheduledRoutePolicyTest {
                 template.sendBody("direct:start", "Hello World");
 
                 // wait for route to start
-                Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
                     assertTrue(ServiceHelper.isStarted(context.getRoute("dynamic").getConsumer()));
                 });
 
