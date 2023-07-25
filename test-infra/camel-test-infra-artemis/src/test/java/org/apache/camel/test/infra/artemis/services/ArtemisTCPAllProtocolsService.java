@@ -20,6 +20,7 @@ import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
+import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.camel.test.AvailablePortFinder;
 
@@ -49,6 +50,7 @@ public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedServic
         }
         configuration.addAddressSetting("#",
                 new AddressSettings()
+                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
                         .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
                         .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 
