@@ -314,6 +314,39 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable retry letter topic mode. The default retry letter topic
+         * uses this format: topicname-subscriptionname-RETRY.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableRetry the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder enableRetry(boolean enableRetry) {
+            doSetProperty("enableRetry", enableRetry);
+            return this;
+        }
+        /**
+         * To enable retry letter topic mode. The default retry letter topic
+         * uses this format: topicname-subscriptionname-RETRY.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableRetry the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder enableRetry(String enableRetry) {
+            doSetProperty("enableRetry", enableRetry);
+            return this;
+        }
+        /**
          * Policy to use by consumer when using key-shared subscription type.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -558,6 +591,22 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder readCompacted(String readCompacted) {
             doSetProperty("readCompacted", readCompacted);
+            return this;
+        }
+        /**
+         * Name of the topic to use in retry mode. Note: if not set, default
+         * topic name will be topicName-subscriptionName-RETRY.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param retryLetterTopic the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder retryLetterTopic(
+                String retryLetterTopic) {
+            doSetProperty("retryLetterTopic", retryLetterTopic);
             return this;
         }
         /**

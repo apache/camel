@@ -25,7 +25,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.api.BatcherBuilder;
 import org.apache.pulsar.client.api.CompressionType;
-import org.apache.pulsar.client.api.KeySharedPolicy;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
 import org.apache.pulsar.client.api.RedeliveryBackoff;
@@ -83,13 +82,20 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "consumer",
               description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
     private String deadLetterTopic;
+    @UriParam(label = "consumer",
+              description = "To enable retry letter topic mode. The default retry letter topic uses this format: topicname-subscriptionname-RETRY")
+    private boolean enableRetry;
+    @UriParam(label = "consumer",
+              description = "Name of the topic to use in retry mode. Note: if not set, default topic name will be topicName-subscriptionName-RETRY")
+    private String retryLetterTopic;
     @UriParam(label = "consumer", defaultValue = "true",
               description = "Whether to use the `messageListener` interface, or to receive messages using a separate thread pool")
     private boolean messageListener = true;
     @UriParam(label = "consumer", defaultValue = "1",
               description = "Number of threads to receive and handle messages when using a separate thread pool")
     private int numberOfConsumerThreads = 1;
-    @UriParam(label = "consumer", enums = "AUTO_SPLIT,STICKY", description = "Policy to use by consumer when using key-shared subscription type.")
+    @UriParam(label = "consumer", enums = "AUTO_SPLIT,STICKY",
+              description = "Policy to use by consumer when using key-shared subscription type.")
     private String keySharedPolicy;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
@@ -516,6 +522,22 @@ public class PulsarConfiguration implements Cloneable {
 
     public void setDeadLetterTopic(String deadLetterTopic) {
         this.deadLetterTopic = deadLetterTopic;
+    }
+
+    public boolean isEnableRetry() {
+        return enableRetry;
+    }
+
+    public void setEnableRetry(boolean enableRetry) {
+        this.enableRetry = enableRetry;
+    }
+
+    public String getRetryLetterTopic() {
+        return retryLetterTopic;
+    }
+
+    public void setRetryLetterTopic(String retryLetterTopic) {
+        this.retryLetterTopic = retryLetterTopic;
     }
 
     public boolean isMessageListener() {
