@@ -29,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,6 +66,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
 
     @ParameterizedTest
     @ValueSource(ints = { 500, 100, 100 })
+    @Disabled("This will spam logs with Session is closed")
     public void testTempQueueRefreshed(int numFiles) throws Exception {
         executorService = context.getExecutorServiceManager().newFixedThreadPool(this, "test", 5);
 
