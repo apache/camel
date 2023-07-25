@@ -48,6 +48,7 @@ public interface Route extends RuntimeConfiguration {
     String TEMPLATE_PROPERTY = "template";
     String DESCRIPTION_PROPERTY = "description";
     String CONFIGURATION_ID_PROPERTY = "configurationId";
+    String SUPERVISED = "supervised";
 
     /**
      * Gets the route id
