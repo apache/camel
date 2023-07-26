@@ -45,9 +45,7 @@ public class JmsInOutDisableTimeToLiveTest extends AbstractJMSTest {
 
     @Test
     public void testInOutExpired() throws Exception {
-        MyCoolBean cool = new MyCoolBean();
-        cool.setProducer(template);
-        cool.setConsumer(consumer);
+        MyCoolBean cool = new MyCoolBean(consumer, template, "JmsInOutDisableTimeToLiveTest");
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
@@ -66,9 +64,7 @@ public class JmsInOutDisableTimeToLiveTest extends AbstractJMSTest {
 
     @Test
     public void testInOutDisableTimeToLive() throws Exception {
-        MyCoolBean cool = new MyCoolBean();
-        cool.setProducer(template);
-        cool.setConsumer(consumer);
+        MyCoolBean cool = new MyCoolBean(consumer, template, "JmsInOutDisableTimeToLiveTest");
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedBodiesReceived("Hello World 2");
@@ -121,37 +117,4 @@ public class JmsInOutDisableTimeToLiveTest extends AbstractJMSTest {
         template = camelContextExtension.getProducerTemplate();
         consumer = camelContextExtension.getConsumerTemplate();
     }
-
-    public static class MyCoolBean {
-        private int count;
-        private ConsumerTemplate consumer;
-        private ProducerTemplate producer;
-
-        public void setConsumer(ConsumerTemplate consumer) {
-            this.consumer = consumer;
-        }
-
-        public void setProducer(ProducerTemplate producer) {
-            this.producer = producer;
-        }
-
-        public void someBusinessLogic() {
-            // loop to empty queue
-            while (true) {
-                // receive the message from the queue, wait at most 2 sec
-                String msg = consumer.receiveBody("activemq:JmsInOutDisableTimeToLiveTest.in", 2000, String.class);
-                if (msg == null) {
-                    // no more messages in queue
-                    break;
-                }
-
-                // do something with body
-                msg = "Hello " + msg;
-
-                // send it to the next queue
-                producer.sendBodyAndHeader("activemq:JmsInOutDisableTimeToLiveTest.out", msg, "number", count++);
-            }
-        }
-    }
-
 }
