@@ -181,11 +181,15 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         exchange.setPattern(pattern);
         org.apache.camel.Message message = exchange.getIn();
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
-        List<MessagePart> parts = mail.getPayload().getParts();
-        if (parts != null && parts.get(0).getBody().getData() != null) {
-            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim());
-            String body = new String(bodyBytes, StandardCharsets.UTF_8);
-            message.setBody(body);
+        if (getConfiguration().isRaw()) {
+            message.setBody(mail.getRaw());
+        } else {
+            List<MessagePart> parts = mail.getPayload().getParts();
+            if (parts != null && parts.get(0).getBody().getData() != null) {
+                byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim());
+                String body = new String(bodyBytes, StandardCharsets.UTF_8);
+                message.setBody(body);
+            }
         }
         configureHeaders(message, mail.getPayload().getHeaders());
         return exchange;

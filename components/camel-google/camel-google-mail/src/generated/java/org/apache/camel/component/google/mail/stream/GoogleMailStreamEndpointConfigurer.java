@@ -54,6 +54,7 @@ public class GoogleMailStreamEndpointConfigurer extends PropertyConfigurerSuppor
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "raw": target.getConfiguration().setRaw(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.getConfiguration().setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
@@ -116,6 +117,7 @@ public class GoogleMailStreamEndpointConfigurer extends PropertyConfigurerSuppor
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "query": return java.lang.String.class;
+        case "raw": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "repeatcount":
@@ -179,6 +181,7 @@ public class GoogleMailStreamEndpointConfigurer extends PropertyConfigurerSuppor
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "query": return target.getConfiguration().getQuery();
+        case "raw": return target.getConfiguration().isRaw();
         case "refreshtoken":
         case "refreshToken": return target.getConfiguration().getRefreshToken();
         case "repeatcount":
