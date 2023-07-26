@@ -54,6 +54,6 @@ abstract class NormalizedOperations implements RemoteFileOperations<ShareFileIte
     }
 
     /** Normalized form of {@link #buildDirectory(String, boolean)}. */
-    abstract protected boolean buildDirectory(String path);
+    protected abstract boolean buildDirectory(String path);
 
 }

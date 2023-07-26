@@ -22,7 +22,7 @@ package org.apache.camel.component.file.azure;
  * The absolute paths start with the path separator, they do not include the share name and they are relative to the
  * share root rather than to the endpoint starting directory.
  */
-public class FilesPath {
+public final class FilesPath {
 
     public static final String PARENT = "..";
 
@@ -126,7 +126,7 @@ public class FilesPath {
         }
 
         var includeRoot = preserveRootAsStep && path.startsWith(SHARE_ROOT);
-        if (!(includeRoot)) {
+        if (!includeRoot) {
             path = ensureRelative(path);
         }
 
