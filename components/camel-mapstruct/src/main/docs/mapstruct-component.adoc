@@ -72,5 +72,9 @@ from("direct:foo")
 
 Where `MyFooDto` is a POJO that MapStruct is able to convert to/from.
 
+NOTE: Camel does not support mapper methods defined with a `void` return type such as those used with `@MappingTarget`.
+
+WARNING: If you define multiple mapping methods for the same from / to types, then the implementation chosen by
+Camel to do its type conversion is potentially non-deterministic.
 
 include::spring-boot:partial$starter.adoc[]
