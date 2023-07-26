@@ -99,6 +99,9 @@ public class Sqs2ClientIAMProfileOptimizedImpl implements Sqs2InternalClient {
             if (httpClientBuilder == null) {
                 httpClientBuilder = ApacheHttpClient.builder();
             }
+            if (httpClientBuilder == null) {
+                httpClientBuilder = ApacheHttpClient.builder();
+            }
             SdkHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap
                     .builder()
                     .put(
@@ -106,7 +109,9 @@ public class Sqs2ClientIAMProfileOptimizedImpl implements Sqs2InternalClient {
                             Boolean.TRUE)
                     .build());
             // set created http client to use instead of builder
+            // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
+            clientBuilder.httpClientBuilder(null);
             clientBuilder.httpClientBuilder(null);
         }
         client = clientBuilder.build();

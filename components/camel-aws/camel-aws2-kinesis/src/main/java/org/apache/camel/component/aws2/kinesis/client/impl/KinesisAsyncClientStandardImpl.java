@@ -94,15 +94,19 @@ public class KinesisAsyncClientStandardImpl implements KinesisAsyncInternalClien
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
         if (configuration.isTrustAllCertificates()) {
-            SdkAsyncHttpClient ahc = NettyNioAsyncHttpClient
-                    .builder()
+            if (httpClientBuilder == null) {
+                httpClientBuilder = NettyNioAsyncHttpClient.builder();
+            }
+            SdkAsyncHttpClient ahc = httpClientBuilder
                     .buildWithDefaults(AttributeMap
                             .builder()
                             .put(
                                     SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
                                     Boolean.TRUE)
                             .build());
+            // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
+            clientBuilder.httpClientBuilder(null);
         }
         return clientBuilder.build();
     }
