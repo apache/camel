@@ -32,6 +32,9 @@ final class FilesURIStrings {
 
     public static final char QUERY_SEPARATOR = '?';
 
+    private FilesURIStrings() {
+    }
+
     /**
      * Get the base uri part before the options as they can be non URI valid such as the expression using $ chars and
      * the URI constructor will regard $ as an illegal character and we don't want to enforce end users to to escape the
