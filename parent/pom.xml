@@ -421,7 +421,7 @@
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.3.2</smallrye-config-version>
         <smallrye-health-version>4.0.2</smallrye-health-version>
-        <smallrye-fault-tolerance-version>6.2.4</smallrye-fault-tolerance-version>
+        <smallrye-fault-tolerance-version>6.2.6</smallrye-fault-tolerance-version>
         <snakeyaml-version>2.0</snakeyaml-version>
         <snakeyaml-engine-version>2.6</snakeyaml-engine-version>
         <snmp4j-version>3.7.7</snmp4j-version>
