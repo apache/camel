@@ -26,6 +26,7 @@ import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -184,9 +185,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             delay, period,
                             repeatSeconds, exchange.getExchangeId());
                 }
-                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
-                        new TimeoutExtender(exchange, repeatSeconds), delay, period,
-                        TimeUnit.SECONDS);
+                final TimeoutExtender extender = new TimeoutExtender(exchange, repeatSeconds);
+                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(extender, delay, period, TimeUnit.SECONDS);
                 exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
@@ -202,7 +202,11 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                         // cancel task as we are done
                         LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}",
                                 exchange.getExchangeId());
-                        scheduledFuture.cancel(false);
+                        extender.cancel();
+                        boolean cancelled = scheduledFuture.cancel(true);
+                        if (!cancelled) {
+                            LOG.warn("TimeoutExtender task for exchangeId: {} could not be cancelled", exchange.getExchangeId());
+                        }
                     }
                 });
             }
@@ -397,32 +401,40 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         private final Exchange exchange;
         private final int repeatSeconds;
+        private final AtomicBoolean run = new AtomicBoolean(true);
 
         TimeoutExtender(Exchange exchange, int repeatSeconds) {
             this.exchange = exchange;
             this.repeatSeconds = repeatSeconds;
         }
 
+        public void cancel() {
+            // cancel by setting to no longer run
+            run.set(false);
+        }
+
         @Override
         public void run() {
-            ChangeMessageVisibilityRequest.Builder request
-                    = ChangeMessageVisibilityRequest.builder().queueUrl(getQueueUrl()).visibilityTimeout(repeatSeconds)
-                            .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
+            if (run.get()) {
+                ChangeMessageVisibilityRequest.Builder request
+                        = ChangeMessageVisibilityRequest.builder().queueUrl(getQueueUrl()).visibilityTimeout(repeatSeconds)
+                        .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
 
-            try {
-                LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
-                getEndpoint().getClient().changeMessageVisibility(request.build());
-                LOG.debug("Extended visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
-            } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
-                // Ignore.
-            } catch (SqsException e) {
-                if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
+                try {
+                    LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
+                    getEndpoint().getClient().changeMessageVisibility(request.build());
+                    LOG.debug("Extended visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
+                } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
                     // Ignore.
-                } else {
+                } catch (SqsException e) {
+                    if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
+                        // Ignore.
+                    } else {
+                        logException(e);
+                    }
+                } catch (Exception e) {
                     logException(e);
                 }
-            } catch (Exception e) {
-                logException(e);
             }
         }
 
