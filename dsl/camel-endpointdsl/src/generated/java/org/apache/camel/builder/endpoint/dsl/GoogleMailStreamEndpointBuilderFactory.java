@@ -178,6 +178,41 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to store the entire email message in an RFC 2822 formatted
+         * and base64url encoded string (in JSon format), in the Camel message
+         * body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param raw the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamEndpointBuilder raw(boolean raw) {
+            doSetProperty("raw", raw);
+            return this;
+        }
+        /**
+         * Whether to store the entire email message in an RFC 2822 formatted
+         * and base64url encoded string (in JSon format), in the Camel message
+         * body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param raw the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamEndpointBuilder raw(String raw) {
+            doSetProperty("raw", raw);
+            return this;
+        }
+        /**
          * GMail scopes.
          * 
          * The option is a:

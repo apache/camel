@@ -41,6 +41,8 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String refreshToken;
     @UriParam
+    private boolean raw;
+    @UriParam
     private String applicationName;
     @UriParam(defaultValue = "is:unread")
     private String query = "is:unread";
@@ -101,6 +103,18 @@ public class GoogleMailStreamConfiguration implements Cloneable {
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public boolean isRaw() {
+        return raw;
+    }
+
+    /**
+     * Whether to store the entire email message in an RFC 2822 formatted and base64url encoded string (in JSon format),
+     * in the Camel message body.
+     */
+    public void setRaw(boolean raw) {
+        this.raw = raw;
     }
 
     public String getApplicationName() {

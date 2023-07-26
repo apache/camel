@@ -50,6 +50,7 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "maxresults":
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, long.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "raw": getOrCreateConfiguration(target).setRaw(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
@@ -84,6 +85,7 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "maxresults":
         case "maxResults": return long.class;
         case "query": return java.lang.String.class;
+        case "raw": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
@@ -119,6 +121,7 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "maxresults":
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "query": return getOrCreateConfiguration(target).getQuery();
+        case "raw": return getOrCreateConfiguration(target).isRaw();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
