@@ -24,7 +24,6 @@ import com.azure.core.amqp.AmqpTransportType;
 import com.azure.core.amqp.ProxyOptions;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.util.ClientOptions;
-import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusTransactionContext;
@@ -135,9 +134,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the {@link ClientOptions} to be sent from the client built from this builder, enabling customization of
-     * certain properties, as well as support the addition of custom header information. Refer to the
-     * {@link ClientOptions} documentation for more information.
+     * Sets the ClientOptions to be sent from the client built from this builder, enabling customization of certain
+     * properties, as well as support the addition of custom header information.
      */
     public ClientOptions getClientOptions() {
         return clientOptions;
@@ -148,8 +146,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the proxy configuration to use for {@link ServiceBusSenderAsyncClient}. When a proxy is configured,
-     * {@link AmqpTransportType#AMQP_WEB_SOCKETS} must be used for the transport type.
+     * Sets the proxy configuration to use for ServiceBusSenderAsyncClient. When a proxy is configured, AMQP_WEB_SOCKETS
+     * must be used for the transport type.
      */
     public ProxyOptions getProxyOptions() {
         return proxyOptions;
@@ -171,8 +169,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is
-     * {@link AmqpTransportType#AMQP}.
+     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is AMQP.
      */
     public AmqpTransportType getAmqpTransportType() {
         return amqpTransportType;
@@ -195,8 +192,7 @@ public class ServiceBusConfiguration implements Cloneable {
 
     /**
      * Disables auto-complete and auto-abandon of received messages. By default, a successfully processed message is
-     * {@link ServiceBusReceiverAsyncClient#complete(ServiceBusReceivedMessage) completed}. If an error happens when the
-     * message is processed, it is {@link ServiceBusReceiverAsyncClient#abandon(ServiceBusReceivedMessage) abandoned}.
+     * completed. If an error happens when the message is abandoned.
      */
     public boolean isDisableAutoComplete() {
         return disableAutoComplete;
@@ -218,9 +214,8 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the amount of time to continue auto-renewing the lock. Setting {@link Duration#ZERO} or {@code null}
-     * disables auto-renewal. For {@link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} mode, auto-renewal
-     * is disabled.
+     * Sets the amount of time to continue auto-renewing the lock. Setting ZERO disables auto-renewal. For ServiceBus
+     * receive mode (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
      */
     public Duration getMaxAutoLockRenewDuration() {
         return maxAutoLockRenewDuration;
@@ -231,12 +226,12 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the prefetch count of the receiver. For both {@link ServiceBusReceiveMode#PEEK_LOCK PEEK_LOCK} and
-     * {@link ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} modes the default value is 1.
+     * Sets the prefetch count of the receiver. For both PEEK_LOCK PEEK_LOCK and RECEIVE_AND_DELETE RECEIVE_AND_DELETE
+     * receive modes the default value is 1.
      *
      * Prefetch speeds up the message flow by aiming to have a message readily available for local retrieval when and
-     * before the application asks for one using {@link ServiceBusReceiverAsyncClient#receiveMessages()}. Setting a
-     * non-zero value will prefetch that number of messages. Setting the value to zero turns prefetch off.
+     * before the application asks for one using receive message. Setting a non-zero value will prefetch that number of
+     * messages. Setting the value to zero turns prefetch off.
      */
     public int getPrefetchCount() {
         return prefetchCount;
@@ -247,7 +242,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the type of the {@link SubQueue} to connect to.
+     * Sets the type of the SubQueue to connect to.
      */
     public SubQueue getSubQueue() {
         return subQueue;
@@ -280,7 +275,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * A {@link TokenCredential} for Azure AD authentication, implemented in {@link com.azure.identity}
+     * A TokenCredential for Azure AD authentication.
      */
     public TokenCredential getTokenCredential() {
         return tokenCredential;
