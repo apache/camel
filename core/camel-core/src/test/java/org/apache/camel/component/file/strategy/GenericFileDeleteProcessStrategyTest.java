@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky on some OS as java.io.delete can
@@ -149,7 +148,9 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
 
-        Assertions.assertThrows(GenericFileOperationFailedException.class, () -> strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file), "Should have thrown an exception");
+        Assertions.assertThrows(GenericFileOperationFailedException.class,
+                () -> strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file),
+                "Should have thrown an exception");
 
         assertEquals(3, deleteCounter, "Should have tried to delete file 3 times");
         assertEquals(3, existsCounter, "Should have tried to delete file 3 times");

@@ -22,8 +22,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * MultipleConsumers option test.
  */
@@ -42,7 +40,8 @@ public class DirectNoMultipleConsumersTest extends TestSupport {
             }
         });
 
-        Assertions.assertThrows(FailedToStartRouteException.class, () -> container.start(), "Should have thrown an FailedToStartRouteException");
+        Assertions.assertThrows(FailedToStartRouteException.class, () -> container.start(),
+                "Should have thrown an FailedToStartRouteException");
 
         container.stop();
     }

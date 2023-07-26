@@ -27,7 +27,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Logger formatter test.
@@ -106,6 +109,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
+        assertMockEndpointsSatisfied();
         producer.stop();
     }
 
@@ -119,6 +123,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
+        assertMockEndpointsSatisfied();
         producer.stop();
     }
 
@@ -132,6 +137,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
+        assertMockEndpointsSatisfied();
         producer.stop();
     }
 
@@ -145,6 +151,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
+        assertMockEndpointsSatisfied();
         producer.stop();
     }
 
@@ -158,6 +165,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
+        assertMockEndpointsSatisfied();
         producer.stop();
     }
 

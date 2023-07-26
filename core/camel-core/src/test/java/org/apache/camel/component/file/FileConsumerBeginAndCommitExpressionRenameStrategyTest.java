@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,7 +48,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     }
 
     @Test
-    public void testIllegalOptions(){
+    public void testIllegalOptions() {
 
         Endpoint ep = context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true"));
 
