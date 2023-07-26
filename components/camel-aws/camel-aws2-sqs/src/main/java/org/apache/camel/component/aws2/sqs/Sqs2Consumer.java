@@ -34,8 +34,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
@@ -72,8 +70,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     private transient String sqsConsumerToString;
     private Collection<String> attributeNames;
     private Collection<String> messageAttributeNames;
-    private WritableHealthCheckRepository healthCheckRepository;
-    private Sqs2ConsumerHealthCheck consumerHealthCheck;
 
     public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -377,17 +373,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         super.doStart();
-
-        // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getEndpoint().getCamelContext(), "components",
-                WritableHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new Sqs2ConsumerHealthCheck(this, getRouteId());
-            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
-                    && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
-        }
     }
 
     @Override
