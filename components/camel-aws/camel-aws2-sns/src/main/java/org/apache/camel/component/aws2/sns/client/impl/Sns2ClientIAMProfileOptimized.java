@@ -90,8 +90,6 @@ public class Sns2ClientIAMProfileOptimized implements Sns2InternalClient {
                             Boolean.TRUE)
                     .build());
             // set created http client to use instead of builder
-            clientBuilder.httpClientBuilder(null);
-            // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
             clientBuilder.httpClientBuilder(null);
         }

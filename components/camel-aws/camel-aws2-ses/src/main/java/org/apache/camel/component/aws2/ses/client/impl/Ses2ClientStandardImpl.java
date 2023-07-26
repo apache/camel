@@ -100,9 +100,7 @@ public class Ses2ClientStandardImpl implements Ses2InternalClient {
                             Boolean.TRUE)
                     .build());
             // set created http client to use instead of builder
-            // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
-            clientBuilder.httpClientBuilder(null);
             clientBuilder.httpClientBuilder(null);
         }
         client = clientBuilder.build();
