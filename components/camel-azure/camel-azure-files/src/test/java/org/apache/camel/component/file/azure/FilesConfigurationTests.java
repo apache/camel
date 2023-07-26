@@ -47,7 +47,7 @@ public class FilesConfigurationTests extends CamelTestSupport {
     }
 
     @Test
-    void hostForAccountURIShouldDefaultTo_file_core_windows_netSuffix() {
+    void hostForAccountURIShouldDefaultToFileCoreWindowsNetSuffix() {
         var remoteConf = context.getEndpoint("azure-files://account/share", FilesEndpoint.class).getConfiguration();
         assertEquals("account.file.core.windows.net", remoteConf.getHost());
     }
@@ -127,7 +127,6 @@ public class FilesConfigurationTests extends CamelTestSupport {
     @Test
     void dirForValidDirectoryNameURIShouldBeExtracted2() {
         var remoteConf = context.getEndpoint("azure-files://account/share/dir?", FilesEndpoint.class).getConfiguration();
-        ;
         assertEquals("/dir", remoteConf.getDirectory());
         assertEquals("/dir", remoteConf.getDirectoryName());
     }
@@ -135,7 +134,6 @@ public class FilesConfigurationTests extends CamelTestSupport {
     @Test
     void dirForValidDirectoryNameURIShouldBeExtracted3() {
         var remoteConf = context.getEndpoint("azure-files://account/share/dir/?", FilesEndpoint.class).getConfiguration();
-        ;
         assertEquals("/dir", remoteConf.getDirectory());
         assertEquals("/dir", remoteConf.getDirectoryName());
     }

@@ -149,12 +149,15 @@ final class FilesToken {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         FilesToken other = (FilesToken) obj;
         return Objects.equals(sdd, other.sdd) && Objects.equals(se, other.se)
                 && Objects.equals(si, other.si) && Objects.equals(sig, other.sig)
