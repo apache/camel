@@ -187,8 +187,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             repeatSeconds, exchange.getExchangeId());
                 }
                 final TimeoutExtender extender = new TimeoutExtender(exchange, repeatSeconds);
-                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(extender,
-                        delay, period, TimeUnit.SECONDS);
+                final ScheduledFuture<?> scheduledFuture
+                        = this.scheduledExecutor.scheduleAtFixedRate(extender, delay, period, TimeUnit.SECONDS);
                 exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
