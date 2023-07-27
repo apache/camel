@@ -22,10 +22,10 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Component("telegram")
-public class TelegramComponent extends DefaultComponent {
+public class TelegramComponent extends HealthCheckComponent {
     public static final String BOT_API_DEFAULT_URL = "https://api.telegram.org";
 
     @Metadata(label = "security", secret = true)

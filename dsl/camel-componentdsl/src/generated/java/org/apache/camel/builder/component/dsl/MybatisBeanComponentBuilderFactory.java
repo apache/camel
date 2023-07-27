@@ -134,6 +134,56 @@ public interface MybatisBeanComponentBuilderFactory {
             doSetProperty("sqlSessionFactory", sqlSessionFactory);
             return this;
         }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default MybatisBeanComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default MybatisBeanComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default MybatisBeanComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
     }
 
     class MybatisBeanComponentBuilderImpl
@@ -155,6 +205,9 @@ public interface MybatisBeanComponentBuilderFactory {
             case "lazyStartProducer": ((MyBatisBeanComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((MyBatisBeanComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sqlSessionFactory": ((MyBatisBeanComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
+            case "healthCheckConsumerEnabled": ((MyBatisBeanComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((MyBatisBeanComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((MyBatisBeanComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

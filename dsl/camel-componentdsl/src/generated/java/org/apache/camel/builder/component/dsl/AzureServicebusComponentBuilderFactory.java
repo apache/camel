@@ -69,7 +69,7 @@ public interface AzureServicebusComponentBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AmqpTransportType#AMQP.
+         * Service Bus occurs. Default value is AMQP.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
@@ -88,8 +88,7 @@ public interface AzureServicebusComponentBuilderFactory {
         /**
          * Sets the ClientOptions to be sent from the client built from this
          * builder, enabling customization of certain properties, as well as
-         * support the addition of custom header information. Refer to the
-         * ClientOptions documentation for more information.
+         * support the addition of custom header information.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.util.ClientOptions&lt;/code&gt; type.
@@ -122,8 +121,8 @@ public interface AzureServicebusComponentBuilderFactory {
         }
         /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must
-         * be used for the transport type.
+         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * transport type.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.ProxyOptions&lt;/code&gt; type.
@@ -197,12 +196,8 @@ public interface AzureServicebusComponentBuilderFactory {
         }
         /**
          * Disables auto-complete and auto-abandon of received messages. By
-         * default, a successfully processed message is {link
-         * ServiceBusReceiverAsyncClient#complete(ServiceBusReceivedMessage)
-         * completed}. If an error happens when the message is processed, it is
-         * {link
-         * ServiceBusReceiverAsyncClient#abandon(ServiceBusReceivedMessage)
-         * abandoned}.
+         * default, a successfully processed message is completed. If an error
+         * happens when the message is abandoned.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -219,9 +214,8 @@ public interface AzureServicebusComponentBuilderFactory {
         }
         /**
          * Sets the amount of time to continue auto-renewing the lock. Setting
-         * Duration#ZERO or null disables auto-renewal. For {link
-         * ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} mode,
-         * auto-renewal is disabled.
+         * ZERO disables auto-renewal. For ServiceBus receive mode
+         * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -253,13 +247,11 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the prefetch count of the receiver. For both {link
-         * ServiceBusReceiveMode#PEEK_LOCK PEEK_LOCK} and {link
-         * ServiceBusReceiveMode#RECEIVE_AND_DELETE RECEIVE_AND_DELETE} modes
-         * the default value is 1. Prefetch speeds up the message flow by aiming
-         * to have a message readily available for local retrieval when and
-         * before the application asks for one using
-         * ServiceBusReceiverAsyncClient#receiveMessages(). Setting a non-zero
+         * Sets the prefetch count of the receiver. For both PEEK_LOCK PEEK_LOCK
+         * and RECEIVE_AND_DELETE RECEIVE_AND_DELETE receive modes the default
+         * value is 1. Prefetch speeds up the message flow by aiming to have a
+         * message readily available for local retrieval when and before the
+         * application asks for one using receive message. Setting a non-zero
          * value will prefetch that number of messages. Setting the value to
          * zero turns prefetch off.
          * 
@@ -486,8 +478,7 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication, implemented in
-         * com.azure.identity.
+         * A TokenCredential for Azure AD authentication.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;

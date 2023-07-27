@@ -57,6 +57,12 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "fileoffset":
         case "fileOffset": getOrCreateConfiguration(target).setFileOffset(property(camelContext, java.lang.Long.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
@@ -130,6 +136,12 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "fileName": return java.lang.String.class;
         case "fileoffset":
         case "fileOffset": return java.lang.Long.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresults":
@@ -199,6 +211,12 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "fileoffset":
         case "fileOffset": return getOrCreateConfiguration(target).getFileOffset();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresults":

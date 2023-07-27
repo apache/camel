@@ -26,11 +26,11 @@ import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.GoogleSheetsVerifierExtension;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("google-sheets-stream")
-public class GoogleSheetsStreamComponent extends DefaultComponent {
+public class GoogleSheetsStreamComponent extends HealthCheckComponent {
 
     @Metadata
     private GoogleSheetsStreamConfiguration configuration;

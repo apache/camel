@@ -26,11 +26,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.ObjectHelper;
 
 @Component("azure-storage-datalake")
-public class DataLakeComponent extends DefaultComponent {
+public class DataLakeComponent extends HealthCheckComponent {
 
     @Metadata(description = "configuration object for datalake")
     private DataLakeConfiguration configuration = new DataLakeConfiguration();

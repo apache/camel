@@ -132,6 +132,56 @@ public interface SplunkComponentBuilderFactory {
             doSetProperty("splunkConfigurationFactory", splunkConfigurationFactory);
             return this;
         }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default SplunkComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default SplunkComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default SplunkComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
     }
 
     class SplunkComponentBuilderImpl
@@ -153,6 +203,9 @@ public interface SplunkComponentBuilderFactory {
             case "lazyStartProducer": ((SplunkComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SplunkComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "splunkConfigurationFactory": ((SplunkComponent) component).setSplunkConfigurationFactory((org.apache.camel.component.splunk.SplunkConfigurationFactory) value); return true;
+            case "healthCheckConsumerEnabled": ((SplunkComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((SplunkComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((SplunkComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }
