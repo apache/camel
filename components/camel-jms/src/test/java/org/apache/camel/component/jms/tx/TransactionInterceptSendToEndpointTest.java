@@ -18,12 +18,16 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * End user on forum issue
  */
+
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class TransactionInterceptSendToEndpointTest extends AbstractSpringJMSTestSupport {
 
     @Override

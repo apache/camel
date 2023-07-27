@@ -23,10 +23,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOriginalBodyTest {
 
     @EndpointInject("mock:end")

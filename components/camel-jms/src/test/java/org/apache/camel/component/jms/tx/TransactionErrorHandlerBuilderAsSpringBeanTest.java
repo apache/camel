@@ -20,12 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * To demonstrate the TransactionErrorHandlerBuilder configured in Spring XML.
  */
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class TransactionErrorHandlerBuilderAsSpringBeanTest extends AbstractSpringJMSTestSupport {
 
     @Override
