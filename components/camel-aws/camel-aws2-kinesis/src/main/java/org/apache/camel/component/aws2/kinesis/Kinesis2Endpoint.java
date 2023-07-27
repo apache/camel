@@ -23,7 +23,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisHealthCheck;
 import org.apache.camel.spi.UriEndpoint;
@@ -57,19 +56,20 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        var kinesisConnection = KinesisConnection.getInstance();
+
         if (!configuration.isCborEnabled()) {
             System.setProperty(CBOR_ENABLED.property(), "false");
         }
 
         if (configuration.isAsyncClient() &&
                 Objects.isNull(configuration.getAmazonKinesisClient())) {
-            kinesisAsyncClient = KinesisClientFactory
-                    .getKinesisAsyncClient(configuration)
-                    .getKinesisAsyncClient();
+            kinesisAsyncClient = kinesisConnection.getAsyncClient(this);
         } else {
             kinesisClient = configuration.getAmazonKinesisClient() != null
                     ? configuration.getAmazonKinesisClient()
-                    : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
+                    : kinesisConnection.getClient(this);
         }
 
         if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
