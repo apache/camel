@@ -2733,6 +2733,7 @@ public class StaticEndpointBuilders {
      * @param path node
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.endpointBuilder("corda", path);
@@ -2756,6 +2757,7 @@ public class StaticEndpointBuilders {
      * @param path node
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
             String componentName,
             String path) {

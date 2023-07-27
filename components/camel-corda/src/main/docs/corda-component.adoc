@@ -1,10 +1,11 @@
-= Corda Component
+= Corda Component (deprecated)
 :doctitle: Corda
 :shortname: corda
 :artifactid: camel-corda
 :description: Perform operations against Corda blockchain platform using corda-rpc library.
 :since: 2.23
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: corda
