@@ -837,20 +837,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ControlbusComponentBuilderFactory.controlbus();
     }
     /**
-     * Corda (camel-corda)
-     * Perform operations against Corda blockchain platform using corda-rpc
-     * library.
-     * 
-     * Category: blockchain,rpc
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-corda
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.CordaComponentBuilderFactory.CordaComponentBuilder corda() {
-        return org.apache.camel.builder.component.dsl.CordaComponentBuilderFactory.corda();
-    }
-    /**
      * Couchbase (camel-couchbase)
      * Query Couchbase Views with a poll strategy and/or perform various
      * operations against Couchbase databases.
