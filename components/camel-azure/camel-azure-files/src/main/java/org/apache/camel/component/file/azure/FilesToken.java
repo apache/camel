@@ -36,30 +36,29 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 final class FilesToken {
 
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String sv;
-    @UriParam(label = "both", description = "part of account SAS token", secret = true)
-    protected String ss;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String srt;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String sp;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String se;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String st;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String spr;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
-    protected String sig;
-
-    @UriParam(label = "both", description = "part of service SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String sv;
+    @UriParam(label = "security", description = "part of account SAS token", secret = true)
+    private String ss;
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String srt;
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String sp;
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String se;
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String st;
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String spr;
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
+    private String sig;
+    @UriParam(label = "security", description = "part of service SAS token", secret = true)
     private String si;
-    @UriParam(label = "both", description = "part of service SAS token", secret = true)
+    @UriParam(label = "security", description = "part of service SAS token", secret = true)
     private String sr;
-    @UriParam(label = "both", description = "part of service SAS token", secret = true)
+    @UriParam(label = "security", description = "part of service SAS token", secret = true)
     private String sdd;
-    @UriParam(label = "both", description = "part of SAS token", secret = true)
+    @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String sip;
 
     public void setSv(String sv) {
@@ -150,12 +149,15 @@ final class FilesToken {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         FilesToken other = (FilesToken) obj;
         return Objects.equals(sdd, other.sdd) && Objects.equals(se, other.se)
                 && Objects.equals(si, other.si) && Objects.equals(sig, other.sig)

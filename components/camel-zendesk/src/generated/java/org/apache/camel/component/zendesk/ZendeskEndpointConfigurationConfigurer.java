@@ -35,16 +35,20 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("Category", org.zendesk.client.v2.model.hc.Category.class);
         map.put("CategoryId", java.lang.Long.class);
         map.put("CategoryId0", java.lang.String.class);
+        map.put("CategoryId1", java.lang.Long.class);
         map.put("Category_id", java.lang.Long.class);
         map.put("Comment", org.zendesk.client.v2.model.Comment.class);
         map.put("CommentId", java.lang.Long.class);
         map.put("Content", byte[].class);
+        map.put("ContentTag", org.zendesk.client.v2.model.hc.ContentTag.class);
+        map.put("ContentTagId", java.lang.String.class);
         map.put("ContentType", java.lang.String.class);
         map.put("Email", java.lang.String.class);
         map.put("EndTime", java.util.Date.class);
         map.put("ExternalId", java.lang.String.class);
         map.put("ExternalId0", java.lang.Long.class);
         map.put("ExternalId0s", long[].class);
+        map.put("ExternalIds", java.lang.String[].class);
         map.put("Field", org.zendesk.client.v2.model.Field.class);
         map.put("File", java.io.File.class);
         map.put("FileName", java.lang.String.class);
@@ -73,6 +77,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("MethodName", org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class);
         map.put("MonitorId", java.lang.Long.class);
         map.put("Name", java.lang.String.class);
+        map.put("NamePrefix", java.lang.String.class);
         map.put("NewPassword", java.lang.String.class);
         map.put("NotifySubscribers", java.lang.Boolean.class);
         map.put("OauthToken", java.lang.String.class);
@@ -88,6 +93,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("Organization_membership_id", java.lang.Long.class);
         map.put("Organizations", org.zendesk.client.v2.model.Organization[].class);
         map.put("Page", java.lang.Integer.class);
+        map.put("PageSize", java.lang.Integer.class);
         map.put("Password", java.lang.String.class);
         map.put("PermissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class);
         map.put("Query", java.lang.String.class);
@@ -102,6 +108,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("SearchTerm", java.lang.String.class);
         map.put("Section", org.zendesk.client.v2.model.hc.Section.class);
         map.put("SectionId", java.lang.Long.class);
+        map.put("SectionId0", java.lang.Long.class);
         map.put("ServerUrl", java.lang.String.class);
         map.put("SortBy", java.lang.String.class);
         map.put("SortOrder", org.zendesk.client.v2.model.SortOrder.class);
@@ -178,6 +185,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "CategoryId": target.setCategoryId(property(camelContext, java.lang.Long.class, value)); return true;
         case "categoryid0":
         case "CategoryId0": target.setCategoryId0(property(camelContext, java.lang.String.class, value)); return true;
+        case "categoryid1":
+        case "CategoryId1": target.setCategoryId1(property(camelContext, java.lang.Long.class, value)); return true;
         case "category_id":
         case "Category_id": target.setCategory_id(property(camelContext, java.lang.Long.class, value)); return true;
         case "comment":
@@ -186,6 +195,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "CommentId": target.setCommentId(property(camelContext, java.lang.Long.class, value)); return true;
         case "content":
         case "Content": target.setContent(property(camelContext, byte[].class, value)); return true;
+        case "contenttag":
+        case "ContentTag": target.setContentTag(property(camelContext, org.zendesk.client.v2.model.hc.ContentTag.class, value)); return true;
+        case "contenttagid":
+        case "ContentTagId": target.setContentTagId(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
         case "ContentType": target.setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "email":
@@ -198,6 +211,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "ExternalId0": target.setExternalId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "externalid0s":
         case "ExternalId0s": target.setExternalId0s(property(camelContext, long[].class, value)); return true;
+        case "externalids":
+        case "ExternalIds": target.setExternalIds(property(camelContext, java.lang.String[].class, value)); return true;
         case "field":
         case "Field": target.setField(property(camelContext, org.zendesk.client.v2.model.Field.class, value)); return true;
         case "file":
@@ -254,6 +269,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "MonitorId": target.setMonitorId(property(camelContext, java.lang.Long.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "nameprefix":
+        case "NamePrefix": target.setNamePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "newpassword":
         case "NewPassword": target.setNewPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "notifysubscribers":
@@ -284,6 +301,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Organizations": target.setOrganizations(property(camelContext, org.zendesk.client.v2.model.Organization[].class, value)); return true;
         case "page":
         case "Page": target.setPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagesize":
+        case "PageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "permissiongroup":
@@ -312,6 +331,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Section": target.setSection(property(camelContext, org.zendesk.client.v2.model.hc.Section.class, value)); return true;
         case "sectionid":
         case "SectionId": target.setSectionId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "sectionid0":
+        case "SectionId0": target.setSectionId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "serverurl":
         case "ServerUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "sortby":
@@ -432,6 +453,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "CategoryId": return java.lang.Long.class;
         case "categoryid0":
         case "CategoryId0": return java.lang.String.class;
+        case "categoryid1":
+        case "CategoryId1": return java.lang.Long.class;
         case "category_id":
         case "Category_id": return java.lang.Long.class;
         case "comment":
@@ -440,6 +463,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "CommentId": return java.lang.Long.class;
         case "content":
         case "Content": return byte[].class;
+        case "contenttag":
+        case "ContentTag": return org.zendesk.client.v2.model.hc.ContentTag.class;
+        case "contenttagid":
+        case "ContentTagId": return java.lang.String.class;
         case "contenttype":
         case "ContentType": return java.lang.String.class;
         case "email":
@@ -452,6 +479,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "ExternalId0": return java.lang.Long.class;
         case "externalid0s":
         case "ExternalId0s": return long[].class;
+        case "externalids":
+        case "ExternalIds": return java.lang.String[].class;
         case "field":
         case "Field": return org.zendesk.client.v2.model.Field.class;
         case "file":
@@ -508,6 +537,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "MonitorId": return java.lang.Long.class;
         case "name":
         case "Name": return java.lang.String.class;
+        case "nameprefix":
+        case "NamePrefix": return java.lang.String.class;
         case "newpassword":
         case "NewPassword": return java.lang.String.class;
         case "notifysubscribers":
@@ -538,6 +569,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Organizations": return org.zendesk.client.v2.model.Organization[].class;
         case "page":
         case "Page": return java.lang.Integer.class;
+        case "pagesize":
+        case "PageSize": return java.lang.Integer.class;
         case "password":
         case "Password": return java.lang.String.class;
         case "permissiongroup":
@@ -566,6 +599,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Section": return org.zendesk.client.v2.model.hc.Section.class;
         case "sectionid":
         case "SectionId": return java.lang.Long.class;
+        case "sectionid0":
+        case "SectionId0": return java.lang.Long.class;
         case "serverurl":
         case "ServerUrl": return java.lang.String.class;
         case "sortby":
@@ -682,6 +717,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "CategoryId": return target.getCategoryId();
         case "categoryid0":
         case "CategoryId0": return target.getCategoryId0();
+        case "categoryid1":
+        case "CategoryId1": return target.getCategoryId1();
         case "category_id":
         case "Category_id": return target.getCategory_id();
         case "comment":
@@ -690,6 +727,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "CommentId": return target.getCommentId();
         case "content":
         case "Content": return target.getContent();
+        case "contenttag":
+        case "ContentTag": return target.getContentTag();
+        case "contenttagid":
+        case "ContentTagId": return target.getContentTagId();
         case "contenttype":
         case "ContentType": return target.getContentType();
         case "email":
@@ -702,6 +743,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "ExternalId0": return target.getExternalId0();
         case "externalid0s":
         case "ExternalId0s": return target.getExternalId0s();
+        case "externalids":
+        case "ExternalIds": return target.getExternalIds();
         case "field":
         case "Field": return target.getField();
         case "file":
@@ -758,6 +801,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "MonitorId": return target.getMonitorId();
         case "name":
         case "Name": return target.getName();
+        case "nameprefix":
+        case "NamePrefix": return target.getNamePrefix();
         case "newpassword":
         case "NewPassword": return target.getNewPassword();
         case "notifysubscribers":
@@ -788,6 +833,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Organizations": return target.getOrganizations();
         case "page":
         case "Page": return target.getPage();
+        case "pagesize":
+        case "PageSize": return target.getPageSize();
         case "password":
         case "Password": return target.getPassword();
         case "permissiongroup":
@@ -816,6 +863,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Section": return target.getSection();
         case "sectionid":
         case "SectionId": return target.getSectionId();
+        case "sectionid0":
+        case "SectionId0": return target.getSectionId0();
         case "serverurl":
         case "ServerUrl": return target.getServerUrl();
         case "sortby":

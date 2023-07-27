@@ -19,8 +19,12 @@ package org.apache.camel.main.console;
 import java.util.Map;
 
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
+import org.apache.camel.main.download.DownloadRecord;
+import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("dependency-downloader")
@@ -43,6 +47,16 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
             sb.append("\n    ").append(cp).append("\n");
         }
 
+        MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
+        if (downloader != null) {
+            sb.append("\nDownloads:");
+            for (DownloadRecord r : downloader.downloadRecords()) {
+                sb.append("\n    ").append(String.format("%s:%s:%s (took: %s) from: %s@%s",
+                        r.groupId(), r.artifactId(), r.version(), TimeUtils.printDuration(r.elapsed(), true), r.repoId(),
+                        r.repoUrl()));
+            }
+        }
+
         return sb.toString();
     }
 
@@ -55,6 +69,22 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
             DependencyDownloaderClassLoader ddcl = (DependencyDownloaderClassLoader) cl;
             String[] cp = ddcl.getDownloaded().toArray(new String[0]);
             root.put("dependencies", cp);
+        }
+
+        MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
+        if (downloader != null) {
+            JsonArray arr = new JsonArray();
+            root.put("downloads", arr);
+            for (DownloadRecord r : downloader.downloadRecords()) {
+                JsonObject jo = new JsonObject();
+                arr.add(jo);
+                jo.put("groupId", r.groupId());
+                jo.put("artifactId", r.artifactId());
+                jo.put("version", r.version());
+                jo.put("elapsed", r.elapsed());
+                jo.put("repoId", r.repoId());
+                jo.put("repoUrl", r.repoUrl());
+            }
         }
 
         return root;

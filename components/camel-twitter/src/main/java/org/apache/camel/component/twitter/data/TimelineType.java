@@ -23,7 +23,6 @@ public enum TimelineType {
     HOME,
     USER,
     MENTIONS,
-    RETWEETSOFME,
     LIST,
     UNKNOWN;
 

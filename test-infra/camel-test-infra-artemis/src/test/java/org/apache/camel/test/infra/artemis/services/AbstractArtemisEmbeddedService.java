@@ -41,36 +41,36 @@ import static org.junit.jupiter.api.Assertions.fail;
 public abstract class AbstractArtemisEmbeddedService implements ArtemisService, ConnectionFactoryAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractArtemisEmbeddedService.class);
-    protected static final LongAdder BROKER_COUNT = new LongAdder();
+    private static final LongAdder BROKER_COUNT = new LongAdder();
 
-    protected int tcpPort = AvailablePortFinder.getNextAvailable();
-    protected EmbeddedActiveMQ embeddedBrokerService;
-    private Configuration artemisConfiguration;
+    protected final EmbeddedActiveMQ embeddedBrokerService;
+    private final Configuration artemisConfiguration;
 
     public AbstractArtemisEmbeddedService() {
-        defaultConfigturation();
-
-        embeddedBrokerService.setConfiguration(getConfiguration(artemisConfiguration, AvailablePortFinder.getNextAvailable()));
+        this(AvailablePortFinder.getNextAvailable());
     }
 
-    public AbstractArtemisEmbeddedService(int port) {
-        defaultConfigturation();
-
-        embeddedBrokerService.setConfiguration(getConfiguration(artemisConfiguration, port));
-    }
-
-    private void defaultConfigturation() {
+    protected AbstractArtemisEmbeddedService(int port) {
         embeddedBrokerService = new EmbeddedActiveMQ();
+        artemisConfiguration = new ConfigurationImpl();
+
+        embeddedBrokerService.setConfiguration(configure(port));
+    }
+
+    private synchronized Configuration configure(int port) {
+        final int brokerId = BROKER_COUNT.intValue();
+        BROKER_COUNT.increment();
 
         // Base configuration
-        artemisConfiguration = new ConfigurationImpl();
         artemisConfiguration.setSecurityEnabled(false);
-        BROKER_COUNT.increment();
-        artemisConfiguration.setBrokerInstance(new File("target", "artemis-" + BROKER_COUNT.intValue()));
+        artemisConfiguration.setBrokerInstance(new File("target", "artemis-" + brokerId));
         artemisConfiguration.setJMXManagementEnabled(false);
+        artemisConfiguration.setMaxDiskUsage(98);
+
+        return configure(artemisConfiguration, port, brokerId);
     }
 
-    protected abstract Configuration getConfiguration(Configuration artemisConfiguration, int port);
+    protected abstract Configuration configure(Configuration artemisConfiguration, int port, int brokerId);
 
     public void customConfiguration(Consumer<Configuration> configuration) {
         configuration.accept(artemisConfiguration);
@@ -102,8 +102,11 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     @Override
     public void initialize() {
         try {
-            embeddedBrokerService.start();
-            embeddedBrokerService.getActiveMQServer().waitForActivation(20, TimeUnit.SECONDS);
+            if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
+                embeddedBrokerService.start();
+
+                embeddedBrokerService.getActiveMQServer().waitForActivation(20, TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
             LOG.warn("Unable to start embedded Artemis broker: {}", e.getMessage(), e);
             fail(e.getMessage());

@@ -499,7 +499,7 @@ public interface ComponentsBuilderFactory {
      * Camel Azure Files Component
      * 
      * Category: cloud,file
-     * Since: 3.21
+     * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
      * @return the dsl builder
@@ -1957,19 +1957,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
-     * Hyperledger Aries (camel-hyperledger-aries)
-     * Camel support for Hyperledger Aries
-     * 
-     * Category: blockchain,security
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.HyperledgerAriesComponentBuilder hyperledgerAries() {
-        return org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.hyperledgerAries();
-    }
-    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -3059,6 +3046,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.Olingo4ComponentBuilderFactory.Olingo4ComponentBuilder olingo4() {
         return org.apache.camel.builder.component.dsl.Olingo4ComponentBuilderFactory.olingo4();
+    }
+    /**
+     * OpenSearch (camel-opensearch)
+     * Send requests to OpenSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-opensearch
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.OpensearchComponentBuilderFactory.OpensearchComponentBuilder opensearch() {
+        return org.apache.camel.builder.component.dsl.OpensearchComponentBuilderFactory.opensearch();
     }
     /**
      * Openshift Build Config (camel-kubernetes)
@@ -4189,19 +4189,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.WebhookComponentBuilder webhook() {
         return org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.webhook();
-    }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: blockchain
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.WekaComponentBuilder weka() {
-        return org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.weka();
     }
     /**
      * WhatsApp (camel-whatsapp)

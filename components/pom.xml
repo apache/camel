@@ -152,7 +152,6 @@
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
-        <module>camel-hyperledger-aries</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
@@ -236,6 +235,7 @@
         <module>camel-pgevent</module>
         <module>camel-platform-http</module>
         <module>camel-platform-http-vertx</module>
+        <module>camel-platform-http-main</module>
         <module>camel-plc4x</module>
         <module>camel-printer</module>
         <module>camel-protobuf</module>
@@ -289,6 +289,7 @@
         <module>camel-stitch</module>
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
+        <module>camel-opensearch</module>
         <module>camel-optaplanner</module>
         <module>camel-syslog</module>
         <module>camel-tarfile</module>
@@ -306,7 +307,6 @@
         <module>camel-weather</module>
         <module>camel-web3j</module>
         <module>camel-webhook</module>
-        <module>camel-weka</module>
         <module>camel-whatsapp</module>
         <module>camel-wordpress</module>
         <module>camel-workday</module>
@@ -467,7 +467,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
                         <configuration>
                             <skipTests>${skipTests.s390x}</skipTests>
                         </configuration>
@@ -475,7 +474,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${maven-failsafe-plugin-version}</version>
                         <configuration>
                             <skipITs>${skipITs.s390x}</skipITs>
                         </configuration>
@@ -495,7 +493,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
                         <configuration>
                             <skipTests>${skipTests.ppc64le}</skipTests>
                         </configuration>
@@ -503,7 +500,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${maven-failsafe-plugin-version}</version>
                         <configuration>
                             <skipITs>${skipITs.ppc64le}</skipITs>
                         </configuration>

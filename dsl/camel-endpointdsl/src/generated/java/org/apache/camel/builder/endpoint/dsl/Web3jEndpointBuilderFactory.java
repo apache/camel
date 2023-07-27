@@ -1995,6 +1995,19 @@ public interface Web3jEndpointBuilderFactory {
         }
 
         /**
+         * A transaction privateFrom.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PRIVATE_FROM}.
+         */
+        public String privateFrom() {
+            return "PRIVATE_FROM";
+        }
+
+        /**
          * The error code.
          * 
          * The option is a: {@code int} type.

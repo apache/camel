@@ -34,7 +34,7 @@ import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.camel.support.component.ArgumentSubstitutionParser;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.velocity.VelocityContext;
@@ -88,7 +88,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         setCompileSourceRoots();
 
         // load proxy class and get enumeration file to generate
-        final Class proxyType = getProxyType();
+        final Class<?> proxyType = getProxyType();
 
         // parse pattern for excluded endpoint properties
         if (excludeConfigNames != null) {
@@ -99,7 +99,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
 
         // create parser
-        ApiMethodParser parser = createAdapterParser(proxyType);
+        ApiMethodParser<?> parser = createAdapterParser(proxyType);
 
         List<String> signatures = new ArrayList<>();
         Map<String, Map<String, String>> parameters = new HashMap<>();
@@ -125,7 +125,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         parser.setClassLoader(getProjectClassLoader());
 
         // parse signatures
-        @SuppressWarnings("unchecked")
         final List<ApiMethodParser.ApiMethodModel> models = parser.parse();
 
         // generate enumeration from model
@@ -142,9 +141,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected ApiMethodParser createAdapterParser(Class proxyType) {
-        return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
+    protected ApiMethodParser<?> createAdapterParser(Class<?> proxyType) {
+        return new ArgumentSubstitutionParser<>(proxyType, getArgumentSubstitutions());
     }
 
     public abstract List<SignatureModel> getSignatureList() throws MojoExecutionException;

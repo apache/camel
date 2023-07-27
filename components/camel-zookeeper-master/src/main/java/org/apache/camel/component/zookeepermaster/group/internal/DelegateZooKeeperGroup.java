@@ -37,7 +37,7 @@ public class DelegateZooKeeperGroup<T extends NodeState> implements Group<T> {
     private final List<GroupListener<T>> listeners;
     private Group<T> group;
     private T state;
-    private AtomicBoolean started = new AtomicBoolean();
+    private final AtomicBoolean started = new AtomicBoolean();
 
     public DelegateZooKeeperGroup(String path, Class<T> clazz) {
         this.listeners = new ArrayList<>();

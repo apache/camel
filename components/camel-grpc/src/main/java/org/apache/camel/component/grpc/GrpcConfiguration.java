@@ -68,18 +68,22 @@ public class GrpcConfiguration {
     private String jwtSubject;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String serviceAccountResource;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String keyCertChainResource;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String keyResource;
 
     @UriParam(label = "security", secret = true)
     private String keyPassword;
 
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     private String trustCertCollectionResource;
 
     @UriParam(label = "producer", defaultValue = "SIMPLE")

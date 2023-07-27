@@ -28,6 +28,7 @@ The following components has been removed:
 | camel-elasticsearch-rest             | camel-elasticsearch
 | camel-gora                           | none
 | camel-hbase                          | none
+| camel-hyperledger-aries              | none
 | camel-iota                           | none
 | camel-ipfs                           | none
 | camel-jbpm                           | none
@@ -48,6 +49,7 @@ The following components has been removed:
 | camel-websocket-jsr356               | camel-vertx-websocket
 | camel-vertx-kafka                    | camel-kafka
 | camel-vm                             | camel-seda
+| camel-weka                           | none
 | camel-xstream                        | camel-jacksonxml
 | camel-zipkin                         | camel-micrometer, camel-opentelemetry
 |===
@@ -129,6 +131,10 @@ The `String` -> `java.io.File` converter has been removed.
 The xref:tracer.adoc[Tracer] and xref:backlog-tracer.adoc[Backlog Tracer] no longer includes internal tracing events
 from routes that was created by Rest DSL or route templates or Kamelets. You can turn this on, by setting
 `traceTemplates=true` in the tracer.
+
+The xref:backlog-tracer.adoc[Backlog Tracer] has been enhanced and _fixed_ to trace message headers (also streaming types).
+This means that previously headers of type `InputStream` was not traced before, but is now included. This could mean that
+the header stream is positioned at end, and logging the header afterward, may appear as the header value is empty.
 
 == UseOriginalMessage / UseOriginalBody
 
@@ -235,6 +241,12 @@ To use attributes instead:
 </circuitBreaker>
 ----
 
+== OpenAPI Maven Plugin
+
+The `camel-restdsl-openapi-plugin` Maven plugin now uses `platform-http` as the default rest component
+in the generated Rest DSL code. Previously the default was servlet. However, platform-http is a better
+default that works out of the box with Spring Boot and Quarkus.
+
 == Component changes
 
 === Category
@@ -242,6 +254,15 @@ To use attributes instead:
 The number of enums for `org.apache.camel.Category` has been reduced from 83 to 37, which means custom components
 that are using removed values need to choose one of the remainder values. We have done this to consolidate
 the number of categories of all components in the Camel community.
+
+=== camel-openapi-rest-dsl-generator
+
+This dsl-generator has updated the underlying model classes (`apicurio-data-models`) from 1.1.27 to 2.0.3.
+
+=== camel-atom
+
+The `camel-atom` component has changed the 3rd party atom client from Apache Abdera to RSSReader.
+This means the feed object is changed from `org.apache.abdera.model.Feed` to `com.apptasticsoftware.rssreader.Item`.
 
 === camel-azure-cosmosdb
 
@@ -293,6 +314,24 @@ The `io.fabric8:kubernetes-client` library has been upgraded and some deprecated
 
 For example `replaceConfigMap` is now `updateConfigMap`, `replacePod` is now `updatePod` etc. The corresponding 
 constants in class `KubernetesOperations` are also renamed. `REPLACE_CONFIGMAP_OPERATION` is now `UPDATE_CONFIGMAP_OPERATION`, `REPLACE_POD_OPERATION` is now `UPDATE_POD_OPERATION` etc.
+
+=== camel-web3j
+
+The `camel-web3j` has upgrade web3j JAR from 3.x to 5.0 which has many API changes, and so
+some previous API calls are no long provided.
+
+=== camel-main
+
+The following constants has been moved from `BaseMainSupport` / `Main` to `MainConstants`:
+
+|===
+| Old Name | New Name
+| Main.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION | MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION
+| Main.INITIAL_PROPERTIES_LOCATION | MainConstants.INITIAL_PROPERTIES_LOCATION
+| Main.OVERRIDE_PROPERTIES_LOCATION | MainConstants.OVERRIDE_PROPERTIES_LOCATION
+| Main.PROPERTY_PLACEHOLDER_LOCATION | MainConstants.PROPERTY_PLACEHOLDER_LOCATION
+|===
+
 
 === camel-micrometer
 

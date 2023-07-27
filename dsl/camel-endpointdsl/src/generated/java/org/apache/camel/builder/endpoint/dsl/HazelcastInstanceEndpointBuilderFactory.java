@@ -78,6 +78,24 @@ public interface HazelcastInstanceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Hazelcast configuration file.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param hazelcastConfigUri the value to set
+         * @return the dsl builder
+         */
+        default HazelcastInstanceEndpointBuilder hazelcastConfigUri(
+                String hazelcastConfigUri) {
+            doSetProperty("hazelcastConfigUri", hazelcastConfigUri);
+            return this;
+        }
+        /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 

@@ -133,7 +133,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -141,7 +141,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder redisTemplate(
-                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
+                org.springframework.data.redis.core.RedisTemplate<java.lang.Object, java.lang.Object> redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
@@ -149,7 +149,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -164,7 +164,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -172,7 +172,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder serializer(
-                org.springframework.data.redis.serializer.RedisSerializer serializer) {
+                org.springframework.data.redis.serializer.RedisSerializer<java.lang.Object> serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -180,7 +180,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -452,7 +452,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -460,7 +460,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointProducerBuilder redisTemplate(
-                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
+                org.springframework.data.redis.core.RedisTemplate<java.lang.Object, java.lang.Object> redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
@@ -468,7 +468,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -483,7 +483,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -491,7 +491,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointProducerBuilder serializer(
-                org.springframework.data.redis.serializer.RedisSerializer serializer) {
+                org.springframework.data.redis.serializer.RedisSerializer<java.lang.Object> serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -499,7 +499,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -671,7 +671,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -679,7 +679,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointBuilder redisTemplate(
-                org.springframework.data.redis.core.RedisTemplate redisTemplate) {
+                org.springframework.data.redis.core.RedisTemplate<java.lang.Object, java.lang.Object> redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
@@ -687,7 +687,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -702,7 +702,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -710,7 +710,7 @@ public interface RedisEndpointBuilderFactory {
          * @return the dsl builder
          */
         default RedisEndpointBuilder serializer(
-                org.springframework.data.redis.serializer.RedisSerializer serializer) {
+                org.springframework.data.redis.serializer.RedisSerializer<java.lang.Object> serializer) {
             doSetProperty("serializer", serializer);
             return this;
         }
@@ -718,7 +718,7 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
          * 

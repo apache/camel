@@ -164,6 +164,33 @@ class RoutesTest extends YamlTestSupport {
             }
     }
 
+    def "load route with input/output types"() {
+        when:
+        loadRoutes '''
+                - route:
+                    inputType: 
+                      urn: "plain/text"
+                    outputType: 
+                      urn: "application/octet-stream"
+                    from: 
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            inputType.urn == 'plain/text'
+            outputType.urn == 'application/octet-stream'
+
+            input.endpointUri == 'direct:info'
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
+    }
+
     def "load route inlined"() {
         when:
         loadRoutes '''

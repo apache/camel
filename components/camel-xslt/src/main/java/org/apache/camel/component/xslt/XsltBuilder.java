@@ -56,14 +56,13 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Creates a <a href="http://camel.apache.org/processor.html">Processor</a> which performs an XSLT transformation of the
  * IN message body.
  * <p/>
- * Will by default output the result as a String. You can chose which kind of output you want using the
+ * Will by default output the result as a String. You can choose which kind of output you want using the
  * <tt>outputXXX</tt> methods.
  */
 public class XsltBuilder implements Processor {
 
     protected static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();
-    private XMLConverterHelper converter = new XMLConverterHelper();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
     private volatile SourceHandlerFactory sourceHandlerFactory;
@@ -73,7 +72,9 @@ public class XsltBuilder implements Processor {
     private boolean deleteOutputFile;
     private ErrorListener errorListener;
     private EntityResolver entityResolver;
+    private XsltMessageLogger xsltMessageLogger;
 
+    private final XMLConverterHelper converter = new XMLConverterHelper();
     private final Object sourceHandlerFactoryLock = new Object();
 
     public XsltBuilder() {
@@ -93,7 +94,7 @@ public class XsltBuilder implements Processor {
         notNull(getTemplate(), "template");
 
         if (isDeleteOutputFile()) {
-            // add on completion so we can delete the file when the Exchange is done
+            // add on completion, so we can delete the file when the Exchange is done
             String fileName = ExchangeHelper.getMandatoryHeader(exchange, XsltConstants.XSLT_FILE_NAME, String.class);
             exchange.getExchangeExtension().addOnCompletion(new XsltBuilderOnCompletion(fileName));
         }
@@ -260,6 +261,11 @@ public class XsltBuilder implements Processor {
         return this;
     }
 
+    public XsltBuilder xsltMessageLogger(XsltMessageLogger xsltMessageLogger) {
+        setXsltMessageLogger(xsltMessageLogger);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -320,6 +326,10 @@ public class XsltBuilder implements Processor {
         this.resultHandlerFactory = resultHandlerFactory;
     }
 
+    protected Templates createTemplates(TransformerFactory factory, Source source) throws TransformerConfigurationException {
+        return factory.newTemplates(source);
+    }
+
     /**
      * Sets the XSLT transformer from a Source
      *
@@ -338,10 +348,10 @@ public class XsltBuilder implements Processor {
             factory.setURIResolver(getUriResolver());
         }
 
-        // Check that the call to newTemplates() returns a valid template instance.
-        // In case of an xslt parse error, it will return null and we should stop the
+        // Check that the call to createTemplates() returns a valid template instance.
+        // In case of a xslt parse error, it will return null, and we should stop the
         // deployment and raise an exception as the route will not be setup properly.
-        Templates templates = factory.newTemplates(source);
+        Templates templates = createTemplates(factory, source);
         if (templates != null) {
             setTemplate(templates);
         } else {
@@ -409,6 +419,14 @@ public class XsltBuilder implements Processor {
         this.converter.setTransformerFactory(transformerFactory);
     }
 
+    public XsltMessageLogger getXsltMessageLogger() {
+        return xsltMessageLogger;
+    }
+
+    public void setXsltMessageLogger(XsltMessageLogger xsltMessageLogger) {
+        this.xsltMessageLogger = xsltMessageLogger;
+    }
+
     private void releaseTransformer(Transformer transformer) {
         if (transformers != null) {
             transformer.reset();
@@ -450,7 +468,7 @@ public class XsltBuilder implements Processor {
         }
         transformer.setURIResolver(uriResolver);
         if (errorListener == null) {
-            // set our error listener so we can capture errors and report them back on the exchange
+            // set our error listener, so we can capture errors and report them back on the exchange
             transformer.setErrorListener(new DefaultTransformErrorHandler(exchange));
         } else {
             // use custom error listener

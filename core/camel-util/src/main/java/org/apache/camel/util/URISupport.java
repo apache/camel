@@ -318,7 +318,6 @@ public final class URISupport {
      * @see              #RAW_TOKEN_START
      * @see              #RAW_TOKEN_END
      */
-    @SuppressWarnings("unchecked")
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getValue() == null) {
@@ -438,7 +437,7 @@ public final class URISupport {
      */
     public static String createQueryString(Map<String, Object> options) {
         final Set<String> keySet = options.keySet();
-        return createQueryString(keySet.toArray(new String[keySet.size()]), options, true);
+        return createQueryString(keySet.toArray(new String[0]), options, true);
     }
 
     /**
@@ -493,7 +492,7 @@ public final class URISupport {
 
     @Deprecated
     public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
-        return createQueryString(sortedKeys.toArray(new String[sortedKeys.size()]), options, encode);
+        return createQueryString(sortedKeys.toArray(new String[0]), options, encode);
     }
 
     private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode) {
@@ -654,7 +653,7 @@ public final class URISupport {
             } else {
                 // reorder parameters a..z
                 final Set<String> keySet = parameters.keySet();
-                final String[] parametersArray = keySet.toArray(new String[keySet.size()]);
+                final String[] parametersArray = keySet.toArray(new String[0]);
                 Arrays.sort(parametersArray);
 
                 // build uri object with sorted parameters
@@ -783,7 +782,7 @@ public final class URISupport {
                 } else {
                     // reorder parameters a..z
                     final Set<String> keySet = parameters.keySet();
-                    final String[] parametersArray = keySet.toArray(new String[keySet.size()]);
+                    final String[] parametersArray = keySet.toArray(new String[0]);
                     Arrays.sort(parametersArray);
 
                     // build uri object with sorted parameters

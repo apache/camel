@@ -291,6 +291,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -315,6 +317,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -1589,13 +1593,16 @@ public class StaticEndpointBuilders {
      * Camel Azure Files Component
      * 
      * Category: cloud,file
-     * Since: 3.21
+     * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
-     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * Syntax: <code>azure-files:account/share</code>
      * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
+     * Path parameter: account (required)
+     * The account to use
+     * 
+     * Path parameter: share (required)
+     * The share to use
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -1603,7 +1610,7 @@ public class StaticEndpointBuilders {
      * Path parameter: directoryName
      * The starting directory
      * 
-     * @param path //account[.host]/share[/dir]
+     * @param path account/share
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
@@ -1615,13 +1622,16 @@ public class StaticEndpointBuilders {
      * Camel Azure Files Component
      * 
      * Category: cloud,file
-     * Since: 3.21
+     * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
      * 
-     * Syntax: <code>azure-files://account[.host]/share[/dir]</code>
+     * Syntax: <code>azure-files:account/share</code>
      * 
-     * Path parameter: host (required)
-     * Hostname of the FTP server
+     * Path parameter: account (required)
+     * The account to use
+     * 
+     * Path parameter: share (required)
+     * The share to use
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -1631,7 +1641,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path //account[.host]/share[/dir]
+     * @param path account/share
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(
@@ -2078,11 +2088,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+     * There are 19 enums and the value can be one of: ADD_ON, ADDRESS,
      * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
      * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
-     * PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
-     * WEBHOOK_NOTIFICATION
+     * OAUTH, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
+     * US_BANK_ACCOUNT, WEBHOOK_NOTIFICATION
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2113,11 +2123,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+     * There are 19 enums and the value can be one of: ADD_ON, ADDRESS,
      * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
      * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
-     * PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
-     * WEBHOOK_NOTIFICATION
+     * OAUTH, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
+     * US_BANK_ACCOUNT, WEBHOOK_NOTIFICATION
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2343,6 +2353,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -2367,6 +2379,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4449,6 +4463,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path type:resourceUri
      * @return the dsl builder
@@ -4474,6 +4490,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4597,6 +4615,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -4621,6 +4641,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4963,6 +4985,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: queryString (required)
      * BigQuery standard SQL query
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path projectId:queryString
      * @return the dsl builder
@@ -4986,6 +5010,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: queryString (required)
      * BigQuery standard SQL query
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6672,49 +6698,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Hyperledger Aries (camel-hyperledger-aries)
-     * Camel support for Hyperledger Aries
-     * 
-     * Category: blockchain,security
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
-     * 
-     * Syntax: <code>hyperledger-aries:walletName</code>
-     * 
-     * Path parameter: walletName (required)
-     * The wallet to connect to
-     * 
-     * @param path walletName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.HyperledgerAriesEndpointBuilder hyperledgerAries(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder("hyperledger-aries", path);
-    }
-    /**
-     * Hyperledger Aries (camel-hyperledger-aries)
-     * Camel support for Hyperledger Aries
-     * 
-     * Category: blockchain,security
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
-     * 
-     * Syntax: <code>hyperledger-aries:walletName</code>
-     * 
-     * Path parameter: walletName (required)
-     * The wallet to connect to
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path walletName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.HyperledgerAriesEndpointBuilder hyperledgerAries(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -7881,6 +7864,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -7905,6 +7890,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8020,6 +8007,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8044,6 +8033,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8071,6 +8062,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8095,6 +8088,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8122,6 +8117,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8146,6 +8143,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8173,6 +8172,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -8197,6 +8198,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9217,6 +9220,8 @@ public class StaticEndpointBuilders {
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path languageName:resourceUri
      * @return the dsl builder
@@ -9245,6 +9250,8 @@ public class StaticEndpointBuilders {
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9724,8 +9731,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * There are 3 enums and the value can be one of: counter,
-     * distribution_summary, timer
+     * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9753,8 +9759,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * There are 3 enums and the value can be one of: counter,
-     * distribution_summary, timer
+     * There are 3 enums and the value can be one of: counter, summary, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -10070,6 +10075,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -10094,6 +10101,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10121,6 +10130,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -10145,6 +10156,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10614,6 +10627,49 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OpenSearch (camel-opensearch)
+     * Send requests to OpenSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-opensearch
+     * 
+     * Syntax: <code>opensearch:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Name of the cluster
+     * 
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.endpointBuilder("opensearch", path);
+    }
+    /**
+     * OpenSearch (camel-opensearch)
+     * Send requests to OpenSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-opensearch
+     * 
+     * Syntax: <code>opensearch:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Name of the cluster
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Openshift Build Config (camel-kubernetes)
@@ -11597,6 +11653,8 @@ public class StaticEndpointBuilders {
      * lookup the configuration file in the registry. bean will call a method on
      * a bean to be used as the configuration. For bean you can specify the
      * method name after dot, eg bean:myBean.myMethod
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path configurationName
      * @return the dsl builder
@@ -11623,6 +11681,8 @@ public class StaticEndpointBuilders {
      * lookup the configuration file in the registry. bean will call a method on
      * a bean to be used as the configuration. For bean you can specify the
      * method name after dot, eg bean:myBean.myMethod
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11923,6 +11983,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -11947,6 +12009,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12275,6 +12339,8 @@ public class StaticEndpointBuilders {
      * Path parameter: path (required)
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path path
      * @return the dsl builder
@@ -12296,6 +12362,8 @@ public class StaticEndpointBuilders {
      * Path parameter: path (required)
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13324,6 +13392,8 @@ public class StaticEndpointBuilders {
      * Path parameter: query (required)
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path query
      * @return the dsl builder
@@ -13345,6 +13415,8 @@ public class StaticEndpointBuilders {
      * Path parameter: query (required)
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13367,7 +13439,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>sql-stored:template</code>
      * 
      * Path parameter: template (required)
-     * Sets the StoredProcedure template to perform
+     * Sets the stored procedure template to perform. You can externalize the
+     * template by using file: or classpath: as prefix and specify the location
+     * of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path template
      * @return the dsl builder
@@ -13387,7 +13463,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>sql-stored:template</code>
      * 
      * Path parameter: template (required)
-     * Sets the StoredProcedure template to perform
+     * Sets the stored procedure template to perform. You can externalize the
+     * template by using file: or classpath: as prefix and specify the location
+     * of the file.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13654,6 +13734,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -13678,6 +13760,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14123,8 +14207,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * There are 7 enums and the value can be one of: PUBLIC, HOME, USER,
-     * MENTIONS, RETWEETSOFME, LIST, UNKNOWN
+     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+     * MENTIONS, LIST, UNKNOWN
      * 
      * @param path timelineType
      * @return the dsl builder
@@ -14145,8 +14229,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * There are 7 enums and the value can be one of: PUBLIC, HOME, USER,
-     * MENTIONS, RETWEETSOFME, LIST, UNKNOWN
+     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+     * MENTIONS, LIST, UNKNOWN
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14217,6 +14301,8 @@ public class StaticEndpointBuilders {
      * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -14239,6 +14325,8 @@ public class StaticEndpointBuilders {
      * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14266,6 +14354,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param path resourceUri
      * @return the dsl builder
@@ -14290,6 +14380,8 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14576,53 +14668,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: blockchain
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * Syntax: <code>weka:command</code>
-     * 
-     * Path parameter: command (required)
-     * The command to use.
-     * There are 7 enums and the value can be one of: filter, model, read,
-     * write, push, pop, version
-     * 
-     * @param path command
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder("weka", path);
-    }
-    /**
-     * Weka (camel-weka)
-     * Perform machine learning tasks using Weka.
-     * 
-     * Category: blockchain
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-weka
-     * 
-     * Syntax: <code>weka:command</code>
-     * 
-     * Path parameter: command (required)
-     * The command to use.
-     * There are 7 enums and the value can be one of: filter, model, read,
-     * write, push, pop, version
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path command
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * WhatsApp (camel-whatsapp)
@@ -15228,14 +15273,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 355 enums and the value can be one of:
+     * There are 370 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
      * CREATE_CATEGORY, CREATE_CATEGORY_TRANSLATION, CREATE_COMMENT,
-     * CREATE_DYNAMIC_CONTENT_ITEM, CREATE_DYNAMIC_CONTENT_ITEM_VARIANT,
-     * CREATE_FORUM, CREATE_GROUP, CREATE_GROUP_MEMBERSHIP,
-     * CREATE_GROUP_MEMBERSHIP_1, CREATE_MACRO, CREATE_OR_UPDATE_USER,
+     * CREATE_CONTENT_TAG, CREATE_DYNAMIC_CONTENT_ITEM,
+     * CREATE_DYNAMIC_CONTENT_ITEM_VARIANT, CREATE_FORUM, CREATE_GROUP,
+     * CREATE_GROUP_MEMBERSHIP, CREATE_GROUP_MEMBERSHIP_1, CREATE_MACRO,
+     * CREATE_OR_UPDATE_ORGANIZATION, CREATE_OR_UPDATE_USER,
      * CREATE_OR_UPDATE_USERS, CREATE_OR_UPDATE_USERS_1,
      * CREATE_OR_UPDATE_USERS_ASYNC, CREATE_ORGANIZATION,
      * CREATE_ORGANIZATION_MEMBERSHIP, CREATE_ORGANIZATION_MEMBERSHIP_1,
@@ -15253,22 +15299,22 @@ public class StaticEndpointBuilders {
      * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,
      * DELETE_ARTICLE_ATTACHMENT, DELETE_ARTICLE_ATTACHMENT_1,
      * DELETE_ATTACHMENT, DELETE_ATTACHMENT_1, DELETE_AUTOMATION,
-     * DELETE_CATEGORY, DELETE_DYNAMIC_CONTENT_ITEM,
+     * DELETE_CATEGORY, DELETE_CONTENT_TAG, DELETE_DYNAMIC_CONTENT_ITEM,
      * DELETE_DYNAMIC_CONTENT_ITEM_VARIANT, DELETE_FORUM, DELETE_GROUP,
      * DELETE_GROUP_1, DELETE_GROUP_MEMBERSHIP, DELETE_GROUP_MEMBERSHIP_1,
      * DELETE_GROUP_MEMBERSHIP_2, DELETE_GROUP_MEMBERSHIP_3,
      * DELETE_ORGANIZATION, DELETE_ORGANIZATION_1,
      * DELETE_ORGANIZATION_MEMBERSHIP, DELETE_ORGANIZATION_MEMBERSHIP_1,
      * DELETE_ORGANIZATION_MEMBERSHIP_2, DELETE_ORGANIZATION_MEMBERSHIPS,
-     * DELETE_PERMISSION_GROUP, DELETE_PERMISSION_GROUP_1, DELETE_SECTION,
-     * DELETE_SUSPENDED_TICKET, DELETE_SUSPENDED_TICKET_1, DELETE_TARGET,
-     * DELETE_TICKET, DELETE_TICKET_1, DELETE_TICKET_FIELD,
+     * DELETE_ORGANIZATIONS, DELETE_PERMISSION_GROUP, DELETE_PERMISSION_GROUP_1,
+     * DELETE_SECTION, DELETE_SUSPENDED_TICKET, DELETE_SUSPENDED_TICKET_1,
+     * DELETE_TARGET, DELETE_TICKET, DELETE_TICKET_1, DELETE_TICKET_FIELD,
      * DELETE_TICKET_FIELD_1, DELETE_TICKET_FORM, DELETE_TICKET_FORM_1,
      * DELETE_TICKETS, DELETE_TOPIC, DELETE_TRANSLATION, DELETE_TRANSLATION_1,
      * DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1, DELETE_USER,
      * DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
      * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
-     * GET_ACTIVE_TRIGGERS, GET_ARTICLE, GET_ARTICLE_FROM_SEARCH,
+     * DELETE_USERS, GET_ACTIVE_TRIGGERS, GET_ARTICLE, GET_ARTICLE_FROM_SEARCH,
      * GET_ARTICLE_FROM_SEARCH_1, GET_ARTICLE_SUBSCRIPTIONS,
      * GET_ARTICLE_SUBSCRIPTIONS_1, GET_ARTICLE_TRANSLATIONS, GET_ARTICLES,
      * GET_ARTICLES_1, GET_ARTICLES_2, GET_ARTICLES_3,
@@ -15280,7 +15326,8 @@ public class StaticEndpointBuilders {
      * GET_AUTHENTICATED_USER, GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION,
      * GET_AUTOMATIONS, GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES,
      * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
-     * GET_COMPLIANCE_DELETION_STATUSES, GET_CURRENT_USER,
+     * GET_COMPLIANCE_DELETION_STATUSES, GET_CONTENT_TAG, GET_CONTENT_TAGS,
+     * GET_CONTENT_TAGS_1, GET_CONTENT_TAGS_2, GET_CURRENT_USER,
      * GET_CUSTOM_AGENT_ROLES, GET_DELETED_TICKETS, GET_DELETED_TICKETS_1,
      * GET_DYNAMIC_CONTENT_ITEM, GET_DYNAMIC_CONTENT_ITEM_VARIANT,
      * GET_DYNAMIC_CONTENT_ITEM_VARIANTS, GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM,
@@ -15324,8 +15371,9 @@ public class StaticEndpointBuilders {
      * GET_USER_REQUESTS, GET_USER_REQUESTS_1, GET_USER_SEGMENT,
      * GET_USER_SEGMENTS, GET_USER_SEGMENTS_1, GET_USER_SEGMENTS_APPLICABLE,
      * GET_USER_SUBSCRIPTIONS, GET_USER_SUBSCRIPTIONS_1, GET_USERS, GET_USERS_1,
-     * GET_USERS_BY_EXTERNAL_IDS, GET_USERS_BY_ROLE, GET_USERS_INCREMENTALLY,
-     * GET_VIEW, GET_VIEWS, IMPORT_TICKET, IMPORT_TOPIC,
+     * GET_USERS_BY_EXTERNAL_IDS, GET_USERS_BY_EXTERNAL_IDS_1,
+     * GET_USERS_BY_ROLE, GET_USERS_INCREMENTALLY, GET_VIEW, GET_VIEWS,
+     * IMPORT_TICKET, IMPORT_TOPIC, LIST_HELP_CENTER_LOCALES,
      * LOOKUP_ORGANIZATIONS_BY_EXTERNAL_ID, LOOKUP_USER_BY_EMAIL,
      * LOOKUP_USER_BY_EXTERNAL_ID, MACROS_SHOW_CHANGES_TO_TICKET,
      * MACROS_SHOW_TICKET_AFTER_CHANGES, MAKE_PRIVATE_TICKET_AUDIT,
@@ -15341,10 +15389,12 @@ public class StaticEndpointBuilders {
      * SEARCH_TRIGGERS_1, SET_GROUP_MEMBERSHIP_AS_DEFAULT,
      * SET_ORGANIZATION_MEMBERSHIP_AS_DEFAULT, SET_TAG_ON_ORGANISATIONS,
      * SET_TAG_ON_TICKET, SET_TAG_ON_TOPICS, SET_USER_PRIMARY_IDENTITY,
-     * SET_USER_PRIMARY_IDENTITY_1, SET_USER_PRIMARY_IDENTITY_2, SUSPEND_USER,
-     * TRUST_TICKET_AUDIT, TRUST_TICKET_AUDIT_1, TRUST_TICKET_AUDIT_2,
-     * UNSUSPEND_USER, UPDATE_ARTICLE, UPDATE_ARTICLE_TRANSLATION,
-     * UPDATE_AUTOMATION, UPDATE_CATEGORY, UPDATE_CATEGORY_TRANSLATION,
+     * SET_USER_PRIMARY_IDENTITY_1, SET_USER_PRIMARY_IDENTITY_2,
+     * SHOW_ARTICLE_TRANSLATION, SHOW_CATEGORY_TRANSLATION,
+     * SHOW_SECTION_TRANSLATION, SUSPEND_USER, TRUST_TICKET_AUDIT,
+     * TRUST_TICKET_AUDIT_1, TRUST_TICKET_AUDIT_2, UNSUSPEND_USER,
+     * UPDATE_ARTICLE, UPDATE_ARTICLE_TRANSLATION, UPDATE_AUTOMATION,
+     * UPDATE_CATEGORY, UPDATE_CATEGORY_TRANSLATION, UPDATE_CONTENT_TAG,
      * UPDATE_DYNAMIC_CONTENT_ITEM, UPDATE_DYNAMIC_CONTENT_ITEM_VARIANT,
      * UPDATE_FORUM, UPDATE_GROUP, UPDATE_INSTALLATION, UPDATE_MACRO,
      * UPDATE_ORGANIZATION, UPDATE_ORGANIZATIONS, UPDATE_ORGANIZATIONS_1,
@@ -15375,14 +15425,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 355 enums and the value can be one of:
+     * There are 370 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
      * CREATE_CATEGORY, CREATE_CATEGORY_TRANSLATION, CREATE_COMMENT,
-     * CREATE_DYNAMIC_CONTENT_ITEM, CREATE_DYNAMIC_CONTENT_ITEM_VARIANT,
-     * CREATE_FORUM, CREATE_GROUP, CREATE_GROUP_MEMBERSHIP,
-     * CREATE_GROUP_MEMBERSHIP_1, CREATE_MACRO, CREATE_OR_UPDATE_USER,
+     * CREATE_CONTENT_TAG, CREATE_DYNAMIC_CONTENT_ITEM,
+     * CREATE_DYNAMIC_CONTENT_ITEM_VARIANT, CREATE_FORUM, CREATE_GROUP,
+     * CREATE_GROUP_MEMBERSHIP, CREATE_GROUP_MEMBERSHIP_1, CREATE_MACRO,
+     * CREATE_OR_UPDATE_ORGANIZATION, CREATE_OR_UPDATE_USER,
      * CREATE_OR_UPDATE_USERS, CREATE_OR_UPDATE_USERS_1,
      * CREATE_OR_UPDATE_USERS_ASYNC, CREATE_ORGANIZATION,
      * CREATE_ORGANIZATION_MEMBERSHIP, CREATE_ORGANIZATION_MEMBERSHIP_1,
@@ -15400,22 +15451,22 @@ public class StaticEndpointBuilders {
      * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,
      * DELETE_ARTICLE_ATTACHMENT, DELETE_ARTICLE_ATTACHMENT_1,
      * DELETE_ATTACHMENT, DELETE_ATTACHMENT_1, DELETE_AUTOMATION,
-     * DELETE_CATEGORY, DELETE_DYNAMIC_CONTENT_ITEM,
+     * DELETE_CATEGORY, DELETE_CONTENT_TAG, DELETE_DYNAMIC_CONTENT_ITEM,
      * DELETE_DYNAMIC_CONTENT_ITEM_VARIANT, DELETE_FORUM, DELETE_GROUP,
      * DELETE_GROUP_1, DELETE_GROUP_MEMBERSHIP, DELETE_GROUP_MEMBERSHIP_1,
      * DELETE_GROUP_MEMBERSHIP_2, DELETE_GROUP_MEMBERSHIP_3,
      * DELETE_ORGANIZATION, DELETE_ORGANIZATION_1,
      * DELETE_ORGANIZATION_MEMBERSHIP, DELETE_ORGANIZATION_MEMBERSHIP_1,
      * DELETE_ORGANIZATION_MEMBERSHIP_2, DELETE_ORGANIZATION_MEMBERSHIPS,
-     * DELETE_PERMISSION_GROUP, DELETE_PERMISSION_GROUP_1, DELETE_SECTION,
-     * DELETE_SUSPENDED_TICKET, DELETE_SUSPENDED_TICKET_1, DELETE_TARGET,
-     * DELETE_TICKET, DELETE_TICKET_1, DELETE_TICKET_FIELD,
+     * DELETE_ORGANIZATIONS, DELETE_PERMISSION_GROUP, DELETE_PERMISSION_GROUP_1,
+     * DELETE_SECTION, DELETE_SUSPENDED_TICKET, DELETE_SUSPENDED_TICKET_1,
+     * DELETE_TARGET, DELETE_TICKET, DELETE_TICKET_1, DELETE_TICKET_FIELD,
      * DELETE_TICKET_FIELD_1, DELETE_TICKET_FORM, DELETE_TICKET_FORM_1,
      * DELETE_TICKETS, DELETE_TOPIC, DELETE_TRANSLATION, DELETE_TRANSLATION_1,
      * DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1, DELETE_USER,
      * DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
      * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
-     * GET_ACTIVE_TRIGGERS, GET_ARTICLE, GET_ARTICLE_FROM_SEARCH,
+     * DELETE_USERS, GET_ACTIVE_TRIGGERS, GET_ARTICLE, GET_ARTICLE_FROM_SEARCH,
      * GET_ARTICLE_FROM_SEARCH_1, GET_ARTICLE_SUBSCRIPTIONS,
      * GET_ARTICLE_SUBSCRIPTIONS_1, GET_ARTICLE_TRANSLATIONS, GET_ARTICLES,
      * GET_ARTICLES_1, GET_ARTICLES_2, GET_ARTICLES_3,
@@ -15427,7 +15478,8 @@ public class StaticEndpointBuilders {
      * GET_AUTHENTICATED_USER, GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION,
      * GET_AUTOMATIONS, GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES,
      * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
-     * GET_COMPLIANCE_DELETION_STATUSES, GET_CURRENT_USER,
+     * GET_COMPLIANCE_DELETION_STATUSES, GET_CONTENT_TAG, GET_CONTENT_TAGS,
+     * GET_CONTENT_TAGS_1, GET_CONTENT_TAGS_2, GET_CURRENT_USER,
      * GET_CUSTOM_AGENT_ROLES, GET_DELETED_TICKETS, GET_DELETED_TICKETS_1,
      * GET_DYNAMIC_CONTENT_ITEM, GET_DYNAMIC_CONTENT_ITEM_VARIANT,
      * GET_DYNAMIC_CONTENT_ITEM_VARIANTS, GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM,
@@ -15471,8 +15523,9 @@ public class StaticEndpointBuilders {
      * GET_USER_REQUESTS, GET_USER_REQUESTS_1, GET_USER_SEGMENT,
      * GET_USER_SEGMENTS, GET_USER_SEGMENTS_1, GET_USER_SEGMENTS_APPLICABLE,
      * GET_USER_SUBSCRIPTIONS, GET_USER_SUBSCRIPTIONS_1, GET_USERS, GET_USERS_1,
-     * GET_USERS_BY_EXTERNAL_IDS, GET_USERS_BY_ROLE, GET_USERS_INCREMENTALLY,
-     * GET_VIEW, GET_VIEWS, IMPORT_TICKET, IMPORT_TOPIC,
+     * GET_USERS_BY_EXTERNAL_IDS, GET_USERS_BY_EXTERNAL_IDS_1,
+     * GET_USERS_BY_ROLE, GET_USERS_INCREMENTALLY, GET_VIEW, GET_VIEWS,
+     * IMPORT_TICKET, IMPORT_TOPIC, LIST_HELP_CENTER_LOCALES,
      * LOOKUP_ORGANIZATIONS_BY_EXTERNAL_ID, LOOKUP_USER_BY_EMAIL,
      * LOOKUP_USER_BY_EXTERNAL_ID, MACROS_SHOW_CHANGES_TO_TICKET,
      * MACROS_SHOW_TICKET_AFTER_CHANGES, MAKE_PRIVATE_TICKET_AUDIT,
@@ -15488,10 +15541,12 @@ public class StaticEndpointBuilders {
      * SEARCH_TRIGGERS_1, SET_GROUP_MEMBERSHIP_AS_DEFAULT,
      * SET_ORGANIZATION_MEMBERSHIP_AS_DEFAULT, SET_TAG_ON_ORGANISATIONS,
      * SET_TAG_ON_TICKET, SET_TAG_ON_TOPICS, SET_USER_PRIMARY_IDENTITY,
-     * SET_USER_PRIMARY_IDENTITY_1, SET_USER_PRIMARY_IDENTITY_2, SUSPEND_USER,
-     * TRUST_TICKET_AUDIT, TRUST_TICKET_AUDIT_1, TRUST_TICKET_AUDIT_2,
-     * UNSUSPEND_USER, UPDATE_ARTICLE, UPDATE_ARTICLE_TRANSLATION,
-     * UPDATE_AUTOMATION, UPDATE_CATEGORY, UPDATE_CATEGORY_TRANSLATION,
+     * SET_USER_PRIMARY_IDENTITY_1, SET_USER_PRIMARY_IDENTITY_2,
+     * SHOW_ARTICLE_TRANSLATION, SHOW_CATEGORY_TRANSLATION,
+     * SHOW_SECTION_TRANSLATION, SUSPEND_USER, TRUST_TICKET_AUDIT,
+     * TRUST_TICKET_AUDIT_1, TRUST_TICKET_AUDIT_2, UNSUSPEND_USER,
+     * UPDATE_ARTICLE, UPDATE_ARTICLE_TRANSLATION, UPDATE_AUTOMATION,
+     * UPDATE_CATEGORY, UPDATE_CATEGORY_TRANSLATION, UPDATE_CONTENT_TAG,
      * UPDATE_DYNAMIC_CONTENT_ITEM, UPDATE_DYNAMIC_CONTENT_ITEM_VARIANT,
      * UPDATE_FORUM, UPDATE_GROUP, UPDATE_INSTALLATION, UPDATE_MACRO,
      * UPDATE_ORGANIZATION, UPDATE_ORGANIZATIONS, UPDATE_ORGANIZATIONS_1,

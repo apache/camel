@@ -244,6 +244,11 @@ public class KafkaFetchRecords implements Runnable {
             // this may throw an exception if something is wrong with kafka consumer
             this.consumer = kafkaConsumer.getEndpoint().getKafkaClientFactory().getConsumer(kafkaProps);
 
+            var krbLocation = kafkaConsumer.getEndpoint().getConfiguration().getKerberosConfigLocation();
+            if (krbLocation != null) {
+                System.setProperty("java.security.krb5.conf", krbLocation);
+            }
+
             // init client id which we may need to get from the kafka producer via reflection
             if (clientId == null) {
                 clientId = getKafkaProps().getProperty(CommonClientConfigs.CLIENT_ID_CONFIG);

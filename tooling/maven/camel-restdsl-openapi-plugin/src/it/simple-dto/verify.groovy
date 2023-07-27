@@ -21,7 +21,7 @@ assert restdsl.exists()
 
 def String data = restdsl.text
 
-assert data.contains('restConfiguration().component("servlet");')
+assert data.contains('restConfiguration().component("platform-http");')
 
 def File restdto = new File(basedir, "target/generated-sources/openapi/src/main/java/com/foo/Order.java")
 

@@ -38,6 +38,12 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumerkey":
         case "consumerKey": getOrCreateConfiguration(target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": getOrCreateConfiguration(target).setDelay(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "jiraurl":
         case "jiraUrl": getOrCreateConfiguration(target).setJiraUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -65,6 +71,12 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumerkey":
         case "consumerKey": return java.lang.String.class;
         case "delay": return java.lang.Integer.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "jiraurl":
         case "jiraUrl": return java.lang.String.class;
         case "lazystartproducer":
@@ -93,6 +105,12 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumerkey":
         case "consumerKey": return getOrCreateConfiguration(target).getConsumerKey();
         case "delay": return getOrCreateConfiguration(target).getDelay();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "jiraurl":
         case "jiraUrl": return getOrCreateConfiguration(target).getJiraUrl();
         case "lazystartproducer":

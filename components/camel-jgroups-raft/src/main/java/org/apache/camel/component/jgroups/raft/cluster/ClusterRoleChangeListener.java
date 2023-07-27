@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClusterRoleChangeListener implements RAFT.RoleChange {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ClusterRoleChangeListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClusterRoleChangeListener.class);
 
     private final JGroupsRaftClusterView jgroupsRaftClusterView;
 
@@ -47,12 +47,6 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
                 }
                 break;
             case Follower:
-                if (jgroupsRaftClusterView.isMaster()) {
-                    jgroupsRaftClusterView.setMaster(false);
-                    jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());
-                }
-                break;
-            case Candidate:
                 if (jgroupsRaftClusterView.isMaster()) {
                     jgroupsRaftClusterView.setMaster(false);
                     jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());

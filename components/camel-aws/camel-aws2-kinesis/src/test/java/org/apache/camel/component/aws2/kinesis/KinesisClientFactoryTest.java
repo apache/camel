@@ -16,25 +16,27 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import org.apache.camel.component.aws2.kinesis.client.KinesisAsyncInternalClient;
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
 import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
+import org.apache.camel.component.aws2.kinesis.client.impl.KinesisAsyncClientStandardImpl;
 import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.kinesis.client.impl.KinesisClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KinesisClientFactoryTest {
+class KinesisClientFactoryTest {
 
     @Test
-    public void getStandardKinesisClientDefault() {
+    void getStandardKinesisClientDefault() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
         assertTrue(kinesisClient instanceof KinesisClientStandardImpl);
     }
 
     @Test
-    public void getStandardKinesisClient() {
+    void getStandardKinesisClient() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(false);
         KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
@@ -42,10 +44,18 @@ public class KinesisClientFactoryTest {
     }
 
     @Test
-    public void getIAMOptimizedKinesisClient() {
+    void getIAMOptimizedKinesisClient() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(true);
         KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
         assertTrue(kinesisClient instanceof KinesisClientIAMOptimizedImpl);
+    }
+
+    @Test
+    void getStandardKinesisAsyncClient() {
+        Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
+        kinesis2Configuration.setAsyncClient(true);
+        KinesisAsyncInternalClient kinesisClient = KinesisClientFactory.getKinesisAsyncClient(kinesis2Configuration);
+        assertTrue(kinesisClient instanceof KinesisAsyncClientStandardImpl);
     }
 }

@@ -156,7 +156,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // make sure we sort the classes in case one inherit from the other
         classes.sort(this::compareClasses);
 
-        Map<Class, ComponentModel> models = new HashMap<>();
+        Map<Class<?>, ComponentModel> models = new HashMap<>();
         for (Class<?> classElement : classes) {
             UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
             String scheme = uriEndpoint.scheme();
@@ -183,7 +183,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private void processSchemas(
-            Map<Class, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label, String[] schemes,
+            Map<Class<?>, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label,
+            String[] schemes,
             String[] titles, String[] extendsSchemes) {
         for (int i = 0; i < schemes.length; i++) {
             final String alias = schemes[i];
@@ -205,7 +206,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private ComponentModel collectParentData(Map<Class, ComponentModel> models, Class<?> classElement) {
+    private ComponentModel collectParentData(Map<Class<?>, ComponentModel> models, Class<?> classElement) {
         ComponentModel parentData = null;
         final Class<?> superclass = classElement.getSuperclass();
 
@@ -966,6 +967,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 String label = metadata != null ? metadata.label() : null;
                 boolean secret = metadata != null && metadata.secret();
                 boolean autowired = metadata != null && metadata.autowired();
+                boolean supportFileReference = metadata != null && metadata.supportFileReference();
 
                 // we do not yet have default values / notes / as no annotation
                 // support yet
@@ -1081,6 +1083,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setNestedType(nestedType);
                     option.setConfigurationClass(nestedTypeName);
                     option.setConfigurationField(nestedFieldName);
+                    option.setSupportFileReference(supportFileReference);
                     componentModel.addComponentOption(option);
                 }
             }
@@ -1312,6 +1315,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         boolean isSecret = secret != null && secret || param.secret();
         boolean isAutowired = metadata != null && metadata.autowired();
+        boolean supportFileReference = metadata != null && metadata.supportFileReference();
         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                 componentModel.isProducerOnly());
 
@@ -1367,6 +1371,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setPrefix(paramPrefix);
         option.setOptionalPrefix(paramOptionalPrefix);
         option.setMultiValue(multiValue);
+        option.setSupportFileReference(supportFileReference);
         if (componentOption) {
             option.setKind("property");
             componentModel.addComponentOption((ComponentOptionModel) option);
@@ -1498,6 +1503,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             boolean isSecret = secret != null && secret || path.secret();
             boolean isAutowired = metadata != null && metadata.autowired();
+            boolean supportFileReference = metadata != null && metadata.supportFileReference();
             String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                     componentModel.isProducerOnly());
 
@@ -1549,6 +1555,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             option.setNestedType(nestedType);
             option.setConfigurationClass(nestedTypeName);
             option.setConfigurationField(nestedFieldName);
+            option.setSupportFileReference(supportFileReference);
             if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
                 componentModel.addEndpointOption((EndpointOptionModel) option);
             }

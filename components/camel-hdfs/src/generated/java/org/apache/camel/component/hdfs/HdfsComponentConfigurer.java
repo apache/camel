@@ -25,6 +25,12 @@ public class HdfsComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "jaasconfiguration":
         case "jAASConfiguration": target.setJAASConfiguration(property(camelContext, javax.security.auth.login.Configuration.class, value)); return true;
         case "kerberosconfigfile":
@@ -42,6 +48,12 @@ public class HdfsComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "jaasconfiguration":
         case "jAASConfiguration": return javax.security.auth.login.Configuration.class;
         case "kerberosconfigfile":
@@ -60,6 +72,12 @@ public class HdfsComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "jaasconfiguration":
         case "jAASConfiguration": return target.getJAASConfiguration();
         case "kerberosconfigfile":

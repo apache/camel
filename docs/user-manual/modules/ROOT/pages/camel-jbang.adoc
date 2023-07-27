@@ -2211,6 +2211,41 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=..
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+==== Exporting to Camel Main for Kubernetes
+
+If your want to run Camel Main on Kubernetes, then it's possible to export to Maven based project
+that are pre-configured to build for Kubernetes (with JKube and JIB).
+
+To use this, then `application.properties` must contain JKube configurations that are to be used for generating
+Kubernetes YAML manifest files.
+
+Camel JBang will export and copy every entry from `application.properties` that start with the following keys:
+
+- `jkube.xxx`
+- `jib.xxx`
+- `label.xxx`
+
+For example, the following can be used for a general Camel based application to run in Kubernetes:
+
+[source,properties]
+----
+label.runtime=app.kubernetes.io/runtime
+jib.to.image=demo/myapp:1.0
+jkube.version=1.13.1
+jkube.build.strategy=jib
+jkube.skip.build=true
+jkube.namespace=my-namespace
+jkube.imagePullPolicy=IfNotPresent
+jkube.enricher.jkube-project-label.group=my-company
+jkube.enricher.jkube-project-label.provider=my-company
+jkube.enricher.jkube-controller.type=Deployment
+jkube.enricher.jkube-controller.replicaCount=1
+jkube.enricher.jkube-service.port=8080
+jkube.recreate=true
+----
+
+You can find more details in the https://eclipse.dev/jkube/docs/[Eclipse JKube] and https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin[Jib] documentations.
+
 === Exporting with selected files
 
 By default, Camel will export what was last run, or all files from the current directory.

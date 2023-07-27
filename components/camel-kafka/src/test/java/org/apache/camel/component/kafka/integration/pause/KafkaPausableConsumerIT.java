@@ -55,11 +55,11 @@ public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
     public static final String SOURCE_TOPIC = "pause-source";
     private static final Logger LOG = LoggerFactory.getLogger(KafkaPausableConsumerIT.class);
     private static final int RETRY_COUNT = 10;
-    private static LongAdder count = new LongAdder();
-    private static TestListener testConsumerListener = new TestListener();
+    private static final LongAdder count = new LongAdder();
+    private static final TestListener testConsumerListener = new TestListener();
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
-    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     private static boolean canContinue() {
         // First one should go through ...

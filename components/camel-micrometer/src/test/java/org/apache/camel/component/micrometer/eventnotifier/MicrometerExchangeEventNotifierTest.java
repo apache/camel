@@ -24,12 +24,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.withPrecision;
 
 public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEventNotifierTest {
 
@@ -54,7 +54,7 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
             @Override
             public Object evaluate(Exchange exchange) {
                 try {
-                    assertEquals(1.0D, currentInflightExchanges(), 0.1D);
+                    Assertions.assertThat(currentInflightExchanges()).isEqualTo(1.0D, withPrecision(0.1D));
                     Thread.sleep(SLEEP);
                     return exchange.getIn().getBody();
                 } catch (InterruptedException e) {
@@ -71,9 +71,9 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
 
         mock.assertIsSatisfied();
         Timer timer = meterRegistry.find(MOCK_OUT).timer();
-        assertEquals(count, timer.count());
-        assertTrue(timer.mean(TimeUnit.MILLISECONDS) > SLEEP.doubleValue());
-        assertEquals(0.0D, currentInflightExchanges(), 0.1D);
+        Assertions.assertThat(timer.count()).isEqualTo(count);
+        Assertions.assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThan(SLEEP.doubleValue());
+        Assertions.assertThat(currentInflightExchanges()).isEqualTo(0.0D, withPrecision(0.1D));
     }
 
     private double currentInflightExchanges() {

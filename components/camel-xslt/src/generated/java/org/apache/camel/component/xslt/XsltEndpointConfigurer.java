@@ -46,6 +46,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transformerFactoryConfigurationStrategy": target.setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
         case "uriresolver":
         case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
+        case "xsltmessagelogger":
+        case "xsltMessageLogger": target.setXsltMessageLogger(property(camelContext, org.apache.camel.component.xslt.XsltMessageLogger.class, value)); return true;
         default: return false;
         }
     }
@@ -78,6 +80,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transformerFactoryConfigurationStrategy": return org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class;
         case "uriresolver":
         case "uriResolver": return javax.xml.transform.URIResolver.class;
+        case "xsltmessagelogger":
+        case "xsltMessageLogger": return org.apache.camel.component.xslt.XsltMessageLogger.class;
         default: return null;
         }
     }
@@ -111,6 +115,8 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "transformerFactoryConfigurationStrategy": return target.getTransformerFactoryConfigurationStrategy();
         case "uriresolver":
         case "uriResolver": return target.getUriResolver();
+        case "xsltmessagelogger":
+        case "xsltMessageLogger": return target.getXsltMessageLogger();
         default: return null;
         }
     }

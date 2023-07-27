@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dataset;
 
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMinimumMessageCount((int) dataSet.getSize());
 
-        result.assertIsSatisfied();
+        result.assertIsSatisfied(Duration.ofSeconds(5).toMillis());
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
         dataSet.setSize(10);
         result.expectedMinimumMessageCount((int) dataSet.getSize());
 
-        result.assertIsSatisfied();
+        result.assertIsSatisfied(Duration.ofSeconds(5).toMillis());
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUri).to("mock://result");
             }
         };

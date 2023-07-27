@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.abdera.model.Feed;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,7 +41,7 @@ public class AtomEndpoint extends FeedEndpoint {
     @Override
     public Exchange createExchange(Object feed) {
         Exchange exchange = createExchangeWithFeedHeader(feed, AtomConstants.ATOM_FEED);
-        exchange.getIn().setBody(((Feed) feed).getEntries());
+        exchange.getIn().setBody(feed);
         return exchange;
     }
 

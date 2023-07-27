@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,6 @@ import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
-import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.spi.ClassResolver;
@@ -79,10 +79,16 @@ import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.CannotLoadBeanClassException;
+import org.springframework.beans.factory.SmartFactoryBean;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.metrics.StartupStep;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -100,6 +106,11 @@ public class KameletMain extends MainCommandLineSupport {
     private boolean stub;
     private DownloadListener downloadListener;
     private DependencyDownloaderClassLoader classLoader;
+
+    // when preparing spring-based beans, we may have problems loading classes which are provided with Java DSL
+    // that's why some beans should be processed later
+    private final List<String> delayedBeans = new LinkedList<>();
+    private Set<String> infraBeanNames;
 
     public KameletMain() {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
@@ -398,15 +409,13 @@ public class KameletMain extends MainCommandLineSupport {
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
         if (port != null) {
-            VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()), stub);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withPort(Integer.parseInt(port.toString()));
         }
         boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
-        if (console && port == null) {
-            // use default port 8080 if console is enabled
-            VertxHttpServer.registerServer(answer, 8080, stub);
-        }
         if (console) {
-            VertxHttpServer.registerConsole(answer);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withDevConsoleEnabled(true);
         }
 
         // always enable developer console as it is needed by camel-cli-connector
@@ -429,12 +438,13 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
-        if (health && port == null) {
-            // use default port 8080 if console is enabled
-            VertxHttpServer.registerServer(answer, 8080, stub);
-        }
         if (health) {
-            VertxHttpServer.registerHealthCheck(answer);
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withHealthCheckEnabled(true);
+        }
+        if (stub) {
+            // stub should not include http server
+            configure().httpServer().withEnabled(false);
         }
 
         // need to setup jfr early
@@ -499,7 +509,9 @@ public class KameletMain extends MainCommandLineSupport {
             if (sourceDir != null) {
                 if (console || health) {
                     // allow to upload source via http when HTTP console enabled
-                    VertxHttpServer.registerUploadSourceDir(answer, sourceDir);
+                    configure().httpServer().withEnabled(true);
+                    configure().httpServer().withUploadEnabled(true);
+                    configure().httpServer().withUploadSourceDir(sourceDir);
                 }
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");
@@ -607,7 +619,7 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     @Override
-    protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config, Registry registry) {
+    protected void preProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
         // camel-kamelet-main has access to Spring libraries, so we can grab XML documents representing
         // actual Spring Beans and read them using Spring's BeanFactory to populate Camel registry
         final Map<String, Document> xmls = new TreeMap<>();
@@ -627,10 +639,12 @@ public class KameletMain extends MainCommandLineSupport {
         // Spring registry and then copy the beans (whether the scope is)
         final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         beanFactory.setAllowCircularReferences(true); // for now
+        beanFactory.setBeanClassLoader(classLoader);
+        registry.bind("SpringBeanFactory", beanFactory);
 
         // register some existing beans (the list may change)
         // would be nice to keep the documentation up to date: docs/user-manual/modules/ROOT/pages/camel-jbang.adoc
-        Set<String> infraBeanNames = Set.of("CamelContext", "MainConfiguration");
+        infraBeanNames = Set.of("CamelContext", "MainConfiguration");
         beanFactory.registerSingleton("CamelContext", camelContext);
         beanFactory.registerSingleton("MainConfiguration", config);
         // ...
@@ -658,9 +672,74 @@ public class KameletMain extends MainCommandLineSupport {
         // which extra/infra beans are added
 
         beanFactory.freezeConfiguration();
-        beanFactory.preInstantiateSingletons();
 
-        for (String name : beanFactory.getBeanDefinitionNames()) {
+        List<String> beanNames = Arrays.asList(beanFactory.getBeanDefinitionNames());
+
+        // Trigger initialization of all non-lazy singleton beans...
+        instantiateAndRegisterBeans(beanFactory, beanNames);
+    }
+
+    @Override
+    protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
+        if (delayedBeans.isEmpty()) {
+            return;
+        }
+
+        DefaultListableBeanFactory beanFactory
+                = registry.lookupByNameAndType("SpringBeanFactory", DefaultListableBeanFactory.class);
+
+        // we have some beans with classes that we couldn't load before. now, after loading the routes
+        // we may have the needed class definitions
+        for (String beanName : delayedBeans) {
+            BeanDefinition bd = beanFactory.getMergedBeanDefinition(beanName);
+            if (bd instanceof AbstractBeanDefinition abd) {
+                if (!abd.hasBeanClass()) {
+                    Class<?> c = camelContext.getClassResolver().resolveClass(abd.getBeanClassName());
+                    abd.setBeanClass(c);
+                }
+            }
+        }
+
+        instantiateAndRegisterBeans(beanFactory, delayedBeans);
+    }
+
+    private void instantiateAndRegisterBeans(DefaultListableBeanFactory beanFactory, List<String> beanNames) {
+        List<String> instantiatedBeanNames = new LinkedList<>();
+
+        for (String beanName : beanNames) {
+            BeanDefinition bd = beanFactory.getMergedBeanDefinition(beanName);
+            if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+                try {
+                    if (beanFactory.isFactoryBean(beanName)) {
+                        Object bean = beanFactory.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);
+                        if (bean instanceof SmartFactoryBean<?> smartFactoryBean && smartFactoryBean.isEagerInit()) {
+                            beanFactory.getBean(beanName);
+                            instantiatedBeanNames.add(beanName);
+                        }
+                    } else {
+                        beanFactory.getBean(beanName);
+                        instantiatedBeanNames.add(beanName);
+                    }
+                } catch (CannotLoadBeanClassException ignored) {
+                    // we'll try to resolve later
+                    delayedBeans.add(beanName);
+                }
+            }
+        }
+
+        // Trigger post-initialization callback for all applicable beans...
+        for (String beanName : instantiatedBeanNames) {
+            Object singletonInstance = beanFactory.getSingleton(beanName);
+            if (singletonInstance instanceof SmartInitializingSingleton smartSingleton) {
+                StartupStep smartInitialize = beanFactory.getApplicationStartup()
+                        .start("spring.beans.smart-initialize")
+                        .tag("beanName", beanName);
+                smartSingleton.afterSingletonsInstantiated();
+                smartInitialize.end();
+            }
+        }
+
+        for (String name : instantiatedBeanNames) {
             if (infraBeanNames.contains(name)) {
                 continue;
             }

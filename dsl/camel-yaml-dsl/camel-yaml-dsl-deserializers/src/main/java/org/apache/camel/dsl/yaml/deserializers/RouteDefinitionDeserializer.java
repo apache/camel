@@ -21,6 +21,8 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.InputTypeDefinition;
+import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -48,6 +50,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "message-history", type = "boolean"),
                   @YamlProperty(name = "log-mask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
+                  @YamlProperty(name = "input-type", type = "object:org.apache.camel.model.InputTypeDefinition"),
+                  @YamlProperty(name = "output-type", type = "object:org.apache.camel.model.OutputTypeDefinition"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
@@ -118,6 +122,14 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "trace":
                     target.setTrace(asText(val));
+                    break;
+                case "inputType":
+                case "input-type":
+                    target.setInputType(asType(val, InputTypeDefinition.class));
+                    break;
+                case "outputType":
+                case "output-type":
+                    target.setOutputType(asType(val, OutputTypeDefinition.class));
                     break;
                 case "from":
                     val.setProperty(RouteDefinition.class.getName(), target);

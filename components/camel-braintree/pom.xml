@@ -185,6 +185,28 @@
                                     </fromJavasource>
                                 </api>
                                 <api>
+                                    <apiName>oauth</apiName>
+                                    <proxyClass>com.braintreegateway.OAuthGateway</proxyClass>
+                                    <fromJavasource />
+                                    <substitutions>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.OAuthConnectUrlRequest</argType>
+                                            <replacement>connectRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.MerchantAccountCreateForCurrencyRequest
+                                            </argType>
+                                            <replacement>currencyRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
+                                    </substitutions>
+                                </api>
+                                <api>
                                     <apiName>plan</apiName>
                                     <proxyClass>com.braintreegateway.PlanGateway</proxyClass>
                                     <fromJavasource />
@@ -234,6 +256,11 @@
                                             <replaceWithType>false</replaceWithType>
                                         </substitution>
                                     </substitutions>
+                                </api>
+                                <api>
+                                    <apiName>usBankAccount</apiName>
+                                    <proxyClass>com.braintreegateway.UsBankAccountGateway</proxyClass>
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>webhookNotification</apiName>

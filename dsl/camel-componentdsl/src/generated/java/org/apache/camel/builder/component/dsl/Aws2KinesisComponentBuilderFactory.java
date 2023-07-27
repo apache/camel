@@ -69,6 +69,21 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder asyncClient(boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -416,6 +431,56 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -468,6 +533,7 @@ public interface Aws2KinesisComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
+            case "asyncClient": getOrCreateConfiguration((Kinesis2Component) component).setAsyncClient((boolean) value); return true;
             case "cborEnabled": getOrCreateConfiguration((Kinesis2Component) component).setCborEnabled((boolean) value); return true;
             case "configuration": ((Kinesis2Component) component).setConfiguration((org.apache.camel.component.aws2.kinesis.Kinesis2Configuration) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Kinesis2Component) component).setOverrideEndpoint((boolean) value); return true;
@@ -488,6 +554,9 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "shardId": getOrCreateConfiguration((Kinesis2Component) component).setShardId((java.lang.String) value); return true;
             case "lazyStartProducer": ((Kinesis2Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((Kinesis2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((Kinesis2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((Kinesis2Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Kinesis2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Kinesis2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Kinesis2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

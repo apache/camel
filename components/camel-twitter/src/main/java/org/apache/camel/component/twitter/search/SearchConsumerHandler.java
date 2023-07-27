@@ -26,13 +26,13 @@ import org.apache.camel.component.twitter.consumer.TwitterEventType;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.GeoLocation;
-import twitter4j.Query;
-import twitter4j.Query.Unit;
-import twitter4j.QueryResult;
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.v1.GeoLocation;
+import twitter4j.v1.Query;
+import twitter4j.v1.Query.Unit;
+import twitter4j.v1.QueryResult;
+import twitter4j.v1.Status;
 
 /**
  * Consumes search requests
@@ -55,15 +55,15 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         Query query;
 
         if (keywords != null && keywords.trim().length() > 0) {
-            query = new Query(keywords);
+            query = Query.of(keywords);
             LOG.debug("Searching twitter with keywords: {}", keywords);
         } else {
-            query = new Query();
+            query = Query.of("");
             LOG.debug("Searching twitter without keywords.");
         }
 
         if (endpoint.getProperties().isFilterOld()) {
-            query.setSinceId(getLastId());
+            query.sinceId(getLastId());
         }
 
         return search(query);
@@ -75,7 +75,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         if (keywords == null || keywords.trim().length() == 0) {
             return Collections.emptyList();
         }
-        Query query = new Query(keywords);
+        Query query = Query.of(keywords);
 
         LOG.debug("Searching twitter with keywords: {}", keywords);
         return search(query);
@@ -85,11 +85,11 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         Integer numberOfPages = 1;
 
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getLang())) {
-            query.setLang(endpoint.getProperties().getLang());
+            query.lang(endpoint.getProperties().getLang());
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getCount())) {
-            query.setCount(endpoint.getProperties().getCount());
+            query.count(endpoint.getProperties().getCount());
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getNumberOfPages())) {
@@ -100,8 +100,8 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getLongitude())
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getRadius())) {
             GeoLocation location
-                    = new GeoLocation(endpoint.getProperties().getLatitude(), endpoint.getProperties().getLongitude());
-            query.setGeoCode(location, endpoint.getProperties().getRadius(),
+                    = GeoLocation.of(endpoint.getProperties().getLatitude(), endpoint.getProperties().getLongitude());
+            query.geoCode(location, endpoint.getProperties().getRadius(),
                     Unit.valueOf(endpoint.getProperties().getDistanceMetric()));
 
             LOG.debug("Searching with additional geolocation parameters.");
@@ -110,7 +110,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         LOG.debug("Searching with {} pages.", numberOfPages);
 
         Twitter twitter = getTwitter();
-        QueryResult qr = twitter.search(query);
+        QueryResult qr = twitter.v1().search().search(query);
         List<Status> tweets = qr.getTweets();
 
         for (int i = 1; i < numberOfPages; i++) {
@@ -118,7 +118,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
                 break;
             }
 
-            qr = twitter.search(qr.nextQuery());
+            qr = twitter.v1().search().search(qr.nextQuery());
             tweets.addAll(qr.getTweets());
         }
 

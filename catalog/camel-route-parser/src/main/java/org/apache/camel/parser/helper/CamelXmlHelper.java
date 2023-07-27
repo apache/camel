@@ -122,7 +122,7 @@ public final class CamelXmlHelper {
     }
 
     private static void findAllUrisRecursive(Node node, List<Node> nodes) {
-        // okay its a route so grab all uri attributes we can find
+        // okay it's a route so grab all uri attributes we can find
         String url = getSafeAttribute(node, "uri");
         if (url != null) {
             nodes.add(node);
@@ -168,7 +168,7 @@ public final class CamelXmlHelper {
     }
 
     private static void findAllLanguageExpressionsRecursive(Node node, List<Node> nodes, String language) {
-        // okay its a route so grab if its the language
+        // okay it's a route so grab if it's the language
         if (isNodeName(language, node)) {
             nodes.add(node);
         }
@@ -255,8 +255,7 @@ public final class CamelXmlHelper {
 
     private static String getIdOrIndex(Node node, Map<String, Integer> nodeCounts) {
         String answer = null;
-        if (node instanceof Element) {
-            Element element = (Element) node;
+        if (node instanceof Element element) {
             String elementName = element.getTagName();
             if ("routes".equals(elementName)) {
                 elementName = "camelContext";

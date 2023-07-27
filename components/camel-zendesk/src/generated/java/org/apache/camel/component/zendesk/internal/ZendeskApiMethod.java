@@ -89,6 +89,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("ticketId", long.class),
         arg("comment", org.zendesk.client.v2.model.Comment.class)),
 
+    CREATE_CONTENT_TAG(
+        org.zendesk.client.v2.model.hc.ContentTag.class,
+        "createContentTag",
+        arg("contentTag", org.zendesk.client.v2.model.hc.ContentTag.class)),
+
     CREATE_DYNAMIC_CONTENT_ITEM(
         org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
         "createDynamicContentItem",
@@ -125,6 +130,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Macro.class,
         "createMacro",
         arg("macro", org.zendesk.client.v2.model.Macro.class)),
+
+    CREATE_OR_UPDATE_ORGANIZATION(
+        org.zendesk.client.v2.model.Organization.class,
+        "createOrUpdateOrganization",
+        arg("organization", org.zendesk.client.v2.model.Organization.class)),
 
     CREATE_OR_UPDATE_USER(
         org.zendesk.client.v2.model.User.class,
@@ -387,6 +397,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         "deleteCategory",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
 
+    DELETE_CONTENT_TAG(
+        void.class,
+        "deleteContentTag",
+        arg("contentTag", org.zendesk.client.v2.model.hc.ContentTag.class)),
+
     DELETE_DYNAMIC_CONTENT_ITEM(
         void.class,
         "deleteDynamicContentItem",
@@ -466,6 +481,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         void.class,
         "deleteOrganizationMemberships",
         arg("id", long.class),
+        arg("ids", long[].class)),
+
+    DELETE_ORGANIZATIONS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "deleteOrganizations",
         arg("ids", long[].class)),
 
     DELETE_PERMISSION_GROUP(
@@ -601,6 +621,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         void.class,
         "deleteUserSegment",
         arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    DELETE_USERS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "deleteUsers",
+        arg("ids", long[].class)),
 
     GET_ACTIVE_TRIGGERS(
         Iterable.class,
@@ -759,6 +784,26 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getComplianceDeletionStatuses",
         arg("userId", long.class)),
+
+    GET_CONTENT_TAG(
+        org.zendesk.client.v2.model.hc.ContentTag.class,
+        "getContentTag",
+        arg("contentTagId", String.class)),
+
+    GET_CONTENT_TAGS(
+        Iterable.class,
+        "getContentTags"),
+
+    GET_CONTENT_TAGS_1(
+        Iterable.class,
+        "getContentTags",
+        arg("pageSize", int.class)),
+
+    GET_CONTENT_TAGS_2(
+        Iterable.class,
+        "getContentTags",
+        arg("pageSize", int.class),
+        arg("namePrefix", String.class)),
 
     GET_CURRENT_USER(
         org.zendesk.client.v2.model.User.class,
@@ -1397,6 +1442,12 @@ public enum ZendeskApiMethod implements ApiMethod {
     GET_USERS_BY_EXTERNAL_IDS(
         java.util.List.class,
         "getUsersByExternalIds",
+        arg("externalId", String.class),
+        arg("externalIds", new String[0].getClass())),
+
+    GET_USERS_BY_EXTERNAL_IDS_1(
+        java.util.List.class,
+        "getUsersByExternalIds",
         arg("externalId0", long.class),
         arg("externalId0s", long[].class)),
 
@@ -1429,6 +1480,10 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Topic.class,
         "importTopic",
         arg("topic", org.zendesk.client.v2.model.Topic.class)),
+
+    LIST_HELP_CENTER_LOCALES(
+        org.zendesk.client.v2.model.hc.Locales.class,
+        "listHelpCenterLocales"),
 
     LOOKUP_ORGANIZATIONS_BY_EXTERNAL_ID(
         Iterable.class,
@@ -1635,6 +1690,24 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("userId", long.class),
         arg("identityId", long.class)),
 
+    SHOW_ARTICLE_TRANSLATION(
+        org.zendesk.client.v2.model.hc.Translation.class,
+        "showArticleTranslation",
+        arg("articleId0", long.class),
+        arg("locale", String.class)),
+
+    SHOW_CATEGORY_TRANSLATION(
+        org.zendesk.client.v2.model.hc.Translation.class,
+        "showCategoryTranslation",
+        arg("categoryId1", long.class),
+        arg("locale", String.class)),
+
+    SHOW_SECTION_TRANSLATION(
+        org.zendesk.client.v2.model.hc.Translation.class,
+        "showSectionTranslation",
+        arg("sectionId0", long.class),
+        arg("locale", String.class)),
+
     SUSPEND_USER(
         org.zendesk.client.v2.model.User.class,
         "suspendUser",
@@ -1692,6 +1765,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("categoryId", Long.class),
         arg("locale", String.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
+
+    UPDATE_CONTENT_TAG(
+        org.zendesk.client.v2.model.hc.ContentTag.class,
+        "updateContentTag",
+        arg("contentTag", org.zendesk.client.v2.model.hc.ContentTag.class)),
 
     UPDATE_DYNAMIC_CONTENT_ITEM(
         org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,

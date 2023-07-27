@@ -60,7 +60,7 @@ public class ResequencerEngine<E> {
     /**
      * A sequence of elements for sorting purposes.
      */
-    private Sequence<Element<E>> sequence;
+    private final Sequence<Element<E>> sequence;
 
     /**
      * A timer for scheduling timeout notifications.

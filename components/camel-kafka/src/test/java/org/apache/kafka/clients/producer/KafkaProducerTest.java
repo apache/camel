@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class KafkaProducerTest {
 
-    private MockProducer kafkaProducer = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
+    private final MockProducer kafkaProducer = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
     private KafkaProducer camelProducer;
     @Spy
     private Exchange exchange;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.math.BigInteger;
 import java.time.Duration;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class VertxPlatformHttpServerConfiguration {
     private String bindHost = DEFAULT_BIND_HOST;
     private int bindPort = DEFAULT_BIND_PORT;
     private String path = DEFAULT_PATH;
-    private BigInteger maxBodySize;
+    private Long maxBodySize;
 
     private SSLContextParameters sslContextParameters;
     private boolean useGlobalSslContextParameters;
@@ -81,11 +80,11 @@ public class VertxPlatformHttpServerConfiguration {
         this.path = path;
     }
 
-    public BigInteger getMaxBodySize() {
+    public Long getMaxBodySize() {
         return maxBodySize;
     }
 
-    public void setMaxBodySize(BigInteger maxBodySize) {
+    public void setMaxBodySize(Long maxBodySize) {
         this.maxBodySize = maxBodySize;
     }
 

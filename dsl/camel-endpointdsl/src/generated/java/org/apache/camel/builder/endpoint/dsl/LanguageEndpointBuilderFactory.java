@@ -338,6 +338,8 @@ public interface LanguageEndpointBuilderFactory {
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
          * to use as the resource
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path languageName:resourceUri
          * @return the dsl builder
@@ -365,6 +367,8 @@ public interface LanguageEndpointBuilderFactory {
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
          * to use as the resource
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

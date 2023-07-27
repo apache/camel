@@ -41,6 +41,10 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String spoolEnabled;
     @XmlAttribute
+    private String allowClasses;
+    @XmlAttribute
+    private String denyClasses;
+    @XmlAttribute
     private String spoolDirectory;
     @XmlAttribute
     private String spoolCipher;
@@ -87,6 +91,30 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
      */
     public void setEnabled(String enabled) {
         this.enabled = enabled;
+    }
+
+    public String getAllowClasses() {
+        return allowClasses;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public void setAllowClasses(String allowClasses) {
+        this.allowClasses = allowClasses;
+    }
+
+    public String getDenyClasses() {
+        return denyClasses;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public void setDenyClasses(String denyClasses) {
+        this.denyClasses = denyClasses;
     }
 
     public String getSpoolEnabled() {

@@ -31,8 +31,9 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.models.OasInfo;
+import io.apicurio.datamodels.models.Info;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -48,17 +49,17 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
     private static final String DEFAULT_INDENT = "    ";
 
-    private Function<OasDocument, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
+    private Function<OpenApiDocument, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
 
     private Instant generated = Instant.now();
 
     private String indent = DEFAULT_INDENT;
 
-    private Function<OasDocument, String> packageNameGenerator = RestDslSourceCodeGenerator::generatePackageName;
+    private Function<OpenApiDocument, String> packageNameGenerator = RestDslSourceCodeGenerator::generatePackageName;
 
     private boolean sourceCodeTimestamps;
 
-    RestDslSourceCodeGenerator(final OasDocument document) {
+    RestDslSourceCodeGenerator(final OpenApiDocument document) {
         super(document);
     }
 
@@ -96,16 +97,20 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
-    MethodSpec generateConfigureMethod(final OasDocument document) {
+    MethodSpec generateConfigureMethod(final OpenApiDocument document) {
         final MethodSpec.Builder configure = MethodSpec.methodBuilder("configure").addModifiers(Modifier.PUBLIC)
                 .returns(void.class).addJavadoc("Defines Apache Camel routes using REST DSL fluent API.\n");
 
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(configure);
 
-        if (restComponent != null) {
+        boolean restConfig = restComponent != null || restContextPath != null || clientRequestValidation;
+        if (restConfig) {
             configure.addCode("\n");
-            configure.addCode("restConfiguration().component(\"" + restComponent + "\")");
-            if (restContextPath != null) {
+            configure.addCode("restConfiguration()");
+            if (ObjectHelper.isNotEmpty(restComponent)) {
+                configure.addCode(".component(\"" + restComponent + "\")");
+            }
+            if (ObjectHelper.isNotEmpty(restContextPath)) {
                 configure.addCode(".contextPath(\"" + restContextPath + "\")");
             }
             if (ObjectHelper.isNotEmpty(apiContextPath)) {
@@ -118,22 +123,26 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         }
 
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
-        document.paths.getItems().forEach(s -> {
+
+        for (String name : document.getPaths().getItemNames()) {
+            OpenApiPathItem s = document.getPaths().getItem(name);
             // there must be at least one verb
-            if (s.get != null || s.delete != null || s.head != null || s.options != null || s.put != null || s.patch != null
-                    || s.post != null) {
+            if (s.getGet() != null || s.getDelete() != null || s.getHead() != null || s.getOptions() != null
+                    || s.getPut() != null || s.getPatch() != null
+                    || s.getPost() != null) {
                 // there must be at least one operation accepted by the filter (otherwise we generate empty rest methods)
-                boolean anyAccepted = filter == null || ofNullable(s.get, s.delete, s.head, s.options, s.put, s.patch, s.post)
-                        .stream().anyMatch(o -> filter.accept(o.operationId));
+                boolean anyAccepted = filter == null || ofNullable(s.getGet(), s.getDelete(), s.getHead(), s.getOptions(),
+                        s.getPut(), s.getPatch(), s.getPost())
+                        .stream().anyMatch(o -> filter.accept(o.getOperationId()));
                 if (anyAccepted) {
                     // create new rest statement per path to avoid a giant chained single method
                     PathVisitor<MethodSpec> restDslStatement
                             = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
-                    restDslStatement.visit(s);
+                    restDslStatement.visit(name, s);
                     emitter.endEmit();
                 }
             }
-        });
+        }
         return emitter.result();
     }
 
@@ -174,13 +183,13 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
-    static String generateClassName(final OasDocument document) {
-        final OasInfo info = (OasInfo) document.info;
+    static String generateClassName(final OpenApiDocument document) {
+        final Info info = document.getInfo();
         if (info == null) {
             return DEFAULT_CLASS_NAME;
         }
 
-        final String title = info.title;
+        final String title = info.getTitle();
         if (title == null) {
             return DEFAULT_CLASS_NAME;
         }
@@ -196,7 +205,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return className;
     }
 
-    static String generatePackageName(final OasDocument document) {
+    static String generatePackageName(final OpenApiDocument document) {
         final String host = RestDslGenerator.determineHostFrom(document);
 
         if (ObjectHelper.isNotEmpty(host)) {

@@ -79,7 +79,7 @@ public class CometdBinding {
 
         Message message = new DefaultMessage(camelContext);
         message.setBody(data);
-        Map headers = getHeadersFromMessage(cometdMessage);
+        Map<String, Object> headers = getHeadersFromMessage(cometdMessage);
         if (headers != null) {
             message.setHeaders(headers);
         }

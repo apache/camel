@@ -40,9 +40,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapConsumer.class);
 
-    private SnmpEndpoint endpoint;
-    private Address listenGenericAddress;
-    private Snmp snmp;
+    private final SnmpEndpoint endpoint;
     private TransportMapping<? extends Address> transport;
 
     public SnmpTrapConsumer(SnmpEndpoint endpoint, Processor processor) {
@@ -59,19 +57,19 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
             LOG.info("Starting trap consumer on {}", this.endpoint.getAddress());
         }
 
-        this.listenGenericAddress = GenericAddress.parse(this.endpoint.getAddress());
+        Address listenGenericAddress = GenericAddress.parse(this.endpoint.getAddress());
 
         // either tcp or udp
         if ("tcp".equals(endpoint.getProtocol())) {
-            this.transport = new DefaultTcpTransportMapping((TcpAddress) this.listenGenericAddress);
+            this.transport = new DefaultTcpTransportMapping((TcpAddress) listenGenericAddress);
         } else if ("udp".equals(endpoint.getProtocol())) {
-            this.transport = new DefaultUdpTransportMapping((UdpAddress) this.listenGenericAddress);
+            this.transport = new DefaultUdpTransportMapping((UdpAddress) listenGenericAddress);
         } else {
             throw new IllegalArgumentException("Unknown protocol: " + endpoint.getProtocol());
         }
 
-        this.snmp = new Snmp(transport);
-        this.snmp.addCommandResponder(this);
+        Snmp snmp = new Snmp(transport);
+        snmp.addCommandResponder(this);
 
         // listen to the transport
         if (LOG.isDebugEnabled()) {
@@ -112,7 +110,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
                 pdu.setErrorStatus(0);
                 pdu.setType(PDU.RESPONSE);
                 StatusInformation statusInformation = new StatusInformation();
-                StateReference ref = event.getStateReference();
+                StateReference<?> ref = event.getStateReference();
                 try {
                     event.getMessageDispatcher().returnResponsePdu(event.getMessageProcessingModel(),
                             event.getSecurityModel(),

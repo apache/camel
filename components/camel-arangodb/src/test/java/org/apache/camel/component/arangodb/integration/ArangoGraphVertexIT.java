@@ -66,7 +66,7 @@ public class ArangoGraphVertexIT extends BaseGraph {
                 BaseDocument.class);
         assertEquals(vertexCreated.getKey(), actualResult.getKey());
         assertEquals("Foo", actualResult.getAttribute("a"));
-        assertEquals(Long.valueOf(42), actualResult.getAttribute("b"));
+        assertEquals(42, actualResult.getAttribute("b"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ArangoGraphVertexIT extends BaseGraph {
                 BaseDocument.class);
         assertEquals(objectToUpdate.getKey(), actualResult.getKey());
         assertEquals("hello", actualResult.getAttribute("foo"));
-        assertEquals(Long.valueOf(42), actualResult.getAttribute("gg"));
+        assertEquals(42, actualResult.getAttribute("gg"));
     }
 
     @Test

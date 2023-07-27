@@ -21,7 +21,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(51);
+        Set<String> props = new HashSet<>(54);
         props.add("accessToken");
         props.add("apiName");
         props.add("appId");
@@ -31,6 +31,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
         props.add("changeId");
+        props.add("channel");
         props.add("childId");
         props.add("clientFactory");
         props.add("clientId");
@@ -44,6 +45,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         props.add("email");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("file");
         props.add("fileId");
         props.add("folderId");
         props.add("greedy");
@@ -53,6 +55,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         props.add("mediaContent");
         props.add("methodName");
         props.add("mimeType");
+        props.add("modifyLabelsRequest");
         props.add("parentId");
         props.add("permissionId");
         props.add("pollStrategy");

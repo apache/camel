@@ -21,12 +21,13 @@ public class HazelcastMapEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(9);
         props.add("bridgeErrorHandler");
         props.add("cacheName");
         props.add("defaultOperation");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("hazelcastConfigUri");
         props.add("hazelcastInstance");
         props.add("hazelcastInstanceName");
         props.add("lazyStartProducer");

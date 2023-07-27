@@ -672,6 +672,56 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the SQS client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -735,6 +785,9 @@ public interface Aws2SqsComponentBuilderFactory {
          * The policy for this queue. It can be loaded by default from
          * classpath, but you can prefix with classpath:, file:, or http: to
          * load the resource from different systems.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -885,6 +938,9 @@ public interface Aws2SqsComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Sqs2Component) component).setOperation((org.apache.camel.component.aws2.sqs.Sqs2Operations) value); return true;
             case "autowiredEnabled": ((Sqs2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "delayQueue": getOrCreateConfiguration((Sqs2Component) component).setDelayQueue((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((Sqs2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((Sqs2Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Sqs2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sqs2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Sqs2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "maximumMessageSize": getOrCreateConfiguration((Sqs2Component) component).setMaximumMessageSize((java.lang.Integer) value); return true;

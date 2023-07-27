@@ -34,7 +34,7 @@
     <description>Camel DHIS2 Component</description>
 
     <properties>
-        <dhis2-java-sdk.version>2.0.0</dhis2-java-sdk.version>
+        <dhis2-java-sdk.version>2.1.0</dhis2-java-sdk.version>
 
          <!-- DHIS2 container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
@@ -62,12 +62,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

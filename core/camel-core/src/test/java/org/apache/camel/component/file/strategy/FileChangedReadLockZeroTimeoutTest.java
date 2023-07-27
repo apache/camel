@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.strategy;
 
 import java.nio.file.Files;
+import java.time.Duration;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
@@ -34,7 +36,7 @@ public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri("in"), "Hello World", Exchange.FILE_NAME, "hello1.txt");
 
-        Thread.sleep(100);
+        Awaitility.await().atMost(Duration.ofSeconds(30)).until(() -> Files.exists(testFile("in/hello1.txt")));
 
         Files.delete(testFile("in/hello1.txt"));
 

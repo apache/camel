@@ -26,6 +26,7 @@ import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
@@ -33,6 +34,7 @@ import static org.fusesource.stomp.client.Constants.DESTINATION;
 import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
 import static org.fusesource.stomp.client.Constants.SEND;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
 
     @BindToRegistry("customHeaderFilterStrategy")

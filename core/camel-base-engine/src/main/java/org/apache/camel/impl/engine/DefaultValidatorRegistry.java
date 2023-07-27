@@ -38,7 +38,7 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
     public Validator resolveValidator(ValidatorKey key) {
         Validator answer = get(key);
         if (answer == null && ObjectHelper.isNotEmpty(key.getType().getName())) {
-            answer = get(new ValidatorKey(new DataType(key.getType().getModel())));
+            answer = get(new ValidatorKey(new DataType(key.getType().getScheme())));
         }
         return answer;
     }

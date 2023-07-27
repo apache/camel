@@ -137,6 +137,56 @@ public interface Jt400ComponentBuilderFactory {
             doSetProperty("connectionPool", connectionPool);
             return this;
         }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Jt400ComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Jt400ComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Jt400ComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
     }
 
     class Jt400ComponentBuilderImpl
@@ -158,6 +208,9 @@ public interface Jt400ComponentBuilderFactory {
             case "lazyStartProducer": ((Jt400Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((Jt400Component) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionPool": ((Jt400Component) component).setConnectionPool((com.ibm.as400.access.AS400ConnectionPool) value); return true;
+            case "healthCheckConsumerEnabled": ((Jt400Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((Jt400Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Jt400Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

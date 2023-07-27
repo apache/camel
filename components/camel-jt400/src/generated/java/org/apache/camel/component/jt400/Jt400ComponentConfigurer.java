@@ -27,6 +27,12 @@ public class Jt400ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectionpool":
         case "connectionPool": target.setConnectionPool(property(camelContext, com.ibm.as400.access.AS400ConnectionPool.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -42,6 +48,12 @@ public class Jt400ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return boolean.class;
         case "connectionpool":
         case "connectionPool": return com.ibm.as400.access.AS400ConnectionPool.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -58,6 +70,12 @@ public class Jt400ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connectionpool":
         case "connectionPool": return target.getConnectionPool();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

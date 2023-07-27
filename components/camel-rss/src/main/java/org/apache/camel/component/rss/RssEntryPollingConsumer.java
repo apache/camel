@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.Collections;
-
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.
@@ -45,17 +42,12 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     @SuppressWarnings("unchecked")
     protected void sortEntries() {
-        Collections.sort(list, new RssDateComparator());
+        list.sort(new RssDateComparator());
     }
 
     @Override
     protected Object createFeed() throws Exception {
-        if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
-            return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
-        } else {
-            return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword(),
-                    RssEntryPollingConsumer.class.getClassLoader());
-        }
+        return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
     }
 
     @Override

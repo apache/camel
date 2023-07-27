@@ -46,7 +46,7 @@ public class AMQPRouteTest extends AMQPTestSupport {
     private ProducerTemplate template;
 
     private MockEndpoint resultEndpoint;
-    private String expectedBody = "Hello there!";
+    private final String expectedBody = "Hello there!";
 
     @BeforeEach
     void setupTemplate() {
@@ -143,7 +143,7 @@ public class AMQPRouteTest extends AMQPTestSupport {
 
     @ContextFixture
     public void configureContext(CamelContext context) {
-        System.setProperty(AMQPConnectionDetails.AMQP_PORT, service.brokerPort() + "");
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
 
         context.getRegistry().bind("amqpConnection", discoverAMQP(context));
         context.addComponent("amqp-customized", amqpComponent(service.serviceAddress()));

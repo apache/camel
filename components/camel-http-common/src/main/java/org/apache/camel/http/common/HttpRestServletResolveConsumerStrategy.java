@@ -37,7 +37,7 @@ public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveCo
         if (path == null) {
             return null;
         }
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer>> paths = new ArrayList<>();
         for (final Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
             paths.add(new HttpRestConsumerPath(entry.getValue()));
         }

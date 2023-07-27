@@ -8,7 +8,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "del": "^7.0.0",
-    "eslint": "^8.24.0",
+    "eslint": "^8.44.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.3.0",
@@ -26,6 +26,7 @@
   },
   "resolutions": {
     "set-value": "^4.1.0",
-    "glob-parent": "^6.0.2"
+    "glob-parent": "^6.0.2",
+    "semver": "^7.5.4"
   }
 }

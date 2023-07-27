@@ -20,22 +20,27 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileRecursiveNoopTest extends ContextTestSupport {
+    private final String fileUri = fileUri();
+
+    @BeforeEach
+    void sendMessages() {
+        template.sendBodyAndHeader(fileUri, "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri, "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(fileUri("foo"), "a2", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri("bar"), "c", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader(fileUri("bar"), "b2", Exchange.FILE_NAME, "b.txt");
+    }
 
     @Test
     public void testRecursiveNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
-        template.sendBodyAndHeader(fileUri(), "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader(fileUri(), "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader(fileUri("foo"), "a2", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader(fileUri("bar"), "c", Exchange.FILE_NAME, "c.txt");
-        template.sendBodyAndHeader(fileUri("bar"), "b2", Exchange.FILE_NAME, "b.txt");
-
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied(5);
 
         // reset mock and send in a new file to be picked up only
         mock.reset();
@@ -43,7 +48,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "c2", Exchange.FILE_NAME, "c.txt");
 
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied(5);
     }
 
     @Override

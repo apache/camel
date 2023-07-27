@@ -31,7 +31,8 @@ public class SftpChmodDirectoryIT extends SftpServerTestSupport {
     public void testSftpChmodDirectoryWriteable() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/folder" +
-                                   "?username=admin&password=admin&chmod=777&chmodDirectory=770",
+                                   "?username=admin&password=admin&chmod=777&chmodDirectory=770&knownHostsFile="
+                                   + service.getKnownHostsFile(),
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 

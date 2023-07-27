@@ -21,7 +21,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("accessToken");
         props.add("applicationName");
         props.add("backoffErrorThreshold");
@@ -42,6 +42,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("maxResults");
         props.add("pollStrategy");
         props.add("query");
+        props.add("raw");
         props.add("refreshToken");
         props.add("repeatCount");
         props.add("runLoggingLevel");

@@ -37,10 +37,10 @@ import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SubmitMultiResult;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,10 +86,14 @@ public class SmppSubmitMultiCommandTest {
 
     @Test
     public void executeWithConfigurationData() throws Exception {
+        UnsuccessDelivery ud
+                = new UnsuccessDelivery(new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717"), 0);
+
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
         exchange.getIn().setBody("short message body");
+
         when(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(new Address[] { new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717") }),
                 eq(new ESMClass()), eq((byte) 0), eq((byte) 1), (String) isNull(), (String) isNull(),
@@ -97,8 +101,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(ReplaceIfPresentFlag.DEFAULT), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
                 eq("short message body".getBytes())))
                 .thenReturn(new SubmitMultiResult(
-                        "1", new UnsuccessDelivery(
-                                new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717"), 0)));
+                        "1", new UnsuccessDelivery[] { ud }, null));
 
         command.execute(exchange);
 
@@ -132,7 +135,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
                 eq("short message body".getBytes())))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -166,7 +169,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
                 eq(ReplaceIfPresentFlag.REPLACE), eq(DataCodings.newInstance((byte) 0)), eq((byte) 0),
                 eq("short message body".getBytes())))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -207,7 +210,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(DataCodings.newInstance(dataCoding)),
                 eq((byte) 0),
                 eq(bodyNarrowed)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -246,7 +249,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(DataCodings.newInstance(dataCoding)),
                 eq((byte) 0),
                 eq(bodyNarrowed)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -284,7 +287,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(DataCodings.newInstance(dataCoding)),
                 eq((byte) 0),
                 eq(body)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -322,7 +325,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(DataCodings.newInstance(dataCoding)),
                 eq((byte) 0),
                 eq(body)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -361,7 +364,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(DataCodings.newInstance(binDataCoding)),
                 eq((byte) 0),
                 eq(body)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -401,7 +404,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(DataCodings.newInstance(latin1DataCoding)),
                 eq((byte) 0),
                 eq(bodyNarrowed)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -447,7 +450,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(new OptionalParameter.Dest_telematics_id((short) 2)),
                 eq(new OptionalParameter.Qos_time_to_live(3600000)),
                 eq(new OptionalParameter.Alert_on_message_delivery("O".getBytes()))))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -509,7 +512,7 @@ public class SmppSubmitMultiCommandTest {
                 eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
                 eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
                 eq(new OptionalParameter.Null((short) 0x2155))))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         command.execute(exchange);
 
@@ -542,7 +545,7 @@ public class SmppSubmitMultiCommandTest {
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT)),
                 eq(ReplaceIfPresentFlag.DEFAULT),
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), any(byte[].class)))
-                .thenReturn(new SubmitMultiResult("1"));
+                .thenReturn(new SubmitMultiResult("1", null, null));
 
         when(session.submitMultiple(eq("CMT"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
@@ -551,7 +554,7 @@ public class SmppSubmitMultiCommandTest {
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
                 eq(ReplaceIfPresentFlag.DEFAULT),
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), any(byte[].class)))
-                .thenReturn(new SubmitMultiResult("2"));
+                .thenReturn(new SubmitMultiResult("2", null, null));
 
         command.execute(exchange);
         assertEquals(Arrays.asList("1", "2"), exchange.getMessage().getHeader(SmppConstants.ID));

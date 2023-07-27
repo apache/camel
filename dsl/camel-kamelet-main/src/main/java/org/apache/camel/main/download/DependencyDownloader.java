@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.CamelContextAware;
@@ -159,5 +160,18 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      * @param value modeline value
      */
     void onLoadingModeline(String key, String value);
+
+    /**
+     * Gets download record for a given artifact
+     *
+     * @return download record (if any) or <tt>null</tt> if artifact was not downloaded, but could have been resolved
+     *         from local disk
+     */
+    DownloadRecord getDownloadState(String groupId, String artifactId, String version);
+
+    /**
+     * Gets the records for the downloaded artifacts
+     */
+    Collection<DownloadRecord> downloadRecords();
 
 }

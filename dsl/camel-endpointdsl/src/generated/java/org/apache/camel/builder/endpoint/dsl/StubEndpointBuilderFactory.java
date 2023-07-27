@@ -393,14 +393,15 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param queue the value to set
          * @return the dsl builder
          */
-        default AdvancedStubEndpointConsumerBuilder queue(BlockingQueue queue) {
+        default AdvancedStubEndpointConsumerBuilder queue(
+                BlockingQueue<org.apache.camel.Exchange> queue) {
             doSetProperty("queue", queue);
             return this;
         }
@@ -408,7 +409,7 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -796,14 +797,15 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param queue the value to set
          * @return the dsl builder
          */
-        default AdvancedStubEndpointProducerBuilder queue(BlockingQueue queue) {
+        default AdvancedStubEndpointProducerBuilder queue(
+                BlockingQueue<org.apache.camel.Exchange> queue) {
             doSetProperty("queue", queue);
             return this;
         }
@@ -811,7 +813,7 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -884,14 +886,15 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param queue the value to set
          * @return the dsl builder
          */
-        default AdvancedStubEndpointBuilder queue(BlockingQueue queue) {
+        default AdvancedStubEndpointBuilder queue(
+                BlockingQueue<org.apache.camel.Exchange> queue) {
             doSetProperty("queue", queue);
             return this;
         }
@@ -899,7 +902,7 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

@@ -31,6 +31,20 @@
     <packaging>jar</packaging>
     <name>Camel :: JIRA</name>
 
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -56,7 +70,7 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <version>4.4.2</version>
+            <version>5.1.1</version>
             <!-- force jar type -->
             <type>jar</type>
         </dependency>

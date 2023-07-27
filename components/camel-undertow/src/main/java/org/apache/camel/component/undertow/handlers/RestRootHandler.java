@@ -118,7 +118,7 @@ public class RestRootHandler implements HttpHandler {
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer>> paths = new ArrayList<>();
         for (final UndertowConsumer consumer : consumers) {
             paths.add(new RestConsumerPath(consumer));
         }
@@ -136,7 +136,7 @@ public class RestRootHandler implements HttpHandler {
 
                 String consumerPath = consumer.getEndpoint().getHttpURI().getPath();
                 boolean matchOnUriPrefix = consumer.getEndpoint().isMatchOnUriPrefix();
-                // Just make sure the we get the right consumer path first
+                // Just make sure that we get the right consumer path first
                 if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
                     candidates.add(consumer);
                 }

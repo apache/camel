@@ -477,6 +477,8 @@ public interface QuickfixjEndpointBuilderFactory {
          * ref will lookup the configuration file in the registry. bean will
          * call a method on a bean to be used as the configuration. For bean you
          * can specify the method name after dot, eg bean:myBean.myMethod
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path configurationName
          * @return the dsl builder
@@ -502,6 +504,8 @@ public interface QuickfixjEndpointBuilderFactory {
          * ref will lookup the configuration file in the registry. bean will
          * call a method on a bean to be used as the configuration. For bean you
          * can specify the method name after dot, eg bean:myBean.myMethod
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

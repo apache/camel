@@ -40,7 +40,7 @@ public class SnmpTrapProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapProducer.class);
 
-    private SnmpEndpoint endpoint;
+    private final SnmpEndpoint endpoint;
 
     private Address targetAddress;
     private USM usm;
@@ -67,7 +67,9 @@ public class SnmpTrapProducer extends DefaultProducer {
         super.doStop();
 
         try {
-            SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            if (this.usm != null) {
+                SecurityModels.getInstance().removeSecurityModel(new Integer32(this.usm.getID()));
+            }
         } finally {
             this.targetAddress = null;
             this.usm = null;

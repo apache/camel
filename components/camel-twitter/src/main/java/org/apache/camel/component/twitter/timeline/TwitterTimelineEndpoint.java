@@ -98,9 +98,6 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
             case MENTIONS:
                 handler = new MentionsConsumerHandler(this);
                 break;
-            case RETWEETSOFME:
-                handler = new RetweetsConsumerHandler(this);
-                break;
             case LIST:
                 handler = new UserListConsumerHandler(this, user, list);
                 break;

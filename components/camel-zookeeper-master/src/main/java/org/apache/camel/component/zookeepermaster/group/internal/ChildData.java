@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import org.apache.zookeeper.data.Stat;
 
-public class ChildData<T> implements Comparable<ChildData> {
+public class ChildData<T> implements Comparable<ChildData<T>> {
     private final String path;
     private final Stat stat;
     private final byte[] data;
@@ -39,7 +39,7 @@ public class ChildData<T> implements Comparable<ChildData> {
      *             Note: this class has a natural ordering that is inconsistent with equals.
      */
     @Override
-    public int compareTo(ChildData rhs) {
+    public int compareTo(ChildData<T> rhs) {
         if (this == rhs) {
             return 0;
         }
@@ -60,7 +60,8 @@ public class ChildData<T> implements Comparable<ChildData> {
             return false;
         }
 
-        ChildData childData = (ChildData) o;
+        @SuppressWarnings("unchecked")
+        ChildData<T> childData = (ChildData<T>) o;
 
         if (!Arrays.equals(data, childData.data)) {
             return false;

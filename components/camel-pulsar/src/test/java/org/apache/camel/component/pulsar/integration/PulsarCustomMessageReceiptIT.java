@@ -50,7 +50,7 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarCustomMessageReceiptIT.class);
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic/PulsarCustomMessageReceiptIT";
     private static final String PRODUCER = "camel-producer-1";
 
     public PulsarMessageReceiptFactory mockPulsarMessageReceiptFactory = mock(PulsarMessageReceiptFactory.class);

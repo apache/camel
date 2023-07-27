@@ -31,6 +31,8 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "hazelcastconfiguri":
+        case "hazelcastConfigUri": target.setHazelcastConfigUri(property(camelContext, java.lang.String.class, value)); return true;
         case "hazelcastinstance":
         case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "hazelcastinstancename":
@@ -61,6 +63,8 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hazelcastconfiguri":
+        case "hazelcastConfigUri": return java.lang.String.class;
         case "hazelcastinstance":
         case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
         case "hazelcastinstancename":
@@ -92,6 +96,8 @@ public class HazelcastSedaEndpointConfigurer extends PropertyConfigurerSupport i
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "hazelcastconfiguri":
+        case "hazelcastConfigUri": return target.getHazelcastConfigUri();
         case "hazelcastinstance":
         case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastinstancename":

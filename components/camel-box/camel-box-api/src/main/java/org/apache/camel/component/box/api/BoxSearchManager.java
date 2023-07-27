@@ -78,7 +78,7 @@ public class BoxSearchManager {
             bsp.setAncestorFolderIds(Collections.singletonList(folderId));
             bsp.setQuery(query);
 
-            LinkedList<BoxItem> result = new LinkedList();
+            LinkedList<BoxItem> result = new LinkedList<>();
             BoxSearch bs = new BoxSearch(boxConnection);
             PartialCollection<BoxItem.Info> partialResult;
             int offset = 0;

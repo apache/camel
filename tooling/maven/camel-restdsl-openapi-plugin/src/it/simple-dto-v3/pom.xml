@@ -45,7 +45,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-servlet</artifactId>
+      <artifactId>camel-platform-http</artifactId>
       <version>@project.version@</version>
     </dependency>
     <dependency>

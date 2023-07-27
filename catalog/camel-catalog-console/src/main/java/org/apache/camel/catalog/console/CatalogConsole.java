@@ -98,7 +98,7 @@ public class CatalogConsole extends AbstractDevConsole {
         return root;
     }
 
-    private ArtifactModel findOtherModel(String artifactId) {
+    private ArtifactModel<?> findOtherModel(String artifactId) {
         // is it a mist component
         for (String name : catalog.findOtherNames()) {
             OtherModel model = catalog.otherModel(name);

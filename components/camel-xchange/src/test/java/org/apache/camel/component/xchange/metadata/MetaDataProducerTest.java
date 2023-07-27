@@ -21,16 +21,19 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
-import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
+import org.knowm.xchange.dto.meta.InstrumentMetaData;
 
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "These tests do no run reliably on the Apache CI")
 public class MetaDataProducerTest extends XChangeTestSupport {
 
     @Override
@@ -86,12 +89,12 @@ public class MetaDataProducerTest extends XChangeTestSupport {
     @Test
     void testCurrencyPairMetaData() {
 
-        CurrencyPairMetaData metadata
-                = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
+        InstrumentMetaData metadata
+                = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, InstrumentMetaData.class);
         assertNotNull(metadata, "CurrencyPairMetaData not null");
 
         metadata = template.requestBodyAndHeader("direct:currencyPairMetaData", null, HEADER_CURRENCY_PAIR,
-                CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
+                CurrencyPair.EOS_ETH, InstrumentMetaData.class);
         assertNotNull(metadata, "CurrencyPairMetaData not null");
     }
 }

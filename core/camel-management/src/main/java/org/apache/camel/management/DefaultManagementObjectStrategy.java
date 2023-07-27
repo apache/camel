@@ -179,6 +179,7 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
+import org.apache.camel.processor.transformer.DataTypeProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandler;
@@ -437,7 +438,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof ThrowExceptionProcessor) {
                 answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
-                answer = new ManagedTransformer(context, (TransformProcessor) target, (TransformDefinition) definition);
+                answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
+            } else if (target instanceof DataTypeProcessor) {
+                answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
             } else if (target instanceof PredicateValidatingProcessor) {
                 answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, (ValidateDefinition) definition);
             } else if (target instanceof WireTapProcessor) {

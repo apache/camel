@@ -41,7 +41,7 @@ for example in a Spring Boot application:
     <plugin>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-restdsl-openapi-plugin</artifactId>
-      <version>3.9.0</version> <!-- use the Camel version you are using -->
+      <version>3.21.0</version> <!-- use the Camel version you are using -->
     </plugin>
 
   </plugins>
@@ -80,22 +80,7 @@ in the `<configuration>` tag.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
 | `clientRequestValidation` | `false` | Whether to enable request validation.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification. 
-| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
-``
-<requestMappingValues>
-    <param>/my-api-path/\****</param>
-    <param>/my-other-path/**</param>
-</requestMappingValues>
-``
-|
 |========================================
-
-=== Spring Boot Project with Servlet component
-
-If the Maven project is a Spring Boot project and `restConfiguration` is enabled and the servlet component
-is being used as REST component, then this plugin will autodetect the package name (if packageName has not been explicit configured)
- where the `@SpringBootApplication` main class is located, and use the same package name
- for generating Rest DSL source code and a needed `CamelRestController` support class.
 
 == camel-restdsl-openapi:generate-with-dto
 
@@ -114,12 +99,12 @@ The DTO classes may require additional dependencies such as:
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.8.6</version>
+      <version>2.10.1</version>
     </dependency>
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-core</artifactId>
-      <version>2.1.9</version>
+      <version>2.2.15</version>
     </dependency>
 ----
 
@@ -129,7 +114,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.36 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.46 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
@@ -166,14 +151,6 @@ in the `<configuration>` tag.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
 | `clientRequestValidation` | `false` | Whether to enable request validation.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification. 
-| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
-``
-<requestMappingValues>
-    <param>/my-api-path/\****</param>
-    <param>/my-other-path/**</param>
-</requestMappingValues>
-``
-|
 |========================================
 
 == camel-restdsl-openapi:generate-xml-with-dto
@@ -193,12 +170,12 @@ The DTO classes may require additional dependencies such as:
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.8.6</version>
+      <version>2.10.1</version>
     </dependency>
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-core</artifactId>
-      <version>2.1.9</version>
+      <version>2.2.15</version>
     </dependency>
 ----
 
@@ -208,7 +185,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.36 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.46 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
@@ -244,14 +221,6 @@ in the `<configuration>` tag.
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
 | `clientRequestValidation` | `false` | Whether to enable request validation.
 | `basePath` | | Overrides the api base path as defined in the OpenAPI specification.
-| `requestMappingValues` | `/**` | Allows generation of custom RequestMapping mapping values. Multiple mapping values can be passed as:
-``
-<requestMappingValues>
-<param>/my-api-path/\****</param>
-<param>/my-other-path/**</param>
-</requestMappingValues>
-``
-|
 |========================================
 
 == camel-restdsl-openapi:generate-yaml-with-dto
@@ -271,12 +240,12 @@ The DTO classes may require additional dependencies such as:
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.8.6</version>
+      <version>2.10.1</version>
     </dependency>
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-core</artifactId>
-      <version>2.1.9</version>
+      <version>2.2.15</version>
     </dependency>
 ----
 
@@ -286,7 +255,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.36 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.46 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums

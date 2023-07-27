@@ -20,6 +20,7 @@ import java.net.URI;
 import java.security.KeyPair;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -36,12 +37,14 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
     @UriParam(label = "security", secret = true)
+    @Metadata(supportFileReference = true)
     private String knownHostsUri;
     @UriParam(label = "security", secret = true)
     private byte[] knownHosts;
     @UriParam(label = "security", secret = true)
     private String privateKeyFile;
     @UriParam(label = "security", secret = true)
+    @Metadata(supportFileReference = true)
     private String privateKeyUri;
     @UriParam(label = "security", secret = true)
     private byte[] privateKey;
@@ -81,6 +84,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String serverHostKeys;
     @UriParam(label = "security")
     private String publicKeyAcceptedAlgorithms;
+    @UriParam(label = "advanced")
+    private String filenameEncoding;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -391,5 +396,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setPublicKeyAcceptedAlgorithms(String publicKeyAcceptedAlgorithms) {
         this.publicKeyAcceptedAlgorithms = publicKeyAcceptedAlgorithms;
+    }
+
+    public String getFilenameEncoding() {
+        return filenameEncoding;
+    }
+
+    /**
+     * Encoding to use for FTP client when parsing filenames. By default, UTF-8 is used.
+     */
+    public void setFilenameEncoding(String filenameEncoding) {
+        this.filenameEncoding = filenameEncoding;
     }
 }

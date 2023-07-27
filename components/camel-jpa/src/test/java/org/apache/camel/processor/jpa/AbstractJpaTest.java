@@ -85,7 +85,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
         assertEntityInDB(size, SendEmail.class);
     }
 
-    protected void assertEntityInDB(int size, Class entityType) {
+    protected void assertEntityInDB(int size, Class<?> entityType) {
         List<?> results = entityManager.createQuery("select o from " + entityType.getName() + " o").getResultList();
         assertEquals(size, results.size());
 

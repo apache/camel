@@ -22,13 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * For working with Amazon Secrets Manager SDK v2.
  */
 @Component("aws-secrets-manager")
-public class SecretsManagerComponent extends DefaultComponent {
+public class SecretsManagerComponent extends HealthCheckComponent {
 
     @Metadata
     private SecretsManagerConfiguration configuration = new SecretsManagerConfiguration();

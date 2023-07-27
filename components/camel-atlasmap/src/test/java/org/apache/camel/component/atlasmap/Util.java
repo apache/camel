@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.atlasmap;
 
-import twitter4j.Status;
-import twitter4j.User;
+import twitter4j.v1.Status;
+import twitter4j.v1.User;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

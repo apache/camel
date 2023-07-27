@@ -35,7 +35,7 @@ public class BodyDeserializer extends StdDeserializer<Object> {
         ObjectMapper om = (ObjectMapper) p.getCodec();
 
         if (treeNode.get("clazz") != null) {
-            Class cl = om.readValue(treeNode.get("clazz").toString(), Class.class);
+            Class<?> cl = om.readValue(treeNode.get("clazz").toString(), Class.class);
             return om.readValue(treeNode.get("data").toString(), cl);
         }
 

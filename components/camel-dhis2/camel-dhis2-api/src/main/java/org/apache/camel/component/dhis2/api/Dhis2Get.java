@@ -17,10 +17,10 @@
 package org.apache.camel.component.dhis2.api;
 
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.support.InputStreamIterator;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.IterableDhis2Response;
 import org.hisp.dhis.integration.sdk.api.operation.GetOperation;
@@ -75,11 +75,11 @@ public class Dhis2Get {
         return getOperation;
     }
 
-    public <T> Iterator<T> collection(
-            String path, String itemType, Boolean paging, String fields, String filter, RootJunctionEnum rootJunction,
+    public InputStream collection(
+            String path, String arrayName, Boolean paging, String fields, String filter,
+            RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
-        Iterable<T> iterable;
 
         IterableDhis2Response iteratorDhis2Response;
         if (paging == null || paging) {
@@ -88,19 +88,8 @@ public class Dhis2Get {
             iteratorDhis2Response = getOperation.withoutPaging().transfer();
         }
 
-        if (itemType == null) {
-            iterable = (Iterable<T>) iteratorDhis2Response
-                    .returnAs(Map.class, path);
-        } else {
-            try {
-                iterable = (Iterable<T>) iteratorDhis2Response
-                        .returnAs(Class.forName(itemType), path);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return iterable.iterator();
+        Iterable<Map> iterable = iteratorDhis2Response.returnAs(Map.class, arrayName);
+        return new InputStreamIterator(new ItemTypeConverter(dhis2Client), iterable.iterator());
     }
 
 }

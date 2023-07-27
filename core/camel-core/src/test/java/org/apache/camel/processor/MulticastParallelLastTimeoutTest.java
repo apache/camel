@@ -16,14 +16,31 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated
+@Timeout(60)
 public class MulticastParallelLastTimeoutTest extends ContextTestSupport {
+
+    private final Phaser phaser = new Phaser(3);
+
+    @BeforeEach
+    void sendEarly() {
+        Assumptions.assumeTrue(context.isStarted(), "The test cannot be run because the context is not started");
+        template.sendBody("direct:start", "Hello");
+    }
 
     @Test
     public void testMulticastParallelLastTimeout() throws Exception {
@@ -31,7 +48,7 @@ public class MulticastParallelLastTimeoutTest extends ContextTestSupport {
         // C will timeout so we only get A and B
         mock.expectedBodiesReceived("AB");
 
-        template.sendBody("direct:start", "Hello");
+        phaser.awaitAdvanceInterruptibly(0, 5000, TimeUnit.SECONDS);
 
         assertMockEndpointsSatisfied();
     }
@@ -55,11 +72,11 @@ public class MulticastParallelLastTimeoutTest extends ContextTestSupport {
                         // use end to indicate end of multicast route
                         .end().to("mock:result");
 
-                from("direct:a").delay(500).setBody(constant("A"));
+                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(500).setBody(constant("A"));
 
-                from("direct:b").setBody(constant("B"));
+                from("direct:b").process(e -> phaser.arriveAndAwaitAdvance()).setBody(constant("B"));
 
-                from("direct:c").delay(3000).setBody(constant("C"));
+                from("direct:c").process(e -> phaser.arriveAndAwaitAdvance()).delay(3000).setBody(constant("C"));
             }
         };
     }

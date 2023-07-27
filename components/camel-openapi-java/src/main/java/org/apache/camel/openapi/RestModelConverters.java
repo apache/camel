@@ -30,8 +30,6 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Camel extended {@link ModelConverters} where we are appending vendor extensions to include the java class name of
@@ -40,7 +38,6 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("rawtypes")
 public class RestModelConverters {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestModelConverters.class);
     private static final ModelConverters MODEL30_CONVERTERS;
 
     static {
@@ -55,7 +52,7 @@ public class RestModelConverters {
         MODEL20_CONVERTERS.addConverter(new ClassNameExtensionModelResolver());
     }
 
-    public List<? extends Schema> readClass(OpenAPI oasDocument, Class<?> clazz) {
+    public List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz) {
         if (clazz.equals(java.io.File.class)) {
             // File is a special type in OAS2 / OAS3 (no model)
             return null;
@@ -64,14 +61,14 @@ public class RestModelConverters {
         }
     }
 
-    private List<? extends Schema> readClassOpenApi3(Class<?> clazz) {
+    private List<? extends Schema<?>> readClassOpenApi3(Class<?> clazz) {
         String name = clazz.getName();
         if (!name.contains(".")) {
             return null;
         }
 
         Map<String, Schema> swaggerModel = MODEL30_CONVERTERS.readAll(clazz);
-        List<Schema> modelSchemas = new java.util.ArrayList<>();
+        List<Schema<?>> modelSchemas = new java.util.ArrayList<>();
         swaggerModel.forEach((key, schema) -> {
             schema.setName(key);
             modelSchemas.add(schema);
@@ -105,7 +102,7 @@ public class RestModelConverters {
 
         @Override
         public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
-            Schema result = delegate.resolve(annotatedType, context, next);
+            Schema<?> result = delegate.resolve(annotatedType, context, next);
 
             if (result != null && Objects.equals("object", result.getType())) {
                 JavaType type;

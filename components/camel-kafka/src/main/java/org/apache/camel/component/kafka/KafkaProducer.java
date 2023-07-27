@@ -169,9 +169,15 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         // if we are in asynchronous mode we need a worker pool
         if (!configuration.isSynchronous() && workerPool == null) {
-            workerPool = endpoint.createProducerExecutor();
-            // we create a thread pool so we should also shut it down
-            shutdownWorkerPool = true;
+            // If custom worker pool is provided, then use it, else create a new one.
+            if (configuration.getWorkerPool() != null) {
+                workerPool = configuration.getWorkerPool();
+                shutdownWorkerPool = false;
+            } else {
+                workerPool = endpoint.createProducerExecutor();
+                // we create a thread pool so we should also shut it down
+                shutdownWorkerPool = true;
+            }
         }
 
         // init client id which we may need to get from the kafka producer via reflection
@@ -196,6 +202,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         if (healthCheckRepository != null) {
             producerHealthCheck = new KafkaProducerHealthCheck(this, clientId);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
+                    && getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
     }

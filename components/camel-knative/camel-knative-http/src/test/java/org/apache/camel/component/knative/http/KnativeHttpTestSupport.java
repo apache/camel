@@ -89,17 +89,7 @@ public final class KnativeHttpTestSupport {
         configuration.setBindPort(bindPort);
 
         try {
-            camelContext.addService(new VertxPlatformHttpServer(configuration) {
-                @Override
-                protected void doInit() {
-                    initializeServer();
-                }
-
-                @Override
-                protected void doStart() throws Exception {
-                    startServer();
-                }
-            });
+            camelContext.addService(new MyVertxPlatformHttpServer(configuration));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -108,5 +98,22 @@ public final class KnativeHttpTestSupport {
         component.setEngine(new VertxPlatformHttpEngine());
 
         camelContext.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, component);
+    }
+
+    private static class MyVertxPlatformHttpServer extends VertxPlatformHttpServer {
+
+        public MyVertxPlatformHttpServer(VertxPlatformHttpServerConfiguration configuration) {
+            super(configuration);
+        }
+
+        @Override
+        protected void doInit() throws Exception {
+            super.initializeServer();
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            super.startServer();
+        }
     }
 }

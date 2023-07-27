@@ -23,9 +23,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,6 +66,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private CamelContext camelContext;
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
     private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
+    private final Map<String, DownloadRecord> downloadRecords = new HashMap<>();
     private KnownReposResolver knownReposResolver;
 
     // all maven-resolver work is delegated to camel-tooling-maven
@@ -394,6 +398,16 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
     }
 
+    @Override
+    public DownloadRecord getDownloadState(String groupId, String artifactId, String version) {
+        return downloadRecords.get(groupId + ":" + artifactId + ":" + version);
+    }
+
+    @Override
+    public Collection<DownloadRecord> downloadRecords() {
+        return downloadRecords.values();
+    }
+
     private Set<String> resolveExtraRepositories(String repositoryList) {
         Set<String> repositories = new LinkedHashSet<>();
         if (repositoryList != null) {
@@ -417,7 +431,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (classLoader == null && camelContext != null) {
             classLoader = camelContext.getApplicationContextClassLoader();
         }
-        threadPool = new DownloadThreadPool();
+        threadPool = new DownloadThreadPool(this);
         threadPool.setCamelContext(camelContext);
         ServiceHelper.buildService(threadPool);
 
@@ -426,6 +440,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
         mavenDownloaderImpl.setRepos(repos);
         mavenDownloaderImpl.setFresh(fresh);
+        // use listener to keep track of which JARs was downloaded from a remote Maven repo (and how long time it took)
+        mavenDownloaderImpl.setRemoteArtifactDownloadListener((groupId, artifactId, version, repoId, repoUrl, elapsed) -> {
+            String gav = groupId + ":" + artifactId + ":" + version;
+            downloadRecords.put(gav, new DownloadRecord(groupId, artifactId, version, repoId, repoUrl, elapsed));
+        });
         ServiceHelper.buildService(mavenDownloaderImpl);
 
         mavenDownloader = mavenDownloaderImpl;

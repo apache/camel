@@ -32,11 +32,11 @@ import javax.xml.stream.XMLStreamWriter;
  */
 class XMLStreamReaderInputStream extends InputStream {
     private static final int BUFFER_SIZE = 4096;
-    private XMLStreamReader reader;
+    private final XMLStreamReader reader;
     private XMLStreamWriter writer;
-    private TrimmableByteArrayOutputStream chunk;
-    private byte[] buffer;
-    private String charset;
+    private final TrimmableByteArrayOutputStream chunk;
+    private final byte[] buffer;
+    private final String charset;
     private int bpos;
 
     XMLStreamReaderInputStream(XMLStreamReader reader, String charset, XMLOutputFactory outfactory) {

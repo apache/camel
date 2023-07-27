@@ -157,7 +157,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private Processor errorHandler;
     private String id;
     private String routeId;
-    private Collection<Processor> processors;
+    private final Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
     private boolean synchronous;

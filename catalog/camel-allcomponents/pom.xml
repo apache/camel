@@ -32,7 +32,21 @@
     <name>Camel :: All Components Sync point</name>
     <description>Depends on all components to ensure correct build ordering</description>
 
-	<dependencies>
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
@@ -805,11 +819,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-hyperledger-aries</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-ical</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1255,6 +1264,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-opensearch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-openstack</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1301,6 +1315,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-platform-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-platform-http-main</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1746,11 +1765,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-webhook</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-weka</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -460,6 +460,9 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * be overwritten by the header
          * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI.
          * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer

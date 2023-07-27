@@ -27,7 +27,7 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
 public class BlacklistServiceFilter implements ServiceFilter {
-    private List<ServiceDefinition> services;
+    private final List<ServiceDefinition> services;
 
     public BlacklistServiceFilter() {
         this.services = new ArrayList<>();

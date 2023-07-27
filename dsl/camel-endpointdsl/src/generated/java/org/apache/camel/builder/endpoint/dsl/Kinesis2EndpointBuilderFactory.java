@@ -78,6 +78,37 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder asyncClient(boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder asyncClient(String asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1262,6 +1293,37 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder asyncClient(boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder asyncClient(String asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1690,6 +1752,37 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder asyncClient(boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder asyncClient(String asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
             return this;
         }
         /**

@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.fabric8.kubernetes.client.ConfigBuilder;
@@ -109,12 +108,12 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                 PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
                         .resolvePropertyConfigurer(ConfigBuilder.class.getName(), camelContext);
 
-                // use copy to keep track of which options was configureed or not
+                // use copy to keep track of which options was configured or not
                 OrderedLocationProperties copy = new OrderedLocationProperties();
                 copy.putAll(properties);
 
                 PropertyBindingSupport.build()
-                        .withProperties((Map) copy)
+                        .withProperties(copy.asMap())
                         .withFluentBuilder(true)
                         .withIgnoreCase(true)
                         .withReflection(false)

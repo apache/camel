@@ -34,7 +34,7 @@ import org.apache.camel.component.hazelcast.HazelcastOperation;
  */
 public class HazelcastQueueProducer extends HazelcastDefaultProducer {
 
-    private IQueue<Object> queue;
+    private final IQueue<Object> queue;
 
     public HazelcastQueueProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String queueName) {
         super(endpoint);
@@ -94,7 +94,7 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
                 break;
 
             case DRAIN_TO:
-                this.drainTo((Collection) drainToCollection, exchange);
+                this.drainTo((Collection<?>) drainToCollection, exchange);
                 break;
 
             case TAKE:
@@ -158,7 +158,7 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     }
 
     private void removeAll(Exchange exchange) {
-        Collection body = exchange.getIn().getBody(Collection.class);
+        Collection<?> body = exchange.getIn().getBody(Collection.class);
         this.queue.removeAll(body);
     }
 
@@ -172,7 +172,7 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
     }
 
     private void retainAll(Exchange exchange) {
-        Collection body = exchange.getIn().getBody(Collection.class);
+        Collection<?> body = exchange.getIn().getBody(Collection.class);
         this.queue.retainAll(body);
     }
 }

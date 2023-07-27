@@ -36,7 +36,7 @@ public class PulsarConsumerInURIClientIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInURIClientIT.class);
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic/PulsarConsumerInURIClientIT";
     private static final String PRODUCER = "camel-producer-1";
     private static final String URI_ENDPOINT = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
                                                + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer&serviceUrl="

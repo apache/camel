@@ -259,6 +259,8 @@ public interface JsonataEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path resourceUri
          * @return the dsl builder
@@ -283,6 +285,8 @@ public interface JsonataEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

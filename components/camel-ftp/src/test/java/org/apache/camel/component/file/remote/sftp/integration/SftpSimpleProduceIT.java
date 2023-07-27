@@ -31,7 +31,8 @@ public class SftpSimpleProduceIT extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleProduce() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin",
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&knownHostsFile="
+                                   + service.getKnownHostsFile(),
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = ftpFile("hello.txt").toFile();
@@ -42,9 +43,9 @@ public class SftpSimpleProduceIT extends SftpServerTestSupport {
     @Test
     public void testSftpSimpleSubPathProduce() {
         template.sendBodyAndHeader(
-                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/mysub?username=admin&password=admin",
-                "Bye World",
-                Exchange.FILE_NAME, "bye.txt");
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/mysub?username=admin&password=admin&knownHostsFile="
+                                   + service.getKnownHostsFile(),
+                "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         File file = ftpFile("mysub/bye.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
@@ -55,7 +56,8 @@ public class SftpSimpleProduceIT extends SftpServerTestSupport {
     public void testSftpSimpleTwoSubPathProduce() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub/myother?username=admin&password=admin",
+                                   + "/mysub/myother?username=admin&password=admin&knownHostsFile="
+                                   + service.getKnownHostsFile(),
                 "Farewell World", Exchange.FILE_NAME,
                 "farewell.txt");
 

@@ -26,11 +26,23 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
 
     private final CamelContext camelContext;
     private final StreamCachingStrategy streamCachingStrategy;
+    private final String[] allowClasses;
+    private final String[] denyClasses;
 
     public ManagedStreamCachingStrategy(CamelContext camelContext, StreamCachingStrategy streamCachingStrategy) {
         super(camelContext, streamCachingStrategy);
         this.camelContext = camelContext;
         this.streamCachingStrategy = streamCachingStrategy;
+        if (streamCachingStrategy.getAllowClasses() != null) {
+            this.allowClasses = streamCachingStrategy.getAllowClasses().toArray(new String[0]);
+        } else {
+            this.allowClasses = null;
+        }
+        if (streamCachingStrategy.getDenyClasses() != null) {
+            this.denyClasses = streamCachingStrategy.getDenyClasses().toArray(new String[0]);
+        } else {
+            this.denyClasses = null;
+        }
     }
 
     public CamelContext getCamelContext() {
@@ -44,6 +56,16 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
     @Override
     public boolean isEnabled() {
         return streamCachingStrategy.isEnabled();
+    }
+
+    @Override
+    public String[] getAllowClasses() {
+        return allowClasses;
+    }
+
+    @Override
+    public String[] getDenyClasses() {
+        return denyClasses;
     }
 
     @Override

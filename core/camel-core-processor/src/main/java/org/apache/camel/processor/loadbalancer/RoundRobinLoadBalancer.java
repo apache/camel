@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
  * Implements the round robin load balancing policy
  */
 public class RoundRobinLoadBalancer extends QueueLoadBalancer {
-    private AtomicInteger counter = new AtomicInteger(-1);
+    private final AtomicInteger counter = new AtomicInteger(-1);
 
     @Override
     protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {

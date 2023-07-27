@@ -118,6 +118,56 @@ public interface TwitterSearchComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default TwitterSearchComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default TwitterSearchComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default TwitterSearchComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * The http proxy host which can be used for the camel-twitter.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -256,6 +306,9 @@ public interface TwitterSearchComponentBuilderFactory {
             case "bridgeErrorHandler": ((TwitterSearchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((TwitterSearchComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((TwitterSearchComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((TwitterSearchComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((TwitterSearchComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((TwitterSearchComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "httpProxyHost": ((TwitterSearchComponent) component).setHttpProxyHost((java.lang.String) value); return true;
             case "httpProxyPassword": ((TwitterSearchComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
             case "httpProxyPort": ((TwitterSearchComponent) component).setHttpProxyPort((int) value); return true;

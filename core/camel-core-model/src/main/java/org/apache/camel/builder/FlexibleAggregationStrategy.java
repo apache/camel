@@ -334,7 +334,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     private class PropertyInjector extends FlexibleAggregationStrategyInjector {
-        private String propertyName;
+        private final String propertyName;
 
         PropertyInjector(Class<E> type, String propertyName) {
             super(type);
@@ -376,7 +376,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     }
 
     private class HeaderInjector extends FlexibleAggregationStrategyInjector {
-        private String headerName;
+        private final String headerName;
 
         HeaderInjector(Class<E> type, String headerName) {
             super(type);

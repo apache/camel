@@ -177,6 +177,23 @@ public interface GoogleMailStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to store the entire email message in an RFC 2822 formatted
+         * and base64url encoded string (in JSon format), in the Camel message
+         * body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param raw the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamComponentBuilder raw(boolean raw) {
+            doSetProperty("raw", raw);
+            return this;
+        }
+        /**
          * GMail scopes.
          * 
          * The option is a:
@@ -243,6 +260,56 @@ public interface GoogleMailStreamComponentBuilderFactory {
         default GoogleMailStreamComponentBuilder configuration(
                 org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
         /**
@@ -340,10 +407,14 @@ public interface GoogleMailStreamComponentBuilderFactory {
             case "markAsRead": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMarkAsRead((boolean) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMaxResults((long) value); return true;
             case "query": getOrCreateConfiguration((GoogleMailStreamComponent) component).setQuery((java.lang.String) value); return true;
+            case "raw": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRaw((boolean) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleMailStreamComponent) component).setScopes((java.util.List) value); return true;
             case "autowiredEnabled": ((GoogleMailStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
             case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;
+            case "healthCheckConsumerEnabled": ((GoogleMailStreamComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((GoogleMailStreamComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((GoogleMailStreamComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleMailStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRefreshToken((java.lang.String) value); return true;

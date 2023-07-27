@@ -114,26 +114,12 @@ public class Web3jProducerInvokeOnHeaderFactory implements InvokeOnHeaderStrateg
         case "NET_PEER_COUNT": target.netPeerCount(exchange.getMessage()); return null;
         case "net_version":
         case "NET_VERSION": target.netVersion(exchange.getMessage()); return null;
-        case "quorum_canonical_hash":
-        case "QUORUM_CANONICAL_HASH": target.quorumCanonicalHash(exchange.getMessage()); return null;
         case "quorum_eth_send_transaction":
         case "QUORUM_ETH_SEND_TRANSACTION": target.quorumEthSendTransaction(exchange.getMessage()); return null;
         case "quorum_get_private_payload":
         case "QUORUM_GET_PRIVATE_PAYLOAD": target.quorumGetPrivatePayload(exchange.getMessage()); return null;
-        case "quorum_is_block_maker":
-        case "QUORUM_IS_BLOCK_MAKER": target.quorumIsBlockMaker(exchange.getMessage()); return null;
-        case "quorum_is_voter":
-        case "QUORUM_IS_VOTER": target.quorumIsVoter(exchange.getMessage()); return null;
-        case "quorum_make_block":
-        case "QUORUM_MAKE_BLOCK": target.quorumMakeBlock(exchange.getMessage()); return null;
         case "quorum_node_info":
         case "QUORUM_NODE_INFO": target.quorumNodeInfo(exchange.getMessage()); return null;
-        case "quorum_pause_block_maker":
-        case "QUORUM_PAUSE_BLOCK_MAKER": target.quorumPauseBlockMaker(exchange.getMessage()); return null;
-        case "quorum_resume_block_maker":
-        case "QUORUM_RESUME_BLOCK_MAKER": target.quorumResumeBlockMaker(exchange.getMessage()); return null;
-        case "quorum_vote":
-        case "QUORUM_VOTE": target.quorumVote(exchange.getMessage()); return null;
         case "shh_add_to_group":
         case "SHH_ADD_TO_GROUP": target.shhAddToGroup(exchange.getMessage()); return null;
         case "shh_get_filter_changes":

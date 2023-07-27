@@ -50,7 +50,7 @@ public class LambdaListFunctionsIT extends Aws2LambdaBase {
         template.send("direct:createFunction", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Lambda2Constants.RUNTIME, "nodejs6.10");
+                exchange.getIn().setHeader(Lambda2Constants.RUNTIME, "nodejs16.x");
                 exchange.getIn().setHeader(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
                 exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Hello with node.js on Lambda");
                 exchange.getIn().setHeader(Lambda2Constants.ROLE,

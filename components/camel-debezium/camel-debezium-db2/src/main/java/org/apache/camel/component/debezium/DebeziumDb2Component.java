@@ -49,7 +49,7 @@ public final class DebeziumDb2Component extends DebeziumComponent<Db2ConnectorEm
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(
+    protected DebeziumEndpoint<Db2ConnectorEmbeddedDebeziumConfiguration> initializeDebeziumEndpoint(
             String uri, Db2ConnectorEmbeddedDebeziumConfiguration configuration) {
         return new DebeziumDb2Endpoint(uri, this, configuration);
     }

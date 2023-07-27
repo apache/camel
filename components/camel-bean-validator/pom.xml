@@ -59,7 +59,7 @@
         <dependency>
             <groupId>jakarta.el</groupId>
             <artifactId>jakarta.el-api</artifactId>
-            <version>${jakarta-el-api-hibernate-validator-version}</version>
+            <version>${jakarta-el-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.expressly</groupId>

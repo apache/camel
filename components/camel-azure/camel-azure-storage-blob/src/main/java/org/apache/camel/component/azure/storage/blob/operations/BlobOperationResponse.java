@@ -56,11 +56,11 @@ public final class BlobOperationResponse {
         return new BlobOperationResponse(true);
     }
 
-    public static BlobOperationResponse create(final Response response) {
+    public static BlobOperationResponse create(final Response<?> response) {
         return buildResponse(response, false);
     }
 
-    public static BlobOperationResponse createWithEmptyBody(final Response response) {
+    public static BlobOperationResponse createWithEmptyBody(final Response<?> response) {
         return buildResponse(response, true);
     }
 

@@ -18,18 +18,20 @@ package org.apache.camel.component.xchange;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
 import si.mazi.rescu.SynchronizedValueFactory;
 
-// Wraps the exchange to avoid anem collision with the camel exchange
+// Wraps the exchange to avoid name collision with the camel exchange
 public class XChange implements Exchange {
 
     private final Exchange delegate;
@@ -49,8 +51,15 @@ public class XChange implements Exchange {
     }
 
     @Override
-    public List<CurrencyPair> getExchangeSymbols() {
-        return delegate.getExchangeSymbols();
+    public List<Instrument> getExchangeInstruments() {
+        return delegate.getExchangeInstruments();
+    }
+
+    public List<CurrencyPair> getCurrencyPairs() {
+        return delegate.getExchangeInstruments().stream()
+                .filter(it -> it instanceof CurrencyPair)
+                .map(it -> (CurrencyPair) it)
+                .collect(Collectors.toList());
     }
 
     @Override

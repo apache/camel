@@ -38,7 +38,6 @@ public class BeanComponent extends DefaultComponent {
 
     // use an internal soft cache for BeanInfo as they are costly to introspect
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
-    @SuppressWarnings("unchecked")
     private final Map<BeanInfoCacheKey, BeanInfo> beanInfoCache = LRUCacheFactory.newLRUSoftCache(1000);
 
     @Metadata(defaultValue = "Singleton", description = "Scope of bean."
@@ -80,8 +79,7 @@ public class BeanComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
-            LRUCache cache = (LRUCache) this.beanInfoCache;
+        if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache<BeanInfoCacheKey, BeanInfo> cache) {
             LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(),
                     cache.getMisses(), cache.getEvicted());
         }

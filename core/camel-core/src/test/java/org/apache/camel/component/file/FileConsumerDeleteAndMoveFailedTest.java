@@ -19,7 +19,9 @@ package org.apache.camel.component.file;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Flaky and may have conflicts if running along with its parent class")
 public class FileConsumerDeleteAndMoveFailedTest extends FileConsumerDeleteAndFailureTest {
 
     @Override

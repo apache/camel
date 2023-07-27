@@ -90,7 +90,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
 
         PlainJWT plainJWT = new PlainJWT(claimsSet.build());
 
-        Map<String, Object> headers = new HashMap();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("type", "JWT");
         headers.put("alg", "RS256");
         Map<String, Object> claims = new KeycloakUsernameSubClaimAdapter("preffered_name").convert(claimsSet.getClaims());

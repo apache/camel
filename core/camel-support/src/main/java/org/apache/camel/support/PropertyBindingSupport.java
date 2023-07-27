@@ -915,7 +915,7 @@ public final class PropertyBindingSupport {
         if (reference && value instanceof String) {
             String str = value.toString();
             if (str.startsWith("#bean:")) {
-                // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
+                // okay it's a reference so swap to look up this which is already supported in IntrospectionSupport
                 refName = "#" + ((String) value).substring(6);
                 value = null;
             } else if (str.equals("#autowired")) {
@@ -1156,10 +1156,10 @@ public final class PropertyBindingSupport {
                 Class<?> parameterType = null;
                 try {
                     // our only hope is that the List has getter/setter that use a generic type to specify what kind of class
-                    // they contains so we can use that to know the parameter type
+                    // they contain, so we can use that to know the parameter type
                     Method method = introspection.getPropertyGetter(target.getClass(), key, ignoreCase);
                     if (method != null) {
-                        // its a list (List<com.foo.MyObject>) so we look for < >
+                        // it's a list (List<com.foo.MyObject>) so we look for < >
                         String typeName = method.getGenericReturnType().getTypeName();
                         String fqn = StringHelper.between(typeName, "<", ">");
                         if (fqn != null) {
@@ -1208,7 +1208,7 @@ public final class PropertyBindingSupport {
     }
 
     private static Method findBestSetterMethod(
-            CamelContext context, Class clazz, String name,
+            CamelContext context, Class<?> clazz, String name,
             boolean fluentBuilder, boolean allowPrivateSetter, boolean ignoreCase) {
         // is there a direct setter?
         final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(context);
@@ -1273,7 +1273,7 @@ public final class PropertyBindingSupport {
     public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', false);
-        Constructor found = findMatchingConstructor(type.getConstructors(), params);
+        Constructor<?> found = findMatchingConstructor(type.getConstructors(), params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
             for (int i = 0; i < found.getParameterCount(); i++) {
@@ -1313,11 +1313,11 @@ public final class PropertyBindingSupport {
      * @param  params       the parameters
      * @return              the constructor, or null if no matching constructor can be found
      */
-    private static Constructor findMatchingConstructor(Constructor<?>[] constructors, String[] params) {
-        List<Constructor> candidates = new ArrayList<>();
-        Constructor fallbackCandidate = null;
+    private static Constructor<?> findMatchingConstructor(Constructor<?>[] constructors, String[] params) {
+        List<Constructor<?>> candidates = new ArrayList<>();
+        Constructor<?> fallbackCandidate = null;
 
-        for (Constructor ctr : constructors) {
+        for (Constructor<?> ctr : constructors) {
             if (ctr.getParameterCount() != params.length) {
                 continue;
             }
@@ -1538,18 +1538,17 @@ public final class PropertyBindingSupport {
      * @throws Exception    is thrown if error resolving the bean, or if the value is invalid.
      */
     public static Object resolveBean(CamelContext camelContext, Object value) throws Exception {
-        if (!(value instanceof String)) {
+        if (!(value instanceof String strval)) {
             return value;
         }
 
-        String strval = (String) value;
         Object answer = value;
 
         // resolve placeholders
         strval = camelContext.resolvePropertyPlaceholders(strval);
 
         if (strval.startsWith("#class:")) {
-            // its a new class to be created
+            // it's a new class to be created
             String className = strval.substring(7);
             String factoryMethod = null;
             String parameters = null;

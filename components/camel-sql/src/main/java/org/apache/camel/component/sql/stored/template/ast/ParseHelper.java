@@ -34,7 +34,7 @@ public final class ParseHelper {
 
         String sqlType = sqlTypeToken.toString();
 
-        //if number then use it(probably Vendor spesific SQL-type)
+        // if number, then use it(probably Vendor specific SQL-type)
         if (sqlTypeToken.kind == SSPTParserConstants.NUMBER) {
             return Integer.parseInt(sqlType);
         }
@@ -50,7 +50,7 @@ public final class ParseHelper {
                 throw new ParseRuntimeException("Failed to parse class.field:" + sqlType);
             }
             try {
-                Class clazz = classResolver.resolveMandatoryClass(className);
+                Class<?> clazz = classResolver.resolveMandatoryClass(className);
                 return getFieldInt(clazz, fieldName);
             } catch (ClassNotFoundException e) {
                 throw new ParseRuntimeException("Class for " + className + " not found", e);
@@ -70,7 +70,7 @@ public final class ParseHelper {
         }
     }
 
-    private static int getFieldInt(Class clazz, String sqlType) {
+    private static int getFieldInt(Class<?> clazz, String sqlType) {
         Field field = ReflectionUtils.findField(clazz, sqlType);
         if (field == null) {
             throw new ParseRuntimeException("Field " + sqlType + " not found from " + clazz.getName());

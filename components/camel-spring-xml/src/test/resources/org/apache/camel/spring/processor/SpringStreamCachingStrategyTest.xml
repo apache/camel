@@ -26,7 +26,8 @@
 
   <camelContext streamCache="true" xmlns="http://camel.apache.org/schema/spring">
 
-    <streamCaching id="myCacheConfig" spoolEnabled="true" bufferSize="2048" spoolDirectory="target/cachedir" spoolThreshold="8192"/>
+    <streamCaching id="myCacheConfig" allowClasses="java.io.ByteArrayInputStream" denyClasses="java.io.Reader"
+                   spoolEnabled="true" bufferSize="2048" spoolDirectory="target/cachedir" spoolThreshold="8192"/>
 
     <route>
       <from uri="direct:c"/>

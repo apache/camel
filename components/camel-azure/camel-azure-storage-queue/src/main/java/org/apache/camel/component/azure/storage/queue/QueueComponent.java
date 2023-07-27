@@ -25,13 +25,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * Azure Queue Storage component using azure java sdk v12.x
  */
 @Component("azure-storage-queue")
-public class QueueComponent extends DefaultComponent {
+public class QueueComponent extends HealthCheckComponent {
     @Metadata
     private QueueConfiguration configuration = new QueueConfiguration();
 

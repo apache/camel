@@ -236,6 +236,11 @@ public final class CatalogLoader {
         }
 
         @Override
+        public ClassLoader getClassLoader() {
+            return classLoader;
+        }
+
+        @Override
         public String getLoadedVersion() {
             return version;
         }

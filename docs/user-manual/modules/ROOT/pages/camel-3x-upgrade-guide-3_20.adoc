@@ -29,6 +29,10 @@ The option `backlogTracing=true` now automatic enabled the tracer on startup. Th
 was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
 The old behavior can be archived by setting `backlogTracingStandby=true`.
 
+The xref:backlog-tracer.adoc[Backlog Tracer] has been enhanced and _fixed_ to trace message headers (also streaming types).
+This means that previously headers of type `InputStream` was not traced before, but is now included. This could mean that
+the header stream is positioned at end, and logging the header afterward, may appear as the header value is empty.
+
 === camel-micrometer-starter
 
 The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.

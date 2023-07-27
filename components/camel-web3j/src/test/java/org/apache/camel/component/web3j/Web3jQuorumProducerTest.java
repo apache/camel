@@ -26,20 +26,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.protocol.core.methods.response.VoidResponse;
 import org.web3j.quorum.Quorum;
-import org.web3j.quorum.methods.response.BlockMaker;
-import org.web3j.quorum.methods.response.CanonicalHash;
-import org.web3j.quorum.methods.response.MakeBlock;
 import org.web3j.quorum.methods.response.PrivatePayload;
-import org.web3j.quorum.methods.response.QuorumNodeInfo;
-import org.web3j.quorum.methods.response.Vote;
-import org.web3j.quorum.methods.response.Voter;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
@@ -62,113 +53,6 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
     @Override
     public boolean isUseAdviceWith() {
         return false;
-    }
-
-    //Quorum API tests
-    @Test
-    public void quorumNodeInfoTest() throws Exception {
-        QuorumNodeInfo.NodeInfo nodeInfo = new QuorumNodeInfo.NodeInfo();
-        QuorumNodeInfo response = Mockito.mock(QuorumNodeInfo.class);
-
-        Mockito.when(mockQuorum.quorumNodeInfo()).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getNodeInfo()).thenReturn(nodeInfo);
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_NODE_INFO);
-        template.send(exchange);
-        QuorumNodeInfo.NodeInfo body = exchange.getIn().getBody(QuorumNodeInfo.NodeInfo.class);
-        assertNotNull(body);
-    }
-
-    @Test
-    public void quorumCanonicalHashTest() throws Exception {
-        CanonicalHash response = Mockito.mock(CanonicalHash.class);
-        Mockito.when(mockQuorum.quorumCanonicalHash(any())).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getCanonicalHash()).thenReturn("4444");
-
-        Exchange exchange = createExchangeWithBodyAndHeader("1234567890", OPERATION, Web3jConstants.QUORUM_CANONICAL_HASH);
-        template.send(exchange);
-        String body = exchange.getIn().getBody(String.class);
-        assertEquals("4444", body);
-    }
-
-    @Test
-    public void quorumVoteTest() throws Exception {
-        Vote response = Mockito.mock(Vote.class);
-        Mockito.when(mockQuorum.quorumVote(any())).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getTransactionHash()).thenReturn("test");
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_VOTE);
-        template.send(exchange);
-        String body = exchange.getIn().getBody(String.class);
-        assertEquals("test", body);
-    }
-
-    @Test
-    public void quorumMakeBlockTest() throws Exception {
-        MakeBlock response = Mockito.mock(MakeBlock.class);
-        Mockito.when(mockQuorum.quorumMakeBlock()).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getBlockHash()).thenReturn("test");
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_MAKE_BLOCK);
-        template.send(exchange);
-        String body = exchange.getIn().getBody(String.class);
-        assertEquals("test", body);
-    }
-
-    @Test
-    public void quorumPauseBlockMakerTest() throws Exception {
-        VoidResponse response = Mockito.mock(VoidResponse.class);
-        Mockito.when(mockQuorum.quorumPauseBlockMaker()).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.isValid()).thenReturn(Boolean.TRUE);
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_PAUSE_BLOCK_MAKER);
-        template.send(exchange);
-        Boolean body = exchange.getIn().getBody(Boolean.class);
-        assertTrue(body);
-    }
-
-    @Test
-    public void quorumResumeBlockMakerTest() throws Exception {
-        VoidResponse response = Mockito.mock(VoidResponse.class);
-        Mockito.when(mockQuorum.quorumResumeBlockMaker()).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.isValid()).thenReturn(Boolean.TRUE);
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_RESUME_BLOCK_MAKER);
-        template.send(exchange);
-        Boolean body = exchange.getIn().getBody(Boolean.class);
-        assertTrue(body);
-    }
-
-    @Test
-    public void quorumIsBlockMakerTest() throws Exception {
-        BlockMaker response = Mockito.mock(BlockMaker.class);
-        Mockito.when(mockQuorum.quorumIsBlockMaker(any())).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.isBlockMaker()).thenReturn(Boolean.TRUE);
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_IS_BLOCK_MAKER);
-        template.send(exchange);
-        Boolean body = exchange.getIn().getBody(Boolean.class);
-        assertTrue(body);
-    }
-
-    @Test
-    public void quorumIsVoterTest() throws Exception {
-        Voter response = Mockito.mock(Voter.class);
-        Mockito.when(mockQuorum.quorumIsVoter(any())).thenReturn(request);
-        Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.isVoter()).thenReturn(Boolean.TRUE);
-
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_IS_VOTER);
-        template.send(exchange);
-        Boolean body = exchange.getIn().getBody(Boolean.class);
-        assertTrue(body);
     }
 
     @Test

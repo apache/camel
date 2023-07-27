@@ -21,7 +21,7 @@ public class RssEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(24);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -33,7 +33,6 @@ public class RssEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("feedUri");
         props.add("greedy");
         props.add("initialDelay");
-        props.add("password");
         props.add("pollStrategy");
         props.add("repeatCount");
         props.add("runLoggingLevel");
@@ -47,12 +46,8 @@ public class RssEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("throttleEntries");
         props.add("timeUnit");
         props.add("useFixedDelay");
-        props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);

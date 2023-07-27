@@ -21,9 +21,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 
 @UriParams
 public class TwitterConfiguration {
@@ -92,37 +89,29 @@ public class TwitterConfiguration {
     }
 
     /**
-     * Builds a Twitter4J Configuration using the OAuth params.
-     *
-     * @return Configuration
+     * Builds {@link Twitter} with the current configuration.
      */
-    public Configuration getConfiguration() {
+    protected Twitter buildTwitter() {
         checkComplete();
-        ConfigurationBuilder confBuilder = new ConfigurationBuilder();
-        confBuilder.setOAuthConsumerKey(consumerKey);
-        confBuilder.setOAuthConsumerSecret(consumerSecret);
-        confBuilder.setOAuthAccessToken(accessToken);
-        confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
-        confBuilder.setTweetModeExtended(isExtendedMode());
-        if (getHttpProxyHost() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyHost());
-        }
-        if (getHttpProxyUser() != null) {
-            confBuilder.setHttpProxyUser(getHttpProxyUser());
-        }
-        if (getHttpProxyPassword() != null) {
-            confBuilder.setHttpProxyPassword(getHttpProxyPassword());
-        }
-        if (httpProxyPort != null) {
-            confBuilder.setHttpProxyPort(httpProxyPort);
+
+        Twitter.TwitterBuilder builder = Twitter.newBuilder()
+                .oAuthConsumer(consumerKey, consumerSecret)
+                .oAuthAccessToken(accessToken, accessTokenSecret)
+                .tweetModeExtended(isExtendedMode())
+                .httpProxyHost(getHttpProxyHost())
+                .httpProxyUser(getHttpProxyUser())
+                .httpProxyPassword(getHttpProxyPassword());
+
+        if (getHttpProxyPort() != null) {
+            builder.httpProxyPort(getHttpProxyPort());
         }
 
-        return confBuilder.build();
+        return builder.build();
     }
 
     public Twitter getTwitter() {
         if (twitter == null) {
-            twitter = new TwitterFactory(getConfiguration()).getInstance();
+            twitter = buildTwitter();
         }
         return twitter;
     }

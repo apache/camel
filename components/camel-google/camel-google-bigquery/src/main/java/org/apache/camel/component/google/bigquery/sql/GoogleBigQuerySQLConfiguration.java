@@ -26,6 +26,10 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleBigQuerySQLConfiguration implements Cloneable {
 
+    @UriPath(label = "common", description = "BigQuery standard SQL query")
+    @Metadata(required = true, supportFileReference = true)
+    private String queryString;
+
     @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
@@ -33,10 +37,6 @@ public class GoogleBigQuerySQLConfiguration implements Cloneable {
     @UriPath(label = "common", description = "Google Cloud Project Id")
     @Metadata(required = true)
     private String projectId;
-
-    @UriPath(label = "common", description = "BigQuery standard SQL query")
-    @Metadata(required = true)
-    private String queryString;
 
     @UriParam(label = "security",
               description = "Service account key in json format to authenticate an application as a service account to google cloud platform")

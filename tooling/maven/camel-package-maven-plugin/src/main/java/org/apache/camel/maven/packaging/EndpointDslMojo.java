@@ -53,12 +53,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.generics.JavadocUtil.getMainDescription;
 import static org.apache.camel.maven.packaging.generics.JavadocUtil.pathParameterJavaDoc;
@@ -719,6 +719,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (!baseDesc.endsWith(".")) {
             baseDescBuilder.append(".");
         }
+        if (option.isSupportFileReference()) {
+            baseDescBuilder.append("\n");
+            baseDescBuilder.append(
+                    "\nThis option can also be loaded from an existing file, by prefixing with file: or classpath: followed by the location of the file.");
+        }
         baseDescBuilder.append("\n@@REPLACE_ME@@");
         if (option.isMultiValue()) {
             baseDescBuilder.append("\nThe option is multivalued, and you can use the ")
@@ -888,25 +893,24 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 String sourceCode = loadText(file);
                 JavaClassSource source = (JavaClassSource) Roaster.parse(sourceCode);
                 // add existing methods
-                for (MethodSource ms : source.getMethods()) {
+                for (MethodSource<?> ms : source.getMethods()) {
                     boolean exist = methods.stream().anyMatch(
                             m -> m.getName().equals(ms.getName()) && m.getParameters().size() == ms.getParameters().size());
                     if (!exist) {
-                        // the existing file has a method we dont have so create a method and add
+                        // the existing file has a method we don't have, so create a method and add
                         Method method = new Method();
                         if (ms.isStatic()) {
                             method.setStatic();
                         }
                         method.setPublic();
                         method.setName(ms.getName());
-                        // roaster dont preserve the message body with nicely formatted space after comma
+                        // roaster don't preserve the message body with nicely formatted space after comma
                         String body = ms.getBody();
                         body = COMMA_PRESERVER_PATTERN.matcher(body).replaceAll(", $1");
                         method.setBody(body);
                         method.setReturnType(getQualifiedType(ms.getReturnType()));
                         for (Object o : ms.getParameters()) {
-                            if (o instanceof ParameterSource) {
-                                ParameterSource ps = (ParameterSource) o;
+                            if (o instanceof ParameterSource<?> ps) {
                                 method.addParameter(getQualifiedType(ps.getType()), ps.getName());
                             }
                         }
@@ -945,7 +949,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
     }
 
-    private static String getQualifiedType(Type type) {
+    private static String getQualifiedType(Type<?> type) {
         String val = type.getQualifiedName();
         if (val.startsWith("java.lang.")) {
             val = val.substring(10);
@@ -954,7 +958,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     @Deprecated
-    protected static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
+    protected static String extractJavaDoc(String sourceCode, MethodSource<?> ms) throws IOException {
         return JavadocUtil.extractJavaDoc(sourceCode, ms);
     }
 
@@ -969,7 +973,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // load components
-        return Arrays.stream(files).sorted().collect(Collectors.toUnmodifiableList());
+        return Arrays.stream(files).sorted().toList();
     }
 
     private static String camelCaseLower(String s) {
@@ -1013,7 +1017,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return getComponentNameFromType(type) + "EndpointBuilder";
     }
 
-    private Class generateDummyClass(String clazzName) {
+    private Class<?> generateDummyClass(String clazzName) {
         return getProjectClassLoader().generateDummyClass(clazzName);
     }
 

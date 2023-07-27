@@ -38,7 +38,7 @@ import org.apache.kafka.connect.source.SourceRecord;
  */
 public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> extends DefaultEndpoint {
 
-    protected DebeziumEndpoint(String uri, DebeziumComponent component) {
+    protected DebeziumEndpoint(String uri, DebeziumComponent<C> component) {
         super(uri, component);
     }
 

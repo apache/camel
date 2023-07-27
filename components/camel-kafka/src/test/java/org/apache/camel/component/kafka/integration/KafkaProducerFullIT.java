@@ -85,10 +85,10 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
     private ProducerTemplate noRecordSpecificHeadersTemplate;
 
     @BindToRegistry("myStrategy")
-    private MyHeaderFilterStrategy headerFilterStrategy = new MyHeaderFilterStrategy();
+    private final MyHeaderFilterStrategy headerFilterStrategy = new MyHeaderFilterStrategy();
 
     @BindToRegistry("myHeaderSerializer")
-    private MyKafkaHeadersSerializer headersSerializer = new MyKafkaHeadersSerializer();
+    private final MyKafkaHeadersSerializer headersSerializer = new MyKafkaHeadersSerializer();
 
     @BeforeAll
     public static void before() {

@@ -101,7 +101,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "CamelApplication")
     protected String mainClassname;
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)", defaultValue = "11")
+    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "17")
     protected String javaVersion;
 
     @CommandLine.Option(names = { "--camel-version" },
@@ -109,7 +109,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String camelVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.5")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "4.0.0-RC1")
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -117,7 +117,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.10")
+                        defaultValue = "3.1.2")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
@@ -132,7 +132,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "2.16.7.Final")
+                        defaultValue = "3.2.2.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -630,6 +630,18 @@ abstract class ExportBaseCommand extends CamelCommand {
         return false;
     }
 
+    protected static int httpServerPort(File settings) {
+        try {
+            List<String> lines = Files.readAllLines(settings.toPath());
+            String port = lines.stream().filter(l -> l.startsWith("camel.jbang.platform-http.port="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
+            return Integer.parseInt(port);
+        } catch (Exception e) {
+            // ignore
+        }
+        return -1;
+    }
+
     protected static void safeCopy(File source, File target, boolean override) throws Exception {
         if (!source.exists()) {
             return;
@@ -756,7 +768,11 @@ abstract class ExportBaseCommand extends CamelCommand {
         properties.setProperty("camel.vault.aws.refreshEnabled", "true");
         properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
         properties.setProperty("camel.vault.aws.secrets", "<secrets>");
-        properties.setProperty("camel.main.context-reload-enabled", "true");
+        if (runtime.equalsIgnoreCase("spring-boot")) {
+            properties.setProperty("camel.springboot.context-reload-enabled", "true");
+        } else {
+            properties.setProperty("camel.main.context-reload-enabled", "true");
+        }
     }
 
     protected void exportGcpSecretsRefreshProp(Properties properties) {
@@ -767,7 +783,11 @@ abstract class ExportBaseCommand extends CamelCommand {
         properties.setProperty("camel.vault.aws.refreshPeriod", "30000");
         properties.setProperty("camel.vault.gcp.secrets", "<secrets>");
         properties.setProperty("camel.vault.gcp.subscriptionName", "<subscriptionName>");
-        properties.setProperty("camel.main.context-reload-enabled", "true");
+        if (runtime.equalsIgnoreCase("spring-boot")) {
+            properties.setProperty("camel.springboot.context-reload-enabled", "true");
+        } else {
+            properties.setProperty("camel.main.context-reload-enabled", "true");
+        }
     }
 
     protected void exportAzureSecretsRefreshProp(Properties properties) {
@@ -782,7 +802,11 @@ abstract class ExportBaseCommand extends CamelCommand {
         properties.setProperty("camel.vault.azure.blobAccountName", "<blobAccountName>");
         properties.setProperty("camel.vault.azure.blobContainerName", "<blobContainerName>");
         properties.setProperty("camel.vault.azure.blobAccessKey", "<blobAccessKey>");
-        properties.setProperty("camel.main.context-reload-enabled", "true");
+        if (runtime.equalsIgnoreCase("spring-boot")) {
+            properties.setProperty("camel.springboot.context-reload-enabled", "true");
+        } else {
+            properties.setProperty("camel.main.context-reload-enabled", "true");
+        }
     }
 
     protected List<String> getSecretProviders() {

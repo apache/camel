@@ -21,9 +21,10 @@ on:
   pull_request:
     branches:
       - camel-3.20.x
-      - camel-3.18.x
+      - camel-3.21.x
       - camel-3.x
     paths-ignore:
+      - .github/**
       - README.md
       - SECURITY.md
       - Jenkinsfile

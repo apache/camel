@@ -39,8 +39,6 @@
         <outPackage>org.apache.camel.component.as2.internal</outPackage>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <commons-io-version>2.11.0</commons-io-version>
     </properties>
 
     <dependencies>

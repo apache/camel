@@ -3369,7 +3369,7 @@ public abstract class AbstractCamelContext extends BaseService
     public boolean isJMXDisabled() {
         String override = System.getProperty(JmxSystemPropertyKeys.DISABLED);
         if (override != null) {
-            return Boolean.valueOf(override);
+            return Boolean.parseBoolean(override);
         }
 
         return disableJMX;
@@ -3867,8 +3867,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Transformer resolveTransformer(String scheme) {
-        return getTransformerRegistry().resolveTransformer(new TransformerKey(scheme));
+    public Transformer resolveTransformer(String name) {
+        return getTransformerRegistry().resolveTransformer(new TransformerKey(name));
     }
 
     @Override

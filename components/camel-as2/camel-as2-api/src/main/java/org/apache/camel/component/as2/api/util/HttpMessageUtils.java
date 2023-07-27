@@ -65,13 +65,13 @@ public final class HttpMessageUtils {
     public static <T> T getEntity(HttpMessage message, Class<T> type) {
         ObjectHelper.notNull(message, "message");
         ObjectHelper.notNull(type, "type");
-        if (message instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = ((HttpEntityEnclosingRequest) message).getEntity();
+        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+            HttpEntity entity = httpEntityEnclosingRequest.getEntity();
             if (entity != null && type.isInstance(entity)) {
                 return type.cast(entity);
             }
-        } else if (message instanceof HttpResponse) {
-            HttpEntity entity = ((HttpResponse) message).getEntity();
+        } else if (message instanceof HttpResponse httpResponse) {
+            HttpEntity entity = httpResponse.getEntity();
             if (entity != null && type.isInstance(entity)) {
                 type.cast(entity);
             }
@@ -137,7 +137,7 @@ public final class HttpMessageUtils {
         ContentType contentType = ContentType.parse(contentTypeString);
 
         EntityParser.parseAS2MessageEntity(message);
-        ApplicationEntity ediEntity = null;
+        ApplicationEntity ediEntity;
         switch (contentType.getMimeType().toLowerCase()) {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
@@ -225,9 +225,7 @@ public final class HttpMessageUtils {
         MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
         if (mimeEntity instanceof ApplicationEntity) {
             ediEntity = (ApplicationEntity) mimeEntity;
-        } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
-            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
-                    = (ApplicationPkcs7MimeCompressedDataEntity) mimeEntity;
+        } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity) {
             ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
         } else {
             throw new HttpException(
@@ -240,7 +238,7 @@ public final class HttpMessageUtils {
     private static ApplicationEntity extractEdiPayloadFromEnvelopedEntity(
             ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
             throws HttpException {
-        ApplicationEntity ediEntity = null;
+        ApplicationEntity ediEntity;
 
         MimeEntity entity = envelopedDataEntity.getEncryptedEntity(decrpytingAndSigningInfo.getDecryptingPrivateKey());
         String contentTypeString = entity.getContentTypeValue();
@@ -266,9 +264,7 @@ public final class HttpMessageUtils {
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEntity) {
                     ediEntity = (ApplicationEntity) mimeEntity;
-                } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
-                    ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
-                            = (ApplicationPkcs7MimeCompressedDataEntity) mimeEntity;
+                } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity) {
                     ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
                 } else {
 
@@ -301,7 +297,7 @@ public final class HttpMessageUtils {
     public static ApplicationEntity extractEdiPayloadFromCompressedEntity(
             ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
             throws HttpException {
-        ApplicationEntity ediEntity = null;
+        ApplicationEntity ediEntity;
 
         MimeEntity entity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
         String contentTypeString = entity.getContentTypeValue();
@@ -325,8 +321,8 @@ public final class HttpMessageUtils {
                 }
 
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
-                if (mimeEntity instanceof ApplicationEntity) {
-                    ediEntity = (ApplicationEntity) mimeEntity;
+                if (mimeEntity instanceof ApplicationEntity applicationEntity) {
+                    ediEntity = applicationEntity;
                 } else {
 
                     throw new HttpException(
@@ -345,8 +341,8 @@ public final class HttpMessageUtils {
     }
 
     public static class DecrpytingAndSigningInfo {
-        private Certificate[] validateSigningCertificateChain;
-        private PrivateKey decryptingPrivateKey;
+        private final Certificate[] validateSigningCertificateChain;
+        private final PrivateKey decryptingPrivateKey;
 
         public DecrpytingAndSigningInfo(Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey) {
             this.validateSigningCertificateChain = validateSigningCertificateChain;

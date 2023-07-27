@@ -969,11 +969,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hyperledger-aries</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ical</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1469,6 +1464,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-opensearch</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-openstack</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1515,6 +1515,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-platform-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-platform-http-main</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2005,11 +2010,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-webhook</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-weka</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

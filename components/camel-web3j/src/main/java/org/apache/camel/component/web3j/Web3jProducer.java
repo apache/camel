@@ -79,29 +79,23 @@ import org.web3j.protocol.core.methods.response.ShhNewIdentity;
 import org.web3j.protocol.core.methods.response.ShhPost;
 import org.web3j.protocol.core.methods.response.ShhUninstallFilter;
 import org.web3j.protocol.core.methods.response.ShhVersion;
-import org.web3j.protocol.core.methods.response.VoidResponse;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
+import org.web3j.protocol.core.methods.response.admin.AdminNodeInfo;
 import org.web3j.quorum.Quorum;
 import org.web3j.quorum.methods.request.PrivateTransaction;
-import org.web3j.quorum.methods.response.BlockMaker;
-import org.web3j.quorum.methods.response.CanonicalHash;
-import org.web3j.quorum.methods.response.MakeBlock;
 import org.web3j.quorum.methods.response.PrivatePayload;
-import org.web3j.quorum.methods.response.QuorumNodeInfo;
-import org.web3j.quorum.methods.response.Vote;
-import org.web3j.quorum.methods.response.Voter;
 
 import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParameter;
 
 public class Web3jProducer extends HeaderSelectorProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jProducer.class);
-    private Web3j web3j;
+    private final Web3j web3j;
     private Quorum quorum;
-    private Web3jConfiguration configuration;
+    private final Web3jConfiguration configuration;
 
     public Web3jProducer(Web3jEndpoint endpoint, final Web3jConfiguration configuration) {
-        super(endpoint, Web3jConstants.OPERATION, () -> configuration.getOperationOrDefault());
+        super(endpoint, Web3jConstants.OPERATION, configuration::getOperationOrDefault);
         web3j = endpoint.getWeb3j();
         this.configuration = configuration;
         if (web3j instanceof Quorum) {
@@ -942,127 +936,12 @@ public class Web3jProducer extends HeaderSelectorProducer {
             return;
         }
 
-        Request<?, QuorumNodeInfo> request = quorum.quorumNodeInfo();
+        Request<?, AdminNodeInfo> request = quorum.adminNodeInfo();
         setRequestId(message, request);
-        QuorumNodeInfo response = request.send();
+        AdminNodeInfo response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getNodeInfo());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_CANONICAL_HASH)
-    void quorumCanonicalHash(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        Request<?, CanonicalHash> request = quorum.quorumCanonicalHash(message.getBody(BigInteger.class));
-        setRequestId(message, request);
-        CanonicalHash response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getCanonicalHash());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_VOTE)
-    void quorumVote(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        String blockHash = message.getHeader(Web3jConstants.BLOCK_HASH, configuration::getBlockHash, String.class);
-        Request<?, Vote> request = quorum.quorumVote(blockHash);
-        setRequestId(message, request);
-        Vote response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getTransactionHash());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_MAKE_BLOCK)
-    void quorumMakeBlock(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        Request<?, MakeBlock> request = quorum.quorumMakeBlock();
-        setRequestId(message, request);
-        MakeBlock response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getBlockHash());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_PAUSE_BLOCK_MAKER)
-    void quorumPauseBlockMaker(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        Request<?, VoidResponse> request = quorum.quorumPauseBlockMaker();
-        setRequestId(message, request);
-        VoidResponse response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.isValid());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_RESUME_BLOCK_MAKER)
-    void quorumResumeBlockMaker(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        Request<?, VoidResponse> request = quorum.quorumResumeBlockMaker();
-        setRequestId(message, request);
-        VoidResponse response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.isValid());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_IS_BLOCK_MAKER)
-    void quorumIsBlockMaker(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
-        Request<?, BlockMaker> request = quorum.quorumIsBlockMaker(address);
-        setRequestId(message, request);
-        BlockMaker response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.isBlockMaker());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.QUORUM_IS_VOTER)
-    void quorumIsVoter(Message message) throws IOException {
-        if (quorum == null) {
-            setQuorumEndpointError(message);
-            return;
-        }
-
-        String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
-        Request<?, Voter> request = quorum.quorumIsVoter(address);
-        setRequestId(message, request);
-        Voter response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.isVoter());
+            message.setBody(response.getResult());
         }
     }
 
@@ -1097,8 +976,9 @@ public class Web3jProducer extends HeaderSelectorProducer {
         BigInteger value = message.getHeader(Web3jConstants.VALUE, configuration::getValue, BigInteger.class);
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
         List<String> privateFor = message.getHeader(Web3jConstants.PRIVATE_FOR, configuration::getPrivateFor, List.class);
+        String privateFrom = message.getHeader(Web3jConstants.PRIVATE_FROM, String.class);
         PrivateTransaction transaction
-                = new PrivateTransaction(fromAddress, nonce, gasLimit, toAddress, value, data, privateFor);
+                = new PrivateTransaction(fromAddress, nonce, gasLimit, toAddress, value, data, privateFrom, privateFor);
 
         Request<?, EthSendTransaction> request = quorum.ethSendTransaction(transaction);
         setRequestId(message, request);
@@ -1109,7 +989,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
-    private void setRequestId(Message message, Request request) {
+    private void setRequestId(Message message, Request<?, ?> request) {
         final Long id = message.getHeader(Web3jConstants.ID, Long.class);
         LOG.debug("setRequestId {}", id);
         if (id != null) {
@@ -1117,7 +997,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
-    private boolean checkForError(Message message, Response response) {
+    private boolean checkForError(Message message, Response<?> response) {
         if (response.hasError()) {
             int code = response.getError().getCode();
             String data = response.getError().getData();

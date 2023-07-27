@@ -37,12 +37,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Prepares camel-main by generating Camel Main configuration metadata for tooling support.
@@ -75,7 +75,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
         fields.forEach(f -> {
-            AnnotationSource as = f.getAnnotation(Metadata.class);
+            AnnotationSource<?> as = f.getAnnotation(Metadata.class);
             String name = f.getName();
             String javaType = f.getType().getQualifiedName();
             String sourceType = clazz.getQualifiedName();
@@ -204,6 +204,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
+                } else if (file.getName().contains("HttpServer")) {
+                    prefix = "camel.server.";
                 } else if (file.getName().contains("ThreadPoolProfileConfigurationProperties")) {
                     // skip this file
                     continue;
@@ -275,6 +277,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getOptions().addAll(data);
             model.getGroups().add(new MainGroupModel(
                     "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.server",
+                    "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
+                    "org.apache.camel.main.HttpServerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.threadpool", "Camel Thread Pool configurations",

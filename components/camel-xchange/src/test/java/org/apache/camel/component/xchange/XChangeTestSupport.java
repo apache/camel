@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
+import org.knowm.xchange.utils.AuthUtils;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
@@ -60,8 +61,11 @@ public abstract class XChangeTestSupport extends CamelTestSupport {
         if (useMockedBackend()) {
             specification.setSslUri("http://localhost:" + wireMockServer.port());
         } else {
-            specification.setApiKey(System.getProperty("xchange.api.key", System.getenv("XCHANGE_API_KEY")));
-            specification.setSecretKey(System.getProperty("xchange.secret.key", System.getenv("XCHANGE_SECRET_KEY")));
+            AuthUtils.setApiAndSecretKey(specification, "binance");
+            if (specification.getApiKey() == null)
+                specification.setApiKey(System.getProperty("xchange.api.key", System.getenv("XCHANGE_API_KEY")));
+            if (specification.getSecretKey() == null)
+                specification.setSecretKey(System.getProperty("xchange.secret.key", System.getenv("XCHANGE_SECRET_KEY")));
         }
 
         XChange xchange = new XChange(ExchangeFactory.INSTANCE.createExchange(specification));
@@ -71,6 +75,7 @@ public abstract class XChangeTestSupport extends CamelTestSupport {
     }
 
     protected static boolean useMockedBackend() {
-        return !Boolean.TRUE.toString().equals(System.getProperty("enable.xchange.itests"));
+        String value = System.getProperty("enable.xchange.itests");
+        return !Boolean.parseBoolean(value);
     }
 }

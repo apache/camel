@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.artemis.services;
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
+import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -32,12 +33,14 @@ public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
     }
 
     @Override
-    protected Configuration getConfiguration(Configuration artemisConfiguration, int port) {
+    protected Configuration configure(Configuration artemisConfiguration, int port, int brokerId) {
         amqpPort = port;
         brokerURL = "tcp://0.0.0.0:" + amqpPort
                     + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300";
 
         AddressSettings addressSettings = new AddressSettings();
+        addressSettings.setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL);
+
         // Disable auto create address to make sure that topic name is correct without prefix
         try {
             artemisConfiguration.addAcceptorConfiguration("amqp", brokerURL);
@@ -48,6 +51,7 @@ public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
         artemisConfiguration.setPersistenceEnabled(false);
         artemisConfiguration.addAddressesSetting("#", addressSettings);
         artemisConfiguration.setSecurityEnabled(false);
+        artemisConfiguration.setMaxDiskUsage(98);
 
         // Set explicit topic name
         CoreAddressConfiguration pingTopicConfig = new CoreAddressConfiguration();

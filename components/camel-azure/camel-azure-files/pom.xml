@@ -20,25 +20,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>  
+    <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure-files</artifactId>
     <packaging>jar</packaging>
-
     <name>Camel :: Azure Files</name>
     <description>Camel Azure Files Component</description>
+
+    <properties>
+        <supportLevel>Preview</supportLevel>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-file-share</artifactId>
@@ -53,12 +54,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

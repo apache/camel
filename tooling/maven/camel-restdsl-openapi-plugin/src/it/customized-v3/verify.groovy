@@ -21,4 +21,4 @@ assert restdsl.exists()
 
 def String data = restdsl.text
 
-assert data.contains('restConfiguration().component("servlet").apiContextPath("/api-docs");')
+assert data.contains('restConfiguration().component("platform-http").apiContextPath("/api-docs");')

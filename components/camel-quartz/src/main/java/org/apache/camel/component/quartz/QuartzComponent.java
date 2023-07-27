@@ -69,7 +69,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private String propertiesRef;
     @Metadata
     private Map properties;
-    @Metadata
+    @Metadata(supportFileReference = true)
     private String propertiesFile;
     @Metadata(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
@@ -96,9 +96,9 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Whether or not the scheduler should be auto started.
+     * Whether the scheduler should be auto started.
      * <p/>
-     * This options is default true
+     * This option is default true
      */
     public void setAutoStartScheduler(boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;

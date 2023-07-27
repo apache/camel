@@ -216,7 +216,7 @@
         <dependency>
             <groupId>org.mockftpserver</groupId>
             <artifactId>MockFtpServer</artifactId>
-            <version>2.5</version>
+            <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -227,6 +227,12 @@
             <version>${derby-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${derby-version}</version>
+            <scope>test</scope>
+        </dependency>        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>

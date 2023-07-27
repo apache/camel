@@ -23,6 +23,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
     static {
         Set<String> props = new HashSet<>(39);
         props.add("apiName");
+        props.add("arrayName");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -38,7 +39,6 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("inBody");
         props.add("initialDelay");
         props.add("interval");
-        props.add("itemType");
         props.add("lastYears");
         props.add("lazyStartProducer");
         props.add("methodName");

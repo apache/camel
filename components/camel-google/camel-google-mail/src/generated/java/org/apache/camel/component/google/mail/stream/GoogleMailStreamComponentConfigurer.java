@@ -44,12 +44,19 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class, value)); return true;
         case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "labels": getOrCreateConfiguration(target).setLabels(property(camelContext, java.lang.String.class, value)); return true;
         case "markasread":
         case "markAsRead": getOrCreateConfiguration(target).setMarkAsRead(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, long.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "raw": getOrCreateConfiguration(target).setRaw(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
@@ -78,12 +85,19 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class;
         case "delegate": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "labels": return java.lang.String.class;
         case "markasread":
         case "markAsRead": return boolean.class;
         case "maxresults":
         case "maxResults": return long.class;
         case "query": return java.lang.String.class;
+        case "raw": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
@@ -113,12 +127,19 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
         case "delegate": return getOrCreateConfiguration(target).getDelegate();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "labels": return getOrCreateConfiguration(target).getLabels();
         case "markasread":
         case "markAsRead": return getOrCreateConfiguration(target).isMarkAsRead();
         case "maxresults":
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "query": return getOrCreateConfiguration(target).getQuery();
+        case "raw": return getOrCreateConfiguration(target).isRaw();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();

@@ -2517,6 +2517,8 @@ public interface SqlEndpointBuilderFactory {
          * Path parameter: query (required)
          * Sets the SQL query to perform. You can externalize the query by using
          * file: or classpath: as prefix and specify the location of the file.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param path query
          * @return the dsl builder
@@ -2537,6 +2539,8 @@ public interface SqlEndpointBuilderFactory {
          * Path parameter: query (required)
          * Sets the SQL query to perform. You can externalize the query by using
          * file: or classpath: as prefix and specify the location of the file.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

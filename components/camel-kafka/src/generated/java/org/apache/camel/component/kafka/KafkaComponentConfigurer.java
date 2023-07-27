@@ -88,6 +88,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "headerserializer":
         case "headerSerializer": getOrCreateConfiguration(target).setHeaderSerializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
@@ -100,6 +106,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": getOrCreateConfiguration(target).setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": getOrCreateConfiguration(target).setKerberosConfigLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosinitcmd":
         case "kerberosInitCmd": getOrCreateConfiguration(target).setKerberosInitCmd(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosprincipaltolocalrules":
@@ -124,7 +132,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": getOrCreateConfiguration(target).setMaxPartitionFetchBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": getOrCreateConfiguration(target).setMaxPollIntervalMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxPollIntervalMs": getOrCreateConfiguration(target).setMaxPollIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollrecords":
         case "maxPollRecords": getOrCreateConfiguration(target).setMaxPollRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxrequestsize":
@@ -144,6 +152,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": getOrCreateConfiguration(target).setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": getOrCreateConfiguration(target).setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": getOrCreateConfiguration(target).setPartitionerIgnoreKeys(property(camelContext, boolean.class, value)); return true;
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": target.setPollExceptionStrategy(property(camelContext, org.apache.camel.component.kafka.PollExceptionStrategy.class, value)); return true;
         case "pollonerror":
@@ -310,6 +320,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "headerserializer":
         case "headerSerializer": return org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return java.lang.Integer.class;
         case "interceptorclasses":
@@ -322,6 +338,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return java.lang.Integer.class;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return java.lang.String.class;
         case "kerberosinitcmd":
         case "kerberosInitCmd": return java.lang.String.class;
         case "kerberosprincipaltolocalrules":
@@ -346,7 +364,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": return java.lang.Integer.class;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": return java.lang.Long.class;
+        case "maxPollIntervalMs": return java.lang.Integer.class;
         case "maxpollrecords":
         case "maxPollRecords": return java.lang.Integer.class;
         case "maxrequestsize":
@@ -366,6 +384,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return boolean.class;
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": return org.apache.camel.component.kafka.PollExceptionStrategy.class;
         case "pollonerror":
@@ -528,6 +548,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
         case "headerserializer":
         case "headerSerializer": return getOrCreateConfiguration(target).getHeaderSerializer();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "interceptorclasses":
@@ -540,6 +566,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return getOrCreateConfiguration(target).getKerberosBeforeReloginMinTime();
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return getOrCreateConfiguration(target).getKerberosConfigLocation();
         case "kerberosinitcmd":
         case "kerberosInitCmd": return getOrCreateConfiguration(target).getKerberosInitCmd();
         case "kerberosprincipaltolocalrules":
@@ -584,6 +612,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionkey":
         case "partitionKey": return getOrCreateConfiguration(target).getPartitionKey();
         case "partitioner": return getOrCreateConfiguration(target).getPartitioner();
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return getOrCreateConfiguration(target).isPartitionerIgnoreKeys();
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": return target.getPollExceptionStrategy();
         case "pollonerror":

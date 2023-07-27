@@ -3097,6 +3097,26 @@ necessary. Default is false. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowClasses" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream
+is allowed. Multiple class names can be separated by comma.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="denyClasses" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To filter stream caching of a given set of allowed/denied classes. By default, all classes that are java.io.InputStream
+is allowed. Multiple class names can be separated by comma.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="spoolDirectory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -8730,11 +8750,21 @@ false. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="compressionCodecName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Compression codec to use when marshalling. Default value: GZIP
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="unmarshalType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Class to use when unmarshalling.
+Class to use when (un)marshalling. If omitted, parquet files are converted into Avro's GenericRecords for unmarshalling
+and input objects are assumed as GenericRecords for marshalling.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11749,7 +11779,7 @@ To control how to shutdown the route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To control how to shutdown the route.
+To control how to shut down the route.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13262,6 +13292,24 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
+        <xs:attribute name="fromType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+From type used in data type transformation.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="toType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To type used as a target data type in the transformation.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -16165,6 +16213,7 @@ Sets the component name that this definition will apply to.
   <xs:complexType abstract="true" name="transformer">
     <xs:sequence/>
     <xs:attribute name="scheme" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="fromType" type="xs:string"/>
     <xs:attribute name="toType" type="xs:string"/>
   </xs:complexType>
@@ -16227,11 +16276,21 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="loadTransformer">
+    <xs:complexContent>
+      <xs:extension base="tns:transformer">
+        <xs:sequence/>
+        <xs:attribute name="packageScan" type="xs:string"/>
+        <xs:attribute name="defaults" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="transformersDefinition">
     <xs:sequence>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element name="dataFormatTransformer" type="tns:dataFormatTransformer"/>
         <xs:element name="endpointTransformer" type="tns:endpointTransformer"/>
+        <xs:element name="loadTransformer" type="tns:loadTransformer"/>
         <xs:element name="customTransformer" type="tns:customTransformer"/>
       </xs:choice>
     </xs:sequence>

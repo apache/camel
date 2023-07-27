@@ -59,7 +59,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private String languageName;
     // resourceUri is optional in the language endpoint
     @UriPath(description = "Path to the resource, or a reference to lookup a bean in the Registry to use as the resource")
-    @Metadata
+    @Metadata(supportFileReference = true)
     private String resourceUri;
     @UriParam
     private String script;

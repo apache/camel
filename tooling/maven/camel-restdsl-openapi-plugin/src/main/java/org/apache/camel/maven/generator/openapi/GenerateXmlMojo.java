@@ -19,7 +19,7 @@ package org.apache.camel.maven.generator.openapi;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -51,7 +51,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OasDocument openapi = null;
+        OpenApiDocument openapi;
         try {
             openapi = readOpenApiDoc(specificationUri);
         } catch (Exception e1) {

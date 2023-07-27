@@ -238,7 +238,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
+        List<RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler>> paths = new ArrayList<>();
         for (final HttpServerChannelHandler handler : consumers) {
             paths.add(new HttpRestConsumerPath(handler));
         }

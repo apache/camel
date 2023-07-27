@@ -78,12 +78,12 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private final String as2Version;
     private final String serverFQDN;
-    private AS2SignatureAlgorithm signingAlgorithm;
-    private Certificate[] signingCertificateChain;
-    private PrivateKey signingPrivateKey;
-    private PrivateKey decryptingPrivateKey;
-    private String mdnMessageTemplate;
-    private Certificate[] validateSigningCertificateChain;
+    private final AS2SignatureAlgorithm signingAlgorithm;
+    private final Certificate[] signingCertificateChain;
+    private final PrivateKey signingPrivateKey;
+    private final PrivateKey decryptingPrivateKey;
+    private final String mdnMessageTemplate;
+    private final Certificate[] validateSigningCertificateChain;
 
     private VelocityEngine velocityEngine;
 
@@ -121,12 +121,11 @@ public class ResponseMDN implements HttpResponseInterceptor {
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
-        if (request == null || !(request instanceof HttpEntityEnclosingRequest)) {
+        if (request == null || !(request instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest)) {
             // Not an enclosing request so nothing to do.
             return;
         }
 
-        HttpEntityEnclosingRequest httpEntityEnclosingRequest = (HttpEntityEnclosingRequest) request;
         LOG.debug("Processing MDN for request: {}", httpEntityEnclosingRequest);
 
         if (HttpMessageUtils.getHeaderValue(httpEntityEnclosingRequest, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {

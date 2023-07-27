@@ -344,11 +344,11 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+         * There are 19 enums and the value can be one of: ADD_ON, ADDRESS,
          * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
          * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
-         * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
-         * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
+         * PAYMENT_METHOD_NONCE, OAUTH, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
+         * SUBSCRIPTION, TRANSACTION, US_BANK_ACCOUNT, WEBHOOK_NOTIFICATION
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -379,11 +379,11 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+         * There are 19 enums and the value can be one of: ADD_ON, ADDRESS,
          * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
          * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
-         * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
-         * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
+         * PAYMENT_METHOD_NONCE, OAUTH, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
+         * SUBSCRIPTION, TRANSACTION, US_BANK_ACCOUNT, WEBHOOK_NOTIFICATION
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

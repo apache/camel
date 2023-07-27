@@ -44,7 +44,7 @@ public final class DebeziumTestComponent extends DebeziumComponent<FileConnector
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(
+    protected DebeziumEndpoint<FileConnectorEmbeddedDebeziumConfiguration> initializeDebeziumEndpoint(
             String uri, FileConnectorEmbeddedDebeziumConfiguration configuration) {
         return new DebeziumTestEndpoint(uri, this, configuration);
     }

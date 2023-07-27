@@ -36,10 +36,10 @@ public class KafkaConsumerIdempotentGroupIdIT extends KafkaConsumerIdempotentTes
 
     public static final String TOPIC = "idempt";
 
-    private int size = 200;
+    private final int size = 200;
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository testIdempotent
+    private final KafkaIdempotentRepository testIdempotent
             = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers(), "test_1");
 
     @BeforeEach

@@ -58,6 +58,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
     private RestConfigurationProperties restConfigurationProperties;
     private VaultConfigurationProperties vaultConfigurationProperties;
+    private HttpServerConfigurationProperties httpServerConfigurationProperties;
 
     @Override
     public void close() {
@@ -88,6 +89,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (vaultConfigurationProperties != null) {
             vaultConfigurationProperties.close();
             vaultConfigurationProperties = null;
+        }
+        if (httpServerConfigurationProperties != null) {
+            httpServerConfigurationProperties.close();
+            httpServerConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -134,6 +139,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasLraConfiguration() {
         return lraConfigurationProperties != null;
+    }
+
+    /**
+     * To configure embedded HTTP server (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpServerConfigurationProperties httpServer() {
+        if (httpServerConfigurationProperties == null) {
+            httpServerConfigurationProperties = new HttpServerConfigurationProperties(this);
+        }
+        return httpServerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any embedded HTTP server configuration specified
+     */
+    public boolean hasHttpServerConfiguration() {
+        return httpServerConfigurationProperties != null;
     }
 
     /**

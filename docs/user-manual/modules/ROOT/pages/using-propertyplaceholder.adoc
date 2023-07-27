@@ -544,7 +544,7 @@ Camel will first use _mount paths_ (if configured) to lookup, and then fallback 
 
 ==== Configuring mount paths for ConfigMaps and Secrets
 
-The configuration of the _month path_ are used by the given order:
+The configuration of the _mount path_ are used by the given order:
 
 1. Reading configuration property with keys `camel.kubernetes-config.mount-path-configmaps`
 and `camel.kubernetes-config.mount-path-secrets`.

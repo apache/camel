@@ -24,10 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.v30.OpenApi30Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -69,8 +69,8 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        final JsonNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
-        OasDocument document = (OasDocument) Library.readDocument(node);
+        final ObjectNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
+        OpenApi30Document document = (OpenApi30Document) Library.readDocument(node);
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new DefaultCamelContext()) {
             String text = null;
@@ -93,16 +93,16 @@ public class CodeRestGenerator extends CamelCommand {
         return 0;
     }
 
-    private JsonNode readNodeFromJson() throws Exception {
+    private ObjectNode readNodeFromJson() throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(Paths.get(input).toFile());
+        return (ObjectNode) mapper.readTree(Paths.get(input).toFile());
     }
 
-    private JsonNode readNodeFromYaml() throws FileNotFoundException {
+    private ObjectNode readNodeFromYaml() throws FileNotFoundException {
         final ObjectMapper mapper = new ObjectMapper();
         Yaml loader = new Yaml(new SafeConstructor(new LoaderOptions()));
-        Map map = loader.load(new FileInputStream(Paths.get(input).toFile()));
-        return mapper.convertValue(map, JsonNode.class);
+        Map<?, ?> map = loader.load(new FileInputStream(Paths.get(input).toFile()));
+        return mapper.convertValue(map, ObjectNode.class);
     }
 
     private void generateDto() throws IOException {

@@ -49,7 +49,7 @@ public class AMQPEmbeddedBrokerTest {
 
     private MockEndpoint resultEndpoint;
 
-    private String expectedBody = "Hello there!";
+    private final String expectedBody = "Hello there!";
 
     @BeforeEach
     void prepareTest() {
@@ -65,8 +65,8 @@ public class AMQPEmbeddedBrokerTest {
     }
 
     @ContextFixture
-    public static void setupRoutes(CamelContext context) throws Exception {
-        System.setProperty(AMQP_PORT, service.brokerPort() + "");
+    public static void setupRoutes(CamelContext context) {
+        System.setProperty(AMQP_PORT, String.valueOf(service.brokerPort()));
         System.setProperty(AMQP_SET_TOPIC_PREFIX, "false");
 
         context.getRegistry().bind("amqpConnection", discoverAMQP(context));

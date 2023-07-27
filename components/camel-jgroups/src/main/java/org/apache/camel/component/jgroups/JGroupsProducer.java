@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
 import org.jgroups.Message;
+import org.jgroups.ObjectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,7 @@ public class JGroupsProducer extends DefaultProducer {
             if (sourceAddress != null) {
                 LOG.debug("Posting from custom source address: {}", sourceAddress);
             }
-            Message message = new Message(destinationAddress, body);
+            Message message = new ObjectMessage(destinationAddress, body);
             message.setSrc(sourceAddress);
             endpoint.getResolvedChannel().send(message);
         } else {

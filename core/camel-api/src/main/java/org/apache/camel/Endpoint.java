@@ -28,7 +28,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * @see Exchange
  * @see Message
  */
-public interface Endpoint extends IsSingleton, Service {
+public interface Endpoint extends IsSingleton, Service, ComponentAware {
 
     /**
      * Returns the string representation of the endpoint URI

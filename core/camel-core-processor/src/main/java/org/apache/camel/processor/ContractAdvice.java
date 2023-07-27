@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
+import org.apache.camel.processor.transformer.TypeConverterTransformer;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.DataType;
@@ -45,10 +46,10 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.model.InputTypeDefinition
  * @see org.apache.camel.model.OutputTypeDefinition
  */
-public class ContractAdvice implements CamelInternalProcessorAdvice {
+public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
     private static final Logger LOG = LoggerFactory.getLogger(ContractAdvice.class);
 
-    private Contract contract;
+    private final Contract contract;
 
     public ContractAdvice(Contract contract) {
         this.contract = contract;
@@ -117,7 +118,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
 
     private void doTransform(Message message, DataType from, DataType to) throws Exception {
         if (from == null) {
-            // If 'from' is null, only Java-Java convertion is performed.
+            // If 'from' is null, only Java-Java conversion is performed.
             // It means if 'to' is other than Java, it's assumed to be already in expected type.
             convertIfRequired(message, to);
             return;
@@ -127,7 +128,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         convertIfRequired(message, from);
 
         if (applyMatchedTransformer(message, from, to)) {
-            // Found matched transformer. Java-Java transformer is also allowed.
+            // Found matched transformer. Java->Java transformer is also allowed.
             return;
         } else if (from.isJavaType()) {
             // Try TypeConverter as a fallback for Java->Java transformation
@@ -143,39 +144,35 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         throw new IllegalArgumentException("No Transformer found for [from='" + from + "', to='" + to + "']");
     }
 
-    private boolean convertIfRequired(Message message, DataType type) throws Exception {
-        // TODO for better performance it may be better to add TypeConverterTransformer
-        // into transformer registry automatically to avoid unnecessary scan in transformer registry
-        if (type != null && type.isJavaType() && type.getName() != null && message != null && message.getBody() != null) {
-            CamelContext context = message.getExchange().getContext();
-            Class<?> typeJava = getClazz(type.getName(), context);
-            if (!typeJava.isAssignableFrom(message.getBody().getClass())) {
-                LOG.debug("Converting to '{}'", typeJava.getName());
-                message.setBody(message.getMandatoryBody(typeJava));
-                return true;
-            }
+    private void convertIfRequired(Message message, DataType type) throws Exception {
+        if (DataType.isAnyType(type) || !DataType.isJavaType(type) || type.getName() == null) {
+            return;
         }
-        return false;
-    }
 
-    private boolean applyTransformer(Transformer transformer, Message message, DataType from, DataType to) throws Exception {
+        CamelContext context = message.getExchange().getContext();
+        Transformer transformer = context.resolveTransformer(DataType.ANY, type);
         if (transformer != null) {
-            LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
-            transformer.transform(message, from, to);
-            return true;
+            transformer.transform(message, DataType.ANY, type);
+        } else {
+            new TypeConverterTransformer(type).transform(message, DataType.ANY, type);
         }
-        return false;
     }
 
     private boolean applyMatchedTransformer(Message message, DataType from, DataType to) throws Exception {
         Transformer transformer = message.getExchange().getContext().resolveTransformer(from, to);
-        return applyTransformer(transformer, message, from, to);
+        if (transformer == null) {
+            return false;
+        }
+
+        LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
+        transformer.transform(message, from, to);
+        return true;
     }
 
     private boolean applyTransformerChain(Message message, DataType from, DataType to) throws Exception {
         CamelContext context = message.getExchange().getContext();
-        Transformer fromTransformer = context.resolveTransformer(from.getModel());
-        Transformer toTransformer = context.resolveTransformer(to.getModel());
+        Transformer fromTransformer = context.resolveTransformer(DataType.ANY, from);
+        Transformer toTransformer = context.resolveTransformer(DataType.ANY, to);
         if (fromTransformer != null && toTransformer != null) {
             LOG.debug("Applying transformer 1/2: from='{}', to='{}', transformer='{}'", from, to, fromTransformer);
             fromTransformer.transform(message, from, new DataType(Object.class));

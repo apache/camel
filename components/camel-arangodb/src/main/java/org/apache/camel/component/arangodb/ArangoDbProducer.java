@@ -28,7 +28,6 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.ArangoGraph;
 import com.arangodb.ArangoVertexCollection;
-import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.model.AqlQueryOptions;
@@ -56,7 +55,6 @@ public class ArangoDbProducer extends DefaultProducer {
 
     private final ArangoDbEndpoint endpoint;
     private final Map<ArangoDbOperation, Processor> operations = new EnumMap<>(ArangoDbOperation.class);
-
     {
         bind(ArangoDbOperation.SAVE_DOCUMENT, saveDocument());
         bind(ArangoDbOperation.FIND_DOCUMENT_BY_KEY, findDocumentByKey());
@@ -308,7 +306,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> aqlQuery() {
         return exchange -> {
             try {
-                ArangoDatabase database = endpoint.getArango().db(DbName.of(endpoint.getConfiguration().getDatabase()));
+                ArangoDatabase database = endpoint.getArangoDB().db(endpoint.getConfiguration().getDatabase());
 
                 // AQL query
                 String query = (String) exchange.getMessage().getHeader(AQL_QUERY);
@@ -328,7 +326,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 resultClassType = resultClassType != null ? resultClassType : BaseDocument.class;
 
                 // perform query and return Collection
-                try (ArangoCursor<?> cursor = database.query(query, bindParameters, queryOptions, resultClassType)) {
+                try (ArangoCursor<?> cursor = database.query(query, resultClassType, bindParameters, queryOptions)) {
                     return cursor == null ? null : cursor.asListRemaining();
                 } catch (IOException e) {
                     LOG.warn("Failed to close instance of ArangoCursor", e);
@@ -348,7 +346,7 @@ public class ArangoDbProducer extends DefaultProducer {
         String collection = endpoint.getConfiguration().getDocumentCollection();
 
         // return collection
-        return endpoint.getArango().db(DbName.of(database)).collection(collection);
+        return endpoint.getArangoDB().db(database).collection(collection);
     }
 
     /**
@@ -358,7 +356,7 @@ public class ArangoDbProducer extends DefaultProducer {
         String database = endpoint.getConfiguration().getDatabase();
         String graph = endpoint.getConfiguration().getGraph();
         // return vertex collection collection
-        return endpoint.getArango().db(DbName.of(database)).graph(graph);
+        return endpoint.getArangoDB().db(database).graph(graph);
     }
 
     /**

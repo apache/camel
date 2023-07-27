@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class InfinispanRemoteProducerIT extends InfinispanRemoteTestSupport implements InfinispanProducerTestSupport {
 
     @BindToRegistry("mappingFunction")
-    public static BiFunction<String, String, String> mappingFunction() {
+    public BiFunction<String, String, String> mappingFunction() {
         return (k, v) -> v + "replay";
     }
 

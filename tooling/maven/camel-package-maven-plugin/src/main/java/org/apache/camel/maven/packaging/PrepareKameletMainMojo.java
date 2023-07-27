@@ -43,7 +43,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.plexus.build.incremental.BuildContext;
+import org.codehaus.plexus.build.BuildContext;
 
 import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
@@ -81,7 +81,6 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     @Parameter(defaultValue = "src/generated/")
     protected File genDir;
 
-    private Collection<Path> allJsonFiles;
     private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
     private transient String licenseHeader;
 
@@ -101,7 +100,7 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     }
 
     protected void updateKnownDependencies() throws Exception {
-        allJsonFiles = new TreeSet<>();
+        Collection<Path> allJsonFiles = new TreeSet<>();
 
         File path = new File(catalogDir, "src/generated/resources/org/apache/camel/catalog/components");
         for (File p : path.listFiles()) {
@@ -119,7 +118,7 @@ public class PrepareKameletMainMojo extends AbstractMojo {
         }
 
         List<String> lines = new ArrayList<>();
-        for (BaseModel model : allModels.values()) {
+        for (BaseModel<?> model : allModels.values()) {
             String fqn = model.getJavaType();
             if (model instanceof ArtifactModel) {
                 String aid = ((ArtifactModel<?>) model).getArtifactId();

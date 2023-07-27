@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jcache.policy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -245,6 +248,45 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     }
 
+    //Use a bypass expression ${header.mybypass}
+    @Test
+    public void testBypassExpression() throws Exception {
+        final String key = randomString();
+        final String body = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        Cache cache = lookupCache("simple");
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("mykey", key);
+        headers.put("mybypass", Boolean.TRUE);
+
+        //Send first, key is not in cache
+        Object responseBody = this.template().requestBodyAndHeaders("direct:cached-bypass", body, headers);
+
+        //We got back the value, mock was called once, value got cached.
+        assertEquals(generateValue(body), cache.get(key));
+        assertEquals(generateValue(body), responseBody);
+        assertEquals(1, mock.getExchanges().size());
+
+        //Send again, use another body, but the same key
+        final String body2 = randomString();
+        responseBody = this.template().requestBodyAndHeaders("direct:cached-bypass", body2, headers);
+
+        //We got back the value, the mock was called again, value got cached
+        assertEquals(generateValue(body2), cache.get(key));
+        assertEquals(generateValue(body2), responseBody);
+        assertEquals(2, mock.getExchanges().size());
+
+        //Send again, use another body, but the same key; disable bypass
+        headers.put("mybypass", Boolean.FALSE);
+        responseBody = this.template().requestBodyAndHeaders("direct:cached-bypass", body, headers);
+
+        //We got back the cached value, the mock was not called again
+        assertEquals(generateValue(body2), cache.get(key));
+        assertEquals(generateValue(body2), responseBody);
+        assertEquals(2, mock.getExchanges().size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -297,6 +339,16 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 jcachePolicy.setKeyExpression(simple("${header.mykey}"));
 
                 from("direct:cached-byheader")
+                        .policy(jcachePolicy)
+                        .to("mock:value");
+
+                //Use ${header.mykey} as the key, ${header.mybypass} as bypass
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCache(cacheManager.getCache("simple"));
+                jcachePolicy.setKeyExpression(simple("${header.mykey}"));
+                jcachePolicy.setBypassExpression(simple("${header.mybypass}"));
+
+                from("direct:cached-bypass")
                         .policy(jcachePolicy)
                         .to("mock:value");
             }

@@ -60,6 +60,12 @@ public final class FlatpackConverter {
     }
 
     @Converter
+    public static String toString(DataSet dataSet) {
+        // force using toString from DataSet as we do not want conversion of each element
+        return dataSet.toString();
+    }
+
+    @Converter
     public static Document toDocument(DataSet dataSet) throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

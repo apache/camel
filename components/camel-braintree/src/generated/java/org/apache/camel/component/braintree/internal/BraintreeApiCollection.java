@@ -21,11 +21,13 @@ import org.apache.camel.component.braintree.DocumentUploadGatewayEndpointConfigu
 import org.apache.camel.component.braintree.MerchantAccountGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.PaymentMethodGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.PaymentMethodNonceGatewayEndpointConfiguration;
+import org.apache.camel.component.braintree.OAuthGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.PlanGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.ReportGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.SettlementBatchSummaryGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.SubscriptionGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.TransactionGatewayEndpointConfiguration;
+import org.apache.camel.component.braintree.UsBankAccountGatewayEndpointConfiguration;
 import org.apache.camel.component.braintree.WebhookNotificationGatewayEndpointConfiguration;
 
 import org.apache.camel.support.component.ApiCollection;
@@ -103,6 +105,11 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
         aliases.clear();
         nullableArgs = Arrays.asList();
+        apiHelpers.put(BraintreeApiName.OAUTH, new ApiMethodHelper<>(OAuthGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(OAuthGatewayApiMethod.class, BraintreeApiName.OAUTH);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList();
         apiHelpers.put(BraintreeApiName.PLAN, new ApiMethodHelper<>(PlanGatewayApiMethod.class, aliases, nullableArgs));
         apiMethods.put(PlanGatewayApiMethod.class, BraintreeApiName.PLAN);
 
@@ -125,6 +132,11 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
         nullableArgs = Arrays.asList();
         apiHelpers.put(BraintreeApiName.TRANSACTION, new ApiMethodHelper<>(TransactionGatewayApiMethod.class, aliases, nullableArgs));
         apiMethods.put(TransactionGatewayApiMethod.class, BraintreeApiName.TRANSACTION);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList();
+        apiHelpers.put(BraintreeApiName.US_BANK_ACCOUNT, new ApiMethodHelper<>(UsBankAccountGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(UsBankAccountGatewayApiMethod.class, BraintreeApiName.US_BANK_ACCOUNT);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -171,6 +183,9 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
             case PAYMENT_METHOD_NONCE:
                 result = new PaymentMethodNonceGatewayEndpointConfiguration();
                 break;
+            case OAUTH:
+                result = new OAuthGatewayEndpointConfiguration();
+                break;
             case PLAN:
                 result = new PlanGatewayEndpointConfiguration();
                 break;
@@ -185,6 +200,9 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
                 break;
             case TRANSACTION:
                 result = new TransactionGatewayEndpointConfiguration();
+                break;
+            case US_BANK_ACCOUNT:
+                result = new UsBankAccountGatewayEndpointConfiguration();
                 break;
             case WEBHOOK_NOTIFICATION:
                 result = new WebhookNotificationGatewayEndpointConfiguration();

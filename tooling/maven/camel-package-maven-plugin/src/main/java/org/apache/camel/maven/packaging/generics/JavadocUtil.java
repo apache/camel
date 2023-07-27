@@ -67,6 +67,10 @@ public final class JavadocUtil {
                         descSb.append(" <strong>deprecated</strong>");
                     }
                     descSb.append("\n").append(option.getDescription());
+                    if (option.isSupportFileReference()) {
+                        descSb.append(
+                                "\nThis option can also be loaded from an existing file, by prefixing with file: or classpath: followed by the location of the file.");
+                    }
                     if (option.getDefaultValue() != null) {
                         descSb.append("\nDefault value: ").append(option.getDefaultValue());
                     }
@@ -97,7 +101,7 @@ public final class JavadocUtil {
         }
     }
 
-    public static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
+    public static String extractJavaDoc(String sourceCode, MethodSource<?> ms) throws IOException {
         // the javadoc is mangled by roaster (sadly it does not preserve newlines and original formatting)
         // so we need to load it from the original source file
         Object internal = ms.getJavaDoc().getInternal();

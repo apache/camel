@@ -73,6 +73,12 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "handleFailedMessage": getOrCreateConfiguration(target).setHandleFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "ignoreunsupportedcharset":
         case "ignoreUnsupportedCharset": getOrCreateConfiguration(target).setIgnoreUnsupportedCharset(property(camelContext, boolean.class, value)); return true;
         case "ignoreurischeme":
@@ -158,6 +164,12 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "handleFailedMessage": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "ignoreunsupportedcharset":
         case "ignoreUnsupportedCharset": return boolean.class;
         case "ignoreurischeme":
@@ -244,6 +256,12 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "handleFailedMessage": return getOrCreateConfiguration(target).isHandleFailedMessage();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "ignoreunsupportedcharset":
         case "ignoreUnsupportedCharset": return getOrCreateConfiguration(target).isIgnoreUnsupportedCharset();
         case "ignoreurischeme":

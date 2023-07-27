@@ -34,7 +34,6 @@
     <properties>
         <firstVersion>3.21</firstVersion>
         <supportLevel>Experimental</supportLevel>
-        <zeebe.version>8.1.9</zeebe.version>
     </properties>
 
     <dependencies>
@@ -57,6 +56,17 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-bom</artifactId>
+            <version>${camunda-version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.bpm.model</groupId>
+            <artifactId>camunda-xml-model</artifactId>
+            <version>${camunda-version}</version>
+        </dependency>
         <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>zeebe-client-java</artifactId>

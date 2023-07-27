@@ -16,9 +16,8 @@
  */
 package org.apache.camel.language.ognl;
 
-import java.util.Map;
-
 import ognl.ClassResolver;
+import ognl.OgnlContext;
 
 /**
  * This class is used to wrap the org.apache.camel.spi.ClassResolver with ClassResolver interface
@@ -32,8 +31,7 @@ public class CamelClassResolver implements ClassResolver {
     }
 
     @Override
-    public Class<?> classForName(String className, Map context) throws ClassNotFoundException {
-
+    public Class<?> classForName(String className, OgnlContext context) throws ClassNotFoundException {
         return delegateClassResolver.resolveClass(className);
     }
 

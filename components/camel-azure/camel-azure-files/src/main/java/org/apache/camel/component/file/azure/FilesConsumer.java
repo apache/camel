@@ -47,7 +47,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     public FilesConsumer(FilesEndpoint endpoint, Processor processor,
                          FilesOperations fileOperations,
-                         GenericFileProcessStrategy processStrategy) {
+                         GenericFileProcessStrategy<?> processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
@@ -210,7 +210,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
-        if (file.isDirectory() == false) {
+        if (!file.isDirectory()) {
             answer.setFileLength(file.getFileSize());
             answer.setLastModified(lastModified(file));
         }

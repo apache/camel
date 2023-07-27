@@ -35,6 +35,20 @@
         <skipOnUnsupported>true</skipOnUnsupported>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -115,7 +129,7 @@
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.12.1</version>
+                        <version>1.13.4</version>
                         <executions>
                             <execution>
                                 <id>install node and yarn</id>

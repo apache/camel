@@ -60,26 +60,25 @@ http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.o
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as it is used as a one-time header
-that is not send along the message, as it is removed in the producer.
+If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as it is used as a one-time header that is not sent along the message, and actually is removed in the producer.
 
 == Consumer error handling
 
 While kafka consumer is polling messages from the kafka broker, then errors can happen. This section describes what happens and what
 you can configure.
 
-The consumer may throw exception when invoking the Kafka `poll` API. For example, if the message cannot be de-serialized due invalid data,
-and many other kind of errors. Those errors are in the form of `KafkaException` which are either _retryable_ or not. The exceptions
-which can be retried (`RetriableException`) will be retried again (with a poll timeout in between). All other kind of exceptions are
+The consumer may throw exception when invoking the Kafka `poll` API. For example, if the message cannot be deserialized due to invalid data,
+and many others kinds of errors. Those errors are in the form of `KafkaException` which are either _retryable_ or not. The exceptions
+which can be retried (`RetriableException`) will be retried again (with a poll timeout in between). All others kinds of exceptions are
 handled according to the _pollOnError_ configuration. This configuration has the following values:
 
-* DISCARD will discard the message and continue to poll next message.
-* ERROR_HANDLER will use Camel's error handler to process the exception, and afterwards continue to poll next message.
-* RECONNECT will re-connect the consumer and try poll the message again.
+* DISCARD will discard the message and continue to poll the next message.
+* ERROR_HANDLER will use Camel's error handler to process the exception, and afterwards continue to poll the next message.
+* RECONNECT will re-connect the consumer and try to poll the message again.
 * RETRY will let the consumer retry polling the same message again
-* STOP will stop the consumer (have to be manually started/restarted if the consumer should be able to consume messages again).
+* STOP will stop the consumer (it has to be manually started/restarted if the consumer should be able to consume messages again).
 
-The default is *ERROR_HANDLER* which will let Camel's error handler (if any configured) process the caused exception.
+The default is *ERROR_HANDLER*, which will let Camel's error handler (if any configured) process the caused exception.
 Afterwards continue to poll the next message. This behavior is similar to the _bridgeErrorHandler_ option that
 Camel components have.
 
@@ -102,7 +101,7 @@ from("kafka:test?brokers=localhost:9092")
     .log("    with the key ${headers[kafka.KEY]}")
 ----
 
-If you need to consume messages from multiple topics you can use a comma separated list of topic names.
+If you need to consume messages from multiple topics, you can use a comma separated list of topic names.
 
 [source,java]
 ----
@@ -126,8 +125,8 @@ from("kafka:test*?brokers=localhost:9092&topicIsPattern=true")
     .log("    with the key ${headers[kafka.KEY]}")
 ----
 
-When consuming messages from Kafka you can use your own offset management and not delegate this management to Kafka.
-In order to keep the offsets the component needs a `StateRepository` implementation such as `FileStateRepository`.
+When consuming messages from Kafka, you can use your own offset management and not delegate this management to Kafka.
+In order to keep the offsets, the component needs a `StateRepository` implementation such as `FileStateRepository`.
 This bean should be available in the registry.
 Here how to use it :
 
@@ -228,7 +227,7 @@ camelContext.addRoutes(new RouteBuilder() {
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
 The topic used must be unique per idempotent repository instance. The mechanism does not have any requirements about the number of topic partitions; as the repository consumes from all partitions at the same time. It also does not have any requirements about the replication factor of the topic.
-Each repository instance that uses the topic (e.g. typically on different machines running in parallel) controls its own consumer group, so in a cluster of 10 Camel processes using the same topic each will control its own offset.
+Each repository instance that uses the topic (e.g., typically on different machines running in parallel) controls its own consumer group, so in a cluster of 10 Camel processes using the same topic, each will control its own offset.
 On startup, the instance subscribes to the topic, rewinds the offset to the beginning and rebuilds the cache to the latest state. The cache will not be considered warmed up until one poll of `pollDurationMs` in length returns 0 records. Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the latter happens the idempotent repository may be in an inconsistent state until its consumer catches up to the end of the topic.
 Be mindful of the format of the header used for the uniqueness check. By default, it uses Strings as the data types. When using primitive numeric formats, the header must be deserialized accordingly. Check the samples below for examples.
 
@@ -243,7 +242,7 @@ A `KafkaIdempotentRepository` has the following properties:
 | maxCacheSize | How many of the most recently used keys should be stored in memory (default 1000).
 | pollDurationMs | The poll duration of the Kafka consumer. The local caches are updated immediately. This value will affect how far behind other peers that update their caches from the topic are relative to the idempotent consumer instance that sent the cache action message. The default value of this is 100 ms. +
 If setting this value explicitly, be aware that there is a tradeoff between the remote cache liveness and the volume of network traffic between this repository's consumer and the Kafka brokers. The cache warmup process also depends on there being one poll that fetches nothing - this indicates that the stream has been consumed up to the current point. If the poll duration is excessively long for the rate at which messages are sent on the topic, there exists a possibility that the cache cannot be warmed up and will operate in an inconsistent state relative to its peers until it catches up.
-| groupId | The groupId to assign to the idempotent consumer. If not specified it will be randomize.
+| groupId | The groupId to assign to the idempotent consumer. If not specified it will be randomized.
 |===
 
 The repository can be instantiated by defining the `topic` and `bootstrapServers`, or the `producerConfig` and `consumerConfig` property sets can be explicitly defined to enable features such as SSL/SASL.
@@ -346,7 +345,7 @@ from(from).routeId("foo")
 By default, the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
 In case you want to force manual commits, you can use `KafkaManualCommit` API from the Camel Exchange, stored on the message header.
-This requires to turn on manual commits by either setting the option `allowManualCommit` to `true` on the `KafkaComponent`
+This requires turning on manual commits by either setting the option `allowManualCommit` to `true` on the `KafkaComponent`
 or on the endpoint, for example:
 
 [source,java]
@@ -404,9 +403,9 @@ Producing flow backed by same behaviour - camel headers of particular exchange w
 
 Since kafka headers allows only `byte[]` values, in order camel exchange header to be propagated its value should be serialized to `bytes[]`,
 otherwise header will be skipped.
-Following header value types are supported: `String`, `Integer`, `Long`, `Double`, `Boolean`, `byte[]`.
+The following header value types are supported: `String`, `Integer`, `Long`, `Double`, `Boolean`, `byte[]`.
 Note: all headers propagated *from* kafka *to* camel exchange will contain `byte[]` value by default.
-In order to override default functionality uri parameters can be set: `headerDeserializer` for `from` route and `headerSerializer` for `to` route. Example:
+In order to override default functionality, these uri parameters can be set: `headerDeserializer` for `from` route and `headerSerializer` for `to` route. For example:
 
 [source,java]
 ----
@@ -426,7 +425,7 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 .to("kafka:my_topic?headerFilterStrategy=#myStrategy")
 ----
 
-`myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
+`myStrategy` object should be a subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 
 == Kafka Transaction
 
@@ -438,34 +437,15 @@ from("direct:transaction")
 ----
 At the end of exchange routing, the kafka producer would commit the transaction or abort it if there is an Exception throwing or the exchange is `RollbackOnly`. Since Kafka does not support transactions in multi threads, it will throw `ProducerFencedException` if there is another producer with the same `transaction.id` to make the transactional request.
 
-It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS) which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to rollback the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
+It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS) which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to roll back the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
 
 == Setting Kerberos config file
 
-Since kafka clients do not expose a way to configure the `krb5.conf` file directly through their API, you can, if necessary, do this using the JVM system properties.
-
-Through command line:
-[source,bash]
-----
-java -jar myroute.jar -Djava.security.krb5.conf=/path/to/krb5.conf
-----
-
-Through java code:
+Configure the 'krb5.conf' file directly through the API
 [source,java]
 ----
-public class MyRoute extends RouteBuilder {
-    static {
-        System.setProperty("java.security.krb5.conf", "/path/to/krb5.conf");
-    }
-
-    // your route
-
+static {
+    KafkaComponent.setKerberosConfigLocation("path/to/config/file");
 }
 ----
-
-[WARNING]
-====
-Keep in mind that once using system properties that config will be applied to whole JVM so all routes will be affected by this.
-====
-
 include::spring-boot:partial$starter.adoc[]

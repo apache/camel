@@ -24,13 +24,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Timeout(50)
+@Isolated
+@Timeout(60)
 public class SplitParallelTimeoutTest extends ContextTestSupport {
 
     private volatile Exchange receivedExchange;
@@ -39,13 +43,17 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
     private volatile long receivedTimeout;
     private final Phaser phaser = new Phaser(3);
 
+    @BeforeEach
+    void sendEarly() {
+        Assumptions.assumeTrue(context.isStarted(), "The test cannot be run because the context is not started");
+        template.sendBody("direct:start", "A,B,C");
+    }
+
     @RepeatedTest(20)
     public void testSplitParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C
         mock.message(0).body().not(body().contains("A"));
-
-        template.sendBody("direct:start", "A,B,C");
 
         phaser.awaitAdvanceInterruptibly(0, 5000, TimeUnit.SECONDS);
 
@@ -62,7 +70,8 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100)
+                from("direct:start")
+                        .split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100)
                         .choice()
                             .when(body().isEqualTo("A")).to("direct:a")
                             .when(body().isEqualTo("B")).to("direct:b")

@@ -21,7 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.xml.XmlPrettyPrinter;
+import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 import org.fusesource.jansi.Ansi;
 
 public final class XmlHelper {

@@ -24,7 +24,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ArangoDbContainer extends GenericContainer {
     public static final Integer PORT_DEFAULT = 8529;
-    public static final String ARANGO_IMAGE = "arangodb:3.9.8";
+    public static final String ARANGO_IMAGE = "arangodb:3.10.9";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDbContainer.class);
     private static final String CONTAINER_NAME = "arango";

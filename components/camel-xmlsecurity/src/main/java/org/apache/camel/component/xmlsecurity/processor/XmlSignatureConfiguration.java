@@ -24,6 +24,7 @@ import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLValidateContext;
 
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -41,6 +42,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
     @UriParam(label = "producer")
+    @Metadata(supportFileReference = true)
     private String schemaResourceUri;
     @UriParam(label = "producer")
     private String outputXmlEncoding;

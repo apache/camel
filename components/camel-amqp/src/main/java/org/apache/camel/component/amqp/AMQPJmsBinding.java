@@ -40,8 +40,8 @@ public class AMQPJmsBinding extends JmsBinding {
 
     public AMQPJmsBinding(JmsEndpoint endpoint) {
         super(endpoint);
-        if (endpoint.getConfiguration() instanceof AMQPConfiguration) {
-            includeAmqpAnnotations = ((AMQPConfiguration) endpoint.getConfiguration()).isIncludeAmqpAnnotations();
+        if (endpoint.getConfiguration() instanceof AMQPConfiguration amqpConfiguration) {
+            includeAmqpAnnotations = amqpConfiguration.isIncludeAmqpAnnotations();
         }
     }
 
@@ -71,8 +71,7 @@ public class AMQPJmsBinding extends JmsBinding {
     }
 
     private AmqpJmsMessageFacade getMessageFacade(Message message) {
-        if (message instanceof JmsMessage) {
-            JmsMessage jmsMessage = (JmsMessage) message;
+        if (message instanceof JmsMessage jmsMessage) {
             if (jmsMessage.getFacade() instanceof AmqpJmsMessageFacade) {
                 return (AmqpJmsMessageFacade) jmsMessage.getFacade();
             }

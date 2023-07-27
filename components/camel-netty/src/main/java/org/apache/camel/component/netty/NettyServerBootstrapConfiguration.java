@@ -88,6 +88,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     @UriParam(label = "security")
     protected String keyStoreResource;
     @UriParam(label = "security")
+    @Metadata(supportFileReference = true)
     protected String trustStoreResource;
     @UriParam(label = "security")
     protected String keyStoreFormat;

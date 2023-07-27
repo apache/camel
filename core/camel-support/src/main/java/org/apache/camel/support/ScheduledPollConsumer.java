@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
@@ -565,6 +566,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        Component component = getEndpoint().getComponent();
+        if (component instanceof HealthCheckComponent hcc) {
+            getHealthCheck().setEnabled(hcc.isHealthCheckEnabled() && hcc.isHealthCheckConsumerEnabled());
+        }
 
         // validate that if backoff multiplier is in use, the threshold values is set correctly
         if (backoffMultiplier > 0) {

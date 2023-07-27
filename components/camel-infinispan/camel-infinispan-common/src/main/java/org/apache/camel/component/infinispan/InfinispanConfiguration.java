@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan;
 
 import java.util.function.BiFunction;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 
 public abstract class InfinispanConfiguration {
@@ -37,6 +38,7 @@ public abstract class InfinispanConfiguration {
     private Object defaultValue;
 
     @UriParam(label = "advanced", description = "An implementation specific URI for the CacheManager")
+    @Metadata(supportFileReference = true)
     private String configurationUri;
 
     @UriParam(label = "advanced",

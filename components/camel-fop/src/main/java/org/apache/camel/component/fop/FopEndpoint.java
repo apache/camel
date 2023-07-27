@@ -42,6 +42,7 @@ public class FopEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private FopOutputType outputType;
     @UriParam
+    @Metadata(supportFileReference = true)
     private String userConfigURL;
     @UriParam
     private FopFactory fopFactory;

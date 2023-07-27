@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -56,6 +57,9 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tracing.SpanDecorator;
+import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +87,11 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
     CamelMicrometerObservationTestSupport(SpanTestData[] expected) {
         this.expected = expected;
+    }
+
+    @AfterEach
+    void noLeakingContext() {
+        Assertions.assertThat(Context.current()).as("There must be no leaking span after test").isSameAs(Context.root());
     }
 
     @Override
@@ -183,7 +192,14 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
     }
 
     protected void verifyTraceSpanNumbers(int numOfTraces, int numSpansPerTrace) {
-        Map<String, List<SpanData>> traces = new HashMap<>();
+        final Map<String, List<SpanData>> traces = new HashMap<>();
+
+        Awaitility.await()
+                .alias("inMemorySpanExporter.getFinishedSpanItems() should eventually contain all expected spans")
+                .atMost(5, TimeUnit.SECONDS)
+                .pollInterval(10, TimeUnit.MILLISECONDS)
+                .pollDelay(0, TimeUnit.MILLISECONDS)
+                .until(() -> inMemorySpanExporter.getFinishedSpanItems().size() >= (numOfTraces * numSpansPerTrace));
 
         List<SpanData> finishedSpans = inMemorySpanExporter.getFinishedSpanItems();
         // Sort spans into separate traces
@@ -192,6 +208,7 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
             spans.add(finishedSpans.get(i));
         }
 
+        LOG.info("Found traces: " + traces);
         assertEquals(numOfTraces, traces.size());
 
         for (Map.Entry<String, List<SpanData>> spans : traces.entrySet()) {

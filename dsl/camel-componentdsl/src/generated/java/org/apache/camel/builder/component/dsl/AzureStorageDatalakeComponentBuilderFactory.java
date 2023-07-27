@@ -531,6 +531,56 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * account key for authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -678,6 +728,9 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             case "lazyStartProducer": ((DataLakeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((DataLakeComponent) component).setOperation((org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition) value); return true;
             case "autowiredEnabled": ((DataLakeComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((DataLakeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((DataLakeComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((DataLakeComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accountKey": getOrCreateConfiguration((DataLakeComponent) component).setAccountKey((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((DataLakeComponent) component).setClientSecret((java.lang.String) value); return true;
             case "clientSecretCredential": getOrCreateConfiguration((DataLakeComponent) component).setClientSecretCredential((com.azure.identity.ClientSecretCredential) value); return true;

@@ -1,1 +1,0 @@
-../../../../../components/camel-hyperledger-aries/src/main/docs/hyperledger-aries-component.adoc

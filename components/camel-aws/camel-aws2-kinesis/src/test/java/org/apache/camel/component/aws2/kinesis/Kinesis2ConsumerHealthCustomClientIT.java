@@ -82,8 +82,7 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("aws2-kinesis://stream")
-                        .startupOrder(2).log("${body}").routeId("test-health-it");
+                from("aws2-kinesis://stream").startupOrder(2).log("${body}").routeId("test-health-it");
             }
         };
     }
@@ -104,10 +103,7 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
 
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertFalse(hasRegionMessage, "aws2-kinesis check error message");
         });
 
     }

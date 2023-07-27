@@ -271,6 +271,37 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * To enable retry letter topic mode. The default retry letter topic
+         * uses this format: topicname-subscriptionname-RETRY.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param enableRetry the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder enableRetry(boolean enableRetry) {
+            doSetProperty("enableRetry", enableRetry);
+            return this;
+        }
+        /**
+         * Policy to use by consumer when using key-shared subscription type.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param keySharedPolicy the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder keySharedPolicy(
+                java.lang.String keySharedPolicy) {
+            doSetProperty("keySharedPolicy", keySharedPolicy);
+            return this;
+        }
+        /**
          * Maximum number of times that a message will be redelivered before
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
@@ -380,6 +411,22 @@ public interface PulsarComponentBuilderFactory {
          */
         default PulsarComponentBuilder readCompacted(boolean readCompacted) {
             doSetProperty("readCompacted", readCompacted);
+            return this;
+        }
+        /**
+         * Name of the topic to use in retry mode. Note: if not set, default
+         * topic name will be topicName-subscriptionName-RETRY.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param retryLetterTopic the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder retryLetterTopic(
+                java.lang.String retryLetterTopic) {
+            doSetProperty("retryLetterTopic", retryLetterTopic);
             return this;
         }
         /**
@@ -833,6 +880,8 @@ public interface PulsarComponentBuilderFactory {
             case "consumerNamePrefix": getOrCreateConfiguration((PulsarComponent) component).setConsumerNamePrefix((java.lang.String) value); return true;
             case "consumerQueueSize": getOrCreateConfiguration((PulsarComponent) component).setConsumerQueueSize((int) value); return true;
             case "deadLetterTopic": getOrCreateConfiguration((PulsarComponent) component).setDeadLetterTopic((java.lang.String) value); return true;
+            case "enableRetry": getOrCreateConfiguration((PulsarComponent) component).setEnableRetry((boolean) value); return true;
+            case "keySharedPolicy": getOrCreateConfiguration((PulsarComponent) component).setKeySharedPolicy((java.lang.String) value); return true;
             case "maxRedeliverCount": getOrCreateConfiguration((PulsarComponent) component).setMaxRedeliverCount((java.lang.Integer) value); return true;
             case "messageListener": getOrCreateConfiguration((PulsarComponent) component).setMessageListener((boolean) value); return true;
             case "negativeAckRedeliveryBackoff": getOrCreateConfiguration((PulsarComponent) component).setNegativeAckRedeliveryBackoff((org.apache.pulsar.client.api.RedeliveryBackoff) value); return true;
@@ -840,6 +889,7 @@ public interface PulsarComponentBuilderFactory {
             case "numberOfConsumers": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumers((int) value); return true;
             case "numberOfConsumerThreads": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumerThreads((int) value); return true;
             case "readCompacted": getOrCreateConfiguration((PulsarComponent) component).setReadCompacted((boolean) value); return true;
+            case "retryLetterTopic": getOrCreateConfiguration((PulsarComponent) component).setRetryLetterTopic((java.lang.String) value); return true;
             case "subscriptionInitialPosition": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionInitialPosition((org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition) value); return true;
             case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;
             case "subscriptionTopicsMode": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionTopicsMode((org.apache.pulsar.client.api.RegexSubscriptionMode) value); return true;

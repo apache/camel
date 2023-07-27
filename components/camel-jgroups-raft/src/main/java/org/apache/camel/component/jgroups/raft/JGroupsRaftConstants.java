@@ -33,8 +33,6 @@ public final class JGroupsRaftConstants {
     public static final String HEADER_JGROUPSRAFT_LAST_APPLIED = "JGROUPSRAFT_LAST_APPLIED";
     @Metadata(label = "consumer", description = "The Address ot Raft Leader or not.", javaType = "org.jgroups.Address")
     public static final String HEADER_JGROUPSRAFT_LEADER_ADDRESS = "JGROUPSRAFT_LEADER_ADDRESS";
-    @Metadata(label = "consumer", description = "The Raft log size in bytes.", javaType = "int")
-    public static final String HEADER_JGROUPSRAFT_LOG_SIZE_BYTE = "JGROUPSRAFT_LOG_SIZE_BYTE";
     @Metadata(label = "consumer", description = "The Raft id of the node.", javaType = "String")
     public static final String HEADER_JGROUPSRAFT_RAFT_ID = "JGROUPSRAFT_RAFT_ID";
     @Metadata(label = "consumer", description = "The event type",

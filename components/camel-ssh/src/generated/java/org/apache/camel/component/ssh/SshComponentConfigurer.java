@@ -41,6 +41,12 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
         case "failonunknownhost":
         case "failOnUnknownHost": getOrCreateConfiguration(target).setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "keypairprovider":
         case "keyPairProvider": getOrCreateConfiguration(target).setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
         case "keytype":
@@ -78,6 +84,12 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": return org.apache.camel.component.ssh.SshConfiguration.class;
         case "failonunknownhost":
         case "failOnUnknownHost": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "keypairprovider":
         case "keyPairProvider": return org.apache.sshd.common.keyprovider.KeyPairProvider.class;
         case "keytype":
@@ -116,6 +128,12 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": return target.getConfiguration();
         case "failonunknownhost":
         case "failOnUnknownHost": return getOrCreateConfiguration(target).isFailOnUnknownHost();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "keypairprovider":
         case "keyPairProvider": return getOrCreateConfiguration(target).getKeyPairProvider();
         case "keytype":

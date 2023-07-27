@@ -30,10 +30,10 @@ public class KafkaAutowireTest {
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    private CamelContext context = contextExtension.getContext();
+    private final CamelContext context = contextExtension.getContext();
 
     @BindToRegistry
-    private KafkaClientFactory clientFactory = new TestKafkaClientFactory();
+    private final KafkaClientFactory clientFactory = new TestKafkaClientFactory();
 
     @Test
     public void testKafkaComponentAutowiring() {

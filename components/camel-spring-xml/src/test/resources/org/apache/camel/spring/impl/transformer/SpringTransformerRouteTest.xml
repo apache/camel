@@ -30,16 +30,18 @@
     <bean id="otherToXOrder" class="org.apache.camel.processor.transformer.TransformerRouteTest$OtherToXOrderTransformer"/>
     <bean id="xOrderResponseToOther" class="org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponseToOtherTransformer"/>
     <bean id="myMyDataTypeFormatDef" class="org.apache.camel.processor.transformer.TransformerRouteTest$MyDataFormatDefinition"/>
-    
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-    
+
         <endpoint id="myXmlEndpoint" uri="direct:endpointXmlTransformer"/>
 
         <transformers>
+            <loadTransformer defaults="true"/>
+            <loadTransformer packageScan="org.apache.camel.processor.transformer.custom"/>
             <dataFormatTransformer scheme="json">
                 <custom ref="myJsonDataFormatDef"/>
             </dataFormatTransformer>
-            <dataFormatTransformer scheme="myDataType">
+            <dataFormatTransformer name="myDataType">
                 <custom ref="myMyDataTypeFormatDef"/>
             </dataFormatTransformer>
             <endpointTransformer ref="myXmlEndpoint" fromType="xml:XmlXOrder" toType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
@@ -74,26 +76,26 @@
             <setBody><constant>response</constant></setBody>
             <to uri="mock:xyzresult"/>
         </route>
-        
+
         <route>
             <from uri="direct:dataFormat"/>
             <inputType urn="json:JsonXOrder"/>
             <outputType urn="json:JsonXOrderResponse"/>
             <to uri="direct:xyz" pattern="InOut"/>
         </route>
-        
+
         <route>
             <from uri="direct:endpoint"/>
             <inputType urn="xml:XmlXOrder"/>
             <outputType urn="xml:XmlXOrderResponse"/>
             <to uri="direct:xyz" pattern="InOut"/>
         </route>
-        
+
         <route>
             <from uri="direct:endpointXmlTransformer"/>
             <process ref="myXmlProcessor"/>
         </route>
-        
+
         <route>
             <from uri="direct:custom"/>
             <inputType urn="other:OtherXOrder"/>
@@ -114,5 +116,5 @@
         </route>
 
     </camelContext>
-  
+
 </beans>

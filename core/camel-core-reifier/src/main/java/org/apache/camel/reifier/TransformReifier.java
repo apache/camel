@@ -22,6 +22,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.processor.TransformProcessor;
+import org.apache.camel.processor.transformer.DataTypeProcessor;
 
 public class TransformReifier extends ExpressionReifier<TransformDefinition> {
 
@@ -31,6 +32,15 @@ public class TransformReifier extends ExpressionReifier<TransformDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
+        if (definition.getExpression() != null && definition.getToType() != null) {
+            throw new IllegalArgumentException(
+                    "Both expression and data type set on transform EIP - please choose only one of them");
+        }
+
+        if (definition.getToType() != null) {
+            return new DataTypeProcessor(definition.getFromType(), definition.getToType());
+        }
+
         Expression expr = createExpression(definition.getExpression());
         return new TransformProcessor(expr);
     }

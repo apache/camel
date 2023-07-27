@@ -19,7 +19,6 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.CamelContext;
@@ -147,7 +146,7 @@ public class KafkaConsumerAuthIT {
     @Timeout(30)
     @Order(1)
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException, ExecutionException {
+    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
         MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         String propagatedHeaderKey = "PropagatedCustomHeader";

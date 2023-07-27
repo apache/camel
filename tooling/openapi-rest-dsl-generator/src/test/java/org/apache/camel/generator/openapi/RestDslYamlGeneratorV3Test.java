@@ -22,12 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslYamlGeneratorV3Test {
 
-    static OasDocument document;
+    static OpenApiDocument document;
 
     @Test
     public void shouldGenerateYamlWithDefaults() throws Exception {
@@ -65,10 +64,9 @@ public class RestDslYamlGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = RestDslYamlGeneratorV3Test.class.getResourceAsStream("openapi-spec.json")) {
-            final JsonNode node = mapper.readTree(is);
-            document = (OasDocument) Library.readDocument(node);
+            String json = IOHelper.loadText(is);
+            document = (OpenApiDocument) Library.readDocumentFromJSONString(json);
         }
     }
 

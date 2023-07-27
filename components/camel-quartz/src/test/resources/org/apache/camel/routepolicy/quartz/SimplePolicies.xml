@@ -25,7 +25,7 @@
     ">
 
   <bean id="now" class="org.apache.camel.routepolicy.quartz.DateFactory" factory-method="createDate">
-    <constructor-arg index="0" value="3000"/>
+    <constructor-arg index="0" value="1000"/>
   </bean>
 
   <bean id="defaultPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy"/>
@@ -33,25 +33,25 @@
   <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
     <property name="routeStartDate" ref="now"/>
     <property name="routeStartRepeatCount" value="1"/>
-    <property name="routeStartRepeatInterval" value="3000"/>
+    <property name="routeStartRepeatInterval" value="1000"/>
   </bean>
 
   <bean id="stopPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
     <property name="routeStopDate" ref="now"/>
     <property name="routeStopRepeatCount" value="1"/>
-    <property name="routeStopRepeatInterval" value="3000"/>
+    <property name="routeStopRepeatInterval" value="1000"/>
   </bean>
 
   <bean id="suspendPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
     <property name="routeSuspendDate" ref="now"/>
     <property name="routeSuspendRepeatCount" value="1"/>
-    <property name="routeSuspendRepeatInterval" value="3000"/>
+    <property name="routeSuspendRepeatInterval" value="1000"/>
   </bean>
 
   <bean id="resumePolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
     <property name="routeResumeDate" ref="now"/>
     <property name="routeResumeRepeatCount" value="1"/>
-    <property name="routeResumeRepeatInterval" value="3000"/>
+    <property name="routeResumeRepeatInterval" value="1000"/>
   </bean>
 
   <bean id="direct" class="org.apache.camel.component.direct.DirectComponent">

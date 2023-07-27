@@ -21,9 +21,10 @@ public class HazelcastRingbufferEndpointUriFactory extends org.apache.camel.supp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(6);
         props.add("cacheName");
         props.add("defaultOperation");
+        props.add("hazelcastConfigUri");
         props.add("hazelcastInstance");
         props.add("hazelcastInstanceName");
         props.add("lazyStartProducer");

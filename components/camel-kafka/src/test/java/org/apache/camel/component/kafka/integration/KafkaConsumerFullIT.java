@@ -63,7 +63,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
     @BindToRegistry("myHeaderDeserializer")
-    private MyKafkaHeaderDeserializer bean = new MyKafkaHeaderDeserializer();
+    private final MyKafkaHeaderDeserializer bean = new MyKafkaHeaderDeserializer();
 
     @BeforeEach
     public void before() {

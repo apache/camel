@@ -120,7 +120,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
     @Override
     public long getTaskQueueSize() {
         if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
-            BlockingQueue queue = ((ThreadPoolExecutor) processor.getExecutorService()).getQueue();
+            BlockingQueue<Runnable> queue = ((ThreadPoolExecutor) processor.getExecutorService()).getQueue();
             return queue != null ? queue.size() : 0;
         } else {
             return 0;

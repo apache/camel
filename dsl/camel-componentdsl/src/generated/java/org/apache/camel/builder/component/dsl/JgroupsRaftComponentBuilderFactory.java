@@ -101,8 +101,7 @@ public interface JgroupsRaftComponentBuilderFactory {
          * StateMachine to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.jgroups.protocols.raft.StateMachine&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.jgroups.raft.StateMachine&lt;/code&gt; type.
          * 
          * Default: NopStateMachine
          * Group: common
@@ -111,7 +110,7 @@ public interface JgroupsRaftComponentBuilderFactory {
          * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder stateMachine(
-                org.jgroups.protocols.raft.StateMachine stateMachine) {
+                org.jgroups.raft.StateMachine stateMachine) {
             doSetProperty("stateMachine", stateMachine);
             return this;
         }
@@ -202,7 +201,7 @@ public interface JgroupsRaftComponentBuilderFactory {
             case "channelProperties": ((JGroupsRaftComponent) component).setChannelProperties((java.lang.String) value); return true;
             case "raftHandle": ((JGroupsRaftComponent) component).setRaftHandle((org.jgroups.raft.RaftHandle) value); return true;
             case "raftId": ((JGroupsRaftComponent) component).setRaftId((java.lang.String) value); return true;
-            case "stateMachine": ((JGroupsRaftComponent) component).setStateMachine((org.jgroups.protocols.raft.StateMachine) value); return true;
+            case "stateMachine": ((JGroupsRaftComponent) component).setStateMachine((org.jgroups.raft.StateMachine) value); return true;
             case "bridgeErrorHandler": ((JGroupsRaftComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JGroupsRaftComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JGroupsRaftComponent) component).setAutowiredEnabled((boolean) value); return true;

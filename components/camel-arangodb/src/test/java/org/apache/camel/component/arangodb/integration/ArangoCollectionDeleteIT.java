@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
                           disabledReason = "Apache CI nodes are too resource constrained for this test")
-public class ArangoCollectionDeleteIT extends BaseCollection {
+public class ArangoCollectionDeleteIT extends BaseArangoDb {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -58,28 +58,32 @@ public class ArangoCollectionDeleteIT extends BaseCollection {
     @Test
     public void deleteMultipleDocuments() {
         TestDocumentEntity test1 = new TestDocumentEntity("bar1");
-        TestDocumentEntity test2 = new TestDocumentEntity("bar2", 10);
-        TestDocumentEntity test3 = new TestDocumentEntity("bar3");
+        var o = collection.insertDocument(test1);
+        var k1 = o.getKey();
 
-        collection.insertDocument(test1);
-        collection.insertDocument(test2);
-        collection.insertDocument(test3);
+        TestDocumentEntity test2 = new TestDocumentEntity("bar2", 10);
+        o = collection.insertDocument(test2);
+        var k2 = o.getKey();
+
+        TestDocumentEntity test3 = new TestDocumentEntity("bar3");
+        o = collection.insertDocument(test3);
+        var k3 = o.getKey();
 
         template.request("direct:delete", exchange -> {
-            exchange.getMessage().setBody(Arrays.asList(test1.getKey(), test2.getKey()));
+            exchange.getMessage().setBody(Arrays.asList(k1, k2));
             exchange.getMessage().setHeader(MULTI_DELETE, true);
         });
 
         // document is deleted
-        TestDocumentEntity document = collection.getDocument(test1.getKey(), TestDocumentEntity.class);
+        TestDocumentEntity document = collection.getDocument(k1, TestDocumentEntity.class);
         assertNull(document);
 
         // document is deleted
-        document = collection.getDocument(test2.getKey(), TestDocumentEntity.class);
+        document = collection.getDocument(k2, TestDocumentEntity.class);
         assertNull(document);
 
         // document is not delete
-        document = collection.getDocument(test3.getKey(), TestDocumentEntity.class);
+        document = collection.getDocument(k3, TestDocumentEntity.class);
         assertNotNull(document);
         assertEquals(test3.getFoo(), document.getFoo());
     }

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.xml.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
@@ -51,12 +53,15 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 @ManagedResource(description = "Managed XML RoutesBuilderLoader")
 @RoutesLoader(XmlRoutesBuilderLoader.EXTENSION)
@@ -281,14 +286,47 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         = getCamelContext().getCamelContextExtension().getContextPlugin(PackageScanClassResolver.class);
                 Injector injector = getCamelContext().getInjector();
                 if (scanner != null && injector != null) {
+                    Map<Class<?>, Object> created = new HashMap<>();
                     for (String pkg : packagesToScan) {
                         Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
                         for (Class<?> c : classes) {
-                            // should:
-                            // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
-                            // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
-                            // - bind to registry if @org.apache.camel.BindToRegistry is present
-                            injector.newInstance(c, true);
+                            // phase-1: create empty bean instance without any bean post-processing
+                            Object b = injector.newInstance(c, false);
+                            if (b != null) {
+                                created.put(c, b);
+                            }
+                        }
+                        for (Class<?> c : created.keySet()) {
+                            // phase-2: discover any created beans has @BindToRegistry to register them eager
+                            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
+                            if (ann != null) {
+                                String name = ann.value();
+                                if (isEmpty(name)) {
+                                    name = c.getSimpleName();
+                                }
+                                Object bean = created.get(c);
+                                String beanName = c.getName();
+                                // - bind to registry if @org.apache.camel.BindToRegistry is present
+                                // use dependency injection factory to perform the task of binding the bean to registry
+                                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getCamelContext())
+                                        .createBindToRegistryFactory(name, bean, beanName, false);
+                                task.run();
+                            }
+                        }
+                        for (Class<?> c : created.keySet()) {
+                            // phase-3: now we can do bean post-processing on the created beans
+                            Object bean = created.get(c);
+                            String beanName = c.getName();
+                            try {
+                                // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
+                                // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
+                                PluginHelper.getBeanPostProcessor(getCamelContext()).postProcessBeforeInitialization(bean,
+                                        beanName);
+                                PluginHelper.getBeanPostProcessor(getCamelContext()).postProcessAfterInitialization(bean,
+                                        beanName);
+                            } catch (Exception e) {
+                                throw new RuntimeCamelException("Error post-processing bean: " + beanName, e);
+                            }
                         }
                     }
                 }

@@ -76,6 +76,11 @@ public class CloudtrailEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
+    @Override
+    public CloudtrailComponent getComponent() {
+        return (CloudtrailComponent) super.getComponent();
+    }
+
     public CloudTrailClient getClient() {
         return cloudTrailClient;
     }

@@ -62,6 +62,7 @@ import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Metadata;
@@ -2449,6 +2450,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type transform(Expression expression) {
         TransformDefinition answer = new TransformDefinition(expression);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the OUT message according to a data type transformation.
+     *
+     * @param  fromType the data type representing the input of the transformation
+     * @param  toType   the data type representing the output of the transformation.
+     * @return          the builder
+     */
+    public Type transform(DataType fromType, DataType toType) {
+        TransformDefinition answer = new TransformDefinition(fromType, toType);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
+     * the body on the OUT message according to a data type transformation.
+     *
+     * @param  toType the data type representing the output of the transformation.
+     * @return        the builder
+     */
+    public Type transform(DataType toType) {
+        TransformDefinition answer = new TransformDefinition(DataType.ANY, toType);
         addOutput(answer);
         return asType();
     }

@@ -45,11 +45,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -597,6 +597,10 @@ public class Run extends CamelCommand {
             // run in another JVM with different camel version (foreground or background)
             boolean custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
             if (custom) {
+                // regular camel versions can also be a milestone or release candidate
+                custom = !camelVersion.matches(".*-(RC|M)\\d$");
+            }
+            if (custom) {
                 // custom camel distribution
                 return runCustomCamelVersion(main);
             } else {
@@ -729,7 +733,7 @@ public class Run extends CamelCommand {
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17"); // TODO: java 11 or 17
+        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17");
         if (repos != null) {
             content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repos);
         } else {
@@ -972,8 +976,8 @@ public class Run extends CamelCommand {
         } else {
             mapper = new ObjectMapper();
         }
-        JsonNode node = mapper.readTree(file);
-        OasDocument document = (OasDocument) Library.readDocument(node);
+        ObjectNode node = (ObjectNode) mapper.readTree(file);
+        OpenApiDocument document = (OpenApiDocument) Library.readDocument(node);
         RuntimeUtil.setRootLoggingLevel("off");
         try {
             try (CamelContext context = new DefaultCamelContext()) {

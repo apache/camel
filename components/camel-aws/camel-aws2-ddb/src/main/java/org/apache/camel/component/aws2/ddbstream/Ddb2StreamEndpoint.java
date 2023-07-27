@@ -87,6 +87,11 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
+    @Override
+    public Ddb2StreamComponent getComponent() {
+        return (Ddb2StreamComponent) super.getComponent();
+    }
+
     public Ddb2StreamConfiguration getConfiguration() {
         return configuration;
     }
@@ -129,13 +134,18 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
         if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
+            if (httpClientBuilder == null) {
+                httpClientBuilder = ApacheHttpClient.builder();
+            }
+            SdkHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
                             Boolean.TRUE)
                     .build());
+            // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
+            clientBuilder.httpClientBuilder(null);
         }
         client = clientBuilder.build();
         return client;

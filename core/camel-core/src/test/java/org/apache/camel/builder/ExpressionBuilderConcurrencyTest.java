@@ -46,8 +46,8 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {
-            Map body = Map.of("label", "ALabel", "startLabel", "Document", "endLabel", "Document");
-            String simpleTemplate
+            final Map<String, String> body = Map.of("label", "ALabel", "startLabel", "Document", "endLabel", "Document");
+            final String simpleTemplate
                     = "This is a test a with startLabel: `${body.get('startLabel')}` endLabel: `${body.get('endLabel')}` and label: `${body.get('label')}`";
 
             @Override

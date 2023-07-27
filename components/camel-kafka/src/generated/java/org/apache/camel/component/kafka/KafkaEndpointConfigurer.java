@@ -90,6 +90,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class, value)); return true;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": target.getConfiguration().setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": target.getConfiguration().setKerberosConfigLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosinitcmd":
         case "kerberosInitCmd": target.getConfiguration().setKerberosInitCmd(property(camelContext, java.lang.String.class, value)); return true;
         case "kerberosprincipaltolocalrules":
@@ -114,7 +116,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": target.getConfiguration().setMaxPartitionFetchBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxpollrecords":
         case "maxPollRecords": target.getConfiguration().setMaxPollRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxrequestsize":
@@ -134,6 +136,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": target.getConfiguration().setPartitionerIgnoreKeys(property(camelContext, boolean.class, value)); return true;
         case "pollonerror":
         case "pollOnError": target.getConfiguration().setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
@@ -296,6 +300,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "kafkaManualCommitFactory": return org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory.class;
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return java.lang.Integer.class;
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return java.lang.String.class;
         case "kerberosinitcmd":
         case "kerberosInitCmd": return java.lang.String.class;
         case "kerberosprincipaltolocalrules":
@@ -320,7 +326,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxpartitionfetchbytes":
         case "maxPartitionFetchBytes": return java.lang.Integer.class;
         case "maxpollintervalms":
-        case "maxPollIntervalMs": return java.lang.Long.class;
+        case "maxPollIntervalMs": return java.lang.Integer.class;
         case "maxpollrecords":
         case "maxPollRecords": return java.lang.Integer.class;
         case "maxrequestsize":
@@ -340,6 +346,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return java.lang.Integer.class;
         case "partitioner": return java.lang.String.class;
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return boolean.class;
         case "pollonerror":
         case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
@@ -503,6 +511,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "kafkaManualCommitFactory": return target.getKafkaManualCommitFactory();
         case "kerberosbeforereloginmintime":
         case "kerberosBeforeReloginMinTime": return target.getConfiguration().getKerberosBeforeReloginMinTime();
+        case "kerberosconfiglocation":
+        case "kerberosConfigLocation": return target.getConfiguration().getKerberosConfigLocation();
         case "kerberosinitcmd":
         case "kerberosInitCmd": return target.getConfiguration().getKerberosInitCmd();
         case "kerberosprincipaltolocalrules":
@@ -547,6 +557,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "partitionkey":
         case "partitionKey": return target.getConfiguration().getPartitionKey();
         case "partitioner": return target.getConfiguration().getPartitioner();
+        case "partitionerignorekeys":
+        case "partitionerIgnoreKeys": return target.getConfiguration().isPartitionerIgnoreKeys();
         case "pollonerror":
         case "pollOnError": return target.getConfiguration().getPollOnError();
         case "polltimeoutms":

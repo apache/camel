@@ -184,9 +184,10 @@ public final class KameletCatalogHelper {
         Method m = kamelet.getClass().getMethod("getMetadata");
         Object meta = ObjectHelper.invokeMethod(m, kamelet);
         m = meta.getClass().getMethod("getLabels");
-        Map labels = (Map) ObjectHelper.invokeMethod(m, meta);
+        @SuppressWarnings("unchecked")
+        Map<String, String> labels = (Map<String, String>) ObjectHelper.invokeMethod(m, meta);
         if (labels != null) {
-            return (String) labels.get("camel.apache.org/kamelet.type");
+            return labels.get("camel.apache.org/kamelet.type");
         }
         return null;
     }
@@ -195,9 +196,10 @@ public final class KameletCatalogHelper {
         Method m = kamelet.getClass().getMethod("getMetadata");
         Object meta = ObjectHelper.invokeMethod(m, kamelet);
         m = meta.getClass().getMethod("getAnnotations");
-        Map anns = (Map) ObjectHelper.invokeMethod(m, meta);
+        @SuppressWarnings("unchecked")
+        Map<String, String> anns = (Map<String, String>) ObjectHelper.invokeMethod(m, meta);
         if (anns != null) {
-            return (String) anns.get("camel.apache.org/kamelet.support.level");
+            return anns.get("camel.apache.org/kamelet.support.level");
         }
         return null;
     }
@@ -225,6 +227,7 @@ public final class KameletCatalogHelper {
         Method m = kamelet.getClass().getMethod("getSpec");
         Object spec = ObjectHelper.invokeMethod(m, kamelet);
         m = spec.getClass().getMethod("getDependencies");
+        @SuppressWarnings("unchecked")
         List<Object> list = (List<Object>) ObjectHelper.invokeMethod(m, spec);
         if (list != null && !list.isEmpty()) {
             for (var en : list) {

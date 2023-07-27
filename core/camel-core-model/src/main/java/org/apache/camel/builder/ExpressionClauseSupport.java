@@ -60,7 +60,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     // which ensures that the route model dumped as XML uses these types, eg
     // <header> instead of <language name="header"> etc.
 
-    private T result;
+    private final T result;
     private Expression expressionValue;
     private ExpressionFactory expressionType;
     private PredicateFactory predicateType;

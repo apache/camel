@@ -49,7 +49,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
     private Target target;
     private PDU pdu;
-    private SnmpEndpoint endpoint;
+    private final SnmpEndpoint endpoint;
 
     public SnmpOIDPoller(SnmpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -114,9 +114,8 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         } else {
             TreeUtils treeUtils = new TreeUtils(snmp, new DefaultPDUFactory());
             for (OID oid : this.endpoint.getOids()) {
-                List events = treeUtils.getSubtree(target, new OID(oid));
-                for (Object eventObj : events) {
-                    TreeEvent event = (TreeEvent) eventObj;
+                List<TreeEvent> events = treeUtils.getSubtree(target, new OID(oid));
+                for (TreeEvent event : events) {
                     if (event == null) {
                         LOG.warn("Event is null");
                         continue;

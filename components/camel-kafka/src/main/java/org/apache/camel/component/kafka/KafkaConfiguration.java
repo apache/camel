@@ -110,7 +110,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long pollTimeoutMs = 5000L;
     @UriParam(label = "consumer", javaType = "java.time.Duration")
-    private Long maxPollIntervalMs;
+    private Integer maxPollIntervalMs;
     // auto.offset.reset1
     @UriParam(label = "consumer", defaultValue = "latest", enums = "latest,earliest,none")
     private String autoOffsetReset = "latest";
@@ -149,8 +149,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String isolationLevel;
 
     // Producer configuration properties
-    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
-    private String partitioner = KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
+    @UriParam(label = "producer")
+    private String partitioner;
+
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean partitionerIgnoreKeys;
+
     @UriParam(label = "producer", defaultValue = "100")
     private Integer retryBackoffMs = 100;
 
@@ -340,6 +344,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
+    @UriParam(label = "common,security")
+    private String kerberosConfigLocation;
+
     public KafkaConfiguration() {
     }
 
@@ -372,6 +379,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ProducerConfig.MAX_BLOCK_MS_CONFIG, getMaxBlockMs());
         addPropertyIfNotEmpty(props, ProducerConfig.MAX_REQUEST_SIZE_CONFIG, getMaxRequestSize());
         addPropertyIfNotEmpty(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, getPartitioner());
+        addPropertyIfNotEmpty(props, ProducerConfig.PARTITIONER_IGNORE_KEYS_CONFIG, isPartitionerIgnoreKeys());
         addPropertyIfNotEmpty(props, ProducerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotEmpty(props, ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, getRequestTimeoutMs());
         addPropertyIfNotEmpty(props, ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, getDeliveryTimeoutMs());
@@ -659,6 +667,18 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.partitioner = partitioner;
     }
 
+    /**
+     * Whether the message keys should be ignored when computing partition. This setting has effect only when
+     * {@link #partitioner} is not set
+     */
+    public boolean isPartitionerIgnoreKeys() {
+        return partitionerIgnoreKeys;
+    }
+
+    public void setPartitionerIgnoreKeys(boolean partitionerIgnoreKeys) {
+        this.partitionerIgnoreKeys = partitionerIgnoreKeys;
+    }
+
     public String getTopic() {
         return topic;
     }
@@ -821,8 +841,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * <tt>false</tt> then the consumer continues to the next message and processes it. If the option is <tt>true</tt>
      * then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then
      * re-attempt to process this message. However this can lead to endless processing of the same message if its bound
-     * to fail every time, eg a poison message. Therefore its recommended to deal with that for example by using Camel's
-     * error handler.
+     * to fail every time, eg a poison message. Therefore it is recommended to deal with that for example by using
+     * Camel's error handler.
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
@@ -886,8 +906,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     /**
      * Before each retry, the producer refreshes the metadata of relevant topics to see if a new leader has been
-     * elected. Since leader election takes a bit of time, this property specifies the amount of time that the producer
-     * waits before refreshing the metadata.
+     * elected. Since the leader election takes a bit of time, this property specifies the amount of time that the
+     * producer waits before refreshing the metadata.
      */
     public void setRetryBackoffMs(Integer retryBackoffMs) {
         this.retryBackoffMs = retryBackoffMs;
@@ -1217,8 +1237,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The location of the key store file. This is optional for client and can be used for two-way authentication for
-     * client.
+     * The location of the key store file. This is optional for the client and can be used for two-way authentication
+     * for the client.
      */
     public void setSslKeystoreLocation(String sslKeystoreLocation) {
         this.sslKeystoreLocation = sslKeystoreLocation;
@@ -1229,8 +1249,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The store password for the key store file. This is optional for client and only needed if sslKeystoreLocation' is
-     * configured. Key store password is not supported for PEM format.
+     * The store password for the key store file. This is optional for the client and only needed if
+     * sslKeystoreLocation' is configured. Key store password is not supported for PEM format.
      */
     public void setSslKeystorePassword(String sslKeystorePassword) {
         this.sslKeystorePassword = sslKeystorePassword;
@@ -1352,8 +1372,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * The producer will attempt to batch records together into fewer requests whenever multiple records are being sent
      * to the same partition. This helps performance on both the client and the server. This configuration controls the
-     * default batch size in bytes. No attempt will be made to batch records larger than this size.Requests sent to
-     * brokers will contain multiple batches, one for each partition with data available to be sent.A small batch size
+     * default batch size in bytes. No attempt will be made to batch records larger than this size. Requests sent to
+     * brokers will contain multiple batches, one for each partition with data available to be sent. A small batch size
      * will make batching less common and may reduce throughput (a batch size of zero will disable batching entirely). A
      * very large batch size may use memory a bit more wastefully as we will always allocate a buffer of the specified
      * batch size in anticipation of additional records.
@@ -1396,9 +1416,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * request. Normally this occurs only under load when records arrive faster than they can be sent out. However in
      * some circumstances the client may want to reduce the number of requests even under moderate load. This setting
      * accomplishes this by adding a small amount of artificial delay that is, rather than immediately sending out a
-     * record the producer will wait for up to the given delay to allow other records to be sent so that the sends can
-     * be batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the
-     * upper bound on the delay for batching: once we get batch.size worth of records for a partition it will be sent
+     * record the producer will wait for up to the given delay to allow other records to be sent so that they can be
+     * batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the upper
+     * bound on the delay for batching: once we get batch.size worth of records for a partition it will be sent
      * immediately regardless of this setting, however if we have fewer than this many bytes accumulated for this
      * partition we will 'linger' for the specified time waiting for more records to show up. This setting defaults to 0
      * (i.e. no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests sent
@@ -1418,7 +1438,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * timeout bounds the total time waiting for both metadata fetch and buffer allocation (blocking in the
      * user-supplied serializers or partitioner is not counted against this timeout). For partitionsFor() this timeout
      * bounds the time spent waiting for metadata if it is unavailable. The transaction-related methods always block,
-     * but may timeout if the transaction coordinator could not be discovered or did not respond within the timeout.
+     * but may time out if the transaction coordinator could not be discovered or did not respond within the timeout.
      */
     public void setMaxBlockMs(Integer maxBlockMs) {
         this.maxBlockMs = maxBlockMs;
@@ -1582,7 +1602,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.pollTimeoutMs = pollTimeoutMs;
     }
 
-    public Long getMaxPollIntervalMs() {
+    public Integer getMaxPollIntervalMs() {
         return maxPollIntervalMs;
     }
 
@@ -1592,7 +1612,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * expiration of this timeout, then the consumer is considered failed and the group will rebalance in order to
      * reassign the partitions to another member.
      */
-    public void setMaxPollIntervalMs(Long maxPollIntervalMs) {
+    public void setMaxPollIntervalMs(Integer maxPollIntervalMs) {
         this.maxPollIntervalMs = maxPollIntervalMs;
     }
 
@@ -1638,7 +1658,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Deserializer class for key that implements the Deserializer interface.
+     * Deserializer class for the key that implements the Deserializer interface.
      */
     public void setKeyDeserializer(String keyDeserializer) {
         this.keyDeserializer = keyDeserializer;
@@ -1660,8 +1680,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Set if KafkaConsumer will read from beginning or end on startup: SeekPolicy.BEGINNING: read from beginning.
-     * SeekPolicy.END: read from end.
+     * Set if KafkaConsumer will read from the beginning or the end on startup: SeekPolicy.BEGINNING: read from the
+     * beginning. SeekPolicy.END: read from the end.
      */
     public void setSeekTo(SeekPolicy seekTo) {
         this.seekTo = seekTo;
@@ -1874,5 +1894,16 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setIsolationLevel(String isolationLevel) {
         this.isolationLevel = isolationLevel;
+    }
+
+    public String getKerberosConfigLocation() {
+        return kerberosConfigLocation;
+    }
+
+    /**
+     * Location of the kerberos config file.
+     */
+    public void setKerberosConfigLocation(String kerberosConfigLocation) {
+        this.kerberosConfigLocation = kerberosConfigLocation;
     }
 }

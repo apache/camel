@@ -49,6 +49,7 @@ import org.wildfly.security.http.util.SecurityProviderServerMechanismFactory;
  * Implementation of `UndertowSecurityProvider` which adds elytron capability into camel-undertow. Provider requires
  * instance of `ElytronSecurityConfiguration` to be provided as `securityConfiguration` parameter in camel-undertow.
  */
+@Deprecated
 public class ElytronSecurityProvider implements UndertowSecurityProvider {
     /**
      * Name of the header which contains associated security identity if request is authenticated.

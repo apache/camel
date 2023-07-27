@@ -254,6 +254,40 @@ And in YAML DSL
         value: "5s"
 ----
 
+=== Using template parameters with Java DSL simple builder
+
+When using Java DSL and simple language then beware that you should
+not use the _simple fluent builder_ when defining the simple expressions/predicates.
+
+For example given the following route template in Java DSL:
+
+[source,java]
+----
+public class MyRouteTemplates extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        routeTemplate("myTemplate")
+            .templateParameter("name")
+            .templateParameter("color")
+            .from("direct:{{name}}")
+                .choice()
+                    .when(simple("{{color}}").isEqualTo("red"))
+                        .to("direct:red")
+                    .otherwise()
+                        .to("color:other")
+                .end();
+    }
+}
+----
+
+Then notice how the simple predicate is using _simple fluent builder_ `simple("{\{color}}").isEqualTo("red")`.
+This is **not supported** with route templates and would not work when creating multiple routes from the template.
+
+Instead, the simple expression should be a literal String value _only_ as follows:
+----
+    .when(simple("'{{color}}' == 'red'")
+----
 === Using hardcoded node IDs in route templates
 
 If route templates contains hardcoded node IDs then routes created from templates will use the same IDs

@@ -617,7 +617,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 TreeInfo doc = config.buildDocumentTree(source);
                 dynamicQueryContext.setContextItem(doc.getRootNode());
             } finally {
-                // can deal if is is null
+                // can deal if it is null
                 IOHelper.close(is);
             }
         }
@@ -733,7 +733,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected Item getAsParameter(Object value) {
         if (value instanceof String) {
             return new StringValue((String) value);
@@ -748,7 +747,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         } else if (value instanceof Float) {
             return FloatValue.makeFloatValue((float) value);
         } else {
-            return new ObjectValue(value);
+            return new ObjectValue<>(value);
         }
     }
 

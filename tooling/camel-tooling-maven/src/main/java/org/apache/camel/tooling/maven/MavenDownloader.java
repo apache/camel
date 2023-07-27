@@ -29,12 +29,10 @@ public interface MavenDownloader {
      * {@code groupId:artifactId[:packaging[:classifier]]:version}) is used to download artifacts from configured Maven
      * repositories.
      *
-     * @param  dependencyGAVs     a list of Maven coordinates
-     * @param  extraRepositories  nullable list of additional repositories to use (except the discovered ones)
-     * @param  transitively       whether to download/resolve dependencies transitively
-     * @param  useApacheSnapshots whether to include Apache Snapshots repository in the list of used repositories
-     * @return
-     * @throws {@link             MavenResolutionException} that can hold a list of repositories used during resolution.
+     * @param dependencyGAVs     a list of Maven coordinates
+     * @param extraRepositories  nullable list of additional repositories to use (except the discovered ones)
+     * @param transitively       whether to download/resolve dependencies transitively
+     * @param useApacheSnapshots whether to include Apache Snapshots repository in the list of used repositories
      */
     List<MavenArtifact> resolveArtifacts(
             List<String> dependencyGAVs, Set<String> extraRepositories,
@@ -44,10 +42,9 @@ public interface MavenDownloader {
     /**
      * Resolves available versions for groupId + artifactId from single remote repository.
      *
-     * @param  groupId
-     * @param  artifactId
-     * @param  repository external repository to use (defaults to Maven Central if {@code null})
-     * @return
+     * @param groupId    groupId
+     * @param artifactId artifactId
+     * @param repository external repository to use (defaults to Maven Central if {@code null})
      */
     List<MavenGav> resolveAvailableVersions(String groupId, String artifactId, String repository)
             throws MavenResolutionException;
@@ -56,12 +53,12 @@ public interface MavenDownloader {
      * Existing, configured {@link MavenDownloader} can be used as a template to create customized version which shares
      * most of the configuration except underlying {@code org.eclipse.aether.RepositorySystemSession}, which can't be
      * shared.
-     *
-     * @param  localRepository
-     * @param  connectTimeout
-     * @param  requestTimeout
-     * @return
      */
     MavenDownloader customize(String localRepository, int connectTimeout, int requestTimeout);
+
+    /**
+     * To use a listener when downloading from remote repositories.
+     */
+    void setRemoteArtifactDownloadListener(RemoteArtifactDownloadListener listener);
 
 }

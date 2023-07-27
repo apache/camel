@@ -18,20 +18,27 @@ package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class ArtemisVMService extends AbstractArtemisEmbeddedService {
+    private static final Logger LOG = LoggerFactory.getLogger(ArtemisVMService.class);
 
     private String brokerURL;
 
     @Override
-    protected Configuration getConfiguration(Configuration configuration, int port) {
-        final int brokerId = super.BROKER_COUNT.intValue();
+    protected Configuration configure(Configuration configuration, int port, int brokerId) {
         brokerURL = "vm://" + brokerId;
 
+        LOG.info("Creating a new Artemis VM-based broker");
         configuration.setPersistenceEnabled(false);
+        configuration.setJournalMinFiles(10);
+        configuration.setSecurityEnabled(false);
+
         try {
             configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
         } catch (Exception e) {
@@ -40,6 +47,8 @@ public class ArtemisVMService extends AbstractArtemisEmbeddedService {
         }
         configuration.addAddressSetting("#",
                 new AddressSettings()
+                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
+                        .setAutoDeleteQueues(false)
                         .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
                         .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 

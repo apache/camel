@@ -52,19 +52,15 @@ public final class CollectionHelper {
      */
     public static Integer size(Object value) {
         if (value != null) {
-            if (value instanceof Collection) {
-                Collection<?> collection = (Collection<?>) value;
+            if (value instanceof Collection<?> collection) {
                 return collection.size();
-            } else if (value instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>) value;
+            } else if (value instanceof Map<?, ?> map) {
                 return map.size();
-            } else if (value instanceof Object[]) {
-                Object[] array = (Object[]) value;
+            } else if (value instanceof Object[] array) {
                 return array.length;
             } else if (value.getClass().isArray()) {
                 return Array.getLength(value);
-            } else if (value instanceof NodeList) {
-                NodeList nodeList = (NodeList) value;
+            } else if (value instanceof NodeList nodeList) {
                 return nodeList.getLength();
             }
         }
@@ -141,8 +137,7 @@ public final class CollectionHelper {
             Object value = entry.getValue();
             String newKey = prefix.isEmpty() ? key : prefix + separator + key;
 
-            if (value instanceof Map) {
-                Map map = (Map) value;
+            if (value instanceof Map map) {
                 doFlattenKeysInMap(map, newKey, separator, target);
             } else {
                 target.put(newKey, value);

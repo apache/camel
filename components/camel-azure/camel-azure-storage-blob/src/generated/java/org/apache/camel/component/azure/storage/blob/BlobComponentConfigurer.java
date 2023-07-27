@@ -70,6 +70,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "downloadLinkExpiration": getOrCreateConfiguration(target).setDownloadLinkExpiration(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":
         case "fileDir": getOrCreateConfiguration(target).setFileDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperpage":
@@ -140,6 +146,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "downloadLinkExpiration": return java.lang.Long.class;
         case "filedir":
         case "fileDir": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperpage":
@@ -206,6 +218,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "downloadLinkExpiration": return getOrCreateConfiguration(target).getDownloadLinkExpiration();
         case "filedir":
         case "fileDir": return getOrCreateConfiguration(target).getFileDir();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperpage":

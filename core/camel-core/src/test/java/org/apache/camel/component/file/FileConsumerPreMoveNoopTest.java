@@ -29,12 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
 
+    private final String endpointUri = fileUri();
+
     @Test
     public void testPreMoveNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(endpointUri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -48,7 +50,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(endpointUri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
@@ -58,7 +60,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
         oneExchangeDone.reset();
         mock.expectedBodiesReceived("Hello Again World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello Again World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(endpointUri, "Hello Again World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();

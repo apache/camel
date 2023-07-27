@@ -108,6 +108,11 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         return consumer;
     }
 
+    @Override
+    public Sqs2Component getComponent() {
+        return (Sqs2Component) super.getComponent();
+    }
+
     private boolean isDefaultAwsHost() {
         return configuration.getAmazonAWSHost().equals("amazonaws.com");
     }

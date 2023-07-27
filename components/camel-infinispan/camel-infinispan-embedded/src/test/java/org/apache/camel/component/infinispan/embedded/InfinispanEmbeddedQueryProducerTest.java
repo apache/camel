@@ -38,11 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InfinispanEmbeddedQueryProducerTest extends InfinispanEmbeddedQueryTestSupport {
 
     @BindToRegistry("noResultQueryBuilder")
-    public static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER = InfinispanQueryBuilder.create(
+    private InfinispanQueryBuilder noResultQueryBuilder = InfinispanQueryBuilder.create(
             "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%abc'");
 
     @BindToRegistry("withResultQueryBuilder")
-    public static final InfinispanQueryBuilder WITH_RESULT_QUERY_BUILDER = InfinispanQueryBuilder.create(
+    private InfinispanQueryBuilder withResultQueryBuilder = InfinispanQueryBuilder.create(
             "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%A'");
 
     // *****************************
@@ -61,7 +61,7 @@ public class InfinispanEmbeddedQueryProducerTest extends InfinispanEmbeddedQuery
 
     @Test
     public void producerQueryWithoutResult() {
-        producerQueryWithoutResult("direct:start", NO_RESULT_QUERY_BUILDER);
+        producerQueryWithoutResult("direct:start", noResultQueryBuilder);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class InfinispanEmbeddedQueryProducerTest extends InfinispanEmbeddedQuery
 
     @Test
     public void producerQueryWithResult() {
-        producerQueryWithResult("direct:start", WITH_RESULT_QUERY_BUILDER);
+        producerQueryWithResult("direct:start", withResultQueryBuilder);
     }
 
     @Test

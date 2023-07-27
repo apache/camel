@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +61,7 @@ public final class SObjectNode implements Serializable {
 
     private static final String SOBJECT_TYPE_PARAM = "type";
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @JsonUnwrapped
@@ -265,8 +267,8 @@ public final class SObjectNode implements Serializable {
         return object.getAttributes().getType();
     }
 
-    Stream<Class> objectTypes() {
-        return Stream.concat(Stream.of((Class) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
+    Stream<Class<?>> objectTypes() {
+        return Stream.concat(Stream.of((Class<?>) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
     }
 
     void setErrors(final List<RestError> errors) {

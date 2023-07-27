@@ -55,7 +55,7 @@ import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
-import org.apache.camel.util.xml.XmlPrettyPrinter;
+import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -1309,7 +1309,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Iterator it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
+                Iterator<?> it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
                 if (it != null) {
                     // skip first
                     it.next();
@@ -1705,8 +1705,7 @@ public class ExpressionBuilder {
                 StringBuilder buffer = new StringBuilder();
                 Collection<?> col = optimized != null ? optimized : expressions;
                 for (Object obj : col) {
-                    if (obj instanceof Expression) {
-                        Expression expression = (Expression) obj;
+                    if (obj instanceof Expression expression) {
                         String text = expression.evaluate(exchange, String.class);
                         if (text != null) {
                             buffer.append(text);

@@ -2,5 +2,6 @@
 CustomTransformerDefinition
 DataFormatTransformerDefinition
 EndpointTransformerDefinition
+LoadTransformerDefinition
 TransformerDefinition
 TransformersDefinition

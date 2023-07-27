@@ -29,6 +29,11 @@ public interface VersionManager {
     void setClassLoader(ClassLoader classLoader);
 
     /**
+     * Gets the class loader that is able to load classes and resources from the catalog.
+     */
+    ClassLoader getClassLoader();
+
+    /**
      * Gets the current loaded Camel version used by the catalog.
      */
     String getLoadedVersion();

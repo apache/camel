@@ -68,7 +68,7 @@ public class Dhis2PutIT extends AbstractDhis2TestSupport {
         assertEquals(name, organisationUnit.getName().get());
 
         assertNotNull(result, "resource result");
-        LOG.debug("resource: " + result);
+        LOG.debug("Result: {}", result);
     }
 
     @Override

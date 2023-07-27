@@ -41,6 +41,20 @@
         <tarLongFileMode>gnu</tarLongFileMode>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
 
         <!-- camel core -->
@@ -122,11 +136,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-headersmap</artifactId>
+            <artifactId>camel-xml-jaxp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxp</artifactId>
+            <artifactId>camel-xml-jaxp-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -194,12 +208,7 @@
 
     <profiles>
         <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>

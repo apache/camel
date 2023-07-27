@@ -22,17 +22,21 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
-import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JmsInOnlyDisableTimeToLiveTest.class);
+
     @Order(2)
     @RegisterExtension
-    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -42,9 +46,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
 
     @Test
     public void testInOnlyExpired() throws Exception {
-        MyCoolBean cool = new MyCoolBean();
-        cool.setProducer(template);
-        cool.setConsumer(consumer);
+        MyCoolBean cool = new MyCoolBean(consumer, template, "JmsInOnlyDisableTimeToLiveTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("World 1");
 
@@ -67,9 +69,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
 
     @Test
     public void testInOnlyDisabledTimeToLive() throws Exception {
-        MyCoolBean cool = new MyCoolBean();
-        cool.setProducer(template);
-        cool.setConsumer(consumer);
+        MyCoolBean cool = new MyCoolBean(consumer, template, "JmsInOnlyDisableTimeToLiveTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("World 2");
 
@@ -125,38 +125,6 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
         consumer = camelContextExtension.getConsumerTemplate();
-    }
-
-    public static class MyCoolBean {
-        private int count;
-        private ConsumerTemplate consumer;
-        private ProducerTemplate producer;
-
-        public void setConsumer(ConsumerTemplate consumer) {
-            this.consumer = consumer;
-        }
-
-        public void setProducer(ProducerTemplate producer) {
-            this.producer = producer;
-        }
-
-        public void someBusinessLogic() {
-            // loop to empty queue
-            while (true) {
-                // receive the message from the queue, wait at most 2 sec
-                String msg = consumer.receiveBody("activemq:JmsInOnlyDisableTimeToLiveTest.in", 2000, String.class);
-                if (msg == null) {
-                    // no more messages in queue
-                    break;
-                }
-
-                // do something with body
-                msg = "Hello " + msg;
-
-                // send it to the next queue
-                producer.sendBodyAndHeader("activemq:JmsInOnlyDisableTimeToLiveTest.out", msg, "number", count++);
-            }
-        }
     }
 
 }

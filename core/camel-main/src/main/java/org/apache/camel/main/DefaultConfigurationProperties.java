@@ -59,6 +59,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean modeline;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled = true;
+    private String streamCachingAllowClasses;
+    private String streamCachingDenyClasses;
     private boolean streamCachingSpoolEnabled;
     private String streamCachingSpoolDirectory;
     private String streamCachingSpoolCipher;
@@ -459,6 +461,30 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStreamCachingEnabled(boolean streamCachingEnabled) {
         this.streamCachingEnabled = streamCachingEnabled;
+    }
+
+    public String getStreamCachingAllowClasses() {
+        return streamCachingAllowClasses;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public void setStreamCachingAllowClasses(String streamCachingAllowClasses) {
+        this.streamCachingAllowClasses = streamCachingAllowClasses;
+    }
+
+    public String getStreamCachingDenyClasses() {
+        return streamCachingDenyClasses;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public void setStreamCachingDenyClasses(String streamCachingDenyClasses) {
+        this.streamCachingDenyClasses = streamCachingDenyClasses;
     }
 
     public boolean isStreamCachingSpoolEnabled() {
@@ -1835,6 +1861,24 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStreamCachingEnabled(boolean streamCachingEnabled) {
         this.streamCachingEnabled = streamCachingEnabled;
+        return (T) this;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public T withStreamCachingAllowClasses(String streamCachingAllowClasses) {
+        this.streamCachingAllowClasses = streamCachingAllowClasses;
+        return (T) this;
+    }
+
+    /**
+     * To filter stream caching of a given set of allowed/denied classes. By default, all classes that are
+     * {@link java.io.InputStream} is allowed. Multiple class names can be separated by comma.
+     */
+    public T withStreamCachingDenyClasses(String streamCachingDenyClasses) {
+        this.streamCachingDenyClasses = streamCachingDenyClasses;
         return (T) this;
     }
 

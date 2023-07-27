@@ -33,6 +33,7 @@
     <description>Camel Flink support</description>
 
     <properties>
+        <camel.surefire.fork.vmargs>--add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.vmargs>
     </properties>
 
     <dependencies>
@@ -89,13 +90,6 @@
             </exclusions>
         </dependency>
 
-        <!-- scala -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala-version}</version>
-        </dependency>
-
         <!--testing-->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -110,25 +104,4 @@
         </dependency>
 
     </dependencies>
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

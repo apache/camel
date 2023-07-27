@@ -71,7 +71,7 @@ public final class ReflectionHelper {
          *
          * @param clazz the class to operate on
          */
-        void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException;
+        void doWith(Class<?> clazz) throws IllegalArgumentException, IllegalAccessException;
     }
 
     /**
@@ -82,8 +82,8 @@ public final class ReflectionHelper {
      */
     public static void doWithClasses(Class<?> clazz, ClassCallback cc) throws IllegalArgumentException {
         // and then nested classes
-        Class[] classes = clazz.getDeclaredClasses();
-        for (Class aClazz : classes) {
+        Class<?>[] classes = clazz.getDeclaredClasses();
+        for (Class<?> aClazz : classes) {
             try {
                 cc.doWith(aClazz);
             } catch (IllegalAccessException ex) {
@@ -179,7 +179,12 @@ public final class ReflectionHelper {
 
     public static void setField(Field f, Object instance, Object value) {
         try {
-            boolean oldAccessible = f.isAccessible();
+            boolean oldAccessible = false;
+            try {
+                oldAccessible = f.canAccess(instance);
+            } catch (Exception e) {
+                // ignore
+            }
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
                 f.setAccessible(true);
@@ -195,7 +200,12 @@ public final class ReflectionHelper {
 
     public static Object getField(Field f, Object instance) {
         try {
-            boolean oldAccessible = f.isAccessible();
+            boolean oldAccessible = false;
+            try {
+                oldAccessible = f.canAccess(instance);
+            } catch (Exception e) {
+                // ignore
+            }
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
                 f.setAccessible(true);

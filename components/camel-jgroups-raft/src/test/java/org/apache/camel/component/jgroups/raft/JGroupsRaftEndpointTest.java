@@ -24,8 +24,8 @@ import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
-import org.jgroups.protocols.raft.StateMachine;
 import org.jgroups.raft.RaftHandle;
+import org.jgroups.raft.StateMachine;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,19 +42,18 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
             = "jgroups-raft:" + CLUSTER_NAME2 + "?stateMachine=#sm&raftId=C&channelProperties=raftC.xml";
 
     StateMachine sm = new StateMachine() {
+
         @Override
-        public byte[] apply(byte[] bytes, int i, int i1) {
+        public byte[] apply(byte[] data, int offset, int length, boolean serialize_response) throws Exception {
             return new byte[0];
         }
 
         @Override
         public void readContentFrom(DataInput dataInput) {
-
         }
 
         @Override
         public void writeContentTo(DataOutput dataOutput) {
-
         }
     };
 

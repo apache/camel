@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.opentelemetry.api.common.AttributeKey;
@@ -39,6 +40,9 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tracing.SpanDecorator;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +66,11 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
         this.expected = expected;
+    }
+
+    @AfterEach
+    void noLeakingContext() {
+        Assertions.assertSame(Context.root(), Context.current(), "There must be no leaking span after test");
     }
 
     @Override
@@ -136,6 +145,12 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     protected void verifyTraceSpanNumbers(int numOfTraces, int numSpansPerTrace) {
         Map<String, List<SpanData>> traces = new HashMap<>();
+        Awaitility.await()
+                .alias("inMemorySpanExporter.getFinishedSpanItems() should eventually contain all expected spans")
+                .atMost(5, TimeUnit.SECONDS)
+                .pollInterval(10, TimeUnit.MILLISECONDS)
+                .pollDelay(0, TimeUnit.MILLISECONDS)
+                .until(() -> inMemorySpanExporter.getFinishedSpanItems().size() >= (numOfTraces * numSpansPerTrace));
 
         List<SpanData> finishedSpans = inMemorySpanExporter.getFinishedSpanItems();
         // Sort spans into separate traces
@@ -144,6 +159,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
             spans.add(finishedSpans.get(i));
         }
 
+        LOG.info("Found traces: " + traces);
         assertEquals(numOfTraces, traces.size());
 
         for (Map.Entry<String, List<SpanData>> spans : traces.entrySet()) {

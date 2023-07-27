@@ -238,19 +238,19 @@ public final class DSAnnotationProcessor {
                     for (CreateIndex createIndex : indexes) {
                         if (createIndex.type() == JdbmIndex.class) {
                             // JDBM index
-                            JdbmIndex index = new JdbmIndex(createIndex.attribute(), false);
+                            JdbmIndex index = new JdbmIndex<>(createIndex.attribute(), false);
 
                             btreePartition.addIndexedAttributes(index);
                         } else if (createIndex.type() == MavibotIndex.class) {
                             // Mavibot index
-                            MavibotIndex index = new MavibotIndex(createIndex.attribute(), false);
+                            MavibotIndex index = new MavibotIndex<>(createIndex.attribute(), false);
 
                             btreePartition.addIndexedAttributes(index);
                         } else {
                             // The annotation does not specify a specific index
                             // type.
                             // We use the generic index implementation.
-                            JdbmIndex index = new JdbmIndex(createIndex.attribute(), false);
+                            JdbmIndex index = new JdbmIndex<>(createIndex.attribute(), false);
 
                             btreePartition.addIndexedAttributes(index);
                         }

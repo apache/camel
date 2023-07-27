@@ -59,6 +59,12 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "deleteIfFiltered": getOrCreateConfiguration(target).setDeleteIfFiltered(property(camelContext, boolean.class, value)); return true;
         case "extendmessagevisibility":
         case "extendMessageVisibility": getOrCreateConfiguration(target).setExtendMessageVisibility(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "kmsdatakeyreuseperiodseconds":
         case "kmsDataKeyReusePeriodSeconds": getOrCreateConfiguration(target).setKmsDataKeyReusePeriodSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "kmsmasterkeyid":
@@ -158,6 +164,12 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "deleteIfFiltered": return boolean.class;
         case "extendmessagevisibility":
         case "extendMessageVisibility": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "kmsdatakeyreuseperiodseconds":
         case "kmsDataKeyReusePeriodSeconds": return java.lang.Integer.class;
         case "kmsmasterkeyid":
@@ -253,6 +265,12 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "deleteIfFiltered": return getOrCreateConfiguration(target).isDeleteIfFiltered();
         case "extendmessagevisibility":
         case "extendMessageVisibility": return getOrCreateConfiguration(target).isExtendMessageVisibility();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "kmsdatakeyreuseperiodseconds":
         case "kmsDataKeyReusePeriodSeconds": return getOrCreateConfiguration(target).getKmsDataKeyReusePeriodSeconds();
         case "kmsmasterkeyid":

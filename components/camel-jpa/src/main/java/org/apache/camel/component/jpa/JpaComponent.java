@@ -25,7 +25,7 @@ import jakarta.persistence.EntityManagerFactory;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * A JPA Component
  */
 @Component("jpa")
-public class JpaComponent extends DefaultComponent {
+public class JpaComponent extends HealthCheckComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
 

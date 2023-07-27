@@ -39,7 +39,7 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
     }
 
     @Override
-    protected DebeziumEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+    protected DebeziumEndpoint<C> createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         // use a copy on the endpoint
         final C configuration = (C) getConfiguration().copy();
@@ -55,7 +55,7 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
             configuration.setName(remaining);
         }
 
-        DebeziumEndpoint endpoint = initializeDebeziumEndpoint(uri, configuration);
+        DebeziumEndpoint<C> endpoint = initializeDebeziumEndpoint(uri, configuration);
         setProperties(endpoint, parameters);
 
         // extract the additional properties map
@@ -76,7 +76,7 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
         return endpoint;
     }
 
-    protected abstract DebeziumEndpoint initializeDebeziumEndpoint(String uri, C configuration);
+    protected abstract DebeziumEndpoint<C> initializeDebeziumEndpoint(String uri, C configuration);
 
     public abstract C getConfiguration();
 

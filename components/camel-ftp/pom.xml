@@ -102,9 +102,9 @@
 
         <!-- for testing sftp through http proxy -->
         <dependency>
-            <groupId>org.littleshoot</groupId>
+            <groupId>xyz.rogfam</groupId>
             <artifactId>littleproxy</artifactId>
-            <version>1.1.2</version>
+            <version>${littleproxy-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
