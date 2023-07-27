@@ -33,7 +33,7 @@ public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
     }
 
     @Override
-    protected Configuration getConfiguration(Configuration artemisConfiguration, int port) {
+    protected Configuration configure(Configuration artemisConfiguration, int port, int brokerId) {
         amqpPort = port;
         brokerURL = "tcp://0.0.0.0:" + amqpPort
                     + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300";
