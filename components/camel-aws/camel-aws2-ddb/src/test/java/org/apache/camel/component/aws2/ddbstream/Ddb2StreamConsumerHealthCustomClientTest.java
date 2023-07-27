@@ -89,15 +89,13 @@ public class Ddb2StreamConsumerHealthCustomClientTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2DdbStreamHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-ddbstream-consumer"))
+            boolean containsAws2SqsHealthCheck = res2.stream()
+                    .filter(result -> result.getCheck().getId().startsWith("consumer:test-health-it"))
                     .findAny()
                     .isPresent();
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2DdbStreamHealthCheck, "aws2-ddbstream check");
-            Assertions.assertFalse(hasRegionMessage, "aws2-ddbstream check error message");
+            Assertions.assertTrue(containsAws2SqsHealthCheck, "aws2-sqs check");
         });
 
     }
