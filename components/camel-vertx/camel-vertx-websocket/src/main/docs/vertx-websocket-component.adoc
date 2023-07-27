@@ -94,6 +94,41 @@ from("vertx-websocket:localhost:8080/chat/{user}")
     .log("New message from ${header.user} (${header.role}) >>> ${body}")
 ----
 
+== Sending messages to peers connected to the vertx-websocket server consumer
+
+NOTE: This section only applies when producing messages to a WebSocket hosted by the camel-vertx-websocket consumer.
+It is not relevant when producing messages to an externally hosted WebSocket.
+
+To send a message to all peers connected to a WebSocket hosted by the vertx-websocket server consumer, use the `sendToAll=true`
+endpoint option, or the `CamelVertxWebsocket.sendToAll` header.
+
+[source,java]
+----
+from("vertx-websocket:localhost:8080/chat")
+    .log("Got WebSocket message ${body}");
+
+from("direct:broadcastMessage")
+    .setBody().constant("This is a broadcast message!")
+    .to("vertx-websocket:localhost:8080/chat?sendToAll=true");
+----
+
+Alternatively, you can send messages to specific peers by using the `CamelVertxWebsocket.connectionKey` header.
+Multiple peers can be specified as a comma separated list.
+
+The value of the `connectionKey` can be determined whenever a peer triggers an event on the vertx-websocket
+consumer, where a unique key identifying the peer will be propagated via the `CamelVertxWebsocket.connectionKey` header.
+
+[source,java]
+----
+from("vertx-websocket:localhost:8080/chat")
+    .log("Got WebSocket message ${body}");
+
+from("direct:broadcastMessage")
+    .setBody().constant("This is a broadcast message!")
+    .setHeader(VertxWebsocketConstants.CONNECTION_KEY).constant("key-1,key-2,key-3")
+    .to("vertx-websocket:localhost:8080/chat");
+----
+
 == SSL
 
 By default, the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
