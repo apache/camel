@@ -344,7 +344,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * producers when using this recipient list, when uris are reused.
      * <p>
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      * <p>
@@ -368,7 +368,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * producers when using this recipient list, when uris are reused.
      * <p>
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      * <p>
