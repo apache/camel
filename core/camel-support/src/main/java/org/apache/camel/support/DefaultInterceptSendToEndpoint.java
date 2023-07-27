@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -124,6 +125,16 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public CamelContext getCamelContext() {
         return delegate.getCamelContext();
+    }
+
+    @Override
+    public void setComponent(Component component) {
+        delegate.setComponent(component);
+    }
+
+    @Override
+    public Component getComponent() {
+        return delegate.getComponent();
     }
 
     @Override
