@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.aws2.kinesis.consumer;
 
-import java.util.Objects;
-
 import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
+
+import java.util.Objects;
+
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 
@@ -45,9 +46,9 @@ public class KinesisConnection {
 
     public KinesisClient getClient(final Kinesis2Endpoint endpoint) {
         if (Objects.isNull(kinesisClient)) {
-            kinesisClient = KinesisClientFactory
-                    .getKinesisClient(endpoint.getConfiguration())
-                    .getKinesisClient();
+            kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
+                    ? endpoint.getConfiguration().getAmazonKinesisClient()
+                    : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration()).getKinesisClient();
         }
         return kinesisClient;
     }
