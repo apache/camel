@@ -31,8 +31,9 @@ public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedServic
     private int port;
 
     @Override
-    protected Configuration getConfiguration(Configuration configuration, int port) {
-        final int brokerId = super.BROKER_COUNT.intValue();
+    protected Configuration configure(Configuration configuration, int port, int brokerId) {
+        this.port = port;
+
         port = AvailablePortFinder.getNextAvailable();
         brokerURL = "tcp://0.0.0.0:" + port;
 
