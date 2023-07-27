@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ public class KinesisConsumerClosedShardWithFailTest {
         configuration.setStreamName("streamName");
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(null, configuration, component);
         endpoint.start();
-        underTest = new Kinesis2Consumer(endpoint, processor);
+        underTest = new Kinesis2Consumer(endpoint, processor, KinesisConnection.getInstance());
 
         SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
