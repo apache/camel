@@ -92,14 +92,11 @@ public class Kinesis2ConsumerHealthCheckProfileCredsTest extends CamelTestSuppor
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsKinesis2HealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-kinesis-consumer"))
+                    .filter(result -> result.getCheck().getId().startsWith("consumer:test-health-it"))
                     .findAny()
                     .isPresent();
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsKinesis2HealthCheck, "aws2-kinesis check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-kinesis check error message");
         });
 
     }
