@@ -25,10 +25,10 @@ import org.apache.camel.component.google.calendar.BatchGoogleCalendarClientFacto
 import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @Component("google-calendar-stream")
-public class GoogleCalendarStreamComponent extends DefaultComponent {
+public class GoogleCalendarStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
     private Calendar client;

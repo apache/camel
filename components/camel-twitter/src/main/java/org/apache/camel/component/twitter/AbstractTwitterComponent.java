@@ -21,12 +21,12 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * Base Twitter component
  */
-public abstract class AbstractTwitterComponent extends DefaultComponent {
+public abstract class AbstractTwitterComponent extends HealthCheckComponent {
     @Metadata(label = "security", secret = true)
     private String consumerKey;
     @Metadata(label = "security", secret = true)

@@ -585,6 +585,56 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * Access key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
@@ -671,6 +721,9 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;
             case "pageBlobSize": getOrCreateConfiguration((BlobComponent) component).setPageBlobSize((java.lang.Long) value); return true;
             case "autowiredEnabled": ((BlobComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((BlobComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((BlobComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((BlobComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((BlobComponent) component).setAccessKey((java.lang.String) value); return true;
             case "sourceBlobAccessKey": getOrCreateConfiguration((BlobComponent) component).setSourceBlobAccessKey((java.lang.String) value); return true;
             default: return false;

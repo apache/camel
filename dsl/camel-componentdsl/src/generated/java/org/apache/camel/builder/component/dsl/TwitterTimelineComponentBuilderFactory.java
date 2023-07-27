@@ -118,6 +118,56 @@ public interface TwitterTimelineComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default TwitterTimelineComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default TwitterTimelineComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default TwitterTimelineComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * The http proxy host which can be used for the camel-twitter.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -256,6 +306,9 @@ public interface TwitterTimelineComponentBuilderFactory {
             case "bridgeErrorHandler": ((TwitterTimelineComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((TwitterTimelineComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((TwitterTimelineComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((TwitterTimelineComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((TwitterTimelineComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((TwitterTimelineComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "httpProxyHost": ((TwitterTimelineComponent) component).setHttpProxyHost((java.lang.String) value); return true;
             case "httpProxyPassword": ((TwitterTimelineComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
             case "httpProxyPort": ((TwitterTimelineComponent) component).setHttpProxyPort((int) value); return true;

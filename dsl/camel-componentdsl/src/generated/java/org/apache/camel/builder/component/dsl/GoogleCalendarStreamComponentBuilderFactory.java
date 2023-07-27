@@ -285,6 +285,56 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -432,6 +482,9 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "syncFlow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setSyncFlow((boolean) value); return true;
             case "autowiredEnabled": ((GoogleCalendarStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
+            case "healthCheckConsumerEnabled": ((GoogleCalendarStreamComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((GoogleCalendarStreamComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((GoogleCalendarStreamComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "emailAddress": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setEmailAddress((java.lang.String) value); return true;

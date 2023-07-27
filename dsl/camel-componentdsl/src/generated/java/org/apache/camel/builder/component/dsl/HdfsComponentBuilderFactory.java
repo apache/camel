@@ -114,6 +114,56 @@ public interface HdfsComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default HdfsComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default HdfsComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default HdfsComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * To use the given configuration for security with JAAS.
          * 
          * The option is a:
@@ -168,6 +218,9 @@ public interface HdfsComponentBuilderFactory {
             case "bridgeErrorHandler": ((HdfsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HdfsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((HdfsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((HdfsComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((HdfsComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((HdfsComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "jAASConfiguration": ((HdfsComponent) component).setJAASConfiguration((javax.security.auth.login.Configuration) value); return true;
             case "kerberosConfigFile": ((HdfsComponent) component).setKerberosConfigFile((java.lang.String) value); return true;
             default: return false;

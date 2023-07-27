@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 import static org.apache.camel.component.azure.storage.blob.CredentialType.AZURE_IDENTITY;
 import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_ACCOUNT_KEY;
@@ -35,7 +35,7 @@ import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARE
  * Azure Blob Storage component using azure java sdk v12.x
  */
 @Component("azure-storage-blob")
-public class BlobComponent extends DefaultComponent {
+public class BlobComponent extends HealthCheckComponent {
     @Metadata
     private BlobConfiguration configuration = new BlobConfiguration();
 

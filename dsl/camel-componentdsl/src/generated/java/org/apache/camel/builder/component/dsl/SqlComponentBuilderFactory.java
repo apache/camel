@@ -159,6 +159,56 @@ public interface SqlComponentBuilderFactory {
             doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
     }
 
     class SqlComponentBuilderImpl
@@ -182,6 +232,9 @@ public interface SqlComponentBuilderFactory {
             case "autowiredEnabled": ((SqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "rowMapperFactory": ((SqlComponent) component).setRowMapperFactory((org.apache.camel.component.sql.RowMapperFactory) value); return true;
             case "usePlaceholder": ((SqlComponent) component).setUsePlaceholder((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((SqlComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((SqlComponent) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((SqlComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

@@ -28,6 +28,12 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "entitymanagerfactory":
         case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, jakarta.persistence.EntityManagerFactory.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "jointransaction":
         case "joinTransaction": target.setJoinTransaction(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -52,6 +58,12 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return boolean.class;
         case "entitymanagerfactory":
         case "entityManagerFactory": return jakarta.persistence.EntityManagerFactory.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "jointransaction":
         case "joinTransaction": return boolean.class;
         case "lazystartproducer":
@@ -77,6 +89,12 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "entitymanagerfactory":
         case "entityManagerFactory": return target.getEntityManagerFactory();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "jointransaction":
         case "joinTransaction": return target.isJoinTransaction();
         case "lazystartproducer":

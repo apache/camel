@@ -20,13 +20,13 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * Represents the component that manages {@link SnmpEndpoint}. It holds the list of named direct endpoints.
  */
 @Component("snmp")
-public class SnmpComponent extends DefaultComponent {
+public class SnmpComponent extends HealthCheckComponent {
 
     public SnmpComponent() {
     }

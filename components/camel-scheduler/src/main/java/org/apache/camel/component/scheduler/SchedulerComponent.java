@@ -24,10 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 @org.apache.camel.spi.annotations.Component("scheduler")
-public class SchedulerComponent extends DefaultComponent {
+public class SchedulerComponent extends HealthCheckComponent {
 
     private final Map<String, ScheduledExecutorService> executors = new HashMap<>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();

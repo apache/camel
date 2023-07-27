@@ -44,6 +44,12 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class, value)); return true;
         case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "labels": getOrCreateConfiguration(target).setLabels(property(camelContext, java.lang.String.class, value)); return true;
         case "markasread":
         case "markAsRead": getOrCreateConfiguration(target).setMarkAsRead(property(camelContext, boolean.class, value)); return true;
@@ -79,6 +85,12 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class;
         case "delegate": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "labels": return java.lang.String.class;
         case "markasread":
         case "markAsRead": return boolean.class;
@@ -115,6 +127,12 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
         case "delegate": return getOrCreateConfiguration(target).getDelegate();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "labels": return getOrCreateConfiguration(target).getLabels();
         case "markasread":
         case "markAsRead": return getOrCreateConfiguration(target).isMarkAsRead();
