@@ -76,8 +76,7 @@ public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("aws2-kinesis://stream")
-                        .startupOrder(2).log("${body}").routeId("test-health-it");
+                from("aws2-kinesis://stream").startupOrder(2).log("${body}").routeId("test-health-it");
             }
         };
     }
