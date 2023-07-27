@@ -177,6 +177,23 @@ public interface GoogleMailStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to store the entire email message in an RFC 2822 formatted
+         * and base64url encoded string (in JSon format), in the Camel message
+         * body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param raw the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamComponentBuilder raw(boolean raw) {
+            doSetProperty("raw", raw);
+            return this;
+        }
+        /**
          * GMail scopes.
          * 
          * The option is a:
@@ -340,6 +357,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
             case "markAsRead": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMarkAsRead((boolean) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMaxResults((long) value); return true;
             case "query": getOrCreateConfiguration((GoogleMailStreamComponent) component).setQuery((java.lang.String) value); return true;
+            case "raw": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRaw((boolean) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleMailStreamComponent) component).setScopes((java.util.List) value); return true;
             case "autowiredEnabled": ((GoogleMailStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;

@@ -1260,8 +1260,6 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default:
-         * org.apache.kafka.clients.producer.internals.DefaultPartitioner
          * Group: producer
          * 
          * @param partitioner the value to set
@@ -1269,6 +1267,23 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder partitioner(java.lang.String partitioner) {
             doSetProperty("partitioner", partitioner);
+            return this;
+        }
+        /**
+         * Whether the message keys should be ignored when computing partition.
+         * This setting has effect only when partitioner is not set.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param partitionerIgnoreKeys the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder partitionerIgnoreKeys(
+                boolean partitionerIgnoreKeys) {
+            doSetProperty("partitionerIgnoreKeys", partitionerIgnoreKeys);
             return this;
         }
         /**
@@ -2265,6 +2280,7 @@ public interface KafkaComponentBuilderFactory {
             case "metricsSampleWindowMs": getOrCreateConfiguration((KafkaComponent) component).setMetricsSampleWindowMs((java.lang.Integer) value); return true;
             case "noOfMetricsSample": getOrCreateConfiguration((KafkaComponent) component).setNoOfMetricsSample((java.lang.Integer) value); return true;
             case "partitioner": getOrCreateConfiguration((KafkaComponent) component).setPartitioner((java.lang.String) value); return true;
+            case "partitionerIgnoreKeys": getOrCreateConfiguration((KafkaComponent) component).setPartitionerIgnoreKeys((boolean) value); return true;
             case "partitionKey": getOrCreateConfiguration((KafkaComponent) component).setPartitionKey((java.lang.Integer) value); return true;
             case "producerBatchSize": getOrCreateConfiguration((KafkaComponent) component).setProducerBatchSize((java.lang.Integer) value); return true;
             case "queueBufferingMaxMessages": getOrCreateConfiguration((KafkaComponent) component).setQueueBufferingMaxMessages((java.lang.Integer) value); return true;
