@@ -41,6 +41,7 @@ public interface CordaComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static CordaComponentBuilder corda() {
         return new CordaComponentBuilderImpl();
     }

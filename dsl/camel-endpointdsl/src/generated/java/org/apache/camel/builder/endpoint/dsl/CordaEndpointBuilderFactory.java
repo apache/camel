@@ -667,6 +667,7 @@ public interface CordaEndpointBuilderFactory {
          * @param path node
          * @return the dsl builder
          */
+        @Deprecated
         default CordaEndpointBuilder corda(String path) {
             return CordaEndpointBuilderFactory.endpointBuilder("corda", path);
         }
@@ -689,6 +690,7 @@ public interface CordaEndpointBuilderFactory {
          * @param path node
          * @return the dsl builder
          */
+        @Deprecated
         default CordaEndpointBuilder corda(String componentName, String path) {
             return CordaEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -826,6 +828,7 @@ public interface CordaEndpointBuilderFactory {
             return "PAGE_SPECIFICATION";
         }
     }
+    @Deprecated
     static CordaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
