@@ -57,7 +57,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CosmosDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory,
