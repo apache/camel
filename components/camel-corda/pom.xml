@@ -29,7 +29,7 @@
     <artifactId>camel-corda</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Corda</name>
+    <name>Camel :: Corda (deprecated)</name>
     <description>Camel Corda which is based on corda-rpc support</description>
 
     <dependencies>
