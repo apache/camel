@@ -21,13 +21,13 @@ import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-/**
- *
- */
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
 
     @RegisterExtension

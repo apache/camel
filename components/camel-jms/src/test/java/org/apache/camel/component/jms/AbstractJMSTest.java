@@ -58,7 +58,8 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
         return buildComponent(connectionFactory);
     }
 
-    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ArtemisService service, String componentName) {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
 
         return setupComponent(camelContext, connectionFactory, componentName);
@@ -68,7 +69,7 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
 
     @ContextFixture
     @Override
-    public void configureContext(CamelContext context) throws Exception {
+    public synchronized void configureContext(CamelContext context) throws Exception {
         JmsComponent component = setupComponent(context, service, getComponentName());
         context.addComponent(getComponentName(), component);
     }

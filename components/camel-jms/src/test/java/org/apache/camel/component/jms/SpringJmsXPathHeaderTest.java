@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -24,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * JMS with XPath
  */
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public class SpringJmsXPathHeaderTest extends AbstractSpringJMSTestSupport {
 
     @Test

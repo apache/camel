@@ -32,15 +32,16 @@ import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Isolated
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
 
     @Order(2)
