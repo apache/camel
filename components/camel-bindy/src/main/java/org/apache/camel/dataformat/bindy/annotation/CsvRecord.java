@@ -113,4 +113,9 @@ public @interface CsvRecord {
      */
     boolean removeQuotes() default true;
 
+    /**
+     * Whether to trim each line (stand and end) before parsing the line into data fields.
+     */
+    boolean trimLine() default true;
+
 }

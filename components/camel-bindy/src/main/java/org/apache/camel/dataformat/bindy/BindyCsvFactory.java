@@ -75,6 +75,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean quotingEscaped;
     private boolean endWithLineBreak;
     private boolean removeQuotes;
+    private boolean trimLine;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
         super(type);
@@ -679,6 +680,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     removeQuotes = record.removeQuotes();
                     LOG.debug("Remove quotes: {}", removeQuotes);
+
+                    trimLine = record.trimLine();
+                    LOG.debug("Trim line: {}", trimLine);
                 }
 
                 if (section != null) {
@@ -785,4 +789,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return endWithLineBreak;
     }
 
+    public boolean isTrimLine() {
+        return trimLine;
+    }
 }

@@ -206,15 +206,20 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             String separator, Boolean removeQuotes, String quote, AtomicInteger count) {
         return line -> {
             try {
-                // Trim the line coming in to remove any trailing whitespace
                 String trimmedLine;
 
-                // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
-                if (separator.equals("\t")) {
-                    // trim only trailing whitespaces (remove new lines etc but keep tab character)
-                    trimmedLine = line.replaceAll("[ \\n\\x0B\\f\\r]+$", "");
+                // Trim the line coming in to remove any trailing whitespace
+                if (factory.isTrimLine()) {
+                    // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
+                    if (separator.equals("\t")) {
+                        // trim only trailing whitespaces (remove new lines etc but keep tab character)
+                        trimmedLine = line.replaceAll("[ \\n\\x0B\\f\\r]+$", "");
+                    } else {
+                        trimmedLine = line.trim();
+                    }
                 } else {
-                    trimmedLine = line.trim();
+                    // no trim
+                    trimmedLine = line;
                 }
 
                 // Increment counter
