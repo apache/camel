@@ -16,17 +16,21 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import java.util.Objects;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisHealthCheck;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.Objects;
+import java.util.Timer;
+
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
@@ -37,7 +41,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
  * Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS Kinesis", syntax = "aws2-kinesis:streamName",
-             category = { Category.CLOUD, Category.MESSAGING }, headersClass = Kinesis2Constants.class)
+        category = {Category.CLOUD, Category.MESSAGING}, headersClass = Kinesis2Constants.class)
 public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -99,10 +103,18 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
+        var kinesisConnection = KinesisConnection.getInstance();
+        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor, kinesisConnection);
         consumer.setSchedulerProperties(getSchedulerProperties());
+        startHealthChecks(kinesisConnection);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    private void startHealthChecks(KinesisConnection kinesisConnection) {
+        KinesisHealthCheck kinesisHealthCheck = new KinesisHealthCheck(this, kinesisConnection);
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(kinesisHealthCheck, 0, 5 * 1000);
     }
 
     @Override
