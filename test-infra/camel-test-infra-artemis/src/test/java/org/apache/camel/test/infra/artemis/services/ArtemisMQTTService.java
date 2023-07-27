@@ -34,7 +34,7 @@ public class ArtemisMQTTService extends AbstractArtemisEmbeddedService {
     }
 
     @Override
-    protected Configuration getConfiguration(Configuration configuration, int port) {
+    protected Configuration configure(Configuration configuration, int port, int brokerId) {
         this.port = port;
         brokerURL = "tcp://0.0.0.0:" + port;
 
