@@ -56,7 +56,8 @@ public abstract class SpringScheduledRoutePolicyTest {
 
         context.getRouteController().stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("testRoute")));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("testRoute")));
 
         context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come");
 
@@ -69,7 +70,8 @@ public abstract class SpringScheduledRoutePolicyTest {
 
         CamelContext context = startRouteWithPolicy("stopPolicy");
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("testRoute")));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("testRoute")));
 
         assertThrows(CamelExecutionException.class,
                 () -> context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come"));
@@ -83,7 +85,8 @@ public abstract class SpringScheduledRoutePolicyTest {
         CamelContext context = startRouteWithPolicy("suspendPolicy");
 
         // wait for route to suspend
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(ServiceHelper.isSuspended(context.getRoute("testRoute").getConsumer())));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(ServiceHelper.isSuspended(context.getRoute("testRoute").getConsumer())));
 
         assertThrows(CamelExecutionException.class,
                 () -> context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come"));
@@ -101,7 +104,8 @@ public abstract class SpringScheduledRoutePolicyTest {
 
         ServiceHelper.suspendService(context.getRoute("testRoute").getConsumer());
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(ServiceHelper.isStarted(context.getRoute("testRoute").getConsumer())));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(ServiceHelper.isStarted(context.getRoute("testRoute").getConsumer())));
 
         context.createProducerTemplate().sendBody("direct:start?timeout=1000", "Ready or not, Here, I come");
 

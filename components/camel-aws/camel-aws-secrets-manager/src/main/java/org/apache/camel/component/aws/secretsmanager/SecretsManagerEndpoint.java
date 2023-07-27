@@ -79,7 +79,8 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
 
         if (healthCheckRepository != null) {
             clientHealthCheck = new SecretsManagerClientHealthCheck(this, getId());
-            clientHealthCheck.setEnabled(getComponent().isHealthCheckEnabled() && getComponent().isHealthCheckProducerEnabled());
+            clientHealthCheck
+                    .setEnabled(getComponent().isHealthCheckEnabled() && getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
     }
