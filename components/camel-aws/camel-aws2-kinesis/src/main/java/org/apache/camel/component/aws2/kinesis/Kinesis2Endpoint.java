@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.kinesis;
 import java.util.Objects;
 
 import org.apache.camel.Category;
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

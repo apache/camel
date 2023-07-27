@@ -59,7 +59,8 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new CloudtrailConsumerHealthCheck(this, getRouteId());
-            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
+                    && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
     }

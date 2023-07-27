@@ -186,7 +186,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             repeatSeconds, exchange.getExchangeId());
                 }
                 final TimeoutExtender extender = new TimeoutExtender(exchange, repeatSeconds);
-                final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(extender, delay, period, TimeUnit.SECONDS);
+                final ScheduledFuture<?> scheduledFuture
+                        = this.scheduledExecutor.scheduleAtFixedRate(extender, delay, period, TimeUnit.SECONDS);
                 exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
@@ -205,7 +206,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                         extender.cancel();
                         boolean cancelled = scheduledFuture.cancel(true);
                         if (!cancelled) {
-                            LOG.warn("TimeoutExtender task for exchangeId: {} could not be cancelled", exchange.getExchangeId());
+                            LOG.warn("TimeoutExtender task for exchangeId: {} could not be cancelled",
+                                    exchange.getExchangeId());
                         }
                     }
                 });
@@ -382,7 +384,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new Sqs2ConsumerHealthCheck(this, getRouteId());
-            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled() && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
+            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
+                    && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
     }
@@ -418,7 +421,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             if (run.get()) {
                 ChangeMessageVisibilityRequest.Builder request
                         = ChangeMessageVisibilityRequest.builder().queueUrl(getQueueUrl()).visibilityTimeout(repeatSeconds)
-                        .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
+                                .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
 
                 try {
                     LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
