@@ -90,7 +90,13 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             // okay so only add the known properties as they are the non lenient properties
             properties = new LinkedHashMap<>();
             map.forEach((k, v) -> {
-                if (knownProperties.contains(k)) {
+                boolean accept = knownProperties.contains(k);
+                // we should put the key from a multi-value (prefix) in the
+                // properties too, or the property may be lost
+                if (!accept && !knownPrefixes.isEmpty()) {
+                    accept = knownPrefixes.stream().anyMatch(k::startsWith);
+                }
+                if (accept) {
                     properties.put(k, v);
                 }
             });
