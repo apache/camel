@@ -65,7 +65,7 @@ public class Ddb2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:listClusters")
+                from("direct:listClusters").routeId("ddb-route")
                         .to("aws2-ddb://test?region=l&secretKey=l&accessKey=k&enabledInitialDescribeTable=false");
             }
         };
@@ -83,14 +83,12 @@ public class Ddb2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2DdbHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-ddb-client"))
+                    .filter(result -> result.getCheck().getId().startsWith("consumer:ddb-route"))
                     .findAny()
                     .isPresent();
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-ddb check error message");
         });
 
     }

@@ -26,8 +26,6 @@ import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -46,9 +44,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     private static Instant lastTime;
 
-    private WritableHealthCheckRepository healthCheckRepository;
-    private CloudtrailConsumerHealthCheck consumerHealthCheck;
-
     public CloudtrailConsumer(CloudtrailEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
@@ -56,16 +51,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new CloudtrailConsumerHealthCheck(this, getRouteId());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
-        }
     }
 
     @Override
@@ -114,10 +99,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && consumerHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(consumerHealthCheck);
-            consumerHealthCheck = null;
-        }
         super.doStop();
     }
 

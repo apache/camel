@@ -92,14 +92,12 @@ public class AWS2S3ConsumerHealthCheckProfileCredsTest extends CamelTestSupport 
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2S3HealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-s3-consumer"))
+                    .filter(result -> result.getCheck().getId().startsWith("consumer:test-health-it"))
                     .findAny()
                     .isPresent();
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2S3HealthCheck, "aws2-s3 check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-s3 check error message");
         });
 
     }
