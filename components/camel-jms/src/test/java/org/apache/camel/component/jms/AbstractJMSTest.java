@@ -41,7 +41,7 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
 
     @Order(1)
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();
