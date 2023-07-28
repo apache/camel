@@ -71,7 +71,7 @@ public final class MllpProtocolConstants {
           UNICODE
           UNICODE UTF-16
           UNICODE UTF-32
-          
+
           see: https://terminology.hl7.org/CodeSystem-v2-0211.html
         */
     }
