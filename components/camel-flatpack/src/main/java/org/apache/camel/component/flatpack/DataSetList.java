@@ -63,19 +63,17 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     @Override
     public Iterator<Map<String, Object>> iterator() {
         dataSet.goTop();
+
         return new Iterator<Map<String, Object>>() {
-            private boolean hasNext = dataSet.next();
+            private int pos = 0;
 
             public boolean hasNext() {
-                return hasNext;
+                return pos < size();
             }
 
             public Map<String, Object> next() {
-                // because of a limitation in split() we need to create an object for the current position
-                // otherwise strangeness occurs when the same object is used to represent each row
-                Map<String, Object> result = FlatpackConverter.toMap(dataSet);
-                hasNext = dataSet.next();
-                return result;
+                dataSet.absolute(pos++);
+                return FlatpackConverter.toMap(dataSet);
             }
 
             @Override
