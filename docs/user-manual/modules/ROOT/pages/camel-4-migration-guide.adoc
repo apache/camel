@@ -151,6 +151,23 @@ Health checks are now by default only readiness checks out of the box.
 Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
 one of each out of the box.
 
+Only consumer based health-checks is enabled by default.
+
+Some components (in particular AWS) provides also health checks for producers; in Camel 3.x
+these health checks did not work properly and has been disabled in the source.
+To continue this behaviour in Camel 4, then producer based health checks are disabled.
+
+Notice that `camel-kafka` comes with producer based health-check that worked in Camel 3,
+and therefore this change in Camel 4, means that this health-check is disabled.
+
+You can enable producer health-checks per component via
+
+[source,properties]
+----
+camel.component.kafka.health-check-producer-enabled = true
+----
+
+
 == JMX
 
 Camel now also include MBeans for `doCatch` and `doFinally` in the tree of processor MBeans.
