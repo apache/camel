@@ -30,29 +30,22 @@ import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Apache CI")
-public class Ddb2StreamConsumerHealthCustomClientTest extends CamelTestSupport {
+public class Ddb2StreamConsumerHealthCheckIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
-
-    private static final Logger LOG = LoggerFactory.getLogger(Ddb2StreamConsumerHealthCustomClientTest.class);
 
     CamelContext context;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
-        context.getRegistry().bind("ddbClient", DynamoDbStreamsClient.builder().build());
 
+        // install health check manually (yes a bit cumbersome)
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
         Object hc = registry.resolveById("context");
@@ -72,7 +65,7 @@ public class Ddb2StreamConsumerHealthCustomClientTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("aws2-ddbstream://stream")
+                from("aws2-ddbstream://stream?region=l&secretKey=l&accessKey=k")
                         .startupOrder(2).log("${body}").routeId("test-health-it");
             }
         };
@@ -89,13 +82,10 @@ public class Ddb2StreamConsumerHealthCustomClientTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2SqsHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("consumer:test-health-it"))
-                    .findAny()
-                    .isPresent();
-
+            boolean containsKinesis2HealthCheck = res2.stream()
+                    .anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2SqsHealthCheck, "aws2-sqs check");
+            Assertions.assertTrue(containsKinesis2HealthCheck, "aws2-ddbstream check");
         });
 
     }
