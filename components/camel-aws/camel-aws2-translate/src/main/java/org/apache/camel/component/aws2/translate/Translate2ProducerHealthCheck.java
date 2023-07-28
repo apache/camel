@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.translate.TranslateClient;
 import software.amazon.awssdk.services.translate.model.ListLanguagesRequest;
 
-public class Translate2ClientHealthCheck extends AbstractHealthCheck {
+public class Translate2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final Translate2Endpoint translate2Endpoint;
 
-    public Translate2ClientHealthCheck(Translate2Endpoint translate2Endpoint, String clientId) {
-        super("camel", "aws2-translate-client-" + clientId);
+    public Translate2ProducerHealthCheck(Translate2Endpoint translate2Endpoint, String clientId) {
+        super("camel", "aws2-translate-producer-" + clientId);
         this.translate2Endpoint = translate2Endpoint;
     }
 
