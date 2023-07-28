@@ -24,16 +24,14 @@ import software.amazon.awssdk.services.kinesis.model.ListStreamsRequest;
 
 public class KinesisHealthCheck implements Runnable {
     private Kinesis2Endpoint endpoint;
-    private KinesisConnection kinesisConnection;
 
-    public KinesisHealthCheck(Kinesis2Endpoint endpoint,
-                              KinesisConnection kinesisConnection) {
+    public KinesisHealthCheck(Kinesis2Endpoint endpoint) {
         this.endpoint = endpoint;
-        this.kinesisConnection = kinesisConnection;
     }
 
     @Override
     public void run() {
+        var kinesisConnection = KinesisConnection.getInstance();
         if (this.endpoint.getConfiguration().isAsyncClient()) {
             try {
                 if (Objects.isNull(kinesisConnection.getAsyncClient(this.endpoint)) ||

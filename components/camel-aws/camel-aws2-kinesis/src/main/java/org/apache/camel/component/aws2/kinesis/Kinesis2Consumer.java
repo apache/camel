@@ -49,7 +49,6 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private static final Logger LOG = LoggerFactory.getLogger(Kinesis2Consumer.class);
     private boolean isShardClosed;
     private ResumeStrategy resumeStrategy;
-    private KinesisConnection kinesisConnection;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint,
                             Processor processor) {
@@ -81,10 +80,6 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 response = kinesisConnection
                         .getClient(getEndpoint())
                         .describeStream(request);
-            }
-
-            if (response == null) {
-                System.out.println("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
             }
 
             var shard = response

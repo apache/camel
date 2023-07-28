@@ -24,8 +24,7 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 
 public class KinesisConnection {
-
-    private static KinesisConnection instance;
+    private static volatile KinesisConnection instance;
     private KinesisClient kinesisClient = null;
     private KinesisAsyncClient kinesisAsyncClient = null;
 
@@ -61,11 +60,11 @@ public class KinesisConnection {
         return kinesisAsyncClient;
     }
 
-    public void setKinesisClient(KinesisClient kinesisClient) {
+    public void setKinesisClient(final KinesisClient kinesisClient) {
         this.kinesisClient = kinesisClient;
     }
 
-    public void setKinesisAsyncClient(KinesisAsyncClient kinesisAsyncClient) {
+    public void setKinesisAsyncClient(final KinesisAsyncClient kinesisAsyncClient) {
         this.kinesisAsyncClient = kinesisAsyncClient;
     }
 }

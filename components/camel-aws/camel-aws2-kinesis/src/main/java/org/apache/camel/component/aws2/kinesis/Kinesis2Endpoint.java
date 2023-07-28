@@ -111,7 +111,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     private void startHealthChecks() {
         var timeoutCheckerExecutorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                 CONNECTION_CHECKER_EXECUTOR_NAME);
-        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this, KinesisConnection.getInstance()),
+        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this),
                 0, 5 * 1000,
                 TimeUnit.MILLISECONDS);
     }
