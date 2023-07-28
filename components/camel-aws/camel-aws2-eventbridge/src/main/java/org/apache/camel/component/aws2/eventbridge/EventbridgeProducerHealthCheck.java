@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.ListEventBusesRequest;
 
-public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
+public class EventbridgeProducerHealthCheck extends AbstractHealthCheck {
 
     private final EventbridgeEndpoint eventbridgeEndpoint;
 
-    public EventbridgeClientHealthCheck(EventbridgeEndpoint eventbridgeEndpoint, String clientId) {
-        super("camel", "aws2-eventbridge-client-" + clientId);
+    public EventbridgeProducerHealthCheck(EventbridgeEndpoint eventbridgeEndpoint, String clientId) {
+        super("camel", "aws2-eventbridge-producer-" + clientId);
         this.eventbridgeEndpoint = eventbridgeEndpoint;
     }
 
