@@ -299,6 +299,7 @@
                                 <configuration>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                     <interactiveMode>false</interactiveMode>
+                                    <archetypeCatalog>local</archetypeCatalog>
                                     <archetypeGroupId>org.apache.olingo</archetypeGroupId>
                                     <archetypeArtifactId>olingo-odata2-sample-cars-annotation-archetype
                                     </archetypeArtifactId>
