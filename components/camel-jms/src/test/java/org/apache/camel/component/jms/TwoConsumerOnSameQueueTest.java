@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel") })
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
 
     @Test
@@ -37,7 +36,6 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
     public void testStopAndStartOneRoute() throws Exception {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 

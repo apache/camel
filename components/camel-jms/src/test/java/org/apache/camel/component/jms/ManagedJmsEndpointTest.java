@@ -27,13 +27,11 @@ import org.apache.camel.support.ShortUuidGenerator;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
 
     private final String uuid = new ShortUuidGenerator().generateUuid();
