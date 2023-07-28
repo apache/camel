@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
-import java.net.URI;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
