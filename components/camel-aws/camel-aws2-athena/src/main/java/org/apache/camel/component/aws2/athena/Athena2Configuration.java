@@ -46,7 +46,8 @@ public class Athena2Configuration implements Cloneable {
     private String nextToken;
     @UriParam(description = "Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set, will use the Athena API default for the given operation.")
     private Integer maxResults;
-    @UriParam(label = "advanced", description = "Include useful trace information at the beginning of queries as an SQL comment (prefixed with --).")
+    @UriParam(label = "advanced",
+              description = "Include useful trace information at the beginning of queries as an SQL comment (prefixed with --).")
     private boolean includeTrace;
     @UriParam(description = "The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/. Ensure this value ends with a forward slash.")
     private String outputLocation;
@@ -62,7 +63,8 @@ public class Athena2Configuration implements Cloneable {
     @UriParam(description = "The SQL query to run. Except for simple queries, prefer setting this as the body of the "
                             + "Exchange or as a header using Athena2Constants.QUERY_STRING to avoid having to deal with URL encoding issues.")
     private String queryString;
-    @UriParam(label = "security", description = "The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS.")
+    @UriParam(label = "security",
+              description = "The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS.")
     private EncryptionOption encryptionOption;
     @UriParam(label = "security",
               description = "For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.")

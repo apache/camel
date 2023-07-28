@@ -421,7 +421,7 @@ public class SecretsManagerProducer extends DefaultProducer {
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
-            producerHealthCheck = new SecretsManagerClientHealthCheck(getEndpoint(), id);
+            producerHealthCheck = new SecretsManagerProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }

@@ -26,6 +26,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,8 @@ public class ECS2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
         hc = registry.resolveById("consumers");
         registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
+        // enable producer health check
+        context.getComponent("aws2-ecs", HealthCheckComponent.class).setHealthCheckProducerEnabled(true);
 
         return context;
     }

@@ -26,17 +26,14 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 public class Athena2ProducerHealthCheckProfileCredsTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Athena2ProducerHealthCheckProfileCredsTest.class);
 
     CamelContext context;
 
@@ -55,6 +52,8 @@ public class Athena2ProducerHealthCheckProfileCredsTest extends CamelTestSupport
         hc = registry.resolveById("consumers");
         registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
+        // enable producer health check
+        context.getComponent("aws2-athena", HealthCheckComponent.class).setHealthCheckProducerEnabled(true);
 
         return context;
     }
@@ -73,7 +72,6 @@ public class Athena2ProducerHealthCheckProfileCredsTest extends CamelTestSupport
 
     @Test
     public void testConnectivity() {
-
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");

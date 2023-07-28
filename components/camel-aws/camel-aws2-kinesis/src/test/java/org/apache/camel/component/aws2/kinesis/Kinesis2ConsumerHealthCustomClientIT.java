@@ -37,8 +37,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
@@ -49,8 +47,6 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
-
-    private static final Logger LOG = LoggerFactory.getLogger(Kinesis2ConsumerHealthCustomClientIT.class);
 
     CamelContext context;
 
