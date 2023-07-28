@@ -343,7 +343,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -359,28 +359,12 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -463,7 +447,6 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             case "useProfileCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((SecretsManagerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((SecretsManagerComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((SecretsManagerComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((SecretsManagerComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((SecretsManagerComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretKey((java.lang.String) value); return true;

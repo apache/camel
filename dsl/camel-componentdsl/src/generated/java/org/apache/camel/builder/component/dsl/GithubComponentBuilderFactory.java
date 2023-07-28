@@ -118,7 +118,7 @@ public interface GithubComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -134,28 +134,12 @@ public interface GithubComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default GithubComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -202,7 +186,6 @@ public interface GithubComponentBuilderFactory {
             case "lazyStartProducer": ((GitHubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GitHubComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((GitHubComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((GitHubComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((GitHubComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "oauthToken": ((GitHubComponent) component).setOauthToken((java.lang.String) value); return true;
             default: return false;

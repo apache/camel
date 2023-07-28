@@ -194,7 +194,7 @@ public interface JooqComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -210,28 +210,12 @@ public interface JooqComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default JooqComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -275,7 +259,6 @@ public interface JooqComponentBuilderFactory {
             case "query": getOrCreateConfiguration((JooqComponent) component).setQuery((java.lang.String) value); return true;
             case "autowiredEnabled": ((JooqComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((JooqComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((JooqComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((JooqComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }

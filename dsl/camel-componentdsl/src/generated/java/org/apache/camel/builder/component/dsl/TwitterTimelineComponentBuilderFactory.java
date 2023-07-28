@@ -119,7 +119,7 @@ public interface TwitterTimelineComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -135,28 +135,12 @@ public interface TwitterTimelineComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default TwitterTimelineComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -307,7 +291,6 @@ public interface TwitterTimelineComponentBuilderFactory {
             case "lazyStartProducer": ((TwitterTimelineComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((TwitterTimelineComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((TwitterTimelineComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((TwitterTimelineComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((TwitterTimelineComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "httpProxyHost": ((TwitterTimelineComponent) component).setHttpProxyHost((java.lang.String) value); return true;
             case "httpProxyPassword": ((TwitterTimelineComponent) component).setHttpProxyPassword((java.lang.String) value); return true;

@@ -372,7 +372,7 @@ public interface Aws2TranslateComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -388,28 +388,12 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default Aws2TranslateComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -494,7 +478,6 @@ public interface Aws2TranslateComponentBuilderFactory {
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Translate2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((Translate2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Translate2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((Translate2Component) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Translate2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Translate2Component) component).setSecretKey((java.lang.String) value); return true;

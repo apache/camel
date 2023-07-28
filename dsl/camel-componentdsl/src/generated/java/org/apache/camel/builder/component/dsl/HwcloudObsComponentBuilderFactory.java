@@ -121,7 +121,7 @@ public interface HwcloudObsComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -137,28 +137,12 @@ public interface HwcloudObsComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default HwcloudObsComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -190,7 +174,6 @@ public interface HwcloudObsComponentBuilderFactory {
             case "lazyStartProducer": ((OBSComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((OBSComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((OBSComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((OBSComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((OBSComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }

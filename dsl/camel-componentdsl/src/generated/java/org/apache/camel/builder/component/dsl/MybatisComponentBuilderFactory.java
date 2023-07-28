@@ -158,7 +158,7 @@ public interface MybatisComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -174,28 +174,12 @@ public interface MybatisComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default MybatisComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -229,7 +213,6 @@ public interface MybatisComponentBuilderFactory {
             case "autowiredEnabled": ((MyBatisComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sqlSessionFactory": ((MyBatisComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
             case "healthCheckConsumerEnabled": ((MyBatisComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((MyBatisComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((MyBatisComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }

@@ -160,7 +160,7 @@ public interface JiraComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -176,28 +176,12 @@ public interface JiraComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default JiraComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -332,7 +316,6 @@ public interface JiraComponentBuilderFactory {
             case "autowiredEnabled": ((JiraComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((JiraComponent) component).setConfiguration((org.apache.camel.component.jira.JiraConfiguration) value); return true;
             case "healthCheckConsumerEnabled": ((JiraComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((JiraComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((JiraComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessToken": getOrCreateConfiguration((JiraComponent) component).setAccessToken((java.lang.String) value); return true;
             case "consumerKey": getOrCreateConfiguration((JiraComponent) component).setConsumerKey((java.lang.String) value); return true;

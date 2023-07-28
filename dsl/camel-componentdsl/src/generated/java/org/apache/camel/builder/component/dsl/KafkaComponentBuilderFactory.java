@@ -1668,7 +1668,7 @@ public interface KafkaComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1684,28 +1684,12 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -2301,7 +2285,6 @@ public interface KafkaComponentBuilderFactory {
             case "synchronous": getOrCreateConfiguration((KafkaComponent) component).setSynchronous((boolean) value); return true;
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "healthCheckConsumerEnabled": ((KafkaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((KafkaComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((KafkaComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;

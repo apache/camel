@@ -454,7 +454,7 @@ public interface Aws2SnsComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -470,28 +470,12 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -579,7 +563,6 @@ public interface Aws2SnsComponentBuilderFactory {
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Sns2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((Sns2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Sns2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((Sns2Component) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Sns2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;

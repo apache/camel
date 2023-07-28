@@ -785,7 +785,7 @@ public interface Pop3ComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -801,28 +801,12 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default Pop3ComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -960,7 +944,6 @@ public interface Pop3ComponentBuilderFactory {
             case "useInlineAttachments": getOrCreateConfiguration((MailComponent) component).setUseInlineAttachments((boolean) value); return true;
             case "headerFilterStrategy": ((MailComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "healthCheckConsumerEnabled": ((MailComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((MailComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((MailComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((MailComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MailComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

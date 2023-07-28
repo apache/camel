@@ -290,7 +290,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -306,28 +306,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsStreamComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -440,7 +424,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             case "autowiredEnabled": ((GoogleSheetsStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             case "healthCheckConsumerEnabled": ((GoogleSheetsStreamComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((GoogleSheetsStreamComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((GoogleSheetsStreamComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientSecret((java.lang.String) value); return true;

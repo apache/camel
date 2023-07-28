@@ -286,7 +286,7 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component.
+         * this component (default enabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -302,28 +302,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarStreamComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component (default disabled).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set
@@ -483,7 +467,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "autowiredEnabled": ((GoogleCalendarStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
             case "healthCheckConsumerEnabled": ((GoogleCalendarStreamComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((GoogleCalendarStreamComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((GoogleCalendarStreamComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
