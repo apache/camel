@@ -29,12 +29,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * JMSPriority being ordered using the resequencer in batch mode.
  */
-@Isolated
 public class JmsBatchResequencerJMSPriorityTest extends AbstractJMSTest {
 
     @Order(2)

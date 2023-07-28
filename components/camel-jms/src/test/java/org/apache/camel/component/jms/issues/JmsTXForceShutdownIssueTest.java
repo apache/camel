@@ -19,13 +19,13 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- */
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
 public class JmsTXForceShutdownIssueTest extends CamelSpringTestSupport {
 
     @Override

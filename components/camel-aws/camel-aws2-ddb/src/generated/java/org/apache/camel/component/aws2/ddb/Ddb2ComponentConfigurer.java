@@ -39,6 +39,12 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "consistentRead": getOrCreateConfiguration(target).setConsistentRead(property(camelContext, boolean.class, value)); return true;
         case "enabledinitialdescribetable":
         case "enabledInitialDescribeTable": getOrCreateConfiguration(target).setEnabledInitialDescribeTable(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "keyattributename":
         case "keyAttributeName": getOrCreateConfiguration(target).setKeyAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "keyattributetype":
@@ -96,6 +102,12 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "consistentRead": return boolean.class;
         case "enabledinitialdescribetable":
         case "enabledInitialDescribeTable": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "keyattributename":
         case "keyAttributeName": return java.lang.String.class;
         case "keyattributetype":
@@ -149,6 +161,12 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "consistentRead": return getOrCreateConfiguration(target).isConsistentRead();
         case "enabledinitialdescribetable":
         case "enabledInitialDescribeTable": return getOrCreateConfiguration(target).isEnabledInitialDescribeTable();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "keyattributename":
         case "keyAttributeName": return getOrCreateConfiguration(target).getKeyAttributeName();
         case "keyattributetype":

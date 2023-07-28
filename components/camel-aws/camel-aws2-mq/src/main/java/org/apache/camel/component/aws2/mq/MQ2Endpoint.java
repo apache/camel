@@ -22,8 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -39,15 +37,17 @@ public class MQ2Endpoint extends ScheduledPollEndpoint {
 
     private MqClient mqClient;
 
-    private ComponentsHealthCheckRepository healthCheckRepository;
-    private MQ2ClientHealthCheck clientHealthCheck;
-
     @UriParam
     private MQ2Configuration configuration;
 
     public MQ2Endpoint(String uri, Component component, MQ2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public MQ2Component getComponent() {
+        return (MQ2Component) super.getComponent();
     }
 
     @Override
@@ -67,24 +67,10 @@ public class MQ2Endpoint extends ScheduledPollEndpoint {
         mqClient = configuration.getAmazonMqClient() != null
                 ? configuration.getAmazonMqClient()
                 : MQ2ClientFactory.getMqClient(configuration).getMqClient();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            // clientHealthCheck = new MQ2ClientHealthCheck(this, getId());
-            // healthCheckRepository.addHealthCheck(clientHealthCheck);
-        }
     }
 
     @Override
     public void doStop() throws Exception {
-        if (healthCheckRepository != null && clientHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(clientHealthCheck);
-            clientHealthCheck = null;
-        }
-
         if (ObjectHelper.isEmpty(configuration.getAmazonMqClient())) {
             if (mqClient != null) {
                 mqClient.close();

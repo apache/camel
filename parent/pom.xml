@@ -50,8 +50,7 @@
 
         <!-- dependency versions -->
         <activemq-version>5.18.2</activemq-version>
-        <!-- Artemis upgrade blocked by CAMEL-19561 -->
-        <activemq-artemis-version>2.28.0</activemq-artemis-version>
+        <activemq-artemis-version>2.30.0</activemq-artemis-version>
         <angus-mail-version>2.0.2</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.1</apache-drill-version>
@@ -70,7 +69,7 @@
         <avro-ipc-jetty-version>1.11.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.2</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.112</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.113</aws-java-sdk2-version>
         <aws-xray-version>2.14.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.14</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
@@ -115,7 +114,6 @@
         <compress-lzf-version>1.1.2</compress-lzf-version>
         <consul-client-version>1.5.3</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-        <corda-version>4.10</corda-version>
         <couchbase-client-version>3.4.8</couchbase-client-version>
         <curator-version>5.5.0</curator-version>
         <cxf-version>4.0.2</cxf-version>
@@ -299,7 +297,7 @@
         <jython-version>2.7.3</jython-version>
         <jython-standalone-version>2.7.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>3.5.0</kafka-version>
+        <kafka-version>3.5.1</kafka-version>
         <kotlin-version>1.9.0</kotlin-version>
         <kubernetes-client-version>6.8.0</kubernetes-client-version>
         <kubernetes-model-version>6.8.0</kubernetes-model-version>
@@ -975,11 +973,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-controlbus</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-corda</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

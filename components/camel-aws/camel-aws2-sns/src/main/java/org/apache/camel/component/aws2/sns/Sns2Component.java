@@ -23,13 +23,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
 
 @Component("aws2-sns")
-public class Sns2Component extends DefaultComponent {
+public class Sns2Component extends HealthCheckComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Component.class);
 
@@ -42,7 +42,6 @@ public class Sns2Component extends DefaultComponent {
 
     public Sns2Component(CamelContext context) {
         super(context);
-
     }
 
     @Override

@@ -24,12 +24,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Timeout(60)
-@Isolated
 public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
 
     private JmsEndpoint endpoint;

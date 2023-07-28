@@ -31,7 +31,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Creates multiple threads")
 public class JmsPriorityConsumerTest extends AbstractJMSTest {
 
     @Order(2)

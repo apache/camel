@@ -22,8 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -38,9 +36,6 @@ import software.amazon.awssdk.services.athena.AthenaClient;
 public class Athena2Endpoint extends DefaultEndpoint {
 
     private AthenaClient athenaClient;
-
-    private WritableHealthCheckRepository healthCheckRepository;
-    private Athena2ClientHealthCheck clientHealthCheck;
 
     @UriParam
     private Athena2Configuration configuration;
@@ -61,6 +56,11 @@ public class Athena2Endpoint extends DefaultEndpoint {
     }
 
     @Override
+    public Athena2Component getComponent() {
+        return (Athena2Component) super.getComponent();
+    }
+
+    @Override
     public void doInit() throws Exception {
         super.doInit();
 
@@ -68,26 +68,10 @@ public class Athena2Endpoint extends DefaultEndpoint {
                 ? configuration.getAmazonAthenaClient()
                 : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
 
-        // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            // clientHealthCheck = new Athena2ClientHealthCheck(this, getId());
-            // healthCheckRepository.addHealthCheck(clientHealthCheck);
-        }
     }
 
     @Override
     public void doStop() throws Exception {
-        if (healthCheckRepository != null && clientHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(clientHealthCheck);
-            clientHealthCheck = null;
-        }
-
         if (ObjectHelper.isEmpty(configuration.getAmazonAthenaClient())) {
             if (athenaClient != null) {
                 athenaClient.close();

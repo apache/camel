@@ -1332,28 +1332,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "CordaComponentBuilderFactory": {
-    "kind": "component",
-    "name": "corda",
-    "title": "Corda",
-    "description": "Perform operations against Corda blockchain platform using corda-rpc library.",
-    "deprecated": false,
-    "firstVersion": "2.23.0",
-    "label": "blockchain,rpc",
-    "javaType": "org.apache.camel.component.corda.CordaComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-corda",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "corda",
-    "extendsScheme": "",
-    "syntax": "corda:node",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "CouchbaseComponentBuilderFactory": {
     "kind": "component",
     "name": "couchbase",

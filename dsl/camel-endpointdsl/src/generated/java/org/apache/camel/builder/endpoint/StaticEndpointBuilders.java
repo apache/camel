@@ -2687,51 +2687,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Corda (camel-corda)
-     * Perform operations against Corda blockchain platform using corda-rpc
-     * library.
-     * 
-     * Category: blockchain,rpc
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-corda
-     * 
-     * Syntax: <code>corda:node</code>
-     * 
-     * Path parameter: node (required)
-     * The url for the corda node
-     * 
-     * @param path node
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.endpointBuilder("corda", path);
-    }
-    /**
-     * Corda (camel-corda)
-     * Perform operations against Corda blockchain platform using corda-rpc
-     * library.
-     * 
-     * Category: blockchain,rpc
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-corda
-     * 
-     * Syntax: <code>corda:node</code>
-     * 
-     * Path parameter: node (required)
-     * The url for the corda node
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path node
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Couchbase (camel-couchbase)
      * Query Couchbase Views with a poll strategy and/or perform various
      * operations against Couchbase databases.

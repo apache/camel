@@ -26,8 +26,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -52,9 +50,6 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private static final Logger LOG = LoggerFactory.getLogger(Kinesis2Consumer.class);
     private boolean isShardClosed;
     private ResumeStrategy resumeStrategy;
-
-    private WritableHealthCheckRepository healthCheckRepository;
-    private Kinesis2ConsumerHealthCheck consumerHealthCheck;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -293,18 +288,6 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new Kinesis2ConsumerHealthCheck(this, getRouteId());
-            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
-                    && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
-        }
 
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();

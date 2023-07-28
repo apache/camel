@@ -581,7 +581,9 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * VertxWebsocketConstants.SEND_TO_ALL header on the message. Note that
          * when using this option, the host name specified for the
          * vertx-websocket producer URI must match one used for an existing
-         * vertx-websocket consumer.
+         * vertx-websocket consumer. Note that this option only applies when
+         * producing messages to endpoints hosted by the vertx-websocket
+         * consumer and not to an externally hosted WebSocket.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -602,7 +604,9 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * VertxWebsocketConstants.SEND_TO_ALL header on the message. Note that
          * when using this option, the host name specified for the
          * vertx-websocket producer URI must match one used for an existing
-         * vertx-websocket consumer.
+         * vertx-websocket consumer. Note that this option only applies when
+         * producing messages to endpoints hosted by the vertx-websocket
+         * consumer and not to an externally hosted WebSocket.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -856,7 +860,9 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Sends the message to the client with the given connection key. You
          * can use a comma separated list of keys to send a message to multiple
-         * clients.
+         * clients. Note that this option only applies when producing messages
+         * to endpoints hosted by the vertx-websocket consumer and not to an
+         * externally hosted WebSocket.
          * 
          * The option is a: {@code String} type.
          * 
@@ -871,7 +877,9 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Sends the message to all clients which are currently connected. You
          * can use the sendToAll option on the endpoint instead of using this
-         * header.
+         * header. Note that this option only applies when producing messages to
+         * endpoints hosted by the vertx-websocket consumer and not to an
+         * externally hosted WebSocket.
          * 
          * The option is a: {@code boolean} type.
          * 

@@ -61,7 +61,6 @@
 ** xref:cometd-component.adoc[CometD]
 ** xref:consul-component.adoc[Consul]
 ** xref:controlbus-component.adoc[Control Bus]
-** xref:corda-component.adoc[Corda]
 ** xref:couchbase-component.adoc[Couchbase]
 ** xref:couchdb-component.adoc[CouchDB]
 ** xref:cron-component.adoc[Cron]

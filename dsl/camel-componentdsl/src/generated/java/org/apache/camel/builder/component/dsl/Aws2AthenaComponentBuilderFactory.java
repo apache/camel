@@ -51,36 +51,6 @@ public interface Aws2AthenaComponentBuilderFactory {
             extends
                 ComponentBuilder<Athena2Component> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * The AmazonAthena instance to use as the client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonAthenaClient the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder amazonAthenaClient(
-                software.amazon.awssdk.services.athena.AthenaClient amazonAthenaClient) {
-            doSetProperty("amazonAthenaClient", amazonAthenaClient);
-            return this;
-        }
-        /**
          * The component configuration.
          * 
          * The option is a:
@@ -112,7 +82,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         }
         /**
          * Milliseconds before the next poll for query execution status. See the
-         * section 'Waiting for Query Completion and Retrying Failed Queries' to
+         * section Waiting for Query Completion and Retrying Failed Queries to
          * learn more.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -128,42 +98,9 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
-         * The encryption type to use when storing query results in S3. One of
-         * SSE_S3, SSE_KMS, or CSE_KMS.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param encryptionOption the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder encryptionOption(
-                software.amazon.awssdk.services.athena.model.EncryptionOption encryptionOption) {
-            doSetProperty("encryptionOption", encryptionOption);
-            return this;
-        }
-        /**
-         * Include useful trace information at the beginning of queries as an
-         * SQL comment (prefixed with --).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param includeTrace the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder includeTrace(boolean includeTrace) {
-            doSetProperty("includeTrace", includeTrace);
-            return this;
-        }
-        /**
          * Milliseconds before the first poll for query execution status. See
-         * the section 'Waiting for Query Completion and Retrying Failed
-         * Queries' to learn more.
+         * the section Waiting for Query Completion and Retrying Failed Queries
+         * to learn more.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -175,20 +112,6 @@ public interface Aws2AthenaComponentBuilderFactory {
          */
         default Aws2AthenaComponentBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param kmsKey the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder kmsKey(java.lang.String kmsKey) {
-            doSetProperty("kmsKey", kmsKey);
             return this;
         }
         /**
@@ -217,8 +140,8 @@ public interface Aws2AthenaComponentBuilderFactory {
         }
         /**
          * Maximum number of times to attempt a query. Set to 1 to disable
-         * retries. See the section 'Waiting for Query Completion and Retrying
-         * Failed Queries' to learn more.
+         * retries. See the section Waiting for Query Completion and Retrying
+         * Failed Queries to learn more.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -284,7 +207,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * The location in Amazon S3 where query results are stored, such as
          * s3://path/to/query/bucket/. Ensure this value ends with a forward
-         * slash ('/').
+         * slash.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -301,7 +224,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * How query results should be returned. One of StreamList (default -
          * return a GetQueryResultsIterable that can page through all results),
-         * SelectList (returns at most 1,000 rows at a time, plus a NextToken
+         * SelectList (returns at most 1000 rows at a time, plus a NextToken
          * value as a header than can be used for manual pagination of results),
          * S3Pointer (return an S3 path pointing to the results).
          * 
@@ -317,67 +240,6 @@ public interface Aws2AthenaComponentBuilderFactory {
         default Aws2AthenaComponentBuilder outputType(
                 org.apache.camel.component.aws2.athena.Athena2OutputType outputType) {
             doSetProperty("outputType", outputType);
-            return this;
-        }
-        /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Athena client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Athena client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Athena client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -416,8 +278,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * The region in which Athena client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1). You'll need to use the name
-         * Region.EU_WEST_1.id().
+         * region (for example ap-east-1).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -433,8 +294,8 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * Reset the waitTimeout countdown in the event of a query retry. If set
          * to true, potential max time spent waiting for queries is equal to
-         * waitTimeout x maxAttempts. See the section 'Waiting for Query
-         * Completion and Retrying Failed Queries' to learn more.
+         * waitTimeout x maxAttempts. See the section Waiting for Query
+         * Completion and Retrying Failed Queries to learn more.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -451,13 +312,13 @@ public interface Aws2AthenaComponentBuilderFactory {
         }
         /**
          * Optional comma separated list of error types to retry the query for.
-         * Use 'retryable' to retry all retryable failure conditions (e.g.
+         * Use: 'retryable' to retry all retryable failure conditions (e.g.
          * generic errors and resources exhausted), 'generic' to retry
          * 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that
          * have exhausted resource limits, 'always' to always retry regardless
          * of failure condition, or 'never' or null to never retry (default).
-         * See the section 'Waiting for Query Completion and Retrying Failed
-         * Queries' to learn more.
+         * See the section Waiting for Query Completion and Retrying Failed
+         * Queries to learn more.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -472,58 +333,9 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Set whether the Athena client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Athena client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
          * Optional max wait time in millis to wait for a successful query
-         * completion. See the section 'Waiting for Query Completion and
-         * Retrying Failed Queries' to learn more.
+         * completion. See the section Waiting for Query Completion and Retrying
+         * Failed Queries to learn more.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -549,6 +361,22 @@ public interface Aws2AthenaComponentBuilderFactory {
          */
         default Aws2AthenaComponentBuilder workGroup(java.lang.String workGroup) {
             doSetProperty("workGroup", workGroup);
+            return this;
+        }
+        /**
+         * The AmazonAthena instance to use as the client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonAthenaClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder amazonAthenaClient(
+                software.amazon.awssdk.services.athena.AthenaClient amazonAthenaClient) {
+            doSetProperty("amazonAthenaClient", amazonAthenaClient);
             return this;
         }
         /**
@@ -588,6 +416,227 @@ public interface Aws2AthenaComponentBuilderFactory {
             doSetProperty("clientRequestToken", clientRequestToken);
             return this;
         }
+        /**
+         * Include useful trace information at the beginning of queries as an
+         * SQL comment (prefixed with --).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeTrace the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder includeTrace(boolean includeTrace) {
+            doSetProperty("includeTrace", includeTrace);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Athena client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Athena client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Athena client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * The encryption type to use when storing query results in S3. One of
+         * SSE_S3, SSE_KMS, or CSE_KMS.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptionOption the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder encryptionOption(
+                software.amazon.awssdk.services.athena.model.EncryptionOption encryptionOption) {
+            doSetProperty("encryptionOption", encryptionOption);
+            return this;
+        }
+        /**
+         * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kmsKey the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder kmsKey(java.lang.String kmsKey) {
+            doSetProperty("kmsKey", kmsKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
     }
 
     class Aws2AthenaComponentBuilderImpl
@@ -612,15 +661,10 @@ public interface Aws2AthenaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": getOrCreateConfiguration((Athena2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "amazonAthenaClient": getOrCreateConfiguration((Athena2Component) component).setAmazonAthenaClient((software.amazon.awssdk.services.athena.AthenaClient) value); return true;
             case "configuration": ((Athena2Component) component).setConfiguration((org.apache.camel.component.aws2.athena.Athena2Configuration) value); return true;
             case "database": getOrCreateConfiguration((Athena2Component) component).setDatabase((java.lang.String) value); return true;
             case "delay": getOrCreateConfiguration((Athena2Component) component).setDelay((long) value); return true;
-            case "encryptionOption": getOrCreateConfiguration((Athena2Component) component).setEncryptionOption((software.amazon.awssdk.services.athena.model.EncryptionOption) value); return true;
-            case "includeTrace": getOrCreateConfiguration((Athena2Component) component).setIncludeTrace((boolean) value); return true;
             case "initialDelay": getOrCreateConfiguration((Athena2Component) component).setInitialDelay((long) value); return true;
-            case "kmsKey": getOrCreateConfiguration((Athena2Component) component).setKmsKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((Athena2Component) component).setLazyStartProducer((boolean) value); return true;
             case "maxAttempts": getOrCreateConfiguration((Athena2Component) component).setMaxAttempts((int) value); return true;
             case "maxResults": getOrCreateConfiguration((Athena2Component) component).setMaxResults((java.lang.Integer) value); return true;
@@ -628,22 +672,30 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Athena2Component) component).setOperation((org.apache.camel.component.aws2.athena.Athena2Operations) value); return true;
             case "outputLocation": getOrCreateConfiguration((Athena2Component) component).setOutputLocation((java.lang.String) value); return true;
             case "outputType": getOrCreateConfiguration((Athena2Component) component).setOutputType((org.apache.camel.component.aws2.athena.Athena2OutputType) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((Athena2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
-            case "proxyHost": getOrCreateConfiguration((Athena2Component) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": getOrCreateConfiguration((Athena2Component) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyProtocol": getOrCreateConfiguration((Athena2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queryExecutionId": getOrCreateConfiguration((Athena2Component) component).setQueryExecutionId((java.lang.String) value); return true;
             case "queryString": getOrCreateConfiguration((Athena2Component) component).setQueryString((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Athena2Component) component).setRegion((java.lang.String) value); return true;
             case "resetWaitTimeoutOnRetry": getOrCreateConfiguration((Athena2Component) component).setResetWaitTimeoutOnRetry((boolean) value); return true;
             case "retry": getOrCreateConfiguration((Athena2Component) component).setRetry((java.lang.String) value); return true;
+            case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
+            case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
+            case "amazonAthenaClient": getOrCreateConfiguration((Athena2Component) component).setAmazonAthenaClient((software.amazon.awssdk.services.athena.AthenaClient) value); return true;
+            case "autowiredEnabled": ((Athena2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "clientRequestToken": getOrCreateConfiguration((Athena2Component) component).setClientRequestToken((java.lang.String) value); return true;
+            case "includeTrace": getOrCreateConfiguration((Athena2Component) component).setIncludeTrace((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((Athena2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((Athena2Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Athena2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Athena2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Athena2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Athena2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "accessKey": getOrCreateConfiguration((Athena2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "encryptionOption": getOrCreateConfiguration((Athena2Component) component).setEncryptionOption((software.amazon.awssdk.services.athena.model.EncryptionOption) value); return true;
+            case "kmsKey": getOrCreateConfiguration((Athena2Component) component).setKmsKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Athena2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Athena2Component) component).setSecretKey((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
-            case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
-            case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
-            case "autowiredEnabled": ((Athena2Component) component).setAutowiredEnabled((boolean) value); return true;
-            case "clientRequestToken": getOrCreateConfiguration((Athena2Component) component).setClientRequestToken((java.lang.String) value); return true;
             default: return false;
             }
         }

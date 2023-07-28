@@ -18,6 +18,8 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Unit test for issues CAMEL-1034 and CAMEL-1037
  */
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
 public class JmsResequencerTest extends AbstractSpringJMSTestSupport {
 
     @Override

@@ -18,12 +18,15 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
 public class JmsInOutWithSpringRestartIssueTest extends AbstractSpringJMSTestSupport {
 
     @Override
