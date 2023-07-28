@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ecs.EcsClient;
 import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 
-public class ECS2ClientHealthCheck extends AbstractHealthCheck {
+public class ECS2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final ECS2Endpoint ecs2Endpoint;
 
-    public ECS2ClientHealthCheck(ECS2Endpoint ecs2Endpoint, String clientId) {
-        super("camel", "aws2-ecs-client-" + clientId);
+    public ECS2ProducerHealthCheck(ECS2Endpoint ecs2Endpoint, String clientId) {
+        super("camel", "aws2-ecs-producer-" + clientId);
         this.ecs2Endpoint = ecs2Endpoint;
     }
 
