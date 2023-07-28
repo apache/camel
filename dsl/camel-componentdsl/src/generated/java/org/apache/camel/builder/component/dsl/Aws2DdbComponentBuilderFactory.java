@@ -416,6 +416,56 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -489,6 +539,9 @@ public interface Aws2DdbComponentBuilderFactory {
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Ddb2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
             case "autowiredEnabled": ((Ddb2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((Ddb2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((Ddb2Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Ddb2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

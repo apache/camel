@@ -352,6 +352,56 @@ public interface Aws2Ec2ComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all health checks from this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder healthCheckEnabled(
+                boolean healthCheckEnabled) {
+            doSetProperty("healthCheckEnabled", healthCheckEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2Ec2ComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
     }
 
     class Aws2Ec2ComponentBuilderImpl
@@ -394,6 +444,9 @@ public interface Aws2Ec2ComponentBuilderFactory {
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWS2EC2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((AWS2EC2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((AWS2EC2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((AWS2EC2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckEnabled": ((AWS2EC2Component) component).setHealthCheckEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((AWS2EC2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

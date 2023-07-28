@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
@@ -49,7 +50,7 @@ public class Athena2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Athena2Producer.class);
 
-    private Athena2ProducerHealthCheck producerHealthCheck;
+    private HealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
 
     public Athena2Producer(Endpoint endpoint) {
@@ -441,10 +442,7 @@ public class Athena2Producer extends DefaultProducer {
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            String id = getEndpoint().getConfiguration().getQueryExecutionId();
-            if (id == null) {
-                id = getEndpoint().getId();
-            }
+            String id = getEndpoint().getId();
             producerHealthCheck = new Athena2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
                     && getEndpoint().getComponent().isHealthCheckProducerEnabled());

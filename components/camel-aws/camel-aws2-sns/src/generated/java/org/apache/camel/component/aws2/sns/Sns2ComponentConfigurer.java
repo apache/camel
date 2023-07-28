@@ -37,6 +37,12 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sns.Sns2Configuration.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": getOrCreateConfiguration(target).setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -97,6 +103,12 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.sns.Sns2Configuration.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": return java.lang.String.class;
         case "lazystartproducer":
@@ -153,6 +165,12 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": return getOrCreateConfiguration(target).getKmsMasterKeyId();
         case "lazystartproducer":
