@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
@@ -50,8 +51,9 @@ public class MQ2ProducerHealthCheckProfileCredsTest extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
-        hc = registry.resolveById("producers");
-        registry.register(hc);
+        HealthCheckRepository hcr = (HealthCheckRepository) registry.resolveById("producers");
+        hcr.setEnabled(true);
+        registry.register(hcr);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;
