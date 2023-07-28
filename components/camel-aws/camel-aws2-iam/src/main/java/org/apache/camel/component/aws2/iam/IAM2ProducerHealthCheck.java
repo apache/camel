@@ -25,11 +25,11 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IamClient;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 
-public class IAM2HealthCheck extends AbstractHealthCheck {
+public class IAM2ProducerHealthCheck extends AbstractHealthCheck {
     private final IAM2Endpoint endpoint;
 
-    public IAM2HealthCheck(IAM2Endpoint endpoint, String clientId) {
-        super("camel", "aws2-iam-client-" + clientId);
+    public IAM2ProducerHealthCheck(IAM2Endpoint endpoint, String clientId) {
+        super("camel", "aws2-iam-producer-" + clientId);
         this.endpoint = endpoint;
     }
 

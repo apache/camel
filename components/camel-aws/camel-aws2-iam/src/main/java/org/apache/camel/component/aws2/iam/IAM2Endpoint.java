@@ -22,8 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.iam.client.IAM2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -39,8 +37,6 @@ import software.amazon.awssdk.services.iam.IamClient;
 public class IAM2Endpoint extends ScheduledPollEndpoint {
 
     private IamClient iamClient;
-    private ComponentsHealthCheckRepository healthCheckRepository;
-    private IAM2HealthCheck clientHealthCheck;
 
     @UriParam
     private IAM2Configuration configuration;
@@ -61,20 +57,17 @@ public class IAM2Endpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public IAM2Component getComponent() {
+        return (IAM2Component) super.getComponent();
+    }
+
+    @Override
     public void doStart() throws Exception {
         super.doStart();
 
         iamClient = configuration.getIamClient() != null
                 ? configuration.getIamClient()
                 : IAM2ClientFactory.getIamClient(configuration).getIamClient();
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            // clientHealthCheck = new IAM2HealthCheck(this, getId());
-            // healthCheckRepository.addHealthCheck(clientHealthCheck);
-        }
     }
 
     @Override
@@ -84,11 +77,6 @@ public class IAM2Endpoint extends ScheduledPollEndpoint {
                 iamClient.close();
             }
         }
-        if (healthCheckRepository != null && clientHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(clientHealthCheck);
-            clientHealthCheck = null;
-        }
-        super.doStop();
     }
 
     public IAM2Configuration getConfiguration() {
