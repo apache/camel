@@ -1,1 +1,0 @@
-../../../../../components/camel-corda/src/main/docs/corda-component.adoc
