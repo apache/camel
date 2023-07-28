@@ -25,18 +25,17 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kafka.KafkaClient;
 import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 
-public class MSK2HealthCheck extends AbstractHealthCheck {
+public class MSK2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final MSK2Endpoint msk2Endpoint;
 
-    public MSK2HealthCheck(MSK2Endpoint msk2Endpoint, String clientId) {
-        super("camel", "aws2-msk-client-" + clientId);
+    public MSK2ProducerHealthCheck(MSK2Endpoint msk2Endpoint, String clientId) {
+        super("camel", "aws2-msk-producer-" + clientId);
         this.msk2Endpoint = msk2Endpoint;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-
         MSK2Configuration configuration = msk2Endpoint.getConfiguration();
         try {
             if (!KafkaClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
@@ -56,7 +55,6 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
             return;
         }
         builder.up();
-
     }
 
 }
