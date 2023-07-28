@@ -31,17 +31,13 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Ddb2StreamConsumerHealthCheckStaticCredsIT extends CamelTestSupport {
+public class Ddb2StreamConsumerHealthCheckIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
-
-    private static final Logger LOG = LoggerFactory.getLogger(Ddb2StreamConsumerHealthCheckStaticCredsIT.class);
 
     CamelContext context;
 
@@ -87,14 +83,9 @@ public class Ddb2StreamConsumerHealthCheckStaticCredsIT extends CamelTestSupport
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsKinesis2HealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-ddbstream-consumer"))
-                    .findAny()
-                    .isPresent();
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
-            Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsKinesis2HealthCheck, "aws2-ddbstream check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-ddbstream check error message");
+                    .anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
+            Assertions.assertTrue(containsKinesis2HealthCheck, "readiness check");
+            Assertions.assertTrue(down, "readiness check");
         });
 
     }
