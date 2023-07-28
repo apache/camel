@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.aws2.cw;
+package org.apache.camel.component.aws2.ddb;
 
 import java.util.Map;
 
@@ -24,31 +24,31 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-import software.amazon.awssdk.services.cloudwatch.model.ListDashboardsRequest;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 
-public class Cw2ClientHealthCheck extends AbstractHealthCheck {
+public class Db2ProducerHealthCheck extends AbstractHealthCheck {
 
-    private final Cw2Endpoint cw2Endpoint;
+    private final Ddb2Endpoint ddb2Endpoint;
 
-    public Cw2ClientHealthCheck(Cw2Endpoint cw2Endpoint, String clientId) {
-        super("camel", "aws2-cw-client-" + clientId);
-        this.cw2Endpoint = cw2Endpoint;
+    public Db2ProducerHealthCheck(Ddb2Endpoint ddb2Endpoint, String clientId) {
+        super("camel", "aws2-ddb-producer-" + clientId);
+        this.ddb2Endpoint = ddb2Endpoint;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        Cw2Configuration configuration = cw2Endpoint.getConfiguration();
+        Ddb2Configuration configuration = ddb2Endpoint.getConfiguration();
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            if (!CloudWatchClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+            if (!DynamoDbClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
         }
         try {
-            CloudWatchClient cw2Client = cw2Endpoint.getCloudWatchClient();
-            cw2Client.listDashboards(ListDashboardsRequest.builder().build());
+            DynamoDbClient ddbClient = ddb2Endpoint.getDdbClient();
+            ddbClient.listTables(ListTablesRequest.builder().limit(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +67,4 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

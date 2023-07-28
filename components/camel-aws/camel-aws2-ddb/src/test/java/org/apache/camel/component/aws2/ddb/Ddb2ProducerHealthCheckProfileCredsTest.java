@@ -28,16 +28,11 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Ddb2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Ddb2ClientHealthCheckProfileCredsTest.class);
+public class Ddb2ProducerHealthCheckProfileCredsTest extends CamelTestSupport {
 
     CamelContext context;
 
@@ -73,7 +68,6 @@ public class Ddb2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
     }
 
     @Test
-    @Disabled("Do not register the Producer Health Check until we solve CAMEL-18992")
     public void testConnectivity() {
 
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
@@ -85,9 +79,7 @@ public class Ddb2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2DdbHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("consumer:ddb-route"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-ddb-producer"));
 
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb check");

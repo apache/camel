@@ -22,8 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.cw.client.Cw2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -40,12 +38,15 @@ public class Cw2Endpoint extends DefaultEndpoint {
     @UriParam
     private Cw2Configuration configuration;
     private CloudWatchClient cloudWatchClient;
-    private ComponentsHealthCheckRepository healthCheckRepository;
-    private Cw2ClientHealthCheck clientHealthCheck;
 
     public Cw2Endpoint(String uri, Component component, Cw2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public Cw2Component getComponent() {
+        return (Cw2Component) super.getComponent();
     }
 
     @Override
@@ -74,20 +75,6 @@ public class Cw2Endpoint extends DefaultEndpoint {
             }
         }
         super.doStop();
-    }
-
-    @Override
-    public void doStart() throws Exception {
-        super.doStart();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            //clientHealthCheck = new Cw2ClientHealthCheck(this, getId());
-            //healthCheckRepository.addHealthCheck(clientHealthCheck);
-        }
     }
 
     public Cw2Configuration getConfiguration() {
