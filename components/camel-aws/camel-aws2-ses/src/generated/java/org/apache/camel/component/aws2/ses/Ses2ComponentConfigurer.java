@@ -39,6 +39,12 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
         case "configurationset":
         case "configurationSet": getOrCreateConfiguration(target).setConfigurationSet(property(camelContext, java.lang.String.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "overrideendpoint":
@@ -91,6 +97,12 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": return org.apache.camel.component.aws2.ses.Ses2Configuration.class;
         case "configurationset":
         case "configurationSet": return java.lang.String.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "overrideendpoint":
@@ -139,6 +151,12 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "configuration": return target.getConfiguration();
         case "configurationset":
         case "configurationSet": return getOrCreateConfiguration(target).getConfigurationSet();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "overrideendpoint":

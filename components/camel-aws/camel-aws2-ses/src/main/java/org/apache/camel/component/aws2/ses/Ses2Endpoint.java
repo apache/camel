@@ -22,8 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ses.client.Ses2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,9 +35,6 @@ import software.amazon.awssdk.services.ses.SesClient;
              producerOnly = true, category = { Category.CLOUD, Category.MAIL }, headersClass = Ses2Constants.class)
 public class Ses2Endpoint extends DefaultEndpoint {
 
-    private ComponentsHealthCheckRepository healthCheckRepository;
-    private Ses2HealthCheck clientHealthCheck;
-
     private SesClient sesClient;
 
     @UriParam
@@ -51,20 +46,16 @@ public class Ses2Endpoint extends DefaultEndpoint {
     }
 
     @Override
+    public Ses2Component getComponent() {
+        return (Ses2Component) super.getComponent();
+    }
+
+    @Override
     public void doStart() throws Exception {
         super.doStart();
         sesClient = configuration.getAmazonSESClient() != null
                 ? configuration.getAmazonSESClient()
                 : Ses2ClientFactory.getSesClient(configuration).getSesClient();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            // clientHealthCheck = new Ses2HealthCheck(this, getId());
-            // healthCheckRepository.addHealthCheck(clientHealthCheck);
-        }
     }
 
     @Override
@@ -74,12 +65,6 @@ public class Ses2Endpoint extends DefaultEndpoint {
                 sesClient.close();
             }
         }
-
-        if (healthCheckRepository != null && clientHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(clientHealthCheck);
-            clientHealthCheck = null;
-        }
-
         super.doStop();
     }
 

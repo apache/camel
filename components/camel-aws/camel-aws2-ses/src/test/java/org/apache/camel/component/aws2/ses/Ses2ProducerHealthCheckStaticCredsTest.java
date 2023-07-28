@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.aws2.ses;
 
 import java.util.Collection;
@@ -28,16 +27,11 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Ses2HealthCheckProfileCredsTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Ses2HealthCheckProfileCredsTest.class);
+public class Ses2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
 
     CamelContext context;
 
@@ -67,15 +61,13 @@ public class Ses2HealthCheckProfileCredsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:testHealthCheck")
-                        .to("aws2-ses://from@example.com?region=l&useDefaultCredentialsProvider=true");
+                        .to("aws2-ses://from@example.com?region=l&secretKey=l&accessKey=k");
             }
         };
     }
 
     @Test
-    @Disabled("Do not register the Producer Health Check until we solve CAMEL-18992")
     public void testConnectivity() {
-
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");
@@ -85,9 +77,7 @@ public class Ses2HealthCheckProfileCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-ses-client"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-ses-producer"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");

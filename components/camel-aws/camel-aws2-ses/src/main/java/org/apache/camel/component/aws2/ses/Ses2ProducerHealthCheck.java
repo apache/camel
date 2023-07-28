@@ -24,18 +24,17 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
 
-public class Ses2HealthCheck extends AbstractHealthCheck {
+public class Ses2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final Ses2Endpoint ses2Endpoint;
 
-    public Ses2HealthCheck(Ses2Endpoint ses2Endpoint, String clientId) {
-        super("camel", "aws2-ses-client-" + clientId);
+    public Ses2ProducerHealthCheck(Ses2Endpoint ses2Endpoint, String clientId) {
+        super("camel", "aws2-ses-producer-" + clientId);
         this.ses2Endpoint = ses2Endpoint;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-
         Ses2Configuration configuration = ses2Endpoint.getConfiguration();
         try {
             if (!SesClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
