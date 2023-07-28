@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.aws2.kinesis.consumer;
 
-import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
-
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
 import software.amazon.awssdk.services.kinesis.model.ListStreamsRequest;
 
 public class KinesisHealthCheck implements Runnable {

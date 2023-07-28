@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,11 +29,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Objects;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
@@ -41,7 +39,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
  * Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS Kinesis", syntax = "aws2-kinesis:streamName",
-        category = {Category.CLOUD, Category.MESSAGING}, headersClass = Kinesis2Constants.class)
+             category = { Category.CLOUD, Category.MESSAGING }, headersClass = Kinesis2Constants.class)
 public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -103,18 +101,17 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        var kinesisConnection = KinesisConnection.getInstance();
-        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor, kinesisConnection);
+        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
         consumer.setSchedulerProperties(getSchedulerProperties());
-        startHealthChecks(kinesisConnection);
+        startHealthChecks();
         configureConsumer(consumer);
         return consumer;
     }
 
-    private void startHealthChecks(KinesisConnection kinesisConnection) {
+    private void startHealthChecks() {
         var timeoutCheckerExecutorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                 CONNECTION_CHECKER_EXECUTOR_NAME);
-        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this, kinesisConnection),
+        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this, KinesisConnection.getInstance()),
                 0, 5 * 1000,
                 TimeUnit.MILLISECONDS);
     }
