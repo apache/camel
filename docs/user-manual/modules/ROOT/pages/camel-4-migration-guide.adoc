@@ -153,6 +153,10 @@ one of each out of the box.
 
 Only consumer based health-checks is enabled by default.
 
+=== Producer Health Checks
+
+The option `camel.health.components-enabled` has been renamed to `camel.health.producers-enabled`.
+
 Some components (in particular AWS) provides also health checks for producers; in Camel 3.x
 these health checks did not work properly and has been disabled in the source.
 To continue this behaviour in Camel 4, then producer based health checks are disabled.

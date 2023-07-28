@@ -42,7 +42,7 @@ public class ProducersHealthCheckRepository extends ServiceSupport
 
     private final List<HealthCheck> checks;
     private volatile CamelContext context;
-    private boolean enabled = true;
+    private boolean enabled; // default disabled
 
     public ProducersHealthCheckRepository() {
         this.checks = new CopyOnWriteArrayList<>();
