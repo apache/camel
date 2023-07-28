@@ -17,12 +17,14 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisHealthCheck;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -45,6 +47,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     private KinesisClient kinesisClient;
     private KinesisAsyncClient kinesisAsyncClient;
+    private static final String CONNECTION_CHECKER_EXECUTOR_NAME = "Kinesis_Streaming_Connection_Checker";
 
     public Kinesis2Endpoint(String uri, Kinesis2Configuration configuration, Kinesis2Component component) {
         super(uri, component);
@@ -54,19 +57,18 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        var kinesisConnection = KinesisConnection.getInstance();
+
         if (!configuration.isCborEnabled()) {
             System.setProperty(CBOR_ENABLED.property(), "false");
         }
 
         if (configuration.isAsyncClient() &&
                 Objects.isNull(configuration.getAmazonKinesisClient())) {
-            kinesisAsyncClient = KinesisClientFactory
-                    .getKinesisAsyncClient(configuration)
-                    .getKinesisAsyncClient();
+            kinesisAsyncClient = kinesisConnection.getAsyncClient(this);
         } else {
-            kinesisClient = configuration.getAmazonKinesisClient() != null
-                    ? configuration.getAmazonKinesisClient()
-                    : KinesisClientFactory.getKinesisClient(configuration).getKinesisClient();
+            kinesisClient = kinesisConnection.getClient(this);
         }
 
         if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
@@ -101,8 +103,17 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
         consumer.setSchedulerProperties(getSchedulerProperties());
+        startHealthChecks();
         configureConsumer(consumer);
         return consumer;
+    }
+
+    private void startHealthChecks() {
+        var timeoutCheckerExecutorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                CONNECTION_CHECKER_EXECUTOR_NAME);
+        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this),
+                0, 5 * 1000,
+                TimeUnit.MILLISECONDS);
     }
 
     @Override
