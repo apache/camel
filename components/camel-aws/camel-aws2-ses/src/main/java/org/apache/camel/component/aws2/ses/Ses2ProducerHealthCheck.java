@@ -29,7 +29,7 @@ public class Ses2ProducerHealthCheck extends AbstractHealthCheck {
     private final Ses2Endpoint ses2Endpoint;
 
     public Ses2ProducerHealthCheck(Ses2Endpoint ses2Endpoint, String clientId) {
-        super("camel", "aws2-ses-producer-" + clientId);
+        super("camel", "producer:aws2-ses-" + clientId);
         this.ses2Endpoint = ses2Endpoint;
     }
 

@@ -32,7 +32,7 @@ public class EventbridgeProducerHealthCheck extends AbstractHealthCheck {
     private final EventbridgeEndpoint eventbridgeEndpoint;
 
     public EventbridgeProducerHealthCheck(EventbridgeEndpoint eventbridgeEndpoint, String clientId) {
-        super("camel", "aws2-eventbridge-producer-" + clientId);
+        super("camel", "producer:aws2-eventbridge-" + clientId);
         this.eventbridgeEndpoint = eventbridgeEndpoint;
     }
 

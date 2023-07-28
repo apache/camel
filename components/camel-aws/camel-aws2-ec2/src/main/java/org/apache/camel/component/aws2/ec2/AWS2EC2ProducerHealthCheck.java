@@ -31,7 +31,7 @@ public class AWS2EC2ProducerHealthCheck extends AbstractHealthCheck {
     private final AWS2EC2Endpoint aws2EC2Endpoint;
 
     public AWS2EC2ProducerHealthCheck(AWS2EC2Endpoint aws2EC2Endpoint, String clientId) {
-        super("camel", "aws2-ec2-producer-" + clientId);
+        super("camel", "producer:aws2-ec2-" + clientId);
         this.aws2EC2Endpoint = aws2EC2Endpoint;
     }
 

@@ -30,7 +30,7 @@ public class MSK2ProducerHealthCheck extends AbstractHealthCheck {
     private final MSK2Endpoint msk2Endpoint;
 
     public MSK2ProducerHealthCheck(MSK2Endpoint msk2Endpoint, String clientId) {
-        super("camel", "aws2-msk-producer-" + clientId);
+        super("camel", "producer:aws2-msk-" + clientId);
         this.msk2Endpoint = msk2Endpoint;
     }
 

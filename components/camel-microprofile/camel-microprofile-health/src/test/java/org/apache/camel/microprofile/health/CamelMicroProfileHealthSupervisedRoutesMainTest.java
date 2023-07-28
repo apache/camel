@@ -57,7 +57,7 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
         SimpleMain main = new SimpleMain(context);
         main.addInitialProperty("camel.health.routes-enabled", "true");
         main.addInitialProperty("camel.health.consumers-enabled", "true");
-        main.addInitialProperty("camel.health.components-enabled", "true");
+        main.addInitialProperty("camel.health.producers-enabled", "true");
         main.start();
 
         try {
@@ -79,10 +79,10 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
                 assertEquals(Status.UP.toString(), check.getString("status"));
             }, () -> fail("Expected camel-consumers check not found in health output"));
 
-            Optional<JsonObject> camelComponentsCheck = findHealthCheck("camel-components", checks);
+            Optional<JsonObject> camelComponentsCheck = findHealthCheck("camel-producers", checks);
             camelComponentsCheck.ifPresentOrElse(check -> {
                 assertEquals(Status.UP.toString(), check.getString("status"));
-            }, () -> fail("Expected camel-components check not found in health output"));
+            }, () -> fail("Expected camel-producers check not found in health output"));
         } finally {
             main.stop();
         }

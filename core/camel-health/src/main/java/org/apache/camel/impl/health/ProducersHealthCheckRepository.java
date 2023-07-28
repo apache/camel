@@ -30,21 +30,21 @@ import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * Repository for components {@link HealthCheck}s.
+ * Repository for producer {@link HealthCheck}s.
  */
-@org.apache.camel.spi.annotations.HealthCheck(ComponentsHealthCheckRepository.REPOSITORY_NAME)
+@org.apache.camel.spi.annotations.HealthCheck(ProducersHealthCheckRepository.REPOSITORY_NAME)
 @DeferredContextBinding
-public class ComponentsHealthCheckRepository extends ServiceSupport
+public class ProducersHealthCheckRepository extends ServiceSupport
         implements CamelContextAware, WritableHealthCheckRepository, StaticService, NonManagedService {
 
-    public static final String REPOSITORY_ID = "components";
-    public static final String REPOSITORY_NAME = "components-repository";
+    public static final String REPOSITORY_ID = "producers";
+    public static final String REPOSITORY_NAME = "producers-repository";
 
     private final List<HealthCheck> checks;
     private volatile CamelContext context;
     private boolean enabled = true;
 
-    public ComponentsHealthCheckRepository() {
+    public ProducersHealthCheckRepository() {
         this.checks = new CopyOnWriteArrayList<>();
     }
 

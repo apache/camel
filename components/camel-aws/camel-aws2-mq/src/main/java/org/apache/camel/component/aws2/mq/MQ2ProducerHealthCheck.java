@@ -32,7 +32,7 @@ public class MQ2ProducerHealthCheck extends AbstractHealthCheck {
     private final MQ2Endpoint mq2Endpoint;
 
     public MQ2ProducerHealthCheck(MQ2Endpoint mq2Endpoint, String clientId) {
-        super("camel", "aws2-mq-producer-" + clientId);
+        super("camel", "producer:aws2-mq-" + clientId);
         this.mq2Endpoint = mq2Endpoint;
     }
 

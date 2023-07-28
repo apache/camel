@@ -251,7 +251,7 @@ public class Ses2Producer extends DefaultProducer {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
                 getEndpoint().getCamelContext(),
-                "components",
+                "producers",
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {

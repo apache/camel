@@ -150,7 +150,7 @@ public interface TelegramComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all consumer based health checks from
-         * this component (default enabled).
+         * this component.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -167,11 +167,13 @@ public interface TelegramComponentBuilderFactory {
         }
         /**
          * Used for enabling or disabling all producer based health checks from
-         * this component (default disabled).
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: health
          * 
          * @param healthCheckProducerEnabled the value to set

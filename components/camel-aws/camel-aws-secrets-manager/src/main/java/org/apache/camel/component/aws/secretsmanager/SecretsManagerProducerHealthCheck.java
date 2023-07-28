@@ -32,7 +32,7 @@ public class SecretsManagerProducerHealthCheck extends AbstractHealthCheck {
     private final SecretsManagerEndpoint secretsManagerEndpoint;
 
     public SecretsManagerProducerHealthCheck(SecretsManagerEndpoint secretsManagerEndpoint, String clientId) {
-        super("camel", "aws-secrets-manager-producer-" + clientId);
+        super("camel", "producer:aws-secrets-manager-" + clientId);
         this.secretsManagerEndpoint = secretsManagerEndpoint;
     }
 

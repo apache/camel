@@ -59,6 +59,8 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
+        hc = registry.resolveById("producers");
+        registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;

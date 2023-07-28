@@ -26,7 +26,6 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -51,9 +50,9 @@ public class Ddb2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
+        hc = registry.resolveById("producers");
+        registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
-        // enable producer health check
-        context.getComponent("aws2-ddb", HealthCheckComponent.class).setHealthCheckProducerEnabled(true);
 
         return context;
     }
@@ -82,7 +81,7 @@ public class Ddb2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2DdbHealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-ddb-producer"));
+                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-ddb"));
 
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb check");

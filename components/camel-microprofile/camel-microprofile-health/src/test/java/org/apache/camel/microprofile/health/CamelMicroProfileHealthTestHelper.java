@@ -38,7 +38,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
+import org.apache.camel.impl.health.ProducersHealthCheckRepository;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
@@ -152,8 +152,8 @@ public final class CamelMicroProfileHealthTestHelper {
 
             var repo = HealthCheckHelper.getHealthCheckRepository(
                     getCamelContext(),
-                    ComponentsHealthCheckRepository.REPOSITORY_ID,
-                    ComponentsHealthCheckRepository.class);
+                    ProducersHealthCheckRepository.REPOSITORY_ID,
+                    ProducersHealthCheckRepository.class);
 
             if (repo != null) {
                 repo.addHealthCheck(this.check);

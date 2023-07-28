@@ -197,7 +197,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
                 endpoint.getCamelContext(),
-                "components",
+                "producers",
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
