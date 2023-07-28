@@ -34,7 +34,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         implements EndpointRequiredDefinition {
 
     @XmlTransient
-    private transient String endpointUriToString;
+    private String endpointUriToString;
     @XmlTransient
     protected Endpoint endpoint;
     @XmlTransient
@@ -125,6 +125,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     protected void clear() {
+        this.endpointUriToString = null;
         this.endpointProducerBuilder = null;
         this.endpoint = null;
         this.uri = null;
