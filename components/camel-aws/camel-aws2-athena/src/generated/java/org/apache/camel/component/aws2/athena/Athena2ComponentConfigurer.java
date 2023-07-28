@@ -43,8 +43,6 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "encryptionOption": getOrCreateConfiguration(target).setEncryptionOption(property(camelContext, software.amazon.awssdk.services.athena.model.EncryptionOption.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "includetrace":
@@ -119,8 +117,6 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "encryptionOption": return software.amazon.awssdk.services.athena.model.EncryptionOption.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
         case "includetrace":
@@ -191,8 +187,6 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "encryptionOption": return getOrCreateConfiguration(target).getEncryptionOption();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "includetrace":

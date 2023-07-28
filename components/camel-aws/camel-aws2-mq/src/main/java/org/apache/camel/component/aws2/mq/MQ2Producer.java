@@ -387,8 +387,7 @@ public class MQ2Producer extends DefaultProducer {
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
             producerHealthCheck = new MQ2ProducerHealthCheck(getEndpoint(), id);
-            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
-                    && getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
     }
