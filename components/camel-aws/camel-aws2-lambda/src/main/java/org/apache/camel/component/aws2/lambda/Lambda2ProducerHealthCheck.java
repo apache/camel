@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
 
-public class Lambda2ClientHealthCheck extends AbstractHealthCheck {
+public class Lambda2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final Lambda2Endpoint lambda2Endpoint;
 
-    public Lambda2ClientHealthCheck(Lambda2Endpoint lambda2Endpoint, String clientId) {
-        super("camel", "aws2-lambda-client-" + clientId);
+    public Lambda2ProducerHealthCheck(Lambda2Endpoint lambda2Endpoint, String clientId) {
+        super("camel", "aws2-lambda-producer-" + clientId);
         this.lambda2Endpoint = lambda2Endpoint;
     }
 
