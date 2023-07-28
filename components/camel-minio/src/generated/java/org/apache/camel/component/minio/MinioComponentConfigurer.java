@@ -55,8 +55,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "endpoint": getOrCreateConfiguration(target).setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "includebody":
@@ -156,8 +154,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "endpoint": return java.lang.String.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
         case "includebody":
@@ -253,8 +249,6 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "endpoint": return getOrCreateConfiguration(target).getEndpoint();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "includebody":

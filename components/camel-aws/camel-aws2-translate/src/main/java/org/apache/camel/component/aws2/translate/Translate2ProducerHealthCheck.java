@@ -32,7 +32,7 @@ public class Translate2ProducerHealthCheck extends AbstractHealthCheck {
     private final Translate2Endpoint translate2Endpoint;
 
     public Translate2ProducerHealthCheck(Translate2Endpoint translate2Endpoint, String clientId) {
-        super("camel", "aws2-translate-producer-" + clientId);
+        super("camel", "producer:aws2-translate-" + clientId);
         this.translate2Endpoint = translate2Endpoint;
     }
 

@@ -32,7 +32,7 @@ public class EKS2ProducerHealthCheck extends AbstractHealthCheck {
     private final EKS2Endpoint eks2Endpoint;
 
     public EKS2ProducerHealthCheck(EKS2Endpoint eks2Endpoint, String clientId) {
-        super("camel", "aws2-eks-producer-" + clientId);
+        super("camel", "producer:aws2-eks-" + clientId);
         this.eks2Endpoint = eks2Endpoint;
     }
 

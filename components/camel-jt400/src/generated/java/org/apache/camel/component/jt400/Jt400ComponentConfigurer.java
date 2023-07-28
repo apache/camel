@@ -29,8 +29,6 @@ public class Jt400ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "connectionPool": target.setConnectionPool(property(camelContext, com.ibm.as400.access.AS400ConnectionPool.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -50,8 +48,6 @@ public class Jt400ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "connectionPool": return com.ibm.as400.access.AS400ConnectionPool.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
@@ -72,8 +68,6 @@ public class Jt400ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "connectionPool": return target.getConnectionPool();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":

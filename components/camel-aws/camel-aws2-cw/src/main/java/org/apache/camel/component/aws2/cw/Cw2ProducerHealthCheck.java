@@ -32,7 +32,7 @@ public class Cw2ProducerHealthCheck extends AbstractHealthCheck {
     private final Cw2Endpoint cw2Endpoint;
 
     public Cw2ProducerHealthCheck(Cw2Endpoint cw2Endpoint, String clientId) {
-        super("camel", "aws2-cw-producer-" + clientId);
+        super("camel", "producer:aws2-cw-" + clientId);
         this.cw2Endpoint = cw2Endpoint;
     }
 

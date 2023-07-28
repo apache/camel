@@ -32,7 +32,7 @@ public class Lambda2ProducerHealthCheck extends AbstractHealthCheck {
     private final Lambda2Endpoint lambda2Endpoint;
 
     public Lambda2ProducerHealthCheck(Lambda2Endpoint lambda2Endpoint, String clientId) {
-        super("camel", "aws2-lambda-producer-" + clientId);
+        super("camel", "producer:aws2-lambda-" + clientId);
         this.lambda2Endpoint = lambda2Endpoint;
     }
 

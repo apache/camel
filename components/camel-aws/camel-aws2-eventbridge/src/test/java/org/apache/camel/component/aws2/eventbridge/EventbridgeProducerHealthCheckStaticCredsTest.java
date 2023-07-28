@@ -50,6 +50,8 @@ public class EventbridgeProducerHealthCheckStaticCredsTest extends CamelTestSupp
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
+        hc = registry.resolveById("producers");
+        registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;
@@ -79,7 +81,7 @@ public class EventbridgeProducerHealthCheckStaticCredsTest extends CamelTestSupp
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAwsEventbridgeHealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-eventbridge-producer"));
+                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-eventbridge"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");

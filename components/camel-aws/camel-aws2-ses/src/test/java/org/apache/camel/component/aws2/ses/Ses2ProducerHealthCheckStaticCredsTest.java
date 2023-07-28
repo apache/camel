@@ -49,6 +49,8 @@ public class Ses2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
+        hc = registry.resolveById("producers");
+        registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;
@@ -77,7 +79,7 @@ public class Ses2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-ses-producer"));
+                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-ses"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");

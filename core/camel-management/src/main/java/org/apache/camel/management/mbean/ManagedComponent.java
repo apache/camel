@@ -99,14 +99,6 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     }
 
     @Override
-    public boolean isHealthCheckEnabled() {
-        if (component instanceof HealthCheckComponent) {
-            return ((HealthCheckComponent) component).isHealthCheckEnabled();
-        }
-        return false;
-    }
-
-    @Override
     public boolean isHealthCheckConsumerEnabled() {
         if (component instanceof HealthCheckComponent) {
             return ((HealthCheckComponent) component).isHealthCheckConsumerEnabled();

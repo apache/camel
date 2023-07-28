@@ -32,7 +32,7 @@ public class Athena2ProducerHealthCheck extends AbstractHealthCheck {
     private final Athena2Endpoint athena2Endpoint;
 
     public Athena2ProducerHealthCheck(Athena2Endpoint athena2Endpoint, String clientId) {
-        super("camel", "aws2-athena-producer-" + clientId);
+        super("camel", "producer:aws2-athena-" + clientId);
         this.athena2Endpoint = athena2Endpoint;
     }
 

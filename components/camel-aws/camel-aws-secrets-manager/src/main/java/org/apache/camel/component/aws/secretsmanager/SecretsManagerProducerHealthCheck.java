@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
 
-public class SecretsManagerClientHealthCheck extends AbstractHealthCheck {
+public class SecretsManagerProducerHealthCheck extends AbstractHealthCheck {
 
     private final SecretsManagerEndpoint secretsManagerEndpoint;
 
-    public SecretsManagerClientHealthCheck(SecretsManagerEndpoint secretsManagerEndpoint, String clientId) {
-        super("camel", "aws-secrets-manager-client-" + clientId);
+    public SecretsManagerProducerHealthCheck(SecretsManagerEndpoint secretsManagerEndpoint, String clientId) {
+        super("camel", "producer:aws-secrets-manager-" + clientId);
         this.secretsManagerEndpoint = secretsManagerEndpoint;
     }
 

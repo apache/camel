@@ -438,14 +438,13 @@ public class Athena2Producer extends DefaultProducer {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
                 getEndpoint().getCamelContext(),
-                "components",
+                "producers",
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Athena2ProducerHealthCheck(getEndpoint(), id);
-            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
-                    && getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
     }

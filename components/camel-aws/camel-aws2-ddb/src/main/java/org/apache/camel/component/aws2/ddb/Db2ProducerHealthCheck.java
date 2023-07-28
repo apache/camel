@@ -32,7 +32,7 @@ public class Db2ProducerHealthCheck extends AbstractHealthCheck {
     private final Ddb2Endpoint ddb2Endpoint;
 
     public Db2ProducerHealthCheck(Ddb2Endpoint ddb2Endpoint, String clientId) {
-        super("camel", "aws2-ddb-producer-" + clientId);
+        super("camel", "producer:aws2-ddb-" + clientId);
         this.ddb2Endpoint = ddb2Endpoint;
     }
 

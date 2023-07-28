@@ -29,7 +29,7 @@ public class Sns2ProducerHealthCheck extends AbstractHealthCheck {
     private final Sns2Endpoint sns2Endpoint;
 
     public Sns2ProducerHealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
-        super("camel", "aws2-sns-producer-" + clientId);
+        super("camel", "producer:aws2-sns-" + clientId);
         this.sns2Endpoint = sns2Endpoint;
     }
 

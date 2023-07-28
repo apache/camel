@@ -18,7 +18,6 @@ package org.apache.camel.component.kafka.integration.health;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
@@ -161,21 +160,15 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     @Test
     @DisplayName("Tests that readiness reports down when it's actually down")
     public void testReadinessWhenDown() {
-        // but health-check readiness should NOT be ready
-        await().atMost(20, TimeUnit.SECONDS).untilAsserted(this::readinessCheck);
-    }
-
-    private void readinessCheck() {
         CamelContext context = contextExtension.getContext();
+        // and shutdown Kafka which will make readiness report as DOWN
+        service.shutdown();
+        serviceShutdown = true;
 
-        Collection<HealthCheck.Result> res2 = HealthCheckHelper.invoke(context);
-        Optional<HealthCheck.Result> down
-                = res2.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
-        Assertions.assertTrue(down.isPresent());
-        String msg = down.get().getMessage().get();
-        Assertions.assertTrue(msg.contains("KafkaConsumer is not ready"));
-        Map<String, Object> map = down.get().getDetails();
-        Assertions.assertEquals(TOPIC, map.get("topic"));
-        Assertions.assertEquals("test-health-it", map.get("route.id"));
+        // health-check readiness should be DOWN
+        final Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(context);
+        final boolean down = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+        Assertions.assertTrue(down, "readiness check");
     }
+
 }

@@ -450,24 +450,10 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default Aws2AthenaComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -684,7 +670,6 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "clientRequestToken": getOrCreateConfiguration((Athena2Component) component).setClientRequestToken((java.lang.String) value); return true;
             case "includeTrace": getOrCreateConfiguration((Athena2Component) component).setIncludeTrace((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Athena2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((Athena2Component) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Athena2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Athena2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Athena2Component) component).setProxyPort((java.lang.Integer) value); return true;

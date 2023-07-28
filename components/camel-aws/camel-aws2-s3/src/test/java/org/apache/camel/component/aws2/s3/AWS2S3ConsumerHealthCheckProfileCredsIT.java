@@ -32,8 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
@@ -41,8 +39,6 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
-
-    private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ConsumerHealthCheckProfileCredsIT.class);
 
     CamelContext context;
 
@@ -63,6 +59,8 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
+        hc = registry.resolveById("producers");
+        registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;
@@ -82,7 +80,6 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
 
     @Test
     public void testConnectivity() {
-
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");
@@ -92,9 +89,7 @@ public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2S3HealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("consumer:test-health-it"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
 
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2S3HealthCheck, "aws2-s3 check");

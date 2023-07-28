@@ -29,14 +29,10 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class SecretsManagerClientHealthCheckProfileCredsTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SecretsManagerClientHealthCheckProfileCredsTest.class);
+public class SecretsManagerProducerHealthCheckProfileCredsTest extends CamelTestSupport {
 
     CamelContext context;
 
@@ -53,6 +49,8 @@ public class SecretsManagerClientHealthCheckProfileCredsTest extends CamelTestSu
         hc = registry.resolveById("routes");
         registry.register(hc);
         hc = registry.resolveById("consumers");
+        registry.register(hc);
+        hc = registry.resolveById("producers");
         registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
@@ -83,9 +81,7 @@ public class SecretsManagerClientHealthCheckProfileCredsTest extends CamelTestSu
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAwsSecretsManagerHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws-secrets-manager-client"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws-secrets-manager"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");

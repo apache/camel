@@ -29,14 +29,10 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class SecretsManagerClientHealthCheckStaticCredsTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SecretsManagerClientHealthCheckStaticCredsTest.class);
+public class SecretsManagerProducerHealthCheckStaticCredsTest extends CamelTestSupport {
 
     CamelContext context;
 
@@ -53,6 +49,8 @@ public class SecretsManagerClientHealthCheckStaticCredsTest extends CamelTestSup
         hc = registry.resolveById("routes");
         registry.register(hc);
         hc = registry.resolveById("consumers");
+        registry.register(hc);
+        hc = registry.resolveById("producers");
         registry.register(hc);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
@@ -73,7 +71,6 @@ public class SecretsManagerClientHealthCheckStaticCredsTest extends CamelTestSup
 
     @Test
     public void testConnectivity() {
-
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");
@@ -83,9 +80,7 @@ public class SecretsManagerClientHealthCheckStaticCredsTest extends CamelTestSup
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAwsSecManagerHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws-secrets-manager-client"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws-secrets-manager"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
