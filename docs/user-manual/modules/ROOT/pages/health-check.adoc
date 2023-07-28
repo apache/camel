@@ -110,6 +110,24 @@ camel.health.exclude-pattern = consumer:myroute*
 
 which will turn off checks for all consumers on routes that starts with `myroute` in the route ID.
 
+=== Turning off health checks from components
+
+Some Camel components comes with health-checks.
+
+For example to turn off all health checks from the Kafka component you can do:
+
+[source,properties]
+----
+camel.component.kafka.health-check-enabled = false
+----
+
+You can also turn off only consumer or producer based checks:
+
+[source,properties]
+----
+camel.component.kafka.health-check-producer-enabled = false
+----
+
 == JMX management
 
 The health check is manageable via JMX (requires `camel-management` JAR on the classpath).
