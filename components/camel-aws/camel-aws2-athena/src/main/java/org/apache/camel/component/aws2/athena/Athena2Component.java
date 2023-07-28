@@ -22,13 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * For working with Amazon Athena SDK v2.
  */
 @Component("aws2-athena")
-public class Athena2Component extends DefaultComponent {
+public class Athena2Component extends HealthCheckComponent {
+
     @Metadata
     private Athena2Configuration configuration = new Athena2Configuration();
 

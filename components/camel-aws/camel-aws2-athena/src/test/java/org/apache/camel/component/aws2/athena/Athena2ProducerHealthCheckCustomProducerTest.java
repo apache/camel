@@ -28,16 +28,15 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Athena2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
+public class Athena2ProducerHealthCheckCustomProducerTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Athena2ClientHealthCheckStaticCredsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Athena2ProducerHealthCheckCustomProducerTest.class);
 
     CamelContext context;
 
@@ -45,7 +44,8 @@ public class Athena2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
-
+        AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
+        context.getRegistry().bind("amazonAthenaClient", clientMock);
         // install health check manually (yes a bit cumbersome)
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
         registry.setCamelContext(context);
@@ -67,13 +67,12 @@ public class Athena2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:getQueryExecution")
-                        .to("aws2-athena://label?region=l&secretKey=l&accessKey=k");
+                        .to("aws2-athena://label?region=l");
             }
         };
     }
 
     @Test
-    @Disabled("Do not register the Producer Health Check until we solve CAMEL-18992")
     public void testConnectivity() {
 
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
@@ -85,9 +84,7 @@ public class Athena2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-athena-client"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-athena-producer"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");

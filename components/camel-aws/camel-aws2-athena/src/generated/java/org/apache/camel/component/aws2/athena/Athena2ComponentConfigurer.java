@@ -41,6 +41,12 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "delay": getOrCreateConfiguration(target).setDelay(property(camelContext, long.class, value)); return true;
         case "encryptionoption":
         case "encryptionOption": getOrCreateConfiguration(target).setEncryptionOption(property(camelContext, software.amazon.awssdk.services.athena.model.EncryptionOption.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "includetrace":
         case "includeTrace": getOrCreateConfiguration(target).setIncludeTrace(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
@@ -111,6 +117,12 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "delay": return long.class;
         case "encryptionoption":
         case "encryptionOption": return software.amazon.awssdk.services.athena.model.EncryptionOption.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "includetrace":
         case "includeTrace": return boolean.class;
         case "initialdelay":
@@ -177,6 +189,12 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "delay": return getOrCreateConfiguration(target).getDelay();
         case "encryptionoption":
         case "encryptionOption": return getOrCreateConfiguration(target).getEncryptionOption();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckenabled":
+        case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "includetrace":
         case "includeTrace": return getOrCreateConfiguration(target).isIncludeTrace();
         case "initialdelay":

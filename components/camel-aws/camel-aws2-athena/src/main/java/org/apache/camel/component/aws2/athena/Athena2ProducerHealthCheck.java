@@ -27,18 +27,17 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.athena.AthenaClient;
 import software.amazon.awssdk.services.athena.model.ListQueryExecutionsRequest;
 
-public class Athena2ClientHealthCheck extends AbstractHealthCheck {
+public class Athena2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final Athena2Endpoint athena2Endpoint;
 
-    public Athena2ClientHealthCheck(Athena2Endpoint athena2Endpoint, String clientId) {
-        super("camel", "aws2-athena-client-" + clientId);
+    public Athena2ProducerHealthCheck(Athena2Endpoint athena2Endpoint, String clientId) {
+        super("camel", "aws2-athena-producer-" + clientId);
         this.athena2Endpoint = athena2Endpoint;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-
         try {
             if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getRegion())) {
                 if (!AthenaClient.serviceMetadata().regions()
@@ -61,12 +60,12 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
             }
             builder.down();
             return;
-
         } catch (Exception e) {
             builder.error(e);
             builder.down();
             return;
         }
+
         builder.up();
     }
 
