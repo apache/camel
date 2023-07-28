@@ -24,18 +24,17 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 
-public class Sns2HealthCheck extends AbstractHealthCheck {
+public class Sns2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final Sns2Endpoint sns2Endpoint;
 
-    public Sns2HealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
-        super("camel", "aws2-sns-client-" + clientId);
+    public Sns2ProducerHealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
+        super("camel", "aws2-sns-producer-" + clientId);
         this.sns2Endpoint = sns2Endpoint;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-
         Sns2Configuration configuration = sns2Endpoint.getConfiguration();
         try {
             if (!SnsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
@@ -54,8 +53,8 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
             builder.down();
             return;
         }
-        builder.up();
 
+        builder.up();
     }
 
 }
