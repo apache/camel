@@ -37,8 +37,6 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.EmptyAsyncCallback;
@@ -55,9 +53,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
     private final Language language;
 
-    private WritableHealthCheckRepository healthCheckRepository;
-    private GoogleCloudStorageConsumerHealthCheck consumerHealthCheck;
-
     public GoogleCloudStorageConsumer(GoogleCloudStorageEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.language = getEndpoint().getCamelContext().resolveLanguage("file");
@@ -67,21 +62,10 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new GoogleCloudStorageConsumerHealthCheck(this, getRouteId());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
-        }
-
         if (getConfiguration().isMoveAfterRead()) {
             Bucket bucket = getStorageClient().get(getConfiguration().getDestinationBucket());
             if (bucket != null) {
                 LOG.trace("Bucket [{}] already exists", bucket.getName());
-                return;
             } else {
                 LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
                 if (getConfiguration().isAutoCreateBucket()) {
