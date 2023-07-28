@@ -26,12 +26,12 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
-public class AWS2EC2HealthCheck extends AbstractHealthCheck {
+public class AWS2EC2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final AWS2EC2Endpoint aws2EC2Endpoint;
 
-    public AWS2EC2HealthCheck(AWS2EC2Endpoint aws2EC2Endpoint, String clientId) {
-        super("camel", "aws2-ec2-client-" + clientId);
+    public AWS2EC2ProducerHealthCheck(AWS2EC2Endpoint aws2EC2Endpoint, String clientId) {
+        super("camel", "aws2-ec2-producer-" + clientId);
         this.aws2EC2Endpoint = aws2EC2Endpoint;
     }
 

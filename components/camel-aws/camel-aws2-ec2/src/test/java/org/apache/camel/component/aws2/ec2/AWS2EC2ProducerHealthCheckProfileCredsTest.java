@@ -29,14 +29,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class AWS2EC2HealthCheckProfileCredsTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AWS2EC2HealthCheckProfileCredsTest.class);
+public class AWS2EC2ProducerHealthCheckProfileCredsTest extends CamelTestSupport {
 
     CamelContext context;
 
@@ -84,9 +80,7 @@ public class AWS2EC2HealthCheckProfileCredsTest extends CamelTestSupport {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-ec2-client"))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(result -> result.getCheck().getId().startsWith("aws2-ec2-producer"));
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
