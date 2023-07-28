@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.aws2.kinesis.consumer;
 
+import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
+
 import java.util.Objects;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
 import software.amazon.awssdk.services.kinesis.model.ListStreamsRequest;
 
-public class KinesisHealthCheck extends TimerTask {
+public class KinesisHealthCheck implements Runnable {
     private Kinesis2Endpoint endpoint;
     private KinesisConnection kinesisConnection;
 

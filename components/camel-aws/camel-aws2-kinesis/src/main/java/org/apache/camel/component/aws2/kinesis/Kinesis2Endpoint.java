@@ -28,7 +28,8 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 import java.util.Objects;
-import java.util.Timer;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
@@ -48,6 +49,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     private KinesisClient kinesisClient;
     private KinesisAsyncClient kinesisAsyncClient;
+    private static final String CONNECTION_CHECKER_EXECUTOR_NAME = "Kinesis_Streaming_Connection_Checker";
 
     public Kinesis2Endpoint(String uri, Kinesis2Configuration configuration, Kinesis2Component component) {
         super(uri, component);
@@ -110,9 +112,11 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     }
 
     private void startHealthChecks(KinesisConnection kinesisConnection) {
-        KinesisHealthCheck kinesisHealthCheck = new KinesisHealthCheck(this, kinesisConnection);
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(kinesisHealthCheck, 0, 5 * 1000);
+        var timeoutCheckerExecutorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                CONNECTION_CHECKER_EXECUTOR_NAME);
+        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this, kinesisConnection),
+                0, 5 * 1000,
+                TimeUnit.MILLISECONDS);
     }
 
     @Override

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.aws2.kinesis.consumer;
 
-import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
-import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
-
 import java.util.Objects;
 
+import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
+import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 
