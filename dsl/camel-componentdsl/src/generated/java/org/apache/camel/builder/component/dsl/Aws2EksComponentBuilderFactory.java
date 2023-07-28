@@ -65,22 +65,6 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a existing configured AWS EKS as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.eks.EksClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param eksClient the value to set
-         * @return the dsl builder
-         */
-        default Aws2EksComponentBuilder eksClient(
-                software.amazon.awssdk.services.eks.EksClient eksClient) {
-            doSetProperty("eksClient", eksClient);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -158,6 +142,7 @@ public interface Aws2EksComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param profileCredentialsName the value to set
@@ -166,51 +151,6 @@ public interface Aws2EksComponentBuilderFactory {
         default Aws2EksComponentBuilder profileCredentialsName(
                 java.lang.String profileCredentialsName) {
             doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the EKS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Aws2EksComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the EKS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Aws2EksComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the EKS client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Aws2EksComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -228,23 +168,6 @@ public interface Aws2EksComponentBuilderFactory {
          */
         default Aws2EksComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Aws2EksComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**
@@ -320,6 +243,22 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AWS EKS as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.eks.EksClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param eksClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder eksClient(
+                software.amazon.awssdk.services.eks.EksClient eksClient) {
+            doSetProperty("eksClient", eksClient);
+            return this;
+        }
+        /**
          * Used for enabling or disabling all consumer based health checks from
          * this component.
          * 
@@ -356,6 +295,51 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the EKS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the EKS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the EKS client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -383,6 +367,23 @@ public interface Aws2EksComponentBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
     }
 
     class Aws2EksComponentBuilderImpl
@@ -408,25 +409,25 @@ public interface Aws2EksComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((EKS2Component) component).setConfiguration((org.apache.camel.component.aws2.eks.EKS2Configuration) value); return true;
-            case "eksClient": getOrCreateConfiguration((EKS2Component) component).setEksClient((software.amazon.awssdk.services.eks.EksClient) value); return true;
             case "lazyStartProducer": ((EKS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((EKS2Component) component).setOperation((org.apache.camel.component.aws2.eks.EKS2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((EKS2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((EKS2Component) component).setPojoRequest((boolean) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((EKS2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
-            case "proxyHost": getOrCreateConfiguration((EKS2Component) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((EKS2Component) component).setRegion((java.lang.String) value); return true;
-            case "trustAllCertificates": getOrCreateConfiguration((EKS2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((EKS2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((EKS2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((EKS2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((EKS2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "eksClient": getOrCreateConfiguration((EKS2Component) component).setEksClient((software.amazon.awssdk.services.eks.EksClient) value); return true;
             case "healthCheckConsumerEnabled": ((EKS2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((EKS2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((EKS2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((EKS2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((EKS2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((EKS2Component) component).setTrustAllCertificates((boolean) value); return true;
             default: return false;
             }
         }

@@ -49,22 +49,6 @@ public interface Aws2SesComponentBuilderFactory {
      */
     interface Aws2SesComponentBuilder extends ComponentBuilder<Ses2Component> {
         /**
-         * To use the AmazonSimpleEmailService as the client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonSESClient the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder amazonSESClient(
-                software.amazon.awssdk.services.ses.SesClient amazonSESClient) {
-            doSetProperty("amazonSESClient", amazonSESClient);
-            return this;
-        }
-        /**
          * List of comma separated destination blind carbon copy (bcc) email
          * address. Can be overridden with 'CamelAwsSesBcc' header.
          * 
@@ -168,67 +152,6 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SES client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the SES client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SES client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which SES client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -307,23 +230,6 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -340,38 +246,19 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Ses client should expect to load credentials through
-         * a default credentials provider or to expect static credentials to be
-         * passed in.
+         * To use the AmazonSimpleEmailService as the client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: advanced
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param amazonSESClient the value to set
          * @return the dsl builder
          */
-        default Aws2SesComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SES client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2SesComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default Aws2SesComponentBuilder amazonSESClient(
+                software.amazon.awssdk.services.ses.SesClient amazonSESClient) {
+            doSetProperty("amazonSESClient", amazonSESClient);
             return this;
         }
         /**
@@ -432,6 +319,51 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the SES client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SES client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -446,6 +378,22 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -457,6 +405,58 @@ public interface Aws2SesComponentBuilderFactory {
          */
         default Aws2SesComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Ses client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SES client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2SesComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -483,31 +483,31 @@ public interface Aws2SesComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "amazonSESClient": getOrCreateConfiguration((Ses2Component) component).setAmazonSESClient((software.amazon.awssdk.services.ses.SesClient) value); return true;
             case "bcc": getOrCreateConfiguration((Ses2Component) component).setBcc((java.lang.String) value); return true;
             case "cc": getOrCreateConfiguration((Ses2Component) component).setCc((java.lang.String) value); return true;
             case "configuration": ((Ses2Component) component).setConfiguration((org.apache.camel.component.aws2.ses.Ses2Configuration) value); return true;
             case "configurationSet": getOrCreateConfiguration((Ses2Component) component).setConfigurationSet((java.lang.String) value); return true;
             case "lazyStartProducer": ((Ses2Component) component).setLazyStartProducer((boolean) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Ses2Component) component).setOverrideEndpoint((boolean) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((Ses2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
-            case "proxyHost": getOrCreateConfiguration((Ses2Component) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": getOrCreateConfiguration((Ses2Component) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyProtocol": getOrCreateConfiguration((Ses2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Ses2Component) component).setRegion((java.lang.String) value); return true;
             case "replyToAddresses": getOrCreateConfiguration((Ses2Component) component).setReplyToAddresses((java.lang.String) value); return true;
             case "returnPath": getOrCreateConfiguration((Ses2Component) component).setReturnPath((java.lang.String) value); return true;
             case "subject": getOrCreateConfiguration((Ses2Component) component).setSubject((java.lang.String) value); return true;
             case "to": getOrCreateConfiguration((Ses2Component) component).setTo((java.lang.String) value); return true;
-            case "trustAllCertificates": getOrCreateConfiguration((Ses2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Ses2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
-            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ses2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
-            case "useProfileCredentialsProvider": getOrCreateConfiguration((Ses2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "amazonSESClient": getOrCreateConfiguration((Ses2Component) component).setAmazonSESClient((software.amazon.awssdk.services.ses.SesClient) value); return true;
             case "autowiredEnabled": ((Ses2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Ses2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Ses2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Ses2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Ses2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Ses2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((Ses2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Ses2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ses2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Ses2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ses2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((Ses2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             default: return false;
             }
         }

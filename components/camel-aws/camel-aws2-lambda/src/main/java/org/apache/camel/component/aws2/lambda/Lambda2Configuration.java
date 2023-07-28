@@ -43,19 +43,19 @@ public class Lambda2Configuration implements Cloneable {
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private LambdaClient awsLambdaClient;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pojoRequest;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     public LambdaClient getAwsLambdaClient() {

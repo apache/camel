@@ -31,7 +31,7 @@ public class AWS2EC2Configuration implements Cloneable {
     @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
-    @Metadata(autowired = true)
+    @Metadata(label = "advanced", autowired = true)
     private Ec2Client amazonEc2Client;
     @UriParam(label = "producer", secret = true)
     private String accessKey;
@@ -40,27 +40,27 @@ public class AWS2EC2Configuration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true)
     private AWS2EC2Operations operation;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,proxy")
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,proxy")
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pojoRequest;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     public Ec2Client getAmazonEc2Client() {

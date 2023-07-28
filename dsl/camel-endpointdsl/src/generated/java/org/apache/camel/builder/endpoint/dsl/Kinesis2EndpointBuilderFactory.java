@@ -46,69 +46,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return (AdvancedKinesis2EndpointConsumerBuilder) this;
         }
         /**
-         * Amazon Kinesis client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonKinesisClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder amazonKinesisClient(
-                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
-            doSetProperty("amazonKinesisClient", amazonKinesisClient);
-            return this;
-        }
-        /**
-         * Amazon Kinesis client to use for all requests for this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonKinesisClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder amazonKinesisClient(
-                String amazonKinesisClient) {
-            doSetProperty("amazonKinesisClient", amazonKinesisClient);
-            return this;
-        }
-        /**
-         * If we want to a KinesisAsyncClient instance set it to true.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param asyncClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder asyncClient(boolean asyncClient) {
-            doSetProperty("asyncClient", asyncClient);
-            return this;
-        }
-        /**
-         * If we want to a KinesisAsyncClient instance set it to true.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param asyncClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder asyncClient(String asyncClient) {
-            doSetProperty("asyncClient", asyncClient);
-            return this;
-        }
-        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -175,99 +112,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Kinesis client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder proxyProtocol(
-                String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Kinesis Firehose client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example ap-east-1) You'll need to use the name
@@ -285,41 +129,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -333,78 +142,6 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointConsumerBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Kinesis client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Kinesis client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Kinesis client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Kinesis client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -578,6 +315,83 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointConsumerBuilder shardId(String shardId) {
             doSetProperty("shardId", shardId);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Kinesis client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -1072,6 +886,22 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1083,6 +913,113 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -1249,29 +1186,18 @@ public interface Kinesis2EndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
-    }
-
-    /**
-     * Builder for endpoint producers for the AWS Kinesis component.
-     */
-    public interface Kinesis2EndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedKinesis2EndpointProducerBuilder advanced() {
-            return (AdvancedKinesis2EndpointProducerBuilder) this;
-        }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonKinesisClient the value to set
          * @return the dsl builder
          */
-        default Kinesis2EndpointProducerBuilder amazonKinesisClient(
+        default AdvancedKinesis2EndpointConsumerBuilder amazonKinesisClient(
                 software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -1282,12 +1208,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonKinesisClient the value to set
          * @return the dsl builder
          */
-        default Kinesis2EndpointProducerBuilder amazonKinesisClient(
+        default AdvancedKinesis2EndpointConsumerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -1298,12 +1224,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: advanced
          * 
          * @param asyncClient the value to set
          * @return the dsl builder
          */
-        default Kinesis2EndpointProducerBuilder asyncClient(boolean asyncClient) {
+        default AdvancedKinesis2EndpointConsumerBuilder asyncClient(
+                boolean asyncClient) {
             doSetProperty("asyncClient", asyncClient);
             return this;
         }
@@ -1314,14 +1241,26 @@ public interface Kinesis2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: advanced
          * 
          * @param asyncClient the value to set
          * @return the dsl builder
          */
-        default Kinesis2EndpointProducerBuilder asyncClient(String asyncClient) {
+        default AdvancedKinesis2EndpointConsumerBuilder asyncClient(
+                String asyncClient) {
             doSetProperty("asyncClient", asyncClient);
             return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the AWS Kinesis component.
+     */
+    public interface Kinesis2EndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AdvancedKinesis2EndpointProducerBuilder advanced() {
+            return (AdvancedKinesis2EndpointProducerBuilder) this;
         }
         /**
          * This option will set the CBOR_ENABLED property during the execution.
@@ -1390,99 +1329,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Kinesis client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder proxyProtocol(
-                String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Kinesis Firehose client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example ap-east-1) You'll need to use the name
@@ -1497,41 +1343,6 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**
@@ -1551,6 +1362,162 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the Kinesis client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointProducerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Set whether the Kinesis client should expect to load credentials
          * through a default credentials provider or to expect static
          * credentials to be passed in.
@@ -1558,7 +1525,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -1577,7 +1544,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -1594,7 +1561,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -1612,7 +1579,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -1620,34 +1587,6 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointProducerBuilder useProfileCredentialsProvider(
                 String useProfileCredentialsProvider) {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointProducerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1710,6 +1649,71 @@ public interface Kinesis2EndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder amazonKinesisClient(
+                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder amazonKinesisClient(
+                String amazonKinesisClient) {
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder asyncClient(
+                boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder asyncClient(
+                String asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
     }
 
     /**
@@ -1721,69 +1725,6 @@ public interface Kinesis2EndpointBuilderFactory {
                 Kinesis2EndpointProducerBuilder {
         default AdvancedKinesis2EndpointBuilder advanced() {
             return (AdvancedKinesis2EndpointBuilder) this;
-        }
-        /**
-         * Amazon Kinesis client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonKinesisClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder amazonKinesisClient(
-                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
-            doSetProperty("amazonKinesisClient", amazonKinesisClient);
-            return this;
-        }
-        /**
-         * Amazon Kinesis client to use for all requests for this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonKinesisClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder amazonKinesisClient(
-                String amazonKinesisClient) {
-            doSetProperty("amazonKinesisClient", amazonKinesisClient);
-            return this;
-        }
-        /**
-         * If we want to a KinesisAsyncClient instance set it to true.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param asyncClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder asyncClient(boolean asyncClient) {
-            doSetProperty("asyncClient", asyncClient);
-            return this;
-        }
-        /**
-         * If we want to a KinesisAsyncClient instance set it to true.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param asyncClient the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder asyncClient(String asyncClient) {
-            doSetProperty("asyncClient", asyncClient);
-            return this;
         }
         /**
          * This option will set the CBOR_ENABLED property during the execution.
@@ -1851,98 +1792,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Kinesis client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Kinesis Firehose client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example ap-east-1) You'll need to use the name
@@ -1957,41 +1806,6 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default Kinesis2EndpointBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**
@@ -2011,6 +1825,161 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the Kinesis client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Set whether the Kinesis client should expect to load credentials
          * through a default credentials provider or to expect static
          * credentials to be passed in.
@@ -2018,7 +1987,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -2037,7 +2006,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -2054,7 +2023,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -2072,7 +2041,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -2080,34 +2049,6 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointBuilder useProfileCredentialsProvider(
                 String useProfileCredentialsProvider) {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -2121,6 +2062,69 @@ public interface Kinesis2EndpointBuilderFactory {
                 AdvancedKinesis2EndpointProducerBuilder {
         default Kinesis2EndpointBuilder basic() {
             return (Kinesis2EndpointBuilder) this;
+        }
+        /**
+         * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder amazonKinesisClient(
+                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder amazonKinesisClient(
+                String amazonKinesisClient) {
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder asyncClient(boolean asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KinesisAsyncClient instance set it to true.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param asyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder asyncClient(String asyncClient) {
+            doSetProperty("asyncClient", asyncClient);
+            return this;
         }
     }
 

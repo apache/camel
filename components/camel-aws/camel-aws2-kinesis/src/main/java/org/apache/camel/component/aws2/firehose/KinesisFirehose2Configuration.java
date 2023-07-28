@@ -38,38 +38,37 @@ public class KinesisFirehose2Configuration implements Cloneable {
                             + "region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()")
     private String region;
     @UriParam(description = "Amazon Kinesis Firehose client to use for all requests for this endpoint")
-    @Metadata(autowired = true)
+    @Metadata(label = "advanced", autowired = true)
     private FirehoseClient amazonKinesisFirehoseClient;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(description = "To define a proxy host when instantiating the Kinesis Firehose client")
+    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the Kinesis Firehose client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the Kinesis Firehose client")
+    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the Kinesis Firehose client")
     private Integer proxyPort;
     @UriParam(label = "producer", description = "The operation to do in case the user don't want to send only a record")
     private KinesisFirehose2Operations operation;
-    @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
+    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
     @UriParam(label = "common", defaultValue = "true",
               description = "This option will set the CBOR_ENABLED property during the execution")
     private boolean cborEnabled = true;
-    @UriParam(label = "common", defaultValue = "false",
+    @UriParam(label = "common",
               description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride"
                             + " option")
     private boolean overrideEndpoint;
     @UriParam(label = "common",
               description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(label = "common", defaultValue = "false",
-              description = "Set whether the Kinesis Firehose client should expect to load credentials through a default credentials provider or to expect "
-                            +
-                            "static credentials to be passed in.")
+    @UriParam(label = "common",
+              description = "Set whether the Kinesis Firehose client should expect to load credentials through a default credentials provider or to expect"
+                            + " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "common", defaultValue = "false",
+    @UriParam(label = "security",
               description = "Set whether the Kinesis Firehose client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "common",
+    @UriParam(label = "security",
               description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 

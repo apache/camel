@@ -73,22 +73,6 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder cloudTrailClient(
-                software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
@@ -152,69 +136,6 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder proxyHost(
-                java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder proxyPort(
-                java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: consumer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Cloudtrail client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -232,23 +153,6 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -262,41 +166,6 @@ public interface AwsCloudtrailComponentBuilderFactory {
         default AwsCloudtrailComponentBuilder uriEndpointOverride(
                 java.lang.String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AwsCloudtrailComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -318,6 +187,22 @@ public interface AwsCloudtrailComponentBuilderFactory {
         default AwsCloudtrailComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+        /**
+         * Amazon Cloudtrail client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudTrailClient the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder cloudTrailClient(
+                software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
+            doSetProperty("cloudTrailClient", cloudTrailClient);
             return this;
         }
         /**
@@ -357,6 +242,53 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the Cloudtrail client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Cloudtrail client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Cloudtrail client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -372,6 +304,22 @@ public interface AwsCloudtrailComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -384,6 +332,58 @@ public interface AwsCloudtrailComponentBuilderFactory {
         default AwsCloudtrailComponentBuilder secretKey(
                 java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsCloudtrailComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -411,25 +411,25 @@ public interface AwsCloudtrailComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((CloudtrailComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "cloudTrailClient": getOrCreateConfiguration((CloudtrailComponent) component).setCloudTrailClient((software.amazon.awssdk.services.cloudtrail.CloudTrailClient) value); return true;
             case "configuration": ((CloudtrailComponent) component).setConfiguration((org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration) value); return true;
             case "eventSource": getOrCreateConfiguration((CloudtrailComponent) component).setEventSource((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((CloudtrailComponent) component).setMaxResults((int) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((CloudtrailComponent) component).setOverrideEndpoint((boolean) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((CloudtrailComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((CloudtrailComponent) component).setRegion((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((CloudtrailComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "autowiredEnabled": ((CloudtrailComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "cloudTrailClient": getOrCreateConfiguration((CloudtrailComponent) component).setCloudTrailClient((software.amazon.awssdk.services.cloudtrail.CloudTrailClient) value); return true;
+            case "healthCheckConsumerEnabled": ((CloudtrailComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((CloudtrailComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((CloudtrailComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((CloudtrailComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((CloudtrailComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": getOrCreateConfiguration((CloudtrailComponent) component).setRegion((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((CloudtrailComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((CloudtrailComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((CloudtrailComponent) component).setSecretKey((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((CloudtrailComponent) component).setTrustAllCertificates((boolean) value); return true;
-            case "uriEndpointOverride": getOrCreateConfiguration((CloudtrailComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((CloudtrailComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((CloudtrailComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
-            case "autowiredEnabled": ((CloudtrailComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "healthCheckConsumerEnabled": ((CloudtrailComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckProducerEnabled": ((CloudtrailComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
-            case "accessKey": getOrCreateConfiguration((CloudtrailComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": getOrCreateConfiguration((CloudtrailComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

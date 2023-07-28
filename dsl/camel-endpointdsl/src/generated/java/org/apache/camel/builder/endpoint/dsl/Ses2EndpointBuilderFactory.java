@@ -42,37 +42,6 @@ public interface Ses2EndpointBuilderFactory {
             return (AdvancedSes2EndpointBuilder) this;
         }
         /**
-         * To use the AmazonSimpleEmailService as the client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonSESClient the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder amazonSESClient(
-                software.amazon.awssdk.services.ses.SesClient amazonSESClient) {
-            doSetProperty("amazonSESClient", amazonSESClient);
-            return this;
-        }
-        /**
-         * To use the AmazonSimpleEmailService as the client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonSESClient the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder amazonSESClient(String amazonSESClient) {
-            doSetProperty("amazonSESClient", amazonSESClient);
-            return this;
-        }
-        /**
          * List of comma separated destination blind carbon copy (bcc) email
          * address. Can be overridden with 'CamelAwsSesBcc' header.
          * 
@@ -148,98 +117,6 @@ public interface Ses2EndpointBuilderFactory {
          */
         default Ses2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
             doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SES client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the SES client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the SES client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SES client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SES client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -320,13 +197,149 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the SES client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SES client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SES client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default Ses2EndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param trustAllCertificates the value to set
          * @return the dsl builder
@@ -344,7 +357,7 @@ public interface Ses2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param trustAllCertificates the value to set
          * @return the dsl builder
@@ -355,22 +368,6 @@ public interface Ses2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder uriEndpointOverride(
-                String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
          * Set whether the Ses client should expect to load credentials through
          * a default credentials provider or to expect static credentials to be
          * passed in.
@@ -378,7 +375,7 @@ public interface Ses2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -397,7 +394,7 @@ public interface Ses2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -414,7 +411,7 @@ public interface Ses2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -432,7 +429,7 @@ public interface Ses2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -440,34 +437,6 @@ public interface Ses2EndpointBuilderFactory {
         default Ses2EndpointBuilder useProfileCredentialsProvider(
                 String useProfileCredentialsProvider) {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default Ses2EndpointBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -529,6 +498,38 @@ public interface Ses2EndpointBuilderFactory {
         default AdvancedSes2EndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * To use the AmazonSimpleEmailService as the client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSESClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSes2EndpointBuilder amazonSESClient(
+                software.amazon.awssdk.services.ses.SesClient amazonSESClient) {
+            doSetProperty("amazonSESClient", amazonSESClient);
+            return this;
+        }
+        /**
+         * To use the AmazonSimpleEmailService as the client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSESClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSes2EndpointBuilder amazonSESClient(
+                String amazonSESClient) {
+            doSetProperty("amazonSESClient", amazonSESClient);
             return this;
         }
     }
