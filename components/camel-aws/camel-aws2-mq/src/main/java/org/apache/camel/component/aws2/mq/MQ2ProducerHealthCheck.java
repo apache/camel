@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
 
-public class MQ2ClientHealthCheck extends AbstractHealthCheck {
+public class MQ2ProducerHealthCheck extends AbstractHealthCheck {
 
     private final MQ2Endpoint mq2Endpoint;
 
-    public MQ2ClientHealthCheck(MQ2Endpoint mq2Endpoint, String clientId) {
-        super("camel", "aws2-mq-client-" + clientId);
+    public MQ2ProducerHealthCheck(MQ2Endpoint mq2Endpoint, String clientId) {
+        super("camel", "aws2-mq-producer-" + clientId);
         this.mq2Endpoint = mq2Endpoint;
     }
 
