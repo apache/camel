@@ -160,13 +160,12 @@ To continue this behaviour in Camel 4, then producer based health checks are dis
 Notice that `camel-kafka` comes with producer based health-check that worked in Camel 3,
 and therefore this change in Camel 4, means that this health-check is disabled.
 
-You can enable producer health-checks per component via
+You *MUST* enable producer health-checks globally, such as in `application.properties`:
 
 [source,properties]
 ----
-camel.component.kafka.health-check-producer-enabled = true
+camel.health.producers-enabled = true
 ----
-
 
 == JMX
 
