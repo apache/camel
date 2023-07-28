@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Isolated("This test creates a lot of threads")
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     @RegisterExtension
