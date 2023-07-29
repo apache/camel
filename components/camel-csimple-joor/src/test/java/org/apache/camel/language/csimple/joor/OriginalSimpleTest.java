@@ -57,7 +57,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled
 public class OriginalSimpleTest extends LanguageTestSupport {
 
     private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";
@@ -343,6 +342,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${body[0][code]}", 4321);
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testOGNLBodyEmptyList() {
         Map<String, List<String>> map = new HashMap<>();
@@ -1339,6 +1339,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         }
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOGNLOrderListOutOfBoundsWithNullSafe() {
         List<OrderLine> lines = new ArrayList<>();
@@ -1351,6 +1352,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${bodyAs(Order)?.getLines[3].getId}", null);
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOGNLOrderListOutOfBoundsWithNullSafeShorthand() {
         List<OrderLine> lines = new ArrayList<>();
@@ -1363,6 +1365,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${bodyAs(Order)?.lines[3].id}", null);
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOGNLOrderListNoMethodNameWithNullSafe() {
         List<OrderLine> lines = new ArrayList<>();
@@ -1381,6 +1384,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         }
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOGNLOrderListNoMethodNameWithNullSafeShorthand() {
         List<OrderLine> lines = new ArrayList<>();
@@ -1399,6 +1403,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         }
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOGNLNullSafeToAvoidNPE() {
         Animal tiger = new Animal("Tony the Tiger", 13);
@@ -1427,6 +1432,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         }
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOGNLNullSafeToAvoidNPEShorthand() {
         Animal tiger = new Animal("Tony the Tiger", 13);
@@ -1548,6 +1554,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${bodyAs(String).replace(\"$\", \"-\")}", "foo-bar-baz");
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOgnlReplaceEscapedBackslashChar() {
         exchange.getIn().setBody("foo\\bar\\baz");
@@ -1566,6 +1573,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${bodyAs(String).replaceFirst(\"http:\",\" \")}", " camel.apache.org");
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testBodyOgnlReplaceSingleQuoteInDouble() {
         exchange.getIn().setBody("Hello O\"Conner");
@@ -1904,6 +1912,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("Hi ${bodyOneLine} Again", "Hi HelloGreatWorld Again");
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testListIndexByNestedFunction() {
         List<String> alist = new ArrayList<>();
@@ -1920,6 +1929,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression(exp, "99");
     }
 
+    @Disabled("Investigation pending - see CAMEL-19681")
     @Test
     public void testNestedFunction() {
         exchange.getMessage().setBody("Tony");
