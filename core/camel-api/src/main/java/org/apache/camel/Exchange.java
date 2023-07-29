@@ -247,9 +247,13 @@ public interface Exchange {
     String TIMER_PERIOD = "CamelTimerPeriod";
     String TIMER_TIME = "CamelTimerTime";
     String TO_ENDPOINT = "CamelToEndpoint";
+    @Deprecated
     String TRACE_EVENT = "CamelTraceEvent";
+    @Deprecated
     String TRACE_EVENT_NODE_ID = "CamelTraceEventNodeId";
+    @Deprecated
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
+    @Deprecated
     String TRACE_EVENT_EXCHANGE = "CamelTraceEventExchange";
     @Deprecated
     String TRACING_HEADER_FORMAT = "CamelTracingHeaderFormat";
