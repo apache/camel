@@ -98,6 +98,50 @@ Removed `lang` attribute for the `<description>` on every EIPs.
 The `InOnly` and `InOut` EIPs has been removed.
 Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
 
+=== Poll Enrich EIP
+
+The polled endpoint URI is now stored as property on the `Exchange` (with key `CamelToEndpoint`) like all other EIPs.
+Before the URI was stored as a message header.
+
+== CircuitBreaker EIP
+
+The following options in `camel-resilience4j` was mistakenly not defined as attributes:
+
+|===
+| *Option*
+| bulkheadEnabled
+| bulkheadMaxConcurrentCalls
+| bulkheadMaxWaitDuration
+| timeoutEnabled
+| timeoutExecutorService
+| timeoutDuration
+| timeoutCancelRunningFuture
+|===
+
+These options were not exposed in YAML DSL, and in XML DSL you need to migrate from:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration>
+        <timeoutEnabled>true</timeoutEnabled>
+        <timeoutDuration>2000</timeoutDuration>
+    </resilience4jConfiguration>
+...
+</circuitBreaker>
+----
+
+To use attributes instead:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+...
+</circuitBreaker>
+----
+
+
 == XML DSL
 
 The `<description>` to set a description on a route or node, has been changed from an element to an attribute.
@@ -223,44 +267,6 @@ that contains the input and outgoing (if `InOut`) messages.
 
 The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
 serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
-
-== CircuitBreaker EIP
-
-The following options in `camel-resilience4j` was mistakenly not defined as attributes:
-
-|===
-| *Option*
-| bulkheadEnabled
-| bulkheadMaxConcurrentCalls
-| bulkheadMaxWaitDuration
-| timeoutEnabled
-| timeoutExecutorService
-| timeoutDuration
-| timeoutCancelRunningFuture
-|===
-
-These options were not exposed in YAML DSL, and in XML DSL you need to migrate from:
-
-[source,xml]
-----
-<circuitBreaker>
-    <resilience4jConfiguration>
-        <timeoutEnabled>true</timeoutEnabled>
-        <timeoutDuration>2000</timeoutDuration>
-    </resilience4jConfiguration>
-...
-</circuitBreaker>
-----
-
-To use attributes instead:
-
-[source,xml]
-----
-<circuitBreaker>
-    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
-...
-</circuitBreaker>
-----
 
 == OpenAPI Maven Plugin
 
