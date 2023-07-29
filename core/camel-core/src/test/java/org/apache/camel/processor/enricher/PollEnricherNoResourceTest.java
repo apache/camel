@@ -19,6 +19,7 @@ package org.apache.camel.processor.enricher;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class PollEnricherNoResourceTest extends ContextTestSupport {
@@ -28,7 +29,6 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
         // there should be no message body
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body().isNull();
-        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo");
 
         template.sendBody("direct:a", "Hello World");
 
@@ -43,7 +43,6 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
 
         // there should be a message body
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo");
 
         template.sendBody("direct:a", "Hello World");
 
@@ -56,7 +55,6 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
 
         // there should be a message body
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://bar");
 
         template.sendBody("direct:b", "Hello World");
 
@@ -67,9 +65,17 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").pollEnrich("seda:foo", 1000).to("mock:result");
+                from("direct:a").pollEnrich("seda:foo", 1000)
+                        .process(e -> {
+                            Assertions.assertEquals("seda://foo", e.getProperty(Exchange.TO_ENDPOINT));
+                        })
+                        .to("mock:result");
 
-                from("direct:b").pollEnrich("seda:bar").to("mock:result");
+                from("direct:b").pollEnrich("seda:bar")
+                        .process(e -> {
+                            Assertions.assertEquals("seda://bar", e.getProperty(Exchange.TO_ENDPOINT));
+                        })
+                        .to("mock:result");
             }
         };
     }

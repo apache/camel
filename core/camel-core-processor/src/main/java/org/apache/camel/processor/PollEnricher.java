@@ -24,6 +24,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -335,8 +336,9 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 }
             }
 
-            // set header with the uri of the endpoint enriched so we can use that for tracing etc
-            exchange.getMessage().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+            // set property with the uri of the endpoint enriched so we can use that for tracing etc
+            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+
         } catch (Throwable e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
             callback.done(true);

@@ -57,9 +57,9 @@ public abstract class HealthCheckComponent extends DefaultComponent {
     }
 
     /**
-     * Used for enabling or disabling all producer based health checks from this component.
-     * Notice: Camel has by default disabled all producer based health-checks.
-     * You can turn on producer checks globally by setting camel.health.producersEnabled=true.
+     * Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default
+     * disabled all producer based health-checks. You can turn on producer checks globally by setting
+     * camel.health.producersEnabled=true.
      */
     public void setHealthCheckProducerEnabled(boolean healthCheckProducerEnabled) {
         this.healthCheckProducerEnabled = healthCheckProducerEnabled;
