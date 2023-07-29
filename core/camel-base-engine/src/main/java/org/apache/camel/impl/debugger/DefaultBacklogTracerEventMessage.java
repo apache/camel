@@ -40,6 +40,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String toNode;
     private final String exchangeId;
     private final String threadName;
+    private String endpointUri;
     private final boolean rest;
     private final boolean template;
     private final String messageAsXml;
@@ -183,6 +184,14 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.exceptionAsJSon = exceptionAsJSon;
     }
 
+    public String getEndpointUri() {
+        return endpointUri;
+    }
+
+    public void setEndpointUri(String endpointUri) {
+        this.endpointUri = endpointUri;
+    }
+
     @Override
     public String toString() {
         return "DefaultBacklogTracerEventMessage[" + exchangeId + " at " + toNode + "]";
@@ -218,6 +227,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         // route id is optional and we then use an empty value for no route id
         sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
+        if (endpointUri != null) {
+            sb.append(prefix).append("  <endpointUri>").append(endpointUri).append("</endpointUri>\n");
+        }
         if (toNode != null) {
             sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
         } else {
@@ -253,6 +265,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         jo.put("template", template);
         if (location != null) {
             jo.put("location", location);
+        }
+        if (endpointUri != null) {
+            jo.put("endpointUri", endpointUri);
         }
         if (routeId != null) {
             jo.put("routeId", routeId);
