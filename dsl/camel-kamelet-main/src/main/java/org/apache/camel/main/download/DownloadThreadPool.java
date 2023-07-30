@@ -38,6 +38,7 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
     private final MavenDependencyDownloader downloader;
     private CamelContext camelContext;
     private volatile ExecutorService executorService;
+    private boolean verbose;
 
     public DownloadThreadPool(MavenDependencyDownloader downloader) {
         this.downloader = downloader;
@@ -51,6 +52,14 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public void download(Logger log, Runnable task, String gav) {
@@ -89,7 +98,7 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
             long taken = watch.taken();
             String msg = "Resolved: " + gav + " (took: "
                          + TimeUtils.printDuration(taken, true) + ")";
-            if (taken > 2000) {
+            if (verbose || taken > 2000) {
                 // slow resolving then log
                 log.info(msg);
             } else {
@@ -105,6 +114,7 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
         } else {
             executorService = Executors.newCachedThreadPool();
         }
+        downloader.setVerbose(verbose);
     }
 
     @Override
