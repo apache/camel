@@ -57,7 +57,7 @@ public final class MllpProtocolConstants {
 
         /*
           These values are defined in the HL7 Spec, but currently not mapped to a Java charset
-        
+
           JAS2020
           JIS X 0202
           ISO IR6
@@ -71,7 +71,7 @@ public final class MllpProtocolConstants {
           UNICODE
           UNICODE UTF-16
           UNICODE UTF-32
-          
+
           see: https://terminology.hl7.org/CodeSystem-v2-0211.html
         */
     }
