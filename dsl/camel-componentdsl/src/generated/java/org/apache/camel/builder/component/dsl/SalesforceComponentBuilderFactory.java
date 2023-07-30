@@ -1495,7 +1495,8 @@ public interface SalesforceComponentBuilderFactory {
          * If set to true prevents the component from authenticating to
          * Salesforce with the start of the component. You would generally set
          * this to the (default) false and authenticate early and be immediately
-         * aware of any authentication issues.
+         * aware of any authentication issues. Lazy login is not supported by
+         * salesforce consumers.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
