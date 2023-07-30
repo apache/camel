@@ -23,8 +23,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
-    private static final String ZOOKEEPER_CONTAINER = System.getProperty("itest.zookeeper.container.image",
-            StrimziContainer.DEFAULT_STRIMZI_CONTAINER);
+    private static final String ZOOKEEPER_CONTAINER = StrimziContainer.STRIMZI_CONTAINER;
     private static final int ZOOKEEPER_PORT = 2181;
 
     public ZookeeperContainer(Network network, String name) {

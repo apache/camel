@@ -24,7 +24,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class StrimziContainer extends GenericContainer<StrimziContainer> {
     public static final String DEFAULT_STRIMZI_CONTAINER = "quay.io/strimzi/kafka:latest-kafka-3.5.1";
-    private static final String STRIMZI_CONTAINER
+    static final String STRIMZI_CONTAINER
             = System.getProperty("itest.strimzi.container.image", DEFAULT_STRIMZI_CONTAINER);
     private static final int KAFKA_PORT = 9092;
 
