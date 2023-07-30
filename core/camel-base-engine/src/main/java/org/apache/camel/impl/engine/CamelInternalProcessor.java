@@ -1258,8 +1258,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     /**
-     * Event notifier for {@link BacklogTracerAdvice} to capture
-     * {@link Exchange} sent to endpoints during tracing.
+     * Event notifier for {@link BacklogTracerAdvice} to capture {@link Exchange} sent to endpoints during tracing.
      */
     private static final class BacklogTraceAdviceEventNotifier extends SimpleEventNotifierSupport {
 
