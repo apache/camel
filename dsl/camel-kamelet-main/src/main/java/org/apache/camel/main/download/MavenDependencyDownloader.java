@@ -62,6 +62,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     private String[] bootClasspath;
     private DownloadThreadPool threadPool;
+    private boolean verbose;
     private ClassLoader classLoader;
     private CamelContext camelContext;
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
@@ -96,6 +97,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public KnownReposResolver getKnownReposResolver() {
@@ -211,7 +220,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         String gav = groupId + ":" + artifactId + ":" + version;
         threadPool.download(LOG, () -> {
-            LOG.debug("Downloading: {}", gav);
+            if (verbose) {
+                LOG.info("Downloading: {}", gav);
+            } else {
+                LOG.debug("Downloading: {}", gav);
+            }
             List<String> deps = List.of(gav);
 
             // include Apache snapshot to make it easy to use upcoming releases
@@ -230,7 +243,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, extraRepositories,
                     transitively, useApacheSnaphots);
             List<File> files = new ArrayList<>();
-            LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+            if (verbose) {
+                LOG.info("Resolved {} -> [{}]", gav, artifacts);
+            } else {
+                LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+            }
 
             for (MavenArtifact a : artifacts) {
                 File file = a.getFile();
@@ -242,7 +259,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                         ddc.addFile(file);
                     }
                     files.add(file);
-                    LOG.trace("Added classpath: {}", a.getGav());
+                    if (verbose) {
+                        LOG.info("Added classpath: {}", a.getGav());
+                    } else {
+                        LOG.debug("Added classpath: {}", a.getGav());
+                    }
                 }
             }
 
@@ -271,14 +292,22 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public MavenArtifact downloadArtifact(String groupId, String artifactId, String version) {
         String gav = groupId + ":" + artifactId + ":" + version;
-        LOG.debug("DownloadingArtifact: {}", gav);
+        if (verbose) {
+            LOG.info("DownloadingArtifact: {}", gav);
+        } else {
+            LOG.debug("DownloadingArtifact: {}", gav);
+        }
         List<String> deps = List.of(gav);
 
         // include Apache snapshot to make it easy to use upcoming releases
         boolean useApacheSnaphots = "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT");
 
         List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, false, useApacheSnaphots);
-        LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+        if (verbose) {
+            LOG.info("Resolved {} -> [{}]", gav, artifacts);
+        } else {
+            LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+        }
 
         if (artifacts.size() == 1) {
             return artifacts.get(0);
@@ -292,7 +321,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String groupId, String artifactId,
             String minimumVersion, String repo) {
         String gav = groupId + ":" + artifactId;
-        LOG.debug("DownloadAvailableVersions: {}", gav);
+        if (verbose) {
+            LOG.info("DownloadAvailableVersions: {}", gav);
+        } else {
+            LOG.debug("DownloadAvailableVersions: {}", gav);
+        }
 
         List<String[]> answer = new ArrayList<>();
 
@@ -419,7 +452,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     }
                     repositories.add(url.toExternalForm());
                 } catch (MalformedURLException e) {
-                    LOG.warn("Can't use {} URL: {}. Skipping.", repo, e.getMessage(), e);
+                    LOG.warn("Cannot use {} URL: {}. Skipping.", repo, e.getMessage(), e);
                 }
             }
         }
@@ -432,6 +465,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             classLoader = camelContext.getApplicationContextClassLoader();
         }
         threadPool = new DownloadThreadPool(this);
+        threadPool.setVerbose(verbose);
         threadPool.setCamelContext(camelContext);
         ServiceHelper.buildService(threadPool);
 
