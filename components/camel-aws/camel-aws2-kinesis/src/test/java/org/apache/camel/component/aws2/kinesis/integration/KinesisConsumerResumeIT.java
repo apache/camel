@@ -25,7 +25,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
@@ -133,7 +132,6 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         client = AWSSDKClientUtils.newKinesisClient();
-        KinesisConnection.getInstance().setKinesisClient(client);
 
         context.getRegistry().bind("amazonKinesisClient", client);
 

@@ -17,14 +17,11 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisHealthCheck;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -58,7 +55,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        var kinesisConnection = KinesisConnection.getInstance();
+        var kinesisConnection = getComponent().getConnection();
 
         if (!configuration.isCborEnabled()) {
             System.setProperty(CBOR_ENABLED.property(), "false");
@@ -96,24 +93,18 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new Kinesis2Producer(this);
+        Kinesis2Producer producer = new Kinesis2Producer(this);
+        producer.setConnection(getComponent().getConnection());
+        return producer;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
+        consumer.setConnection(getComponent().getConnection());
         consumer.setSchedulerProperties(getSchedulerProperties());
-        startHealthChecks();
         configureConsumer(consumer);
         return consumer;
-    }
-
-    private void startHealthChecks() {
-        var timeoutCheckerExecutorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                CONNECTION_CHECKER_EXECUTOR_NAME);
-        timeoutCheckerExecutorService.scheduleAtFixedRate(new KinesisHealthCheck(this),
-                0, 5 * 1000,
-                TimeUnit.MILLISECONDS);
     }
 
     @Override

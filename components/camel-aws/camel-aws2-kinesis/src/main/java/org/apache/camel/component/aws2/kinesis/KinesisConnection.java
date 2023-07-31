@@ -14,35 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.kinesis.consumer;
+package org.apache.camel.component.aws2.kinesis;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Objects;
 
-import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 
-public class KinesisConnection {
-    private static volatile KinesisConnection instance;
-    private KinesisClient kinesisClient = null;
-    private KinesisAsyncClient kinesisAsyncClient = null;
+/**
+ * Holds connections to AWS from {@link KinesisClient} and {@link KinesisAsyncClient}.
+ */
+public class KinesisConnection implements Closeable {
 
-    private KinesisConnection() {
-    }
+    private KinesisClient kinesisClient;
+    private KinesisAsyncClient kinesisAsyncClient;
 
-    public static synchronized KinesisConnection getInstance() {
-        if (instance == null) {
-            synchronized (KinesisConnection.class) {
-                if (instance == null) {
-                    instance = new KinesisConnection();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public KinesisClient getClient(final Kinesis2Endpoint endpoint) {
+    public synchronized KinesisClient getClient(final Kinesis2Endpoint endpoint) {
         if (Objects.isNull(kinesisClient)) {
             kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
                     ? endpoint.getConfiguration().getAmazonKinesisClient()
@@ -51,7 +41,7 @@ public class KinesisConnection {
         return kinesisClient;
     }
 
-    public KinesisAsyncClient getAsyncClient(final Kinesis2Endpoint endpoint) {
+    public synchronized KinesisAsyncClient getAsyncClient(final Kinesis2Endpoint endpoint) {
         if (Objects.isNull(kinesisAsyncClient)) {
             kinesisAsyncClient = KinesisClientFactory
                     .getKinesisAsyncClient(endpoint.getConfiguration())
@@ -66,5 +56,15 @@ public class KinesisConnection {
 
     public void setKinesisAsyncClient(final KinesisAsyncClient kinesisAsyncClient) {
         this.kinesisAsyncClient = kinesisAsyncClient;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (kinesisClient != null) {
+            kinesisClient.close();
+        }
+        if (kinesisAsyncClient != null) {
+            kinesisAsyncClient.close();
+        }
     }
 }

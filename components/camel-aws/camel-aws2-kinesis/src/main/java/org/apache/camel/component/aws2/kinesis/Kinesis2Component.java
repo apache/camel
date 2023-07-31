@@ -23,12 +23,15 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.IOHelper;
 
 @Component("aws2-kinesis")
 public class Kinesis2Component extends HealthCheckComponent {
 
     @Metadata
     private Kinesis2Configuration configuration = new Kinesis2Configuration();
+
+    private KinesisConnection connection = new KinesisConnection();
 
     public Kinesis2Component() {
         this(null);
@@ -64,5 +67,20 @@ public class Kinesis2Component extends HealthCheckComponent {
      */
     public void setConfiguration(Kinesis2Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // use pre-configured client (if any)
+        connection.setKinesisClient(configuration.getAmazonKinesisClient());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        IOHelper.close(connection);
+    }
+
+    public KinesisConnection getConnection() {
+        return connection;
     }
 }
