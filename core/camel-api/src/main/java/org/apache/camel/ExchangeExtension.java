@@ -251,7 +251,15 @@ public interface ExchangeExtension {
      */
     void setDefaultConsumerCallback(AsyncCallback callback);
 
+    /**
+     * Returns whether the exchange has been failure handed
+     * @return true if failure handled or false otherwise
+     */
     boolean isFailureHandled();
 
+    /**
+     * Sets whether the exchange has been failure handled
+     * @param failureHandled true if failure handled or false otherwise
+     */
     void setFailureHandled(boolean failureHandled);
 }
