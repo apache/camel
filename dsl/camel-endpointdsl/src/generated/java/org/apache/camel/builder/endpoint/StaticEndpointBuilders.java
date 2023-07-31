@@ -296,6 +296,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.AtlasMapEndpointBuilder atlasmap(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.endpointBuilder("atlasmap", path);
@@ -322,6 +323,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.AtlasMapEndpointBuilder atlasmap(
             String componentName,
             String path) {
