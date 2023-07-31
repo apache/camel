@@ -20,6 +20,7 @@ The following components has been removed:
 |===
 | Component | Alternative component(s)
 | camel-any23                          | none
+| camel-atlasmap                       | none
 | camel-atmos                          | none
 | camel-caffeine-lrucache              | camel-cache, camel-ignite, camel-infinispan
 | camel-cdi                            | camel-spring-boot, camel-quarkus
