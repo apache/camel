@@ -34,6 +34,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
@@ -50,6 +51,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     // instances used by MDCUnitOfWork
     final InflightRepository inflightRepository;
+    final StreamCachingStrategy streamCachingStrategy;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
 
@@ -79,6 +81,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         this.useBreadcrumb = useBreadcrumb;
         this.context = exchange.getContext();
         this.inflightRepository = inflightRepository;
+        this.streamCachingStrategy = exchange.getContext().getStreamCachingStrategy();
         doOnPrepare(exchange);
     }
 
@@ -102,10 +105,12 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
         if (allowUseOriginalMessage) {
             this.originalInMessage = exchange.getIn().copy();
-            // if the input body is streaming we need to cache it, so we can access the original input message
-            StreamCache cache = context.getStreamCachingStrategy().cache(this.originalInMessage);
-            if (cache != null) {
-                this.originalInMessage.setBody(cache);
+            if (streamCachingStrategy.isEnabled()) {
+                // if the input body is streaming we need to cache it, so we can access the original input message
+                StreamCache cache = streamCachingStrategy.cache(this.originalInMessage);
+                if (cache != null) {
+                    this.originalInMessage.setBody(cache);
+                }
             }
         }
 
