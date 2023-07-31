@@ -28,7 +28,7 @@
 
     <artifactId>camel-atlasmap</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: AtlasMap</name>
+    <name>Camel :: AtlasMap (deprecated)</name>
     <description>Camel AtlasMap support</description>
 
     <dependencies>
