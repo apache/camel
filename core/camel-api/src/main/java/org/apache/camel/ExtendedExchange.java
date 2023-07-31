@@ -239,4 +239,10 @@ public interface ExtendedExchange extends Exchange {
      * @see SafeCopyProperty
      */
     <T> T getSafeCopyProperty(String key, Class<T> type);
+
+    /**
+     * Copy the safe copy properties from this exchange to the target exchange
+     */
+    void copySafeCopyPropertiesTo(ExtendedExchange target);
+
 }
