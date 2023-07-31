@@ -327,6 +327,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * @param path resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default AtlasMapEndpointBuilder atlasmap(String path) {
             return AtlasMapEndpointBuilderFactory.endpointBuilder("atlasmap", path);
         }
@@ -353,6 +354,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * @param path resourceUri
          * @return the dsl builder
          */
+        @Deprecated
         default AtlasMapEndpointBuilder atlasmap(
                 String componentName,
                 String path) {
@@ -410,6 +412,7 @@ public interface AtlasMapEndpointBuilderFactory {
             return "Content-Type";
         }
     }
+    @Deprecated
     static AtlasMapEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
