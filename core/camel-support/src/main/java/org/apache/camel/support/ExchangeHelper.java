@@ -390,6 +390,7 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
         source.adapt(ExtendedExchange.class).copyInternalProperties(result);
+        source.adapt(ExtendedExchange.class).copySafeCopyPropertiesTo(result);
 
         // copy over state
         result.setRouteStop(source.isRouteStop());

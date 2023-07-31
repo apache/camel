@@ -211,6 +211,12 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     @Override
+    public void copySafeCopyPropertiesTo(ExtendedExchange target) {
+        safeCopyProperties.entrySet()
+                .forEach(entry -> target.setSafeCopyProperty(entry.getKey(), entry.getValue().safeCopy()));
+    }
+
+    @Override
     public CamelContext getContext() {
         return context;
     }
