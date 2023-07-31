@@ -4,7 +4,7 @@
     "name": "atlasmap",
     "title": "AtlasMap",
     "description": "Transforms the message using an AtlasMap transformation.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.7.0",
     "label": "transformation",
     "javaType": "org.apache.camel.component.atlasmap.AtlasMapComponent",

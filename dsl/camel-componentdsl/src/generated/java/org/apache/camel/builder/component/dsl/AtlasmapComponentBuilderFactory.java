@@ -40,6 +40,7 @@ public interface AtlasmapComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static AtlasmapComponentBuilder atlasmap() {
         return new AtlasmapComponentBuilderImpl();
     }
