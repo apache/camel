@@ -111,28 +111,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "AtlasmapComponentBuilderFactory": {
-    "kind": "component",
-    "name": "atlasmap",
-    "title": "AtlasMap",
-    "description": "Transforms the message using an AtlasMap transformation.",
-    "deprecated": false,
-    "firstVersion": "3.7.0",
-    "label": "transformation",
-    "javaType": "org.apache.camel.component.atlasmap.AtlasMapComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-atlasmap",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "atlasmap",
-    "extendsScheme": "",
-    "syntax": "atlasmap:resourceUri",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "AtmosphereWebsocketComponentBuilderFactory": {
     "kind": "component",
     "name": "atmosphere-websocket",

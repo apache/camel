@@ -21,5 +21,3 @@ xref:manual::type-converter.adoc[Type Converter]'s from the messaging infrastruc
 Java Objects representing the data model of the component in question. Combining this with the
 xref:message-translator.adoc[Message Translator] to have the Messaging Mapper EIP pattern.
 
-Camel also integrates with external mapping software such as xref:ROOT:atlasmap-component.adoc[AtlasMap].
-
