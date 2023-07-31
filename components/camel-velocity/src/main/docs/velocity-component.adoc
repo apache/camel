@@ -104,7 +104,7 @@ Camel will provide exchange information in the Velocity context (just a
 |=======================================================================
 
 You can setup a custom Velocity Context yourself by
-setting the message header *CamelVelocityContext *just like this
+setting property *allowTemplateFromHeader=true* and setting the message header *CamelVelocityContext* just like this
 
 [source,java]
 -----------------------------------------------------------------------
