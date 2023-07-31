@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,8 +60,7 @@ public class KinesisConsumerClosedShardWithSilentTest {
     private KinesisClient kinesisClient;
     @Mock
     private AsyncProcessor processor;
-    @Mock
-    private KinesisConnection kinesisConnection;
+
     private final CamelContext context = new DefaultCamelContext();
     private final Kinesis2Component component = new Kinesis2Component(context);
 
@@ -71,25 +68,24 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @BeforeEach
     public void setup() {
+        component.start();
+
         Kinesis2Configuration configuration = new Kinesis2Configuration();
         configuration.setAmazonKinesisClient(kinesisClient);
         configuration.setIteratorType(ShardIteratorType.LATEST);
         configuration.setShardClosed(Kinesis2ShardClosedStrategyEnum.silent);
         configuration.setStreamName("streamName");
 
-        setMock(kinesisConnection);
-
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint("aws2-kinesis:foo", configuration, component);
         endpoint.start();
         underTest = new Kinesis2Consumer(endpoint, processor);
+        underTest.setConnection(component.getConnection());
+        underTest.start();
 
         SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
-
-        when(kinesisConnection
-                .getClient(any(Kinesis2Endpoint.class))).thenReturn(kinesisClient);
 
         when(kinesisClient
                 .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
@@ -113,16 +109,6 @@ public class KinesisConsumerClosedShardWithSilentTest {
         context.start();
         underTest.start();
 
-    }
-
-    private void setMock(KinesisConnection mock) {
-        try {
-            Field instance = KinesisConnection.class.getDeclaredField("instance");
-            instance.setAccessible(true);
-            instance.set(instance, mock);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test

@@ -47,9 +47,9 @@ public class Kinesis2ConsumerHealthCheckProfileCredsIT extends CamelTestSupport 
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
+
         Kinesis2Component component = new Kinesis2Component(context);
         component.getConfiguration().setAmazonKinesisClient(AWSSDKClientUtils.newKinesisClient());
-        component.init();
         context.addComponent("aws2-kinesis", component);
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();

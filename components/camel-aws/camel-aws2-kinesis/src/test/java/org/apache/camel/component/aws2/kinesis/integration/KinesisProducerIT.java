@@ -25,7 +25,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisConnection;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.aws.common.AWSCommon;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
@@ -119,8 +118,6 @@ public class KinesisProducerIT extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         client = AWSSDKClientUtils.newKinesisClient();
-
-        KinesisConnection.getInstance().setKinesisClient(client);
 
         context.getRegistry().bind("amazonKinesisClient", client);
 
