@@ -46,6 +46,7 @@ import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -383,6 +384,7 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
         source.getExchangeExtension().copyInternalProperties(result);
+        source.getExchangeExtension().copySafeCopyPropertiesTo(result.getExchangeExtension());
 
         // copy over state
         result.setRouteStop(source.isRouteStop());
@@ -391,6 +393,7 @@ public final class ExchangeHelper {
         result.getExchangeExtension().setNotifyEvent(source.getExchangeExtension().isNotifyEvent());
         result.getExchangeExtension().setRedeliveryExhausted(source.getExchangeExtension().isRedeliveryExhausted());
         result.getExchangeExtension().setErrorHandlerHandled(source.getExchangeExtension().getErrorHandlerHandled());
+
         result.setException(source.getException());
     }
 

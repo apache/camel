@@ -218,6 +218,11 @@ public interface ExchangeExtension {
     void setSafeCopyProperty(String key, SafeCopyProperty value);
 
     /**
+     * Copy the safe copy properties from this exchange to the target exchange
+     */
+    void copySafeCopyPropertiesTo(ExchangeExtension target);
+
+    /**
      * Gets the internal properties from this exchange. The known set of internal keys is defined in
      * {@link ExchangePropertyKey}.
      * <p/>
