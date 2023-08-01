@@ -92,6 +92,9 @@ We have removed deprecated APIs such as the following:
 - The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`.
 - The type for `dumpRoutes` on `CamelContext` has changed from `boolean` to `String` to allow specifying either xml or yaml.
 
+TIP: The `org.apache.camel.support.PluginHelper` gives easy access to various extensions and context plugins, that
+was available previously in Camel v3 directly from `CamelContext`.
+
 == EIP Changes
 
 Removed `lang` attribute for the `<description>` on every EIPs.
