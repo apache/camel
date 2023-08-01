@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.StreamCacheException;
@@ -50,7 +51,7 @@ final class StreamCachingHelper {
             exchange.setException(tce);
             // because this is stream caching error then we cannot use redelivery as the message body is corrupt
             // so mark as redelivery exhausted
-            exchange.getExchangeExtension().setRedeliveryExhausted(true);
+            exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
         }
         // check if we somewhere failed due to a stream caching exception
         Throwable cause = exchange.getException();
@@ -64,7 +65,7 @@ final class StreamCachingHelper {
             StreamCachingStrategy strategy, Exchange exchange, Message inMessage, Throwable cause) {
         final boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
         if (!failed) {
-            boolean disabled = exchange.getExchangeExtension().isStreamCacheDisabled();
+            boolean disabled = exchange.adapt(ExtendedExchange.class).isStreamCacheDisabled();
             if (disabled) {
                 return null;
             }
@@ -81,7 +82,7 @@ final class StreamCachingHelper {
                 exchange.setException(tce);
                 // because this is stream caching error then we cannot use redelivery as the message body is corrupt
                 // so mark as redelivery exhausted
-                exchange.getExchangeExtension().setRedeliveryExhausted(true);
+                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
             }
         }
         return null;
