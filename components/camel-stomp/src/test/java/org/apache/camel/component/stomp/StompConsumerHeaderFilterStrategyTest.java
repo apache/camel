@@ -50,17 +50,19 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
         Stomp stomp = createStompClient();
         final BlockingConnection producerConnection = stomp.connectBlocking();
 
-        StompFrame frame = new StompFrame(SEND);
-        frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
-        frame.addHeader(MESSAGE_ID, StompFrame.encodeHeader("msg:1"));
-        frame.content(utf8("Important Message 1"));
-        producerConnection.send(frame);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.message(0).header("content-length").isNull();
+        mock.expectedMinimumMessageCount(numberOfMessages);
+        mock.allMessages().header("content-length").isNull();
 
-        mock.await(5, TimeUnit.SECONDS);
+        for (int i = 0; i < numberOfMessages * 2; i++) {
+            StompFrame frame = new StompFrame(SEND);
+            frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
+            frame.addHeader(MESSAGE_ID, StompFrame.encodeHeader("msg:" + i));
+            frame.content(utf8("Important Message " + i));
+            producerConnection.send(frame);
+        }
+
+        mock.await(10, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
     }
 
