@@ -102,6 +102,21 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
     }
 
+    private boolean isStreamCacheInUse(Exchange exchange) {
+        boolean inUse = streamCachingStrategy.isEnabled();
+        if (inUse) {
+            // the original route (from route) may have disabled stream caching
+            String rid = exchange.getFromRouteId();
+            if (rid != null) {
+                Route route = exchange.getContext().getRoute(rid);
+                if (route != null) {
+                    inUse = route.isStreamCaching() != null && route.isStreamCaching();
+                }
+            }
+        }
+        return inUse;
+    }
+
     private void doOnPrepare(Exchange exchange) {
         // unit of work is reused, so setup for this exchange
         this.exchange = exchange;
@@ -119,11 +134,14 @@ public class DefaultUnitOfWork implements UnitOfWork {
             if (this.originalInMessage instanceof MessageSupport) {
                 ((MessageSupport) this.originalInMessage).setExchange(exchange);
             }
-            if (streamCachingStrategy.isEnabled()) {
-                // if the input body is streaming we need to cache it, so we can access the original input message
-                StreamCache cache = context.getStreamCachingStrategy().cache(this.originalInMessage);
+            if (streamCachingStrategy.isEnabled() && isStreamCacheInUse(exchange)) {
+                // if the input body is streaming we need to cache it, so we can access the original input message (like stream caching advice does)
+                StreamCache cache
+                        = StreamCachingHelper.convertToStreamCache(streamCachingStrategy, exchange, this.originalInMessage);
                 if (cache != null) {
                     this.originalInMessage.setBody(cache);
+                    // replace original incoming message with stream cache
+                    this.exchange.getIn().setBody(cache);
                 }
             }
         }
