@@ -52,6 +52,7 @@ public class DefaultUndertowHttpBindingTest {
     }
 
     @Timeout(1)
+    @Test
     public void readEntireMultiDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
                 "",
@@ -72,6 +73,7 @@ public class DefaultUndertowHttpBindingTest {
     }
 
     @Timeout(1)
+    @Test
     public void readEntireMultiDelayedWithPausePayload() throws Exception {
         String[] delayedPayloads = new String[] {
                 "",
