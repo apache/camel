@@ -575,11 +575,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         return camelContext.getTestExcludeRoutes();
     }
 
-    @Override
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
-
     ManagementStrategy getManagementStrategy() {
         return managementStrategy;
     }
