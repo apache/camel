@@ -34,6 +34,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
@@ -50,6 +51,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     // instances used by MDCUnitOfWork
     final InflightRepository inflightRepository;
+    final StreamCachingStrategy streamCachingStrategy;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
 
@@ -79,6 +81,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         this.useBreadcrumb = useBreadcrumb;
         this.context = exchange.getContext();
         this.inflightRepository = inflightRepository;
+        this.streamCachingStrategy = exchange.getContext().getStreamCachingStrategy();
         doOnPrepare(exchange);
     }
 
@@ -96,16 +99,36 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
     }
 
+    private boolean isStreamCacheInUse(Exchange exchange) {
+        boolean inUse = streamCachingStrategy.isEnabled();
+        if (inUse) {
+            // the original route (from route) may have disabled stream caching
+            String rid = exchange.getFromRouteId();
+            if (rid != null) {
+                Route route = exchange.getContext().getRoute(rid);
+                if (route != null) {
+                    inUse = route.isStreamCaching() != null && route.isStreamCaching();
+                }
+            }
+        }
+        return inUse;
+    }
+
     private void doOnPrepare(Exchange exchange) {
         // unit of work is reused, so setup for this exchange
         this.exchange = exchange;
 
         if (allowUseOriginalMessage) {
             this.originalInMessage = exchange.getIn().copy();
-            // if the input body is streaming we need to cache it, so we can access the original input message
-            StreamCache cache = context.getStreamCachingStrategy().cache(this.originalInMessage);
-            if (cache != null) {
-                this.originalInMessage.setBody(cache);
+            if (isStreamCacheInUse(exchange)) {
+                // if the input body is streaming we need to cache it, so we can access the original input message (like stream caching advice does)
+                StreamCache cache
+                        = StreamCachingHelper.convertToStreamCache(streamCachingStrategy, exchange, this.originalInMessage);
+                if (cache != null) {
+                    this.originalInMessage.setBody(cache);
+                    // replace original incoming message with stream cache
+                    this.exchange.getIn().setBody(cache);
+                }
             }
         }
 

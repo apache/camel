@@ -122,6 +122,12 @@ public interface BacklogTracerEventMessage {
     String getExceptionAsJSon();
 
     /**
+     * The endpoint uri if this trace is either from a route input (from), or the exchange was sent to an endpoint such
+     * as (to, toD, wireTap) etc.
+     */
+    String getEndpointUri();
+
+    /**
      * Dumps the event message as XML using the {@link #ROOT_TAG} as root tag.
      * <p/>
      * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}

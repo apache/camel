@@ -31,7 +31,7 @@ public class MSK2Configuration implements Cloneable {
     @Metadata(required = true)
     private String label;
     @UriParam
-    @Metadata(autowired = true)
+    @Metadata(label = "advanced", autowired = true)
     private KafkaClient mskClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -40,27 +40,27 @@ public class MSK2Configuration implements Cloneable {
     @UriParam
     @Metadata(required = true)
     private MSK2Operations operation;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pojoRequest;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     public KafkaClient getMskClient() {

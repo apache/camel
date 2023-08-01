@@ -22,6 +22,11 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 
+/**
+ * Do not create tests using Spring: CamelSpringTestSupport does not provide a safe environment for concurrent
+ * execution.
+ */
+@Deprecated
 public class AbstractSpringJMSTestSupport extends CamelSpringTestSupport {
 
     @RegisterExtension

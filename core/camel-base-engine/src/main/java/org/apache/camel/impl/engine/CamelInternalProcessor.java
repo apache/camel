@@ -19,11 +19,14 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
@@ -35,12 +38,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.StreamCacheException;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
@@ -63,11 +67,11 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -552,6 +556,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     public static final class BacklogTracerAdvice
             implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage>, Ordered {
 
+        private final BacklogTraceAdviceEventNotifier notifier;
+        private final CamelContext camelContext;
         private final BacklogTracer backlogTracer;
         private final NamedNode processorDefinition;
         private final NamedRoute routeDefinition;
@@ -560,8 +566,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final boolean template;
         private final boolean skip;
 
-        public BacklogTracerAdvice(BacklogTracer backlogTracer, NamedNode processorDefinition,
+        public BacklogTracerAdvice(CamelContext camelContext, BacklogTracer backlogTracer, NamedNode processorDefinition,
                                    NamedRoute routeDefinition, boolean first) {
+            this.camelContext = camelContext;
             this.backlogTracer = backlogTracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
@@ -582,11 +589,28 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             } else {
                 this.skip = false;
             }
+            this.notifier = getOrCreateEventNotifier(camelContext);
+        }
+
+        private BacklogTraceAdviceEventNotifier getOrCreateEventNotifier(CamelContext camelContext) {
+            // use a single instance of this event notifier
+            for (EventNotifier en : camelContext.getManagementStrategy().getEventNotifiers()) {
+                if (en instanceof BacklogTraceAdviceEventNotifier) {
+                    return (BacklogTraceAdviceEventNotifier) en;
+                }
+            }
+            BacklogTraceAdviceEventNotifier answer = new BacklogTraceAdviceEventNotifier();
+            camelContext.getManagementStrategy().addEventNotifier(answer);
+            return answer;
         }
 
         @Override
         public DefaultBacklogTracerEventMessage before(Exchange exchange) throws Exception {
             if (!skip && backlogTracer.shouldTrace(processorDefinition, exchange)) {
+
+                // to capture if the exchange was sent to an endpoint during this event
+                notifier.before(exchange);
+
                 long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
@@ -656,6 +680,25 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         private void doneProcessing(Exchange exchange, DefaultBacklogTracerEventMessage data) {
             data.doneProcessing();
+
+            String uri = null;
+            Endpoint endpoint = notifier.after(exchange);
+            if (endpoint != null) {
+                uri = endpoint.getEndpointUri();
+            } else if ((data.isFirst() || data.isLast()) && data.getToNode() == null && routeDefinition != null) {
+                // pseudo first/last event (the from in the route)
+                Route route = camelContext.getRoute(routeDefinition.getRouteId());
+                if (route != null && route.getConsumer() != null) {
+                    // get the actual resolved uri
+                    uri = route.getConsumer().getEndpoint().getEndpointUri();
+                } else {
+                    uri = routeDefinition.getEndpointUrl();
+                }
+            }
+            if (uri != null) {
+                data.setEndpointUri(uri);
+            }
+
             if (!data.isFirst()) {
                 // we want to capture if there was an exception
                 Throwable e = exchange.getException();
@@ -947,68 +990,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public StreamCache before(Exchange exchange) throws Exception {
-            final Message inMessage = exchange.getIn();
-
-            // check if body is already cached
-            try {
-                Object body = inMessage.getBody();
-                if (body == null) {
-                    return null;
-                } else if (body instanceof StreamCache) {
-                    StreamCache sc = (StreamCache) body;
-                    // reset so the cache is ready to be used before processing
-                    sc.reset();
-                    return sc;
-                }
-            } catch (Exception e) {
-                // lets allow Camels error handler to deal with stream cache failures
-                StreamCacheException tce = new StreamCacheException(null, e);
-                exchange.setException(tce);
-                // because this is stream caching error then we cannot use redelivery as the message body is corrupt
-                // so mark as redelivery exhausted
-                exchange.getExchangeExtension().setRedeliveryExhausted(true);
-            }
-            // check if we somewhere failed due to a stream caching exception
-            Throwable cause = exchange.getException();
-            if (cause == null) {
-                cause = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            }
-            return tryStreamCache(exchange, inMessage, cause);
-        }
-
-        private StreamCache tryStreamCache(Exchange exchange, Message inMessage, Throwable cause) {
-            final boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
-            if (!failed) {
-                boolean disabled = exchange.getExchangeExtension().isStreamCacheDisabled();
-                if (disabled) {
-                    return null;
-                }
-                try {
-                    // cache the body and if we could do that replace it as the new body
-                    StreamCache sc = strategy.cache(exchange);
-                    if (sc != null) {
-                        inMessage.setBody(sc);
-                    }
-                    return sc;
-                } catch (Exception e) {
-                    // lets allow Camels error handler to deal with stream cache failures
-                    StreamCacheException tce = new StreamCacheException(exchange.getMessage().getBody(), e);
-                    exchange.setException(tce);
-                    // because this is stream caching error then we cannot use redelivery as the message body is corrupt
-                    // so mark as redelivery exhausted
-                    exchange.getExchangeExtension().setRedeliveryExhausted(true);
-                }
-            }
-            return null;
+            return StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
         }
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            Object body = exchange.getMessage().getBody();
-            if (body instanceof StreamCache) {
-                // reset so the cache is ready to be reused after processing
-                ((StreamCache) body).reset();
-            }
+            // reset cached streams so they can be read again
+            MessageHelper.resetStreamCache(exchange.getMessage());
         }
 
         @Override
@@ -1212,4 +1200,42 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
     }
 
+    /**
+     * Event notifier for {@link BacklogTracerAdvice} to capture {@link Exchange} sent to endpoints during tracing.
+     */
+    private static final class BacklogTraceAdviceEventNotifier extends SimpleEventNotifierSupport {
+
+        private final Object dummy = new Object();
+
+        private final ConcurrentMap<Exchange, Object> uris = new ConcurrentHashMap<>();
+
+        public BacklogTraceAdviceEventNotifier() {
+            // only capture sending events
+            setIgnoreExchangeEvents(false);
+            setIgnoreExchangeSendingEvents(false);
+        }
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            if (event instanceof CamelEvent.ExchangeSendingEvent ess) {
+                Exchange e = ess.getExchange();
+                if (uris.containsKey(e)) {
+                    uris.put(e, ess.getEndpoint());
+                }
+            }
+        }
+
+        public void before(Exchange exchange) {
+            uris.put(exchange, dummy);
+        }
+
+        public Endpoint after(Exchange exchange) {
+            Object o = uris.remove(exchange);
+            if (o == dummy) {
+                return null;
+            }
+            return (Endpoint) o;
+        }
+
+    }
 }

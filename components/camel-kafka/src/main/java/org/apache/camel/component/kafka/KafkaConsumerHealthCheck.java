@@ -31,7 +31,7 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
     private final String routeId;
 
     public KafkaConsumerHealthCheck(KafkaConsumer kafkaConsumer, String routeId) {
-        super("camel", "kafka-consumer-" + routeId);
+        super("camel", "consumer:kafka-" + routeId);
         this.kafkaConsumer = kafkaConsumer;
         this.routeId = routeId;
     }

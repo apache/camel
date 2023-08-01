@@ -31,12 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Timeout(30)
-@Isolated
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JmsSelectorInTest extends AbstractJMSTest {
 

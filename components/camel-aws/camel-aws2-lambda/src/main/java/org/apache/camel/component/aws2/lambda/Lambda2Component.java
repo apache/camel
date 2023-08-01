@@ -22,13 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * For working with Amazon Lambda SDK v2.
  */
 @Component("aws2-lambda")
-public class Lambda2Component extends DefaultComponent {
+public class Lambda2Component extends HealthCheckComponent {
+
     @Metadata
     private Lambda2Configuration configuration = new Lambda2Configuration();
 

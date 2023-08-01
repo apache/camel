@@ -38,13 +38,10 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Whether this component provides component specific health checks")
     boolean isHealthCheckSupported();
 
-    @ManagedAttribute(description = "Used for enabling or disabling all health checks from this component")
-    boolean isHealthCheckEnabled();
-
-    @ManagedAttribute(description = "Used for enabling or disabling all consumer based health checks from this component")
+    @ManagedAttribute(description = "Whether consumer based health checks from this component is enabled (default enabled)")
     boolean isHealthCheckConsumerEnabled();
 
-    @ManagedAttribute(description = "Used for enabling or disabling all producer based health checks from this component")
+    @ManagedAttribute(description = "Whether producer based health checks from this component is enabled (default disabled)")
     boolean isHealthCheckProducerEnabled();
 
     @ManagedAttribute(description = "Whether this component support verification (parameters or connectivity)")

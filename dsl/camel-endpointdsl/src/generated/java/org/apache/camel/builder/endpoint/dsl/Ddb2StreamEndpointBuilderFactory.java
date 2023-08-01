@@ -45,38 +45,6 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return (AdvancedDdb2StreamEndpointBuilder) this;
         }
         /**
-         * Amazon DynamoDB client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param amazonDynamoDbStreamsClient the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
-                software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient amazonDynamoDbStreamsClient) {
-            doSetProperty("amazonDynamoDbStreamsClient", amazonDynamoDbStreamsClient);
-            return this;
-        }
-        /**
-         * Amazon DynamoDB client to use for all requests for this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param amazonDynamoDbStreamsClient the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
-                String amazonDynamoDbStreamsClient) {
-            doSetProperty("amazonDynamoDbStreamsClient", amazonDynamoDbStreamsClient);
-            return this;
-        }
-        /**
          * Maximum number of records that will be fetched in each poll.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -139,98 +107,6 @@ public interface Ddb2StreamEndpointBuilderFactory {
         default Ddb2StreamEndpointBuilder overrideEndpoint(
                 String overrideEndpoint) {
             doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the DDBStreams client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the DDBStreams client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the DDBStreams client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the DDBStreams client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: consumer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the DDBStreams client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: consumer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -321,41 +197,6 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Ddb2StreamEndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -372,75 +213,79 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the DynamoDB Streams client should expect to load
-         * credentials through a default credentials provider or to expect
-         * static credentials to be passed in.
+         * To define a proxy host when instantiating the DDBStreams client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: proxy
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param proxyHost the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+        default Ddb2StreamEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * Set whether the DynamoDB Streams client should expect to load
-         * credentials through a default credentials provider or to expect
-         * static credentials to be passed in.
+         * To define a proxy port when instantiating the DDBStreams client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: proxy
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+        default Ddb2StreamEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a profile credentials provider.
+         * To define a proxy port when instantiating the DDBStreams client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default Ddb2StreamEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a profile credentials provider.
+         * To define a proxy protocol when instantiating the DDBStreams client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Default: HTTPS
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Ddb2StreamEndpointBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default Ddb2StreamEndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDBStreams client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -930,6 +775,22 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -943,6 +804,113 @@ public interface Ddb2StreamEndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the DynamoDB Streams client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the DynamoDB Streams client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
     }
 
     /**
@@ -953,6 +921,38 @@ public interface Ddb2StreamEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default Ddb2StreamEndpointBuilder basic() {
             return (Ddb2StreamEndpointBuilder) this;
+        }
+        /**
+         * Amazon DynamoDB client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param amazonDynamoDbStreamsClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDdb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
+                software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient amazonDynamoDbStreamsClient) {
+            doSetProperty("amazonDynamoDbStreamsClient", amazonDynamoDbStreamsClient);
+            return this;
+        }
+        /**
+         * Amazon DynamoDB client to use for all requests for this endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param amazonDynamoDbStreamsClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDdb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
+                String amazonDynamoDbStreamsClient) {
+            doSetProperty("amazonDynamoDbStreamsClient", amazonDynamoDbStreamsClient);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,

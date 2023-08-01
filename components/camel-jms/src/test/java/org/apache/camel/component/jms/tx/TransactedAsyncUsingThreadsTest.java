@@ -20,11 +20,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class TransactedAsyncUsingThreadsTest extends AbstractSpringJMSTestSupport {
 
     private static int counter;

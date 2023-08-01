@@ -22,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for issue CAMEL-706
  */
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
 public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractSpringJMSTestSupport {
 
     private static final LongAdder COUNTER = new LongAdder();

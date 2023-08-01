@@ -569,7 +569,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         Component component = getEndpoint().getComponent();
         if (component instanceof HealthCheckComponent hcc) {
-            getHealthCheck().setEnabled(hcc.isHealthCheckEnabled() && hcc.isHealthCheckConsumerEnabled());
+            getHealthCheck().setEnabled(hcc.isHealthCheckConsumerEnabled());
         }
 
         // validate that if backoff multiplier is in use, the threshold values is set correctly

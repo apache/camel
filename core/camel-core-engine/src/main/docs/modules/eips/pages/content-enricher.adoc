@@ -22,8 +22,7 @@ The most natural Camel approach is using xref:enrich-eip.adoc[Enrich] EIP.
 
 You can consume a message from
 one destination, transform it with something like
-xref:ROOT:velocity-component.adoc[Velocity], xref:ROOT:xquery-component.adoc[XQuery],
-or xref:ROOT:atlasmap-component.adoc[AtlasMap]
+xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery]
 and then send it on to another destination.
 
 [tabs]

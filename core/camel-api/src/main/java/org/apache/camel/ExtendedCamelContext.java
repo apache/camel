@@ -468,14 +468,6 @@ public interface ExtendedCamelContext {
     byte getStatusPhase();
 
     /**
-     * Gets access to the internal plugin manager
-     *
-     * @return the internal plugin manager
-     */
-    @Deprecated
-    PluginManager getPluginManager();
-
-    /**
      * Gets a plugin of the given type.
      *
      * @param  type the type of the extension

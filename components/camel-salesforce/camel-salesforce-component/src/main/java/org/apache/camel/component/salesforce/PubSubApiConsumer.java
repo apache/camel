@@ -24,6 +24,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
@@ -75,6 +76,11 @@ public class PubSubApiConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (endpoint.getComponent().getLoginConfig().isLazyLogin()) {
+            throw new SalesforceException("Lazy login is not supported by salesforce consumers.", null);
+        }
+        
         this.eventClassMap = endpoint.getComponent().getEventClassMap();
         this.pubSubClient = new PubSubApiClient(
                 endpoint.getComponent().getSession(), endpoint.getComponent().getLoginConfig(),

@@ -30,7 +30,7 @@ public class Ses2Configuration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String from;
-    @UriParam
+    @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private SesClient amazonSESClient;
     @UriParam(label = "security", secret = true)
@@ -49,27 +49,27 @@ public class Ses2Configuration implements Cloneable {
     private String returnPath;
     @UriParam
     private String replyToAddresses;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
-    private boolean useDefaultCredentialsProvider;
     @UriParam
     private String configurationSet;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
+    private boolean useDefaultCredentialsProvider;
+    @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     public String getAccessKey() {

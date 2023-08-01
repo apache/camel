@@ -46,6 +46,7 @@
         <plexus-xml-version>4.0.2</plexus-xml-version>
         <maven-archiver-version>3.6.0</maven-archiver-version>
         <plexus-archiver-version>4.8.0</plexus-archiver-version>
+        <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
     </properties>
 
     <dependencyManagement>
@@ -145,6 +146,11 @@
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-dependency-tree</artifactId>
                 <version>${maven-dependency-tree-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-artifact-transfer</artifactId>
+                <version>${maven-artifact-transfer-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.reporting</groupId>

@@ -199,8 +199,10 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
      * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible, to ensure the body can be read when the original message is
-     * being used later. If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the original route),
+     * to ensure the body can be read when the original message is being used later. If the body is converted to {@link org.apache.camel.StreamCache}
+     * then the message body on the current {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body.
+     * If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
      * able to re-read when accessed later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
@@ -241,8 +243,10 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
      * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible, to ensure the body can be read when the original message is
-     * being used later. If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the original route),
+     * to ensure the body can be read when the original message is being used later. If the body is converted to {@link org.apache.camel.StreamCache}
+     * then the message body on the current {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body.
+     * If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
      * able to re-read when accessed later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current
@@ -697,8 +701,10 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
      * original message body and headers as they are. You cannot enable both useOriginalMessage and useOriginalBody.
      * <p/>
      * The original input message is defensively copied, and the copied message body is converted to
-     * {@link org.apache.camel.StreamCache} if possible, to ensure the body can be read when the original message is
-     * being used later. If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
+     * {@link org.apache.camel.StreamCache} if possible (stream caching is enabled, can be disabled globally or on the original route),
+     * to ensure the body can be read when the original message is being used later. If the body is converted to {@link org.apache.camel.StreamCache}
+     * then the message body on the current {@link org.apache.camel.Exchange} is replaced with the {@link org.apache.camel.StreamCache} body.
+     * If the body is not converted to {@link org.apache.camel.StreamCache} then the body will not be
      * able to re-read when accessed later.
      * <p/>
      * <b>Important:</b> The original input means the input message that are bounded by the current

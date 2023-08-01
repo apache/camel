@@ -288,6 +288,13 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         return this.exchange.getSafeCopyProperty(key, type);
     }
 
+    public void copySafeCopyPropertiesTo(ExchangeExtension target) {
+        if (exchange.safeCopyProperties != null && !exchange.safeCopyProperties.isEmpty()) {
+            exchange.safeCopyProperties.entrySet().stream()
+                    .forEach(entry -> target.setSafeCopyProperty(entry.getKey(), entry.getValue().safeCopy()));
+        }
+    }
+
     @Override
     public boolean isFailureHandled() {
         return this.failureHandled;

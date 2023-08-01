@@ -29,8 +29,6 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -59,8 +57,6 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "dataSource": return javax.sql.DataSource.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
@@ -85,8 +81,6 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "dataSource": return target.getDataSource();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":

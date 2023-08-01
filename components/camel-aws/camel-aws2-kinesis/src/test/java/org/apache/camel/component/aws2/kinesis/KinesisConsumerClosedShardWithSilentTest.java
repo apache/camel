@@ -68,35 +68,47 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @BeforeEach
     public void setup() {
+        component.start();
+
         Kinesis2Configuration configuration = new Kinesis2Configuration();
         configuration.setAmazonKinesisClient(kinesisClient);
         configuration.setIteratorType(ShardIteratorType.LATEST);
         configuration.setShardClosed(Kinesis2ShardClosedStrategyEnum.silent);
         configuration.setStreamName("streamName");
+
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint("aws2-kinesis:foo", configuration, component);
         endpoint.start();
         underTest = new Kinesis2Consumer(endpoint, processor);
+        underTest.setConnection(component.getConnection());
+        underTest.start();
 
         SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
-                .nextShardIterator("shardIterator")
-                .records(
-                        Record.builder().sequenceNumber("1").data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                .build(),
-                        Record.builder().sequenceNumber("2").data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                .build())
-                .build());
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+        when(kinesisClient
+                .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
+                        .nextShardIterator("shardIterator")
+                        .records(
+                                Record.builder().sequenceNumber("1")
+                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                        .build(),
+                                Record.builder().sequenceNumber("2")
+                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                        .build())
+                        .build());
+
+        when(kinesisClient
+                .getShardIterator(any(GetShardIteratorRequest.class)))
                 .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
-        when(kinesisClient.listShards(any(ListShardsRequest.class)))
+        when(kinesisClient
+                .listShards(any(ListShardsRequest.class)))
                 .thenReturn(ListShardsResponse.builder().shards(shardList).build());
 
         context.start();
         underTest.start();
+
     }
 
     @Test

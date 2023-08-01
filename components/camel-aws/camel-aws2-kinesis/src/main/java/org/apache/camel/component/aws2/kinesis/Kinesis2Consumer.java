@@ -33,8 +33,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
@@ -48,16 +46,26 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements ResumeAware<ResumeStrategy> {
     private static final Logger LOG = LoggerFactory.getLogger(Kinesis2Consumer.class);
+
+    private KinesisConnection connection;
     private boolean isShardClosed;
     private ResumeStrategy resumeStrategy;
 
-    public Kinesis2Consumer(Kinesis2Endpoint endpoint, Processor processor) {
+    public Kinesis2Consumer(Kinesis2Endpoint endpoint,
+                            Processor processor) {
         super(endpoint, processor);
+    }
+
+    public KinesisConnection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(KinesisConnection connection) {
+        this.connection = connection;
     }
 
     @Override
     protected int poll() throws Exception {
-
         var processedExchangeCount = new AtomicInteger(0);
 
         if (!getEndpoint().getConfiguration().getShardId().isEmpty()) {
@@ -65,17 +73,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                     .builder()
                     .streamName(getEndpoint().getConfiguration().getStreamName())
                     .build();
-            DescribeStreamResponse response = null;
+            DescribeStreamResponse response;
             if (getEndpoint().getConfiguration().isAsyncClient()) {
                 try {
-                    response = getAsyncClient()
+                    response = connection
+                            .getAsyncClient(getEndpoint())
                             .describeStream(request)
                             .get();
                 } catch (ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                response = getClient().describeStream(request);
+                response = connection
+                        .getClient(getEndpoint())
+                        .describeStream(request);
             }
 
             var shard = response
@@ -90,13 +101,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("The shard can't be found"));
 
-            fetchAndPrepareRecordsForCamel(shard, processedExchangeCount);
+            fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
 
         } else {
-            getShardList()
+            getShardList(connection)
                     .parallelStream()
                     .forEach(shard -> {
-                        fetchAndPrepareRecordsForCamel(shard, processedExchangeCount);
+                        fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
                     });
         }
 
@@ -105,10 +116,11 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
     private void fetchAndPrepareRecordsForCamel(
             final Shard shard,
+            final KinesisConnection kinesisConnection,
             AtomicInteger processedExchangeCount) {
-        String shardIterator = null;
+        String shardIterator;
         try {
-            shardIterator = getShardIterator(shard);
+            shardIterator = getShardIterator(shard, kinesisConnection);
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -126,17 +138,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                         .getMaxResultsPerRequest())
                 .build();
 
-        GetRecordsResponse result = null;
+        GetRecordsResponse result;
         if (getEndpoint().getConfiguration().isAsyncClient()) {
             try {
-                result = getAsyncClient()
+                result = kinesisConnection
+                        .getAsyncClient(getEndpoint())
                         .getRecords(req)
                         .get();
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            result = getClient().getRecords(req);
+            result = kinesisConnection
+                    .getClient(getEndpoint())
+                    .getRecords(req);
         }
 
         try {
@@ -186,20 +201,15 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         return processedExchanges;
     }
 
-    private KinesisClient getClient() {
-        return getEndpoint().getClient();
-    }
-
-    private KinesisAsyncClient getAsyncClient() {
-        return getEndpoint().getAsyncClient();
-    }
-
     @Override
     public Kinesis2Endpoint getEndpoint() {
         return (Kinesis2Endpoint) super.getEndpoint();
     }
 
-    private String getShardIterator(final Shard shard) throws ExecutionException, InterruptedException {
+    private String getShardIterator(
+            final Shard shard,
+            final KinesisConnection kinesisConnection)
+            throws ExecutionException, InterruptedException {
 
         var shardId = shard.shardId();
         isShardClosed = shard.sequenceNumberRange().endingSequenceNumber() != null;
@@ -215,17 +225,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
         resume(request);
 
-        GetShardIteratorResponse result = null;
+        GetShardIteratorResponse result;
         if (getEndpoint().getConfiguration().isAsyncClient()) {
             try {
-                result = getAsyncClient()
+                result = kinesisConnection
+                        .getAsyncClient(getEndpoint())
                         .getShardIterator(request.build())
                         .get();
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            result = getClient().getShardIterator(request.build());
+            result = kinesisConnection
+                    .getClient(getEndpoint())
+                    .getShardIterator(request.build());
         }
 
         return result.shardIterator();
@@ -289,6 +302,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     protected void doStart() throws Exception {
         super.doStart();
 
+        ObjectHelper.notNull(connection, "connection", this);
+
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();
         }
@@ -298,17 +313,17 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         return getEndpoint().getConfiguration();
     }
 
-    private List<Shard> getShardList() {
-
+    private List<Shard> getShardList(final KinesisConnection kinesisConnection) {
         var request = ListShardsRequest
                 .builder()
                 .streamName(getEndpoint().getConfiguration().getStreamName())
                 .build();
 
-        List<Shard> shardList = null;
+        List<Shard> shardList;
         if (getEndpoint().getConfiguration().isAsyncClient()) {
             try {
-                shardList = getAsyncClient()
+                shardList = kinesisConnection
+                        .getAsyncClient(getEndpoint())
                         .listShards(request)
                         .get()
                         .shards();
@@ -316,10 +331,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 throw new RuntimeException(e);
             }
         } else {
-            shardList = getClient().listShards(request).shards();
+            shardList = kinesisConnection
+                    .getClient(getEndpoint())
+                    .listShards(request)
+                    .shards();
         }
 
         return shardList;
-
     }
+
 }

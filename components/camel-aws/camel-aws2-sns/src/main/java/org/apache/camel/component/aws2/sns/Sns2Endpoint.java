@@ -27,8 +27,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -61,9 +59,6 @@ import software.amazon.awssdk.services.sns.model.Topic;
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);
-
-    private ComponentsHealthCheckRepository healthCheckRepository;
-    private Sns2HealthCheck clientHealthCheck;
 
     private SnsClient snsClient;
 
@@ -104,6 +99,11 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     @Override
+    public Sns2Component getComponent() {
+        return (Sns2Component) super.getComponent();
+    }
+
+    @Override
     public void doInit() throws Exception {
         super.doInit();
         snsClient = configuration.getAmazonSNSClient() != null
@@ -112,15 +112,6 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new Sns2HeaderFilterStrategy();
-        }
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            // clientHealthCheck = new Sns2HealthCheck(this, getId());
-            // healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
 
         if (configuration.getTopicArn() == null) {
@@ -208,10 +199,6 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
             }
         }
 
-        if (healthCheckRepository != null && clientHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(clientHealthCheck);
-            clientHealthCheck = null;
-        }
         super.doStop();
     }
 

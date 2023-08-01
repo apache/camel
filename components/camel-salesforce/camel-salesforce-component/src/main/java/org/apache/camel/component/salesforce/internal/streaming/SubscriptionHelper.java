@@ -103,6 +103,10 @@ public class SubscriptionHelper extends ServiceSupport {
     protected void doStart() throws Exception {
         session = component.getSession();
 
+        if (component.getLoginConfig().isLazyLogin()) {
+            throw new CamelException("Lazy login is not supported by salesforce consumers.");
+        }
+
         // create CometD client
         client = createClient(component, session);
 

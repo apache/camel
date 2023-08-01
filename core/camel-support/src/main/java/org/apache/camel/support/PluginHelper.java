@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,15 +55,16 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
+/**
+ * Convenient helper to get easy access to various extensions from {@link ExtendedCamelContext}.
+ */
 public final class PluginHelper {
-    private PluginHelper() {
 
+    private PluginHelper() {
     }
 
     /**
      * Returns the bean post processor used to do any bean customization.
-     *
-     * @return the bean post processor.
      */
     public static CamelBeanPostProcessor getBeanPostProcessor(CamelContext camelContext) {
         return getBeanPostProcessor(camelContext.getCamelContextExtension());
@@ -72,8 +72,6 @@ public final class PluginHelper {
 
     /**
      * Returns the bean post processor used to do any bean customization.
-     *
-     * @return the bean post processor.
      */
     public static CamelBeanPostProcessor getBeanPostProcessor(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(CamelBeanPostProcessor.class);
@@ -84,7 +82,6 @@ public final class PluginHelper {
      */
     public static CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory(CamelContext camelContext) {
         return getDependencyInjectionAnnotationFactory(camelContext.getCamelContextExtension());
-
     }
 
     /**
@@ -197,8 +194,6 @@ public final class PluginHelper {
 
     /**
      * Gets the factory finder resolver to use
-     *
-     * @return the factory finder resolver
      */
     public static FactoryFinderResolver getFactoryFinderResolver(CamelContext camelContext) {
         return getFactoryFinderResolver(camelContext.getCamelContextExtension());
@@ -206,8 +201,6 @@ public final class PluginHelper {
 
     /**
      * Gets the factory finder resolver to use
-     *
-     * @return the factory finder resolver
      */
     public static FactoryFinderResolver getFactoryFinderResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(FactoryFinderResolver.class);
@@ -215,8 +208,6 @@ public final class PluginHelper {
 
     /**
      * Returns the package scanning class resolver
-     *
-     * @return the resolver
      */
     public static PackageScanClassResolver getPackageScanClassResolver(CamelContext camelContext) {
         return getPackageScanClassResolver(camelContext.getCamelContextExtension());
@@ -224,8 +215,6 @@ public final class PluginHelper {
 
     /**
      * Returns the package scanning class resolver
-     *
-     * @return the resolver
      */
     public static PackageScanClassResolver getPackageScanClassResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(PackageScanClassResolver.class);
@@ -233,8 +222,6 @@ public final class PluginHelper {
 
     /**
      * Returns the package scanning resource resolver
-     *
-     * @return the resolver
      */
     public static PackageScanResourceResolver getPackageScanResourceResolver(CamelContext camelContext) {
         return getPackageScanResourceResolver(camelContext.getCamelContextExtension());
@@ -242,8 +229,6 @@ public final class PluginHelper {
 
     /**
      * Returns the package scanning resource resolver
-     *
-     * @return the resolver
      */
     public static PackageScanResourceResolver getPackageScanResourceResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(PackageScanResourceResolver.class);
@@ -251,8 +236,6 @@ public final class PluginHelper {
 
     /**
      * Returns the JAXB Context factory used to create Models.
-     *
-     * @return the JAXB Context factory used to create Models.
      */
     public static ModelJAXBContextFactory getModelJAXBContextFactory(CamelContext camelContext) {
         return getModelJAXBContextFactory(camelContext.getCamelContextExtension());
@@ -260,8 +243,6 @@ public final class PluginHelper {
 
     /**
      * Returns the JAXB Context factory used to create Models.
-     *
-     * @return the JAXB Context factory used to create Models.
      */
     public static ModelJAXBContextFactory getModelJAXBContextFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelJAXBContextFactory.class);
@@ -283,8 +264,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current data format resolver
-     *
-     * @return the resolver
      */
     public static DataFormatResolver getDataFormatResolver(CamelContext camelContext) {
         return getDataFormatResolver(camelContext.getCamelContextExtension());
@@ -292,8 +271,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current data format resolver
-     *
-     * @return the resolver
      */
     public static DataFormatResolver getDataFormatResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(DataFormatResolver.class);
@@ -329,8 +306,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current health check resolver
-     *
-     * @return the resolver
      */
     public static HealthCheckResolver getHealthCheckResolver(CamelContext camelContext) {
         return getHealthCheckResolver(camelContext.getCamelContextExtension());
@@ -338,8 +313,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current health check resolver
-     *
-     * @return the resolver
      */
     public static HealthCheckResolver getHealthCheckResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(HealthCheckResolver.class);
@@ -347,8 +320,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current dev console resolver
-     *
-     * @return the resolver
      */
     public static DevConsoleResolver getDevConsoleResolver(CamelContext camelContext) {
         return getDevConsoleResolver(camelContext.getCamelContextExtension());
@@ -356,8 +327,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current dev console resolver
-     *
-     * @return the resolver
      */
     public static DevConsoleResolver getDevConsoleResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(DevConsoleResolver.class);
@@ -383,8 +352,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}
-     *
-     * @return the factory
      */
     public static InternalProcessorFactory getInternalProcessorFactory(CamelContext camelContext) {
         return getInternalProcessorFactory(camelContext.getCamelContextExtension());
@@ -392,8 +359,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}
-     *
-     * @return the factory
      */
     public static InternalProcessorFactory getInternalProcessorFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(InternalProcessorFactory.class);
@@ -401,8 +366,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
-     *
-     * @return the factory
      */
     public static InterceptEndpointFactory getInterceptEndpointFactory(CamelContext camelContext) {
         return getInterceptEndpointFactory(camelContext.getCamelContextExtension());
@@ -410,8 +373,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
-     *
-     * @return the factory
      */
     public static InterceptEndpointFactory getInterceptEndpointFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(InterceptEndpointFactory.class);
@@ -419,8 +380,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current {@link org.apache.camel.spi.RouteFactory}
-     *
-     * @return the factory
      */
     public static RouteFactory getRouteFactory(CamelContext camelContext) {
         return getRouteFactory(camelContext.getCamelContextExtension());
@@ -428,8 +387,6 @@ public final class PluginHelper {
 
     /**
      * Gets the current {@link org.apache.camel.spi.RouteFactory}
-     *
-     * @return the factory
      */
     public static RouteFactory getRouteFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RouteFactory.class);
@@ -451,8 +408,6 @@ public final class PluginHelper {
 
     /**
      * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @return the manager
      */
     public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(CamelContext camelContext) {
         return getAsyncProcessorAwaitManager(camelContext.getCamelContextExtension());
@@ -460,8 +415,6 @@ public final class PluginHelper {
 
     /**
      * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @return the manager
      */
     public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(AsyncProcessorAwaitManager.class);

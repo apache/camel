@@ -37,7 +37,7 @@ public class CloudtrailConfiguration implements Cloneable {
     @UriParam(description = "The region in which Cloudtrail client needs to work. When using this parameter, the configuration will expect the lowercase name of the "
                             + "region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()")
     private String region;
-    @UriParam(description = "Amazon Cloudtrail client to use for all requests for this endpoint")
+    @UriParam(label = "advanced", description = "Amazon Cloudtrail client to use for all requests for this endpoint")
     @Metadata(autowired = true)
     private CloudTrailClient cloudTrailClient;
     @UriParam(description = "Maximum number of records that will be fetched in each poll",
@@ -45,31 +45,28 @@ public class CloudtrailConfiguration implements Cloneable {
     private int maxResults = 1;
     @UriParam(description = "Specify an event source to select events")
     private String eventSource;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Cloudtrail client")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(description = "To define a proxy host when instantiating the Cloudtrail client")
+    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the Cloudtrail client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the Cloudtrail client")
+    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the Cloudtrail client")
     private Integer proxyPort;
-    @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
+    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false",
-              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride"
-                            + " option")
+              description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
     private boolean overrideEndpoint;
-    @UriParam(
-              description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
+    @UriParam(description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false",
-              description = "Set whether the Cloudtrail client should expect to load credentials through a default credentials provider or to expect "
-                            +
-                            "static credentials to be passed in.")
+    @UriParam(label = "security",
+              description = "Set whether the Cloudtrail client should expect to load credentials through a default credentials provider or to expect"
+                            + " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false",
+    @UriParam(label = "security",
               description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(
+    @UriParam(label = "security",
               description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 

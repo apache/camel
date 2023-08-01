@@ -21,12 +21,11 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.infra.core.annotations.ContextProvider;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Isolated;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Isolated
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Tags({ @Tag("not-parallel"), @Tag("spring") })
 public class JmsRouteUsingSpringTest extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
 

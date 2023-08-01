@@ -29,7 +29,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 
 public class OpenSearchLocalContainerService implements OpenSearchService, ContainerService<OpensearchContainer> {
-    public static final String DEFAULT_OPEN_SEARCH_CONTAINER = "opensearchproject/opensearch:2.8.0";
+    public static final String DEFAULT_OPEN_SEARCH_CONTAINER = "opensearchproject/opensearch:2.9.0";
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";

@@ -20,9 +20,11 @@ The following components has been removed:
 |===
 | Component | Alternative component(s)
 | camel-any23                          | none
+| camel-atlasmap                       | none
 | camel-atmos                          | none
 | camel-caffeine-lrucache              | camel-cache, camel-ignite, camel-infinispan
 | camel-cdi                            | camel-spring-boot, camel-quarkus
+| camel-corda                          | none
 | camel-directvm                       | camel-direct
 | camel-dozer                          | camel-mapstruct
 | camel-elasticsearch-rest             | camel-elasticsearch
@@ -90,12 +92,59 @@ We have removed deprecated APIs such as the following:
 - The `org.apache.camel.support.EventNotifierSupport` abstract class now implements `CamelContextAware`.
 - The type for `dumpRoutes` on `CamelContext` has changed from `boolean` to `String` to allow specifying either xml or yaml.
 
+TIP: The `org.apache.camel.support.PluginHelper` gives easy access to various extensions and context plugins, that
+was available previously in Camel v3 directly from `CamelContext`.
+
 == EIP Changes
 
 Removed `lang` attribute for the `<description>` on every EIPs.
 
 The `InOnly` and `InOut` EIPs has been removed.
 Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
+
+=== Poll Enrich EIP
+
+The polled endpoint URI is now stored as property on the `Exchange` (with key `CamelToEndpoint`) like all other EIPs.
+Before the URI was stored as a message header.
+
+== CircuitBreaker EIP
+
+The following options in `camel-resilience4j` was mistakenly not defined as attributes:
+
+|===
+| *Option*
+| bulkheadEnabled
+| bulkheadMaxConcurrentCalls
+| bulkheadMaxWaitDuration
+| timeoutEnabled
+| timeoutExecutorService
+| timeoutDuration
+| timeoutCancelRunningFuture
+|===
+
+These options were not exposed in YAML DSL, and in XML DSL you need to migrate from:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration>
+        <timeoutEnabled>true</timeoutEnabled>
+        <timeoutDuration>2000</timeoutDuration>
+    </resilience4jConfiguration>
+...
+</circuitBreaker>
+----
+
+To use attributes instead:
+
+[source,xml]
+----
+<circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+...
+</circuitBreaker>
+----
+
 
 == XML DSL
 
@@ -150,6 +199,26 @@ Health checks are now by default only readiness checks out of the box.
 Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
 one of each out of the box.
 
+Only consumer based health-checks is enabled by default.
+
+=== Producer Health Checks
+
+The option `camel.health.components-enabled` has been renamed to `camel.health.producers-enabled`.
+
+Some components (in particular AWS) provides also health checks for producers; in Camel 3.x
+these health checks did not work properly and has been disabled in the source.
+To continue this behaviour in Camel 4, then producer based health checks are disabled.
+
+Notice that `camel-kafka` comes with producer based health-check that worked in Camel 3,
+and therefore this change in Camel 4, means that this health-check is disabled.
+
+You *MUST* enable producer health-checks globally, such as in `application.properties`:
+
+[source,properties]
+----
+camel.health.producers-enabled = true
+----
+
 == JMX
 
 Camel now also include MBeans for `doCatch` and `doFinally` in the tree of processor MBeans.
@@ -202,44 +271,6 @@ that contains the input and outgoing (if `InOut`) messages.
 
 The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
 serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
-
-== CircuitBreaker EIP
-
-The following options in `camel-resilience4j` was mistakenly not defined as attributes:
-
-|===
-| *Option*
-| bulkheadEnabled
-| bulkheadMaxConcurrentCalls
-| bulkheadMaxWaitDuration
-| timeoutEnabled
-| timeoutExecutorService
-| timeoutDuration
-| timeoutCancelRunningFuture
-|===
-
-These options were not exposed in YAML DSL, and in XML DSL you need to migrate from:
-
-[source,xml]
-----
-<circuitBreaker>
-    <resilience4jConfiguration>
-        <timeoutEnabled>true</timeoutEnabled>
-        <timeoutDuration>2000</timeoutDuration>
-    </resilience4jConfiguration>
-...
-</circuitBreaker>
-----
-
-To use attributes instead:
-
-[source,xml]
-----
-<circuitBreaker>
-    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
-...
-</circuitBreaker>
-----
 
 == OpenAPI Maven Plugin
 

@@ -30,7 +30,7 @@ public class SecretsManagerConfiguration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
-    @UriParam
+    @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private SecretsManagerClient secretsManagerClient;
     @UriParam(label = "security", secret = true)
@@ -40,25 +40,25 @@ public class SecretsManagerConfiguration implements Cloneable {
     @UriParam
     @Metadata(required = true)
     private SecretsManagerOperations operation;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pojoRequest;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean binaryPayload;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
 
     @UriParam(defaultValue = "false")

@@ -21,14 +21,25 @@ import java.nio.ByteBuffer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 
 public class Kinesis2Producer extends DefaultProducer {
 
+    private KinesisConnection connection;
+
     public Kinesis2Producer(Kinesis2Endpoint endpoint) {
         super(endpoint);
+    }
+
+    public KinesisConnection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(KinesisConnection connection) {
+        this.connection = connection;
     }
 
     @Override
@@ -39,7 +50,7 @@ public class Kinesis2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         PutRecordRequest request = createRequest(exchange);
-        PutRecordResponse putRecordResult = getEndpoint().getClient().putRecord(request);
+        PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
         Message message = getMessageForResponse(exchange);
         message.setHeader(Kinesis2Constants.SEQUENCE_NUMBER, putRecordResult.sequenceNumber());
         message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResult.shardId());
@@ -62,5 +73,12 @@ public class Kinesis2Producer extends DefaultProducer {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ObjectHelper.notNull(connection, "connection", this);
     }
 }

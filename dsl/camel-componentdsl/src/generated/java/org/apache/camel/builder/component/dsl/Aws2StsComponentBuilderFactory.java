@@ -138,67 +138,6 @@ public interface Aws2StsComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the STS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the STS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the STS client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which STS client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -217,39 +156,6 @@ public interface Aws2StsComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a existing configured AWS STS as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sts.StsClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param stsClient the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder stsClient(
-                software.amazon.awssdk.services.sts.StsClient stsClient) {
-            doSetProperty("stsClient", stsClient);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -263,41 +169,6 @@ public interface Aws2StsComponentBuilderFactory {
         default Aws2StsComponentBuilder uriEndpointOverride(
                 java.lang.String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the STS client should expect to load credentials through
-         * a default credentials provider or to expect static credentials to be
-         * passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the STS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2StsComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -322,6 +193,67 @@ public interface Aws2StsComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AWS STS as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.sts.StsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param stsClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder stsClient(
+                software.amazon.awssdk.services.sts.StsClient stsClient) {
+            doSetProperty("stsClient", stsClient);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the STS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the STS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the STS client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -336,6 +268,22 @@ public interface Aws2StsComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -347,6 +295,58 @@ public interface Aws2StsComponentBuilderFactory {
          */
         default Aws2StsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the STS client should expect to load credentials through
+         * a default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the STS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2StsComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -378,19 +378,19 @@ public interface Aws2StsComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((STS2Component) component).setOperation((org.apache.camel.component.aws2.sts.STS2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((STS2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((STS2Component) component).setPojoRequest((boolean) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((STS2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((STS2Component) component).setRegion((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((STS2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "autowiredEnabled": ((STS2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "stsClient": getOrCreateConfiguration((STS2Component) component).setStsClient((software.amazon.awssdk.services.sts.StsClient) value); return true;
             case "proxyHost": getOrCreateConfiguration((STS2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((STS2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((STS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": getOrCreateConfiguration((STS2Component) component).setRegion((java.lang.String) value); return true;
-            case "stsClient": getOrCreateConfiguration((STS2Component) component).setStsClient((software.amazon.awssdk.services.sts.StsClient) value); return true;
+            case "accessKey": getOrCreateConfiguration((STS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((STS2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((STS2Component) component).setSecretKey((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((STS2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "uriEndpointOverride": getOrCreateConfiguration((STS2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((STS2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((STS2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
-            case "autowiredEnabled": ((STS2Component) component).setAutowiredEnabled((boolean) value); return true;
-            case "accessKey": getOrCreateConfiguration((STS2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": getOrCreateConfiguration((STS2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

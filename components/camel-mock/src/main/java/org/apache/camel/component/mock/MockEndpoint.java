@@ -1797,7 +1797,24 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
         if (!ObjectHelper.equal(expectedValue, actualValue)) {
+            logReceivedExchanges();
+
             fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
+        }
+    }
+
+    private void logReceivedExchanges() {
+        for (Exchange exchange : receivedExchanges) {
+            LOG.warn("Received exchange: {}", exchange);
+            final Message exchangeMessage = exchange.getMessage();
+            if (exchangeMessage != null) {
+                LOG.warn("Received exchange message: {}", exchangeMessage);
+                final Object body = exchangeMessage.getBody();
+                if (body != null) {
+                    LOG.warn("Received exchange message body: {}", body);
+                    LOG.warn("Received exchange message body type: {}", body.getClass());
+                }
+            }
         }
     }
 

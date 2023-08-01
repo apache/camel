@@ -24,6 +24,9 @@ Camel provides the following health checks out of the box:
   then the consumer is UP. This is on purpose to avoid having the health check to be initially UP
   and then after first poll run then DOWN again because the consumer cannot poll from external system;
   which causes the health check to be _flaky_.
+- _producers_ A `HealthCheckRegistry` which are for producer based health-checks. There are a few components
+  which comes with producer health checks such as `camel-kafka` and many of the `AWS` components.
+  However, producer health checks are by default disabled. See further below for how to enable producer health checks.
 - _registry_ - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
 
 == IDs
@@ -56,8 +59,10 @@ public boolean isReadiness() {
 Camel supports via `camel-main` to configure health-checks from configuration files. This is possible for runtimes that leverage `camel-main`
 such as Camel on Spring Boot, or Camel K.
 
-Camel will automatically enable `context`, `routes`, `consumers`, and `registry` health-checks if `camel-health` is detected on the classpath.
-They are all enabled by default (context is always enabled and cannot be disabled). However, you can configure them, for example to turn them off:
+Camel will automatically enable `context`, `routes`, `consumers`, `producers` and `registry` health-checks if `camel-health` is detected on the classpath.
+They are all enabled by default (except for `producers` which is disabled).
+
+However, you can configure them, for example to turn them off:
 
 [source,properties]
 ----
@@ -109,6 +114,47 @@ camel.health.exclude-pattern = consumer:myroute*
 ----
 
 which will turn off checks for all consumers on routes that starts with `myroute` in the route ID.
+
+
+Or you can turn off producer based health checks by their component name:
+
+[source,properties]
+----
+camel.health.exclude-pattern = producer:kafka*
+----
+
+Or all AWS producer health-checks
+
+[source,properties]
+----
+camel.health.exclude-pattern = producer:aws*
+----
+
+=== Turning on producer level health-checks
+
+Only consumer based health-checks is enabled by default.
+
+Some components (in particular AWS) provides also health checks for producers.
+These health checks can be enabled via:
+
+[source,properties]
+----
+camel.health.producersEnabled=true
+----
+
+=== Turning off health checks from components
+
+Some Camel components comes with health-checks.
+
+For example to turn off both consumer and producer health checks from Kafka:
+
+[source,properties]
+----
+camel.component.kafka.health-check-consumer-enabled = false
+camel.component.kafka.health-check-producer-enabled = false
+----
+
+TIP: You can turn of either consumer, producer or both.
 
 == JMX management
 

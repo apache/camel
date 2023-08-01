@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Converter methods to convert from / to Vert.x Buffer
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class VertxBufferConverter {
 
     private VertxBufferConverter() {

@@ -18,6 +18,9 @@ package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
@@ -28,6 +31,8 @@ import org.apache.camel.util.URISupport;
 public class Ddb2Producer extends DefaultProducer {
 
     private transient String ddbProducerToString;
+    private HealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
 
     public Ddb2Producer(Endpoint endpoint) {
         super(endpoint);
@@ -92,4 +97,29 @@ public class Ddb2Producer extends DefaultProducer {
     public Ddb2Endpoint getEndpoint() {
         return (Ddb2Endpoint) super.getEndpoint();
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            String id = getEndpoint().getId();
+            producerHealthCheck = new Db2ProducerHealthCheck(getEndpoint(), id);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
+    }
+
 }

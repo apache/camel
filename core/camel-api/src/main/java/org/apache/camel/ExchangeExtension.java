@@ -218,6 +218,11 @@ public interface ExchangeExtension {
     void setSafeCopyProperty(String key, SafeCopyProperty value);
 
     /**
+     * Copy the safe copy properties from this exchange to the target exchange
+     */
+    void copySafeCopyPropertiesTo(ExchangeExtension target);
+
+    /**
      * Gets the internal properties from this exchange. The known set of internal keys is defined in
      * {@link ExchangePropertyKey}.
      * <p/>
@@ -246,7 +251,15 @@ public interface ExchangeExtension {
      */
     void setDefaultConsumerCallback(AsyncCallback callback);
 
+    /**
+     * Returns whether the exchange has been failure handed
+     * @return true if failure handled or false otherwise
+     */
     boolean isFailureHandled();
 
+    /**
+     * Sets whether the exchange has been failure handled
+     * @param failureHandled true if failure handled or false otherwise
+     */
     void setFailureHandled(boolean failureHandled);
 }

@@ -22,13 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * For working with Amazon MQ SDK v2.
  */
 @Component("aws2-mq")
-public class MQ2Component extends DefaultComponent {
+public class MQ2Component extends HealthCheckComponent {
+
     @Metadata
     private MQ2Configuration configuration = new MQ2Configuration();
 

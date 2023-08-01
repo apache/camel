@@ -35,6 +35,10 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "awslambdaclient":
         case "awsLambdaClient": getOrCreateConfiguration(target).setAwsLambdaClient(property(camelContext, software.amazon.awssdk.services.lambda.LambdaClient.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.lambda.Lambda2Configuration.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.lambda.Lambda2Operations.class, value)); return true;
@@ -80,6 +84,10 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "awslambdaclient":
         case "awsLambdaClient": return software.amazon.awssdk.services.lambda.LambdaClient.class;
         case "configuration": return org.apache.camel.component.aws2.lambda.Lambda2Configuration.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.lambda.Lambda2Operations.class;
@@ -121,6 +129,10 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "awslambdaclient":
         case "awsLambdaClient": return getOrCreateConfiguration(target).getAwsLambdaClient();
         case "configuration": return target.getConfiguration();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();

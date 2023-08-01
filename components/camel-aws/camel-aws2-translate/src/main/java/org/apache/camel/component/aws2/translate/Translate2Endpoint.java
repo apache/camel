@@ -22,8 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.translate.client.Translate2ClientFactory;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -38,9 +36,6 @@ import software.amazon.awssdk.services.translate.TranslateClient;
 public class Translate2Endpoint extends ScheduledPollEndpoint {
 
     private TranslateClient translateClient;
-
-    private ComponentsHealthCheckRepository healthCheckRepository;
-    private Translate2ClientHealthCheck clientHealthCheck;
 
     @UriParam
     private Translate2Configuration configuration;
@@ -61,6 +56,11 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public Translate2Component getComponent() {
+        return (Translate2Component) super.getComponent();
+    }
+
+    @Override
     public void doStart() throws Exception {
         super.doStart();
 
@@ -68,24 +68,10 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
                 = configuration.getTranslateClient() != null
                         ? configuration.getTranslateClient()
                         : Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            // Do not register the health check until we resolve CAMEL-18992
-            // clientHealthCheck = new Translate2ClientHealthCheck(this, getId());
-            // healthCheckRepository.addHealthCheck(clientHealthCheck);
-        }
     }
 
     @Override
     public void doStop() throws Exception {
-        if (healthCheckRepository != null && clientHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(clientHealthCheck);
-            clientHealthCheck = null;
-        }
-
         if (ObjectHelper.isEmpty(configuration.getTranslateClient())) {
             if (translateClient != null) {
                 translateClient.close();
