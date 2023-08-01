@@ -94,13 +94,13 @@ public class BomGeneratorMojo extends AbstractMojo {
     /**
      * The user configuration
      */
-    @Parameter(readonly = true)
+    @Parameter
     protected DependencySet dependencies;
 
     /**
      * The conflict checks configured by the user
      */
-    @Parameter(readonly = true)
+    @Parameter
     protected ExternalBomConflictCheckSet checkConflicts;
 
     /**
