@@ -31,10 +31,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 
 /**
- * {@link DynamicRouterConcurrentEIPTest}
+ * {@link DynamicRouterConcurrentEIPManualTest}
  */
 @Disabled("Manual test together with DynamicRouterConcurrentEIPTest")
-public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
+public class DynamicRouterConcurrentPOJOManualTest extends ContextTestSupport {
 
     private static final int COUNT = 100;
 
