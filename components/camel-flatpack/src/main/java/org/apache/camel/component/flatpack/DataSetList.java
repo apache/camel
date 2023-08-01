@@ -65,7 +65,7 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
         dataSet.goTop();
 
         return new Iterator<Map<String, Object>>() {
-            private int pos = 0;
+            private int pos;
 
             public boolean hasNext() {
                 return pos < size();
