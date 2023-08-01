@@ -38,7 +38,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.StreamCacheException;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
@@ -73,7 +72,6 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -992,68 +990,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public StreamCache before(Exchange exchange) throws Exception {
-            final Message inMessage = exchange.getIn();
-
-            // check if body is already cached
-            try {
-                Object body = inMessage.getBody();
-                if (body == null) {
-                    return null;
-                } else if (body instanceof StreamCache) {
-                    StreamCache sc = (StreamCache) body;
-                    // reset so the cache is ready to be used before processing
-                    sc.reset();
-                    return sc;
-                }
-            } catch (Exception e) {
-                // lets allow Camels error handler to deal with stream cache failures
-                StreamCacheException tce = new StreamCacheException(null, e);
-                exchange.setException(tce);
-                // because this is stream caching error then we cannot use redelivery as the message body is corrupt
-                // so mark as redelivery exhausted
-                exchange.getExchangeExtension().setRedeliveryExhausted(true);
-            }
-            // check if we somewhere failed due to a stream caching exception
-            Throwable cause = exchange.getException();
-            if (cause == null) {
-                cause = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            }
-            return tryStreamCache(exchange, inMessage, cause);
-        }
-
-        private StreamCache tryStreamCache(Exchange exchange, Message inMessage, Throwable cause) {
-            final boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
-            if (!failed) {
-                boolean disabled = exchange.getExchangeExtension().isStreamCacheDisabled();
-                if (disabled) {
-                    return null;
-                }
-                try {
-                    // cache the body and if we could do that replace it as the new body
-                    StreamCache sc = strategy.cache(exchange);
-                    if (sc != null) {
-                        inMessage.setBody(sc);
-                    }
-                    return sc;
-                } catch (Exception e) {
-                    // lets allow Camels error handler to deal with stream cache failures
-                    StreamCacheException tce = new StreamCacheException(exchange.getMessage().getBody(), e);
-                    exchange.setException(tce);
-                    // because this is stream caching error then we cannot use redelivery as the message body is corrupt
-                    // so mark as redelivery exhausted
-                    exchange.getExchangeExtension().setRedeliveryExhausted(true);
-                }
-            }
-            return null;
+            return StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
         }
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            Object body = exchange.getMessage().getBody();
-            if (body instanceof StreamCache) {
-                // reset so the cache is ready to be reused after processing
-                ((StreamCache) body).reset();
-            }
+            // reset cached streams so they can be read again
+            MessageHelper.resetStreamCache(exchange.getMessage());
         }
 
         @Override
