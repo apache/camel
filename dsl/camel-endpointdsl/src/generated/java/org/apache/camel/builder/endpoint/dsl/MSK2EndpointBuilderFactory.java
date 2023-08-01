@@ -43,37 +43,6 @@ public interface MSK2EndpointBuilderFactory {
             return (AdvancedMSK2EndpointBuilder) this;
         }
         /**
-         * To use a existing configured AWS MSK as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.kafka.KafkaClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param mskClient the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder mskClient(
-                software.amazon.awssdk.services.kafka.KafkaClient mskClient) {
-            doSetProperty("mskClient", mskClient);
-            return this;
-        }
-        /**
-         * To use a existing configured AWS MSK as client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.kafka.KafkaClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param mskClient the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder mskClient(String mskClient) {
-            doSetProperty("mskClient", mskClient);
-            return this;
-        }
-        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -171,98 +140,6 @@ public interface MSK2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the MSK client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the MSK client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the MSK client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the MSK client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the MSK client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which MSK client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -277,41 +154,6 @@ public interface MSK2EndpointBuilderFactory {
          */
         default MSK2EndpointBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**
@@ -331,6 +173,161 @@ public interface MSK2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the MSK client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MSK client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MSK client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the MSK client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the MSK client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MSK2EndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
          * Set whether the Kafka client should expect to load credentials
          * through a default credentials provider or to expect static
          * credentials to be passed in.
@@ -338,7 +335,7 @@ public interface MSK2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -357,7 +354,7 @@ public interface MSK2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useDefaultCredentialsProvider the value to set
          * @return the dsl builder
@@ -374,7 +371,7 @@ public interface MSK2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -392,7 +389,7 @@ public interface MSK2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param useProfileCredentialsProvider the value to set
          * @return the dsl builder
@@ -400,34 +397,6 @@ public interface MSK2EndpointBuilderFactory {
         default MSK2EndpointBuilder useProfileCredentialsProvider(
                 String useProfileCredentialsProvider) {
             doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default MSK2EndpointBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -489,6 +458,37 @@ public interface MSK2EndpointBuilderFactory {
         default AdvancedMSK2EndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS MSK as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.kafka.KafkaClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param mskClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMSK2EndpointBuilder mskClient(
+                software.amazon.awssdk.services.kafka.KafkaClient mskClient) {
+            doSetProperty("mskClient", mskClient);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS MSK as client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.kafka.KafkaClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param mskClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMSK2EndpointBuilder mskClient(String mskClient) {
+            doSetProperty("mskClient", mskClient);
             return this;
         }
     }

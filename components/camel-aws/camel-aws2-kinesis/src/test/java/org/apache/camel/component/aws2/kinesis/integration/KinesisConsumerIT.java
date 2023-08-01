@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -90,20 +88,17 @@ public class KinesisConsumerIT extends CamelTestSupport {
                 String kinesisEndpointUri = "aws2-kinesis://%s?amazonKinesisClient=#amazonKinesisClient";
 
                 fromF(kinesisEndpointUri, streamName)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                KinesisData data = new KinesisData();
+                        .process(exchange -> {
+                            KinesisData data = new KinesisData();
 
-                                final Message message = exchange.getMessage();
+                            final Message message = exchange.getMessage();
 
-                                if (message != null) {
-                                    data.body = message.getBody(String.class);
-                                    data.partition = message.getHeader(Kinesis2Constants.PARTITION_KEY, String.class);
-                                }
-
-                                receivedMessages.add(data);
+                            if (message != null) {
+                                data.body = message.getBody(String.class);
+                                data.partition = message.getHeader(Kinesis2Constants.PARTITION_KEY, String.class);
                             }
+
+                            receivedMessages.add(data);
                         })
                         .to("mock:result");
             }

@@ -30,7 +30,7 @@ public class Translate2Configuration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
-    @UriParam
+    @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private TranslateClient translateClient;
     @UriParam(label = "security", secret = true)
@@ -40,33 +40,33 @@ public class Translate2Configuration implements Cloneable {
     @UriParam(defaultValue = "translateText")
     @Metadata(required = true)
     private Translate2Operations operation = Translate2Operations.translateText;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
+    @UriParam(label = "proxy")
+    private Integer proxyPort;
     @UriParam
     private String sourceLanguage;
     @UriParam
     private String targetLanguage;
     @UriParam
-    private Integer proxyPort;
-    @UriParam
     private String region;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean autodetectSourceLanguage;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pojoRequest;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     public TranslateClient getTranslateClient() {

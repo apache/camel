@@ -22,6 +22,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -60,6 +63,8 @@ public class SecretsManagerProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SecretsManagerProducer.class);
 
     private transient String secretsManagerProducerToString;
+    private WritableHealthCheckRepository healthCheckRepository;
+    private HealthCheck producerHealthCheck;
 
     public SecretsManagerProducer(Endpoint endpoint) {
         super(endpoint);
@@ -405,4 +410,29 @@ public class SecretsManagerProducer extends DefaultProducer {
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            String id = getEndpoint().getId();
+            producerHealthCheck = new SecretsManagerProducerHealthCheck(getEndpoint(), id);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
+    }
+
 }

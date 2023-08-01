@@ -27,10 +27,10 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.impl.health.ConsumersHealthCheckRepository;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.health.HealthCheckRegistryRepository;
+import org.apache.camel.impl.health.ProducersHealthCheckRepository;
 import org.apache.camel.impl.health.RoutesHealthCheckRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,13 +217,13 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
         return repository.stream().findAny().isPresent()
                 || repository instanceof RoutesHealthCheckRepository
                 || repository instanceof ConsumersHealthCheckRepository
-                || repository instanceof ComponentsHealthCheckRepository;
+                || repository instanceof ProducersHealthCheckRepository;
     }
 
     protected boolean registerEagerly(HealthCheckRepository repository) {
         return repository instanceof RoutesHealthCheckRepository
                 || repository instanceof ConsumersHealthCheckRepository
-                || repository instanceof ComponentsHealthCheckRepository;
+                || repository instanceof ProducersHealthCheckRepository;
     }
 
     protected HealthRegistry getLivenessRegistry() {

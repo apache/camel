@@ -19,6 +19,8 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.Test;
  * NOTE: had to split into separate test classes as I was unable to fully tear down and isolate the test cases, I'm not
  * sure why, but as soon as we know the Transaction classes can be joined into one.
  */
+@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class QueueToProcessorTransactionTest extends AbstractTransactionTest {
 
     @Test

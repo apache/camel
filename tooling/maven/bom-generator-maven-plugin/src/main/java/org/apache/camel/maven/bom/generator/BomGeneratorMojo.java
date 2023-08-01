@@ -50,7 +50,6 @@ import org.apache.camel.tooling.util.FileUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
@@ -63,7 +62,10 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 
 /**
  * Generate BOM by flattening the current project's dependency management section and applying exclusions.
@@ -421,10 +423,14 @@ public class BomGeneratorMojo extends AbstractMojo {
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {
 
         Artifact art = artifactFactory.createArtifact(groupId, artifactId, version, "runtime", type);
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest
+                .setRemoteRepositories(remoteRepositories)
+                .setLocalRepository(localRepository);
 
-        artifactResolver.resolve(art, remoteRepositories, localRepository);
-
-        return art;
+        return artifactResolver
+                .resolveArtifact(buildingRequest, art)
+                .getArtifact();
     }
 
     private MavenProject loadExternalProjectPom(File pomFile) throws Exception {

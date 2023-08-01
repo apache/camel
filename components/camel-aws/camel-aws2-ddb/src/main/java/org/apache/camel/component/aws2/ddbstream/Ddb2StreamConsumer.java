@@ -27,8 +27,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
-import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
@@ -44,9 +42,6 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     private final ShardIteratorHandler shardIteratorHandler;
     private final Map<String, String> lastSeenSequenceNumbers = new HashMap<>();
-
-    private WritableHealthCheckRepository healthCheckRepository;
-    private Ddb2StreamConsumerHealthCheck consumerHealthCheck;
 
     public Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
@@ -122,23 +117,6 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return answer;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
-
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new Ddb2StreamConsumerHealthCheck(this, getRouteId());
-            consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckEnabled()
-                    && getEndpoint().getComponent().isHealthCheckConsumerEnabled());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
-        }
     }
 
     protected Exchange createExchange(Record record) {

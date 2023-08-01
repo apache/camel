@@ -1,1 +1,0 @@
-../../../../../components/camel-atlasmap/src/main/docs/atlasmap-component.adoc

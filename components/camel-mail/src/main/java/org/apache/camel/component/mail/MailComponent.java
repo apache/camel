@@ -48,7 +48,7 @@ public class MailComponent extends HealthCheckComponent implements HeaderFilterS
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "filter",
-            description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     public MailComponent() {

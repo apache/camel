@@ -39,8 +39,6 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "force": getOrCreateConfiguration(target).setForce(property(camelContext, boolean.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "id": getOrCreateConfiguration(target).setId(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -69,8 +67,6 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "force": return boolean.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
         case "id": return java.lang.Integer.class;
@@ -100,8 +96,6 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "force": return getOrCreateConfiguration(target).isForce();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "id": return getOrCreateConfiguration(target).getId();

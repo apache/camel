@@ -38,7 +38,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
     @UriParam(description = "The region in which DDBStreams client needs to work")
     private String region;
 
-    @UriParam(label = "consumer", description = "Amazon DynamoDB client to use for all requests for this endpoint")
+    @UriParam(label = "consumer,advanced", description = "Amazon DynamoDB client to use for all requests for this endpoint")
     @Metadata(autowired = true)
     private DynamoDbStreamsClient amazonDynamoDbStreamsClient;
 
@@ -52,29 +52,28 @@ public class Ddb2StreamConfiguration implements Cloneable {
               defaultValue = "FROM_LATEST")
     private StreamIteratorType streamIteratorType = StreamIteratorType.FROM_LATEST;
 
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the DDBStreams client")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
+    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
+    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
-    @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
+    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false",
               description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
     private boolean overrideEndpoint;
     @UriParam(description = " Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false",
-              description = "Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect "
-                            +
-                            " static credentials to be passed in.")
+    @UriParam(label = "security",
+              description = "Set whether the DynamoDB Streams client should expect to load credentials through a default credentials provider or to expect"
+                            + " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false",
+    @UriParam(label = "security",
               description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(
+    @UriParam(label = "security",
               description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 

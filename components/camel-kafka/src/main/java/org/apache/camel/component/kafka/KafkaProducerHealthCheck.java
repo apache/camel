@@ -32,7 +32,7 @@ public class KafkaProducerHealthCheck extends AbstractHealthCheck {
     private final String clientId;
 
     public KafkaProducerHealthCheck(KafkaProducer kafkaProducer, String clientId) {
-        super("camel", "kafka-producer-" + clientId);
+        super("camel", "producer:kafka-" + clientId);
         this.kafkaProducer = kafkaProducer;
         this.clientId = clientId;
     }

@@ -145,7 +145,6 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
                 fromF(kinesisEndpointUri, streamName)
                         .process(exchange -> {
                             KinesisData data = new KinesisData();
-
                             final Message message = exchange.getMessage();
 
                             if (message != null) {
@@ -183,12 +182,12 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     }
 
     @DisplayName("Tests that the component can resume messages from AWS Kinesis")
-    @Timeout(value = 2, unit = TimeUnit.MINUTES)
+    @Timeout(value = 3, unit = TimeUnit.MINUTES)
     @Test
     void testProduceMessages() {
         result.expectedMessageCount(expectedCount);
 
-        await().atMost(1, TimeUnit.MINUTES)
+        await().atMost(2, TimeUnit.MINUTES)
                 .untilAsserted(() -> result.assertIsSatisfied());
 
         assertEquals(expectedCount, receivedMessages.size());

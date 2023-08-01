@@ -315,11 +315,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             if (PatternHelper.matchPatterns(id, s)) {
                 return true;
             }
-            // special for route and consumer health checks
+            // special for route, consumer and producer health checks
             if (id.startsWith("route:")) {
                 id = id.substring(6);
                 return PatternHelper.matchPatterns(id, s);
             } else if (id.startsWith("consumer:")) {
+                id = id.substring(9);
+                return PatternHelper.matchPatterns(id, s);
+            } else if (id.startsWith("producer:")) {
                 id = id.substring(9);
                 return PatternHelper.matchPatterns(id, s);
             }

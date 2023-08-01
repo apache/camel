@@ -61,8 +61,6 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "extendMessageVisibility": getOrCreateConfiguration(target).setExtendMessageVisibility(property(camelContext, boolean.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "kmsdatakeyreuseperiodseconds":
@@ -166,8 +164,6 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "extendMessageVisibility": return boolean.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
         case "kmsdatakeyreuseperiodseconds":
@@ -267,8 +263,6 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "extendMessageVisibility": return getOrCreateConfiguration(target).isExtendMessageVisibility();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "kmsdatakeyreuseperiodseconds":

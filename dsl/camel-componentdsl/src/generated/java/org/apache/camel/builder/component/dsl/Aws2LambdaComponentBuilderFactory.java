@@ -141,22 +141,6 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2LambdaComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
          * The region in which Lambda client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -174,23 +158,6 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Aws2LambdaComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -204,41 +171,6 @@ public interface Aws2LambdaComponentBuilderFactory {
         default Aws2LambdaComponentBuilder uriEndpointOverride(
                 java.lang.String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Lambda client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2LambdaComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Lambda client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2LambdaComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -276,6 +208,42 @@ public interface Aws2LambdaComponentBuilderFactory {
         default Aws2LambdaComponentBuilder awsLambdaClient(
                 software.amazon.awssdk.services.lambda.LambdaClient awsLambdaClient) {
             doSetProperty("awsLambdaClient", awsLambdaClient);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
         /**
@@ -338,6 +306,22 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -349,6 +333,58 @@ public interface Aws2LambdaComponentBuilderFactory {
          */
         default Aws2LambdaComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Lambda client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2LambdaComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -380,19 +416,21 @@ public interface Aws2LambdaComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Lambda2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Lambda2Component) component).setPojoRequest((boolean) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((Lambda2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
-            case "trustAllCertificates": getOrCreateConfiguration((Lambda2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Lambda2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
-            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Lambda2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
-            case "useProfileCredentialsProvider": getOrCreateConfiguration((Lambda2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((Lambda2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
+            case "healthCheckConsumerEnabled": ((Lambda2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Lambda2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Lambda2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Lambda2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Lambda2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((Lambda2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Lambda2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Lambda2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Lambda2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Lambda2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((Lambda2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             default: return false;
             }
         }

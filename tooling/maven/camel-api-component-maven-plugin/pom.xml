@@ -82,10 +82,6 @@
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-container-default</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
         </dependency>
         <dependency>
@@ -98,31 +94,6 @@
             <version>3.3</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.maven.doxia</groupId>
-            <artifactId>doxia-module-xhtml</artifactId>
-            <version>1.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.doxia</groupId>
-            <artifactId>doxia-site-renderer</artifactId>
-            <version>1.11.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.velocity</groupId>
-                    <artifactId>velocity</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.velocity</groupId>
-                    <artifactId>velocity-tools</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-beanutils</groupId>
-                    <artifactId>commons-beanutils</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

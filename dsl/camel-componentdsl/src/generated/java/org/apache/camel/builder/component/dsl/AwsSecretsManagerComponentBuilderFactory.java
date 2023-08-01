@@ -172,54 +172,6 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the Secrets Manager client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder proxyHost(
-                java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Secrets Manager client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder proxyPort(
-                java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Secrets Manager
-         * client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Secrets Manager client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example ap-east-1) You'll need to use the name
@@ -237,39 +189,6 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a existing configured AWS Secrets Manager as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.secretsmanager.SecretsManagerClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param secretsManagerClient the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder secretsManagerClient(
-                software.amazon.awssdk.services.secretsmanager.SecretsManagerClient secretsManagerClient) {
-            doSetProperty("secretsManagerClient", secretsManagerClient);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -283,24 +202,6 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         default AwsSecretsManagerComponentBuilder uriEndpointOverride(
                 java.lang.String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Translate client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -342,6 +243,22 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AWS Secrets Manager as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.secretsmanager.SecretsManagerClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param secretsManagerClient the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder secretsManagerClient(
+                software.amazon.awssdk.services.secretsmanager.SecretsManagerClient secretsManagerClient) {
+            doSetProperty("secretsManagerClient", secretsManagerClient);
+            return this;
+        }
+        /**
          * Used for enabling or disabling all consumer based health checks from
          * this component.
          * 
@@ -359,24 +276,10 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default AwsSecretsManagerComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -389,6 +292,54 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         default AwsSecretsManagerComponentBuilder healthCheckProducerEnabled(
                 boolean healthCheckProducerEnabled) {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Secrets Manager client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Secrets Manager client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Secrets Manager
+         * client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -419,6 +370,41 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         default AwsSecretsManagerComponentBuilder secretKey(
                 java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Translate client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AwsSecretsManagerComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
     }
@@ -452,21 +438,20 @@ public interface AwsSecretsManagerComponentBuilderFactory {
             case "overrideEndpoint": getOrCreateConfiguration((SecretsManagerComponent) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((SecretsManagerComponent) component).setPojoRequest((boolean) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((SecretsManagerComponent) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((SecretsManagerComponent) component).setRegion((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((SecretsManagerComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "useProfileCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
+            case "autowiredEnabled": ((SecretsManagerComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "secretsManagerClient": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretsManagerClient((software.amazon.awssdk.services.secretsmanager.SecretsManagerClient) value); return true;
+            case "healthCheckConsumerEnabled": ((SecretsManagerComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((SecretsManagerComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((SecretsManagerComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": getOrCreateConfiguration((SecretsManagerComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretsManagerClient": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretsManagerClient((software.amazon.awssdk.services.secretsmanager.SecretsManagerClient) value); return true;
-            case "trustAllCertificates": getOrCreateConfiguration((SecretsManagerComponent) component).setTrustAllCertificates((boolean) value); return true;
-            case "uriEndpointOverride": getOrCreateConfiguration((SecretsManagerComponent) component).setUriEndpointOverride((java.lang.String) value); return true;
-            case "useDefaultCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
-            case "useProfileCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
-            case "autowiredEnabled": ((SecretsManagerComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "healthCheckConsumerEnabled": ((SecretsManagerComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((SecretsManagerComponent) component).setHealthCheckEnabled((boolean) value); return true;
-            case "healthCheckProducerEnabled": ((SecretsManagerComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((SecretsManagerComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((SecretsManagerComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((SecretsManagerComponent) component).setTrustAllCertificates((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((SecretsManagerComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             default: return false;
             }
         }

@@ -45,6 +45,7 @@ public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
         configuration.addAddressSetting("#",
                 new AddressSettings()
                         .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
+                        .setAutoDeleteQueues(false)
                         .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
                         .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 

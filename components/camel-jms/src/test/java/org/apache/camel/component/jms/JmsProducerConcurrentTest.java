@@ -31,9 +31,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
+@Isolated("Creates multiple threads")
 public class JmsProducerConcurrentTest extends AbstractJMSTest {
 
     @Order(2)

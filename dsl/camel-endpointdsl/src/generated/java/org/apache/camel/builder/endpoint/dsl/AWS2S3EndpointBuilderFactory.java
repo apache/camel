@@ -46,74 +46,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return (AdvancedAWS2S3EndpointConsumerBuilder) this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param amazonS3Client the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder amazonS3Client(
-                software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
-            doSetProperty("amazonS3Client", amazonS3Client);
-            return this;
-        }
-        /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param amazonS3Client the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder amazonS3Client(
-                String amazonS3Client) {
-            doSetProperty("amazonS3Client", amazonS3Client);
-            return this;
-        }
-        /**
-         * An S3 Presigner for Request, used mainly in createDownloadLink
-         * operation.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonS3Presigner the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
-                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
-            doSetProperty("amazonS3Presigner", amazonS3Presigner);
-            return this;
-        }
-        /**
-         * An S3 Presigner for Request, used mainly in createDownloadLink
-         * operation.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonS3Presigner the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
-                String amazonS3Presigner) {
-            doSetProperty("amazonS3Presigner", amazonS3Presigner);
-            return this;
-        }
-        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -299,98 +231,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SQS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Specify a proxy port to be used inside the client definition.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Specify a proxy port to be used inside the client definition.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the S3 client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the S3 client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which S3 client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -408,41 +248,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -456,76 +261,6 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointConsumerBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -914,6 +649,82 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the SQS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Specify a proxy port to be used inside the client definition.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Specify a proxy port to be used inside the client definition.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the S3 client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the S3 client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -1407,6 +1218,22 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1418,6 +1245,111 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -1673,17 +1605,6 @@ public interface AWS2S3EndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
-    }
-
-    /**
-     * Builder for endpoint producers for the AWS S3 Storage Service component.
-     */
-    public interface AWS2S3EndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedAWS2S3EndpointProducerBuilder advanced() {
-            return (AdvancedAWS2S3EndpointProducerBuilder) this;
-        }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
@@ -1691,12 +1612,12 @@ public interface AWS2S3EndpointBuilderFactory {
          * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
          * type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Client the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointProducerBuilder amazonS3Client(
+        default AdvancedAWS2S3EndpointConsumerBuilder amazonS3Client(
                 software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
@@ -1708,12 +1629,12 @@ public interface AWS2S3EndpointBuilderFactory {
          * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
          * type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Client the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointProducerBuilder amazonS3Client(
+        default AdvancedAWS2S3EndpointConsumerBuilder amazonS3Client(
                 String amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
@@ -1725,12 +1646,12 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Presigner the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointProducerBuilder amazonS3Presigner(
+        default AdvancedAWS2S3EndpointConsumerBuilder amazonS3Presigner(
                 software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
@@ -1742,15 +1663,26 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Presigner the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointProducerBuilder amazonS3Presigner(
+        default AdvancedAWS2S3EndpointConsumerBuilder amazonS3Presigner(
                 String amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the AWS S3 Storage Service component.
+     */
+    public interface AWS2S3EndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AdvancedAWS2S3EndpointProducerBuilder advanced() {
+            return (AdvancedAWS2S3EndpointProducerBuilder) this;
         }
         /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
@@ -1938,98 +1870,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SQS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Specify a proxy port to be used inside the client definition.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Specify a proxy port to be used inside the client definition.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the S3 client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the S3 client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which S3 client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -2047,41 +1887,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -2095,76 +1900,6 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointProducerBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the S3 client should expect to load credentials through a
-         * profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointProducerBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -2526,6 +2261,82 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the SQS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Specify a proxy port to be used inside the client definition.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Specify a proxy port to be used inside the client definition.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the S3 client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the S3 client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2540,6 +2351,22 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2551,6 +2378,111 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -2770,18 +2702,6 @@ public interface AWS2S3EndpointBuilderFactory {
             doSetProperty("useSSES3", useSSES3);
             return this;
         }
-    }
-
-    /**
-     * Builder for endpoint for the AWS S3 Storage Service component.
-     */
-    public interface AWS2S3EndpointBuilder
-            extends
-                AWS2S3EndpointConsumerBuilder,
-                AWS2S3EndpointProducerBuilder {
-        default AdvancedAWS2S3EndpointBuilder advanced() {
-            return (AdvancedAWS2S3EndpointBuilder) this;
-        }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
@@ -2789,12 +2709,12 @@ public interface AWS2S3EndpointBuilderFactory {
          * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
          * type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Client the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder amazonS3Client(
+        default AdvancedAWS2S3EndpointProducerBuilder amazonS3Client(
                 software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
@@ -2806,12 +2726,13 @@ public interface AWS2S3EndpointBuilderFactory {
          * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
          * type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Client the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder amazonS3Client(String amazonS3Client) {
+        default AdvancedAWS2S3EndpointProducerBuilder amazonS3Client(
+                String amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
@@ -2822,12 +2743,12 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Presigner the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder amazonS3Presigner(
+        default AdvancedAWS2S3EndpointProducerBuilder amazonS3Presigner(
                 software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
@@ -2839,14 +2760,27 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: advanced
          * 
          * @param amazonS3Presigner the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder amazonS3Presigner(String amazonS3Presigner) {
+        default AdvancedAWS2S3EndpointProducerBuilder amazonS3Presigner(
+                String amazonS3Presigner) {
             doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint for the AWS S3 Storage Service component.
+     */
+    public interface AWS2S3EndpointBuilder
+            extends
+                AWS2S3EndpointConsumerBuilder,
+                AWS2S3EndpointProducerBuilder {
+        default AdvancedAWS2S3EndpointBuilder advanced() {
+            return (AdvancedAWS2S3EndpointBuilder) this;
         }
         /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
@@ -3028,98 +2962,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SQS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * Specify a proxy port to be used inside the client definition.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Specify a proxy port to be used inside the client definition.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the S3 client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the S3 client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which S3 client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -3134,41 +2976,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**
@@ -3188,73 +2995,79 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider.
+         * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Group: proxy
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param proxyHost the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+        default AWS2S3EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider.
+         * Specify a proxy port to be used inside the client definition.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Group: proxy
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+        default AWS2S3EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials through a
-         * profile credentials provider.
+         * Specify a proxy port to be used inside the client definition.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default AWS2S3EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials through a
-         * profile credentials provider.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Default: HTTPS
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default AWS2S3EndpointBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default AWS2S3EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the S3 client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -3272,6 +3085,22 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -3283,6 +3112,111 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -3339,6 +3273,74 @@ public interface AWS2S3EndpointBuilderFactory {
         default AdvancedAWS2S3EndpointBuilder customerKeyMD5(
                 String customerKeyMD5) {
             doSetProperty("customerKeyMD5", customerKeyMD5);
+            return this;
+        }
+        /**
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonS3Client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder amazonS3Client(
+                software.amazon.awssdk.services.s3.S3Client amazonS3Client) {
+            doSetProperty("amazonS3Client", amazonS3Client);
+            return this;
+        }
+        /**
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.s3.S3Client&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonS3Client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder amazonS3Client(
+                String amazonS3Client) {
+            doSetProperty("amazonS3Client", amazonS3Client);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonS3Presigner the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder amazonS3Presigner(
+                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.s3.presigner.S3Presigner&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonS3Presigner the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointBuilder amazonS3Presigner(
+                String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
         }
     }

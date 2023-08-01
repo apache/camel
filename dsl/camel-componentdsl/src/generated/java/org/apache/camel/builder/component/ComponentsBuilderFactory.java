@@ -111,19 +111,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AsteriskComponentBuilderFactory.asterisk();
     }
     /**
-     * AtlasMap (camel-atlasmap)
-     * Transforms the message using an AtlasMap transformation.
-     * 
-     * Category: transformation
-     * Since: 3.7
-     * Maven coordinates: org.apache.camel:camel-atlasmap
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.AtlasmapComponentBuilderFactory.AtlasmapComponentBuilder atlasmap() {
-        return org.apache.camel.builder.component.dsl.AtlasmapComponentBuilderFactory.atlasmap();
-    }
-    /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
      * 
@@ -835,20 +822,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ControlbusComponentBuilderFactory.ControlbusComponentBuilder controlbus() {
         return org.apache.camel.builder.component.dsl.ControlbusComponentBuilderFactory.controlbus();
-    }
-    /**
-     * Corda (camel-corda)
-     * Perform operations against Corda blockchain platform using corda-rpc
-     * library.
-     * 
-     * Category: blockchain,rpc
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-corda
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.CordaComponentBuilderFactory.CordaComponentBuilder corda() {
-        return org.apache.camel.builder.component.dsl.CordaComponentBuilderFactory.corda();
     }
     /**
      * Couchbase (camel-couchbase)

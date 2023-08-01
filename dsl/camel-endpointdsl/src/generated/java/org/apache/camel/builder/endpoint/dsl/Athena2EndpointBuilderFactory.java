@@ -42,52 +42,6 @@ public interface Athena2EndpointBuilderFactory {
             return (AdvancedAthena2EndpointBuilder) this;
         }
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * The AmazonAthena instance to use as the client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonAthenaClient the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder amazonAthenaClient(
-                software.amazon.awssdk.services.athena.AthenaClient amazonAthenaClient) {
-            doSetProperty("amazonAthenaClient", amazonAthenaClient);
-            return this;
-        }
-        /**
-         * The AmazonAthena instance to use as the client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonAthenaClient the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder amazonAthenaClient(
-                String amazonAthenaClient) {
-            doSetProperty("amazonAthenaClient", amazonAthenaClient);
-            return this;
-        }
-        /**
          * The Athena database to use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -103,7 +57,7 @@ public interface Athena2EndpointBuilderFactory {
         }
         /**
          * Milliseconds before the next poll for query execution status. See the
-         * section 'Waiting for Query Completion and Retrying Failed Queries' to
+         * section Waiting for Query Completion and Retrying Failed Queries to
          * learn more.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -120,7 +74,7 @@ public interface Athena2EndpointBuilderFactory {
         }
         /**
          * Milliseconds before the next poll for query execution status. See the
-         * section 'Waiting for Query Completion and Retrying Failed Queries' to
+         * section Waiting for Query Completion and Retrying Failed Queries to
          * learn more.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
@@ -136,75 +90,9 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The encryption type to use when storing query results in S3. One of
-         * SSE_S3, SSE_KMS, or CSE_KMS.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param encryptionOption the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder encryptionOption(
-                software.amazon.awssdk.services.athena.model.EncryptionOption encryptionOption) {
-            doSetProperty("encryptionOption", encryptionOption);
-            return this;
-        }
-        /**
-         * The encryption type to use when storing query results in S3. One of
-         * SSE_S3, SSE_KMS, or CSE_KMS.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param encryptionOption the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder encryptionOption(String encryptionOption) {
-            doSetProperty("encryptionOption", encryptionOption);
-            return this;
-        }
-        /**
-         * Include useful trace information at the beginning of queries as an
-         * SQL comment (prefixed with --).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param includeTrace the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder includeTrace(boolean includeTrace) {
-            doSetProperty("includeTrace", includeTrace);
-            return this;
-        }
-        /**
-         * Include useful trace information at the beginning of queries as an
-         * SQL comment (prefixed with --).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param includeTrace the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder includeTrace(String includeTrace) {
-            doSetProperty("includeTrace", includeTrace);
-            return this;
-        }
-        /**
          * Milliseconds before the first poll for query execution status. See
-         * the section 'Waiting for Query Completion and Retrying Failed
-         * Queries' to learn more.
+         * the section Waiting for Query Completion and Retrying Failed Queries
+         * to learn more.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -220,8 +108,8 @@ public interface Athena2EndpointBuilderFactory {
         }
         /**
          * Milliseconds before the first poll for query execution status. See
-         * the section 'Waiting for Query Completion and Retrying Failed
-         * Queries' to learn more.
+         * the section Waiting for Query Completion and Retrying Failed Queries
+         * to learn more.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -236,23 +124,9 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
-         * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param kmsKey the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder kmsKey(String kmsKey) {
-            doSetProperty("kmsKey", kmsKey);
-            return this;
-        }
-        /**
          * Maximum number of times to attempt a query. Set to 1 to disable
-         * retries. See the section 'Waiting for Query Completion and Retrying
-         * Failed Queries' to learn more.
+         * retries. See the section Waiting for Query Completion and Retrying
+         * Failed Queries to learn more.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -268,8 +142,8 @@ public interface Athena2EndpointBuilderFactory {
         }
         /**
          * Maximum number of times to attempt a query. Set to 1 to disable
-         * retries. See the section 'Waiting for Query Completion and Retrying
-         * Failed Queries' to learn more.
+         * retries. See the section Waiting for Query Completion and Retrying
+         * Failed Queries to learn more.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -367,7 +241,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * The location in Amazon S3 where query results are stored, such as
          * s3://path/to/query/bucket/. Ensure this value ends with a forward
-         * slash ('/').
+         * slash.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -383,7 +257,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * How query results should be returned. One of StreamList (default -
          * return a GetQueryResultsIterable that can page through all results),
-         * SelectList (returns at most 1,000 rows at a time, plus a NextToken
+         * SelectList (returns at most 1000 rows at a time, plus a NextToken
          * value as a header than can be used for manual pagination of results),
          * S3Pointer (return an S3 path pointing to the results).
          * 
@@ -404,7 +278,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * How query results should be returned. One of StreamList (default -
          * return a GetQueryResultsIterable that can page through all results),
-         * SelectList (returns at most 1,000 rows at a time, plus a NextToken
+         * SelectList (returns at most 1000 rows at a time, plus a NextToken
          * value as a header than can be used for manual pagination of results),
          * S3Pointer (return an S3 path pointing to the results).
          * 
@@ -419,98 +293,6 @@ public interface Athena2EndpointBuilderFactory {
          */
         default Athena2EndpointBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
-            return this;
-        }
-        /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Athena client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Athena client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Athena client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Athena client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Athena client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -547,8 +329,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * The region in which Athena client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1). You'll need to use the name
-         * Region.EU_WEST_1.id().
+         * region (for example ap-east-1).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -564,8 +345,8 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * Reset the waitTimeout countdown in the event of a query retry. If set
          * to true, potential max time spent waiting for queries is equal to
-         * waitTimeout x maxAttempts. See the section 'Waiting for Query
-         * Completion and Retrying Failed Queries' to learn more.
+         * waitTimeout x maxAttempts. See the section Waiting for Query
+         * Completion and Retrying Failed Queries to learn more.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -583,8 +364,8 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * Reset the waitTimeout countdown in the event of a query retry. If set
          * to true, potential max time spent waiting for queries is equal to
-         * waitTimeout x maxAttempts. See the section 'Waiting for Query
-         * Completion and Retrying Failed Queries' to learn more.
+         * waitTimeout x maxAttempts. See the section Waiting for Query
+         * Completion and Retrying Failed Queries to learn more.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -602,13 +383,13 @@ public interface Athena2EndpointBuilderFactory {
         }
         /**
          * Optional comma separated list of error types to retry the query for.
-         * Use 'retryable' to retry all retryable failure conditions (e.g.
+         * Use: 'retryable' to retry all retryable failure conditions (e.g.
          * generic errors and resources exhausted), 'generic' to retry
          * 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that
          * have exhausted resource limits, 'always' to always retry regardless
          * of failure condition, or 'never' or null to never retry (default).
-         * See the section 'Waiting for Query Completion and Retrying Failed
-         * Queries' to learn more.
+         * See the section Waiting for Query Completion and Retrying Failed
+         * Queries to learn more.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -623,95 +404,9 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Set whether the Athena client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Athena client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Athena client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Athena client should expect to load credentials
-         * through a profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Athena2EndpointBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
          * Optional max wait time in millis to wait for a successful query
-         * completion. See the section 'Waiting for Query Completion and
-         * Retrying Failed Queries' to learn more.
+         * completion. See the section Waiting for Query Completion and Retrying
+         * Failed Queries to learn more.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -727,8 +422,8 @@ public interface Athena2EndpointBuilderFactory {
         }
         /**
          * Optional max wait time in millis to wait for a successful query
-         * completion. See the section 'Waiting for Query Completion and
-         * Retrying Failed Queries' to learn more.
+         * completion. See the section Waiting for Query Completion and Retrying
+         * Failed Queries to learn more.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -754,6 +449,245 @@ public interface Athena2EndpointBuilderFactory {
          */
         default Athena2EndpointBuilder workGroup(String workGroup) {
             doSetProperty("workGroup", workGroup);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Athena client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Athena client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Athena client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Athena client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Athena client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * The encryption type to use when storing query results in S3. One of
+         * SSE_S3, SSE_KMS, or CSE_KMS.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptionOption the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder encryptionOption(
+                software.amazon.awssdk.services.athena.model.EncryptionOption encryptionOption) {
+            doSetProperty("encryptionOption", encryptionOption);
+            return this;
+        }
+        /**
+         * The encryption type to use when storing query results in S3. One of
+         * SSE_S3, SSE_KMS, or CSE_KMS.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptionOption the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder encryptionOption(String encryptionOption) {
+            doSetProperty("encryptionOption", encryptionOption);
+            return this;
+        }
+        /**
+         * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param kmsKey the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder kmsKey(String kmsKey) {
+            doSetProperty("kmsKey", kmsKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Athena client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -817,6 +751,38 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The AmazonAthena instance to use as the client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonAthenaClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAthena2EndpointBuilder amazonAthenaClient(
+                software.amazon.awssdk.services.athena.AthenaClient amazonAthenaClient) {
+            doSetProperty("amazonAthenaClient", amazonAthenaClient);
+            return this;
+        }
+        /**
+         * The AmazonAthena instance to use as the client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonAthenaClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAthena2EndpointBuilder amazonAthenaClient(
+                String amazonAthenaClient) {
+            doSetProperty("amazonAthenaClient", amazonAthenaClient);
+            return this;
+        }
+        /**
          * A unique string to ensure issues queries are idempotent. It is
          * unlikely you will need to set this.
          * 
@@ -830,6 +796,39 @@ public interface Athena2EndpointBuilderFactory {
         default AdvancedAthena2EndpointBuilder clientRequestToken(
                 String clientRequestToken) {
             doSetProperty("clientRequestToken", clientRequestToken);
+            return this;
+        }
+        /**
+         * Include useful trace information at the beginning of queries as an
+         * SQL comment (prefixed with --).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeTrace the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAthena2EndpointBuilder includeTrace(boolean includeTrace) {
+            doSetProperty("includeTrace", includeTrace);
+            return this;
+        }
+        /**
+         * Include useful trace information at the beginning of queries as an
+         * SQL comment (prefixed with --).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeTrace the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAthena2EndpointBuilder includeTrace(String includeTrace) {
+            doSetProperty("includeTrace", includeTrace);
             return this;
         }
     }

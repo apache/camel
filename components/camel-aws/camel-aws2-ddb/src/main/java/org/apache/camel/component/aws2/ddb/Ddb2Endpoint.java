@@ -77,6 +77,11 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public Ddb2Component getComponent() {
+        return (Ddb2Component) super.getComponent();
+    }
+
+    @Override
     public void doStart() throws Exception {
         super.doStart();
 

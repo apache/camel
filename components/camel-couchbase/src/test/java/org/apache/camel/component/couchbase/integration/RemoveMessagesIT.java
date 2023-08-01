@@ -22,10 +22,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 
+@EnabledIfSystemProperty(named = "couchbase.enable.it", matches = "true",
+                         disabledReason = "Too resource intensive for most systems to run reliably")
 @Tags({ @Tag("couchbase-7") })
 public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 

@@ -25,6 +25,9 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
@@ -42,6 +45,8 @@ public class Cw2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Cw2Producer.class);
 
+    private HealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
     private transient String cwProducerToString;
 
     public Cw2Producer(Endpoint endpoint) {
@@ -153,4 +158,29 @@ public class Cw2Producer extends DefaultProducer {
     public Cw2Endpoint getEndpoint() {
         return (Cw2Endpoint) super.getEndpoint();
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            String id = getEndpoint().getId();
+            producerHealthCheck = new Cw2ProducerHealthCheck(getEndpoint(), id);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
+    }
+
 }

@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
@@ -37,8 +38,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
@@ -49,8 +48,6 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
-
-    private static final Logger LOG = LoggerFactory.getLogger(Kinesis2ConsumerHealthCustomClientIT.class);
 
     CamelContext context;
 
@@ -71,6 +68,9 @@ public class Kinesis2ConsumerHealthCustomClientIT extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
+        HealthCheckRepository hcr = (HealthCheckRepository) registry.resolveById("producers");
+        hcr.setEnabled(true);
+        registry.register(hcr);
         context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;

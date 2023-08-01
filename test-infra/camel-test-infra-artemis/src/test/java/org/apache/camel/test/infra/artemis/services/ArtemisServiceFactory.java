@@ -85,11 +85,11 @@ public final class ArtemisServiceFactory {
     }
 
     public static synchronized ArtemisService createVMService() {
-        return createSingletonVMService();
+        return new ArtemisVMService();
     }
 
     public static synchronized ArtemisService createPersistentVMService() {
-        return createSingletonPersistentVMService();
+        return new ArtemisPersistentVMService();
     }
 
     public static ArtemisService createAMQPService() {

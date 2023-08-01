@@ -50,22 +50,6 @@ public interface Aws2DdbComponentBuilderFactory {
      */
     interface Aws2DdbComponentBuilder extends ComponentBuilder<Ddb2Component> {
         /**
-         * To use the AmazonDynamoDB as the client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonDDBClient the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder amazonDDBClient(
-                software.amazon.awssdk.services.dynamodb.DynamoDbClient amazonDDBClient) {
-            doSetProperty("amazonDDBClient", amazonDDBClient);
-            return this;
-        }
-        /**
          * The component configuration.
          * 
          * The option is a:
@@ -218,70 +202,6 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the DDB client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The region in which DynamoDB client needs to work. When using this
-         * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1) You'll need to use the name
-         * Region.EU_WEST_1.id().
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the DDB client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
@@ -311,23 +231,6 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -344,41 +247,6 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials through a
-         * default credentials provider or to expect static credentials to be
-         * passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the DDB client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2DdbComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
@@ -392,6 +260,22 @@ public interface Aws2DdbComponentBuilderFactory {
         default Aws2DdbComponentBuilder writeCapacity(
                 java.lang.Long writeCapacity) {
             doSetProperty("writeCapacity", writeCapacity);
+            return this;
+        }
+        /**
+         * To use the AmazonDynamoDB as the client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonDDBClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder amazonDDBClient(
+                software.amazon.awssdk.services.dynamodb.DynamoDbClient amazonDDBClient) {
+            doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
         /**
@@ -416,6 +300,90 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the DDB client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The region in which DynamoDB client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDB client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -430,6 +398,22 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -441,6 +425,58 @@ public interface Aws2DdbComponentBuilderFactory {
          */
         default Aws2DdbComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the DDB client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2DdbComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -467,7 +503,6 @@ public interface Aws2DdbComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "amazonDDBClient": getOrCreateConfiguration((Ddb2Component) component).setAmazonDDBClient((software.amazon.awssdk.services.dynamodb.DynamoDbClient) value); return true;
             case "configuration": ((Ddb2Component) component).setConfiguration((org.apache.camel.component.aws2.ddb.Ddb2Configuration) value); return true;
             case "consistentRead": getOrCreateConfiguration((Ddb2Component) component).setConsistentRead((boolean) value); return true;
             case "enabledInitialDescribeTable": getOrCreateConfiguration((Ddb2Component) component).setEnabledInitialDescribeTable((boolean) value); return true;
@@ -477,20 +512,23 @@ public interface Aws2DdbComponentBuilderFactory {
             case "lazyStartProducer": ((Ddb2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Ddb2Component) component).setOperation((org.apache.camel.component.aws2.ddb.Ddb2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Ddb2Component) component).setOverrideEndpoint((boolean) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((Ddb2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "readCapacity": getOrCreateConfiguration((Ddb2Component) component).setReadCapacity((java.lang.Long) value); return true;
+            case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Ddb2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
+            case "amazonDDBClient": getOrCreateConfiguration((Ddb2Component) component).setAmazonDDBClient((software.amazon.awssdk.services.dynamodb.DynamoDbClient) value); return true;
+            case "autowiredEnabled": ((Ddb2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((Ddb2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Ddb2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ddb2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Ddb2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ddb2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "readCapacity": getOrCreateConfiguration((Ddb2Component) component).setReadCapacity((java.lang.Long) value); return true;
-            case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Ddb2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "uriEndpointOverride": getOrCreateConfiguration((Ddb2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Ddb2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Ddb2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
-            case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
-            case "autowiredEnabled": ((Ddb2Component) component).setAutowiredEnabled((boolean) value); return true;
-            case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": getOrCreateConfiguration((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

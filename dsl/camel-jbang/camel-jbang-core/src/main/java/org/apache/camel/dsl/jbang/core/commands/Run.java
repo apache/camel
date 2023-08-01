@@ -228,6 +228,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
     String code;
 
+    @Option(names = { "--verbose" }, description = "Verbose output of startup activity (dependency resolution and downloading")
+    boolean verbose;
+
     public Run(CamelJBangMain main) {
         super(main);
     }
@@ -377,6 +380,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.backlogTracing", "true");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());

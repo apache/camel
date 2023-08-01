@@ -61,38 +61,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * To use the AmazonSQS as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonSQSClient the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder amazonSQSClient(
-                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
-            doSetProperty("amazonSQSClient", amazonSQSClient);
-            return this;
-        }
-        /**
-         * To use the AmazonSQS as client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonSQSClient the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder amazonSQSClient(
-                String amazonSQSClient) {
-            doSetProperty("amazonSQSClient", amazonSQSClient);
-            return this;
-        }
-        /**
          * Setting the autocreation of the queue.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -195,22 +163,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
          * The underlying protocol used to communicate with SQS.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -223,39 +175,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointConsumerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SQS client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SQS client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -292,41 +211,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -340,76 +224,6 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointConsumerBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointConsumerBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -886,6 +700,39 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointConsumerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -1529,6 +1376,22 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1540,6 +1403,111 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -1708,6 +1676,38 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To use the AmazonSQS as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointConsumerBuilder amazonSQSClient(
+                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
+            doSetProperty("amazonSQSClient", amazonSQSClient);
+            return this;
+        }
+        /**
+         * To use the AmazonSQS as client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointConsumerBuilder amazonSQSClient(
+                String amazonSQSClient) {
+            doSetProperty("amazonSQSClient", amazonSQSClient);
+            return this;
+        }
+        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
@@ -1766,38 +1766,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointProducerBuilder amazonAWSHost(String amazonAWSHost) {
             doSetProperty("amazonAWSHost", amazonAWSHost);
-            return this;
-        }
-        /**
-         * To use the AmazonSQS as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonSQSClient the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder amazonSQSClient(
-                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
-            doSetProperty("amazonSQSClient", amazonSQSClient);
-            return this;
-        }
-        /**
-         * To use the AmazonSQS as client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonSQSClient the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder amazonSQSClient(
-                String amazonSQSClient) {
-            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -1903,22 +1871,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
          * The underlying protocol used to communicate with SQS.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1931,39 +1883,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointProducerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SQS client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SQS client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -2000,41 +1919,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -2048,76 +1932,6 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointProducerBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointProducerBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -2302,6 +2116,39 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
@@ -2468,6 +2315,22 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2479,6 +2342,111 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -2543,6 +2511,38 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To use the AmazonSQS as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointProducerBuilder amazonSQSClient(
+                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
+            doSetProperty("amazonSQSClient", amazonSQSClient);
+            return this;
+        }
+        /**
+         * To use the AmazonSQS as client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointProducerBuilder amazonSQSClient(
+                String amazonSQSClient) {
+            doSetProperty("amazonSQSClient", amazonSQSClient);
+            return this;
+        }
+        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
@@ -2601,37 +2601,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointBuilder amazonAWSHost(String amazonAWSHost) {
             doSetProperty("amazonAWSHost", amazonAWSHost);
-            return this;
-        }
-        /**
-         * To use the AmazonSQS as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonSQSClient the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder amazonSQSClient(
-                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
-            doSetProperty("amazonSQSClient", amazonSQSClient);
-            return this;
-        }
-        /**
-         * To use the AmazonSQS as client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param amazonSQSClient the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder amazonSQSClient(String amazonSQSClient) {
-            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -2733,22 +2702,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
          * The underlying protocol used to communicate with SQS.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2761,39 +2714,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SQS client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SQS client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -2830,41 +2750,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -2878,76 +2763,6 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SQS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Sqs2EndpointBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
         /**
@@ -2991,6 +2806,39 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -3159,6 +3007,22 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -3170,6 +3034,111 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -3184,6 +3153,38 @@ public interface Sqs2EndpointBuilderFactory {
                 AdvancedSqs2EndpointProducerBuilder {
         default Sqs2EndpointBuilder basic() {
             return (Sqs2EndpointBuilder) this;
+        }
+        /**
+         * To use the AmazonSQS as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointBuilder amazonSQSClient(
+                software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
+            doSetProperty("amazonSQSClient", amazonSQSClient);
+            return this;
+        }
+        /**
+         * To use the AmazonSQS as client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointBuilder amazonSQSClient(
+                String amazonSQSClient) {
+            doSetProperty("amazonSQSClient", amazonSQSClient);
+            return this;
         }
         /**
          * Define if you want to apply delaySeconds option to the queue or on

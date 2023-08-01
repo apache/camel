@@ -25,15 +25,13 @@ import org.apache.camel.spi.Metadata;
 public abstract class HealthCheckComponent extends DefaultComponent {
 
     @Metadata(label = "health", defaultValue = "true",
-              description = "Used for enabling or disabling all health checks from this component")
-    private boolean healthCheckEnabled = true;
-
-    @Metadata(label = "health", defaultValue = "true",
               description = "Used for enabling or disabling all consumer based health checks from this component")
     private boolean healthCheckConsumerEnabled = true;
 
     @Metadata(label = "health", defaultValue = "true",
-              description = "Used for enabling or disabling all producer based health checks from this component")
+              description = "Used for enabling or disabling all producer based health checks from this component."
+                            + " Notice: Camel has by default disabled all producer based health-checks."
+                            + " You can turn on producer checks globally by setting camel.health.producersEnabled=true.")
     private boolean healthCheckProducerEnabled = true;
 
     public HealthCheckComponent() {
@@ -41,17 +39,6 @@ public abstract class HealthCheckComponent extends DefaultComponent {
 
     public HealthCheckComponent(CamelContext context) {
         super(context);
-    }
-
-    public boolean isHealthCheckEnabled() {
-        return healthCheckEnabled;
-    }
-
-    /**
-     * Used for enabling or disabling all health checks from this component
-     */
-    public void setHealthCheckEnabled(boolean healthCheckEnabled) {
-        this.healthCheckEnabled = healthCheckEnabled;
     }
 
     public boolean isHealthCheckConsumerEnabled() {
@@ -70,7 +57,9 @@ public abstract class HealthCheckComponent extends DefaultComponent {
     }
 
     /**
-     * Used for enabling or disabling all producer based health checks from this component
+     * Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default
+     * disabled all producer based health-checks. You can turn on producer checks globally by setting
+     * camel.health.producersEnabled=true.
      */
     public void setHealthCheckProducerEnabled(boolean healthCheckProducerEnabled) {
         this.healthCheckProducerEnabled = healthCheckProducerEnabled;

@@ -191,84 +191,6 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the Secrets Manager client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Secrets Manager client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Secrets Manager client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Secrets Manager
-         * client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Secrets Manager
-         * client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Secrets Manager client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example ap-east-1) You'll need to use the name
@@ -286,73 +208,6 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a existing configured AWS Secrets Manager as client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.secretsmanager.SecretsManagerClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param secretsManagerClient the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder secretsManagerClient(
-                software.amazon.awssdk.services.secretsmanager.SecretsManagerClient secretsManagerClient) {
-            doSetProperty("secretsManagerClient", secretsManagerClient);
-            return this;
-        }
-        /**
-         * To use a existing configured AWS Secrets Manager as client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.secretsmanager.SecretsManagerClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param secretsManagerClient the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder secretsManagerClient(
-                String secretsManagerClient) {
-            doSetProperty("secretsManagerClient", secretsManagerClient);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -366,43 +221,6 @@ public interface SecretsManagerEndpointBuilderFactory {
         default SecretsManagerEndpointBuilder uriEndpointOverride(
                 String uriEndpointOverride) {
             doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Translate client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Translate client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -441,6 +259,84 @@ public interface SecretsManagerEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the Secrets Manager client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Secrets Manager client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Secrets Manager client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Secrets Manager
+         * client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Secrets Manager
+         * client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -466,6 +362,78 @@ public interface SecretsManagerEndpointBuilderFactory {
          */
         default SecretsManagerEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Translate client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Translate client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default SecretsManagerEndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
     }
@@ -526,6 +494,38 @@ public interface SecretsManagerEndpointBuilderFactory {
         default AdvancedSecretsManagerEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS Secrets Manager as client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.secretsmanager.SecretsManagerClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param secretsManagerClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSecretsManagerEndpointBuilder secretsManagerClient(
+                software.amazon.awssdk.services.secretsmanager.SecretsManagerClient secretsManagerClient) {
+            doSetProperty("secretsManagerClient", secretsManagerClient);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS Secrets Manager as client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.secretsmanager.SecretsManagerClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param secretsManagerClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSecretsManagerEndpointBuilder secretsManagerClient(
+                String secretsManagerClient) {
+            doSetProperty("secretsManagerClient", secretsManagerClient);
             return this;
         }
     }

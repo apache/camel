@@ -132,24 +132,10 @@ public interface FtpsComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default FtpsComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -201,7 +187,6 @@ public interface FtpsComponentBuilderFactory {
             case "lazyStartProducer": ((FtpsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((FtpsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((FtpsComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((FtpsComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((FtpsComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "useGlobalSslContextParameters": ((FtpsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

@@ -21,6 +21,9 @@ import java.util.Arrays;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -46,6 +49,9 @@ import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable
 public class Athena2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Athena2Producer.class);
+
+    private HealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
 
     public Athena2Producer(Endpoint endpoint) {
         super(endpoint);
@@ -425,5 +431,29 @@ public class Athena2Producer extends DefaultProducer {
     @Override
     public Athena2Endpoint getEndpoint() {
         return (Athena2Endpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            String id = getEndpoint().getId();
+            producerHealthCheck = new Athena2ProducerHealthCheck(getEndpoint(), id);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
     }
 }

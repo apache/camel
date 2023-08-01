@@ -39,7 +39,7 @@ public class Kinesis2Configuration implements Cloneable {
                             + "region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()")
     private String region;
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
-    @Metadata(autowired = true)
+    @Metadata(label = "advanced", autowired = true)
     private KinesisClient amazonKinesisClient;
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll",
               defaultValue = "1")
@@ -58,16 +58,16 @@ public class Kinesis2Configuration implements Cloneable {
                             + "in case of silent there will be no logging and the consumer will start from the beginning,"
                             + "in case of fail a ReachedClosedStateException will be raised")
     private Kinesis2ShardClosedStrategyEnum shardClosed;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Kinesis client")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(description = "To define a proxy host when instantiating the Kinesis client")
+    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the Kinesis client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the Kinesis client")
+    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the Kinesis client")
     private Integer proxyPort;
-    @UriParam(defaultValue = "false", description = "If we want to trust all certificates in case of overriding the endpoint")
+    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "false",
+    @UriParam(label = "advanced",
               description = "If we want to a KinesisAsyncClient instance set it to true")
     private boolean asyncClient;
     @UriParam(label = "common", defaultValue = "true",
@@ -80,15 +80,14 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "common",
               description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(label = "common", defaultValue = "false",
-              description = "Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect "
-                            +
-                            "static credentials to be passed in.")
+    @UriParam(label = "security",
+              description = "Set whether the Kinesis client should expect to load credentials through a default credentials provider or to expect"
+                            + " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "common", defaultValue = "false",
+    @UriParam(label = "security",
               description = "Set whether the Kinesis client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "common",
+    @UriParam(label = "security",
               description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 

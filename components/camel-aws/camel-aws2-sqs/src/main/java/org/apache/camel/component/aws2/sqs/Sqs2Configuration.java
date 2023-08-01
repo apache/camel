@@ -28,7 +28,7 @@ public class Sqs2Configuration implements Cloneable {
 
     // common properties
     private String queueName;
-    @UriParam
+    @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private SqsClient amazonSQSClient;
     @UriParam(label = "security", secret = true)
@@ -41,17 +41,17 @@ public class Sqs2Configuration implements Cloneable {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean autoCreateQueue;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean overrideEndpoint;
     @UriParam
     private String uriEndpointOverride;
@@ -120,12 +120,11 @@ public class Sqs2Configuration implements Cloneable {
     @UriParam(defaultValue = "https")
     private String protocol = "https";
 
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
-
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     /**

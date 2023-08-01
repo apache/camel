@@ -50,22 +50,6 @@ public interface Aws2SnsComponentBuilderFactory {
      */
     interface Aws2SnsComponentBuilder extends ComponentBuilder<Sns2Component> {
         /**
-         * To use the AmazonSNS as the client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.sns.SnsClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonSNSClient the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder amazonSNSClient(
-                software.amazon.awssdk.services.sns.SnsClient amazonSNSClient) {
-            doSetProperty("amazonSNSClient", amazonSNSClient);
-            return this;
-        }
-        /**
          * Setting the autocreation of the topic.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -225,67 +209,6 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder profileCredentialsName(
-                java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SNS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the SNS client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the SNS client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The queueUrl to subscribe to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -365,23 +288,6 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -398,37 +304,19 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the SNS client should expect to load credentials on an
-         * AWS infra instance or to expect static credentials to be passed in.
+         * To use the AmazonSNS as the client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.sns.SnsClient&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: advanced
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param amazonSNSClient the value to set
          * @return the dsl builder
          */
-        default Aws2SnsComponentBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the SNS client should expect to load credentials through
-         * a profile credentials provider.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param useProfileCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default Aws2SnsComponentBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default Aws2SnsComponentBuilder amazonSNSClient(
+                software.amazon.awssdk.services.sns.SnsClient amazonSNSClient) {
+            doSetProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
         /**
@@ -453,6 +341,87 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder healthCheckConsumerEnabled(
+                boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder healthCheckProducerEnabled(
+                boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the SNS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SNS client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SNS client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -467,6 +436,22 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder profileCredentialsName(
+                java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -478,6 +463,57 @@ public interface Aws2SnsComponentBuilderFactory {
          */
         default Aws2SnsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SNS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SNS client should expect to load credentials through
+         * a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -504,7 +540,6 @@ public interface Aws2SnsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "amazonSNSClient": getOrCreateConfiguration((Sns2Component) component).setAmazonSNSClient((software.amazon.awssdk.services.sns.SnsClient) value); return true;
             case "autoCreateTopic": getOrCreateConfiguration((Sns2Component) component).setAutoCreateTopic((boolean) value); return true;
             case "configuration": ((Sns2Component) component).setConfiguration((org.apache.camel.component.aws2.sns.Sns2Configuration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((Sns2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
@@ -514,22 +549,25 @@ public interface Aws2SnsComponentBuilderFactory {
             case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Sns2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((Sns2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
-            case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": getOrCreateConfiguration((Sns2Component) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyProtocol": getOrCreateConfiguration((Sns2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queueUrl": getOrCreateConfiguration((Sns2Component) component).setQueueUrl((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Sns2Component) component).setRegion((java.lang.String) value); return true;
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((Sns2Component) component).setServerSideEncryptionEnabled((boolean) value); return true;
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
             case "subscribeSNStoSQS": getOrCreateConfiguration((Sns2Component) component).setSubscribeSNStoSQS((boolean) value); return true;
-            case "trustAllCertificates": getOrCreateConfiguration((Sns2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Sns2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
+            case "amazonSNSClient": getOrCreateConfiguration((Sns2Component) component).setAmazonSNSClient((software.amazon.awssdk.services.sns.SnsClient) value); return true;
+            case "autowiredEnabled": ((Sns2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((Sns2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((Sns2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Sns2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Sns2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((Sns2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Sns2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sns2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Sns2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
-            case "autowiredEnabled": ((Sns2Component) component).setAutowiredEnabled((boolean) value); return true;
-            case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -44,40 +44,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return (AdvancedKinesisFirehose2EndpointBuilder) this;
         }
         /**
-         * Amazon Kinesis Firehose client to use for all requests for this
-         * endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonKinesisFirehoseClient the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder amazonKinesisFirehoseClient(
-                software.amazon.awssdk.services.firehose.FirehoseClient amazonKinesisFirehoseClient) {
-            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
-            return this;
-        }
-        /**
-         * Amazon Kinesis Firehose client to use for all requests for this
-         * endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param amazonKinesisFirehoseClient the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder amazonKinesisFirehoseClient(
-                String amazonKinesisFirehoseClient) {
-            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
-            return this;
-        }
-        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -144,19 +110,19 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
-         * @param profileCredentialsName the value to set
+         * @param uriEndpointOverride the value to set
          * @return the dsl builder
          */
-        default KinesisFirehose2EndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
+        default KinesisFirehose2EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -193,88 +159,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the Kinesis Firehose
-         * client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis Firehose
-         * client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Kinesis Firehose
-         * client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis Firehose
-         * client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Kinesis Firehose
-         * client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: producer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder proxyProtocol(
-                String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Kinesis Firehose client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
          * the region (for example ap-east-1) You'll need to use the name
@@ -289,57 +173,6 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          */
         default KinesisFirehose2EndpointBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default KinesisFirehose2EndpointBuilder uriEndpointOverride(
-                String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -380,38 +213,85 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Kinesis Firehose client should expect to load
-         * credentials through a profile credentials provider.
+         * To define a proxy host when instantiating the Kinesis Firehose
+         * client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyHost the value to set
          * @return the dsl builder
          */
-        default KinesisFirehose2EndpointBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default KinesisFirehose2EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * Set whether the Kinesis Firehose client should expect to load
-         * credentials through a profile credentials provider.
+         * To define a proxy port when instantiating the Kinesis Firehose
+         * client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: common
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default KinesisFirehose2EndpointBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default KinesisFirehose2EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -429,6 +309,22 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -440,6 +336,76 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          */
         default KinesisFirehose2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Kinesis Firehose client should expect to load
+         * credentials through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default KinesisFirehose2EndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -500,6 +466,40 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         default AdvancedKinesisFirehose2EndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Amazon Kinesis Firehose client to use for all requests for this
+         * endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisFirehoseClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesisFirehose2EndpointBuilder amazonKinesisFirehoseClient(
+                software.amazon.awssdk.services.firehose.FirehoseClient amazonKinesisFirehoseClient) {
+            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
+            return this;
+        }
+        /**
+         * Amazon Kinesis Firehose client to use for all requests for this
+         * endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisFirehoseClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesisFirehose2EndpointBuilder amazonKinesisFirehoseClient(
+                String amazonKinesisFirehoseClient) {
+            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
             return this;
         }
     }

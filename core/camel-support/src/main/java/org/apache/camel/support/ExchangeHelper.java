@@ -383,6 +383,7 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
         source.getExchangeExtension().copyInternalProperties(result);
+        source.getExchangeExtension().copySafeCopyPropertiesTo(result.getExchangeExtension());
 
         // copy over state
         result.setRouteStop(source.isRouteStop());
@@ -391,6 +392,7 @@ public final class ExchangeHelper {
         result.getExchangeExtension().setNotifyEvent(source.getExchangeExtension().isNotifyEvent());
         result.getExchangeExtension().setRedeliveryExhausted(source.getExchangeExtension().isRedeliveryExhausted());
         result.getExchangeExtension().setErrorHandlerHandled(source.getExchangeExtension().getErrorHandlerHandled());
+
         result.setException(source.getException());
     }
 

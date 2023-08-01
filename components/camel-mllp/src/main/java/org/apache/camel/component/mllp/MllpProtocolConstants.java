@@ -44,7 +44,6 @@ public final class MllpProtocolConstants {
         MSH18_VALUES = new HashMap<>(15);
         MSH18_VALUES.put("ASCII", StandardCharsets.US_ASCII);
         MSH18_VALUES.put("8859/1", StandardCharsets.ISO_8859_1);
-
         MSH18_VALUES.put("8859/2", Charset.forName("ISO-8859-2"));
         MSH18_VALUES.put("8859/3", Charset.forName("ISO-8859-3"));
         MSH18_VALUES.put("8859/4", Charset.forName("ISO-8859-4"));
@@ -53,15 +52,27 @@ public final class MllpProtocolConstants {
         MSH18_VALUES.put("8859/7", Charset.forName("ISO-8859-7"));
         MSH18_VALUES.put("8859/8", Charset.forName("ISO-8859-8"));
         MSH18_VALUES.put("8859/9", Charset.forName("ISO-8859-9"));
+        MSH18_VALUES.put("8859/15", Charset.forName("ISO-8859-15"));
+        MSH18_VALUES.put("UNICODE UTF-8", StandardCharsets.UTF_8);
 
         /*
-          // These are defined in the HL7 Spec, but I don't know how to map them to Java charset names
+          These values are defined in the HL7 Spec, but currently not mapped to a Java charset
 
-          MSH18_VALUES.put("JAS2020", "????");
-          MSH18_VALUES.put("JIS X 0202", "????");
-          MSH18_VALUES.put("JIS X 0201-1976", "????");
-          MSH18_VALUES.put("JIS X 0208-1990", "????");
-          MSH18_VALUES.put("JIS X 0212-1990", "????");
+          JAS2020
+          JIS X 0202
+          ISO IR6
+          ISO IR14
+          ISO IR87
+          ISO IR159
+          GB 18030-2000
+          KS X 1001
+          CNS 11643-1992
+          BIG-5
+          UNICODE
+          UNICODE UTF-16
+          UNICODE UTF-32
+
+          see: https://terminology.hl7.org/CodeSystem-v2-0211.html
         */
     }
 

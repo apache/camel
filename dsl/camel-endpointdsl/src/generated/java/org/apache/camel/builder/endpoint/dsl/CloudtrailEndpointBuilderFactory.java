@@ -45,38 +45,6 @@ public interface CloudtrailEndpointBuilderFactory {
             return (AdvancedCloudtrailEndpointBuilder) this;
         }
         /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder cloudTrailClient(
-                software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder cloudTrailClient(
-                String cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
          * Specify an event source to select events.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -156,98 +124,6 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder profileCredentialsName(
-                String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: consumer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: consumer
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
          * The region in which Cloudtrail client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
@@ -300,41 +176,6 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
          * Set the overriding uri endpoint. This option needs to be used in
          * combination with overrideEndpoint option.
          * 
@@ -351,75 +192,79 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
+         * To define a proxy host when instantiating the Cloudtrail client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: proxy
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param proxyHost the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+        default CloudtrailEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
+         * To define a proxy port when instantiating the Cloudtrail client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: proxy
          * 
-         * @param useDefaultCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+        default CloudtrailEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a profile credentials provider.
+         * To define a proxy port when instantiating the Cloudtrail client.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointBuilder useProfileCredentialsProvider(
-                boolean useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default CloudtrailEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a profile credentials provider.
+         * To define a proxy protocol when instantiating the Cloudtrail client.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: consumer
+         * Default: HTTPS
+         * Group: proxy
          * 
-         * @param useProfileCredentialsProvider the value to set
+         * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointBuilder useProfileCredentialsProvider(
-                String useProfileCredentialsProvider) {
-            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+        default CloudtrailEndpointBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Cloudtrail client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -909,6 +754,22 @@ public interface CloudtrailEndpointBuilderFactory {
             return this;
         }
         /**
+         * If using a profile credentials provider this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder profileCredentialsName(
+                String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -920,6 +781,113 @@ public interface CloudtrailEndpointBuilderFactory {
          */
         default CloudtrailEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder useProfileCredentialsProvider(
+                boolean useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a profile credentials provider.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useProfileCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder useProfileCredentialsProvider(
+                String useProfileCredentialsProvider) {
+            doSetProperty("useProfileCredentialsProvider", useProfileCredentialsProvider);
             return this;
         }
     }
@@ -1084,6 +1052,38 @@ public interface CloudtrailEndpointBuilderFactory {
         default AdvancedCloudtrailEndpointBuilder pollStrategy(
                 String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * Amazon Cloudtrail client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudTrailClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder cloudTrailClient(
+                software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
+            doSetProperty("cloudTrailClient", cloudTrailClient);
+            return this;
+        }
+        /**
+         * Amazon Cloudtrail client to use for all requests for this endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudTrailClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder cloudTrailClient(
+                String cloudTrailClient) {
+            doSetProperty("cloudTrailClient", cloudTrailClient);
             return this;
         }
     }

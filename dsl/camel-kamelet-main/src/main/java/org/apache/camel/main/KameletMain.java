@@ -101,6 +101,7 @@ public class KameletMain extends MainCommandLineSupport {
     private boolean download = true;
     private String repos;
     private boolean fresh;
+    private boolean verbose;
     private String mavenSettings;
     private String mavenSettingsSecurity;
     private boolean stub;
@@ -334,6 +335,8 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     protected CamelContext createCamelContext() {
+        this.verbose = "true".equals(getInitialProperties().get("camel.jbang.verbose"));
+
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
         if (download) {
@@ -348,6 +351,7 @@ public class KameletMain extends MainCommandLineSupport {
             downloader.setKnownReposResolver(known);
             downloader.setClassLoader(dynamicCL);
             downloader.setCamelContext(answer);
+            downloader.setVerbose(verbose);
             downloader.setRepos(repos);
             downloader.setFresh(fresh);
             downloader.setMavenSettings(mavenSettings);

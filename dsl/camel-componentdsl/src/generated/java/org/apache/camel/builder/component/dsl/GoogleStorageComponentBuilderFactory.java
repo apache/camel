@@ -393,24 +393,10 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
         /**
-         * Used for enabling or disabling all health checks from this component.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: health
-         * 
-         * @param healthCheckEnabled the value to set
-         * @return the dsl builder
-         */
-        default GoogleStorageComponentBuilder healthCheckEnabled(
-                boolean healthCheckEnabled) {
-            doSetProperty("healthCheckEnabled", healthCheckEnabled);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all producer based health checks from
-         * this component.
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -468,7 +454,6 @@ public interface GoogleStorageComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setOperation((org.apache.camel.component.google.storage.GoogleCloudStorageOperations) value); return true;
             case "autowiredEnabled": ((GoogleCloudStorageComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }

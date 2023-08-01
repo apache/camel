@@ -31,8 +31,8 @@ public class Plc4XComponentTagTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedMessageCount(2);
-        template.asyncSendBody("direct:plc4x", Collections.singletonList("irrelevant"));
-        template.asyncSendBody("direct:plc4x2", Collections.singletonList("irrelevant"));
+        template.sendBody("direct:plc4x", Collections.singletonList("irrelevant"));
+        template.sendBody("direct:plc4x2", Collections.singletonList("irrelevant"));
 
         MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.SECONDS);
     }

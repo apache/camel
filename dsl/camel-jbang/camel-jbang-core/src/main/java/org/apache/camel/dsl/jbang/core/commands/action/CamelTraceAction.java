@@ -42,6 +42,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -136,6 +137,10 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--latest" },
                         description = "Only output traces from the latest (follow if necessary until complete and exit)")
     boolean latest;
+
+    @CommandLine.Option(names = { "--mask" },
+                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask;
 
     @CommandLine.Option(names = { "--pretty" },
                         description = "Pretty print message body when using JSon or XML format")
@@ -421,6 +426,14 @@ public class CamelTraceAction extends ActionBaseCommand {
                     row.location = jo.getString("location");
                     row.routeId = jo.getString("routeId");
                     row.nodeId = jo.getString("nodeId");
+                    String uri = jo.getString("endpointUri");
+                    if (uri != null) {
+                        row.endpoint = new JsonObject();
+                        if (mask) {
+                            uri = URISupport.sanitizeUri(uri);
+                        }
+                        row.endpoint.put("endpoint", uri);
+                    }
                     Long ts = jo.getLong("timestamp");
                     if (ts != null) {
                         row.timestamp = ts;
@@ -696,7 +709,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     }
 
     private String getDataAsTable(Row r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, null, r.message, r.exception);
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.message, r.exception);
     }
 
     private String getElapsed(Row r) {
@@ -780,6 +793,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         long elapsed;
         boolean done;
         boolean failed;
+        JsonObject endpoint;
         JsonObject message;
         JsonObject exception;
 
