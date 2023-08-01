@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * A key used for caching {@link BeanInfo} by the {@link BeanComponent}
@@ -24,10 +25,12 @@ import java.lang.reflect.Method;
 public final class BeanInfoCacheKey {
 
     private final Class<?> type;
+    private final Object instance;
     private final Method explicitMethod;
 
-    public BeanInfoCacheKey(Class<?> type, Method explicitMethod) {
+    public BeanInfoCacheKey(Class<?> type, Object instance, Method explicitMethod) {
         this.type = type;
+        this.instance = instance;
         this.explicitMethod = explicitMethod;
     }
 
@@ -42,19 +45,19 @@ public final class BeanInfoCacheKey {
 
         BeanInfoCacheKey that = (BeanInfoCacheKey) o;
 
-        if (explicitMethod != null ? !explicitMethod.equals(that.explicitMethod) : that.explicitMethod != null) {
+        if (!Objects.equals(type, that.type)) {
             return false;
         }
-        if (!type.equals(that.type)) {
+        if (!Objects.equals(instance, that.instance)) {
             return false;
         }
-
-        return true;
+        return Objects.equals(explicitMethod, that.explicitMethod);
     }
 
     @Override
     public int hashCode() {
-        int result = type.hashCode();
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (instance != null ? instance.hashCode() : 0);
         result = 31 * result + (explicitMethod != null ? explicitMethod.hashCode() : 0);
         return result;
     }
