@@ -19,7 +19,6 @@ package org.apache.camel.processor.dynamicrouter;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.DynamicRouter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.ProducerTemplate;
@@ -31,10 +30,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 
 /**
- * {@link DynamicRouterConcurrentEIPTest}
+ * {@link DynamicRouterConcurrentPOJOTest}
  */
-@Disabled("Manual test together with DynamicRouterConcurrentEIPTest")
-public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
+@Disabled("Manual test together with DynamicRouterConcurrentPOJOTest")
+public class DynamicRouterConcurrentEIPTest extends ContextTestSupport {
 
     private static final int COUNT = 100;
 
@@ -98,11 +97,14 @@ public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                MyDynamicRouterPojo a = new MyDynamicRouterPojo("mock:a");
+                MyDynamicRouterPojo b = new MyDynamicRouterPojo("mock:b");
+
                 from("seda:a")
-                        .bean(new MyDynamicRouterPojo("mock:a"));
+                        .dynamicRouter(method(a, "route"));
 
                 from("seda:b")
-                        .bean(new MyDynamicRouterPojo("mock:b"));
+                        .dynamicRouter(method(b, "route"));
             }
         };
     }
@@ -115,7 +117,6 @@ public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
             this.target = target;
         }
 
-        @DynamicRouter
         public String route(@Header(Exchange.SLIP_ENDPOINT) String previous) {
             if (previous == null) {
                 return target;
