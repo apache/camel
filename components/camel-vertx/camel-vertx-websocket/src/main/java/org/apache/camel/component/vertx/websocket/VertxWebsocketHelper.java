@@ -84,24 +84,10 @@ public final class VertxWebsocketHelper {
             return false;
         }
 
-        if (normalizedHostPath.contains("{")) {
-            // For a parameterized paths verify the non-parameterized elements match
-            for (int i = 0; i < hostPathElements.length; i++) {
-                String hostPathElement = hostPathElements[i];
-                String targetPathElement = targetPathElements[i];
-                if (!hostPathElement.startsWith("{") && !hostPathElement.endsWith("}")
-                        && !hostPathElement.equals(targetPathElement)) {
-                    return false;
-                }
-            }
+        if (exactPathMatch) {
+            return normalizedHostPath.equals(normalizedTargetPath);
         } else {
-            if (exactPathMatch) {
-                return normalizedHostPath.equals(normalizedTargetPath);
-            } else {
-                return normalizedTargetPath.startsWith(normalizedHostPath);
-            }
+            return normalizedTargetPath.startsWith(normalizedHostPath);
         }
-
-        return true;
     }
 }
