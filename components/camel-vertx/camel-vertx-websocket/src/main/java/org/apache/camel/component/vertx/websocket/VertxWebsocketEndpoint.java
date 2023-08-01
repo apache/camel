@@ -202,10 +202,10 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
     protected ServerWebSocket findPeerForConnectionKey(String connectionKey) {
         Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = getVertxHostRegistry();
         for (VertxWebsocketHost host : registry.values()) {
-            Map<String, ServerWebSocket> hostPeers = host.getConnectedPeers();
-            if (hostPeers.containsKey(connectionKey) && host.isManagedHost(getConfiguration().getWebsocketURI().getHost())
+            VertxWebsocketPeer peer = host.getConnectedPeer(connectionKey);
+            if (peer != null && host.isManagedHost(getConfiguration().getWebsocketURI().getHost())
                     && host.isManagedPort(getConfiguration().getWebsocketURI().getPort())) {
-                return hostPeers.get(connectionKey);
+                return peer.getWebSocket();
             }
         }
         return null;
@@ -220,9 +220,17 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
                 .stream()
                 .filter(host -> host.isManagedHost(getConfiguration().getWebsocketURI().getHost()))
                 .filter(host -> host.isManagedPort(getConfiguration().getWebsocketURI().getPort()))
-                .flatMap(host -> host.getConnectedPeers().entrySet().stream())
-                .filter(entry -> VertxWebsocketHelper.webSocketHostPathMatches(entry.getValue().path(),
-                        getConfiguration().getWebsocketURI().getPath()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .flatMap(host -> host.getConnectedPeers().stream())
+                .filter(connectedPeer -> {
+                    String producerPath = getConfiguration().getWebsocketURI().getPath();
+                    String peerConnectedPath;
+                    if (producerPath.contains("{") || producerPath.contains("*")) {
+                        peerConnectedPath = connectedPeer.getRawPath();
+                    } else {
+                        peerConnectedPath = connectedPeer.getPath();
+                    }
+                    return VertxWebsocketHelper.webSocketHostPathMatches(peerConnectedPath, producerPath);
+                })
+                .collect(Collectors.toMap(VertxWebsocketPeer::getConnectionKey, VertxWebsocketPeer::getWebSocket));
     }
 }

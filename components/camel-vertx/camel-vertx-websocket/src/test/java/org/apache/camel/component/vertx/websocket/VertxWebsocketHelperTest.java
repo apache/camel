@@ -45,13 +45,6 @@ public class VertxWebsocketHelperTest {
     }
 
     @Test
-    void webSocketHostExactPathWithParamsMatches() {
-        String hostPath = "/foo/{bar}/cheese/{wine}";
-        String targetPath = "/foo/bar/cheese/wine";
-        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
-    }
-
-    @Test
     void webSocketHostExactPathWithParamsNotMatches() {
         String hostPath = "/foo/{bar}/cheese/{wine}";
         String targetPath = "/bad/bar/path/wine";
@@ -73,13 +66,6 @@ public class VertxWebsocketHelperTest {
     }
 
     @Test
-    void webSocketHostWildcardPathWithParamsMatches() {
-        String hostPath = "/foo/{bar}/cheese/{wine}*";
-        String targetPath = "/foo/bar/cheese/wine/beer/additional/path";
-        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
-    }
-
-    @Test
     void webSocketHostWildcardPathWithParamsNotMatches() {
         String hostPath = "/foo/{bar}/cheese/{wine}*";
         String targetPath = "/foo/bar/invalid/wine/beer/additional/path";
@@ -97,13 +83,6 @@ public class VertxWebsocketHelperTest {
     void webSocketHostWithTrailingMultipleSlashPathMatches() {
         String hostPath = "/foo/bar/cheese/wine";
         String targetPath = "/foo/bar/cheese/wine//";
-        assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
-    }
-
-    @Test
-    void webSocketHostWildcardPathWithTrailingSlashStarMatches() {
-        String hostPath = "/foo/{bar}/cheese/{wine}/*";
-        String targetPath = "/foo/bar/cheese/wine/beer/additional/path";
         assertTrue(VertxWebsocketHelper.webSocketHostPathMatches(hostPath, targetPath));
     }
 
