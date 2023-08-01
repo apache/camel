@@ -1229,7 +1229,9 @@ public class NotifyBuilder {
             throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
         }
         try {
-            latch.await(timeout, timeUnit);
+            if (!latch.await(timeout, timeUnit)) {
+                LOG.warn("The notify builder latch has timed out. It's likely the condition has never been satisfied");
+            }
         } catch (InterruptedException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
@@ -1366,6 +1368,11 @@ public class NotifyBuilder {
             }
         }
 
+        /*
+         * At a first glance, it may seem like a bug that the latch may not be count down in some cases: this is by design. It
+         * means there was never a match.
+         * This may cause the matchesWaitTime() to take a long time in some cases as it waits for the latch to be counted.
+         */
         private synchronized void computeMatches() {
             // use a temporary answer until we have computed the value to assign
             Boolean answer = null;
