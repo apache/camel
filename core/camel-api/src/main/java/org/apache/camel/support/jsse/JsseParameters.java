@@ -116,7 +116,7 @@ public class JsseParameters implements CamelContextAware {
 
         Resource res
                 = getCamelContext().getCamelContextExtension().getContextPlugin(ResourceLoader.class).resolveResource(resource);
-        if (res == null) {
+        if (res == null || !res.exists()) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
         }
         return res.getInputStream();
