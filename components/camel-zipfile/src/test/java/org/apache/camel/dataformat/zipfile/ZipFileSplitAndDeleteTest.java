@@ -58,7 +58,8 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         notify.matchesWaitTime();
 
         // the original file should have been deleted
-        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> assertFalse(new File(zipFile).exists(), "File should been deleted"));
+        Awaitility.await().atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> assertFalse(new File(zipFile).exists(), "File should been deleted"));
     }
 
     @Test
@@ -73,7 +74,8 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         notify.matchesWaitTime();
 
         // the original file should have been deleted
-        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> assertFalse(new File(zipFile).exists(), "File should been deleted"));
+        Awaitility.await().atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> assertFalse(new File(zipFile).exists(), "File should been deleted"));
     }
 
     @Override
