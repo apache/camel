@@ -212,8 +212,10 @@ class AbstractExchange implements ExtendedExchange {
 
     @Override
     public void copySafeCopyPropertiesTo(ExtendedExchange target) {
-        safeCopyProperties.entrySet()
-                .forEach(entry -> target.setSafeCopyProperty(entry.getKey(), entry.getValue().safeCopy()));
+        if (safeCopyProperties != null && !safeCopyProperties.isEmpty()) {
+            safeCopyProperties.entrySet()
+                    .forEach(entry -> target.setSafeCopyProperty(entry.getKey(), entry.getValue().safeCopy()));
+        }
     }
 
     @Override
