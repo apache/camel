@@ -15,7 +15,7 @@ emulator is available.
 A Google Cloud account with a configured BigQuery instance is required with a dataset created.
 
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+For more information please refer to [Google Cloud Platform Auth Guide](https://cloud.google.com/docs/authentication)
 
 Google security credentials for the tests can be set in the `src/test/resources/simple.properties` file by setting
 either one of the following in order of preference:
@@ -23,8 +23,7 @@ either one of the following in order of preference:
 * Service Account Email and Service Account Key (PEM format) (`service.account` and `service.key`)
 * GCP credentials file location (`service.credentialsFileLocation`)
 
-Or implicitly, where the connection factory falls back on
-https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
+Or implicitly, where the connection factory falls back on [Application Default Credentials](https://developers.google.com/identity/protocols/application-default-credentials#howtheywork).
 
 *OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
 
