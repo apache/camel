@@ -334,6 +334,7 @@
         <jsmpp-version>2.3.11</jsmpp-version>
         <jsch-version>0.2.1</jsch-version>
         <json-api>1.0</json-api>
+        <json-org-version>20230618</json-org-version>
         <jsonassert-version>1.5.1</jsonassert-version>
         <json-path-version>2.8.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
@@ -3233,6 +3234,11 @@
                 <groupId>com.sun.xml.parsers</groupId>
                 <artifactId>jaxp-ri</artifactId>
                 <version>1.4.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json-org-version}</version>
             </dependency>
 
             <!-- logging -->
