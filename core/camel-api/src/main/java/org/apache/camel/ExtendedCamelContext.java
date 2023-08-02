@@ -445,16 +445,18 @@ public interface ExtendedCamelContext {
     String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional);
 
     /**
-     * Package name to use as base (offset) for classpath scanning of custom {@link CamelConfiguration},
-     * {@link Configuration}, and {@link TypeConverter}.
+     * Package name to use as base (offset) for classpath scanning of RouteBuilder,
+     * {@link org.apache.camel.TypeConverter}, {@link CamelConfiguration} classes, and also classes annotated with
+     * {@link org.apache.camel.Converter}, or {@link org.apache.camel.BindToRegistry}.
      *
-     * @return the base package name (can bre null if not configured)
+     * @return the base package name (can be null if not configured)
      */
     String getBasePackageScan();
 
     /**
-     * Package name to use as base (offset) for classpath scanning of custom {@link CamelConfiguration},
-     * {@link Configuration}, and {@link TypeConverter}.
+     * Package name to use as base (offset) for classpath scanning of RouteBuilder,
+     * {@link org.apache.camel.TypeConverter}, {@link CamelConfiguration} classes, and also classes annotated with
+     * {@link org.apache.camel.Converter}, or {@link org.apache.camel.BindToRegistry}.
      *
      * @param basePackageScan the base package name
      */
