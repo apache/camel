@@ -124,23 +124,6 @@ public interface JpaComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the PlatformTransactionManager for managing transactions.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param transactionManager the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default JpaComponentBuilder transactionManager(
-                org.springframework.transaction.PlatformTransactionManager transactionManager) {
-            doSetProperty("transactionManager", transactionManager);
-            return this;
-        }
-        /**
          * To use the TransactionStrategy for running the operations in a
          * transaction.
          * 
@@ -279,7 +262,6 @@ public interface JpaComponentBuilderFactory {
             case "entityManagerFactory": ((JpaComponent) component).setEntityManagerFactory((jakarta.persistence.EntityManagerFactory) value); return true;
             case "joinTransaction": ((JpaComponent) component).setJoinTransaction((boolean) value); return true;
             case "sharedEntityManager": ((JpaComponent) component).setSharedEntityManager((boolean) value); return true;
-            case "transactionManager": ((JpaComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
             case "transactionStrategy": ((JpaComponent) component).setTransactionStrategy((org.apache.camel.component.jpa.TransactionStrategy) value); return true;
             case "bridgeErrorHandler": ((JpaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JpaComponent) component).setLazyStartProducer((boolean) value); return true;

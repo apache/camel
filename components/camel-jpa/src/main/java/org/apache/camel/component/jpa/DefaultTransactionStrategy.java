@@ -16,23 +16,27 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.Map;
+
 import jakarta.persistence.EntityManagerFactory;
 
+import org.apache.camel.CamelContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class DefaultTransactionStrategy implements TransactionStrategy {
-    private final TransactionTemplate transactionTemplate;
-    private final PlatformTransactionManager transactionManager;
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTransactionStrategy.class);
+    private TransactionTemplate transactionTemplate;
+    private PlatformTransactionManager transactionManager;
 
-    public DefaultTransactionStrategy(PlatformTransactionManager transactionManager,
-                                      EntityManagerFactory entityManagerFactory) {
-        if (transactionManager == null) {
+    public DefaultTransactionStrategy(CamelContext camelContext, EntityManagerFactory entityManagerFactory) {
+        initTransactionManager(camelContext);
+        if (transactionManager == null && entityManagerFactory != null) {
             this.transactionManager = createTransactionManager(entityManagerFactory);
-        } else {
-            this.transactionManager = transactionManager;
         }
         this.transactionTemplate = createTransactionTemplate();
     }
@@ -47,6 +51,49 @@ public class DefaultTransactionStrategy implements TransactionStrategy {
 
     public PlatformTransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+        this.transactionTemplate = createTransactionTemplate();
+    }
+
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
+
+    private void initTransactionManager(CamelContext camelContext) {
+        // lookup transaction manager and use it if only one provided
+        if (transactionManager == null && camelContext != null) {
+            Map<String, PlatformTransactionManager> map
+                    = camelContext.getRegistry().findByTypeWithName(PlatformTransactionManager.class);
+            if (map != null) {
+                if (map.size() == 1) {
+                    transactionManager = map.values().iterator().next();
+                    LOG.info("Using TransactionManager found in registry with id [{}] {}",
+                            map.keySet().iterator().next(), transactionManager);
+                } else {
+                    LOG.debug("Could not find a single TransactionManager in registry as there was {} instances.", map.size());
+                }
+            }
+        } else {
+            LOG.info("Using TransactionManager configured on this component: {}", transactionManager);
+        }
+
+        // transaction manager could also be hidden in a template
+        if (transactionManager == null && camelContext != null) {
+            Map<String, TransactionTemplate> map
+                    = camelContext.getRegistry().findByTypeWithName(TransactionTemplate.class);
+            if (map != null) {
+                if (map.size() == 1) {
+                    transactionManager = map.values().iterator().next().getTransactionManager();
+                    LOG.info("Using TransactionManager found in registry with id [{}] {}",
+                            map.keySet().iterator().next(), transactionManager);
+                } else {
+                    LOG.debug("Could not find a single TransactionTemplate in registry as there was {} instances.", map.size());
+                }
+            }
+        }
     }
 
     protected PlatformTransactionManager createTransactionManager(EntityManagerFactory entityManagerFactory) {

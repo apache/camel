@@ -135,7 +135,9 @@ public class JpaTest {
 
         listEndpoint = camelContext.getEndpoint(getEndpointUri() + "&entityType=java.util.List", JpaEndpoint.class);
 
-        transactionTemplate = endpoint.createTransactionTemplate();
+        if (endpoint.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            transactionTemplate = strategy.getTransactionTemplate();
+        }
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();
 
         transactionTemplate.execute(new TransactionCallback<Object>() {

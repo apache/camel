@@ -38,7 +38,7 @@ public class JpaEndpointTest extends CamelTestSupport {
         jpa.setEntityType(SendEmail.class);
 
         assertNotNull(jpa.getEntityManagerFactory());
-        assertNotNull(jpa.getTransactionManager());
+        assertNotNull(jpa.getTransactionStrategy());
 
         assertEquals("jpa://org.apache.camel.examples.SendEmail", jpa.getEndpointUri());
         assertEquals("camel", jpa.getPersistenceUnit());
@@ -57,7 +57,7 @@ public class JpaEndpointTest extends CamelTestSupport {
         jpa.setEntityType(SendEmail.class);
 
         assertNotNull(jpa.getEntityManagerFactory());
-        assertNotNull(jpa.getTransactionManager());
+        assertNotNull(jpa.getTransactionStrategy());
 
         assertEquals("jpa://org.apache.camel.examples.SendEmail", jpa.getEndpointUri());
         assertEquals("camel", jpa.getPersistenceUnit());
@@ -79,7 +79,7 @@ public class JpaEndpointTest extends CamelTestSupport {
         jpa.setEntityType(SendEmail.class);
 
         assertSame(fac, jpa.getEntityManagerFactory());
-        assertNotNull(jpa.getTransactionManager());
+        assertNotNull(jpa.getTransactionStrategy());
 
         assertEquals("jpa://org.apache.camel.examples.SendEmail", jpa.getEndpointUri());
         assertEquals("camel", jpa.getPersistenceUnit());
@@ -100,11 +100,15 @@ public class JpaEndpointTest extends CamelTestSupport {
 
         JpaEndpoint jpa = new JpaEndpoint("jpa://org.apache.camel.examples.SendEmail", null);
         jpa.setEntityManagerFactory(fac);
-        jpa.setTransactionManager(tm);
+        if (jpa.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            strategy.setTransactionManager(tm);
+        }
         jpa.setEntityType(SendEmail.class);
 
         assertSame(fac, jpa.getEntityManagerFactory());
-        assertSame(tm, jpa.getTransactionManager());
+        if (jpa.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            assertSame(tm, strategy.getTransactionManager());
+        }
 
         assertEquals("jpa://org.apache.camel.examples.SendEmail", jpa.getEndpointUri());
         assertEquals("camel", jpa.getPersistenceUnit());
@@ -121,10 +125,14 @@ public class JpaEndpointTest extends CamelTestSupport {
         jpa.setEntityType(SendEmail.class);
 
         jpa.setEntityManagerFactory(fac);
-        jpa.setTransactionManager(tm);
+        if (jpa.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            strategy.setTransactionManager(tm);
+        }
 
         assertSame(fac, jpa.getEntityManagerFactory());
-        assertSame(tm, jpa.getTransactionManager());
+        if (jpa.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            assertSame(tm, strategy.getTransactionManager());
+        }
 
         assertEquals("jpa://org.apache.camel.examples.SendEmail", jpa.getEndpointUri());
         assertEquals("camel", jpa.getPersistenceUnit());
