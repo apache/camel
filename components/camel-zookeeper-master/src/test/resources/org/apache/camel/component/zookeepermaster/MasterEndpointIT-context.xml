@@ -40,8 +40,8 @@
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="curator">
-    <route>
-      <from uri="zookeeper-master:master-000:seda:bar"/>
+    <route id="zookeeper-master-to-direct">
+      <from uri="zookeeper-master:master-000:direct:bar"/>
       <to uri="mock:results"/>
     </route>
 
