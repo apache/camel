@@ -71,6 +71,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
@@ -263,6 +264,14 @@ public abstract class BaseMainSupport extends BaseService {
         listeners.remove(listener);
     }
 
+    protected void loadCustomBeans(CamelContext camelContext) throws Exception {
+        // auto-detect custom beans via base package scanning
+        String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
+        if (basePackage != null) {
+            PackageScanHelper.registerBeans(getCamelContext(), Set.of(basePackage));
+        }
+    }
+
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // auto-detect camel configurations via base package scanning
         String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
@@ -429,9 +438,9 @@ public abstract class BaseMainSupport extends BaseService {
         // configure from main configuration properties
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
 
+        // try to load custom beans/configuration classes via package scanning
         configurePackageScan(camelContext);
-
-        // try to load configuration classes
+        loadCustomBeans(camelContext);
         loadConfigurations(camelContext);
 
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
