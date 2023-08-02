@@ -58,7 +58,8 @@ public final class DefaultBeanProcessorFactory extends ServiceSupport
 
     @Override
     public Processor createBeanProcessor(CamelContext camelContext, Object bean, Method method) throws Exception {
-        BeanInfo info = new BeanInfo(camelContext, method, parameterMappingStrategy, beanComponent);
+        BeanInfo info
+                = new BeanInfo(camelContext, method.getDeclaringClass(), bean, method, parameterMappingStrategy, beanComponent);
         return new BeanProcessor(bean, info);
     }
 
