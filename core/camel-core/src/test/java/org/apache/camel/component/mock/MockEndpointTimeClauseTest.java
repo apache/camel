@@ -127,7 +127,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
             }
         });
 
-        // but the assertion would be complete before hand and thus
+        // but the assertion would be complete beforehand and thus
         // the assertion was valid at the time given
         assertMockEndpointsSatisfied();
 

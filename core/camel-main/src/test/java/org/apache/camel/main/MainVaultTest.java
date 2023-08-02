@@ -48,7 +48,7 @@ public class MainVaultTest {
         Assertions.assertEquals("myKey", cfg.getAccessKey());
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
-        Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
 
         main.stop();
     }
@@ -75,8 +75,8 @@ public class MainVaultTest {
         Assertions.assertEquals("myKey", cfg.getAccessKey());
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
-        Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
-        Assertions.assertEquals(true, cfg.isProfileCredentialsProvider());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
+        Assertions.assertTrue(cfg.isProfileCredentialsProvider());
         Assertions.assertEquals("jack", cfg.getProfileName());
 
         main.stop();
@@ -103,7 +103,7 @@ public class MainVaultTest {
         Assertions.assertEquals("myKey", cfg.getAccessKey());
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
-        Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
 
         main.stop();
     }
@@ -131,8 +131,8 @@ public class MainVaultTest {
         Assertions.assertEquals("myKey", cfg.getAccessKey());
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
-        Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
-        Assertions.assertEquals(true, cfg.isProfileCredentialsProvider());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
+        Assertions.assertTrue(cfg.isProfileCredentialsProvider());
         Assertions.assertEquals("jack", cfg.getProfileName());
 
         main.stop();
@@ -155,7 +155,7 @@ public class MainVaultTest {
 
         Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
         Assertions.assertEquals("gcp-project", cfg.getProjectId());
-        Assertions.assertEquals(false, cfg.isUseDefaultInstance());
+        Assertions.assertFalse(cfg.isUseDefaultInstance());
         main.stop();
     }
 
@@ -177,7 +177,7 @@ public class MainVaultTest {
 
         Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
         Assertions.assertEquals("gcp-project", cfg.getProjectId());
-        Assertions.assertEquals(false, cfg.isUseDefaultInstance());
+        Assertions.assertFalse(cfg.isUseDefaultInstance());
         main.stop();
     }
 

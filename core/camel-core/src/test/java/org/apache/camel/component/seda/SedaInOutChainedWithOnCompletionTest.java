@@ -31,7 +31,7 @@ public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
     public void testInOutSedaChainedWithCustomOnCompletion() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         getMockEndpoint("mock:b").expectedBodiesReceived("start-a");
-        // the onCustomCompletion should be send very last (as it will be handed
+        // the onCustomCompletion should be sent very last (as it will be handed
         // over)
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b", "onCustomCompletion");
 

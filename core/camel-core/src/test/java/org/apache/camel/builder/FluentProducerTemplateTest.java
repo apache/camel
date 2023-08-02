@@ -26,6 +26,7 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,22 +40,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class FluentProducerTemplateTest extends ContextTestSupport {
 
     @Test
-    public void testNoEndpoint() throws Exception {
+    public void testNoEndpoint() {
         FluentProducerTemplate fluent = context.createFluentProducerTemplate();
 
-        try {
-            fluent.withBody("Hello World").send();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        FluentProducerTemplate helloWorld = fluent.withBody("Hello World");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> helloWorld.send(),
+                "Should have thrown exception");
 
-        try {
-            fluent.withBody("Hello World").request();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        Assertions.assertThrows(IllegalArgumentException.class, () -> helloWorld.request(),
+                "Should have thrown exception");
     }
 
     @Test
@@ -239,7 +233,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExceptionUsingProcessorAndBody() throws Exception {
+    public void testExceptionUsingProcessorAndBody() {
         try {
             DefaultFluentProducerTemplate.on(context)
                     .withBody("World")
@@ -257,7 +251,6 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
 
         try {
             DefaultFluentProducerTemplate.on(context).withBody("Hello World").to("direct:exception").request();
-
             fail("Should have thrown RuntimeCamelException");
         } catch (RuntimeCamelException e) {
             boolean b = e.getCause() instanceof IllegalArgumentException;
@@ -301,7 +294,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testWithExchange() throws Exception {
+    public void testWithExchange() {
         Exchange exchange = ExchangeBuilder.anExchange(context).withBody("Hello!").withPattern(ExchangePattern.InOut).build();
 
         exchange = context.createFluentProducerTemplate().withExchange(exchange).to("direct:in").send();
@@ -318,7 +311,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestBody() throws Exception {
+    public void testRequestBody() {
         // with endpoint as string uri
         FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
 
@@ -443,7 +436,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPerformance() throws Exception {
+    public void testPerformance() {
         FluentProducerTemplate fluent = context.createFluentProducerTemplate();
         for (int i = 0; i < 1000; i++) {
             Object result = fluent.withBody("Camel").withHeader("foo", "" + i).to("direct:echo").request();
