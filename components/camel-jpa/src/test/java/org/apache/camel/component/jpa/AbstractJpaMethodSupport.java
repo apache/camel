@@ -49,7 +49,9 @@ public class AbstractJpaMethodSupport extends CamelTestSupport {
     protected void setUp(String endpointUri) throws Exception {
         endpoint = context.getEndpoint(endpointUri, JpaEndpoint.class);
 
-        transactionTemplate = endpoint.createTransactionTemplate();
+        if (endpoint.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            transactionTemplate = strategy.getTransactionTemplate();
+        }
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();
 
         transactionTemplate.execute(new TransactionCallback<Object>() {

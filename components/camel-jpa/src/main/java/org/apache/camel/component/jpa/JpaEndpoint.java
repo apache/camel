@@ -42,9 +42,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Store and retrieve Java objects from databases using Java Persistence API (JPA).
@@ -54,7 +51,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
-    private PlatformTransactionManager transactionManager;
     private TransactionStrategy transactionStrategy;
     private Expression producerExpression;
 
@@ -249,26 +245,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
-    }
-
-    public PlatformTransactionManager getTransactionManager() {
-        if (transactionManager == null) {
-            if (transactionStrategy == null) {
-                DefaultTransactionStrategy defaultTransactionStrategy = createTransactionStrategy();
-                transactionStrategy = defaultTransactionStrategy;
-                transactionManager = defaultTransactionStrategy.getTransactionManager();
-            } else if (transactionStrategy instanceof DefaultTransactionStrategy) {
-                transactionManager = ((DefaultTransactionStrategy) transactionStrategy).getTransactionManager();
-            }
-        }
-        return transactionManager;
-    }
-
-    /**
-     * To use the {@link PlatformTransactionManager} for managing transactions.
-     */
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
     }
 
     public TransactionStrategy getTransactionStrategy() {
@@ -613,15 +589,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    protected TransactionTemplate createTransactionTemplate() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        transactionTemplate.afterPropertiesSet();
-        return transactionTemplate;
-    }
-
     protected DefaultTransactionStrategy createTransactionStrategy() {
-        return new DefaultTransactionStrategy(transactionManager, getEntityManagerFactory());
+        return new DefaultTransactionStrategy(getCamelContext(), getEntityManagerFactory());
     }
 
     protected Expression createProducerExpression() {
@@ -655,9 +624,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         }
         if (transactionStrategy == null && getComponent() != null) {
             transactionStrategy = getComponent().getTransactionStrategy();
-        }
-        if (transactionManager == null && getComponent() != null) {
-            transactionManager = getComponent().getTransactionManager();
         }
     }
 }
