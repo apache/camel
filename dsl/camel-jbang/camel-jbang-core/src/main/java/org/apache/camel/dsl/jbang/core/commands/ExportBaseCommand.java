@@ -107,7 +107,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String camelVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.4")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.6")
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
