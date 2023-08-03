@@ -19,6 +19,7 @@ package org.apache.camel.component.google.pubsub;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.LogManager;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
@@ -41,6 +42,8 @@ import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubService;
 import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PubsubTestSupport extends CamelTestSupport {
     @RegisterExtension
@@ -51,6 +54,16 @@ public class PubsubTestSupport extends CamelTestSupport {
     static {
         Properties testProperties = loadProperties();
         PROJECT_ID = testProperties.getProperty("project.id");
+
+        try (InputStream is = PubsubTestSupport.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(PubsubTestSupport.class);
+
+            logger.warn(
+                    "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
+                    e.getMessage(), e);
+        }
     }
 
     private static Properties loadProperties() {

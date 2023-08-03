@@ -79,6 +79,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
