@@ -149,7 +149,12 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     }
 
     protected void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
-        packageName = packageName.replace('.', '/');
+        // special for root package
+        if (".".equals(packageName)) {
+            packageName = "";
+        } else {
+            packageName = packageName.replace('.', '/');
+        }
 
         Set<ClassLoader> set = getClassLoaders();
 
