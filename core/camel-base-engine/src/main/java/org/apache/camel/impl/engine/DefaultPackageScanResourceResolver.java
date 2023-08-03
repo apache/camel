@@ -105,10 +105,16 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             Set<Resource> resources,
             String subPattern) {
 
-        packageName = packageName.replace('.', '/');
+        // special for root package
+        if (".".equals(packageName)) {
+            packageName = "";
+        } else {
+            packageName = packageName.replace('.', '/');
+        }
+
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.
         // The trailing slash is harmless for other URLs
-        if (!packageName.endsWith("/")) {
+        if (!packageName.isEmpty() && !packageName.endsWith("/")) {
             packageName = packageName + "/";
         }
 
