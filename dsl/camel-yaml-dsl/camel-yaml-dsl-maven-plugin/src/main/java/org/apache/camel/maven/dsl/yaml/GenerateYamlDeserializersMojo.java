@@ -33,10 +33,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -45,7 +46,12 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.Kind;
+import org.apache.camel.maven.dsl.yaml.support.Schema;
 import org.apache.camel.maven.dsl.yaml.support.TypeSpecHolder;
+import org.apache.camel.maven.dsl.yaml.support.YamlProperties;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoFailureException;
@@ -77,13 +83,44 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
+    private static final CamelCatalog CATALOG = new DefaultCamelCatalog();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private final Map<String, Schema> schemes = new HashMap<>();
+
     @Override
     protected void generate() throws MojoFailureException {
         try {
+            for (String name : CATALOG.findDataFormatNames()) {
+                loadScheme(schemes, CATALOG.dataFormatJSonSchema(name));
+            }
+            for (String name : CATALOG.findLanguageNames()) {
+                loadScheme(schemes, CATALOG.languageJSonSchema(name));
+            }
+            for (String name : CATALOG.findOtherNames()) {
+                loadScheme(schemes, CATALOG.otherJSonSchema(name));
+            }
+            for (String name : CATALOG.findModelNames()) {
+                loadScheme(schemes, CATALOG.modelJSonSchema(name));
+            }
+
             write(generateExpressionDeserializers());
             write(generateDeserializers());
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
+        }
+    }
+
+    private void loadScheme(Map<String, Schema> schemes, String s) throws Exception {
+        if (s == null) {
+            return;
+        }
+
+        Schema descriptor = new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode());
+        Schema schema = MAPPER.readerForUpdating(descriptor).readValue(s);
+        JsonNode type = schema.meta.at("/javaType");
+        if (!type.isMissingNode() && type.isTextual()) {
+            schemes.put(type.asText(), schema);
         }
     }
 
@@ -311,7 +348,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 })
                 .map(this::generateParser)
                 .sorted(Comparator.comparing(o -> o.type.name))
-                .collect(Collectors.toList())
                 .forEach(holder -> {
                     // add inner classes
                     deserializers.addType(holder.type);
@@ -463,8 +499,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         CodeBlock.Builder setProperty = CodeBlock.builder();
         setProperty.beginControlFlow("switch(propertyKey)");
 
+        final Schema descriptor = schemes.computeIfAbsent(
+                info.name().toString(),
+                k -> new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode()));
+
         for (FieldInfo field : fields(info)) {
-            if (generateSetValue(modelName.get(), setProperty, field, properties)) {
+            if (generateSetValue(descriptor, modelName.get(), setProperty, field, properties)) {
                 caseAdded = true;
             }
         }
@@ -482,13 +522,16 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.endControlFlow();
 
             properties.add(
-                    yamlProperty(
-                            "id",
-                            "string"));
+                    YamlProperties.annotation("id", "string")
+                            .withDescription(descriptor.description("id"))
+                            .withDisplayName(descriptor.displayName("id"))
+                            .build());
+
             properties.add(
-                    yamlProperty(
-                            "description",
-                            "string"));
+                    YamlProperties.annotation("description", "string")
+                            .withDescription(descriptor.description("id"))
+                            .withDisplayName(descriptor.displayName("id"))
+                            .build());
         }
 
         if (implementType(info, OUTPUT_NODE_CLASS)) {
@@ -584,9 +627,39 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         //
         // YamlType
         //
-        yamlTypeAnnotation.addMember("types", "$L.class", info.name().toString());
-        yamlTypeAnnotation.addMember("order", "org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1",
+        yamlTypeAnnotation.addMember(
+                "types",
+                "$L.class",
                 info.name().toString());
+        yamlTypeAnnotation.addMember(
+                "order",
+                "org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1",
+                info.name().toString());
+
+        JsonNode yamlTypeDisplayName = descriptor.meta.at("/title");
+        if (!yamlTypeDisplayName.isMissingNode() && yamlTypeDisplayName.isTextual()) {
+            yamlTypeAnnotation.addMember(
+                    "displayName",
+                    "$S",
+                    yamlTypeDisplayName.textValue());
+        }
+
+        JsonNode yamlTypeDescription = descriptor.meta.at("/description");
+        if (!yamlTypeDescription.isMissingNode() && yamlTypeDescription.isTextual()) {
+            yamlTypeAnnotation.addMember(
+                    "description",
+                    "$S",
+                    yamlTypeDescription.textValue());
+
+        }
+
+        JsonNode yamlTypeDeprecated = descriptor.meta.at("/deprecated");
+        if (!yamlTypeDeprecated.isMissingNode() && yamlTypeDeprecated.isBoolean()) {
+            yamlTypeAnnotation.addMember(
+                    "deprecated",
+                    "$L",
+                    yamlTypeDeprecated.booleanValue());
+        }
 
         properties.stream().sorted(Comparator.comparing(a -> a.members.get("name").toString())).forEach(spec -> {
             yamlTypeAnnotation.addMember("properties", "$L", spec);
@@ -608,7 +681,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
     @SuppressWarnings("MethodLength")
     private boolean generateSetValue(
-            String modelName, CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
+            Schema descriptor,
+            String modelName,
+            CodeBlock.Builder cb,
+            FieldInfo field,
+            Collection<AnnotationSpec> annotations) {
+
         if (hasAnnotation(field, XML_TRANSIENT_CLASS) && !hasAnnotation(field, DSL_PROPERTY_ANNOTATION)) {
             return false;
         }
@@ -653,11 +731,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         cb.endControlFlow();
 
                         annotations.add(
-                                yamlPropertyWithSubtype(
-                                        fieldName,
-                                        "object",
-                                        type.asString(),
-                                        isRequired(field)));
+                                YamlProperties.annotation(fieldName, "object")
+                                        .withSubType(type.asString())
+                                        .withRequired(isRequired(field))
+                                        .withDescription(descriptor.description(fieldName))
+                                        .withDisplayName(descriptor.displayName(fieldName))
+                                        .withDefaultValue(descriptor.defaultValue(fieldName))
+                                        .withIsSecret(descriptor.isSecret(fieldName))
+                                        .build());
                     }
                 }
             } else {
@@ -675,11 +756,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         cb.endControlFlow();
 
                         annotations.add(
-                                yamlPropertyWithSubtype(
-                                        fieldName,
-                                        "object",
-                                        type.asString(),
-                                        isRequired(field)));
+                                YamlProperties.annotation(fieldName, "object")
+                                        .withSubType(type.asString())
+                                        .withRequired(isRequired(field))
+                                        .withDescription(descriptor.description(fieldName))
+                                        .withDisplayName(descriptor.displayName(fieldName))
+                                        .withDefaultValue(descriptor.defaultValue(fieldName))
+                                        .withIsSecret(descriptor.isSecret(fieldName))
+                                        .build());
                     }
                 }
             }
@@ -723,11 +807,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         cb.endControlFlow();
 
                         annotations.add(
-                                yamlPropertyWithSubtype(
-                                        fieldName,
-                                        "array",
-                                        fieldType,
-                                        false));
+                                YamlProperties.annotation(fieldName, "array")
+                                        .withSubType(fieldType)
+                                        .withRequired(isRequired(field))
+                                        .withDescription(descriptor.description(fieldName))
+                                        .withDisplayName(descriptor.displayName(fieldName))
+                                        .withDefaultValue(descriptor.defaultValue(fieldName))
+                                        .withIsSecret(descriptor.isSecret(fieldName))
+                                        .build());
                     });
                     return true;
                 }
@@ -769,7 +856,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.endControlFlow();
 
                             annotations.add(
-                                    yamlPropertyWithSubtype(fieldName, "array", "string", isRequired(field)));
+                                    YamlProperties.annotation(fieldName, "array")
+                                            .withSubType("string")
+                                            .withRequired(isRequired(field))
+                                            .withDescription(descriptor.description(fieldName))
+                                            .withDisplayName(descriptor.displayName(fieldName))
+                                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                                            .withIsSecret(descriptor.isSecret(fieldName))
+                                            .build());
                         } else {
                             ClassInfo ci = view.getClassByName(parametrizedType.name());
                             String name = fieldName(ci, field);
@@ -782,10 +876,15 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.endControlFlow();
 
                             annotations.add(
-                                    yamlPropertyWithSubtype(
-                                            StringHelper.camelCaseToDash(name).toLowerCase(Locale.US),
-                                            "array",
-                                            parametrizedType.name().toString(), isRequired(field)));
+                                    YamlProperties
+                                            .annotation(StringHelper.camelCaseToDash(name).toLowerCase(Locale.US), "array")
+                                            .withSubType(parametrizedType.name().toString())
+                                            .withRequired(isRequired(field))
+                                            .withDescription(descriptor.description(name))
+                                            .withDisplayName(descriptor.displayName(name))
+                                            .withDefaultValue(descriptor.defaultValue(name))
+                                            .withIsSecret(descriptor.defaultValue(name))
+                                            .build());
                         }
                         return true;
                     case "java.util.Set":
@@ -797,7 +896,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.endControlFlow();
 
                             annotations.add(
-                                    yamlPropertyWithSubtype(fieldName, "array", "string", isRequired(field)));
+                                    YamlProperties.annotation(fieldName, "array")
+                                            .withSubType("string")
+                                            .withRequired(isRequired(field))
+                                            .withDescription(descriptor.description(fieldName))
+                                            .withDisplayName(descriptor.displayName(fieldName))
+                                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                                            .withIsSecret(descriptor.isSecret(fieldName))
+                                            .build());
                         } else {
                             ClassInfo ci = view.getClassByName(parametrizedType.name());
                             String name = fieldName(ci, field);
@@ -809,10 +915,15 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                             cb.endControlFlow();
 
                             annotations.add(
-                                    yamlPropertyWithSubtype(
-                                            StringHelper.camelCaseToDash(name).toLowerCase(Locale.US),
-                                            "array",
-                                            parametrizedType.name().toString(), isRequired(field)));
+                                    YamlProperties
+                                            .annotation(StringHelper.camelCaseToDash(name).toLowerCase(Locale.US), "array")
+                                            .withSubType(parametrizedType.name().toString())
+                                            .withRequired(isRequired(field))
+                                            .withDescription(descriptor.description(name))
+                                            .withDisplayName(descriptor.displayName(name))
+                                            .withDefaultValue(descriptor.defaultValue(name))
+                                            .withIsSecret(descriptor.defaultValue(name))
+                                            .build());
                         }
                         return true;
                     default:
@@ -852,8 +963,16 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         cb.addStatement("$L val = asMap(node)", field.type().name().toString());
                         cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                         cb.addStatement("break");
+
                         annotations.add(
-                                yamlProperty(fieldName, "object", isRequired(field), isDeprecated(field)));
+                                YamlProperties.annotation(fieldName, "object")
+                                        .withRequired(isRequired(field))
+                                        .withDeprecated(isDeprecated(field))
+                                        .withDescription(descriptor.description(fieldName))
+                                        .withDisplayName(descriptor.displayName(fieldName))
+                                        .withDefaultValue(descriptor.defaultValue(fieldName))
+                                        .withIsSecret(descriptor.isSecret(fieldName))
+                                        .build());
                     }
                 }
             }
@@ -873,28 +992,31 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 }
             }
 
-            AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
-            builder.addMember("name", "$S", fieldName);
-            builder.addMember("type", "$S", "enum:" + String.join(",", values));
-
-            if (isRequired(field)) {
-                builder.addMember("required", "$L", isRequired(field));
-            }
-
-            annotations.add(builder.build());
+            annotations.add(
+                    YamlProperties.annotation(fieldName, "enum:" + String.join(",", values))
+                            .withRequired(isRequired(field))
+                            .withRequired(isDeprecated(field))
+                            .withDescription(descriptor.description(fieldName))
+                            .withDisplayName(descriptor.displayName(fieldName))
+                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                            .withIsSecret(descriptor.isSecret(fieldName))
+                            .build());
         } else if (isEnum(field)) {
             // this is a fake enum where the model is text based by have enum values to represent the user to choose between
             cb.addStatement("String val = asText(node)");
             cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
             cb.addStatement("break");
 
-            AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
-            builder.addMember("name", "$S", fieldName);
-            builder.addMember("type", "$S", "enum:" + getEnums(field));
-            if (isRequired(field)) {
-                builder.addMember("required", "$L", isRequired(field));
-            }
-            annotations.add(builder.build());
+            annotations.add(
+                    YamlProperties.annotation(fieldName, "enum:" + getEnums(field))
+                            .withRequired(isRequired(field))
+                            .withRequired(isDeprecated(field))
+                            .withDescription(descriptor.description(fieldName))
+                            .withDisplayName(descriptor.displayName(fieldName))
+                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                            .withIsSecret(descriptor.isSecret(fieldName))
+                            .build());
+
         } else {
             switch (field.type().name().toString()) {
                 case "[B":
@@ -903,35 +1025,81 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("break");
 
                     annotations.add(
-                            yamlPropertyWithFormat(fieldName, "string", "binary", isRequired(field), isDeprecated(field)));
+                            YamlProperties.annotation(fieldName, "string")
+                                    .withFormat("binary")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 case "Z":
                 case "boolean":
                     cb.addStatement("boolean val = asBoolean(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "boolean", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "boolean")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 case "I":
                 case "int":
                     cb.addStatement("int val = asInt(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "number")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 case "J":
                 case "long":
                     cb.addStatement("long val = asLong(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "number")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 case "D":
                 case "double":
                     cb.addStatement("double val = asDouble(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "number")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 case "java.lang.String":
                     cb.addStatement("String val = asText(node)");
@@ -944,17 +1112,41 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
                     switch (javaType) {
                         case "java.lang.Boolean":
-                            annotations.add(yamlProperty(fieldName, "boolean", isRequired(field), isDeprecated(field)));
+                            annotations.add(
+                                    YamlProperties.annotation(fieldName, "boolean")
+                                            .withRequired(isRequired(field))
+                                            .withDeprecated(isDeprecated(field))
+                                            .withDescription(descriptor.description(fieldName))
+                                            .withDisplayName(descriptor.displayName(fieldName))
+                                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                                            .withIsSecret(descriptor.isSecret(fieldName))
+                                            .build());
                             break;
                         case "java.lang.Integer":
                         case "java.lang.Short":
                         case "java.lang.Long":
                         case "java.lang.Float":
                         case "java.lang.Double":
-                            annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
+                            annotations.add(
+                                    YamlProperties.annotation(fieldName, "number")
+                                            .withRequired(isRequired(field))
+                                            .withDeprecated(isDeprecated(field))
+                                            .withDescription(descriptor.description(fieldName))
+                                            .withDisplayName(descriptor.displayName(fieldName))
+                                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                                            .withIsSecret(descriptor.isSecret(fieldName))
+                                            .build());
                             break;
                         default:
-                            annotations.add(yamlProperty(fieldName, "string", isRequired(field), isDeprecated(field)));
+                            annotations.add(
+                                    YamlProperties.annotation(fieldName, "string")
+                                            .withRequired(isRequired(field))
+                                            .withDeprecated(isDeprecated(field))
+                                            .withDescription(descriptor.description(fieldName))
+                                            .withDisplayName(descriptor.displayName(fieldName))
+                                            .withDefaultValue(descriptor.defaultValue(fieldName))
+                                            .withIsSecret(descriptor.isSecret(fieldName))
+                                            .build());
                     }
 
                     break;
@@ -962,7 +1154,17 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("java.lang.Class<?> val = asClass(node)");
                     cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "string", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "string")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
+
                     break;
                 case "[Ljava.lang.Class;":
                     cb.addStatement("java.lang.Class<?>[] val = asClassArray(node)");
@@ -978,14 +1180,32 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     cb.addStatement("target.set$L($L.valueOf(val))", StringHelper.capitalize(field.name()),
                             field.type().name().toString());
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "number", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "number")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 case "java.lang.Boolean":
                     cb.addStatement("String val = asText(node)");
                     cb.addStatement("target.set$L($L.valueOf(val))", StringHelper.capitalize(field.name()),
                             field.type().name().toString());
                     cb.addStatement("break");
-                    annotations.add(yamlProperty(fieldName, "boolean", isRequired(field), isDeprecated(field)));
+
+                    annotations.add(
+                            YamlProperties.annotation(fieldName, "boolean")
+                                    .withRequired(isRequired(field))
+                                    .withRequired(isDeprecated(field))
+                                    .withDescription(descriptor.description(fieldName))
+                                    .withDisplayName(descriptor.displayName(fieldName))
+                                    .withDefaultValue(descriptor.defaultValue(fieldName))
+                                    .withIsSecret(descriptor.isSecret(fieldName))
+                                    .build());
                     break;
                 default:
                     if (field.type().kind() == Type.Kind.CLASS) {
@@ -995,133 +1215,18 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         cb.addStatement("break");
 
                         annotations.add(
-                                yamlPropertyWithSubtype(fieldName, "object", field.type().name().toString(),
-                                        isRequired(field)));
+                                YamlProperties.annotation(fieldName, "object")
+                                        .withSubType(field.type().name().toString())
+                                        .withRequired(isRequired(field))
+                                        .withRequired(isDeprecated(field))
+                                        .withDescription(descriptor.description(fieldName))
+                                        .withDisplayName(descriptor.displayName(fieldName))
+                                        .withDefaultValue(descriptor.defaultValue(fieldName))
+                                        .withIsSecret(descriptor.isSecret(fieldName))
+                                        .build());
                     } else {
                         throw new UnsupportedOperationException(
                                 "Unable to handle field: " + field.name() + " with type: " + field.type().name());
-                    }
-            }
-        }
-
-        cb.endControlFlow();
-
-        return true;
-    }
-
-    @SuppressWarnings("MethodLength")
-    private boolean generateSetValue(CodeBlock.Builder cb, MethodInfo method, Collection<AnnotationSpec> annotations) {
-        final String name = StringHelper.camelCaseToDash(method.name()).toLowerCase(Locale.US).substring(4);
-        final Type parameterType = method.parameterTypes().get(0);
-
-        //
-        // Others
-        //
-        cb.beginControlFlow("case $S:", name);
-
-        ClassInfo c = view.getClassByName(parameterType.name());
-        if (c != null && c.isEnum()) {
-            cb.addStatement("target.$L(asEnum(node, $L.class))", method.name(), parameterType);
-            cb.addStatement("break");
-
-            Set<String> values = new TreeSet<>();
-
-            // gather enum values
-            List<FieldInfo> fields = c.fields();
-            for (int i = 1; i < fields.size(); i++) {
-                FieldInfo f = fields.get(i);
-                if (f.isEnumConstant()) {
-                    values.add(f.name());
-                }
-            }
-
-            AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
-            builder.addMember("name", "$S", name);
-            builder.addMember("type", "$S", "enum:" + String.join(",", values));
-
-            annotations.add(builder.build());
-        } else {
-            switch (parameterType.name().toString()) {
-                case "[B":
-                    cb.addStatement("byte[] val = asByteArray(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-
-                    annotations.add(
-                            yamlPropertyWithFormat(name, "string", "binary"));
-                    break;
-                case "Z":
-                case "boolean":
-                    cb.addStatement("boolean val = asBoolean(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "boolean"));
-                    break;
-                case "I":
-                case "int":
-                    cb.addStatement("int val = asInt(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "number"));
-                    break;
-                case "J":
-                case "long":
-                    cb.addStatement("long val = asLong(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "number"));
-                    break;
-                case "D":
-                case "double":
-                    cb.addStatement("double val = asDouble(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "number"));
-                    break;
-                case "java.lang.String":
-                    cb.addStatement("String val = asText(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "string"));
-                    break;
-                case "java.lang.Class":
-                    cb.addStatement("java.lang.Class<?> val = asClass(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "string"));
-                    break;
-                case "[Ljava.lang.Class;":
-                    cb.addStatement("java.lang.Class<?>[] val = asClassArray(node)");
-                    cb.addStatement("target.$L(val)", method.name());
-                    cb.addStatement("break");
-                    break;
-                case "java.lang.Integer":
-                case "java.lang.Short":
-                case "java.lang.Long":
-                case "java.lang.Float":
-                case "java.lang.Double":
-                    cb.addStatement("String val = asText(node)");
-                    cb.addStatement("target.$L($L.valueOf(val))", method.name(), parameterType.toString());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "number"));
-                    break;
-                case "java.lang.Boolean":
-                    cb.addStatement("String val = asText(node)");
-                    cb.addStatement("target.$L($L.valueOf(val))", method.name(), parameterType.toString());
-                    cb.addStatement("break");
-                    annotations.add(yamlProperty(name, "boolean"));
-                    break;
-                default:
-                    if (parameterType.kind() == Type.Kind.CLASS) {
-                        cb.addStatement("$L val = asType(node, $L.class)", parameterType.toString(), parameterType.toString());
-                        cb.addStatement("target.$L(val)", method.name());
-                        cb.addStatement("break");
-
-                        annotations.add(
-                                yamlPropertyWithSubtype(name, "object", parameterType.toString()));
-                    } else {
-                        throw new UnsupportedOperationException(
-                                "Unable to handle method: " + method.name() + " with type: " + parameterType);
                     }
             }
         }

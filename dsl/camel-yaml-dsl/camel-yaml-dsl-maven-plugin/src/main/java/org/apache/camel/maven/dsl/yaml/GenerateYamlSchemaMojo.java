@@ -32,11 +32,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.maven.dsl.yaml.support.ToolingSupport;
 import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoFailureException;
@@ -70,7 +74,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
     @Override
     protected void generate() throws MojoFailureException {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = JsonMapper.builder()
+                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+                .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+                .build();
+
         final ObjectNode root = mapper.createObjectNode();
 
         root.put("$schema", "http://json-schema.org/draft-04/schema#");
@@ -80,7 +88,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         items.put("maxProperties", 1);
 
         definitions = items.putObject("definitions");
-        step = definitions.with("org.apache.camel.model.ProcessorDefinition")
+        step = definitions.withObject("/org.apache.camel.model.ProcessorDefinition")
                 .put("type", "object")
                 .put("maxProperties", 1);
         if (!additionalProperties) {
@@ -104,8 +112,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         for (Map.Entry<String, ClassInfo> entry : types.entrySet()) {
             Set<String> nodes = annotationValue(entry.getValue(), YAML_TYPE_ANNOTATION, "nodes")
                     .map(AnnotationValue::asStringArray)
-                    .map(values -> Stream.of(values).collect(Collectors.toCollection(TreeSet::new)))
-                    .orElseGet(TreeSet::new);
+                    .stream()
+                    .flatMap(Stream::of)
+                    .collect(Collectors.toCollection(TreeSet::new));
 
             final DotName name = DotName.createSimple(entry.getKey());
             final ClassInfo info = view.getClassByName(name);
@@ -114,14 +123,14 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             }
             if (hasAnnotation(entry.getValue(), YAML_IN_ANNOTATION)) {
                 nodes.forEach(node -> {
-                    items.with("properties")
+                    items.withObject("/properties")
                             .putObject(node)
                             .put("$ref", "#/items/definitions/" + entry.getKey());
                 });
             } else {
                 if (extendsType(info, PROCESSOR_DEFINITION_CLASS)) {
                     nodes.forEach(node -> {
-                        step.with("properties")
+                        step.withObject("/properties")
                                 .putObject(node)
                                 .put("$ref", "#/items/definitions/" + entry.getKey());
                     });
@@ -137,7 +146,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 kebabToCamelCase(definition);
             }
             kebabToCamelCase(step);
-            kebabToCamelCase(root.with("items"));
+            kebabToCamelCase(root.withObject("/items"));
         }
 
         try {
@@ -152,8 +161,20 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     }
 
     private void generate(String type, ClassInfo info) {
-        final ObjectNode definition = definitions.with(type);
+        final ObjectNode definition = definitions.withObject("/" + type);
         final List<AnnotationInstance> properties = new ArrayList<>();
+
+        annotationValue(info, YAML_TYPE_ANNOTATION, "displayName").map(AnnotationValue::asString).ifPresent(v -> {
+            definition.put("title", v);
+        });
+        annotationValue(info, YAML_TYPE_ANNOTATION, "description").map(AnnotationValue::asString).ifPresent(v -> {
+            definition.put("description", v);
+        });
+        annotationValue(info, YAML_TYPE_ANNOTATION, "deprecated").map(AnnotationValue::asBoolean).ifPresent(v -> {
+            if (v) {
+                definition.put("deprecated", true);
+            }
+        });
 
         ObjectNode objectDefinition = definition;
 
@@ -175,10 +196,30 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 Comparator.comparing(property -> annotationValue(property, "name").map(AnnotationValue::asString).orElse("")));
 
         for (AnnotationInstance property : properties) {
-            final String propertyName = annotationValue(property, "name").map(AnnotationValue::asString).orElse("");
-            final String propertyType = annotationValue(property, "type").map(AnnotationValue::asString).orElse("");
-            final boolean propertyRequired
-                    = annotationValue(property, "required").map(AnnotationValue::asBoolean).orElse(false);
+            final String propertyName = annotationValue(property, "name")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
+            final String propertyType = annotationValue(property, "type")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
+            final String propertyDescription = annotationValue(property, "description")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
+            final String propertyDisplayName = annotationValue(property, "displayName")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
+            final boolean propertyRequired = annotationValue(property, "required")
+                    .map(AnnotationValue::asBoolean)
+                    .orElse(false);
+            final boolean propertyDeprecated = annotationValue(property, "deprecated")
+                    .map(AnnotationValue::asBoolean)
+                    .orElse(false);
+            final String propertyDefaultValue = annotationValue(property, "defaultValue")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
+            final String propertyFormat = annotationValue(property, "format")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
 
             //
             // Internal properties
@@ -196,7 +237,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 String objectRef = StringHelper.after(propertyType, ":");
                 definition
                         .put("type", "array")
-                        .with("items")
+                        .withObject("/items")
                         .put("$ref", "#/items/definitions/" + objectRef);
 
                 continue;
@@ -206,7 +247,15 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 continue;
             }
 
-            setProperty(objectDefinition, propertyName, propertyType);
+            setProperty(
+                    objectDefinition,
+                    propertyName,
+                    propertyType,
+                    propertyDescription,
+                    propertyDisplayName,
+                    propertyDefaultValue,
+                    propertyFormat,
+                    propertyDeprecated);
 
             if (propertyRequired) {
                 String name = kebabCase ? propertyName : StringHelper.dashToCamelCase(propertyName);
@@ -243,48 +292,57 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private void setProperty(
             ObjectNode objectDefinition,
             String propertyName,
-            String propertyType) {
+            String propertyType,
+            String propertyDescription,
+            String propertyDisplayName,
+            String propertyDefaultValue,
+            String propertyFormat,
+            boolean deprecated) {
+
+        final ObjectNode current = objectDefinition.withObject("/properties/" + propertyName);
+        current.put("type", propertyType);
+
+        if (!Strings.isNullOrEmpty(propertyDisplayName)) {
+            current.put("title", propertyDisplayName);
+        }
+        if (!Strings.isNullOrEmpty(propertyDescription)) {
+            current.put("description", propertyDescription);
+        }
+        if (deprecated) {
+            current.put("deprecated", true);
+        }
+
+        if (!Strings.isNullOrEmpty(propertyDefaultValue)) {
+            current.put("default", propertyDefaultValue);
+        }
+        if (!Strings.isNullOrEmpty(propertyFormat)) {
+            current.put("format", propertyFormat);
+        }
 
         if (propertyType.startsWith("object:")) {
+            current.remove("type");
+
             String objectType = StringHelper.after(propertyType, ":");
-            objectDefinition
-                    .with("properties")
-                    .with(propertyName)
-                    .put("$ref", "#/items/definitions/" + objectType);
+            current.put("$ref", "#/items/definitions/" + objectType);
+
         } else if (propertyType.startsWith("array:")) {
+
+            current.put("type", "array");
+
             String arrayType = StringHelper.after(propertyType, ":");
             if (arrayType.contains(".")) {
-                objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .put("type", "array")
-                        .with("items").put("$ref", "#/items/definitions/" + arrayType);
+                current.withObject("/items").put("$ref", "#/items/definitions/" + arrayType);
             } else {
-                objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .put("type", "array")
-                        .with("items").put("type", arrayType);
+                current.withObject("/items").put("type", arrayType);
             }
         } else if (propertyType.startsWith("enum:")) {
-            objectDefinition
-                    .with("properties")
-                    .with(propertyName)
-                    .put("type", "string");
+
+            current.put("type", "string");
 
             String enumValues = StringHelper.after(propertyType, ":");
             for (String enumValue : enumValues.split(",")) {
-                objectDefinition
-                        .with("properties")
-                        .with(propertyName)
-                        .withArray("enum")
-                        .add(enumValue);
+                current.withArray("enum").add(enumValue);
             }
-        } else {
-            objectDefinition
-                    .with("properties")
-                    .with(propertyName)
-                    .put("type", propertyType);
         }
     }
 
@@ -295,46 +353,46 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         annotationValue(info, YAML_TYPE_ANNOTATION, "properties")
                 .map(AnnotationValue::asNestedArray)
-                .ifPresent(properties -> {
-                    for (AnnotationInstance property : properties) {
-                        final String propertyName = annotationValue(property, "name").map(AnnotationValue::asString).orElse("");
-                        final String propertyType = annotationValue(property, "type").map(AnnotationValue::asString).orElse("");
+                .stream()
+                .flatMap(Stream::of)
+                .forEach(property -> {
+                    final String propertyName = annotationValue(property, "name").map(AnnotationValue::asString).orElse("");
+                    final String propertyType = annotationValue(property, "type").map(AnnotationValue::asString).orElse("");
 
-                        if (ObjectHelper.isEmpty(propertyName) || ObjectHelper.isEmpty(propertyType)) {
-                            getLog().warn(
-                                    "Missing name or type for property + " + property + " on type " + info.name().toString());
+                    if (ObjectHelper.isEmpty(propertyName) || ObjectHelper.isEmpty(propertyType)) {
+                        getLog().warn(
+                                "Missing name or type for property + " + property + " on type " + info.name().toString());
+                        return;
+                    }
+
+                    if (propertyType.startsWith("object:")) {
+                        final DotName dn = DotName.createSimple(propertyType.substring(7));
+                        if (isBanned(view.getClassByName(dn))) {
+                            return;
+                        }
+                    }
+
+                    if (propertyName.startsWith("__")) {
+                        // reserved property, add it
+                        annotations.add(property);
+                    } else {
+                        boolean matches = annotations.stream()
+                                .map(p -> annotationValue(p, "name").map(AnnotationValue::asString).orElse(""))
+                                .anyMatch(propertyName::equals);
+
+                        if (matches) {
+                            // duplicate
                             return;
                         }
 
-                        if (propertyType.startsWith("object:")) {
-                            final DotName dn = DotName.createSimple(propertyType.substring(7));
-                            if (isBanned(view.getClassByName(dn))) {
-                                continue;
-                            }
-                        }
+                        annotations.add(property);
+                    }
 
-                        if (propertyName.startsWith("__")) {
-                            // reserved property, add it
-                            annotations.add(property);
-                        } else {
-                            boolean matches = annotations.stream()
-                                    .map(p -> annotationValue(p, "name").map(AnnotationValue::asString).orElse(""))
-                                    .anyMatch(propertyName::equals);
-
-                            if (matches) {
-                                // duplicate
-                                return;
-                            } else {
-                                annotations.add(property);
-                            }
-                        }
-
-                        DotName superName = info.superName();
-                        if (superName != null) {
-                            collectYamlProperties(
-                                    annotations,
-                                    view.getClassByName(superName));
-                        }
+                    DotName superName = info.superName();
+                    if (superName != null) {
+                        collectYamlProperties(
+                                annotations,
+                                view.getClassByName(superName));
                     }
                 });
     }
