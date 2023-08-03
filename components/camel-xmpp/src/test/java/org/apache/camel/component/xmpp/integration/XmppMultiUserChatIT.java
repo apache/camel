@@ -21,7 +21,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 class XmppMultiUserChatIT extends XmppBaseIT {
 
     private static final String BODY_1 = "the first message";

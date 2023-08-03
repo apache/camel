@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xmpp.XmppMessage;
 import org.jivesoftware.smack.packet.Message;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppRouteIT extends XmppBaseIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppRouteIT.class);

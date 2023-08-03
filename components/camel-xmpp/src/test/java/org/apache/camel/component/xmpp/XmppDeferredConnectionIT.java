@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,8 @@ import org.slf4j.LoggerFactory;
  * the server is not available upon route initialization. Also verify that these endpoints will then deliver messages as
  * expected.
  */
-
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppDeferredConnectionIT extends XmppBaseContainerTest {
     private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionIT.class);
 
