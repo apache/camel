@@ -137,6 +137,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <!-- skip tests on Windows due CAMEL-8445 -->
