@@ -114,11 +114,24 @@ public class VersionList extends CamelCommand {
                 repo = rr.resolveRepository(repo);
             }
 
+            // ensure from and to-version have major.minor
+            if (fromVersion != null) {
+                if (!(fromVersion.contains(".") || fromVersion.contains(","))) {
+                    fromVersion = fromVersion + ".0";
+                }
+            }
+            if (toVersion != null) {
+                if (!(toVersion.contains(".") || toVersion.contains(","))) {
+                    toVersion = toVersion + ".0";
+                }
+            }
+
             versions = downloader.resolveAvailableVersions(g, a, fromVersion, repo);
             versions = versions.stream().filter(v -> acceptVersion(v[0])).collect(Collectors.toList());
 
             main.stop();
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error downloading available Camel versions");
             return 1;
         }
