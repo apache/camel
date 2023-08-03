@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.dsl.support.SourceLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.download.AutoConfigureDownloadListener;
 import org.apache.camel.main.download.BasePackageScanDownloadListener;
@@ -59,6 +60,7 @@ import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
@@ -79,6 +81,7 @@ import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.SmartFactoryBean;
@@ -461,6 +464,18 @@ public class KameletMain extends MainCommandLineSupport {
                 recorder.setRecordingProfile(jfrProfile.toString());
             }
             answer.setStartupStepRecorder(recorder);
+        }
+
+        // special for source compilation to a specific package based on Maven GAV
+        String gav = getInitialProperties().getProperty("camel.jbang.gav");
+        if (gav != null) {
+            MavenGav g = MavenGav.parseGav(gav);
+            if (g.getGroupId() != null && g.getArtifactId() != null) {
+                // plugin a custom source loader with package name based on GAV
+                String defaultPackageName = g.getGroupId().replace('-', '.') + "." + g.getArtifactId().replace('-', '.');
+                SourceLoader sl = new PackageNameSourceLoader(defaultPackageName);
+                answer.getRegistry().bind("PackageNameSourceLoader", sl);
+            }
         }
 
         try {

@@ -141,6 +141,9 @@ public class Run extends CamelCommand {
             description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
+    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    String gav;
+
     @Option(names = { "--maven-settings" },
             description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies."
                           +
@@ -375,6 +378,10 @@ public class Run extends CamelCommand {
         }
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
+        }
+
+        if (gav != null) {
+            writeSetting(main, profileProperties, "camel.jbang.gav", gav);
         }
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
@@ -678,6 +685,7 @@ public class Run extends CamelCommand {
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
+            gav = answer.getProperty("camel.jbang.gav", gav);
         }
         return answer;
     }
