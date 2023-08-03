@@ -69,6 +69,12 @@
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- test infra -->
         <dependency>
