@@ -120,6 +120,7 @@ public class Export extends ExportBaseCommand {
         cmd.secretsRefresh = this.secretsRefresh;
         cmd.secretsRefreshProviders = this.secretsRefreshProviders;
         cmd.openapi = this.openapi;
+        cmd.packageName = this.packageName;
         // run export
         return cmd.export();
     }

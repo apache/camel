@@ -158,6 +158,12 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     protected String loggingLevel;
 
+    @CommandLine.Option(names = { "--package-name" },
+                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                                      +
+                                      "Use false to turn off and not include package name in the Java source files.")
+    protected String packageName;
+
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
@@ -443,8 +449,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                             }
                         } else {
                             fos = new FileOutputStream(out);
-                            lines.add(0, "");
-                            lines.add(0, "package " + packageName + ";");
+                            if (packageName != null && !"false".equalsIgnoreCase(packageName)) {
+                                lines.add(0, "");
+                                lines.add(0, "package " + packageName + ";");
+                            }
                         }
                         for (String line : lines) {
                             adjustJavaSourceFileLine(line, fos);
@@ -462,7 +470,15 @@ abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
-    protected String exportPackageName(String groupId, String artifactId) {
+    protected String exportPackageName(String groupId, String artifactId, String packageName) {
+        if ("false".equalsIgnoreCase(packageName)) {
+            return null; // package names are turned off (we should use root package)
+        }
+        if (packageName != null) {
+            return packageName; // use specific package name
+        }
+
+        // compute package name based on Maven GAV
         // for package name it must be in lower-case and alpha/numeric
         String s = groupId + "." + artifactId;
         StringBuilder sb = new StringBuilder();
