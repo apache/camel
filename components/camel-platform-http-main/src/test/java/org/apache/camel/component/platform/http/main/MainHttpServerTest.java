@@ -55,7 +55,7 @@ class MainHttpServerTest {
 
         HttpResponse<String> response = HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(500, response.statusCode());
+        assertEquals(503, response.statusCode());
 
     }
 
