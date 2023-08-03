@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.validator;
 
+import java.io.FileNotFoundException;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import java.io.FileNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -30,7 +30,7 @@ public class ValidatorLazyStartProducerTest extends ContextTestSupport {
     public void testLazyStartProducerFail() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class, () ->             template.sendBody("direct:fail",
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:fail",
                 "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>"),
                 "Should throw exception");
 

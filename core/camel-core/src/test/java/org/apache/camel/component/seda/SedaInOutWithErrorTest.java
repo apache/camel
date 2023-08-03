@@ -30,7 +30,8 @@ public class SedaInOutWithErrorTest extends ContextTestSupport {
     public void testInOutWithError() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:start", "Hello World", String.class),
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "Hello World", String.class),
                 "Should have thrown an exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());

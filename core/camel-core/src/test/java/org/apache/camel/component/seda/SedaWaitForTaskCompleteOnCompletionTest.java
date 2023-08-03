@@ -35,8 +35,9 @@ public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport 
     public void testAlways() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
-                "Should have thrown an exception");
+        CamelExecutionException e
+                = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
+                        "Should have thrown an exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced", e.getCause().getMessage());

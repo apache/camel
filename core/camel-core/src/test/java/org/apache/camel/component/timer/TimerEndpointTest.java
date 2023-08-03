@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.Timer;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -23,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Timer;
 
 public class TimerEndpointTest extends ContextTestSupport {
 

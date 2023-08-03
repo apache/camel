@@ -34,7 +34,8 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
         // time timeout after 2 sec should trigger an immediate reply
         StopWatch watch = new StopWatch();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.requestBody("seda:a?timeout=5000", "Hello World"), "Should have thrown an exception");
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("seda:a?timeout=5000", "Hello World"), "Should have thrown an exception");
         ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
         assertEquals(2000, cause.getTimeout());
 

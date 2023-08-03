@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.timer;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class TimerWithTimeOptionTest extends ContextTestSupport {
 

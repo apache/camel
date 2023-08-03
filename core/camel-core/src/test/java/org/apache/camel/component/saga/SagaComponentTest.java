@@ -85,7 +85,8 @@ public class SagaComponentTest extends ContextTestSupport {
         MockEndpoint compensated = getMockEndpoint("mock:compensated");
         compensated.expectedMessageCount(1);
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:auto-workflow", "auto-compensate"), "Should throw an exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:auto-workflow", "auto-compensate"),
+                "Should throw an exception");
 
         completed.assertIsNotSatisfied();
         compensated.assertIsSatisfied();
