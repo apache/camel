@@ -27,8 +27,11 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AcknowledgementIT extends PubsubTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AcknowledgementIT.class);
 
     private static final String TOPIC_NAME = "failureSingle";
     private static final String SUBSCRIPTION_NAME = "failureSub";
@@ -93,7 +96,7 @@ public class AcknowledgementIT extends PubsubTestSupport {
         secondExchange.getIn().setBody("fail  : " + secondExchange.getExchangeId());
 
         // Check 1 : Successful roundtrip.
-        System.out.println("Acknowledgement Test : Stage 1");
+        LOG.debug("Acknowledgement Test : Stage 1");
         receiveResult.reset();
         fail = false;
         receiveResult.expectedMessageCount(1);
@@ -102,7 +105,7 @@ public class AcknowledgementIT extends PubsubTestSupport {
         receiveResult.assertIsSatisfied(3000);
 
         // Check 2 : Failure for the second message.
-        System.out.println("Acknowledgement Test : Stage 2");
+        LOG.debug("Acknowledgement Test : Stage 2");
         receiveResult.reset();
         fail = true;
         receiveResult.expectedMessageCount(0);
@@ -110,7 +113,7 @@ public class AcknowledgementIT extends PubsubTestSupport {
         receiveResult.assertIsSatisfied(3000);
 
         // Check 3 : Success for the second message.
-        System.out.println("Acknowledgement Test : Stage 3");
+        LOG.debug("Acknowledgement Test : Stage 3");
         receiveResult.reset();
         fail = false;
         receiveResult.expectedMessageCount(1);
