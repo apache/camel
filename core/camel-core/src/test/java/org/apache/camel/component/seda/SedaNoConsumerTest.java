@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,7 +64,8 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:start", "Hello World"), "Should throw an exception");
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "Hello World"), "Should throw an exception");
         assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
     }
 
@@ -79,7 +80,8 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"), "Should throw an exception");
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"), "Should throw an exception");
         assertIsInstanceOf(SedaConsumerNotAvailableException.class, e.getCause());
     }
 
@@ -124,7 +126,8 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.sendBody("seda:foo?failIfNoConsumers=true", "Hello World"), "Should throw an exception");
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("seda:foo?failIfNoConsumers=true", "Hello World"), "Should throw an exception");
         assertIsInstanceOf(SedaConsumerNotAvailableException.class, e.getCause());
     }
 

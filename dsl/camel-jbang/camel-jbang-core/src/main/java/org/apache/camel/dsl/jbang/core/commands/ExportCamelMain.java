@@ -82,10 +82,15 @@ class ExportCamelMain extends Export {
         FileUtil.removeDir(buildDir);
         buildDir.mkdirs();
 
-        // copy source files
-        String packageName = exportPackageName(ids[0], ids[1]);
+        // compute source folders
         File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
-        File srcJavaDir = new File(srcJavaDirRoot, packageName.replace('.', File.separatorChar));
+        String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
+        File srcJavaDir;
+        if (srcPackageName == null) {
+            srcJavaDir = srcJavaDirRoot;
+        } else {
+            srcJavaDir = new File(srcJavaDirRoot, srcPackageName.replace('.', File.separatorChar));
+        }
         srcJavaDir.mkdirs();
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
@@ -93,12 +98,15 @@ class ExportCamelMain extends Export {
         srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
         srcKameletsResourcesDir.mkdirs();
+        // copy source files
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, packageName);
+                srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
-            if (!prop.containsKey("camel.main.basePackageScan") && !prop.containsKey("camel.main.base-package-scan")) {
-                prop.put("camel.main.basePackageScan", packageName);
+            if (!prop.containsKey("camel.main.basePackageScan")
+                    && !prop.containsKey("camel.main.base-package-scan")) {
+                // use dot as root package if no package are in use
+                prop.put("camel.main.basePackageScan", srcPackageName == null ? "." : srcPackageName);
             }
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
@@ -117,13 +125,13 @@ class ExportCamelMain extends Export {
             return prop;
         });
         // create main class
-        createMainClassSource(srcJavaDir, packageName, mainClassname);
+        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
         copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps, packageName);
+            createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps, srcPackageName);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
@@ -156,7 +164,11 @@ class ExportCamelMain extends Export {
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
+        if (packageName != null) {
+            context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
+        } else {
+            context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
+        }
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
@@ -307,7 +319,11 @@ class ExportCamelMain extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        context = context.replaceFirst("\\{\\{ \\.PackageName }}", packageName);
+        if (packageName != null) {
+            context = context.replaceFirst("\\{\\{ \\.PackageName }}", "package " + packageName + ";");
+        } else {
+            context = context.replaceFirst("\\{\\{ \\.PackageName }}", "");
+        }
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
         IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
     }

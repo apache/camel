@@ -71,7 +71,8 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         assertFalse(seda.isBlockWhenFull(),
                 "Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"");
 
-        Exception e = assertThrows(Exception.class, () -> sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE), "The route didn't fill the queue beyond capacity: test class isn't working as intended");
+        Exception e = assertThrows(Exception.class, () -> sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE),
+                "The route didn't fill the queue beyond capacity: test class isn't working as intended");
         assertIsInstanceOf(IllegalStateException.class, e.getCause());
     }
 
