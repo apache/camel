@@ -28,7 +28,11 @@ public @interface YamlProperty {
 
     String type();
 
+    String defaultValue() default "";
+
     String format() default "";
+
+    String displayName() default "";
 
     String description() default "";
 
