@@ -202,6 +202,10 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             ee.setRollbackOnlyLast(rollbackOnlyLast);
             ee.setRedeliveryExhausted(exhausted);
             if (cause != null) {
+                // if there is any exception in onCompletionProcessor, the exception should be suppressed
+                if (exchange.isFailed()) {
+                    cause.addSuppressed(exchange.getException());
+                }
                 ee.setException(cause);
             }
         }
