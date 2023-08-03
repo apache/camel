@@ -1876,4 +1876,3 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.isolationLevel = isolationLevel;
     }
 }
-
