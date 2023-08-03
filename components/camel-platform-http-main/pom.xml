@@ -89,6 +89,11 @@
             <version>${rest-assured-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
