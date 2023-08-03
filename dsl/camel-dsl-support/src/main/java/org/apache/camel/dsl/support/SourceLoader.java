@@ -16,23 +16,23 @@
  */
 package org.apache.camel.dsl.support;
 
-import org.apache.camel.spi.Resource;
-
 import java.io.IOException;
+
+import org.apache.camel.spi.Resource;
 
 /**
  * Loader for loading the source code from {@link Resource}.
  *
- * Custom {@link SourceLoader} implementations can be plugged into the {@link org.apache.camel.CamelContext} by
- * adding to the {@link org.apache.camel.spi.Registry}.
+ * Custom {@link SourceLoader} implementations can be plugged into the {@link org.apache.camel.CamelContext} by adding
+ * to the {@link org.apache.camel.spi.Registry}.
  */
 public interface SourceLoader {
 
     /**
      * Loads the source from the given resource
      *
-     * @param resource  the resource
-     * @return the source code (such as java, xml, groovy, yaml)
+     * @param  resource    the resource
+     * @return             the source code (such as java, xml, groovy, yaml)
      *
      * @throws IOException is thrown if error loading the source
      */
