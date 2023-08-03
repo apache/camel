@@ -18,18 +18,17 @@
 
 -->
 <Configuration>
-
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
+        <File name="file" fileName="target/camel-dhis2-test.log">
             <PatternLayout pattern="[%30.30t] %-30.30c{1} %-5p %m%n"/>
-        </Console>
+        </File>
     </Appenders>
 
     <Loggers>
         <Logger name="org.testcontainers" level="INFO" additivity="true"/>
 
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="file"/>
         </Root>
     </Loggers>
 
