@@ -268,7 +268,7 @@ public abstract class BaseMainSupport extends BaseService {
         // auto-detect custom beans via base package scanning
         String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
         if (basePackage != null) {
-            PackageScanHelper.registerBeans(getCamelContext(), Set.of(basePackage));
+            PackageScanHelper.registerBeans(camelContext, Set.of(basePackage));
         }
     }
 
@@ -406,7 +406,7 @@ public abstract class BaseMainSupport extends BaseService {
                 ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                 camelContext.addService(reloader);
             }
-            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
+            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
             scheduler.schedulePeriodTask(r, period);
         }
     }
