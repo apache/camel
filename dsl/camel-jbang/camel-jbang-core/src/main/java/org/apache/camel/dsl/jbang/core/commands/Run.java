@@ -141,7 +141,7 @@ public class Run extends CamelCommand {
             description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
     String gav;
 
     @Option(names = { "--maven-settings" },

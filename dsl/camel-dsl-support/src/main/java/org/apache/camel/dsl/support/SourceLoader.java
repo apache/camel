@@ -22,9 +22,20 @@ import java.io.IOException;
 
 /**
  * Loader for loading the source code from {@link Resource}.
+ *
+ * Custom {@link SourceLoader} implementations can be plugged into the {@link org.apache.camel.CamelContext} by
+ * adding to the {@link org.apache.camel.spi.Registry}.
  */
 public interface SourceLoader {
 
+    /**
+     * Loads the source from the given resource
+     *
+     * @param resource  the resource
+     * @return the source code (such as java, xml, groovy, yaml)
+     *
+     * @throws IOException is thrown if error loading the source
+     */
     String loadResource(Resource resource) throws IOException;
 
 }
