@@ -26,7 +26,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-// This was originally disabled on the pom file with the reason given below.
+// This was originally disabled on the pom file with the reason given below.  (bogus change - don't merge)
 @DisabledOnOs(value = OS.AIX, disabledReason = "has problem with all the new reconnection stuff and whatnot")
 public class XmppBaseIT extends CamelTestSupport {
     @RegisterExtension
