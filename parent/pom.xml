@@ -477,7 +477,7 @@
         <zeebe.version>8.2.11</zeebe.version>
         <zendesk-client-version>0.23.0</zendesk-client-version>
         <zookeeper-version>3.8.2</zookeeper-version>
-        <zxing-version>3.5.1</zxing-version>
+        <zxing-version>3.5.2</zxing-version>
     </properties>
 
     <dependencyManagement>
