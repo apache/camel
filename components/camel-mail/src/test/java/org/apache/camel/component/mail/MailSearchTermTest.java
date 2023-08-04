@@ -123,7 +123,7 @@ public class MailSearchTermTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(bill.uriPrefix(Protocol.imap) + "&debugMode=true&searchTerm=#myTerm&initialDelay=100&delay=100")
+                from(bill.uriPrefix(Protocol.imap) + "&debugMode=false&searchTerm=#myTerm&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         };
