@@ -80,7 +80,7 @@ public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
             ServiceInstance<MetaData> instance
                     = ServiceInstance.<MetaData> builder()
                             .address("127.0.0.1")
-                            .port(AvailablePortFinder.getNextAvailable())
+                            .port(AvailablePortFinder.getNextRandomAvailable())
                             .name(SERVICE_NAME)
                             .id("service-" + i)
                             .build();

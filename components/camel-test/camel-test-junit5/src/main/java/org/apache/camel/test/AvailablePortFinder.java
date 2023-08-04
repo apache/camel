@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -128,6 +129,21 @@ public final class AvailablePortFinder {
      */
     public static int getNextAvailable() {
         try (Port port = INSTANCE.findPort()) {
+            return port.getPort();
+        }
+    }
+
+    /**
+     * Gets the next available port.
+     *
+     * @throws IllegalStateException if there are no ports available
+     * @return                       the available port
+     */
+    public static int getNextRandomAvailable() {
+        Random random = new Random();
+        int fromPort = random.nextInt(10000, 65500);
+        int toPort = random.nextInt(fromPort, 65500);
+        try (Port port = INSTANCE.findPort(fromPort, toPort)) {
             return port.getPort();
         }
     }
