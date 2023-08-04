@@ -77,11 +77,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #if ( ($utility.notBaseField($field.Name)) && ($fieldType) )
 #set ( $fieldName = $field.Name )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
-#if ( $utility.isBlobField($field) )
-#set ( $propertyName = $fieldName + "Url" )
-#else
 #set ( $propertyName = $fieldName )
-#end
     private $fieldType $propertyName;
 
     @JsonProperty("$fieldName")

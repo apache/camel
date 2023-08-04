@@ -54,11 +54,7 @@ public class ${desc.Name}Optional extends AbstractSObjectBase {
 #set ( $fieldName = $field.Name )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
     // $fieldName
-#if ( $utility.isBlobField($field) )
-#set ( $propertyName = $fieldName + "Url" )
-#else
 #set ( $propertyName = $fieldName )
-#end
 #else
 #end
     private Optional<$fieldType> $propertyName;
