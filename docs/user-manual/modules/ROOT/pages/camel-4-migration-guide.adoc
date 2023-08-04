@@ -435,6 +435,10 @@ Solver Daemon solutions should be migrated to use SolverManager.
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
+=== camel-salesforce
+
+Property names of blob fields on generated DTOs no longer have 'Url' affixed. E.g., the `ContentVersionUrl` property is now just `ContentVersion`.
+
 === camel-slack
 
 The default delay (on slack consumer) is changed from 0.5s to 10s to avoid being rate limited to often by Slack.
