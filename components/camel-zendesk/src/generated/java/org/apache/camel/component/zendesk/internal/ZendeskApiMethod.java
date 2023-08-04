@@ -549,7 +549,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("ticketForm", org.zendesk.client.v2.model.TicketForm.class)),
 
     DELETE_TICKETS(
-        void.class,
+        org.zendesk.client.v2.model.JobStatus.class,
         "deleteTickets",
         arg("id", long.class),
         arg("ids", long[].class)),
@@ -1287,6 +1287,10 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getTicketsIncrementally",
         arg("startTime", java.util.Date.class),
         arg("endTime", java.util.Date.class)),
+
+    GET_TIME_ZONES(
+        java.util.List.class,
+        "getTimeZones"),
 
     GET_TOPIC(
         org.zendesk.client.v2.model.Topic.class,
