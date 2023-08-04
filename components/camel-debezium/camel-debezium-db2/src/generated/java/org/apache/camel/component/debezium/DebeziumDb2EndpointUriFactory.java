@@ -21,7 +21,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(66);
+        Set<String> props = new HashSet<>(67);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
@@ -35,6 +35,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("databaseUser");
         props.add("datatypePropagateSourceType");
         props.add("decimalHandlingMode");
+        props.add("errorsMaxRetries");
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");

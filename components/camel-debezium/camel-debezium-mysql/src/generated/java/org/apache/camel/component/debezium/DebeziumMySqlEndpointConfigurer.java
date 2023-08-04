@@ -80,6 +80,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "enabletimeadjuster":
         case "enableTimeAdjuster": target.getConfiguration().setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
+        case "errorsmaxretries":
+        case "errorsMaxRetries": target.getConfiguration().setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": target.getConfiguration().setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
@@ -276,6 +278,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "decimalHandlingMode": return java.lang.String.class;
         case "enabletimeadjuster":
         case "enableTimeAdjuster": return boolean.class;
+        case "errorsmaxretries":
+        case "errorsMaxRetries": return int.class;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
@@ -473,6 +477,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "enabletimeadjuster":
         case "enableTimeAdjuster": return target.getConfiguration().isEnableTimeAdjuster();
+        case "errorsmaxretries":
+        case "errorsMaxRetries": return target.getConfiguration().getErrorsMaxRetries();
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return target.getConfiguration().getEventDeserializationFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":

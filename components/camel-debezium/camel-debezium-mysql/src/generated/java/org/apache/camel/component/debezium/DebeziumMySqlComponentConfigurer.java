@@ -90,6 +90,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "enabletimeadjuster":
         case "enableTimeAdjuster": getOrCreateConfiguration(target).setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
+        case "errorsmaxretries":
+        case "errorsMaxRetries": getOrCreateConfiguration(target).setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration(target).setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
@@ -285,6 +287,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "decimalHandlingMode": return java.lang.String.class;
         case "enabletimeadjuster":
         case "enableTimeAdjuster": return boolean.class;
+        case "errorsmaxretries":
+        case "errorsMaxRetries": return int.class;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
@@ -481,6 +485,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "enabletimeadjuster":
         case "enableTimeAdjuster": return getOrCreateConfiguration(target).isEnableTimeAdjuster();
+        case "errorsmaxretries":
+        case "errorsMaxRetries": return getOrCreateConfiguration(target).getErrorsMaxRetries();
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": return getOrCreateConfiguration(target).getEventDeserializationFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":

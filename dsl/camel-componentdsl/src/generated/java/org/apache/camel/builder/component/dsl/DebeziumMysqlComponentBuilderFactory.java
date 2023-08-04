@@ -795,6 +795,23 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of retries on connection errors before failing (-1
+         * = no limit, 0 = disabled, 0 = num of retries).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: mysql
+         * 
+         * @param errorsMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder errorsMaxRetries(
+                int errorsMaxRetries) {
+            doSetProperty("errorsMaxRetries", errorsMaxRetries);
+            return this;
+        }
+        /**
          * Specify how failures during deserialization of binlog events (i.e.
          * when encountering a corrupted event) should be handled, including:
          * 'fail' (the default) an exception indicating the problematic event
@@ -1873,6 +1890,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "enableTimeAdjuster": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEnableTimeAdjuster((boolean) value); return true;
+            case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMySqlComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventDeserializationFailureHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "gtidSourceExcludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceExcludes((java.lang.String) value); return true;
