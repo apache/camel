@@ -50,6 +50,7 @@ import org.apache.camel.tooling.util.FileUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
@@ -78,6 +79,12 @@ public class BomGeneratorMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
+
+    /**
+     * The maven session.
+     */
+    @Parameter(defaultValue = "${session}", required = true, readonly = true)
+    private MavenSession session;
 
     /**
      * The source pom template file.
@@ -423,7 +430,8 @@ public class BomGeneratorMojo extends AbstractMojo {
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {
 
         Artifact art = artifactFactory.createArtifact(groupId, artifactId, version, "runtime", type);
-        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
         buildingRequest
                 .setRemoteRepositories(remoteRepositories)
                 .setLocalRepository(localRepository);
