@@ -100,11 +100,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
