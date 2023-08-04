@@ -444,7 +444,7 @@
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <testcontainers-version>1.18.3</testcontainers-version>
         <tika-version>2.8.0</tika-version>
-        <twilio-version>9.9.0</twilio-version>
+        <twilio-version>9.9.1</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-version>2.3.7.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
