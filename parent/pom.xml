@@ -387,7 +387,7 @@
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>4.6.2.Final</protostream-version>
-        <prowide-version>SRU2022-10.0.1</prowide-version>
+        <prowide-version>SRU2022-10.0.2</prowide-version>
         <pubnub-version>6.3.6</pubnub-version>
         <pulsar-version>3.0.0</pulsar-version>
         <qpid-broker-version>9.0.0</qpid-broker-version>
