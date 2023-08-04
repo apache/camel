@@ -186,19 +186,22 @@ public class JpaComponent extends HealthCheckComponent {
         super.doInit();
         initEntityManagerFactory();
 
-        if (transactionStrategy != null) {
-            LOG.info("Using TransactionStrategy configured: {}", transactionStrategy);
-            return;
-        }
-
-        if (transactionStrategy == null && getEntityManagerFactory() != null) {
-            transactionStrategy = new DefaultTransactionStrategy(getCamelContext(), getEntityManagerFactory());
-        }
-
         // warn about missing configuration
         if (entityManagerFactory == null) {
             LOG.warn(
                     "No EntityManagerFactory has been configured on this JpaComponent. Each JpaEndpoint will auto create their own EntityManagerFactory.");
+        }
+
+        if (transactionStrategy != null) {
+            LOG.info("Using TransactionStrategy configured: {}", transactionStrategy);
+        } else {
+            createTransactionStrategy();
+        }
+    }
+
+    private void createTransactionStrategy() {
+        if (transactionStrategy == null && getEntityManagerFactory() != null) {
+            transactionStrategy = new DefaultTransactionStrategy(getCamelContext(), getEntityManagerFactory());
         }
     }
 
