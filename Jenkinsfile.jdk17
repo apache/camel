@@ -62,12 +62,6 @@ pipeline {
             }
         }
 
-        stage('Checks') {
-            steps {
-                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
-            }
-        }
-
         stage('Code Quality Review') {
             steps {
                 withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
