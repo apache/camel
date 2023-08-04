@@ -16,16 +16,34 @@
  */
 package org.apache.camel.component.nats.integration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.nats.NatsComponent;
 import org.apache.camel.test.infra.nats.services.NatsService;
 import org.apache.camel.test.infra.nats.services.NatsServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NatsITSupport extends CamelTestSupport {
     @RegisterExtension
     static NatsService service = NatsServiceFactory.createService();
+
+    static {
+        try (InputStream is = NatsITSupport.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(NatsITSupport.class);
+
+            logger.warn(
+                    "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
+                    e.getMessage(), e);
+        }
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
