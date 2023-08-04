@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +41,7 @@ import picocli.CommandLine;
 public abstract class CatalogBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--camel-version" },
-                        description = "To run using a different Camel version than the default version.")
+                        description = "To use a different Camel version than the default version")
     String camelVersion;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
@@ -203,9 +204,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
     static List<String> findComponentNames(CamelCatalog catalog) {
         List<String> answer = catalog.findComponentNames();
+        List<String> copy = new ArrayList<>(answer);
         // remove empty (spring boot catalog has a bug)
-        answer.removeIf(String::isBlank);
-        return answer;
+        copy.removeIf(String::isBlank);
+        return copy;
     }
 
     static class Row {

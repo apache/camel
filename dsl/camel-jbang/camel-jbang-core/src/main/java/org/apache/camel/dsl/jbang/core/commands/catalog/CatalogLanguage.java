@@ -36,17 +36,19 @@ public class CatalogLanguage extends CatalogBaseCommand {
         List<Row> rows = new ArrayList<>();
         for (String name : catalog.findLanguageNames()) {
             LanguageModel model = catalog.languageModel(name);
-            Row row = new Row();
-            row.name = model.getName();
-            row.title = model.getTitle();
-            row.level = model.getSupportLevel().name();
-            row.since = fixQuarkusSince(model.getFirstVersionShort());
-            row.description = model.getDescription();
-            row.label = model.getLabel() != null ? model.getLabel() : "";
-            row.deprecated = model.isDeprecated();
-            row.nativeSupported = model.isNativeSupported();
-            row.gav = getGAV(model);
-            rows.add(row);
+            if (model != null) {
+                Row row = new Row();
+                row.name = model.getName();
+                row.title = model.getTitle();
+                row.level = model.getSupportLevel().name();
+                row.since = fixQuarkusSince(model.getFirstVersionShort());
+                row.description = model.getDescription();
+                row.label = model.getLabel() != null ? model.getLabel() : "";
+                row.deprecated = model.isDeprecated();
+                row.nativeSupported = model.isNativeSupported();
+                row.gav = getGAV(model);
+                rows.add(row);
+            }
         }
         return rows;
     }

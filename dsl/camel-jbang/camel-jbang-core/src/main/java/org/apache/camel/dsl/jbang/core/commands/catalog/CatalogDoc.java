@@ -56,7 +56,7 @@ public class CatalogDoc extends CamelCommand {
     String name;
 
     @CommandLine.Option(names = { "--camel-version" },
-                        description = "To run using a different Camel version than the default version.")
+                        description = "To use a different Camel version than the default version")
     String camelVersion;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
