@@ -1,0 +1,17 @@
+{
+  "messages": [
+    {
+      "id": 1,
+      "text": "Hello, this is a message from a user."
+    },
+    {
+      "id": 2,
+      "text": "This is another message from a user."
+    },
+    {
+      "id": 3,
+      "text": "This message is from a bot.",
+      "bot_id": "123"
+    }
+  ]
+}
