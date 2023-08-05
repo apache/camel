@@ -32,7 +32,7 @@
     <description>Camel JCR support</description>
 
     <properties>
-        <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
     </properties>
 
     <dependencies>
