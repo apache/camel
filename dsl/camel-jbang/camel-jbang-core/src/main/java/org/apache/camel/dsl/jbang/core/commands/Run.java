@@ -440,6 +440,7 @@ public class Run extends CamelCommand {
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
+        StringJoiner sjJKubeFiles = new StringJoiner(",");
 
         // include generated openapi to files to run
         if (openapi != null) {
@@ -450,6 +451,10 @@ public class Run extends CamelCommand {
             if (file.startsWith("clipboard") && !(new File(file).exists())) {
                 file = loadFromClipboard(file);
             } else if (skipFile(file)) {
+                continue;
+            } else if (jkubeFile(file)) {
+                // jkube
+                sjJKubeFiles.add(file);
                 continue;
             } else if (!knownFile(file) && !file.endsWith(".properties")) {
                 // non known files to be added on classpath
@@ -548,6 +553,12 @@ public class Run extends CamelCommand {
             writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         } else {
             writeSetting(main, profileProperties, "camel.jbang.classpathFiles", () -> null);
+        }
+        if (sjJKubeFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.jkubeFiles", sjJKubeFiles.toString());
+            writeSettings("camel.jbang.jkubeFiles", sjJKubeFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, "camel.jbang.jkubeFiles", () -> null);
         }
 
         if (sjKamelets.length() > 0) {
@@ -1076,6 +1087,10 @@ public class Run extends CamelCommand {
         }
 
         return false;
+    }
+
+    private boolean jkubeFile(String name) {
+        return name.endsWith(".jkube.yaml") || name.endsWith(".jkube.yml");
     }
 
     private void writeSettings(String key, String value) {
