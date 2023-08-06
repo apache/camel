@@ -101,10 +101,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void createStateMachine(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateStateMachineRequest) {
+            if (payload instanceof CreateStateMachineRequest request) {
                 CreateStateMachineResponse result;
                 try {
-                    result = sfnClient.createStateMachine((CreateStateMachineRequest) payload);
+                    result = sfnClient.createStateMachine(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -154,10 +154,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void deleteStateMachine(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteStateMachineRequest) {
+            if (payload instanceof DeleteStateMachineRequest request) {
                 DeleteStateMachineResponse result;
                 try {
-                    result = sfnClient.deleteStateMachine((DeleteStateMachineRequest) payload);
+                    result = sfnClient.deleteStateMachine(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -188,10 +188,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void updateStateMachine(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UpdateStateMachineRequest) {
+            if (payload instanceof UpdateStateMachineRequest request) {
                 UpdateStateMachineResponse result;
                 try {
-                    result = sfnClient.updateStateMachine((UpdateStateMachineRequest) payload);
+                    result = sfnClient.updateStateMachine(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Update State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -231,10 +231,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void describeStateMachine(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeStateMachineRequest) {
+            if (payload instanceof DescribeStateMachineRequest request) {
                 DescribeStateMachineResponse result;
                 try {
-                    result = sfnClient.describeStateMachine((DescribeStateMachineRequest) payload);
+                    result = sfnClient.describeStateMachine(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -264,10 +264,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void listStateMachines(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListStateMachinesRequest) {
+            if (payload instanceof ListStateMachinesRequest request) {
                 ListStateMachinesResponse result;
                 try {
-                    result = sfnClient.listStateMachines((ListStateMachinesRequest) payload);
+                    result = sfnClient.listStateMachines(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List State Machines command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -297,10 +297,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void createActivity(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateActivityRequest) {
+            if (payload instanceof CreateActivityRequest request) {
                 CreateActivityResponse result;
                 try {
-                    result = sfnClient.createActivity((CreateActivityRequest) payload);
+                    result = sfnClient.createActivity(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -330,10 +330,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void deleteActivity(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteActivityRequest) {
+            if (payload instanceof DeleteActivityRequest request) {
                 DeleteActivityResponse result;
                 try {
-                    result = sfnClient.deleteActivity((DeleteActivityRequest) payload);
+                    result = sfnClient.deleteActivity(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -363,10 +363,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void describeActivity(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeActivityRequest) {
+            if (payload instanceof DescribeActivityRequest request) {
                 DescribeActivityResponse result;
                 try {
-                    result = sfnClient.describeActivity((DescribeActivityRequest) payload);
+                    result = sfnClient.describeActivity(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -396,10 +396,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void getActivityTask(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetActivityTaskRequest) {
+            if (payload instanceof GetActivityTaskRequest request) {
                 GetActivityTaskResponse result;
                 try {
-                    result = sfnClient.getActivityTask((GetActivityTaskRequest) payload);
+                    result = sfnClient.getActivityTask(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Activity Task command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -429,10 +429,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void listActivities(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListActivitiesRequest) {
+            if (payload instanceof ListActivitiesRequest request) {
                 ListActivitiesResponse result;
                 try {
-                    result = sfnClient.listActivities((ListActivitiesRequest) payload);
+                    result = sfnClient.listActivities(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Activities command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -462,10 +462,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void startExecution(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof StartExecutionRequest) {
+            if (payload instanceof StartExecutionRequest request) {
                 StartExecutionResponse result;
                 try {
-                    result = sfnClient.startExecution((StartExecutionRequest) payload);
+                    result = sfnClient.startExecution(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -508,10 +508,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void startSyncExecution(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof StartSyncExecutionRequest) {
+            if (payload instanceof StartSyncExecutionRequest request) {
                 StartSyncExecutionResponse result;
                 try {
-                    result = sfnClient.startSyncExecution((StartSyncExecutionRequest) payload);
+                    result = sfnClient.startSyncExecution(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Sync Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -554,10 +554,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void stopExecution(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof StopExecutionRequest) {
+            if (payload instanceof StopExecutionRequest request) {
                 StopExecutionResponse result;
                 try {
-                    result = sfnClient.stopExecution((StopExecutionRequest) payload);
+                    result = sfnClient.stopExecution(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Stop Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -587,10 +587,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void describeExecution(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeExecutionRequest) {
+            if (payload instanceof DescribeExecutionRequest request) {
                 DescribeExecutionResponse result;
                 try {
-                    result = sfnClient.describeExecution((DescribeExecutionRequest) payload);
+                    result = sfnClient.describeExecution(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -620,10 +620,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void listExecutions(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListExecutionsRequest) {
+            if (payload instanceof ListExecutionsRequest request) {
                 ListExecutionsResponse result;
                 try {
-                    result = sfnClient.listExecutions((ListExecutionsRequest) payload);
+                    result = sfnClient.listExecutions(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Executions command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -653,10 +653,10 @@ public class StepFunctions2Producer extends DefaultProducer {
     private void getExecutionHistory(SfnClient sfnClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetExecutionHistoryRequest) {
+            if (payload instanceof GetExecutionHistoryRequest request) {
                 GetExecutionHistoryResponse result;
                 try {
-                    result = sfnClient.getExecutionHistory((GetExecutionHistoryRequest) payload);
+                    result = sfnClient.getExecutionHistory(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Execution History command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

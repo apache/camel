@@ -14,7 +14,7 @@
     "version": "4.0.0-SNAPSHOT",
     "scheme": "aws2-step-functions",
     "extendsScheme": "",
-    "syntax": "aws2-step-functions:null",
+    "syntax": "aws2-step-functions:label",
     "async": false,
     "api": false,
     "consumerOnly": false,
@@ -61,7 +61,7 @@
     "CamelAwsStateMachineExecutionHistoryMaxResults": { "index": 14, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The limit number of results while listing execution history", "constantName": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Constants#EXECUTION_HISTORY_MAX_RESULTS" },
     "CamelAwsStateMachineExecutionHistoryIncludeExecutionData": { "index": 15, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "You can select whether execution data (input or output of a history event) is returned.", "constantName": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Constants#EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA" },
     "CamelAwsStateMachineExecutionHistoryReverseOrder": { "index": 16, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Lists events in descending order of their timeStamp.", "constantName": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Constants#EXECUTION_HISTORY_REVERSE_ORDER" },
-    "CamelAwsStateMachineExecutionMaxResults": { "index": 17, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The limit number of results while listing executions", "constantName": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Constants#EXECUTIONS_MAX_RESULTS" }
+    "CamelAwsStateMachineExecutionMaxResults": { "index": 17, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The limit number of results while listing executions", "constantName": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Constants#EXECUTIONS_MAX_RESULTS" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Configuration", "configurationField": "configuration", "description": "Logical name" },

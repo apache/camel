@@ -73,7 +73,7 @@ public interface StepFunctions2Constants {
     @Metadata(description = "Lists events in descending order of their timeStamp.", javaType = "Boolean")
     String EXECUTION_HISTORY_REVERSE_ORDER = "CamelAwsStateMachineExecutionHistoryReverseOrder";
 
-    @Metadata(description = "The limit number of results while listing executions", javaType = "Boolean")
+    @Metadata(description = "The limit number of results while listing executions", javaType = "Integer")
     String EXECUTIONS_MAX_RESULTS = "CamelAwsStateMachineExecutionMaxResults";
 
 }
