@@ -32,7 +32,7 @@
 
   <!-- Optimization algorithms configuration -->
   <termination>
-    <minutesSpentLimit>2</minutesSpentLimit>
+    <secondsSpentLimit>10</secondsSpentLimit>
   </termination>
 
 </solver>
