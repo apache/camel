@@ -65,7 +65,8 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.component.properties.location",
             "camel.component.kamelet.location",
             "camel.jbang.classpathFiles",
-            "camel.jbang.localKameletDir"
+            "camel.jbang.localKameletDir",
+            "camel.jbang.jkubeFiles"
     };
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
@@ -417,6 +418,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                     boolean camel = "camel.main.routesIncludePattern".equals(k);
                     boolean kamelet = "camel.component.kamelet.location".equals(k)
                             || "camel.jbang.localKameletDir".equals(k);
+                    boolean jkube = "camel.jbang.jkubeFiles".equals(k);
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
                     File out;
@@ -428,6 +430,13 @@ abstract class ExportBaseCommand extends CamelCommand {
                     if (!java) {
                         if (kamelet) {
                             out = srcKameletsResourcesDir;
+                            safeCopy(source, out, true);
+                        } else if (jkube) {
+                            // file should be renamed and moved into src/main/jkube
+                            f = f.replace(".jkube.yaml", ".yaml");
+                            f = f.replace(".jkube.yml", ".yml");
+                            out = new File(srcCamelResourcesDir.getParentFile().getParentFile(), "jkube/" + f);
+                            out.mkdirs();
                             safeCopy(source, out, true);
                         } else {
                             safeCopy(source, out, true);
