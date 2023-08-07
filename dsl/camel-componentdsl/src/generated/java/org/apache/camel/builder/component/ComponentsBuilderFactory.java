@@ -429,6 +429,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2SqsComponentBuilderFactory.aws2Sqs();
     }
     /**
+     * AWS StepFunctions (camel-aws2-step-functions)
+     * Manage and invoke AWS Step functions using AWS SDK version 2.x.
+     * 
+     * Category: cloud,serverless
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-aws2-step-functions
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Aws2StepFunctionsComponentBuilderFactory.Aws2StepFunctionsComponentBuilder aws2StepFunctions() {
+        return org.apache.camel.builder.component.dsl.Aws2StepFunctionsComponentBuilderFactory.aws2StepFunctions();
+    }
+    /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 

@@ -119,7 +119,8 @@ from("direct:createStateMachine")
 == Using a POJO as body
 
 Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
-In AWS Step Functions there are multiple operations you can submit, as an example for List cluster request, you can do something like:
+In AWS Step Functions there are multiple operations you can submit, as an example for Create state machine
+ request, you can do something like:
 
 [source,java]
 ------------------------------------------------------------------------------------------------------

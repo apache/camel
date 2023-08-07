@@ -596,6 +596,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "Aws2StepFunctionsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws2-step-functions",
+    "title": "AWS StepFunctions",
+    "description": "Manage and invoke AWS Step functions using AWS SDK version 2.x.",
+    "deprecated": false,
+    "firstVersion": "4.0.0",
+    "label": "cloud,serverless",
+    "javaType": "org.apache.camel.component.aws2.stepfunctions.StepFunctions2Component",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-step-functions",
+    "version": "4.0.0-SNAPSHOT",
+    "scheme": "aws2-step-functions",
+    "extendsScheme": "",
+    "syntax": "aws2-step-functions:label",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Aws2StsComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-sts",
