@@ -41,14 +41,8 @@ public final class GoogleDriveFilesConverterLoader implements TypeConverterLoade
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, com.google.api.services.drive.model.ChildReference.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.google.drive.GoogleDriveFilesConverter.genericStringToChildReference((java.lang.String) value, exchange));
         addTypeConverter(registry, com.google.api.services.drive.model.File.class, org.apache.camel.component.file.GenericFile.class, false,
             (type, exchange, value) -> org.apache.camel.component.google.drive.GoogleDriveFilesConverter.genericFileToGoogleDriveFile((org.apache.camel.component.file.GenericFile) value, exchange));
-        addTypeConverter(registry, java.io.InputStream.class, com.google.api.services.drive.model.File.class, true,
-            (type, exchange, value) -> org.apache.camel.component.google.drive.GoogleDriveFilesConverter.download((com.google.api.services.drive.model.File) value, exchange));
-        addTypeConverter(registry, java.lang.String.class, com.google.api.services.drive.model.File.class, false,
-            (type, exchange, value) -> org.apache.camel.component.google.drive.GoogleDriveFilesConverter.downloadContentAsString((com.google.api.services.drive.model.File) value, exchange));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

@@ -11,19 +11,15 @@ import java.util.Map;
 
 import org.apache.camel.component.google.drive.GoogleDriveConfiguration;
 import org.apache.camel.component.google.drive.DriveAboutEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveAppsEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveChangesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveChannelsEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveChildrenEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveCommentsEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveFilesEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveParentsEndpointConfiguration;
-import org.apache.camel.component.google.drive.DrivePermissionsEndpointConfiguration;
-import org.apache.camel.component.google.drive.DrivePropertiesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveDrivesEndpointConfiguration;
-import org.apache.camel.component.google.drive.DriveTeamdrivesEndpointConfiguration;
+import org.apache.camel.component.google.drive.DriveFilesEndpointConfiguration;
+import org.apache.camel.component.google.drive.DrivePermissionsEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveRepliesEndpointConfiguration;
 import org.apache.camel.component.google.drive.DriveRevisionsEndpointConfiguration;
+import org.apache.camel.component.google.drive.DriveTeamdrivesEndpointConfiguration;
 
 import org.apache.camel.support.component.ApiCollection;
 import org.apache.camel.support.component.ApiMethod;
@@ -50,11 +46,6 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_APPS, new ApiMethodHelper<>(DriveAppsApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveAppsApiMethod.class, GoogleDriveApiName.DRIVE_APPS);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
         apiHelpers.put(GoogleDriveApiName.DRIVE_CHANGES, new ApiMethodHelper<>(DriveChangesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveChangesApiMethod.class, GoogleDriveApiName.DRIVE_CHANGES);
 
@@ -65,33 +56,8 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_CHILDREN, new ApiMethodHelper<>(DriveChildrenApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveChildrenApiMethod.class, GoogleDriveApiName.DRIVE_CHILDREN);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
         apiHelpers.put(GoogleDriveApiName.DRIVE_COMMENTS, new ApiMethodHelper<>(DriveCommentsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveCommentsApiMethod.class, GoogleDriveApiName.DRIVE_COMMENTS);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_FILES, new ApiMethodHelper<>(DriveFilesApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveFilesApiMethod.class, GoogleDriveApiName.DRIVE_FILES);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_PARENTS, new ApiMethodHelper<>(DriveParentsApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveParentsApiMethod.class, GoogleDriveApiName.DRIVE_PARENTS);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_PERMISSIONS, new ApiMethodHelper<>(DrivePermissionsApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DrivePermissionsApiMethod.class, GoogleDriveApiName.DRIVE_PERMISSIONS);
-
-        aliases.clear();
-        nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_PROPERTIES, new ApiMethodHelper<>(DrivePropertiesApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DrivePropertiesApiMethod.class, GoogleDriveApiName.DRIVE_PROPERTIES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -100,8 +66,13 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_TEAMDRIVES, new ApiMethodHelper<>(DriveTeamdrivesApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DriveTeamdrivesApiMethod.class, GoogleDriveApiName.DRIVE_TEAMDRIVES);
+        apiHelpers.put(GoogleDriveApiName.DRIVE_FILES, new ApiMethodHelper<>(DriveFilesApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(DriveFilesApiMethod.class, GoogleDriveApiName.DRIVE_FILES);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList();
+        apiHelpers.put(GoogleDriveApiName.DRIVE_PERMISSIONS, new ApiMethodHelper<>(DrivePermissionsApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(DrivePermissionsApiMethod.class, GoogleDriveApiName.DRIVE_PERMISSIONS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -113,6 +84,11 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
         apiHelpers.put(GoogleDriveApiName.DRIVE_REVISIONS, new ApiMethodHelper<>(DriveRevisionsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveRevisionsApiMethod.class, GoogleDriveApiName.DRIVE_REVISIONS);
 
+        aliases.clear();
+        nullableArgs = Arrays.asList();
+        apiHelpers.put(GoogleDriveApiName.DRIVE_TEAMDRIVES, new ApiMethodHelper<>(DriveTeamdrivesApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(DriveTeamdrivesApiMethod.class, GoogleDriveApiName.DRIVE_TEAMDRIVES);
+
         setApiHelpers(apiHelpers);
         setApiMethods(apiMethods);
     }
@@ -123,44 +99,32 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
             case DRIVE_ABOUT:
                 result = new DriveAboutEndpointConfiguration();
                 break;
-            case DRIVE_APPS:
-                result = new DriveAppsEndpointConfiguration();
-                break;
             case DRIVE_CHANGES:
                 result = new DriveChangesEndpointConfiguration();
                 break;
             case DRIVE_CHANNELS:
                 result = new DriveChannelsEndpointConfiguration();
                 break;
-            case DRIVE_CHILDREN:
-                result = new DriveChildrenEndpointConfiguration();
-                break;
             case DRIVE_COMMENTS:
                 result = new DriveCommentsEndpointConfiguration();
-                break;
-            case DRIVE_FILES:
-                result = new DriveFilesEndpointConfiguration();
-                break;
-            case DRIVE_PARENTS:
-                result = new DriveParentsEndpointConfiguration();
-                break;
-            case DRIVE_PERMISSIONS:
-                result = new DrivePermissionsEndpointConfiguration();
-                break;
-            case DRIVE_PROPERTIES:
-                result = new DrivePropertiesEndpointConfiguration();
                 break;
             case DRIVE_DRIVES:
                 result = new DriveDrivesEndpointConfiguration();
                 break;
-            case DRIVE_TEAMDRIVES:
-                result = new DriveTeamdrivesEndpointConfiguration();
+            case DRIVE_FILES:
+                result = new DriveFilesEndpointConfiguration();
+                break;
+            case DRIVE_PERMISSIONS:
+                result = new DrivePermissionsEndpointConfiguration();
                 break;
             case DRIVE_REPLIES:
                 result = new DriveRepliesEndpointConfiguration();
                 break;
             case DRIVE_REVISIONS:
                 result = new DriveRevisionsEndpointConfiguration();
+                break;
+            case DRIVE_TEAMDRIVES:
+                result = new DriveTeamdrivesEndpointConfiguration();
                 break;
         }
         return result;

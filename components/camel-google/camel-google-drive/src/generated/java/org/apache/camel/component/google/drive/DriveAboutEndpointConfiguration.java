@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "drive-about", 
            description = "The about collection of methods",
-           apiMethods = {@ApiMethod(methodName = "get", description="Gets the information about the current user along with Drive API settings", signatures={"com.google.api.services.drive.Drive$About$Get get()"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "get", description="Gets information about the user, the user's Drive, and system capabilities", signatures={"com.google.api.services.drive.Drive$About$Get get()"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class DriveAboutEndpointConfiguration extends GoogleDriveConfiguration {

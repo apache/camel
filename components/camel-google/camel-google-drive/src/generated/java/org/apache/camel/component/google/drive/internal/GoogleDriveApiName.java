@@ -12,31 +12,23 @@ public enum GoogleDriveApiName implements ApiName {
 
     DRIVE_ABOUT("drive-about"),
 
-    DRIVE_APPS("drive-apps"),
-
     DRIVE_CHANGES("drive-changes"),
 
     DRIVE_CHANNELS("drive-channels"),
 
-    DRIVE_CHILDREN("drive-children"),
-
     DRIVE_COMMENTS("drive-comments"),
-
-    DRIVE_FILES("drive-files"),
-
-    DRIVE_PARENTS("drive-parents"),
-
-    DRIVE_PERMISSIONS("drive-permissions"),
-
-    DRIVE_PROPERTIES("drive-properties"),
 
     DRIVE_DRIVES("drive-drives"),
 
-    DRIVE_TEAMDRIVES("drive-teamdrives"),
+    DRIVE_FILES("drive-files"),
+
+    DRIVE_PERMISSIONS("drive-permissions"),
 
     DRIVE_REPLIES("drive-replies"),
 
-    DRIVE_REVISIONS("drive-revisions");
+    DRIVE_REVISIONS("drive-revisions"),
+
+    DRIVE_TEAMDRIVES("drive-teamdrives");
 
 
     private final String name;
