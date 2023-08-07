@@ -25,6 +25,7 @@ import java.net.http.HttpResponse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MainHttpServerTest {
 
     private CamelContext camelContext;
+
+    private final int port = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void statusIsNotSatisfied() throws IOException, InterruptedException {
@@ -43,14 +46,14 @@ class MainHttpServerTest {
         camelContext.getRegistry().bind("fake", new MainHttpFakeHealthCheck());
 
         server.setHost("0.0.0.0");
-        server.setPort(8080);
+        server.setPort(port);
         server.setPath("/");
 
         server.setHealthCheckEnabled(true);
         server.start();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/q/health/ready"))
+                .uri(URI.create("http://localhost:" + port + "/q/health/ready"))
                 .build();
 
         HttpResponse<String> response = HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString());
