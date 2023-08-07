@@ -191,7 +191,7 @@ public class CamelRouteCoverageDumper {
                 .append(contextExchangesTotal).append("\n");
 
         if (!uncoveredRoutes.isEmpty()) {
-            builder.append("\t\tUncovered routes: ").append(uncoveredRoutes.stream().collect(Collectors.joining(", ")))
+            builder.append("\t\tUncovered routes: ").append(String.join(", ", uncoveredRoutes))
                     .append("\n");
         }
 
