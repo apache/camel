@@ -376,7 +376,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             private boolean initDone;
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (!initDone) {
                     expression.init(exchange.getContext());
                     initDone = true;
@@ -398,7 +398,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             private boolean initDone;
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (!initDone) {
                     expression.init(exchange.getContext());
                     initDone = true;
@@ -1107,7 +1107,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectsNoDuplicates(final Expression expression) {
         expects(new AssertionTask() {
             private boolean initDone;
-            private Map<Object, Exchange> map = new HashMap<>();
+            private final Map<Object, Exchange> map = new HashMap<>();
 
             @Override
             public void assertOnIndex(int index) {
@@ -1115,16 +1115,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                     expression.init(getCamelContext());
                     initDone = true;
                 }
-                List<Exchange> list = getReceivedExchanges();
-                Exchange e2 = list.get(index);
-                Object key = expression.evaluate(e2, Object.class);
-                Exchange e1 = map.get(key);
-                if (e1 != null) {
-                    fail("Duplicate message found on message " + index + " has value: " + key + " for expression: " + expression
-                         + ". Exchanges: " + e1 + " and " + e2);
-                } else {
-                    map.put(key, e2);
-                }
+                duplicateCheck(index, expression, map);
             }
 
             public void run() {
@@ -1139,13 +1130,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         });
     }
 
+    private void duplicateCheck(int index, Expression expression, Map<Object, Exchange> map) {
+        List<Exchange> list = getReceivedExchanges();
+        Exchange e2 = list.get(index);
+        evalDuplicate(expression, e2, map, index);
+    }
+
+    private void evalDuplicate(Expression expression, Exchange e2, Map<Object, Exchange> map, int i) {
+        Object key = expression.evaluate(e2, Object.class);
+        Exchange e1 = map.get(key);
+        if (e1 != null) {
+            fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression
+                    + ". Exchanges: " + e1 + " and " + e2);
+        } else {
+            map.put(key, e2);
+        }
+    }
+
     /**
      * Adds an expectation that no duplicate messages should be received using the expression to determine the message
      * ID
      */
     public AssertionClause expectsNoDuplicates() {
         final AssertionClause clause = new AssertionClauseTask(this) {
-            private Map<Object, Exchange> map = new HashMap<>();
+            private final Map<Object, Exchange> map = new HashMap<>();
             private Expression exp;
 
             @Override
@@ -1153,16 +1161,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 if (exp == null) {
                     exp = createExpression(getCamelContext());
                 }
-                List<Exchange> list = getReceivedExchanges();
-                Exchange e2 = list.get(index);
-                Object key = exp.evaluate(e2, Object.class);
-                Exchange e1 = map.get(key);
-                if (e1 != null) {
-                    fail("Duplicate message found on message " + index + " has value: " + key + " for expression: " + exp
-                         + ". Exchanges: " + e1 + " and " + e2);
-                } else {
-                    map.put(key, e2);
-                }
+                duplicateCheck(index, exp, map);
             }
 
             public void run() {
@@ -1237,16 +1236,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {
             Exchange e2 = list.get(i);
-            Object key = expression.evaluate(e2, Object.class);
-            Exchange e1 = map.get(key);
-            if (e1 != null) {
-                fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression
-                     + ". Exchanges: " + e1 + " and " + e2);
-            } else {
-                map.put(key, e2);
-            }
+            evalDuplicate(expression, e2, map, i);
         }
     }
+
+
 
     /**
      * Adds the expectation which will be invoked when enough messages are received
