@@ -1812,6 +1812,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    protected void assertEquals(String message, int expectedValue, int actualValue) {
+        if (expectedValue != actualValue) {
+            logReceivedExchanges();
+
+            fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
+        }
+    }
+
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
         if (!ObjectHelper.equal(expectedValue, actualValue)) {
             logReceivedExchanges();
