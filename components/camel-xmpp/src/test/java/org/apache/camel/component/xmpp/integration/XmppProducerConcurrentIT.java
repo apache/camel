@@ -27,7 +27,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import static org.apache.camel.test.junit5.TestSupport.body;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
-        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppProducerConcurrentIT extends XmppBaseIT {
 
     @Test

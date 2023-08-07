@@ -688,7 +688,12 @@ public class CamelTraceAction extends ActionBaseCommand {
                 System.out.println(line);
             }
             if (!compact) {
-                System.out.println(nameWithPrefix);
+                if (nameWithPrefix != null) {
+                    System.out.println(nameWithPrefix);
+                } else {
+                    // empty line
+                    System.out.println();
+                }
             }
         }
 

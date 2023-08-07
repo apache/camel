@@ -376,7 +376,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             private boolean initDone;
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (!initDone) {
                     expression.init(exchange.getContext());
                     initDone = true;
@@ -398,7 +398,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             private boolean initDone;
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (!initDone) {
                     expression.init(exchange.getContext());
                     initDone = true;
@@ -645,7 +645,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given header values are received by this endpoint in any order.
+     * Adds an expectation that this endpoint receives the given header values in any order.
      * <p/>
      * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 values.
@@ -679,7 +679,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given header values are received by this endpoint in any order
+     * Adds an expectation that this endpoint receives the given header values in any order
      * <p/>
      * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 values.
@@ -733,7 +733,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given property values are received by this endpoint in any order.
+     * Adds an expectation that this endpoint receives the given property values in any order.
      * <p/>
      * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 values.
@@ -767,7 +767,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given property values are received by this endpoint in any order
+     * Adds an expectation that this endpoint receives the given property values in any order
      * <p/>
      * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 values.
@@ -780,7 +780,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given body values are received by this endpoint in the specified order
+     * Adds an expectation that this endpoint receives the given body values in the specified order
      * <p/>
      * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 values.
@@ -896,7 +896,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given body values are received by this endpoint in any order
+     * Adds an expectation that this endpoint receives the given body values in any order
      * <p/>
      * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 bodies.
@@ -921,7 +921,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Adds an expectation that the given body values are received by this endpoint in any order
+     * Adds an expectation that this endpoint receives the given body values in any order
      * <p/>
      * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect 3 messages,
      * then there must be 3 bodies.
@@ -1107,7 +1107,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectsNoDuplicates(final Expression expression) {
         expects(new AssertionTask() {
             private boolean initDone;
-            private Map<Object, Exchange> map = new HashMap<>();
+            private final Map<Object, Exchange> map = new HashMap<>();
 
             @Override
             public void assertOnIndex(int index) {
@@ -1115,16 +1115,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                     expression.init(getCamelContext());
                     initDone = true;
                 }
-                List<Exchange> list = getReceivedExchanges();
-                Exchange e2 = list.get(index);
-                Object key = expression.evaluate(e2, Object.class);
-                Exchange e1 = map.get(key);
-                if (e1 != null) {
-                    fail("Duplicate message found on message " + index + " has value: " + key + " for expression: " + expression
-                         + ". Exchanges: " + e1 + " and " + e2);
-                } else {
-                    map.put(key, e2);
-                }
+                duplicateCheck(index, expression, map);
             }
 
             public void run() {
@@ -1139,13 +1130,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         });
     }
 
+    private void duplicateCheck(int index, Expression expression, Map<Object, Exchange> map) {
+        List<Exchange> list = getReceivedExchanges();
+        Exchange e2 = list.get(index);
+        evalDuplicate(expression, e2, map, index);
+    }
+
+    private void evalDuplicate(Expression expression, Exchange e2, Map<Object, Exchange> map, int i) {
+        Object key = expression.evaluate(e2, Object.class);
+        Exchange e1 = map.get(key);
+        if (e1 != null) {
+            fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression
+                    + ". Exchanges: " + e1 + " and " + e2);
+        } else {
+            map.put(key, e2);
+        }
+    }
+
     /**
      * Adds an expectation that no duplicate messages should be received using the expression to determine the message
      * ID
      */
     public AssertionClause expectsNoDuplicates() {
         final AssertionClause clause = new AssertionClauseTask(this) {
-            private Map<Object, Exchange> map = new HashMap<>();
+            private final Map<Object, Exchange> map = new HashMap<>();
             private Expression exp;
 
             @Override
@@ -1153,16 +1161,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 if (exp == null) {
                     exp = createExpression(getCamelContext());
                 }
-                List<Exchange> list = getReceivedExchanges();
-                Exchange e2 = list.get(index);
-                Object key = exp.evaluate(e2, Object.class);
-                Exchange e1 = map.get(key);
-                if (e1 != null) {
-                    fail("Duplicate message found on message " + index + " has value: " + key + " for expression: " + exp
-                         + ". Exchanges: " + e1 + " and " + e2);
-                } else {
-                    map.put(key, e2);
-                }
+                duplicateCheck(index, exp, map);
             }
 
             public void run() {
@@ -1237,16 +1236,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {
             Exchange e2 = list.get(i);
-            Object key = expression.evaluate(e2, Object.class);
-            Exchange e1 = map.get(key);
-            if (e1 != null) {
-                fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression
-                     + ". Exchanges: " + e1 + " and " + e2);
-            } else {
-                map.put(key, e2);
-            }
+            evalDuplicate(expression, e2, map, i);
         }
     }
+
+
 
     /**
      * Adds the expectation which will be invoked when enough messages are received
@@ -1427,7 +1421,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * is done routing some messages, before you call the {@link #assertIsSatisfied()} method on the mocks. This allows
      * you to not use a fixed assert period, to speedup testing times.
      * <p/>
-     * If you want to assert that <b>exactly</b> n'th message arrives to this mock endpoint, then see also the
+     * If you want to assert that <b>exactly</b> nth message arrives to this mock endpoint, then see also the
      * {@link #setAssertPeriod(long)} method for further details.
      *
      * @param expectedCount the number of message exchanges that should be expected by this endpoint
@@ -1479,7 +1473,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Specifies to only retain the first n'th number of received {@link Exchange}s.
+     * Specifies to only retain the first nth number of received {@link Exchange}s.
      * <p/>
      * This is used when testing with big data, to reduce memory consumption by not storing copies of every
      * {@link Exchange} this mock endpoint receives.
@@ -1509,7 +1503,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Specifies to only retain the last n'th number of received {@link Exchange}s.
+     * Specifies to only retain the last nth number of received {@link Exchange}s.
      * <p/>
      * This is used when testing with big data, to reduce memory consumption by not storing copies of every
      * {@link Exchange} this mock endpoint receives.
@@ -1612,7 +1606,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             performAssertions(exchange, copy);
 
             if (failFast) {
-                // fail fast mode so check n'th expectations as soon as possible
+                // fail fast mode so check nth expectations as soon as possible
                 int index = getReceivedCounter() - 1;
                 for (Runnable test : tests) {
                     // only assertion tasks can support fail fast mode
@@ -1662,7 +1656,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 if (factory != null) {
                     actualHeaderValues = factory.newMap();
                 } else {
-                    // should not really happen but some tests dont start camel context
+                    // should not really happen but some tests don't start camel context
                     actualHeaderValues = new HashMap<>();
                 }
             }
@@ -1745,7 +1739,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                         receivedExchanges.remove(index);
                     }
                 }
-                // store a copy of the last n'th received
+                // store a copy of the last nth received
                 receivedExchanges.add(copy);
             }
         }
@@ -1792,6 +1786,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         LOG.debug("Waiting on the latch for: {} millis", waitTime);
         if (!latch.await(waitTime, TimeUnit.MILLISECONDS)) {
             LOG.warn("The latch did not reach 0 within the specified time");
+        }
+    }
+
+    protected void assertEquals(String message, int expectedValue, int actualValue) {
+        if (expectedValue != actualValue) {
+            logReceivedExchanges();
+
+            fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
         }
     }
 

@@ -26,7 +26,6 @@ import org.apache.camel.Route;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeepermaster.group.ZookeeprContainer;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
@@ -74,8 +73,7 @@ public class MasterEndpointIT {
         final String uri
                 = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
 
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        MasterEndpoint master = (MasterEndpoint) ctx.getEndpoint(uri);
+        MasterEndpoint master = (MasterEndpoint) camelContext.getEndpoint(uri);
         SftpEndpoint sftp = (SftpEndpoint) master.getEndpoint();
 
         assertEquals("_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_", sftp.getConfiguration().getPassword());
