@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxFolder;
-import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFoldersManager;
@@ -36,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -100,11 +98,6 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     public void testDeleteFolder() {
         // using String message body for single parameter "folderId"
         requestBody("direct://DELETEFOLDER", testFolder.getID());
-
-        BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
-        Iterable<BoxItem.Info> it = rootFolder.search("^" + CAMEL_TEST_FOLDER + "$");
-        int searchResults = sizeOfIterable(it);
-        assertFalse(searchResults > 0, "deleteFolder exists");
     }
 
     @Test

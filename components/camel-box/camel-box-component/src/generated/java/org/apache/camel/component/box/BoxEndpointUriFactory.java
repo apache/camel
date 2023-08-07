@@ -21,7 +21,7 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(90);
+        Set<String> props = new HashSet<>(85);
         props.add("access");
         props.add("accessTokenCache");
         props.add("action");
@@ -53,7 +53,6 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("fileId");
         props.add("fileName");
         props.add("fileSize");
-        props.add("fileType");
         props.add("filterTerm");
         props.add("folderId");
         props.add("folderName");
@@ -70,14 +69,10 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("listener");
         props.add("login");
         props.add("maxCacheEntries");
-        props.add("maxHeight");
-        props.add("maxWidth");
         props.add("memberViewabilityLevel");
         props.add("message");
         props.add("metadata");
         props.add("methodName");
-        props.add("minHeight");
-        props.add("minWidth");
         props.add("modified");
         props.add("name");
         props.add("newFileName");

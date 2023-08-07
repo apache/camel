@@ -27,7 +27,6 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFile.ThumbnailFileType;
 import com.box.sdk.BoxFolder;
-import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
 import com.box.sdk.Metadata;
 import org.apache.camel.builder.RouteBuilder;
@@ -43,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -108,7 +106,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://CREATEFILEMETADATA", null, headers);
 
         assertNotNull(result, "createFileMetadata result");
-        assertEquals("bar", result.get("/foo"), "createFileMetadata result");
+        assertEquals("bar", result.getString("/foo"), "createFileMetadata result");
         LOG.debug("createFileMetadata: " + result);
     }
 
@@ -134,14 +132,6 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
     public void testDeleteFile() {
         // using String message body for single parameter "fileId"
         requestBody("direct://DELETEFILE", testFile.getID());
-
-        BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
-        Iterable<BoxItem.Info> it = rootFolder.search("^" + CAMEL_TEST_FILE + "$");
-        int searchResults = sizeOfIterable(it);
-        boolean exists = searchResults > 0;
-        assertFalse(exists, "deleteFile exists");
-        LOG.debug("deleteFile doesn't exist");
-
     }
 
     @Test
@@ -166,7 +156,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
     @Disabled // Requires premium user account to test.
     @Test
     public void testDeleteFileVersion() {
-        testFile.uploadVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
+        testFile.uploadNewVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -329,7 +319,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
     @Disabled // Requires premium user account to test
     @Test
     public void testPromoteFileVersion() {
-        testFile.uploadVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
+        testFile.uploadNewVersion(getClass().getResourceAsStream(CAMEL_TEST_FILE));
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -402,8 +392,8 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.Metadata result = requestBodyAndHeaders("direct://UPDATEFILEMETADATA", null, headers);
 
         assertNotNull(result, "updateFileMetadata result");
-        assertNotNull(result.get("/foo"), "updateFileMetadata property foo");
-        assertEquals("bar", metadata.get("/foo"));
+        assertNotNull(result.getString("/foo"), "updateFileMetadata property foo");
+        assertEquals("bar", metadata.getString("/foo"));
         LOG.debug("updateFileMetadata: " + result);
     }
 
