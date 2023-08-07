@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -93,6 +94,11 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @AfterEach
+    void resetMocks() {
+        MockEndpoint.resetMocks(context);
     }
 
     @Override
