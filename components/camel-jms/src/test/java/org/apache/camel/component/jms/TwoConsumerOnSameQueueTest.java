@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -25,11 +29,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel") })
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
 
     @Test
@@ -87,13 +92,29 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
     }
 
     private void sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert() throws InterruptedException {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
+        final MockEndpoint mockB = getMockEndpoint("mock:b");
+        final MockEndpoint mockA = getMockEndpoint("mock:a");
 
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(2, mockA.getReceivedCounter() + mockB.getReceivedCounter()));
+
+        for (Exchange exchange : mockA.getReceivedExchanges()) {
+            assertExchange(exchange);
+        }
+
+        for (Exchange exchange : mockB.getReceivedExchanges()) {
+            assertExchange(exchange);
+        }
+    }
+
+    private static void assertExchange(Exchange exchange) {
+        assertNotNull( exchange.getIn(), "There should be an in message");
+        assertNotNull(exchange.getIn().getBody(), "There should be an in body");
+        assertNotNull(exchange.getIn().getBody(String.class), "The in message body should be of type String");
+        assertEquals("Hello World", exchange.getIn().getBody(), "The in message body should be 'Hello World");
     }
 
     @AfterEach
