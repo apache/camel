@@ -103,16 +103,6 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         "getFilePreviewLink",
         arg("fileId", String.class)),
 
-    GET_FILE_THUMBNAIL(
-        byte[].class,
-        "getFileThumbnail",
-        arg("fileId", String.class),
-        arg("fileType", com.box.sdk.BoxFile.ThumbnailFileType.class),
-        arg("minWidth", Integer.class),
-        arg("minHeight", Integer.class),
-        arg("maxWidth", Integer.class),
-        arg("maxHeight", Integer.class)),
-
     GET_FILE_VERSIONS(
         java.util.Collection.class,
         "getFileVersions",

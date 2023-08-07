@@ -107,7 +107,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testDeleteGroupMembership() {
-        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
+        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.GroupRole.MEMBER);
 
         // using String message body for single parameter "groupMembershipId"
         requestBody("direct://DELETEGROUPMEMBERSHIP", info.getID());
@@ -158,7 +158,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testGetGroupMembershipInfo() {
-        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
+        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.GroupRole.MEMBER);
 
         // using String message body for single parameter "groupMembershipId"
         final com.box.sdk.BoxGroupMembership.Info result = requestBody("direct://GETGROUPMEMBERSHIPINFO", info.getID());
@@ -179,8 +179,8 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testUpdateGroupMembershipInfo() {
-        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
-        info.setRole(BoxGroupMembership.Role.ADMIN);
+        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.GroupRole.MEMBER);
+        info.setGroupRole(BoxGroupMembership.GroupRole.ADMIN);
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String

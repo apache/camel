@@ -35,6 +35,7 @@ import com.box.sdk.BoxSharedLink;
 import com.box.sdk.FileUploadParams;
 import com.box.sdk.Metadata;
 import com.box.sdk.ProgressListener;
+import com.box.sdk.sharedlink.BoxSharedLinkRequest;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -503,7 +504,7 @@ public class BoxFilesManager {
      * @param  unshareDate - the date and time at which time the created shared link will expire; if
      *                     <code>unsharedDate</code> is <code>null</code> then a non-expiring link is created.
      * @param  permissions - the permissions of the created link; if <code>permissions</code> is <code>null</code> then
-     *                     the created shared link is create with default permissions.
+     *                     the created shared link is created with default permissions.
      * @return             The created shared link.
      */
     public BoxSharedLink createFileSharedLink(
@@ -520,7 +521,10 @@ public class BoxFilesManager {
             notNull(access, "access");
 
             BoxFile file = new BoxFile(boxConnection, fileId);
-            return file.createSharedLink(access, unshareDate, permissions);
+            BoxSharedLinkRequest request = new BoxSharedLinkRequest();
+            request.access(access).unsharedDate(unshareDate)
+                    .permissions(permissions.getCanDownload(), permissions.getCanPreview(), permissions.getCanEdit());
+            return file.createSharedLink(request);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(buildErrorMessage(e), e);
         }
@@ -562,40 +566,6 @@ public class BoxFilesManager {
 
             BoxFile file = new BoxFile(boxConnection, fileId);
             return file.getPreviewLink();
-        } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(buildErrorMessage(e), e);
-        }
-    }
-
-    /**
-     * Retrieves a thumbnail, or smaller image representation, of this file. Sizes of 32x32, 64x64, 128x128, and 256x256
-     * can be returned in the .png format and sizes of 32x32, 94x94, 160x160, and 320x320 can be returned in the .jpg
-     * format.
-     *
-     * @param  fileId    - the id of the file to get thumbnail.
-     * @param  fileType  either PNG of JPG
-     * @param  minWidth  minimum width
-     * @param  minHeight minimum height
-     * @param  maxWidth  maximum width
-     * @param  maxHeight maximum height
-     * @return           the byte array of the thumbnail image
-     */
-    public byte[] getFileThumbnail(
-            String fileId, BoxFile.ThumbnailFileType fileType, Integer minWidth,
-            Integer minHeight, Integer maxWidth, Integer maxHeight) {
-        try {
-            LOG.debug("Getting thumbnail for file(id={}) fileType={} minWidth={} minHeight={} maxWidth={} maxHeight={}",
-                    fileId, fileType, minWidth, minHeight, maxWidth, maxHeight);
-
-            notNull(fileId, "fileId");
-            notNull(fileType, "fileType");
-            notNull(minWidth, "minWidth");
-            notNull(minHeight, "minHeight");
-            notNull(maxWidth, "maxWidth");
-            notNull(maxHeight, "maxHeight");
-
-            BoxFile file = new BoxFile(boxConnection, fileId);
-            return file.getThumbnail(fileType, minWidth, minHeight, maxWidth, maxHeight);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(buildErrorMessage(e), e);
         }

@@ -197,7 +197,7 @@ public class BoxGroupsManager {
      * @param  role    - the role of the user in this group. Can be <code>null</code> to assign the default role.
      * @return         The group information.
      */
-    public BoxGroupMembership addGroupMembership(String groupId, String userId, BoxGroupMembership.Role role) {
+    public BoxGroupMembership addGroupMembership(String groupId, String userId, BoxGroupMembership.GroupRole role) {
         try {
             LOG.debug("Adding user(id={}) as member to group(id={} {})",
                     userId, groupId, role == null ? "" : "with role=" + role.name());

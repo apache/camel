@@ -37,7 +37,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
         map.put("PrivateKeyPassword", java.lang.String.class);
         map.put("PublicKeyId", java.lang.String.class);
         map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("Types", com.box.sdk.BoxEvent.Type[].class);
+        map.put("Types", com.box.sdk.BoxEvent.EventType[].class);
         map.put("UserId", java.lang.String.class);
         map.put("UserName", java.lang.String.class);
         map.put("UserPassword", java.lang.String.class);
@@ -83,7 +83,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
         case "sslcontextparameters":
         case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "types":
-        case "Types": target.setTypes(property(camelContext, com.box.sdk.BoxEvent.Type[].class, value)); return true;
+        case "Types": target.setTypes(property(camelContext, com.box.sdk.BoxEvent.EventType[].class, value)); return true;
         case "userid":
         case "UserId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
@@ -137,7 +137,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
         case "sslcontextparameters":
         case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "types":
-        case "Types": return com.box.sdk.BoxEvent.Type[].class;
+        case "Types": return com.box.sdk.BoxEvent.EventType[].class;
         case "userid":
         case "UserId": return java.lang.String.class;
         case "username":
