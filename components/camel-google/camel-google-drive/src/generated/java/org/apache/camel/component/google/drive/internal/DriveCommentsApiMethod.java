@@ -19,6 +19,12 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DriveCommentsApiMethod implements ApiMethod {
 
+    CREATE(
+        com.google.api.services.drive.Drive.Comments.Create.class,
+        "create",
+        arg("fileId", String.class),
+        arg("content", com.google.api.services.drive.model.Comment.class)),
+
     DELETE(
         com.google.api.services.drive.Drive.Comments.Delete.class,
         "delete",
@@ -31,23 +37,10 @@ public enum DriveCommentsApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("commentId", String.class)),
 
-    INSERT(
-        com.google.api.services.drive.Drive.Comments.Insert.class,
-        "insert",
-        arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.Comment.class)),
-
     LIST(
         com.google.api.services.drive.Drive.Comments.List.class,
         "list",
         arg("fileId", String.class)),
-
-    PATCH(
-        com.google.api.services.drive.Drive.Comments.Patch.class,
-        "patch",
-        arg("fileId", String.class),
-        arg("commentId", String.class),
-        arg("content", com.google.api.services.drive.model.Comment.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Comments.Update.class,

@@ -19,6 +19,12 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DrivePermissionsApiMethod implements ApiMethod {
 
+    CREATE(
+        com.google.api.services.drive.Drive.Permissions.Create.class,
+        "create",
+        arg("fileId", String.class),
+        arg("content", com.google.api.services.drive.model.Permission.class)),
+
     DELETE(
         com.google.api.services.drive.Drive.Permissions.Delete.class,
         "delete",
@@ -31,28 +37,10 @@ public enum DrivePermissionsApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("permissionId", String.class)),
 
-    GET_ID_FOR_EMAIL(
-        com.google.api.services.drive.Drive.Permissions.GetIdForEmail.class,
-        "getIdForEmail",
-        arg("email", String.class)),
-
-    INSERT(
-        com.google.api.services.drive.Drive.Permissions.Insert.class,
-        "insert",
-        arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.Permission.class)),
-
     LIST(
         com.google.api.services.drive.Drive.Permissions.List.class,
         "list",
         arg("fileId", String.class)),
-
-    PATCH(
-        com.google.api.services.drive.Drive.Permissions.Patch.class,
-        "patch",
-        arg("fileId", String.class),
-        arg("permissionId", String.class),
-        arg("content", com.google.api.services.drive.model.Permission.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Permissions.Update.class,

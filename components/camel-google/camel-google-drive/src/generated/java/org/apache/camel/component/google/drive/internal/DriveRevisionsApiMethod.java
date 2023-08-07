@@ -36,13 +36,6 @@ public enum DriveRevisionsApiMethod implements ApiMethod {
         "list",
         arg("fileId", String.class)),
 
-    PATCH(
-        com.google.api.services.drive.Drive.Revisions.Patch.class,
-        "patch",
-        arg("fileId", String.class),
-        arg("revisionId", String.class),
-        arg("content", com.google.api.services.drive.model.Revision.class)),
-
     UPDATE(
         com.google.api.services.drive.Drive.Revisions.Update.class,
         "update",

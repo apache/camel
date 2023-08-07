@@ -161,11 +161,6 @@
                                     <fromJavasource />
                                 </api>
                                 <api>
-                                    <apiName>drive-apps</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Apps</proxyClass>
-                                    <fromJavasource />
-                                </api>
-                                <api>
                                     <apiName>drive-changes</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Changes</proxyClass>
                                     <fromJavasource />
@@ -176,13 +171,13 @@
                                     <fromJavasource />
                                 </api>
                                 <api>
-                                    <apiName>drive-children</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Children</proxyClass>
+                                    <apiName>drive-comments</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Comments</proxyClass>
                                     <fromJavasource />
                                 </api>
                                 <api>
-                                    <apiName>drive-comments</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Comments</proxyClass>
+                                    <apiName>drive-drives</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Drives</proxyClass>
                                     <fromJavasource />
                                 </api>
                                 <api>
@@ -229,28 +224,8 @@
                                     </substitutions>
                                 </api>
                                 <api>
-                                    <apiName>drive-parents</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Parents</proxyClass>
-                                    <fromJavasource />
-                                </api>
-                                <api>
                                     <apiName>drive-permissions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Permissions</proxyClass>
-                                    <fromJavasource />
-                                </api>
-                                <api>
-                                    <apiName>drive-properties</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Properties</proxyClass>
-                                    <fromJavasource />
-                                </api>
-                                <api>
-                                    <apiName>drive-drives</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Drives</proxyClass>
-                                    <fromJavasource />
-                                </api>
-                                <api>
-                                    <apiName>drive-teamdrives</apiName>
-                                    <proxyClass>com.google.api.services.drive.Drive$Teamdrives</proxyClass>
                                     <fromJavasource />
                                 </api>
                                 <api>
@@ -261,6 +236,11 @@
                                 <api>
                                     <apiName>drive-revisions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Revisions</proxyClass>
+                                    <fromJavasource />
+                                </api>
+                                <api>
+                                    <apiName>drive-teamdrives</apiName>
+                                    <proxyClass>com.google.api.services.drive.Drive$Teamdrives</proxyClass>
                                     <fromJavasource />
                                 </api>
                             </apis>

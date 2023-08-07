@@ -57,7 +57,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         String fromFileId = testFile.getId();
 
         File toFile = new File();
-        toFile.setTitle(UPLOAD_FILE.getName() + "_copy");
+        toFile.setName(UPLOAD_FILE.getName() + "_copy");
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -68,7 +68,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         final File result = requestBodyAndHeaders("direct://COPY", null, headers);
 
         assertNotNull(result, "copy result");
-        assertEquals(toFile.getTitle(), result.getTitle());
+        assertEquals(toFile.getName(), result.getName());
         LOG.debug("copy: " + result);
     }
 
@@ -105,7 +105,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     @Test
     public void testInsert() {
         File file = new File();
-        file.setTitle(UPLOAD_FILE.getName());
+        file.setName(UPLOAD_FILE.getName());
         // using com.google.api.services.drive.model.File message body for single parameter "content"
         File result = requestBody("direct://INSERT", file);
         assertNotNull(result, "insert result");
@@ -127,7 +127,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
 
         FileList result = requestBody("direct://LIST", null);
         assertNotNull(result, "list result");
-        assertTrue(result.getItems().size() >= 1);
+        assertTrue(result.getFiles().size() >= 1);
 
         File testFile2 = uploadTestFile();
 
@@ -136,7 +136,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
 
         result = requestBodyAndHeaders("direct://LIST", null, headers);
         assertNotNull(result, "list result");
-        assertEquals(1, result.getItems().size());
+        assertEquals(1, result.getFiles().size());
 
         // test paging the list
         List<File> resultList = new ArrayList<>();
@@ -145,7 +145,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         do {
             result = requestBodyAndHeaders("direct://LIST", null, headers);
 
-            resultList.addAll(result.getItems());
+            resultList.addAll(result.getFiles());
             pageToken = result.getNextPageToken();
             headers.put("CamelGoogleDrive.pageToken", pageToken);
 
@@ -163,7 +163,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         File file = uploadTestFile();
 
         // lets update the filename
-        file.setTitle(UPLOAD_FILE.getName() + "PATCHED");
+        file.setName(UPLOAD_FILE.getName() + "PATCHED");
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -176,19 +176,19 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         File result = requestBodyAndHeaders("direct://PATCH", null, headers);
 
         assertNotNull(result, "patch result");
-        assertEquals(UPLOAD_FILE.getName() + "PATCHED", result.getTitle());
+        assertEquals(UPLOAD_FILE.getName() + "PATCHED", result.getName());
         LOG.debug("patch: " + result);
     }
 
     @Test
     public void testTouch() {
         File theTestFile = uploadTestFile();
-        DateTime createdDate = theTestFile.getModifiedDate();
+        DateTime createdDate = theTestFile.getModifiedByMeTime();
         // using String message body for single parameter "fileId"
         File result = requestBody("direct://TOUCH", theTestFile.getId());
 
         assertNotNull(result, "touch result");
-        assertTrue(result.getModifiedDate().getValue() > createdDate.getValue());
+        assertTrue(result.getModifiedByMeTime().getValue() > createdDate.getValue());
     }
 
     @Test
@@ -228,7 +228,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         final File file = requestBody("direct://GET", fileId);
 
         // File's new metadata.
-        file.setTitle("camel.png");
+        file.setName("camel.png");
 
         // File's new content.
         java.io.File fileContent = new java.io.File(TEST_UPLOAD_IMG);

@@ -92,7 +92,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
     protected File uploadTestFile() {
         File fileMetadata = new File();
-        fileMetadata.setTitle(UPLOAD_FILE.getName());
+        fileMetadata.setName(UPLOAD_FILE.getName());
         FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
 
         final Map<String, Object> headers = new HashMap<>();
@@ -107,7 +107,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
     protected File uploadTestFolder() {
         File fileMetadata = new File();
-        fileMetadata.setTitle("testfolder");
+        fileMetadata.setName("testfolder");
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
         File result = requestBody("google-drive://drive-files/insert?inBody=content", fileMetadata);

@@ -23,12 +23,12 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         map.put("AccessToken", java.lang.String.class);
         map.put("ApiName", org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class);
         map.put("ApplicationName", java.lang.String.class);
-        map.put("ChangeId", java.lang.String.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("ContentChannel", com.google.api.services.drive.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -45,8 +45,6 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
         case "applicationname":
         case "ApplicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "changeid":
-        case "ChangeId": target.setChangeId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
         case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -57,6 +55,8 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagetoken":
+        case "PageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
@@ -81,8 +81,6 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "ApiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
         case "applicationname":
         case "ApplicationName": return java.lang.String.class;
-        case "changeid":
-        case "ChangeId": return java.lang.String.class;
         case "clientid":
         case "ClientId": return java.lang.String.class;
         case "clientsecret":
@@ -93,6 +91,8 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "Delegate": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
+        case "pagetoken":
+        case "PageToken": return java.lang.String.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
@@ -113,8 +113,6 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "ApiName": return target.getApiName();
         case "applicationname":
         case "ApplicationName": return target.getApplicationName();
-        case "changeid":
-        case "ChangeId": return target.getChangeId();
         case "clientid":
         case "ClientId": return target.getClientId();
         case "clientsecret":
@@ -125,6 +123,8 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "Delegate": return target.getDelegate();
         case "methodname":
         case "MethodName": return target.getMethodName();
+        case "pagetoken":
+        case "PageToken": return target.getPageToken();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
         case "scopes":

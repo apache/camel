@@ -19,6 +19,12 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DriveTeamdrivesApiMethod implements ApiMethod {
 
+    CREATE(
+        com.google.api.services.drive.Drive.Teamdrives.Create.class,
+        "create",
+        arg("requestId", String.class),
+        arg("content", com.google.api.services.drive.model.TeamDrive.class)),
+
     DELETE(
         com.google.api.services.drive.Drive.Teamdrives.Delete.class,
         "delete",
@@ -28,12 +34,6 @@ public enum DriveTeamdrivesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Teamdrives.Get.class,
         "get",
         arg("teamDriveId", String.class)),
-
-    INSERT(
-        com.google.api.services.drive.Drive.Teamdrives.Insert.class,
-        "insert",
-        arg("requestId", String.class),
-        arg("content", com.google.api.services.drive.model.TeamDrive.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Teamdrives.List.class,

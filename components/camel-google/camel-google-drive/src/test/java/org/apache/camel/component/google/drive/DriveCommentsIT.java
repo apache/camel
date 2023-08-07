@@ -68,14 +68,14 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         assertNotNull(result1.get("items"));
         LOG.debug("list: " + result1);
 
-        Comment comment2 = result1.getItems().get(0);
+        Comment comment2 = result1.getComments().get(0);
 
         // 4. now try and get that comment
         headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", comment2.getCommentId());
+        headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
         final com.google.api.services.drive.model.Comment result3 = requestBodyAndHeaders("direct://GET", null, headers);
 
@@ -87,7 +87,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", comment2.getCommentId());
+        headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
         requestBodyAndHeaders("direct://DELETE", null, headers);
 
@@ -97,7 +97,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", comment2.getCommentId());
+        headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
         try {
             final com.google.api.services.drive.model.Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
