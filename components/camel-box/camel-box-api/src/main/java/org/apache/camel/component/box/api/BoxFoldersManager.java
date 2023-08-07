@@ -27,6 +27,7 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
+import com.box.sdk.sharedlink.BoxSharedLinkRequest;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -400,7 +401,10 @@ public class BoxFoldersManager {
             }
 
             BoxFolder folder = new BoxFolder(boxConnection, folderId);
-            return folder.createSharedLink(access, unshareDate, permissions);
+            BoxSharedLinkRequest request = new BoxSharedLinkRequest();
+            request.access(access).unsharedDate(unshareDate)
+                    .permissions(permissions.getCanDownload(), permissions.getCanPreview(), permissions.getCanEdit());
+            return folder.createSharedLink(request);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);

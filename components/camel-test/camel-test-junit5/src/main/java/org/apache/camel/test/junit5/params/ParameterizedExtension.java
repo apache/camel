@@ -19,7 +19,6 @@ package org.apache.camel.test.junit5.params;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -116,7 +115,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
 
         @Override
         public java.util.List<Extension> getAdditionalExtensions() {
-            return Arrays.asList(
+            return List.of(
                     (TestInstancePostProcessor) this::postProcessTestInstance);
         }
 
@@ -127,7 +126,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                     .flatMap(Stream::of)
                     .filter(f -> isAnnotated(f, Parameter.class))
                     .sorted(Comparator.comparing(f -> (Integer) f.getAnnotation(Parameter.class).value()))
-                    .collect(Collectors.toList());
+                    .toList();
             if (params.length != fields.size()) {
                 throw new TestInstantiationException(
                         "Expected " + fields.size() + " parameters bug got " + params.length + " when instantiating "

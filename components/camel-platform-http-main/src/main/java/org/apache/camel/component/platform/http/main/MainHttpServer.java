@@ -352,7 +352,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
                 if (!up) {
                     // we need to fail with a http status so lets use 500
-                    ctx.response().setStatusCode(500);
+                    ctx.response().setStatusCode(503);
                 }
                 ctx.end(sb.toString());
             }

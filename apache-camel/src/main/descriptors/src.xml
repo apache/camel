@@ -23,7 +23,6 @@
     <format>zip</format>
   </formats>
   <fileSets>
-    <!-- Binary Files -->
     <fileSet>
       <directory>..</directory>
       <outputDirectory></outputDirectory>
@@ -33,32 +32,23 @@
       <excludes>
         <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/target/**</exclude>
-
         <exclude>**/build/**</exclude>
-        <!-- exclude>data/**</exclude>
-        <exclude>*/data/**</exclude -->
         <exclude>activemq-data/**</exclude>
         <exclude>*/activemq-data/**</exclude>
         <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/.*</exclude>
         <exclude>**/.*/**</exclude>
-
         <exclude>**/surefire*</exclude>
-        <exclude>**/svn-commit*</exclude>
-
         <exclude>**/.idea/**</exclude>
         <exclude>**/*.iml</exclude>
         <exclude>**/*.ipr</exclude>
         <exclude>**/*.iws</exclude>
-
         <exclude>**/cobertura.ser</exclude>
-
         <exclude>**/node_modules/**</exclude>
-        <exclude>docs/node/**</exclude>
-        <exclude>docs/.yarn/**</exclude>
+        <exclude>**/docs/node/**</exclude>
+        <exclude>**/docs/.yarn/**</exclude>
         <exclude>**/.flattened-pom.xml</exclude>
       </excludes>
     </fileSet>
-
   </fileSets>
 </assembly>

@@ -313,6 +313,11 @@ This also applies to Java types such as String, int, etc:
 
     "bean:myBean?method=bar(String.class, int.class)"
 
+=== camel-box
+
+Upgraded from Box Java SDK v2 to v4, which have some method signature changes.
+The method to get a file thumbnail is no longer available.
+
 === camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.

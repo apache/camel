@@ -64,7 +64,7 @@ http://maven.apache.org/guides/mini/guide-encryption.html[password encryption re
   ...
   <profiles>
     <profile>
-      <id>apache-release</id>
+      <id>release</id>
       <properties>
         <gpg.useagent>false</gpg.useagent>
         <gpg.passphrase><!-- YOUR GPG PASSPHRASE --></gpg.passphrase>

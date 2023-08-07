@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
-        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 class XmppMultiUserChatIT extends XmppBaseIT {
 
     private static final String BODY_1 = "the first message";
@@ -36,7 +36,7 @@ class XmppMultiUserChatIT extends XmppBaseIT {
     private CountDownLatch latch = new CountDownLatch(2);
 
     @BeforeEach
-    void doSetup(){
+    void doSetup() {
         template.sendBody("direct:toProducer", BODY_1);
         template.sendBody("direct:toProducer", BODY_2);
     }
@@ -44,23 +44,22 @@ class XmppMultiUserChatIT extends XmppBaseIT {
     @Test
     void testXmppChat() throws Exception {
 
-            MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
-            consumerEndpoint.expectedBodiesReceived(BODY_1, BODY_2);
+        MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
+        consumerEndpoint.expectedBodiesReceived(BODY_1, BODY_2);
 
-            if (!latch.await(5, TimeUnit.SECONDS)) {
-                Assertions.fail("Some error");
-            }
+        if (!latch.await(5, TimeUnit.SECONDS)) {
+            Assertions.fail("Some error");
+        }
 
-            consumerEndpoint.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
+        consumerEndpoint.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
 
-            consumerEndpoint.assertIsSatisfied();
+        consumerEndpoint.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
 
                 from("direct:toProducer")
                         .process(e -> latch.countDown())

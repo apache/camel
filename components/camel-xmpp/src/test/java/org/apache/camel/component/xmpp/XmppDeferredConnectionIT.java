@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * expected.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
-        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppDeferredConnectionIT extends XmppBaseContainerTest {
     private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionIT.class);
 
