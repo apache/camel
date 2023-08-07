@@ -219,7 +219,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-aws2-stepfunctions</artifactId>
+            <artifactId>camel-aws2-step-functions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
