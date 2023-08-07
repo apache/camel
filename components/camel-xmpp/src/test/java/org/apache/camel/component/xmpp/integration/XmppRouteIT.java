@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
-        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppRouteIT extends XmppBaseIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppRouteIT.class);
