@@ -82,6 +82,7 @@
         <module>archetypes</module>
         <module>tests</module>
         <module>docs</module>
+        <module>apache-camel</module>
     </modules>
 
     <scm>
