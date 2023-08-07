@@ -21,9 +21,10 @@ import java.lang.reflect.Constructor;
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.Service;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.support.ObjectHelper;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
@@ -59,8 +60,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * @deprecated - use JmsConfiguration#getUsername()
      * @see        JmsConfiguration#getUsername()
+     * @deprecated - use JmsConfiguration#getUsername()
      */
     @Deprecated
     public String getUserName() {
@@ -68,8 +69,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * @deprecated - use JmsConfiguration#setUsername(String)
      * @see        JmsConfiguration#setUsername(String)
+     * @deprecated - use JmsConfiguration#setUsername(String)
      */
     @Deprecated
     public void setUserName(String userName) {
@@ -177,6 +178,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
             answer.setPassword(getPassword());
         }
         answer.setBrokerURL(getBrokerURL());
+        CamelContext context = activeMQComponent != null ? activeMQComponent.getCamelContext() : null;
         if (isUseSingleConnection()) {
             SingleConnectionFactory scf = new SingleConnectionFactory(answer);
             if (activeMQComponent != null) {
@@ -184,9 +186,9 @@ public class ActiveMQConfiguration extends JmsConfiguration {
             }
             return scf;
         } else if (isUsePooledConnection()) {
-            ConnectionFactory pcf = createPooledConnectionFactory(answer);
+            ConnectionFactory pcf = createPooledConnectionFactory(context, answer);
             if (activeMQComponent != null) {
-                activeMQComponent.addPooledConnectionFactoryService((Service) pcf);
+                activeMQComponent.addPooledConnectionFactoryService(pcf);
             }
             return pcf;
         } else {
@@ -194,17 +196,29 @@ public class ActiveMQConfiguration extends JmsConfiguration {
         }
     }
 
-    protected ConnectionFactory createPooledConnectionFactory(ActiveMQConnectionFactory connectionFactory) {
+    protected ConnectionFactory createPooledConnectionFactory(
+            CamelContext camelContext, ActiveMQConnectionFactory connectionFactory) {
         try {
-            Class<?> type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
-            Constructor<?> constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);
-            return (ConnectionFactory) constructor.newInstance(connectionFactory);
+            Class<?> type = loadClass(camelContext, "org.messaginghub.pooled.jms.JmsPoolConnectionFactory",
+                    getClass().getClassLoader());
+
+            Constructor<?> constructor = type.getConstructor();
+            ConnectionFactory cf = (ConnectionFactory) constructor.newInstance();
+            ObjectHelper.invokeMethod(type.getDeclaredMethod("setConnectionFactory", Object.class), cf,
+                    connectionFactory);
+            return cf;
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to instantiate PooledConnectionFactory: " + e, e);
         }
     }
 
-    public static Class<?> loadClass(String name, ClassLoader loader) throws ClassNotFoundException {
+    public static Class<?> loadClass(CamelContext camelContext, String name, ClassLoader loader) throws ClassNotFoundException {
+        // if camel then use it to load the class
+        if (camelContext != null) {
+            return camelContext.getClassResolver()
+                    .resolveMandatoryClass("org.messaginghub.pooled.jms.JmsPoolConnectionFactory");
+        }
+
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         if (contextClassLoader != null) {
             try {
