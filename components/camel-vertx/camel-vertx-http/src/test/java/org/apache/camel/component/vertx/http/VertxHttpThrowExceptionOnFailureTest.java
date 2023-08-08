@@ -101,7 +101,7 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
         HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
         assertEquals(500, exception.getStatusCode());
         assertEquals("Internal Server Error", exception.getStatusText());
-        assertEquals(getTestServerUrl(), exception.getUri());
+        assertEquals(getTestServerUrl() + "/redirect", exception.getUri());
     }
 
     @Test
