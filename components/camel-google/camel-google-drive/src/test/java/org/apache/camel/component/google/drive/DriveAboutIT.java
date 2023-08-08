@@ -42,7 +42,7 @@ public class DriveAboutIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.model.About result = requestBody("direct://GET", null);
 
         assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        LOG.debug("get: {}", result);
     }
 
     @Override

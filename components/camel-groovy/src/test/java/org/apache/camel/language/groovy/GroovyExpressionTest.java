@@ -63,7 +63,7 @@ public class GroovyExpressionTest {
             GroovyLanguage.groovy("exchange.doesNotExist").evaluate(exchange);
             fail("This test case should have thrown an exception!");
         } catch (Exception e) {
-            LOG.debug("Caught expected exception: " + e, e);
+            LOG.debug("Caught expected exception: {}", e.getMessage(), e);
             String message = e.getMessage();
             assertTrue(message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
         }

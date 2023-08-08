@@ -70,7 +70,7 @@ public class SheetsSpreadsheetsValuesIT {
             assertEquals(TEST_RANGE, result.getRange());
             assertTrue(ObjectHelper.isEmpty(result.getValues()), "expected empty value range but found entries");
 
-            LOG.debug("get: " + result);
+            LOG.debug("get: {}", result);
         }
 
         @Override
@@ -124,7 +124,7 @@ public class SheetsSpreadsheetsValuesIT {
             assertEquals(data.size(), result.getUpdatedRows());
             assertEquals(data.size() * data.get(0).size(), result.getUpdatedCells());
 
-            LOG.debug("update: " + result);
+            LOG.debug("update: {}", result);
         }
 
         @Override
@@ -180,7 +180,7 @@ public class SheetsSpreadsheetsValuesIT {
             assertEquals(data.size(), result.getUpdates().getUpdatedRows());
             assertEquals(data.get(0).size(), result.getUpdates().getUpdatedCells());
 
-            LOG.debug("append: " + result);
+            LOG.debug("append: {}", result);
         }
 
         @Override
@@ -230,7 +230,7 @@ public class SheetsSpreadsheetsValuesIT {
             assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
             assertEquals(TEST_RANGE, result.getClearedRange());
 
-            LOG.debug("clear: " + result);
+            LOG.debug("clear: {}", result);
         }
 
         @Override

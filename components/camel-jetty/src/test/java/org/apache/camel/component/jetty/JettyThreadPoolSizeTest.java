@@ -34,13 +34,13 @@ public class JettyThreadPoolSizeTest extends BaseJettyTest {
     @Test
     public void threadPoolTest() {
         long initialJettyThreadNumber = countJettyThread();
-        LOG.info("initial Jetty thread number (expected 5): " + initialJettyThreadNumber);
+        LOG.info("initial Jetty thread number (expected 5): {}", initialJettyThreadNumber);
         assertEquals(5, initialJettyThreadNumber);
 
         context.stop();
 
         long jettyThreadNumberAfterStop = countJettyThread();
-        LOG.info("Jetty thread number after stopping Camel Context: (expected 0): " + jettyThreadNumberAfterStop);
+        LOG.info("Jetty thread number after stopping Camel Context: (expected 0): {}", jettyThreadNumberAfterStop);
         assertEquals(0, jettyThreadNumberAfterStop);
     }
 

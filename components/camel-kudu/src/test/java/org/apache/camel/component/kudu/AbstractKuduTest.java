@@ -74,7 +74,7 @@ public abstract class AbstractKuduTest extends CamelTestSupport {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        LOG.trace("Table " + tableName + " created.");
+        LOG.trace("Table {} created.", tableName);
     }
 
     @BeforeEach

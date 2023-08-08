@@ -100,7 +100,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         while (iter.hasMoreElements()) {
             Header header = iter.nextElement();
             String[] value = message.getHeader(header.getName());
-            log.debug("Header: " + header.getName() + " has value: " + org.apache.camel.util.ObjectHelper.asString(value));
+            log.debug("Header: {} has value: {}", header.getName(), org.apache.camel.util.ObjectHelper.asString(value));
         }
     }
 

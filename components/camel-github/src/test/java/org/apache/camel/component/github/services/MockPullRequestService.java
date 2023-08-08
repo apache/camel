@@ -121,7 +121,7 @@ public class MockPullRequestService extends PullRequestService {
             }
         }
 
-        LOG.debug("Returning list of " + result.size() + " pull requests with state " + state);
+        LOG.debug("Returning list of {} pull requests with state {}", result.size(), state);
         return result;
     }
 

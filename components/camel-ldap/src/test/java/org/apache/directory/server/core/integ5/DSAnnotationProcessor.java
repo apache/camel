@@ -173,13 +173,13 @@ public final class DSAnnotationProcessor {
                     schemaManager.enable(schemaName);
 
                     if (schemaManager.isDisabled(schemaName)) {
-                        LOG.error("Cannot enable " + schemaName);
+                        LOG.error("Cannot enable {}", schemaName);
                     }
                 } else {
                     schemaManager.disable(schemaName);
 
                     if (schemaManager.isEnabled(schemaName)) {
-                        LOG.error("Cannot disable " + schemaName);
+                        LOG.error("Cannot disable {}", schemaName);
                     }
                 }
             }

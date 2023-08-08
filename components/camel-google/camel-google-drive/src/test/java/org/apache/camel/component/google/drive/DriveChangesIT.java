@@ -54,7 +54,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
 
         assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        LOG.debug("get: {}", result);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
     }
 
     @Override

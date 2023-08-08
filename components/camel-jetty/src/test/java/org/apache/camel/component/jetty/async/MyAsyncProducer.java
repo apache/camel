@@ -47,17 +47,17 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                LOG.info("Simulating a task which takes " + getEndpoint().getDelay() + " millis to reply");
+                LOG.info("Simulating a task which takes {} millis to reply", getEndpoint().getDelay());
                 Thread.sleep(getEndpoint().getDelay());
 
                 int count = counter.incrementAndGet();
                 if (getEndpoint().getFailFirstAttempts() >= count) {
-                    LOG.info("Simulating a failure at attempt " + count);
+                    LOG.info("Simulating a failure at attempt {}", count);
                     exchange.setException(new CamelExchangeException("Simulated error at attempt " + count, exchange));
                 } else {
                     String reply = getEndpoint().getReply();
                     exchange.getMessage().setBody(reply);
-                    LOG.info("Setting reply " + reply);
+                    LOG.info("Setting reply {}", reply);
                 }
 
                 LOG.info("Callback done(false)");

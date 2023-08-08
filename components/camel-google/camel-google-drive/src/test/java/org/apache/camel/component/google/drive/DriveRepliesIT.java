@@ -95,7 +95,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
                 = requestBodyAndHeaders("direct://LIST", null, headers);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
 
     }
 

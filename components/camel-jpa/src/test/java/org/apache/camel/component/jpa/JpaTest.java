@@ -78,7 +78,7 @@ public class JpaTest {
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                LOG.info("Received exchange: " + e.getIn());
+                LOG.info("Received exchange: {}", e.getIn());
                 receivedExchange = e;
                 // should have a EntityManager
                 EntityManager entityManager = e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);

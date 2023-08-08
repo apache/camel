@@ -153,9 +153,9 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
     protected List<SpanData> verify(SpanTestData[] expected, boolean async) {
         List<SpanData> spans = inMemorySpanExporter.getFinishedSpanItems();
         spans.forEach(mockSpan -> {
-            LOG.info("Span: " + mockSpan);
-            LOG.info("\tComponent: " + mockSpan.getAttributes().get(COMPONENT_KEY));
-            LOG.info("\tTags: " + mockSpan.getAttributes());
+            LOG.info("Span: {}", mockSpan);
+            LOG.info("\tComponent: {}", mockSpan.getAttributes().get(COMPONENT_KEY));
+            LOG.info("\tTags: {}", mockSpan.getAttributes());
             LOG.info("\tLogs: ");
 
         });
@@ -208,7 +208,7 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
             spans.add(finishedSpans.get(i));
         }
 
-        LOG.info("Found traces: " + traces);
+        LOG.info("Found traces: {}", traces);
         assertEquals(numOfTraces, traces.size());
 
         for (Map.Entry<String, List<SpanData>> spans : traces.entrySet()) {

@@ -68,7 +68,7 @@ public class MinaProducerShutdownManualIT {
         public void run() {
             long diff = System.currentTimeMillis() - start;
             if (diff > 5000) {
-                LOG.error("ERROR: MinaProducer should be able to shutdown within 5000 millis: time=" + diff);
+                LOG.error("ERROR: MinaProducer should be able to shutdown within 5000 millis: time={}", diff);
             }
         }
     }

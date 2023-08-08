@@ -133,11 +133,11 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                     }
 
                     private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit " + i + " Index Location:" + hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit " + i + " Score:" + hits.getHit().get(i).getScore());
-                            LOG.debug("Hit " + i + " Data:" + hits.getHit().get(i).getData());
+                            LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
+                            LOG.debug("Hit {} Score: {}", i, hits.getHit().get(i).getScore());
+                            LOG.debug("Hit {} Data: {}", hits.getHit().get(i).getData());
                         }
                     }
                 }).to("mock:searchResult");
@@ -170,9 +170,9 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                     private void printResults(Hits hits) {
                         LOG.debug("Number of hits: " + hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit " + i + " Index Location:" + hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit " + i + " Score:" + hits.getHit().get(i).getScore());
-                            LOG.debug("Hit " + i + " Data:" + hits.getHit().get(i).getData());
+                            LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
+                            LOG.debug("Hit {} Score: {}", i, hits.getHit().get(i).getScore());
+                            LOG.debug("Hit {} Data: {}", i, hits.getHit().get(i).getData());
                         }
                     }
                 }).to("mock:searchResult");
@@ -205,9 +205,9 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                     private void printResults(Hits hits) throws Exception {
                         LOG.debug("Number of hits: " + hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
-                            LOG.debug("Hit " + i + " Index Location:" + hits.getHit().get(i).getHitLocation());
-                            LOG.debug("Hit " + i + " Score:" + hits.getHit().get(i).getScore());
-                            LOG.debug("Hit " + i + " Data:" + hits.getHit().get(i).getData());
+                            LOG.debug("Hit {}  Index Location: {}", i, hits.getHit().get(i).getHitLocation());
+                            LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
+                            LOG.debug("Hit {}  Data: {}", i, hits.getHit().get(i).getData());
                             if (hits.getHit().get(i).getDocument() == null) {
                                 throw new Exception("Failed to return lucene documents");
                             }

@@ -176,8 +176,8 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
             Message in = exchange.getIn();
             ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
 
-            log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action "
-                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with configmap name: {} and action {}", cm.getMetadata().getName(),
+                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

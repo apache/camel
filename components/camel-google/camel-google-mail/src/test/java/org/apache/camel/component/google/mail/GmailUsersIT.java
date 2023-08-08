@@ -44,7 +44,7 @@ public class GmailUsersIT extends AbstractGoogleMailTestSupport {
 
         assertNotNull(result, "getProfile result");
         assertNotNull(result.getEmailAddress(), "Should be email address associated with current account");
-        LOG.debug("getProfile: " + result);
+        LOG.debug("getProfile: {}", result);
     }
 
     @Override

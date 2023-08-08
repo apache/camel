@@ -132,7 +132,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
 
     @Override
     public Bucket create(Bucket bucket, Map<Option, ?> options) {
-        LOG.info("create_bucket: " + bucket.getName());
+        LOG.info("create_bucket: {}", bucket.getName());
         buckets.put(bucket.getName(), bucket);
         return bucket;
     }

@@ -181,8 +181,8 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
             Message in = exchange.getIn();
             String json = exchange.getIn().getBody(String.class);
 
-            log.info("Got event with custom resource instance: " + json + " and action "
-                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with custom resource instance: {} and action {}", json,
+                    in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

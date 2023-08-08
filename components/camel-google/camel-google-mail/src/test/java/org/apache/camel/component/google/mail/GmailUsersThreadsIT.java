@@ -96,7 +96,7 @@ public class GmailUsersThreadsIT extends AbstractGoogleMailTestSupport {
 
         assertNotNull(result, "list result");
         assertTrue(result.getThreads().size() > 0);
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
 
         headers = new HashMap<>();
         // parameter type is String

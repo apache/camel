@@ -136,7 +136,7 @@ public class HttpsRouteTest extends BaseJettyTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        LOG.info("Headers: " + headers);
+        LOG.info("Headers: {}", headers);
 
         assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }

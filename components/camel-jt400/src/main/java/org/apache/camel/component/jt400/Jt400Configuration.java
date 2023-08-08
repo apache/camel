@@ -431,7 +431,7 @@ public class Jt400Configuration {
         AS400 system = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting an AS400 object for '{}' from {}.", systemName + '/' + userID, connectionPool);
+                LOG.debug("Getting an AS400 object for '{}/{}' from {}.", systemName, userID, connectionPool);
             }
 
             if (isSecured()) {
