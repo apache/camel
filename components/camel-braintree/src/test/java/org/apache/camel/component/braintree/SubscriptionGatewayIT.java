@@ -45,7 +45,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBody("direct://CANCEL", null);
 
         assertNotNull(result, "cancel result");
-        LOG.debug("cancel: " + result);
+        LOG.debug("cancel: {}", result);
     }
 
     // TODO provide parameter values for create
@@ -56,7 +56,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
 
         assertNotNull(result, "create result");
-        LOG.debug("create: " + result);
+        LOG.debug("create: {}", result);
     }
 
     // TODO provide parameter values for delete
@@ -72,7 +72,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://DELETE", null, headers);
 
         assertNotNull(result, "delete result");
-        LOG.debug("delete: " + result);
+        LOG.debug("delete: {}", result);
     }
 
     // TODO provide parameter values for find
@@ -83,7 +83,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Subscription result = requestBody("direct://FIND", null);
 
         assertNotNull(result, "find result");
-        LOG.debug("find: " + result);
+        LOG.debug("find: {}", result);
     }
 
     // TODO provide parameter values for retryCharge
@@ -94,7 +94,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBody("direct://RETRYCHARGE", null);
 
         assertNotNull(result, "retryCharge result");
-        LOG.debug("retryCharge: " + result);
+        LOG.debug("retryCharge: {}", result);
     }
 
     // TODO provide parameter values for retryCharge
@@ -110,7 +110,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://RETRYCHARGE_1", null, headers);
 
         assertNotNull(result, "retryCharge result");
-        LOG.debug("retryCharge: " + result);
+        LOG.debug("retryCharge: {}", result);
     }
 
     // TODO provide parameter values for search
@@ -121,7 +121,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
 
         assertNotNull(result, "search result");
-        LOG.debug("search: " + result);
+        LOG.debug("search: {}", result);
     }
 
     // TODO provide parameter values for update
@@ -137,7 +137,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
         assertNotNull(result, "update result");
-        LOG.debug("update: " + result);
+        LOG.debug("update: {}", result);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class DisruptorRouteTest {
                 from("disruptor:test.b").process(new Processor() {
                     @Override
                     public void process(final Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: {}", e.getIn());
                         latch.countDown();
                     }
                 });
@@ -82,7 +82,7 @@ public class DisruptorRouteTest {
                 from("disruptor:test.b").process(new Processor() {
                     @Override
                     public void process(final Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: {}", e.getIn());
                         latch.countDown();
                     }
                 });

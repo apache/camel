@@ -47,7 +47,7 @@ public final class ExecTestUtils {
             File resourceFile = resource.getFile();
             return resourceFile;
         } catch (IOException ioe) {
-            LOG.warn("The resource  " + classpathResource + " does not exist!", ioe);
+            LOG.warn("The resource  {} does not exist!", classpathResource, ioe);
             return null;
         }
     }

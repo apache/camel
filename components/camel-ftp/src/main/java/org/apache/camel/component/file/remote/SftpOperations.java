@@ -537,7 +537,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             channel.rename(from, to);
             return true;
         } catch (SftpException e) {
-            LOG.debug("Cannot rename file from: " + from + " to: " + to, e);
+            LOG.debug("Cannot rename file from: {} to: {}", from, to, e);
             throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
         }
     }

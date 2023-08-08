@@ -44,7 +44,7 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
         final CreditCardVerification result = requestBody("direct://FIND", null, CreditCardVerification.class);
 
         assertNotNull(result, "find result");
-        LOG.debug("find: " + result);
+        LOG.debug("find: {}", result);
     }
 
     // TODO provide parameter values for search
@@ -56,7 +56,7 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
                 = requestBody("direct://SEARCH", null, ResourceCollection.class);
 
         assertNotNull(result, "search result");
-        LOG.debug("search: " + result);
+        LOG.debug("search: {}", result);
     }
 
     @Override

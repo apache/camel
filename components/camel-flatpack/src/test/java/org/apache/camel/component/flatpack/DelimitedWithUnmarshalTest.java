@@ -55,7 +55,7 @@ public class DelimitedWithUnmarshalTest {
             Map<?, ?> body = in.getBody(Map.class);
             assertNotNull(body, "Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()));
             assertEquals(expectedItemDesc[counter], body.get("ITEM_DESC"), "ITEM_DESC result(" + counter + ")");
-            LOG.info("Result: " + counter + " = " + body);
+            LOG.info("Result: {} = {}", counter, body);
             counter++;
         }
     }

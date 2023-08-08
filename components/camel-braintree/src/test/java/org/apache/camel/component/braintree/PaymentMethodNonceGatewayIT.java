@@ -42,7 +42,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
 
         assertNotNull(result, "create result");
-        LOG.debug("create: " + result);
+        LOG.debug("create: {}", result);
     }
 
     // TODO provide parameter values for find
@@ -53,7 +53,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
         final com.braintreegateway.PaymentMethodNonce result = requestBody("direct://FIND", null);
 
         assertNotNull(result, "find result");
-        LOG.debug("find: " + result);
+        LOG.debug("find: {}", result);
     }
 
     @Override

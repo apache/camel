@@ -111,7 +111,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
         MethodOutcome result = requestBodyAndHeaders("direct://PATCH_BY_URL", null, headers);
 
         assertNotNull(result, "patchByUrl result");
-        LOG.debug("patchByUrl: " + result);
+        LOG.debug("patchByUrl: {}", result);
         assertActive(result);
     }
 
@@ -136,7 +136,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     private void assertActive(MethodOutcome result) {
-        LOG.debug("result: " + result);
+        LOG.debug("result: {}", result);
         IIdType id = result.getId();
 
         Patient patient = fhirClient.read().resource(Patient.class).withId(id).preferResponseType(Patient.class).execute();

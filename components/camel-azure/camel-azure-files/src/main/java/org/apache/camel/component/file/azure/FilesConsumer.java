@@ -72,8 +72,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
                     operations.buildDirectory(endpointPath, true);
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
-                    LOG.warn("Error auto creating directory: " + endpointPath + " due " + e.getMessage()
-                             + ". This exception is ignored.",
+                    LOG.warn("Error auto creating directory: {} due to {}. This exception is ignored.", endpointPath, e.getMessage(),
                             e);
                 }
             }

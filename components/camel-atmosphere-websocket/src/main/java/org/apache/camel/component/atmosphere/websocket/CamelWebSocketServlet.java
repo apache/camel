@@ -54,7 +54,7 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
             handleDoService(request, response);
         } catch (Exception e) {
             // do not leak exception back to caller
-            log.warn("Error handling request due to: " + e.getMessage(), e);
+            log.warn("Error handling request due to: {}", e.getMessage(), e);
             try {
                 if (!response.isCommitted()) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

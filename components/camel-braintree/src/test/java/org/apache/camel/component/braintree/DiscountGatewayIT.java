@@ -43,7 +43,7 @@ public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
         final List<Discount> result = requestBody("direct://ALL", null, List.class);
 
         assertNotNull(result, "all result");
-        LOG.debug("all: " + result);
+        LOG.debug("all: {}", result);
     }
 
     @Override

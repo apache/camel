@@ -65,7 +65,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
 
         final Parameters result = requestBodyAndHeaders("direct://ON_INSTANCE", null, headers);
 
-        LOG.debug("onInstance: " + result);
+        LOG.debug("onInstance: {}", result);
         assertNotNull(result, "onInstance result");
         Bundle bundle = (Bundle) result.getParameter().get(0).getResource();
         assertNotNull(bundle, "onInstance result");
@@ -92,7 +92,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
 
         final Parameters result = requestBodyAndHeaders("direct://ON_INSTANCE_VERSION", null, headers);
 
-        LOG.debug("onInstance: " + result);
+        LOG.debug("onInstance: {}", result);
         assertNotNull(result, "onInstance result");
         Bundle bundle = (Bundle) result.getParameter().get(0).getResource();
         assertNotNull(bundle, "onInstance result");
@@ -139,7 +139,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         final org.hl7.fhir.instance.model.api.IBaseResource result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         assertNotNull(result, "onType result");
-        LOG.debug("onType: " + result);
+        LOG.debug("onType: {}", result);
     }
 
     @Disabled("Not implemented yet in HAPI FHIR server side, see"
@@ -161,7 +161,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
                 = requestBodyAndHeaders("direct://PROCESS_MESSAGE", null, headers);
 
         assertNotNull(result, "processMessage result");
-        LOG.debug("processMessage: " + result);
+        LOG.debug("processMessage: {}", result);
     }
 
     @Override

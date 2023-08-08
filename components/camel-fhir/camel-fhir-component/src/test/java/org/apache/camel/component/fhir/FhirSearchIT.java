@@ -45,7 +45,7 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
         String url = "Patient?given=Vincent&family=Freeman&_format=json";
         Bundle result = requestBody("direct://SEARCH_BY_URL", url);
 
-        LOG.debug("searchByUrl: " + result);
+        LOG.debug("searchByUrl: {}", result);
         assertNotNull(result, "searchByUrl result");
         Patient patient = (Patient) result.getEntry().get(0).getResource();
         assertNotNull(patient);

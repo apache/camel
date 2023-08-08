@@ -45,7 +45,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
         final com.braintreegateway.Result result = requestBody("direct://GENERATE", null);
 
         assertNotNull(result, "generate result");
-        LOG.debug("generate: " + result);
+        LOG.debug("generate: {}", result);
     }
 
     // TODO provide parameter values for generate
@@ -61,7 +61,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://GENERATE_1", null, headers);
 
         assertNotNull(result, "generate result");
-        LOG.debug("generate: " + result);
+        LOG.debug("generate: {}", result);
     }
 
     @Override

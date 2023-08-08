@@ -139,7 +139,7 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
                 cs.start();
                 LOG.info("JMX Connector thread started and listening at: {}", url);
             } catch (IOException ioe) {
-                LOG.warn("Could not start JMXConnector thread at: " + url + ". JMX Connector not in use.", ioe);
+                LOG.warn("Could not start JMXConnector thread at: {}. JMX Connector not in use.", url, ioe);
             }
         });
         thread.start();

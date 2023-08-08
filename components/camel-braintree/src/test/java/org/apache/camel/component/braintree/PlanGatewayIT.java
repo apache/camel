@@ -41,7 +41,7 @@ public class PlanGatewayIT extends AbstractBraintreeTestSupport {
         final List<Plan> result = requestBody("direct://ALL", null, List.class);
 
         assertNotNull(result, "all result");
-        LOG.debug("all: " + result);
+        LOG.debug("all: {}", result);
     }
 
     @Override

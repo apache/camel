@@ -65,7 +65,7 @@ public class BoxEventLogsManagerIT extends AbstractBoxITSupport {
         final java.util.List result = requestBodyAndHeaders("direct://GETENTERPRISEEVENTS", null, headers);
 
         assertNotNull(result, "getEnterpriseEvents result");
-        LOG.debug("getEnterpriseEvents: " + result);
+        LOG.debug("getEnterpriseEvents: {}", result);
     }
 
     @Override
