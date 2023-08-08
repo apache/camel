@@ -1583,8 +1583,8 @@ based dependency injection in Java classes.
 
 You can use the following Camel annotations on Camel standalone:
 
-- `@org.apache.camel.BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@org.apache.camel.Configuration` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.BindToRegistry` on class level (for custom beans, processors, etc.) to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.Configuration` on class level for `CamelConfiguation` classes, which is used during Camel startup (only Camel Main runtime) to allow custom setup that requires some coding.
 
 And these annotations should work on all runtimes
 (if target runtime is either Quarkus or Spring Boot then favour using their annotations):
