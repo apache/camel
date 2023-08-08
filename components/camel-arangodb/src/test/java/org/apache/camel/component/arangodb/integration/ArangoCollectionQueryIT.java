@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
@@ -32,8 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-                          disabledReason = "Apache CI nodes are too resource constrained for this test")
+@DisabledIfSystemProperties({
+        @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
+        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
+                                  disabledReason = "Manually disabled tests")
+})
 public class ArangoCollectionQueryIT extends BaseArangoDb {
 
     @Override
