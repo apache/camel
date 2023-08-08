@@ -1254,6 +1254,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS StepFunctions (camel-aws2-step-functions)
+     * Manage and invoke AWS Step functions using AWS SDK version 2.x.
+     * 
+     * Category: cloud,serverless
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-aws2-step-functions
+     * 
+     * Syntax: <code>aws2-step-functions:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StepFunctions2EndpointBuilderFactory.StepFunctions2EndpointBuilder aws2StepFunctions(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StepFunctions2EndpointBuilderFactory.endpointBuilder("aws2-step-functions", path);
+    }
+    /**
+     * AWS StepFunctions (camel-aws2-step-functions)
+     * Manage and invoke AWS Step functions using AWS SDK version 2.x.
+     * 
+     * Category: cloud,serverless
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-aws2-step-functions
+     * 
+     * Syntax: <code>aws2-step-functions:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StepFunctions2EndpointBuilderFactory.StepFunctions2EndpointBuilder aws2StepFunctions(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StepFunctions2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances using AWS SDK version 2.x.
      * 

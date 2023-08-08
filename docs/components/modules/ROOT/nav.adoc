@@ -33,6 +33,7 @@
 *** xref:aws2-ses-component.adoc[AWS Simple Email Service (SES)]
 *** xref:aws2-sns-component.adoc[AWS Simple Notification System (SNS)]
 *** xref:aws2-sqs-component.adoc[AWS Simple Queue Service (SQS)]
+*** xref:aws2-step-functions-component.adoc[AWS StepFunctions]
 *** xref:aws2-translate-component.adoc[AWS Translate]
 ** xref:azure-summary.adoc[Azure]
 *** xref:azure-cosmosdb-component.adoc[Azure CosmosDB]
