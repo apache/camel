@@ -77,7 +77,7 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
 
     @Test
     public void checkUserNameOnly() {
-        String uri = "paho-mqtt5:/test/topic" + "?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test";
+        String uri = "paho-mqtt5:/test/topic?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test";
 
         PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
 
@@ -86,8 +86,8 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
 
     @Test
     public void checkUserNameAndPassword() {
-        String uri = "paho-mqtt5:/test/topic" + "?brokerUrl=tcp://localhost:" + mqttPort
-                     + "&userName=test" + "&password=testpass";
+        String uri = "paho-mqtt5:/test/topic?brokerUrl=tcp://localhost:" + mqttPort
+                     + "&userName=test&password=testpass";
 
         PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
 
