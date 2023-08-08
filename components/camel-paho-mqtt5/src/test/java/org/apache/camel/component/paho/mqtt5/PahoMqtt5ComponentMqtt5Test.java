@@ -53,7 +53,8 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
                         .to("mock:persistenceTest");
 
                 from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
+                from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test")
+                        .to("mock:testCustomizedPaho");
             }
         };
     }
@@ -63,7 +64,7 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
     @Test
     public void checkOptions() {
         String uri = "paho-mqtt5:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort + "&qos=2"
-                     + "&persistence=file";
+                     + "&persistence=file" + "&userName=test";
 
         PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
 
@@ -73,6 +74,26 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
         assertEquals("tcp://localhost:" + mqttPort, endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
         assertEquals(PahoMqtt5Persistence.FILE, endpoint.getConfiguration().getPersistence());
+    }
+
+    @Test
+    public void checkUserNameOnly() {
+        String uri = "paho-mqtt5:/test/topic" + "?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test";
+
+        PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
+
+        assertEquals("test", endpoint.getConfiguration().getUserName());
+    }
+
+    @Test
+    public void checkUserNameAndPassword() {
+        String uri = "paho-mqtt5:/test/topic" + "?brokerUrl=tcp://localhost:" + mqttPort
+                     + "&userName=test" + "&password=testpass";
+
+        PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
+
+        assertEquals("test", endpoint.getConfiguration().getUserName());
+        assertEquals("testpass", endpoint.getConfiguration().getPassword());
     }
 
     @Test
