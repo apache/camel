@@ -77,7 +77,7 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
             } catch (TimeoutException e) {
                 // not done
             } catch (Exception e) {
-                log.error("Error downloading: " + gav + " due: " + e.getMessage(), e);
+                log.error("Error downloading: {} due to: {}", gav, e.getMessage(), e);
                 return;
             }
             if (!done) {
