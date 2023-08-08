@@ -85,9 +85,11 @@ public class PahoMqtt5Endpoint extends DefaultEndpoint {
     protected MqttConnectionOptions createMqttConnectionOptions() {
         PahoMqtt5Configuration config = getConfiguration();
         MqttConnectionOptions options = new MqttConnectionOptions();
-        if (ObjectHelper.isNotEmpty(config.getUserName()) && ObjectHelper.isNotEmpty(config.getPassword())) {
+        if (ObjectHelper.isNotEmpty(config.getUserName())) {
             options.setUserName(config.getUserName());
-            options.setPassword(config.getPassword().getBytes());
+            if (ObjectHelper.isNotEmpty(config.getPassword())) {
+                options.setPassword(config.getPassword().getBytes());
+            }
         }
         options.setAutomaticReconnect(config.isAutomaticReconnect());
         options.setCleanStart(config.isCleanStart());
