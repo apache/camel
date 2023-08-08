@@ -62,7 +62,7 @@ public class ServiceInterfaceStrategyTest {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
             fail();
         } catch (RuntimeCamelException e) {
-            LOG.debug("Caught expected message: " + e.getMessage());
+            LOG.debug("Caught expected message: {}", e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ public class ServiceInterfaceStrategyTest {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
             fail();
         } catch (RuntimeCamelException e) {
-            LOG.debug("Caught expected message: " + e.getMessage());
+            LOG.debug("Caught expected message: {}", e.getMessage());
         }
     }
 
@@ -103,7 +103,7 @@ public class ServiceInterfaceStrategyTest {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
             fail();
         } catch (RuntimeCamelException e) {
-            LOG.debug("Caught expected message: " + e.getMessage());
+            LOG.debug("Caught expected message: {}", e.getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ public class ServiceInterfaceStrategyTest {
             new ServiceInterfaceStrategy(Object.class, true);
             fail("Should throw an exception for a class that is no webservice");
         } catch (IllegalArgumentException e) {
-            LOG.debug("Caught expected message: " + e.getMessage());
+            LOG.debug("Caught expected message: {}", e.getMessage());
         }
     }
 

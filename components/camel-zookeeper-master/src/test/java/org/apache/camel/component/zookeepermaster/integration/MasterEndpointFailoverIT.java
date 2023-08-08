@@ -144,7 +144,7 @@ public class MasterEndpointFailoverIT {
 
         template.sendBody("direct:start", expectedBody);
 
-        LOG.info("Expecting master: " + masterEndpoint + " and standby: " + standbyEndpoint);
+        LOG.info("Expecting master: {} and standby: {}", masterEndpoint, standbyEndpoint);
         MockEndpoint.assertIsSatisfied(masterEndpoint, standbyEndpoint);
     }
 

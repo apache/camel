@@ -1408,8 +1408,9 @@ public class XPathBuilder extends ServiceSupport
                         }
                     }
                 } catch (Exception e) {
-                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
-                             + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of {}" +
+                             " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).",
+                            SAXON_FACTORY_CLASS_NAME);
                     LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                 }
             }

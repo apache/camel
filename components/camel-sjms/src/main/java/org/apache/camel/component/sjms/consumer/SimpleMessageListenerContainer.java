@@ -198,7 +198,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             return false;
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to recover JMS Connection. Will try again in " + task.getCurrentDelay() + " millis", e);
+                LOG.debug("Failed to recover JMS Connection. Will try again in {} millis", task.getCurrentDelay(), e);
             }
             // try again
             return true;

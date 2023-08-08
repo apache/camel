@@ -291,7 +291,7 @@ public class SubscriptionHelper extends ServiceSupport {
                         client.waitFor(waitMs, BayeuxClient.State.CONNECTED);
                     }
                 } catch (Exception e) {
-                    LOG.error("Error handshaking: " + e.getMessage(), e);
+                    LOG.error("Error handshaking: {}", e.getMessage(), e);
                     lastError = e;
                 }
 

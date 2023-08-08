@@ -66,7 +66,7 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
             // check again
             batchInfo = getBatchInfo(batchInfo);
         }
-        log.info("Query finished with state " + batchInfo.getState());
+        log.info("Query finished with state {}", batchInfo.getState());
         assertEquals(BatchStateEnum.COMPLETED, batchInfo.getState(), "Query did not succeed");
 
         // test getQueryResultList
@@ -117,7 +117,7 @@ public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
             // check again
             batchInfo = getBatchInfo(batchInfo);
         }
-        log.info("Query finished with state " + batchInfo.getState());
+        log.info("Query finished with state {}", batchInfo.getState());
         // Because PK chunking is enabled, the original batch is given a state of Not Processed.
         assertEquals(BatchStateEnum.NOT_PROCESSED, batchInfo.getState(), "Query did not succeed");
 

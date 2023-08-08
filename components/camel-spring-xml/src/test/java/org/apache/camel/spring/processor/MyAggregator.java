@@ -42,7 +42,7 @@ public class MyAggregator implements AggregationStrategy {
             if (newBody != null) {
                 body += " " + newBody;
             }
-            LOG.debug("**** invoked my strategy with result: " + body);
+            LOG.debug("**** invoked my strategy with result: {}", body);
 
             newIn.setBody(body);
         }

@@ -36,7 +36,7 @@ public class EndpointUriSetFromSpringTest extends SpringRunWithTestSupport {
     public void testEndpointCreatedWithCorrectUri() throws Exception {
         assertNotNull(endpoint, "foo");
         assertEquals("foo:bar", endpoint.getEndpointUri(), "foo.getEndpointUri()");
-        log.info("Found endpoint " + endpoint + " with URI: " + endpoint.getEndpointUri());
+        log.info("Found endpoint {} with URI: {}", endpoint, endpoint.getEndpointUri());
     }
 
 }

@@ -412,7 +412,7 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
         try {
             registerServlet(bc);
         } catch (Exception e) {
-            LOG.error("Cannot register the servlet, the reason is " + e);
+            LOG.error("Cannot register the servlet, the reason is {}", e);
         }
     }
 
