@@ -85,7 +85,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
         String out = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(out);
-        LOG.info("Reply payload as a String:\n" + out);
+        LOG.info("Reply payload as a String:\n{}", out);
         assertTrue(out.contains("echo Camel"), "Should invoke the echo operation");
     }
 

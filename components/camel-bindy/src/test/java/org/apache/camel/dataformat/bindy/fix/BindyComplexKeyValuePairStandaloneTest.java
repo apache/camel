@@ -102,7 +102,7 @@ public class BindyComplexKeyValuePairStandaloneTest {
         CamelContext camelContext = new DefaultCamelContext();
         factory.bind(camelContext, data, model, counter);
 
-        LOG.info(">>> Model : " + model.toString());
+        LOG.info(">>> Model : {}", model.toString());
 
         assertNotNull(model);
 

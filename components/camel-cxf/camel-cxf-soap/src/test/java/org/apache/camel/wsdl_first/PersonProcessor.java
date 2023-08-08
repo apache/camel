@@ -37,7 +37,7 @@ public class PersonProcessor implements Processor {
 
         BindingOperationInfo boi = (BindingOperationInfo) exchange.getProperty(BindingOperationInfo.class.getName());
         if (boi != null) {
-            LOG.info("boi.isUnwrapped" + boi.isUnwrapped());
+            LOG.info("boi.isUnwrapped {}", boi.isUnwrapped());
         }
         // Get the parameters list which element is the holder.
         MessageContentsList msgList = (MessageContentsList) exchange.getIn().getBody();

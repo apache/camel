@@ -168,7 +168,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                     }
 
                     private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
                             LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
                             LOG.debug("Hit {} Score: {}", i, hits.getHit().get(i).getScore());
@@ -203,7 +203,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                     }
 
                     private void printResults(Hits hits) throws Exception {
-                        LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
                             LOG.debug("Hit {}  Index Location: {}", i, hits.getHit().get(i).getHitLocation());
                             LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
@@ -220,7 +220,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                         map.put("NO_LUCENE_DOCS_ERROR", "NO LUCENE DOCS FOUND");
                         exchange.getContext().setGlobalOptions(map);
                     }
-                    LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                    LOG.debug("Number of hits: {}", hits.getNumberOfHits());
                 });
             }
         });

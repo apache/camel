@@ -73,7 +73,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
                     }
 
                     private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
                             LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
                             LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
@@ -116,7 +116,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
                     }
 
                     private void printResults(Hits hits) {
-                        LOG.debug("Number of hits: " + hits.getNumberOfHits());
+                        LOG.debug("Number of hits: {}", hits.getNumberOfHits());
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
                             LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
                             LOG.debug("Hit {}  Score: {}", i, hits.getHit().get(i).getScore());
