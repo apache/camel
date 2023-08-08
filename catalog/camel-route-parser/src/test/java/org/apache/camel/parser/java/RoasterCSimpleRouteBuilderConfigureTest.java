@@ -44,8 +44,8 @@ public class RoasterCSimpleRouteBuilderConfigureTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelLanguageExpressions(method, "csimple");
         for (ParserResult csimple : list) {
-            LOG.info("CSimple: " + csimple.getElement());
-            LOG.info("   Line: " + findLineNumber(csimple.getPosition()));
+            LOG.info("CSimple: {}", csimple.getElement());
+            LOG.info("   Line: {}", findLineNumber(csimple.getPosition()));
         }
         assertEquals("${body} > 99", list.get(0).getElement());
         assertEquals(true, list.get(0).getPredicate());

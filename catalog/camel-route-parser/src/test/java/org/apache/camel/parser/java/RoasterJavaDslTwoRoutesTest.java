@@ -63,10 +63,10 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
         assertEquals("org.apache.camel.parser.java.TwoRoutesRouteBuilder", details2.getClassName());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         String tree2 = details2.dump(0);
-        LOG.info("\n" + tree2);
+        LOG.info("\n{}", tree2);
 
         assertTrue(tree.contains("25\tfrom"));
         assertTrue(tree.contains("26\t  log"));

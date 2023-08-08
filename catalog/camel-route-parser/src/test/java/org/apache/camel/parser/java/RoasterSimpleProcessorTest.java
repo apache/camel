@@ -50,13 +50,13 @@ public class RoasterSimpleProcessorTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
         assertEquals("direct:start", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Producer: " + result.getElement());
+            LOG.info("Producer: {}", result.getElement());
         }
         assertEquals(0, list.size());
 
