@@ -161,6 +161,9 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
+    @Option(names = { "--jvm-debug" }, defaultValue = "false", description = "To enable JVM remote debug on localhost:4004")
+    boolean jvmDebug;
+
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
@@ -615,18 +618,21 @@ public class Run extends CamelCommand {
         }
 
         // okay we have validated all input and are ready to run
-        if (camelVersion != null) {
-            // run in another JVM with different camel version (foreground or background)
-            boolean custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
-            if (custom) {
-                // regular camel versions can also be a milestone or release candidate
-                custom = !camelVersion.matches(".*-(RC|M)\\d$");
+        if (camelVersion != null || jvmDebug) {
+            boolean custom = false;
+            if (camelVersion != null) {
+                // run in another JVM with different camel version (foreground or background)
+                custom = camelVersion.contains("-") && !camelVersion.endsWith("-SNAPSHOT");
+                if (custom) {
+                    // regular camel versions can also be a milestone or release candidate
+                    custom = !camelVersion.matches(".*-(RC|M)\\d$");
+                }
             }
             if (custom) {
                 // custom camel distribution
                 return runCustomCamelVersion(main);
             } else {
-                // apache camel distribution
+                // apache camel distribution or remote debug enabled
                 return runCamelVersion(main);
             }
         } else if (background) {
@@ -695,6 +701,7 @@ public class Run extends CamelCommand {
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
+            jvmDebug = "true".equals(answer.getProperty("camel.jbang.jvmDebug", jvmDebug ? "true" : "false"));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
         }
@@ -708,12 +715,20 @@ public class Run extends CamelCommand {
             cmds.remove("--background=true");
             cmds.remove("--background");
         }
-        cmds.remove("--camel-version=" + camelVersion);
+        if (camelVersion != null) {
+            cmds.remove("--camel-version=" + camelVersion);
+        }
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
         jbangArgs.add("run");
-        jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
+        if (camelVersion != null) {
+            jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
+        }
+        if (jvmDebug) {
+            jbangArgs.add("--debug"); // jbang --debug
+            cmds.remove("--jvm-debug");
+        }
 
         if (repos != null) {
             jbangArgs.add("--repos=" + repos);
