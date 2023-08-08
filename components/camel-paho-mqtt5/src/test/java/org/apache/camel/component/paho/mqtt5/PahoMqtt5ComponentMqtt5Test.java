@@ -76,6 +76,26 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
     }
 
     @Test
+    public void checkUserNameOnly() {
+        String uri = "paho-mqtt5:/test/topic?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test";
+
+        PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
+
+        assertEquals("test", endpoint.getConfiguration().getUserName());
+    }
+
+    @Test
+    public void checkUserNameAndPassword() {
+        String uri = "paho-mqtt5:/test/topic?brokerUrl=tcp://localhost:" + mqttPort
+                     + "&userName=test&password=testpass";
+
+        PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
+
+        assertEquals("test", endpoint.getConfiguration().getUserName());
+        assertEquals("testpass", endpoint.getConfiguration().getPassword());
+    }
+
+    @Test
     public void shouldReadMessageFromMqtt() throws InterruptedException {
         // Given
         String msg = "msg";
