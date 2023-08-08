@@ -1,0 +1,103 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<camelRouteCoverage>
+<test>
+  <class>com.example.route.ConditionalHeaderRouteUnitTest</class>
+  <method>whenSendBodyWithFruit_thenFavouriteHeaderReceivedSuccessfully</method>
+</test>
+<camelContextRouteCoverage id="DemoServices" exchangesTotal="1" totalProcessingTime="3">
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route customId="true" exchangesTotal="0" id="conditional-bean-route" totalProcessingTime="0">
+        <from exchangesTotal="0" index="0" totalProcessingTime="0" uri="direct:start-conditional-bean"/>
+        <choice exchangesTotal="0" id="choice1" index="1" totalProcessingTime="0">
+            <when id="when1">
+                <method beanType="com.example.service.FruitBean" method="isApple"/>
+                <setHeader exchangesTotal="0" id="setHeader1" index="3" name="favorite" totalProcessingTime="0">
+                    <simple>Apples</simple>
+                </setHeader>
+                <to exchangesTotal="0" id="to1" index="4" totalProcessingTime="0" uri="mock:result"/>
+            </when>
+            <otherwise id="otherwise1">
+                <setHeader exchangesTotal="0" id="setHeader2" index="6" name="favorite" totalProcessingTime="0">
+                    <header>fruit</header>
+                </setHeader>
+                <to exchangesTotal="0" id="to2" index="7" totalProcessingTime="0" uri="mock:result"/>
+            </otherwise>
+        </choice>
+    </route>
+    <route customId="true" exchangesTotal="0" id="conditional-body-route" totalProcessingTime="0">
+        <from exchangesTotal="0" index="0" totalProcessingTime="0" uri="direct:start-conditional-body"/>
+        <choice exchangesTotal="0" id="choice2" index="9" totalProcessingTime="0">
+            <when id="when2">
+                <expressionDefinition>simple{${body}} contains Cloud Cuckoo</expressionDefinition>
+                <setBody exchangesTotal="0" id="setBody1" index="11" totalProcessingTime="0">
+                    <simple>Goodbye from Cloud Cuckoo Camel Land!</simple>
+                </setBody>
+                <to exchangesTotal="0" id="to3" index="12" totalProcessingTime="0" uri="mock:result-body"/>
+            </when>
+            <otherwise id="otherwise2">
+                <to exchangesTotal="0" id="to4" index="14" totalProcessingTime="0" uri="mock:result-body"/>
+            </otherwise>
+        </choice>
+    </route>
+    <route customId="true" exchangesTotal="1" id="conditional-header-route" totalProcessingTime="3">
+        <from exchangesTotal="1" index="0" totalProcessingTime="3" uri="direct:start-conditional-header"/>
+        <choice exchangesTotal="1" id="choice3" index="16" totalProcessingTime="3">
+            <when id="when3">
+                <expressionDefinition>header{fruit} == Apple</expressionDefinition>
+                <setHeader exchangesTotal="0" id="setHeader3" index="18" name="favorite" totalProcessingTime="0">
+                    <simple>Apples</simple>
+                </setHeader>
+                <to exchangesTotal="0" id="to5" index="19" totalProcessingTime="0" uri="mock:result"/>
+            </when>
+            <otherwise id="otherwise3">
+                <setHeader exchangesTotal="1" id="setHeader4" index="21" name="favorite" totalProcessingTime="0">
+                    <header>fruit</header>
+                </setHeader>
+                <to exchangesTotal="1" id="to6" index="22" totalProcessingTime="2" uri="mock:result"/>
+            </otherwise>
+        </choice>
+    </route>
+    <route customId="true" exchangesTotal="0" id="greetings-route" totalProcessingTime="0">
+        <from exchangesTotal="0" index="0" totalProcessingTime="0" uri="direct:greetings"/>
+        <setBody exchangesTotal="0" id="setBody2" index="24" totalProcessingTime="0">
+            <constant>Hello from Cloud Cuckoo Camel Land!</constant>
+        </setBody>
+        <to exchangesTotal="0" id="to7" index="25" totalProcessingTime="0" uri="file:target/output"/>
+    </route>
+    <route customId="true" exchangesTotal="0" id="direct-simple-rest-service" totalProcessingTime="0" trace="true">
+        <from exchangesTotal="0" index="0" totalProcessingTime="0" uri="direct:simple-rest-service"/>
+        <log exchangesTotal="0" id="log1" index="28" message="&gt;&gt;&gt; ${body.id}" totalProcessingTime="0"/>
+        <log exchangesTotal="0" id="log2" index="29" message="&gt;&gt;&gt; ${body.name}" totalProcessingTime="0"/>
+        <process exchangesTotal="0" id="process1" index="30" totalProcessingTime="0"/>
+        <setHeader exchangesTotal="0" id="setHeader5" index="31" name="CamelHttpResponseCode" totalProcessingTime="0">
+            <expressionDefinition>201</expressionDefinition>
+        </setHeader>
+    </route>
+    <route customId="true" exchangesTotal="0" id="api-route" rest="true" totalProcessingTime="0">
+        <from exchangesTotal="0" index="0" totalProcessingTime="0" uri="rest://post:/api/:/bean?consumes=application%2Fjson&amp;description=Test+REST+Service&amp;inType=com.example.model.SimpleBean&amp;produces=application%2Fjson&amp;routeId=api-route"/>
+        <to exchangesTotal="0" id="to8" index="26" totalProcessingTime="0" uri="direct:simple-rest-service"/>
+    </route>
+    <route customId="true" exchangesTotal="0" id="route1" rest="true" totalProcessingTime="0">
+        <from exchangesTotal="0" index="0" totalProcessingTime="0" uri="rest-api:///api-doc?consumerComponentName=servlet"/>
+        <to exchangesTotal="0" id="to9" index="34" totalProcessingTime="0" uri="rest-api:///api-doc?consumerComponentName=servlet"/>
+    </route>
+</routes>
+</camelContextRouteCoverage>
+</camelRouteCoverage>
