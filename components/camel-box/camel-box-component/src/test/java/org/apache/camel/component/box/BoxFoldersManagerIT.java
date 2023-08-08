@@ -114,7 +114,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
             result = requestBodyAndHeaders("direct://COPYFOLDER", null, headers);
             assertNotNull(result, "copyFolder result");
             assertEquals(CAMEL_TEST_COPY_FOLDER, result.getInfo().getName(), "copyFolder folder name");
-            LOG.debug("copyFolder: " + result);
+            LOG.debug("copyFolder: {}", result);
         } finally {
             if (result != null) {
                 try {

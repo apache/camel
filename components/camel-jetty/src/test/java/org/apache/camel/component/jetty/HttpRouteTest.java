@@ -217,8 +217,8 @@ public class HttpRouteTest extends BaseJettyTest {
                     public void process(Exchange exchange) {
                         Message out = exchange.getMessage();
                         out.copyFrom(exchange.getIn());
-                        log.info("The body's object is " + exchange.getIn().getBody());
-                        log.info("Process body = " + exchange.getIn().getBody(String.class));
+                        log.info("The body's object is {}", exchange.getIn().getBody());
+                        log.info("Process body = {}", exchange.getIn().getBody(String.class));
                         InputStreamCache cache = out.getBody(InputStreamCache.class);
                         cache.reset();
                     }

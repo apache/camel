@@ -86,7 +86,7 @@ public class CsvRouteTest extends CamelTestSupport {
         Message in1 = list.get(0).getIn();
         String text1 = in1.getBody(String.class);
 
-        LOG.debug("Received " + text1);
+        LOG.debug("Received {}", text1);
         assertTrue(Pattern.matches("(abc,123)|(123,abc)", text1.trim()), "First CSV body has wrong value");
 
         Message in2 = list.get(1).getIn();
@@ -124,7 +124,7 @@ public class CsvRouteTest extends CamelTestSupport {
         Message in1 = list.get(0).getIn();
         String text1 = in1.getBody(String.class);
 
-        LOG.debug("Received " + text1);
+        LOG.debug("Received {}", text1);
         assertEquals("abc;;123", text1.trim(), "First CSV body has wrong value");
 
         Message in2 = list.get(1).getIn();

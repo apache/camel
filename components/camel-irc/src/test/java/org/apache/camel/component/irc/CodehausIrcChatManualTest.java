@@ -72,7 +72,7 @@ public final class CodehausIrcChatManualTest {
         @Override
         public void onError(int i, String string) {
             super.onError(i, string);
-            LOG.info("onError.i = " + i);
+            LOG.info("onError.i = {}", i);
             LOG.info("onError.string = {}", string);
         }
 
