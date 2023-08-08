@@ -432,7 +432,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         try {
             ServiceHelper.stopService(consumer);
         } catch (Throwable e) {
-            LOG.warn("Error occurred while shutting down route: " + routeId + ". This exception will be ignored.", e);
+            LOG.warn("Error occurred while shutting down route: {}. This exception will be ignored.", routeId, e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
@@ -453,7 +453,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         try {
             ServiceHelper.suspendService(consumer);
         } catch (Throwable e) {
-            LOG.warn("Error occurred while suspending route: " + routeId + ". This exception will be ignored.", e);
+            LOG.warn("Error occurred while suspending route: {}. This exception will be ignored.", routeId, e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
@@ -518,9 +518,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     ((ShutdownPrepared) child).prepareShutdown(suspendOnly, forced);
                 } catch (Exception e) {
                     if (suppressLogging) {
-                        LOG.trace("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
+                        LOG.trace("Error during prepare shutdown on {}. This exception will be ignored.", child, e);
                     } else {
-                        LOG.warn("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
+                        LOG.warn("Error during prepare shutdown on {}. This exception will be ignored.", child, e);
                     }
                 }
             }

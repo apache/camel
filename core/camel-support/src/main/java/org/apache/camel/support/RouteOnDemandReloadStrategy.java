@@ -75,9 +75,7 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
             incSucceededCounter();
         } catch (Exception e) {
             incFailedCounter();
-            LOG.warn("Error reloading routes due " + e.getMessage()
-                     + ". This exception is ignored.",
-                    e);
+            LOG.warn("Error reloading routes due to {}. This exception is ignored.", e.getMessage(), e);
         } finally {
             if (cl != null) {
                 Thread.currentThread().setContextClassLoader(cl);

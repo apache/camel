@@ -395,7 +395,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         try {
             result = expression.evaluate(exchange, Object.class);
         } catch (Exception e) {
-            LOG.debug("Error evaluating expression: " + expression + ". This exception is ignored.", e);
+            LOG.debug("Error evaluating expression: {}. This exception is ignored.", expression, e);
         }
         return result != null;
     }

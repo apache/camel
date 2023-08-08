@@ -127,7 +127,7 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
 
         @Override
         public void handleNotification(Notification notification, Object handback) {
-            log.debug("Get the notification : " + notification);
+            log.debug("Get the notification : {}", notification);
             eventCounter++;
         }
 

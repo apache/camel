@@ -412,7 +412,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            LOG.warn("Could not register Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
     }
 
@@ -427,7 +427,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             unmanageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            LOG.warn("Could not unregister Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
     }
 
@@ -462,7 +462,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         try {
             manageObject(managedObject);
         } catch (Exception e) {
-            LOG.warn("Could not register service: " + service + " as Service MBean.", e);
+            LOG.warn("Could not register service: {} as Service MBean.", service, e);
         }
     }
 
@@ -478,7 +478,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             try {
                 unmanageObject(managedObject);
             } catch (Exception e) {
-                LOG.warn("Could not unregister service: " + service + " as Service MBean.", e);
+                LOG.warn("Could not unregister service: {} as Service MBean.", service, e);
             }
         }
     }
@@ -716,7 +716,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
             managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
-            LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
+            LOG.warn("Could not register thread pool: {} as ThreadPool MBean.", threadPool, e);
         }
     }
 
