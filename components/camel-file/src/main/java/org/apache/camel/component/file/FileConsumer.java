@@ -312,6 +312,22 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return (FileEndpoint) super.getEndpoint();
     }
 
+    @Override
+    protected boolean isMatchedHiddenFile(GenericFile<File> file, boolean isDirectory) {
+        if (getEndpoint().isIncludeHiddenFiles()) {
+            if (isDirectory) {
+                // skip hidden folders
+                String name = file.getFileNameOnly();
+                if (name.startsWith(".")) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return super.isMatchedHiddenFile(file, isDirectory);
+        }
+    }
+
     private boolean fileHasMoved(GenericFile<File> file) {
         // GenericFile's absolute path is always up to date whereas the
         // underlying file is not

@@ -93,6 +93,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "includeext":
         case "includeExt": target.setIncludeExt(property(camelContext, java.lang.String.class, value)); return true;
+        case "includehiddenfiles":
+        case "includeHiddenFiles": target.setIncludeHiddenFiles(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "jailstartingdirectory":
@@ -269,6 +271,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "include": return java.lang.String.class;
         case "includeext":
         case "includeExt": return java.lang.String.class;
+        case "includehiddenfiles":
+        case "includeHiddenFiles": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "jailstartingdirectory":
@@ -446,6 +450,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "include": return target.getInclude();
         case "includeext":
         case "includeExt": return target.getIncludeExt();
+        case "includehiddenfiles":
+        case "includeHiddenFiles": return target.isIncludeHiddenFiles();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "jailstartingdirectory":
