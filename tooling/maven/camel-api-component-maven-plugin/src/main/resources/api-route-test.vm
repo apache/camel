@@ -87,7 +87,7 @@ requestBodyAndHeaders("direct://${model.UniqueName}", null, headers);
 #if ( !$voidResult )
 
         assertNotNull(result, "${model.Name} result");
-        LOG.debug("${model.Name}: " + result);
+        LOG.debug("${model.Name}: {}", result);
 #end
     }
 
