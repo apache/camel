@@ -351,9 +351,8 @@ public final class MainHelper {
                 throw new PropertyBindingException(
                         e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, key, e.getCause());
             } else {
-                LOG.debug("Error configuring property (" + key + ") with name: " + e.getPropertyName() + ") on bean: " + target
-                          + " with value: " + e.getValue() + ". This exception is ignored as failIfNotSet=false.",
-                        e);
+                LOG.debug("Error configuring property ({}) with name: {}) on bean: {} with value: {}. This exception is ignored as failIfNotSet=false.",
+                        key, e.getPropertyName(), target, e.getValue(), e);
             }
         }
 

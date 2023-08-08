@@ -680,7 +680,7 @@ public static class MyOrderService {
      * We just handle the order by returning an id line for the order
      */
     public String handleOrder(String line) {
-        LOG.debug("HandleOrder: " + line);
+        LOG.debug("HandleOrder: {}", line);
         return "(id=" + ++counter + ",item=" + line + ")";
     }
 
@@ -689,7 +689,7 @@ public static class MyOrderService {
      * back to the original caller
      */
     public String buildCombinedResponse(String line) {
-        LOG.debug("BuildCombinedResponse: " + line);
+        LOG.debug("BuildCombinedResponse: {}", line);
         return "Response[" + line + "]";
     }
 }
@@ -721,8 +721,8 @@ public static class MyOrderStrategy implements AggregationStrategy {
         String orders = oldExchange.getIn().getBody(String.class);
         String newLine = newExchange.getIn().getBody(String.class);
 
-        LOG.debug("Aggregate old orders: " + orders);
-        LOG.debug("Aggregate new order: " + newLine);
+        LOG.debug("Aggregate old orders: {}", orders);
+        LOG.debug("Aggregate new order: {}", newLine);
 
         // put orders together separating by semicolon
         orders = orders + ";" + newLine;

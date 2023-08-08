@@ -238,7 +238,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
 
             }
         } catch (IOException ioe) {
-            LOG.warn("Cannot search jar file '" + urlPath + " due to an IOException: " + ioe.getMessage(), ioe);
+            LOG.warn("Cannot search jar file '{} due to an IOException: {}", urlPath, ioe.getMessage(), ioe);
         } finally {
             IOHelper.close(jarStream, urlPath, LOG);
         }

@@ -508,8 +508,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         policy.onExchangeBegin(route, exchange);
                     }
                 } catch (Exception e) {
-                    log.warn("Error occurred during onExchangeBegin on RoutePolicy: " + policy
-                             + ". This exception will be ignored",
+                    log.warn("Error occurred during onExchangeBegin on RoutePolicy: {}. This exception will be ignored", policy,
                             e);
                 }
             }
@@ -530,9 +529,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         policy.onExchangeDone(route, exchange);
                     }
                 } catch (Exception e) {
-                    log.warn("Error occurred during onExchangeDone on RoutePolicy: " + policy
-                             + ". This exception will be ignored",
-                            e);
+                    log.warn("Error occurred during onExchangeDone on RoutePolicy: {}. This exception will be ignored",
+                            policy, e);
                 }
             }
         }

@@ -850,7 +850,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     processorExchangeFactory.release(pair.getExchange());
                 }
             } catch (Throwable e) {
-                LOG.warn("Error releasing exchange due to " + e.getMessage() + ". This exception is ignored.", e);
+                LOG.warn("Error releasing exchange due to {}. This exception is ignored.", e.getMessage(), e);
             }
         }
         // we are done so close the pairs iterator

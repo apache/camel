@@ -305,9 +305,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                                 incSucceededCounter();
                             } catch (Exception e) {
                                 incFailedCounter();
-                                LOG.warn("Error reloading routes from file: " + name + " due " + e.getMessage()
-                                         + ". This exception is ignored.",
-                                        e);
+                                LOG.warn("Error reloading routes from file: {} due to {}. This exception is ignored.", name,
+                                        e.getMessage(), e);
                             }
                         }
                     }

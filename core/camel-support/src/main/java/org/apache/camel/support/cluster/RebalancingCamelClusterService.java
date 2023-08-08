@@ -163,7 +163,7 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
                 view.setDisabled(disabled);
             }
         } catch (Exception ex) {
-            LOG.warn("Could not get view " + partition, ex);
+            LOG.warn("Could not get view {}", partition, ex);
         }
     }
 
@@ -176,7 +176,7 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
                     owned.add(partition);
                 }
             } catch (Exception ex) {
-                LOG.warn("Could not get view " + partition, ex);
+                LOG.warn("Could not get view {}", partition, ex);
                 return null;
             }
         }
@@ -201,7 +201,7 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
                 }
                 members = viewMembers;
             } catch (Exception ex) {
-                LOG.warn("Could not get view " + group, ex);
+                LOG.warn("Could not get view {}", group, ex);
                 return null;
             }
         }

@@ -82,9 +82,7 @@ public final class RouteTemplateHelper {
                         listener.loadRouteTemplate(res);
                     }
                 } catch (Exception e) {
-                    LOG.warn("RouteTemplateLoaderListener error due to " + e.getMessage()
-                             + ". This exception is ignored",
-                            e);
+                    LOG.warn("RouteTemplateLoaderListener error due to {}. This exception is ignored", e.getMessage(), e);
                 }
                 PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
                 found = true;
