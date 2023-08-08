@@ -53,8 +53,7 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
                         .to("mock:persistenceTest");
 
                 from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test")
-                        .to("mock:testCustomizedPaho");
+                from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
             }
         };
     }
@@ -64,7 +63,7 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
     @Test
     public void checkOptions() {
         String uri = "paho-mqtt5:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort + "&qos=2"
-                     + "&persistence=file" + "&userName=test";
+                     + "&persistence=file";
 
         PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
 
