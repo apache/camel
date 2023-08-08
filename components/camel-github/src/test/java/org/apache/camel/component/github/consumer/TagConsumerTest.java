@@ -55,7 +55,7 @@ public class TagConsumerTest extends GitHubComponentTestBase {
         public void process(Exchange exchange) {
             Message in = exchange.getIn();
             RepositoryTag tag = (RepositoryTag) in.getBody();
-            log.debug("Got TAG  [" + tag.getName() + "]");
+            log.debug("Got TAG  [{}]", tag.getName());
         }
     }
 }

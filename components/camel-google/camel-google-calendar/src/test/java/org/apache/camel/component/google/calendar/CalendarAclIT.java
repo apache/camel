@@ -45,7 +45,7 @@ public class CalendarAclIT extends AbstractGoogleCalendarTestSupport {
         // should have at least one rule (reader, owner, etc.) for the calendar
         // or we wouldn't be able to view it!
         assertTrue(result.getItems().size() > 0);
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
     }
 
     @Override

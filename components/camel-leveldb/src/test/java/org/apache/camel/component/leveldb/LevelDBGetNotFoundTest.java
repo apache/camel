@@ -77,7 +77,7 @@ public class LevelDBGetNotFoundTest extends LevelDBTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");
-        log.info("Created " + exchange.getExchangeId());
+        log.info("Created {}", exchange.getExchangeId());
 
         repo.add(context, exchange.getExchangeId(), exchange);
         Exchange out = repo.get(context, exchange.getExchangeId());
@@ -85,7 +85,7 @@ public class LevelDBGetNotFoundTest extends LevelDBTestSupport {
 
         Exchange exchange2 = new DefaultExchange(context);
         exchange2.getIn().setBody("Bye World");
-        log.info("Created " + exchange2.getExchangeId());
+        log.info("Created {}", exchange2.getExchangeId());
 
         Exchange out2 = repo.get(context, exchange2.getExchangeId());
         assertNull(out2, "Should not find exchange");

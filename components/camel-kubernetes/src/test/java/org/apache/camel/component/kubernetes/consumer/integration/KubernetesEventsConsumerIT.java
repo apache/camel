@@ -223,8 +223,8 @@ public class KubernetesEventsConsumerIT extends KubernetesTestSupport {
         public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Event event = exchange.getIn().getBody(Event.class);
-            log.info("Got event with event name: " + event.getMetadata().getName() + " and action "
-                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with event name: {} and action {}", event.getMetadata().getName(),
+                    in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

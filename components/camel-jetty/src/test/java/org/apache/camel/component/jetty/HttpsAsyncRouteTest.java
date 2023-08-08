@@ -114,7 +114,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         Map<String, Object> headers = in.getHeaders();
 
-        LOG.info("Headers: " + headers);
+        LOG.info("Headers: {}", headers);
 
         assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }

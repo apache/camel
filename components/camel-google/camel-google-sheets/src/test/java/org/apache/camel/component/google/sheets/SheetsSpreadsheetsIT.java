@@ -64,7 +64,7 @@ public class SheetsSpreadsheetsIT {
             assertNotNull(result, "create result is null");
             assertEquals(title, result.getProperties().getTitle());
 
-            LOG.debug("create: " + result);
+            LOG.debug("create: {}", result);
         }
 
         @Override
@@ -95,7 +95,7 @@ public class SheetsSpreadsheetsIT {
             assertNotNull(result, "get result is null");
             assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
 
-            LOG.debug("get: " + result);
+            LOG.debug("get: {}", result);
         }
 
         @Override
@@ -139,7 +139,7 @@ public class SheetsSpreadsheetsIT {
             assertNotNull(result, "batchUpdate result is null");
             assertEquals(updateTitle, result.getUpdatedSpreadsheet().getProperties().getTitle());
 
-            LOG.debug("batchUpdate: " + result);
+            LOG.debug("batchUpdate: {}", result);
         }
 
         @Override

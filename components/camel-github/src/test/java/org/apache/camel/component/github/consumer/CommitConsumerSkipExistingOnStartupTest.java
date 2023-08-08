@@ -63,8 +63,7 @@ public class CommitConsumerSkipExistingOnStartupTest extends GitHubComponentTest
             String author = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, String.class);
             String sha = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_SHA, String.class);
             if (log.isDebugEnabled()) {
-                log.debug("Got commit with author: " + author + ": SHA "
-                          + sha);
+                log.debug("Got commit with author: {}: SHA {}", author, sha);
             }
         }
     }

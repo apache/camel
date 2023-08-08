@@ -235,7 +235,7 @@ public class OBSProducer extends DefaultProducer {
 
             // check for bucket location, which is optional to create a new bucket
             if (ObjectHelper.isEmpty(clientConfigurations.getBucketLocation())) {
-                LOG.warn("No bucket location given, defaulting to '" + OBSConstants.DEFAULT_LOCATION + "'");
+                LOG.warn("No bucket location given, defaulting to '{}'", OBSConstants.DEFAULT_LOCATION);
                 clientConfigurations.setBucketLocation(OBSConstants.DEFAULT_LOCATION);
             }
             // verify valid bucket location

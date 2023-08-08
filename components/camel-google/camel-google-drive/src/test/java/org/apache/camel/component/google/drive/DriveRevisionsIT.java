@@ -47,7 +47,7 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.model.RevisionList result = requestBody("direct://LIST", fileId);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
     }
 
     @Override

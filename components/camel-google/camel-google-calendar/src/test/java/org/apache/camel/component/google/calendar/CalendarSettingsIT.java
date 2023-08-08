@@ -43,7 +43,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
         final com.google.api.services.calendar.model.Setting result = requestBody("direct://GET", "timezone");
 
         assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        LOG.debug("get: {}", result);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
         final com.google.api.services.calendar.model.Settings result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
     }
 
     @Override

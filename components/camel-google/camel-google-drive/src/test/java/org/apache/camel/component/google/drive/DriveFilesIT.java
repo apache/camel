@@ -69,7 +69,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
 
         assertNotNull(result, "copy result");
         assertEquals(toFile.getName(), result.getName());
-        LOG.debug("copy: " + result);
+        LOG.debug("copy: {}", result);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         final File result = requestBody("direct://GET", fileId);
 
         assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        LOG.debug("get: {}", result);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         // using com.google.api.services.drive.model.File message body for single parameter "content"
         File result = requestBody("direct://INSERT", file);
         assertNotNull(result, "insert result");
-        LOG.debug("insert: " + result);
+        LOG.debug("insert: {}", result);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         File result = uploadTestFile();
 
         assertNotNull(result, "insert result");
-        LOG.debug("insert: " + result);
+        LOG.debug("insert: {}", result);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
 
         assertNotNull(result, "patch result");
         assertEquals(UPLOAD_FILE.getName() + "PATCHED", result.getName());
-        LOG.debug("patch: " + result);
+        LOG.debug("patch: {}", result);
     }
 
     @Test
@@ -214,7 +214,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         File result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
         assertNotNull(result, "update result");
-        LOG.debug("update: " + result);
+        LOG.debug("update: {}", result);
     }
 
     @Test
@@ -247,7 +247,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         File result = requestBodyAndHeaders("direct://UPDATE_1", null, headers);
 
         assertNotNull(result, "update result");
-        LOG.debug("update: " + result);
+        LOG.debug("update: {}", result);
     }
 
     // TODO provide parameter values for watch
@@ -263,7 +263,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.Drive.Files.Watch result = requestBodyAndHeaders("direct://WATCH", null, headers);
 
         assertNotNull(result, "watch result");
-        LOG.debug("watch: " + result);
+        LOG.debug("watch: {}", result);
     }
 
     @Override

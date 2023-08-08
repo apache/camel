@@ -51,7 +51,7 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
 
         for (int i = 0; i < size; i++) {
             Exchange exchange = getMockEndpoint("mock:result").getReceivedExchanges().get(i);
-            LOG.info("Reply " + exchange);
+            LOG.info("Reply {}", exchange);
         }
     }
 

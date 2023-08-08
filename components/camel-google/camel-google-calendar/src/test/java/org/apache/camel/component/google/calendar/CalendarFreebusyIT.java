@@ -58,7 +58,7 @@ public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
         final com.google.api.services.calendar.model.FreeBusyResponse result = requestBody("direct://QUERY", request);
 
         assertNotNull(result, "query result");
-        LOG.debug("query: " + result);
+        LOG.debug("query: {}", result);
     }
 
     @Override

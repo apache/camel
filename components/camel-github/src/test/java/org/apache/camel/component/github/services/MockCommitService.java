@@ -55,7 +55,7 @@ public class MockCommitService extends CommitService {
             commit.setMessage(message);
         }
         rc.setCommit(commit);
-        LOG.debug("In MockCommitService added commit with sha " + rc.getSha());
+        LOG.debug("In MockCommitService added commit with sha {}", rc.getSha());
         commitsList.add(0, rc);
 
         return rc;
@@ -63,7 +63,7 @@ public class MockCommitService extends CommitService {
 
     @Override
     public synchronized List<RepositoryCommit> getCommits(IRepositoryIdProvider repository, String sha, String path) {
-        LOG.debug("Returning list of size " + commitsList.size());
+        LOG.debug("Returning list of size {}", commitsList.size());
 
         if (sha != null) {
             for (int i = 0; i < commitsList.size(); i++) {

@@ -366,7 +366,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
             if (0 < acknowledgement.length()) {
                 log.error("Timeout waiting for acknowledgement", timeoutEx);
             } else {
-                log.error("Timeout while reading acknowledgement\n" + acknowledgement.toString().replace('\r', '\n'),
+                log.error("Timeout while reading acknowledgement\n{}", acknowledgement.toString().replace('\r', '\n'),
                         timeoutEx);
             }
             throw new MllpJUnitResourceTimeoutException("Timeout while reading acknowledgement", timeoutEx);
