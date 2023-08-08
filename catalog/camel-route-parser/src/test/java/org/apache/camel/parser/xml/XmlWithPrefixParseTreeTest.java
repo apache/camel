@@ -57,7 +57,7 @@ public class XmlWithPrefixParseTreeTest {
         assertNull(details.getClassName());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         assertTrue(tree.contains("34\tfrom"));
         assertTrue(tree.contains("36\t  transform"));

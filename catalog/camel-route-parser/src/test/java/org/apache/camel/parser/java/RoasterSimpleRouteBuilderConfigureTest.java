@@ -44,8 +44,8 @@ public class RoasterSimpleRouteBuilderConfigureTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelLanguageExpressions(method, "simple");
         for (ParserResult simple : list) {
-            LOG.info("Simple: " + simple.getElement());
-            LOG.info("  Line: " + findLineNumber(simple.getPosition()));
+            LOG.info("Simple: {}", simple.getElement());
+            LOG.info("  Line: {}", findLineNumber(simple.getPosition()));
         }
         assertEquals("${body} > 100", list.get(0).getElement());
         assertEquals(true, list.get(0).getPredicate());

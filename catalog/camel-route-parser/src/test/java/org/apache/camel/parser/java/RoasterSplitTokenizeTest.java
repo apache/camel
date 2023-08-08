@@ -50,7 +50,7 @@ public class RoasterSplitTokenizeTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
         assertEquals("direct:a", list.get(0).getElement());
         assertEquals("direct:b", list.get(1).getElement());
@@ -61,7 +61,7 @@ public class RoasterSplitTokenizeTest {
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
-            LOG.info("Producer: " + result.getElement());
+            LOG.info("Producer: {}", result.getElement());
         }
         assertEquals("mock:split", list.get(0).getElement());
         assertEquals("mock:split", list.get(1).getElement());
