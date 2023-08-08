@@ -34,6 +34,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+/*
+ * Note: the ArangoDB container requires a higher limit of open files than usually configured
+ * by default (1024). If they start failing on CI systems, this is likely the reason.
+ */
 public abstract class BaseArangoDb implements ConfigurableRoute, CamelTestSupportHelper {
 
     @Order(1)
