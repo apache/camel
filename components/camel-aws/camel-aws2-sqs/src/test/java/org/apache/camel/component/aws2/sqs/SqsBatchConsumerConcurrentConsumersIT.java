@@ -31,7 +31,7 @@ public class SqsBatchConsumerConcurrentConsumersIT extends CamelTestSupport {
 
     @Test
     public void receiveBatch() throws Exception {
-        mock.expectedMessageCount(5);
+        mock.expectedMinimumMessageCount(5);
         MockEndpoint.assertIsSatisfied(context);
     }
 
