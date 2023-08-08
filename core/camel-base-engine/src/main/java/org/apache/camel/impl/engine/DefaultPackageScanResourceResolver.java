@@ -42,12 +42,15 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanResourceResolver}
  */
 public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         implements PackageScanResourceResolver, NonManagedService, CamelContextAware {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultPackageScanResourceResolver.class);
 
     private static final AntPathMatcher PATH_MATCHER = AntPathMatcher.INSTANCE;
 
@@ -140,7 +143,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             URL url = null;
             try {
                 url = urls.nextElement();
-                log.trace("URL from classloader: {}", url);
+                LOG.trace("URL from classloader: {}", url);
 
                 url = customResourceLocator(url);
 
@@ -149,11 +152,11 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                     continue;
                 }
 
-                log.trace("Scanning for resources in: {} matching pattern: {}", urlPath, subPattern);
+                LOG.trace("Scanning for resources in: {} matching pattern: {}", urlPath, subPattern);
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
-                    log.trace("Loading from directory using file: {}", file);
+                    LOG.trace("Loading from directory using file: {}", file);
                     loadImplementationsInDirectory(subPattern, packageName, file, resources);
                 } else {
                     InputStream stream;
@@ -162,14 +165,14 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                             || isAcceptableScheme(urlPath)) {
                         // load resources using http/https, sonicfs and other acceptable scheme
                         // sonic ESB requires to be loaded using a regular URLConnection
-                        log.trace("Loading from jar using url: {}", urlPath);
+                        LOG.trace("Loading from jar using url: {}", urlPath);
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
                         // disable cache mainly to avoid jar file locking on Windows
                         con.setUseCaches(false);
                         stream = con.getInputStream();
                     } else {
-                        log.trace("Loading from jar using file: {}", file);
+                        LOG.trace("Loading from jar using file: {}", file);
                         stream = new FileInputStream(file);
                     }
 
@@ -177,7 +180,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
-                log.debug("Cannot read entries in url: {}", url, e);
+                LOG.debug("Cannot read entries in url: {}", url, e);
             }
         }
     }
@@ -203,7 +206,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         for (String name : entries) {
             String shortName = name.substring(packageName.length());
             boolean match = PATH_MATCHER.match(subPattern, shortName);
-            log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
+            LOG.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
             if (match) {
                 final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
 
@@ -235,9 +238,9 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
 
             }
         } catch (IOException ioe) {
-            log.warn("Cannot search jar file '" + urlPath + " due to an IOException: " + ioe.getMessage(), ioe);
+            LOG.warn("Cannot search jar file '" + urlPath + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
-            IOHelper.close(jarStream, urlPath, log);
+            IOHelper.close(jarStream, urlPath, LOG);
         }
 
         return entries;
@@ -277,7 +280,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 loadImplementationsInDirectory(subPattern, packageOrClass, file, resources);
             } else if (file.isFile() && file.exists() && !name.endsWith(".class")) {
                 boolean match = PATH_MATCHER.match(subPattern, name);
-                log.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
+                LOG.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
                 if (match) {
                     final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
 

@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * Base class for package scan resolvers.
  */
 public abstract class BasePackageScanResolver extends ServiceSupport implements CamelContextAware {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected String[] acceptableSchemes = {};
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
     private CamelContext camelContext;
@@ -53,12 +52,11 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
         try {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {
-                log.trace("Adding ContextClassLoader from current thread: {}", ccl);
                 classLoaders.add(ccl);
             }
         } catch (Exception e) {
             // Ignore this exception
-            log.warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
+            logger().warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
                     e.getMessage());
         }
 
@@ -133,7 +131,7 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
      * @throws IOException is thrown by the classloader
      */
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
-        log.trace("Getting resource URL for package: {} with classloader: {}", packageName, loader);
+        logger().trace("Getting resource URL for package: {} with classloader: {}", packageName, loader);
 
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.  The
         // trailing slash is harmless for other URLs
@@ -146,8 +144,8 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     protected String parseUrlPath(URL url) {
         String urlPath = url.getFile();
         urlPath = URLDecoder.decode(urlPath, StandardCharsets.UTF_8);
-        if (log.isTraceEnabled()) {
-            log.trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
+        if (logger().isTraceEnabled()) {
+            logger().trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
         }
 
         // If it's a file in a directory, trim the stupid file: spec
@@ -169,13 +167,13 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
 
         // osgi bundles should be skipped
         if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
-            log.trace("Skipping OSGi bundle: {}", url);
+            logger().trace("Skipping OSGi bundle: {}", url);
             return null;
         }
 
         // bundle resource should be skipped
         if (url.toString().startsWith("bundleresource:") || urlPath.startsWith("bundleresource:")) {
-            log.trace("Skipping bundleresource: {}", url);
+            logger().trace("Skipping bundleresource: {}", url);
             return null;
         }
 
@@ -191,13 +189,26 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
         try {
             urls = getResources(loader, packageName);
             if (!urls.hasMoreElements()) {
-                log.trace("No URLs returned by classloader");
+                logger().trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            log.warn("Cannot read package: {}", packageName, ioe);
+            logger().warn("Cannot read package: {}", packageName, ioe);
             return null;
         }
         return urls;
+    }
+
+    /*
+     * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
+     * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
+     * initialization.
+     */
+    private Logger logger() {
+        class Holder {
+            static final Logger LOG = LoggerFactory.getLogger(BasePackageScanResolver.class);
+        }
+
+        return Holder.LOG;
     }
 
 }

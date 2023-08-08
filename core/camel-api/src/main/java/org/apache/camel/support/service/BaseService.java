@@ -49,8 +49,6 @@ public abstract class BaseService {
     protected static final byte SHUTDOWN = 11;
     protected static final byte FAILED = 12;
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseService.class);
-
     protected final Object lock = new Object();
     protected volatile byte status = NEW;
 
@@ -58,14 +56,12 @@ public abstract class BaseService {
         if (status == NEW) {
             synchronized (lock) {
                 if (status == NEW) {
-                    LOG.trace("Building service: {}", this);
                     try (AutoCloseable ignored = doLifecycleChange()) {
                         doBuild();
                     } catch (Exception e) {
                         doFail(e);
                     }
                     status = BUILT;
-                    LOG.trace("Built service: {}", this);
                 }
             }
         }
@@ -77,14 +73,12 @@ public abstract class BaseService {
             synchronized (lock) {
                 if (status <= BUILT || status >= STOPPED) {
                     build();
-                    LOG.trace("Initializing service: {}", this);
                     try (AutoCloseable ignored = doLifecycleChange()) {
                         status = INITIALIZING;
                         doInit();
                         status = INITIALIZED;
-                        LOG.trace("Initialized service: {}", this);
                     } catch (Exception e) {
-                        LOG.trace("Error while initializing service: {}", this, e);
+                        logger().trace("Error while initializing service: {}", this, e);
                         fail(e);
                     }
                 }
@@ -101,34 +95,34 @@ public abstract class BaseService {
     public void start() {
         synchronized (lock) {
             if (status == STARTED) {
-                LOG.trace("Service: {} already started", this);
+                logger().trace("Service: {} already started", this);
                 return;
             }
             if (status == STARTING) {
-                LOG.trace("Service: {} already starting", this);
+                logger().trace("Service: {} already starting", this);
                 return;
             }
             init();
             if (status == FAILED) {
-                LOG.trace("Init failed");
+                logger().trace("Init failed");
                 return;
             }
             try (AutoCloseable ignored = doLifecycleChange()) {
                 status = STARTING;
-                LOG.trace("Starting service: {}", this);
+                logger().trace("Starting service: {}", this);
                 doStart();
                 status = STARTED;
-                LOG.trace("Started service: {}", this);
+                logger().trace("Started service: {}", this);
             } catch (Exception e) {
                 // need to stop as some resources may have been started during startup
                 try {
                     stop();
                 } catch (Exception e2) {
                     // ignore
-                    LOG.trace("Error while stopping service after it failed to start: {}. This exception is ignored",
+                    logger().trace("Error while stopping service after it failed to start: {}. This exception is ignored",
                             this, e);
                 }
-                LOG.trace("Error while starting service: {}", this, e);
+                logger().trace("Error while starting service: {}", this, e);
                 fail(e);
             }
         }
@@ -143,25 +137,25 @@ public abstract class BaseService {
     public void stop() {
         synchronized (lock) {
             if (status == FAILED) {
-                LOG.trace("Service: {} failed and regarded as already stopped", this);
+                logger().trace("Service: {} failed and regarded as already stopped", this);
                 return;
             }
             if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
-                LOG.trace("Service: {} already stopped", this);
+                logger().trace("Service: {} already stopped", this);
                 return;
             }
             if (status == STOPPING) {
-                LOG.trace("Service: {} already stopping", this);
+                logger().trace("Service: {} already stopping", this);
                 return;
             }
             status = STOPPING;
-            LOG.trace("Stopping service: {}", this);
+            logger().trace("Stopping service: {}", this);
             try (AutoCloseable ignored = doLifecycleChange()) {
                 doStop();
                 status = STOPPED;
-                LOG.trace("Stopped: {} service", this);
+                logger().trace("Stopped: {} service", this);
             } catch (Exception e) {
-                LOG.trace("Error while stopping service: {}", this, e);
+                logger().trace("Error while stopping service: {}", this, e);
                 fail(e);
             }
         }
@@ -176,21 +170,21 @@ public abstract class BaseService {
     public void suspend() {
         synchronized (lock) {
             if (status == SUSPENDED) {
-                LOG.trace("Service: {} already suspended", this);
+                logger().trace("Service: {} already suspended", this);
                 return;
             }
             if (status == SUSPENDING) {
-                LOG.trace("Service: {} already suspending", this);
+                logger().trace("Service: {} already suspending", this);
                 return;
             }
             status = SUSPENDING;
-            LOG.trace("Suspending service: {}", this);
+            logger().trace("Suspending service: {}", this);
             try (AutoCloseable ignored = doLifecycleChange()) {
                 doSuspend();
                 status = SUSPENDED;
-                LOG.trace("Suspended service: {}", this);
+                logger().trace("Suspended service: {}", this);
             } catch (Exception e) {
-                LOG.trace("Error while suspending service: {}", this, e);
+                logger().trace("Error while suspending service: {}", this, e);
                 fail(e);
             }
         }
@@ -205,17 +199,17 @@ public abstract class BaseService {
     public void resume() {
         synchronized (lock) {
             if (status != SUSPENDED) {
-                LOG.trace("Service is not suspended: {}", this);
+                logger().trace("Service is not suspended: {}", this);
                 return;
             }
             status = STARTING;
-            LOG.trace("Resuming service: {}", this);
+            logger().trace("Resuming service: {}", this);
             try (AutoCloseable ignored = doLifecycleChange()) {
                 doResume();
                 status = STARTED;
-                LOG.trace("Resumed service: {}", this);
+                logger().trace("Resumed service: {}", this);
             } catch (Exception e) {
-                LOG.trace("Error while resuming service: {}", this, e);
+                logger().trace("Error while resuming service: {}", this, e);
                 fail(e);
             }
         }
@@ -230,22 +224,22 @@ public abstract class BaseService {
     public void shutdown() {
         synchronized (lock) {
             if (status == SHUTDOWN) {
-                LOG.trace("Service: {} already shutdown", this);
+                logger().trace("Service: {} already shutdown", this);
                 return;
             }
             if (status == SHUTTING_DOWN) {
-                LOG.trace("Service: {} already shutting down", this);
+                logger().trace("Service: {} already shutting down", this);
                 return;
             }
             stop();
             status = SHUTDOWN;
-            LOG.trace("Shutting down service: {}", this);
+            logger().trace("Shutting down service: {}", this);
             try (AutoCloseable ignored = doLifecycleChange()) {
                 doShutdown();
-                LOG.trace("Shutdown service: {}", this);
+                logger().trace("Shutdown service: {}", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
-                LOG.trace("Error shutting down service: {}", this, e);
+                logger().trace("Error shutting down service: {}", this, e);
                 fail(e);
             }
         }
@@ -418,6 +412,19 @@ public abstract class BaseService {
      */
     protected AutoCloseable doLifecycleChange() {
         return null;
+    }
+
+    /*
+     * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
+     * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
+     * initialization.
+     */
+    private Logger logger() {
+        class Holder {
+            static final Logger LOG = LoggerFactory.getLogger(BaseService.class);
+        }
+
+        return Holder.LOG;
     }
 
 }

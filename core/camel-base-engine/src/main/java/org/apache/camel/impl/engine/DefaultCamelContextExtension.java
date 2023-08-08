@@ -69,8 +69,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class DefaultCamelContextExtension implements ExtendedCamelContext {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
-
     private final AbstractCamelContext camelContext;
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
@@ -210,7 +208,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             try {
                 bootstrap.close();
             } catch (Exception e) {
-                LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
+                logger().warn("Error during closing bootstrap. This exception is ignored.", e);
             }
         }
         bootstraps.clear();
@@ -230,7 +228,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
             String answer = camelContext.getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
-            LOG.debug("Resolved text: {} -> {}", text, answer);
+            logger().debug("Resolved text: {} -> {}", text, answer);
             return answer;
         }
         // is the value a known field (currently we only support
@@ -239,7 +237,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             String field = StringHelper.after(text, "Exchange.");
             String constant = ExchangeConstantProvider.lookup(field);
             if (constant != null) {
-                LOG.debug("Resolved constant: {} -> {}", text, constant);
+                logger().debug("Resolved constant: {} -> {}", text, constant);
                 return constant;
             } else {
                 throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
@@ -371,7 +369,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setupManagement(Map<String, Object> options) {
-        LOG.trace("Setting up management");
+        logger().trace("Setting up management");
 
         ManagementStrategyFactory factory = null;
         if (!camelContext.isJMXDisabled()) {
@@ -388,17 +386,17 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
                 DebuggerFactory df
                         = getBootstrapFactoryFinder().newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
                 if (df != null) {
-                    LOG.info("Detected: {} JAR (Enabling Camel Debugging)", df);
+                    logger().info("Detected: {} JAR (Enabling Camel Debugging)", df);
                     camelContext.enableDebugging(df);
                 }
             } catch (Exception e) {
-                LOG.warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
+                logger().warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
             }
         }
         if (factory == null) {
             factory = new DefaultManagementStrategyFactory();
         }
-        LOG.debug("Setting up management with factory: {}", factory);
+        logger().debug("Setting up management with factory: {}", factory);
 
         // preserve any existing event notifiers that may have been already added
         List<EventNotifier> notifiers = null;
@@ -414,7 +412,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             LifecycleStrategy lifecycle = factory.createLifecycle(camelContext);
             factory.setupManagement(camelContext, strategy, lifecycle);
         } catch (Exception e) {
-            LOG.warn("Error setting up management due {}", e.getMessage());
+            logger().warn("Error setting up management due {}", e.getMessage());
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
@@ -612,5 +610,18 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         T module = supplier.get();
 
         return camelContext.getInternalServiceManager().addService(module);
+    }
+
+    /*
+     * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
+     * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
+     * initialization.
+     */
+    private Logger logger() {
+        class Holder {
+            static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
+        }
+
+        return Holder.LOG;
     }
 }
