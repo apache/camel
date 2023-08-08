@@ -99,7 +99,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
             // check again
             batchInfo = getBatchInfo(batchInfo);
         }
-        log.info("Batch finished with state " + batchInfo.getState());
+        log.info("Batch finished with state {}", batchInfo.getState());
         assertEquals(BatchStateEnum.COMPLETED, batchInfo.getState(), "Batch did not succeed");
 
         // test getResults

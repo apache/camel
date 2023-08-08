@@ -52,7 +52,7 @@ public class ZendeskTicketIT extends AbstractZendeskTestSupport {
             LOG.info(ticket.toString());
             count++;
         }
-        LOG.info(count + " ticket(s) in total.");
+        LOG.info("{} ticket(s) in total.", count);
     }
 
     @Test

@@ -53,14 +53,14 @@ public class SessionIntegrationTest implements SalesforceSession.SalesforceSessi
         httpClient.start();
         try {
             String loginToken = session.login(session.getAccessToken());
-            LOG.info("First token " + loginToken);
+            LOG.info("First token {}", loginToken);
 
             assertTrue(onLoginTriggered, "SalesforceSessionListener onLogin NOT called");
             onLoginTriggered = false;
 
             // refresh token, also causes logout
             loginToken = session.login(loginToken);
-            LOG.info("Refreshed token " + loginToken);
+            LOG.info("Refreshed token {}", loginToken);
 
             assertTrue(onLogoutTriggered, "SalesforceSessionListener onLogout NOT called");
             assertTrue(onLoginTriggered, "SalesforceSessionListener onLogin NOT called");

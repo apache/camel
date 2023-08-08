@@ -113,12 +113,12 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
                 // validate proxy-authentication header
                 final String header = request.getHeader(PROXY_AUTHORIZATION.toString());
                 if (!authenticationString.equals(header)) {
-                    LOG.warn("Missing header " + PROXY_AUTHORIZATION);
+                    LOG.warn("Missing header {}", PROXY_AUTHORIZATION);
                     // ask for authentication header
                     response.setHeader(PROXY_AUTHENTICATE.toString(), String.format("Basic realm=\"%s\"", HTTP_PROXY_REALM));
                     return false;
                 }
-                LOG.info("Request contains required header " + PROXY_AUTHORIZATION);
+                LOG.info("Request contains required header {}", PROXY_AUTHORIZATION);
                 WENT_THROUGH_PROXY.set(true);
                 return true;
             }

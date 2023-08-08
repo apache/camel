@@ -34,7 +34,7 @@ public class JdbcAggregateSerializedHeadersTest extends AbstractJdbcAggregationT
         mock.expectedMinimumMessageCount(1);
         mock.setResultWaitTime(50 * 1000);
 
-        LOG.info("Staring to send " + SIZE + " messages.");
+        LOG.info("Starting to send {} messages.", SIZE);
 
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
@@ -43,7 +43,7 @@ public class JdbcAggregateSerializedHeadersTest extends AbstractJdbcAggregationT
             template.sendBodyAndHeader("seda:start?size=" + SIZE, value, "id", headerDto);
         }
 
-        LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
+        LOG.info("Sending all {} message done. Now waiting for aggregation to complete.", SIZE);
 
         MockEndpoint.assertIsSatisfied(context);
     }

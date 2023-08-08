@@ -127,7 +127,7 @@ public class CreateCamelContextPerTestTrueTest extends CamelTestSupport {
                     }
                 }
             } finally {
-                LOG.info("Should only call postTearDown 1 time per test class, called: " + POST_TEAR_DOWN.get());
+                LOG.info("Should only call postTearDown 1 time per test class, called: {}", POST_TEAR_DOWN.get());
                 assertEquals(1, POST_TEAR_DOWN.get(), "Should only call postTearDown 1 time per test class");
             }
         };

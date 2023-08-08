@@ -52,7 +52,7 @@ public class TrapTest extends SnmpTestSupport {
         PDU trap = createTrap(version);
 
         // Send it
-        LOG.info("Sending pdu " + trap);
+        LOG.info("Sending pdu {}", trap);
         Endpoint endpoint = context.getEndpoint("direct:snmptrapV" + version);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(trap);

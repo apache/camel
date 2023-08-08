@@ -52,7 +52,7 @@ public class UserProducerInOutIT extends CamelTwitterITSupport {
     public void testPostStatusUpdateRequestResponse() throws Exception {
         Date now = new Date();
         String tweet = "UserProducerInOutTest: This is a tweet posted on " + now.toString();
-        LOG.info("Tweet: " + tweet);
+        LOG.info("Tweet: {}", tweet);
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         // send tweet to the twitter endpoint
         producerTemplate.sendBodyAndHeader("direct:tweets", tweet, "customHeader", 12312);

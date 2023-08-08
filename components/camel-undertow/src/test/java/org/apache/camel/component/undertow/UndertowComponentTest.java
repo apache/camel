@@ -33,7 +33,7 @@ public class UndertowComponentTest extends BaseUndertowTest {
     public void testUndertow() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:myapp");
         mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-        LOG.debug("Number of exchanges in mock:myapp " + mockEndpoint.getExchanges().size());
+        LOG.debug("Number of exchanges in mock:myapp {}", mockEndpoint.getExchanges().size());
 
         String response = template.requestBody("undertow:http://localhost:{{port}}/myapp", "Hello Camel!", String.class);
         assertNotNull(response);

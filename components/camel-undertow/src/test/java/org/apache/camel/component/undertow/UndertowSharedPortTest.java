@@ -42,7 +42,7 @@ public class UndertowSharedPortTest extends BaseUndertowTest {
     private void testPath(String pathSuffix) throws InterruptedException {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:" + pathSuffix);
         mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-        LOG.debug("Number of exchanges in mock:myapp " + mockEndpoint.getExchanges().size());
+        LOG.debug("Number of exchanges in mock:myapp {}", mockEndpoint.getExchanges().size());
 
         String response
                 = template.requestBody("undertow:http://localhost:{{port}}/" + pathSuffix, "Hello Camel!", String.class);

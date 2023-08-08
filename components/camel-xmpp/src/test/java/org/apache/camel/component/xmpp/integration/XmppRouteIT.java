@@ -68,11 +68,11 @@ public class XmppRouteIT extends XmppBaseIT {
 
         assertEquals(123, receivedMessage.getHeader("cheese"), "cheese header");
         Object body = receivedMessage.getBody();
-        XmppRouteIT.LOG.debug("Received body: " + body);
+        XmppRouteIT.LOG.debug("Received body: {}", body);
         Message xmppMessage = receivedMessage.getXmppMessage();
         assertNotNull(xmppMessage);
 
-        XmppRouteIT.LOG.debug("Received XMPP message: " + xmppMessage.getBody());
+        XmppRouteIT.LOG.debug("Received XMPP message: {}", xmppMessage.getBody());
         return body;
     }
 
@@ -82,7 +82,7 @@ public class XmppRouteIT extends XmppBaseIT {
         final String uri1 = uriPrefix + "&resource=camel-test-from&nickname=came-test-from";
         final String uri2 = uriPrefix + "&resource=camel-test-to&nickname=came-test-to";
         final String uri3 = uriPrefix + "&resource=camel-test-from-processor&nickname=came-test-from-processor";
-        LOG.info("Using URI " + uri1 + " and " + uri2);
+        LOG.info("Using URI {} and {}", uri1, uri2);
 
         endpoint = context.getEndpoint(uri1);
         assertNotNull(endpoint, "No endpoint found!");
@@ -92,7 +92,7 @@ public class XmppRouteIT extends XmppBaseIT {
             public void configure() {
                 from(uri1).to(uri2);
                 from(uri3).process(e -> {
-                    LOG.info("Received exchange: " + e);
+                    LOG.info("Received exchange: {}", e);
                     receivedExchange = e.copy();
                     latch.countDown();
                 });

@@ -51,7 +51,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
         assertNotNull(dummyBean.getEndpoint(), "The bean should have an endpoint injected");
         assertEquals("direct://start", dummyBean.getEndpoint().getEndpointUri(), "endpoint URI");
 
-        log.debug("Found dummy bean: " + dummyBean);
+        log.debug("Found dummy bean: {}", dummyBean);
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedBodiesReceived(body);
@@ -71,7 +71,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
     public void testEndpointConfigurationAfterEnsuringThatTheStatementRouteBuilderWasCreated() throws Exception {
         String[] names = applicationContext.getBeanDefinitionNames();
         for (String name : names) {
-            log.debug("Found bean name: " + name);
+            log.debug("Found bean name: {}", name);
         }
 
         testEndpointConfiguration();

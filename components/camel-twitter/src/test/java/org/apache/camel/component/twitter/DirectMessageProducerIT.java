@@ -49,7 +49,7 @@ public class DirectMessageProducerIT extends CamelTwitterITSupport {
     public void testDirectMessage() throws Exception {
         Date now = new Date();
         String tweet = "Test a tweet posted on " + now.toString();
-        LOG.info("Tweet: " + tweet);
+        LOG.info("Tweet: {}", tweet);
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         // send tweet to the twitter endpoint
         producerTemplate.sendBody("direct:tweets", tweet);

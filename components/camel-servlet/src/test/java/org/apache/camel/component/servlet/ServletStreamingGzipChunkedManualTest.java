@@ -72,7 +72,7 @@ public class ServletStreamingGzipChunkedManualTest extends ServletCamelRouterTes
                     }
                 }
 
-                LOG.info(">>>> Payload size: " + len);
+                LOG.info(">>>> Payload size: {}", len);
                 LOG.info(">>>> writing EOL <<<<");
                 pos.flush();
 
