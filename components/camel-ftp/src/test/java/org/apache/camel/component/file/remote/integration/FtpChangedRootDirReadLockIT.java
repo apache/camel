@@ -70,7 +70,7 @@ public class FtpChangedRootDirReadLockIT extends FtpServerTestSupport {
         FileOutputStream fos = new FileOutputStream(service.ftpFile("slowfile.dat").toFile(), true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
-            LOG.debug("Writing line " + i);
+            LOG.debug("Writing line {}", i);
             Thread.sleep(200);
         }
 

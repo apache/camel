@@ -219,7 +219,7 @@ public class FhirReadIT extends AbstractFhirTestSupport {
     }
 
     private void assertValidResponse(Patient result) {
-        LOG.debug("response: " + result);
+        LOG.debug("response: {}", result);
         assertNotNull(result, "resourceByUrl result");
         assertEquals("Freeman", result.getName().get(0).getFamily());
     }

@@ -1761,12 +1761,12 @@ int modelCount = 0;
 for (Map<String, Object> model : unmarshaledModels) {
   for (String className : model.keySet()) {
      Object obj = model.get(className);
-     LOG.info("Count : " + modelCount + ", " + obj.toString());
+     LOG.info("Count : {}, {}", modelCount, obj.toString());
   }
  modelCount++;
 }
 
-LOG.info("Total CSV records received by the csv bean : " + modelCount);
+LOG.info("Total CSV records received by the csv bean : {}", modelCount);
 ----
 
 Assuming that you want to extract a single Order object from this map

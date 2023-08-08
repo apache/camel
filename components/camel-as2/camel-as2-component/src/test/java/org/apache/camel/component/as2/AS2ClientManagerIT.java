@@ -191,7 +191,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -270,7 +270,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -357,7 +357,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
 
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
@@ -453,7 +453,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -563,7 +563,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -669,7 +669,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -815,7 +815,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         @Override
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                 throws HttpException, IOException {
-            LOG.info("Received test message: " + request);
+            LOG.info("Received test message: {}", request);
             context.setAttribute(AS2ServerManager.FROM, MDN_FROM);
             context.setAttribute(AS2ServerManager.SUBJECT, MDN_SUBJECT_PREFIX);
 

@@ -183,7 +183,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull(exchanges, "listen result");
         assertFalse(exchanges.isEmpty(), "listen result");
-        LOG.debug("poll result: " + exchanges);
+        LOG.debug("poll result: {}", exchanges);
 
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
@@ -251,7 +251,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull(exchanges, "listen result");
         assertFalse(exchanges.isEmpty(), "listen result");
-        LOG.debug("poll result: " + exchanges);
+        LOG.debug("poll result: {}", exchanges);
 
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
@@ -333,7 +333,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull(exchanges, "listen result");
         assertFalse(exchanges.isEmpty(), "listen result");
-        LOG.debug("poll result: " + exchanges);
+        LOG.debug("poll result: {}", exchanges);
 
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
@@ -427,7 +427,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull(exchanges, "listen result");
         assertFalse(exchanges.isEmpty(), "listen result");
-        LOG.debug("poll result: " + exchanges);
+        LOG.debug("poll result: {}", exchanges);
 
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
@@ -507,7 +507,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull(exchanges, "listen result");
         assertFalse(exchanges.isEmpty(), "listen result");
-        LOG.debug("poll result: " + exchanges);
+        LOG.debug("poll result: {}", exchanges);
 
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();

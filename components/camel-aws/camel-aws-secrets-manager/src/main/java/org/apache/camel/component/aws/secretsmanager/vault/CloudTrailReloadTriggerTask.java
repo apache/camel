@@ -245,9 +245,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error during AWS Secrets Refresh Task due to " + e.getMessage()
-                     + ". This exception is ignored. Will try again on next run.",
-                    e);
+            LOG.warn("Error during AWS Secrets Refresh Task due to {}. This exception is ignored. Will try again on next run.",
+                    e.getMessage(), e);
         }
 
         if (triggerReloading) {

@@ -49,7 +49,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
     public void testOfType() {
         org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
 
-        LOG.debug("ofType: " + result);
+        LOG.debug("ofType: {}", result);
         assertNotNull(result, "ofType result");
         assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement) result).getStatus());
     }
@@ -62,7 +62,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         org.hl7.fhir.instance.model.api.IBaseConformance result
                 = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
 
-        LOG.debug("ofType: " + result);
+        LOG.debug("ofType: {}", result);
         assertNotNull(result, "ofType result");
         assertEquals(Enumerations.PublicationStatus.ACTIVE, ((CapabilityStatement) result).getStatus());
     }

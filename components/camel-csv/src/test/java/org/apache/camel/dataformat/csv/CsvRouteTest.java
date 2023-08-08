@@ -55,7 +55,7 @@ public class CsvRouteTest extends CamelTestSupport {
             Message in = exchange.getIn();
             String text = in.getBody(String.class);
 
-            LOG.debug("Received " + text);
+            LOG.debug("Received {}", text);
             assertNotNull(text, "Should be able to convert received body to a string");
 
             // order is not guaranteed with a Map (which was passed in before)
@@ -92,7 +92,7 @@ public class CsvRouteTest extends CamelTestSupport {
         Message in2 = list.get(1).getIn();
         String text2 = in2.getBody(String.class);
 
-        LOG.debug("Received " + text2);
+        LOG.debug("Received {}", text2);
 
         // fields should keep the same order from one call to the other
         if (text1.trim().equals("abc,123")) {
@@ -130,7 +130,7 @@ public class CsvRouteTest extends CamelTestSupport {
         Message in2 = list.get(1).getIn();
         String text2 = in2.getBody(String.class);
 
-        LOG.debug("Received " + text2);
+        LOG.debug("Received {}", text2);
         assertEquals("def;789;456", text2.trim(), "Second CSV body has wrong value");
 
     }

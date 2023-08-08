@@ -69,7 +69,7 @@ public class BoxEventsManagerIT extends AbstractBoxITSupport {
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         assertNotNull(exchanges, "poll result");
         assertFalse(exchanges.isEmpty(), "poll result");
-        LOG.debug("poll result: " + exchanges);
+        LOG.debug("poll result: {}", exchanges);
     }
 
     @Override

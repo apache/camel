@@ -69,7 +69,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         assertNotNull(result.getComments(), "addFileComment comments");
         assertTrue(result.getComments().size() > 0, "changeCommentMessage comments size");
         assertEquals(CAMEL_TEST_FILE_COMMENT, result.getComments().get(0).getMessage(), "changeCommentMessage comment message");
-        LOG.debug("addFileComment: " + result);
+        LOG.debug("addFileComment: {}", result);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         assertNotNull(result, "changeCommentMessage result");
         assertNotNull(result.getInfo().getMessage(), "changeCommentMessage message");
         assertEquals(CAMEL_TEST_FILE_CHANGED_COMMENT, result.getInfo().getMessage(), "changeCommentMessage message");
-        LOG.debug("changeCommentMessage: " + result);
+        LOG.debug("changeCommentMessage: {}", result);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "getCommentInfo result");
         assertEquals(CAMEL_TEST_FILE_COMMENT, result.getMessage(), "getCommentInfo message");
-        LOG.debug("getCommentInfo: " + result);
+        LOG.debug("getCommentInfo: {}", result);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "getFileComments result");
         assertEquals(1, result.size(), "getFileComments size");
-        LOG.debug("getFileComments: " + result);
+        LOG.debug("getFileComments: {}", result);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "replyToComment result");
         assertEquals(CAMEL_TEST_FILE_REPLY_COMMENT, result.getInfo().getMessage(), "replyToComment result");
-        LOG.debug("replyToComment: " + result);
+        LOG.debug("replyToComment: {}", result);
     }
 
     @Override

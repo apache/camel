@@ -75,7 +75,7 @@ public class FromFtpExclusiveReadNoneStrategyIT extends FtpServerTestSupport {
         // file currently in progress of being written - so we get only the
         // Hello World part
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        LOG.debug("Body is: " + body);
+        LOG.debug("Body is: {}", body);
         assertFalse(body.endsWith("Bye World"), "Should not wait and read the entire file");
     }
 

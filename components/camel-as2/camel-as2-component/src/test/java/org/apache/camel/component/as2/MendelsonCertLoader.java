@@ -162,21 +162,21 @@ public class MendelsonCertLoader {
         try {
             ks = KeyStore.getInstance("PKCS12");
         } catch (KeyStoreException e) {
-            LOG.error("Error while getting instance of KeyStore" + e);
+            LOG.error("Error while getting instance of KeyStore: {}", e.getMessage(), e);
         }
         try {
             ks.load(inputStream, keyStorePassword.toCharArray());
         } catch (CertificateException e) {
-            LOG.error("Error while loading the certificate" + e);
+            LOG.error("Error while loading the certificate: {}", e.getMessage(), e);
         }
         try {
             return (PrivateKey) ks.getKey(
                     ks.aliases().nextElement(),
                     keyStorePassword.toCharArray());
         } catch (KeyStoreException e) {
-            LOG.error("Error while retrieving private key" + e);
+            LOG.error("Error while retrieving private key: {}", e.getMessage(), e);
         } catch (UnrecoverableKeyException e) {
-            LOG.error("Error while retrieving private key" + e);
+            LOG.error("Error while retrieving private key: {}", e.getMessage(), e);
         }
         throw new IllegalStateException("Failed to construct a PrivateKey from provided InputStream");
     }

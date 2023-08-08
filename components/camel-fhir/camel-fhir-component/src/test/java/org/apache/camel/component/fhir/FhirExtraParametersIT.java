@@ -53,7 +53,7 @@ public class FhirExtraParametersIT extends AbstractFhirTestSupport {
 
         Bundle result = requestBodyAndHeaders("direct://SEARCH_BY_URL", url, headers);
 
-        LOG.debug("searchByUrl: " + result);
+        LOG.debug("searchByUrl: {}", result);
         assertNotNull(result, "searchByUrl result");
         Patient patient = (Patient) result.getEntry().get(0).getResource();
         assertNotNull(patient);
