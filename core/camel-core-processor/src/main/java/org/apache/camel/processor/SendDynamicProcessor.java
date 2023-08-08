@@ -342,7 +342,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             } catch (Throwable e) {
                 // ignore
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
+                    LOG.debug(
+                            "Error creating optimised SendDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
                             URISupport.sanitizeUri(uri), e.getMessage(), e);
                 }
             }
