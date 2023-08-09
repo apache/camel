@@ -575,10 +575,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AwsStateMachineOperation}.
+         * @return the name of the header {@code AwsStepFunctionsOperation}.
          */
-        public String awsStateMachineOperation() {
-            return "AwsStateMachineOperation";
+        public String awsStepFunctionsOperation() {
+            return "AwsStepFunctionsOperation";
         }
 
         /**
@@ -659,10 +659,11 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AwsStateMachinesMaxResults}.
+         * @return the name of the header {@code
+         * AwsStepFunctionsStateMachinesMaxResults}.
          */
-        public String awsStateMachinesMaxResults() {
-            return "AwsStateMachinesMaxResults";
+        public String awsStepFunctionsStateMachinesMaxResults() {
+            return "AwsStepFunctionsStateMachinesMaxResults";
         }
 
         /**
@@ -672,11 +673,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code
-         * AwsStepFunctionsStateMachineActivityName}.
+         * @return the name of the header {@code AwsStepFunctionsActivityName}.
          */
-        public String awsStepFunctionsStateMachineActivityName() {
-            return "AwsStepFunctionsStateMachineActivityName";
+        public String awsStepFunctionsActivityName() {
+            return "AwsStepFunctionsActivityName";
         }
 
         /**
@@ -686,11 +686,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code
-         * AwsStepFunctionsStateMachineActivityArn}.
+         * @return the name of the header {@code AwsStepFunctionsActivityArn}.
          */
-        public String awsStepFunctionsStateMachineActivityArn() {
-            return "AwsStepFunctionsStateMachineActivityArn";
+        public String awsStepFunctionsActivityArn() {
+            return "AwsStepFunctionsActivityArn";
         }
 
         /**
@@ -701,10 +700,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsStateMachineActivitiesMaxResults}.
+         * AwsStepFunctionsActivitiesMaxResults}.
          */
-        public String awsStateMachineActivitiesMaxResults() {
-            return "AwsStateMachineActivitiesMaxResults";
+        public String awsStepFunctionsActivitiesMaxResults() {
+            return "AwsStepFunctionsActivitiesMaxResults";
         }
 
         /**
@@ -714,10 +713,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AwsStateMachineExecutionArn}.
+         * @return the name of the header {@code AwsStepFunctionsExecutionArn}.
          */
-        public String awsStateMachineExecutionArn() {
-            return "AwsStateMachineExecutionArn";
+        public String awsStepFunctionsExecutionArn() {
+            return "AwsStepFunctionsExecutionArn";
         }
 
         /**
@@ -727,10 +726,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AwsStateMachineExecutionName}.
+         * @return the name of the header {@code AwsStepFunctionsExecutionName}.
          */
-        public String awsStateMachineExecutionName() {
-            return "AwsStateMachineExecutionName";
+        public String awsStepFunctionsExecutionName() {
+            return "AwsStepFunctionsExecutionName";
         }
 
         /**
@@ -740,10 +739,11 @@ public interface StepFunctions2EndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AwsStateMachineExecutionInput}.
+         * @return the name of the header {@code
+         * AwsStepFunctionsExecutionInput}.
          */
-        public String awsStateMachineExecutionInput() {
-            return "AwsStateMachineExecutionInput";
+        public String awsStepFunctionsExecutionInput() {
+            return "AwsStepFunctionsExecutionInput";
         }
 
         /**
@@ -754,10 +754,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsStateMachineExecutionTraceHeader}.
+         * AwsStepFunctionsExecutionTraceHeader}.
          */
-        public String awsStateMachineExecutionTraceHeader() {
-            return "AwsStateMachineExecutionTraceHeader";
+        public String awsStepFunctionsExecutionTraceHeader() {
+            return "AwsStepFunctionsExecutionTraceHeader";
         }
 
         /**
@@ -768,10 +768,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsStateMachineExecutionHistoryMaxResults}.
+         * AwsStepFunctionsExecutionHistoryMaxResults}.
          */
-        public String awsStateMachineExecutionHistoryMaxResults() {
-            return "AwsStateMachineExecutionHistoryMaxResults";
+        public String awsStepFunctionsExecutionHistoryMaxResults() {
+            return "AwsStepFunctionsExecutionHistoryMaxResults";
         }
 
         /**
@@ -783,10 +783,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsStateMachineExecutionHistoryIncludeExecutionData}.
+         * AwsStepFunctionsExecutionHistoryIncludeExecutionData}.
          */
-        public String awsStateMachineExecutionHistoryIncludeExecutionData() {
-            return "AwsStateMachineExecutionHistoryIncludeExecutionData";
+        public String awsStepFunctionsExecutionHistoryIncludeExecutionData() {
+            return "AwsStepFunctionsExecutionHistoryIncludeExecutionData";
         }
 
         /**
@@ -797,10 +797,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsStateMachineExecutionHistoryReverseOrder}.
+         * AwsStepFunctionsExecutionHistoryReverseOrder}.
          */
-        public String awsStateMachineExecutionHistoryReverseOrder() {
-            return "AwsStateMachineExecutionHistoryReverseOrder";
+        public String awsStepFunctionsExecutionHistoryReverseOrder() {
+            return "AwsStepFunctionsExecutionHistoryReverseOrder";
         }
 
         /**
@@ -811,10 +811,10 @@ public interface StepFunctions2EndpointBuilderFactory {
          * Group: producer
          * 
          * @return the name of the header {@code
-         * AwsStateMachineExecutionMaxResults}.
+         * AwsStepFunctionsExecutionMaxResults}.
          */
-        public String awsStateMachineExecutionMaxResults() {
-            return "AwsStateMachineExecutionMaxResults";
+        public String awsStepFunctionsExecutionMaxResults() {
+            return "AwsStepFunctionsExecutionMaxResults";
         }
     }
     static StepFunctions2EndpointBuilder endpointBuilder(
