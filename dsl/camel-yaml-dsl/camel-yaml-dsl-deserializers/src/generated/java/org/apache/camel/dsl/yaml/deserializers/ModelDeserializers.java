@@ -3556,6 +3556,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "json-api", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat"),
                     @YamlProperty(name = "mime-multipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
+                    @YamlProperty(name = "parquet-avro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
@@ -3814,6 +3815,26 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
+                case "parquet-avro": {
+                    org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "pgp": {
+                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
                 case "protobuf": {
                     org.apache.camel.model.dataformat.ProtobufDataFormat val = asType(node, org.apache.camel.model.dataformat.ProtobufDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
@@ -3936,16 +3957,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xml-security": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
-                    break;
-                }
-                case "pgp": {
-                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();

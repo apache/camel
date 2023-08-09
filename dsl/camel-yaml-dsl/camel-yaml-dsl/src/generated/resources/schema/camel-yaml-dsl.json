@@ -6701,6 +6701,9 @@
           "mime-multipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
           },
+          "parquet-avro" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
+          },
           "pgp" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
           },
