@@ -31,16 +31,6 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-gRCP requires strong own of the Google Guava version. It's necessary to
-add following configuration property to the maven file
-
-[source,xml]
-------------------------------------------------------------
-<properties>
-    <google-guava-version>${grpc-guava-version}</google-guava-version>
-<properties>
-------------------------------------------------------------
-
 == URI format
 
 -------------------------------------
@@ -91,11 +81,6 @@ To enable these features the following component properties combinations must be
 |||jwtIssuer||Optional
 |||jwtSubject||Optional
 |=======================================================================
-TLS with OpenSSL is currently the recommended approach for using gRPC over TLS component.
-Using the JDK for ALPN is generally much slower and may not support the necessary ciphers for HTTP2. This function is not implemented in the component.
-
-There might be a need to install additional libraries according to the Operating System of choice.
-For more information consult https://github.com/grpc/grpc-java/blob/master/SECURITY.md[the Security page of gRPC].
 
 == gRPC producer resource type mapping
 
@@ -162,7 +147,7 @@ from("direct:grpc-response-stream")
 .log("Response received: ${body}");
 -------------------------------------------------------------------------------
 
-gRPC service consumer TLS/SLL security negotiation enable
+gRPC service consumer TLS/SSL security negotiation enabled
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -170,7 +155,7 @@ from("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?consumerStr
 .to("direct:tls-enable")
 -------------------------------------------------------------------------------
 
-gRPC service producer with custom JSON Web Token implementation authentication
+gRPC service producer with custom JSON Web Token (JWT) implementation authentication
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -180,7 +165,7 @@ from("direct:grpc-jwt")
 
 == Configuration
 
-It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol Buffer Compiler (protoc) tool to generate Java source files from .proto (protocol buffer definition) files for the custom project. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
+It is recommended to use the `protobuf-maven-plugin`, which calls the Protocol Buffer Compiler (protoc) to generate Java source files from .proto (protocol buffer definition) files. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
 
 Following steps are required:
 
@@ -191,19 +176,19 @@ Insert operating system and CPU architecture detection extension inside **<build
   <extension>
     <groupId>kr.motd.maven</groupId>
     <artifactId>os-maven-plugin</artifactId>
-    <version>1.4.1.Final</version>
+    <version>1.7.1</version>
   </extension>
 </extensions>
 -------------------------------------------------------------------------
 
-Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the project pom.xml
+Insert the gRPC and protobuf Java code generator plugins into the **<plugins>** tag of the project pom.xml
 
 [source,xml]
 -------------------------------------------------------------------------
 <plugin>
   <groupId>org.xolstice.maven.plugins</groupId>
   <artifactId>protobuf-maven-plugin</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.1</version>
   <configuration>
     <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
     <pluginId>grpc-java</pluginId>
@@ -226,7 +211,7 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
 
 See these resources:
 
-- http://www.grpc.io/[gRPC project site]
+- https://www.grpc.io/[gRPC project site]
 - https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
 
