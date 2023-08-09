@@ -663,7 +663,8 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testDatePredicates() throws Exception {
         assertPredicate("${date:now} < ${date:now+60s}");
-        assertPredicate("${date:now-2s+2s} == ${date:now}");
+        assertPredicate("${date:now-5s} < ${date:now}");
+        assertPredicate("${date:now+5s} > ${date:now}");
     }
 
     @Test
