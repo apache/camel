@@ -47,12 +47,12 @@ class OpensearchSizeLimitIT extends OpensearchTestSupport {
                 """;
 
         // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertNotNull(response, "response should not be null"));
-
-        HitsMetadata<?> searchWithSizeTwo = template().requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
-        HitsMetadata<?> searchFrom3 = template().requestBody("direct:searchFrom3", query, HitsMetadata.class);
-        assertEquals(2, searchWithSizeTwo.hits().size());
-        assertEquals(1, searchFrom3.hits().size());
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            HitsMetadata<?> searchWithSizeTwo = template().requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
+            HitsMetadata<?> searchFrom3 = template().requestBody("direct:searchFrom3", query, HitsMetadata.class);
+            assertEquals(2, searchWithSizeTwo.hits().size());
+            assertEquals(1, searchFrom3.hits().size());
+        });
     }
 
     @Override

@@ -272,6 +272,7 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
 
     @Test
     void testSearchWithMapQuery() throws Exception {
+
         //first, Index a value
         Map<String, String> map1 = Map.of("testSearchWithMapQuery1", "foo");
         Map<String, String> map2 = Map.of("testSearchWithMapQuery2", "bar");
@@ -291,25 +292,25 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         HitsMetadata<?> response = template().requestBody("direct:search", query, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
+        assertEquals(0, response.total().value(), "response hits should be == 0");
 
         // Match
         actualQuery.put("doc.testSearchWithMapQuery1", "foo");
 
         // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(0, response.total().value(), "response hits should be == 0"));
-
-        HitsMetadata<?> resp = template().requestBody("direct:search", query, HitsMetadata.class);
-
-        assertNotNull(resp, "response should not be null");
-        assertNotNull(resp.total());
-        assertEquals(1, resp.total().value(), "response hits should be == 1");
-        assertEquals(1, resp.hits().size(), "response hits should be == 1");
-        Object result = resp.hits().get(0).source();
-        assertInstanceOf(ObjectNode.class, result);
-        assertTrue(((ObjectNode) result).has("doc"));
-        JsonNode node = ((ObjectNode) result).get("doc");
-        assertTrue(node.has("testSearchWithMapQuery1"));
-        assertEquals("foo", node.get("testSearchWithMapQuery1").asText());
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            HitsMetadata<?> resp = template().requestBody("direct:search", query, HitsMetadata.class);
+            assertNotNull(resp, "response should not be null");
+            assertNotNull(resp.total());
+            assertEquals(1, resp.total().value(), "response hits should be == 1");
+            assertEquals(1, resp.hits().size(), "response hits should be == 1");
+            Object result = resp.hits().get(0).source();
+            assertInstanceOf(ObjectNode.class, result);
+            assertTrue(((ObjectNode) result).has("doc"));
+            JsonNode node = ((ObjectNode) result).get("doc");
+            assertTrue(node.has("testSearchWithMapQuery1"));
+            assertEquals("foo", node.get("testSearchWithMapQuery1").asText());
+        });
     }
 
     @Test
@@ -333,9 +334,7 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         HitsMetadata<?> response = template().requestBody("direct:search", query, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
-
-        // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(0, response.total().value(), "response hits should be == 0"));
+        assertEquals(0, response.total().value(), "response hits should be == 0");
 
         // Match
         String q = """
@@ -344,17 +343,20 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                 }
                 """;
 
-        HitsMetadata<?> resp = template().requestBody("direct:search", q, HitsMetadata.class);
-        assertNotNull(resp, "response should not be null");
-        assertNotNull(resp.total());
-        assertEquals(1, resp.total().value(), "response hits should be == 1");
-        assertEquals(1, resp.hits().size(), "response hits should be == 1");
-        Object result = resp.hits().get(0).source();
-        assertInstanceOf(ObjectNode.class, result);
-        assertTrue(((ObjectNode) result).has("doc"));
-        JsonNode node = ((ObjectNode) result).get("doc");
-        assertTrue(node.has("testSearchWithStringQuery1"));
-        assertEquals("foo", node.get("testSearchWithStringQuery1").asText());
+        // Delay the execution, because the search is getting stale results
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            HitsMetadata<?> resp = template().requestBody("direct:search", q, HitsMetadata.class);
+            assertNotNull(resp, "response should not be null");
+            assertNotNull(resp.total());
+            assertEquals(1, resp.total().value(), "response hits should be == 1");
+            assertEquals(1, resp.hits().size(), "response hits should be == 1");
+            Object result = resp.hits().get(0).source();
+            assertInstanceOf(ObjectNode.class, result);
+            assertTrue(((ObjectNode) result).has("doc"));
+            JsonNode node = ((ObjectNode) result).get("doc");
+            assertTrue(node.has("testSearchWithStringQuery1"));
+            assertEquals("foo", node.get("testSearchWithStringQuery1").asText());
+        });
     }
 
     @Test
@@ -377,28 +379,27 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
         assertNotNull(response, "response should not be null");
         assertNotNull(response.total());
 
-        // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(0, response.total().value(), "response hits should be == 0"));
-
         SearchRequest.Builder b = new SearchRequest.Builder()
                 .query(new Query.Builder()
                         .match(new MatchQuery.Builder().field("doc.testSearchWithBuilder1").query(FieldValue.of("foo"))
                                 .build())
                         .build());
 
-        // Match
-        HitsMetadata<?> resp = template().requestBody("direct:search", b, HitsMetadata.class);
-
-        assertNotNull(resp, "response should not be null");
-        assertNotNull(resp.total());
-        assertEquals(1, resp.total().value(), "response hits should be == 1");
-        assertEquals(1, resp.hits().size(), "response hits should be == 1");
-        Object result = resp.hits().get(0).source();
-        assertInstanceOf(ObjectNode.class, result);
-        assertTrue(((ObjectNode) result).has("doc"));
-        JsonNode node = ((ObjectNode) result).get("doc");
-        assertTrue(node.has("testSearchWithBuilder1"));
-        assertEquals("foo", node.get("testSearchWithBuilder1").asText());
+        // Delay the execution, because the search is getting stale results
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            // Match
+            HitsMetadata<?> resp = template().requestBody("direct:search", b, HitsMetadata.class);
+            assertNotNull(resp, "response should not be null");
+            assertNotNull(resp.total());
+            assertEquals(1, resp.total().value(), "response hits should be == 1");
+            assertEquals(1, resp.hits().size(), "response hits should be == 1");
+            Object result = resp.hits().get(0).source();
+            assertInstanceOf(ObjectNode.class, result);
+            assertTrue(((ObjectNode) result).has("doc"));
+            JsonNode node = ((ObjectNode) result).get("doc");
+            assertTrue(node.has("testSearchWithBuilder1"));
+            assertEquals("foo", node.get("testSearchWithBuilder1").asText());
+        });
     }
 
     @Test
@@ -436,20 +437,19 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                         .build());
 
         // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(0, response.total().value(), "response hits should be == 0"));
-
-        // Match
-        HitsMetadata<?> resp = template().requestBodyAndHeader("direct:search", b, OpensearchConstants.PARAM_DOCUMENT_CLASS,
-                Product.class, HitsMetadata.class);
-
-        assertNotNull(resp, "response should not be null");
-        assertNotNull(resp.total());
-        assertEquals(1, resp.total().value(), "response hits should be == 1");
-        assertEquals(1, resp.hits().size(), "response hits should be == 1");
-        Object result = resp.hits().get(0).source();
-        assertInstanceOf(Product.class, result);
-        Product p = (Product) result;
-        assertEquals(product1, p);
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            //Match
+            HitsMetadata<?> resp = template().requestBodyAndHeader("direct:search", b, OpensearchConstants.PARAM_DOCUMENT_CLASS,
+                    Product.class, HitsMetadata.class);
+            assertNotNull(resp, "response should not be null");
+            assertNotNull(resp.total());
+            assertEquals(1, resp.total().value(), "response hits should be == 1");
+            assertEquals(1, resp.hits().size(), "response hits should be == 1");
+            Object result = resp.hits().get(0).source();
+            assertInstanceOf(Product.class, result);
+            Product p = (Product) result;
+            assertEquals(product1, p);
+        });
     }
 
     @Test
@@ -465,21 +465,22 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                         .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
 
         // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertNotNull(indexId, "indexId should be set"));
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
 
-        @SuppressWarnings("unchecked")
-        List<MultiSearchResponseItem<?>> response = template().requestBody("direct:multiSearch", builder, List.class);
+            @SuppressWarnings("unchecked")
+            List<MultiSearchResponseItem<?>> response = template().requestBody("direct:multiSearch", builder, List.class);
 
-        assertNotNull(response, "response should not be null");
-        assertEquals(2, response.size(), "response should be == 2");
-        assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
-        assertTrue(response.get(0).isResult());
-        assertNotNull(response.get(0).result());
-        assertTrue(response.get(0).result().hits().total().value() > 0);
-        assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
-        assertTrue(response.get(1).isResult());
-        assertNotNull(response.get(1).result());
-        assertTrue(response.get(1).result().hits().total().value() > 0);
+            assertNotNull(response, "response should not be null");
+            assertEquals(2, response.size(), "response should be == 2");
+            assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
+            assertTrue(response.get(0).isResult());
+            assertNotNull(response.get(0).result());
+            assertTrue(response.get(0).result().hits().total().value() > 0);
+            assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
+            assertTrue(response.get(1).isResult());
+            assertNotNull(response.get(1).result());
+            assertTrue(response.get(1).result().hits().total().value() > 0);
+        });
     }
 
     @Test
@@ -501,26 +502,27 @@ class OpensearchGetSearchDeleteExistsUpdateIT extends OpensearchTestSupport {
                         .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
 
         // Delay the execution, because the search is getting stale results
-        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> assertNotNull(indexId, "indexId should be set"));
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
 
-        @SuppressWarnings("unchecked")
-        List<MultiSearchResponseItem<?>> response = template().requestBodyAndHeaders(
-                "direct:multiSearch", builder,
-                Map.of(
-                        OpensearchConstants.PARAM_INDEX_NAME, "multi-search",
-                        OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class),
-                List.class);
+            @SuppressWarnings("unchecked")
+            List<MultiSearchResponseItem<?>> response = template().requestBodyAndHeaders(
+                    "direct:multiSearch", builder,
+                    Map.of(
+                            OpensearchConstants.PARAM_INDEX_NAME, "multi-search",
+                            OpensearchConstants.PARAM_DOCUMENT_CLASS, Product.class),
+                    List.class);
 
-        assertNotNull(response, "response should not be null");
-        assertEquals(2, response.size(), "response should be == 2");
-        assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
-        assertTrue(response.get(0).isResult());
-        assertNotNull(response.get(0).result());
-        assertTrue(response.get(0).result().hits().total().value() > 0);
-        assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
-        assertTrue(response.get(1).isResult());
-        assertNotNull(response.get(1).result());
-        assertTrue(response.get(1).result().hits().total().value() > 0);
+            assertNotNull(response, "response should not be null");
+            assertEquals(2, response.size(), "response should be == 2");
+            assertInstanceOf(MultiSearchResponseItem.class, response.get(0));
+            assertTrue(response.get(0).isResult());
+            assertNotNull(response.get(0).result());
+            assertTrue(response.get(0).result().hits().total().value() > 0);
+            assertInstanceOf(MultiSearchResponseItem.class, response.get(1));
+            assertTrue(response.get(1).isResult());
+            assertNotNull(response.get(1).result());
+            assertTrue(response.get(1).result().hits().total().value() > 0);
+        });
     }
 
     @Test
