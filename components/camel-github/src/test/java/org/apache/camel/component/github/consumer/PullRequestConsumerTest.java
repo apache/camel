@@ -65,7 +65,8 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             pullRequest.getHtmlUrl();
             pullRequest.getUser().getLogin();
             pullRequest.getUser().getHtmlUrl();
-            LOG.debug("Got PullRequest {} [{}] From {}", pullRequest.getHtmlUrl(), pullRequest.getTitle(), pullRequestUser.getLogin());
+            LOG.debug("Got PullRequest {} [{}] From {}", pullRequest.getHtmlUrl(), pullRequest.getTitle(),
+                    pullRequestUser.getLogin());
         }
     }
 }

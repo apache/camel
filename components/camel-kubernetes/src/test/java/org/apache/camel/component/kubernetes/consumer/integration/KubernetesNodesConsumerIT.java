@@ -85,7 +85,7 @@ public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
             Message in = exchange.getIn();
             Node node = exchange.getIn().getBody(Node.class);
             log.info("Got event with node name: {} and action {}", node.getMetadata().getName(),
-                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+                    in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

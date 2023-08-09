@@ -111,7 +111,7 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
     }
 
     private static void assertExchange(Exchange exchange) {
-        assertNotNull( exchange.getIn(), "There should be an in message");
+        assertNotNull(exchange.getIn(), "There should be an in message");
         assertNotNull(exchange.getIn().getBody(), "There should be an in body");
         assertNotNull(exchange.getIn().getBody(String.class), "The in message body should be of type String");
         assertEquals("Hello World", exchange.getIn().getBody(), "The in message body should be 'Hello World");

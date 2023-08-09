@@ -92,7 +92,8 @@ public class RocketMQContainer implements RocketMQService, ContainerService<Rock
                             "sh", "mqadmin", "updateTopic", "-n", "nameserver:9876", "-t",
                             topic, "-c", "DefaultCluster");
 
-                    LOG.info("Exit code: {}. Stderr: {} Stdout: {} ", execResult.getExitCode(), execResult.getStderr(), execResult.getStdout());
+                    LOG.info("Exit code: {}. Stderr: {} Stdout: {} ", execResult.getExitCode(), execResult.getStderr(),
+                            execResult.getStdout());
 
                     return execResult.getStdout() != null && execResult.getStdout().contains("success");
                 });

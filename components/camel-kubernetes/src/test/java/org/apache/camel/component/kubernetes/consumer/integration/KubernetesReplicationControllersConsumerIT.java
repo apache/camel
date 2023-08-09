@@ -128,7 +128,7 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
         public void process(Exchange exchange) {
             Message in = exchange.getIn();
             log.info("Got event with body: {} and action {}", in.getBody(),
-                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+                    in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

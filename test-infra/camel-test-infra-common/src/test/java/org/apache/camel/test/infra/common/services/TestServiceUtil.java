@@ -80,7 +80,6 @@ public final class TestServiceUtil {
                     extensionContext.getDisplayName());
         }
 
-
         throw exception;
     }
 }

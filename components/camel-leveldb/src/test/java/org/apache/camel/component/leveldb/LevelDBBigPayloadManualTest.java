@@ -60,7 +60,7 @@ public class LevelDBBigPayloadManualTest extends LevelDBTestSupport {
         File file = new File("target/data/leveldb.dat");
         assertTrue(file.exists(), file + " should exists");
         long size = file.length();
-        log.info( "{} size is {}", file, size);
+        log.info("{} size is {}", file, size);
         // should be about 32mb, so we say 34 just in case
         assertTrue(size < 34 * 1024 * 1024, file + " should not be so big in size, was: " + size);
     }

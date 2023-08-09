@@ -139,7 +139,7 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
             Message in = exchange.getIn();
             Pod pod = exchange.getIn().getBody(Pod.class);
             log.info("Got event with pod name: {} and action {}", pod.getMetadata().getName(),
-                     in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+                    in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

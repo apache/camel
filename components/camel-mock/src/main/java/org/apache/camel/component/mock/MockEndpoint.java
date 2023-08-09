@@ -1141,7 +1141,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         Exchange e1 = map.get(key);
         if (e1 != null) {
             fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression
-                    + ". Exchanges: " + e1 + " and " + e2);
+                 + ". Exchanges: " + e1 + " and " + e2);
         } else {
             map.put(key, e2);
         }
@@ -1239,8 +1239,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             evalDuplicate(expression, e2, map, i);
         }
     }
-
-
 
     /**
      * Adds the expectation which will be invoked when enough messages are received
