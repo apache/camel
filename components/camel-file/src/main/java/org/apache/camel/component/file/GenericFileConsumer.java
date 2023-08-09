@@ -622,6 +622,26 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Strategy to perform hidden file matching based on endpoint configuration.
+     * <p/>
+     * Will always return <tt>false</tt> for certain files/folders:
+     * <ul>
+     * <li>Starting with a dot (hidden)</li>
+     * </ul>
+     */
+    protected boolean isMatchedHiddenFile(GenericFile<T> file, boolean isDirectory) {
+        String name = file.getFileNameOnly();
+
+        // folders/names starting with dot is always skipped (eg. ".", ".camel",
+        // ".camelLock")
+        if (name.startsWith(".")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Strategy to perform file matching based on endpoint configuration.
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
@@ -639,9 +659,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory, T[] files) {
         String name = file.getFileNameOnly();
 
-        // folders/names starting with dot is always skipped (eg. ".", ".camel",
-        // ".camelLock")
-        if (name.startsWith(".")) {
+        if (!isMatchedHiddenFile(file, isDirectory)) {
+            // folders/names starting with dot is always skipped (eg. ".", ".camel",
+            // ".camelLock")
             return false;
         }
 

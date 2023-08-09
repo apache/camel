@@ -2178,6 +2178,43 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to accept hidden files. Files which names starts with dot is
+         * regarded as a hidden file, and by default not included. Set this
+         * option to true to include hidden files in the file consumer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param includeHiddenFiles the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointConsumerBuilder includeHiddenFiles(
+                boolean includeHiddenFiles) {
+            doSetProperty("includeHiddenFiles", includeHiddenFiles);
+            return this;
+        }
+        /**
+         * Whether to accept hidden files. Files which names starts with dot is
+         * regarded as a hidden file, and by default not included. Set this
+         * option to true to include hidden files in the file consumer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param includeHiddenFiles the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointConsumerBuilder includeHiddenFiles(
+                String includeHiddenFiles) {
+            doSetProperty("includeHiddenFiles", includeHiddenFiles);
+            return this;
+        }
+        /**
          * A pluggable in-progress repository
          * org.apache.camel.spi.IdempotentRepository. The in-progress repository
          * is used to account the current in progress files being consumed. By

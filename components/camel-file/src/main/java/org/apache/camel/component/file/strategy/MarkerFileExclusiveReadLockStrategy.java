@@ -57,7 +57,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
-            deleteLockFiles(file, endpoint.isRecursive(), endpointPath, endpoint.getFilter(), endpoint.getAntFilter(),
+            deleteLockFiles(file, endpoint.isRecursive(), endpoint.isHiddenFilesEnabled(), endpointPath, endpoint.getFilter(),
+                    endpoint.getAntFilter(),
                     excludePattern, includePattern);
 
             // log anything that takes more than a second
@@ -169,7 +170,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     private static <T> void deleteLockFiles(
-            File dir, boolean recursive, String endpointPath, GenericFileFilter<T> filter, GenericFileFilter<T> antFilter,
+            File dir, boolean recursive, boolean hiddenFilesEnabled, String endpointPath, GenericFileFilter<T> filter,
+            GenericFileFilter<T> antFilter,
             Pattern excludePattern,
             Pattern includePattern) {
         File[] files = dir.listFiles();
@@ -179,7 +181,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         for (File file : files) {
 
-            if (file.getName().startsWith(".")) {
+            if (!hiddenFilesEnabled && file.getName().startsWith(".")) {
                 // files starting with dot should be skipped
                 continue;
             }
@@ -212,7 +214,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 LOG.warn("Deleting orphaned lock file: {}", file);
                 FileUtil.deleteFile(file);
             } else if (recursive && file.isDirectory()) {
-                deleteLockFiles(file, true, endpointPath, filter, antFilter, excludePattern, includePattern);
+                deleteLockFiles(file, true, hiddenFilesEnabled, endpointPath, filter, antFilter, excludePattern,
+                        includePattern);
             }
         }
     }

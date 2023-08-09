@@ -66,6 +66,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriParam(label = "advanced")
     private boolean renameUsingCopy;
     @UriParam(label = "consumer,advanced")
+    private boolean includeHiddenFiles;
+    @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustExist;
     @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustHaveAccess;
@@ -260,6 +262,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return FileUtil.isAbsolute(new File(name));
     }
 
+    @Override
+    public boolean isHiddenFilesEnabled() {
+        return includeHiddenFiles;
+    }
+
     public boolean isCopyAndDeleteOnRenameFail() {
         return copyAndDeleteOnRenameFail;
     }
@@ -284,6 +291,18 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      */
     public void setRenameUsingCopy(boolean renameUsingCopy) {
         this.renameUsingCopy = renameUsingCopy;
+    }
+
+    public boolean isIncludeHiddenFiles() {
+        return includeHiddenFiles;
+    }
+
+    /**
+     * Whether to accept hidden files. Files which names starts with dot is regarded as a hidden file, and by default
+     * not included. Set this option to true to include hidden files in the file consumer.
+     */
+    public void setIncludeHiddenFiles(boolean includeHiddenFiles) {
+        this.includeHiddenFiles = includeHiddenFiles;
     }
 
     public boolean isStartingDirectoryMustExist() {
