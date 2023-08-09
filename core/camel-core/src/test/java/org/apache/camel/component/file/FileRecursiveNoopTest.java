@@ -40,7 +40,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
-        mock.assertIsSatisfied(5);
+        mock.assertIsSatisfied();
 
         // reset mock and send in a new file to be picked up only
         mock.reset();
@@ -48,7 +48,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "c2", Exchange.FILE_NAME, "c.txt");
 
-        mock.assertIsSatisfied(5);
+        mock.assertIsSatisfied();
     }
 
     @Override

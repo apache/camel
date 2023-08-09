@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,11 +42,11 @@ public class FileConsumeHiddenFilesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesWaitTime();
-
-        // file should not exists
-        assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
-        assertFalse(Files.exists(testFile(".report.hidden")), "File should been deleted");
+        Awaitility.await().untilAsserted(() -> {
+            // file should be deleted
+            assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
+            assertFalse(Files.exists(testFile(".report.hidden")), "File should been deleted");
+        });
     }
 
     @Override
