@@ -15480,6 +15480,8 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:jsonApi"/>
         <xs:element ref="tns:lzf"/>
         <xs:element ref="tns:mimeMultipart"/>
+        <xs:element ref="tns:parquetAvro"/>
+        <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
         <xs:element ref="tns:soap"/>
@@ -15493,7 +15495,6 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:univocityFixed"/>
         <xs:element ref="tns:univocityTsv"/>
         <xs:element ref="tns:xmlSecurity"/>
-        <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:yaml"/>
         <xs:element ref="tns:zipDeflater"/>
         <xs:element ref="tns:zipFile"/>
