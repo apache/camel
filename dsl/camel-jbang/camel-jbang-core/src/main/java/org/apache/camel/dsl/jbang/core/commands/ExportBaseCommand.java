@@ -54,8 +54,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "export",
-                     description = "Export to other runtimes such as Spring Boot or Quarkus")
 abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = ".camel-jbang/work";
