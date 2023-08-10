@@ -29,6 +29,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -85,21 +86,23 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
         Integer cap = (Integer) mbeanServer.getAttribute(on, "Capacity");
         assertEquals(123, cap.intValue());
 
-        // also only 1 exchange pooled
-        con = (Integer) mbeanServer.getAttribute(on, "TotalPooled");
-        assertEquals(1, con.intValue());
+        Awaitility.await().untilAsserted(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "TotalCreated");
+            assertEquals(1, num.intValue());
 
-        Long num = (Long) mbeanServer.getAttribute(on, "TotalCreated");
-        assertEquals(1, num.intValue());
+            num = (Long) mbeanServer.getAttribute(on, "TotalAcquired");
+            assertEquals(2, num.intValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "TotalAcquired");
-        assertEquals(2, num.intValue());
+            num = (Long) mbeanServer.getAttribute(on, "TotalReleased");
+            assertEquals(3, num.intValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "TotalReleased");
-        assertEquals(3, num.intValue());
+            num = (Long) mbeanServer.getAttribute(on, "TotalDiscarded");
+            assertEquals(0, num.intValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "TotalDiscarded");
-        assertEquals(0, num.intValue());
+            Integer num2 = (Integer) mbeanServer.getAttribute(on, "TotalPooled");
+            assertEquals(1, num2.intValue());
+        });
+
     }
 
     @Override
