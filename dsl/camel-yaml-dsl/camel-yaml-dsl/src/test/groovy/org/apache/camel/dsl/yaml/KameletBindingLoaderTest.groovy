@@ -135,20 +135,20 @@ class KameletBindingLoaderTest extends YamlTestSupport {
               source:
                 ref:
                   kind: Kamelet
-                  apiVersion: camel.apache.org/v1alpha1
+                  apiVersion: camel.apache.org/v1
                   name: timer-source
                 properties:
                   message: "Camel"
               steps:
               - ref:
                   kind: Kamelet
-                  apiVersion: camel.apache.org/v1alpha1
+                  apiVersion: camel.apache.org/v1
                   name: prefix-action
                 properties:
                   prefix: "Apache"
               - ref:
                   kind: Kamelet
-                  apiVersion: camel.apache.org/v1alpha1
+                  apiVersion: camel.apache.org/v1
                   name: prefix-action
                 properties:
                   prefix: "Hello"
@@ -189,14 +189,14 @@ class KameletBindingLoaderTest extends YamlTestSupport {
               source:
                 ref:
                   kind: Kamelet
-                  apiVersion: camel.apache.org/v1alpha1
+                  apiVersion: camel.apache.org/v1
                   name: timer-source
                 properties:
                   message: "Camel"
               steps:
               - ref:
                   kind: Kamelet
-                  apiVersion: camel.apache.org/v1alpha1
+                  apiVersion: camel.apache.org/v1
                   name: prefix-action
                 properties:
                   prefix: "Apache"
@@ -234,7 +234,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
               source:
                 ref:
                   kind: Kamelet
-                  apiVersion: camel.apache.org/v1alpha1
+                  apiVersion: camel.apache.org/v1
                   name: timer-source
                 properties:
                   message: "Camel"
@@ -330,14 +330,14 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                   sink:
                     ref:
                       kind: Kamelet
-                      apiVersion: camel.apache.org/v1alpha1
+                      apiVersion: camel.apache.org/v1
                       name: log-sink
                   errorHandler:
                     sink:
                       endpoint:
                         ref:
                           kind: Kamelet
-                          apiVersion: camel.apache.org/v1alpha1
+                          apiVersion: camel.apache.org/v1
                           name: error-handler
                         properties:
                           log-message: "ERROR!"
@@ -396,7 +396,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                   sink:
                     ref:
                       kind: Kamelet
-                      apiVersion: camel.apache.org/v1alpha1
+                      apiVersion: camel.apache.org/v1
                       name: log-sink
                   errorHandler:
                     sink:
@@ -446,7 +446,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                   sink:
                     ref:
                       kind: Kamelet
-                      apiVersion: camel.apache.org/v1alpha1
+                      apiVersion: camel.apache.org/v1
                       name: log-sink
                   errorHandler:
                     log:
@@ -496,7 +496,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                   sink:
                     ref:
                       kind: Kamelet
-                      apiVersion: camel.apache.org/v1alpha1
+                      apiVersion: camel.apache.org/v1
                       name: log-sink
                   errorHandler:
                     none:
