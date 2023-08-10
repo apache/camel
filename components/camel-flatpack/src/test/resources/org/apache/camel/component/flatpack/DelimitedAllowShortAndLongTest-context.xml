@@ -33,6 +33,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="file://src/test/data/delimMixed?noop=true"/>
+            <convertBodyTo type="String"/>
             <multicast>
                 <to uri="flatpack:delim:INVENTORY-Delimited.pzmap.xml?ignoreExtraColumns=true&amp;allowShortLines=true"/>
                 <to uri="direct:df"/>

@@ -18,12 +18,15 @@ package org.apache.camel.component.opensearch.integration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch.core.search.HitsMetadata;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OpensearchSizeLimitIT extends OpensearchTestSupport {
 
@@ -33,7 +36,7 @@ class OpensearchSizeLimitIT extends OpensearchTestSupport {
         template().requestBody("direct:index", getContent("content"), String.class);
         template().requestBody("direct:index", getContent("content1"), String.class);
         template().requestBody("direct:index", getContent("content2"), String.class);
-        template().requestBody("direct:index", getContent("content3"), String.class);
+        String response = template().requestBody("direct:index", getContent("content3"), String.class);
 
         String query = """
                 {
@@ -44,12 +47,12 @@ class OpensearchSizeLimitIT extends OpensearchTestSupport {
                 """;
 
         // Delay the execution, because the search is getting stale results
-        Thread.sleep(2000);
-
-        HitsMetadata<?> searchWithSizeTwo = template().requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
-        HitsMetadata<?> searchFrom3 = template().requestBody("direct:searchFrom3", query, HitsMetadata.class);
-        assertEquals(2, searchWithSizeTwo.hits().size());
-        assertEquals(1, searchFrom3.hits().size());
+        Awaitility.await().pollDelay(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            HitsMetadata<?> searchWithSizeTwo = template().requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
+            HitsMetadata<?> searchFrom3 = template().requestBody("direct:searchFrom3", query, HitsMetadata.class);
+            assertEquals(2, searchWithSizeTwo.hits().size());
+            assertEquals(1, searchFrom3.hits().size());
+        });
     }
 
     @Override

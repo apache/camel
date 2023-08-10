@@ -38,7 +38,7 @@ public class CamelDirectConnection implements WebServiceConnection {
 
     public CamelDirectConnection(CamelContext camelContext, URI uri) throws URISyntaxException {
         this.camelContext = camelContext;
-        destination = new URI("direct:" + uri);
+        destination = new URI("direct:" + uri + "?block=false");
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CamelDirectConnection implements WebServiceConnection {
             camelContext.createProducerTemplate().sendBody(destination.toString(), message);
         } catch (CamelExecutionException e) {
             // simply discard replyTo message
-            LOG.warn("Could not found any camel endpoint [{}] for wsa:ReplyTo camel mapping.", destination, e);
+            LOG.warn("Could not found any camel endpoint [{}] for wsa:ReplyTo camel mapping.", destination);
         }
     }
 
