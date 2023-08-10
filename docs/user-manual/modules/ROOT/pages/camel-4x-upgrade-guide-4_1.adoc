@@ -8,7 +8,67 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 === camel-aws2-step-functions
 
-The header keys has been renamed to be aligned with Camel naming standard.
+The following Message Headers of `camel-aws2-step-functions` component have been renamed to follow standard camel naming convention.
 
-For example from `CamelAwsStateMachineOperation` to `CamelAwsStepFunctionsOperation` and so on.
+[cols="1,1"]
+|===
+|Old Name|New Name
+
+|CamelAwsStateMachineOperation
+|CamelAwsStepFunctionsOperation
+
+|CamelAwsStateMachinesMaxResults
+|CamelAwsStepFunctionsStateMachinesMaxResults
+
+|CamelAwsStepFunctionsStateMachineActivityName
+|CamelAwsStepFunctionsActivityName
+
+|CamelAwsStepFunctionsStateMachineActivityArn
+|CamelAwsStepFunctionsActivityArn
+
+|CamelAwsStateMachineActivitiesMaxResults
+|CamelAwsStepFunctionsActivitiesMaxResults
+
+|CamelAwsStateMachineExecutionArn
+|CamelAwsStepFunctionsExecutionArn
+
+|CamelAwsStateMachineExecutionName
+|CamelAwsStepFunctionsExecutionName
+
+|CamelAwsStateMachineExecutionInput
+|CamelAwsStepFunctionsExecutionInput
+
+|CamelAwsStateMachineExecutionTraceHeader
+|CamelAwsStepFunctionsExecutionTraceHeader
+
+|CamelAwsStateMachineExecutionHistoryMaxResults
+|CamelAwsStepFunctionsExecutionHistoryMaxResults
+
+|CamelAwsStateMachineExecutionHistoryIncludeExecutionData
+|CamelAwsStepFunctionsExecutionHistoryIncludeExecutionData
+
+|CamelAwsStateMachineExecutionHistoryReverseOrder
+|CamelAwsStepFunctionsExecutionHistoryReverseOrder
+
+|CamelAwsStateMachineExecutionMaxResults
+|CamelAwsStepFunctionsExecutionMaxResults
+|===
+
+This is applicable only if literal constant headers are used such as `CamelAwsStateMachinesMaxResults`. If the headers are used from StepFunctions2Constants Interface like StepFunctions2Constants.STATE_MACHINES_MAX_RESULTS , then there is no change;
+
+For Example before
+
+----
+from("direct:listActivities")
+  .setHeader("CamelAwsStepFunctionsActivitiesMaxResults",5)
+   .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listActivities")
+----
+
+Should be changed to
+
+----
+from("direct:listActivities")
+  .setHeader("CamelAwsStepFunctionsActivitiesMaxResults",5)
+    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listActivities")
+----
 
