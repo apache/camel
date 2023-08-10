@@ -154,10 +154,6 @@ public class Dhis2GetTestCase {
 
     @Test
     public void testCollectionGivenMapOfStringsQueryParams() {
-        DefaultPagingCollectOperation defaultPagingCollectOperation = new DefaultPagingCollectOperation(
-                "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(),
-                getOperation);
-
         Dhis2Response dhis2Response = new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
