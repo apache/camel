@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.htmlxlsx.process;
+package org.apache.camel.maven.htmlxlsx;
 
 import java.util.Collections;
 import java.util.Map;
@@ -22,7 +22,14 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 import org.apache.camel.maven.htmlxlsx.model.CamelContextRouteCoverage;
+import org.apache.camel.maven.htmlxlsx.model.ChildEip;
+import org.apache.camel.maven.htmlxlsx.model.ChildEipStatistic;
+import org.apache.camel.maven.htmlxlsx.model.Components;
+import org.apache.camel.maven.htmlxlsx.model.EipAttribute;
+import org.apache.camel.maven.htmlxlsx.model.EipStatistic;
 import org.apache.camel.maven.htmlxlsx.model.Route;
+import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
+import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.Routes;
 import org.apache.camel.maven.htmlxlsx.model.Test;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
@@ -112,4 +119,57 @@ public class TestUtil {
 
         return result;
     }
+
+    public static ChildEip childEip() {
+
+        ChildEip result = new ChildEip();
+
+        return result;
+    }
+
+    public static ChildEipStatistic childEipStatistic() {
+
+        ChildEipStatistic result = new ChildEipStatistic();
+
+        return result;
+
+    }
+
+    public static Components components() {
+
+        Components result = new Components();
+
+        return result;
+    }
+
+    public static EipAttribute eipAttribute() {
+
+        EipAttribute result = new EipAttribute();
+        result.setId("dont-care");
+        result.setIndex(0);
+
+        return result;
+    }
+
+    public static EipStatistic eipStatistic() {
+
+        EipStatistic result = new EipStatistic();
+
+        return result;
+    }
+
+    public static RouteStatistic routeStatistic() {
+
+        RouteStatistic result = new RouteStatistic();
+
+        return result;
+    }
+
+    public static RouteTotalsStatistic routeTotalsStatistic() {
+
+        RouteTotalsStatistic result = new RouteTotalsStatistic();
+
+        return result;
+    }
+
 }

@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<span th:replace="fragments-static :: common-head-datatables(title=${route.id})"></span>
+<span th:replace="~{fragments-static :: common-head-datatables(title=${route.id})}"></span>
 
 <body>
 
@@ -85,7 +85,7 @@
     </div>
 </div>
 
-<span th:replace="fragments-static :: common-js-datatables"></span>
+<span th:replace="~{fragments-static :: common-js-datatables}"></span>
 <script type="text/javascript">
             $(document).ready(function() {
                 $('#eips').DataTable( {

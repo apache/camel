@@ -16,7 +16,12 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import org.apache.camel.maven.htmlxlsx.TestUtil;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,45 +29,53 @@ import org.mockito.Mockito;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.spy;
 
-public class TestResultParserTest {
+public class XmlToCamelRouteCoverageTest {
 
     @Test
-    public void testTestResultParser() {
+    public void testXmlToCamelRouteCoverageConverter() {
 
         // keep jacoco happy
-        TestResultParser result = new TestResultParser();
+        XmlToCamelRouteCoverageConverter result = new XmlToCamelRouteCoverageConverter();
 
         assertThat(result).isNotNull();
     }
 
     @Test
-    public void testParse() {
+    public void testConvert() throws IOException {
 
-        TestResultParser parser = new TestResultParser();
+        XmlToCamelRouteCoverageConverter converter = new XmlToCamelRouteCoverageConverter();
 
-        TestResult result = parser.parse(TestUtil.testResult());
+        TestResult result = converter.convert(loadXml());
 
         assertAll(
                 () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponents())
+                () -> assertThat(result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponentsMap())
                         .isNotNull());
     }
 
     @Test
-    public void testParseException() {
+    public void testConvertException() throws JsonProcessingException {
 
-        TestResultParser spy = spy(new TestResultParser());
+        XmlToCamelRouteCoverageConverter spy = spy(new XmlToCamelRouteCoverageConverter());
 
         Mockito
                 .doAnswer(invocation -> {
                     throw new TestJsonProcessingException();
                 })
-                .when(spy).objectMapper();
+                .when(spy).readValue(anyString());
 
         assertThrows(RuntimeException.class, () -> {
-            spy.parse(TestUtil.testResult());
+            spy.convert(loadXml());
         });
+    }
+
+    private String loadXml() throws IOException {
+
+        Path path = Paths.get("src/test/resources/XmlToCamelRouteCoverageConverter.xml");
+
+        return new String(Files.readAllBytes(path));
     }
 }

@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<span th:replace="fragments-static :: common-head-datatables(title=${project} + ' Route Coverage')"></span>
+<span th:replace="~{fragments-static :: common-head-datatables(title=${project} + ' - Route Coverage')}"></span>
 
 <body>
 
@@ -58,7 +58,7 @@
     </div>
 </div>
 
-<span th:replace="fragments-static :: common-js-datatables"></span>
+<span th:replace="~{fragments-static :: common-js-datatables}"></span>
 <script type="text/javascript">
             $(document).ready(function() {
                 $('#routes').DataTable( {

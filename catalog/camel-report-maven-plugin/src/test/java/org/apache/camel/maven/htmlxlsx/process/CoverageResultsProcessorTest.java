@@ -24,12 +24,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.maven.htmlxlsx.TestUtil;
 import org.apache.camel.maven.htmlxlsx.model.Route;
 import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -74,8 +73,6 @@ public class CoverageResultsProcessorTest {
     @TempDir
     private File temporaryDirectory;
 
-    private final Log log = new SystemStreamLog();
-
     @Test
     public void testCoverageResultsProcessor() {
 
@@ -101,7 +98,7 @@ public class CoverageResultsProcessorTest {
         MavenProject mavenProject = new MavenProject();
         mavenProject.setName(RESOURCES);
 
-        processor.generateReport(mavenProject, log, xmlPath(), htmlPath, xlsxPath);
+        processor.generateReport(mavenProject, xmlPath(), htmlPath, xlsxPath);
 
         assertAll(
                 () -> assertThat(Files.exists(Paths.get(indexPath().getPath()))).isTrue(),

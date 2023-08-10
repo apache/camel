@@ -47,6 +47,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.apache.camel.maven.htmlxlsx.process.CoverageResultsProcessor;
 import org.apache.camel.maven.model.RouteCoverageNode;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
@@ -141,6 +142,12 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.generateJacocoXmlReport", defaultValue = "false")
     private boolean generateJacocoXmlReport;
+
+    /**
+     * Whether to generate a coverage-report in HTML and XLSX format.
+     */
+    @Parameter(property = "camel.generateHtmlXlsxReport", defaultValue = "false")
+    private boolean generateHtmlXlsxReport;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -266,7 +273,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         if (generateJacocoXmlReport && report != null) {
             try {
-                getLog().info("Generating Jacoco XML report: " + file);
+                getLog().info("Generating Jacoco XML report: " + file + "\n\n");
                 createJacocoXmlFile(document, file);
             } catch (Exception e) {
                 getLog().warn("Error generating Jacoco XML report due " + e.getMessage());
@@ -311,7 +318,28 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     }
                 }
             } catch (Exception e) {
-                throw new MojoExecutionException("Error during gathering route coverage data", e);
+                throw new MojoExecutionException("Error during gathering route coverage data ", e);
+            }
+        }
+
+        if (generateHtmlXlsxReport && generateJacocoXmlReport && report != null) {
+            try {
+                final File htmlPath = new File(project.getBasedir() + "/target/site/route-coverage/html");
+                if (!htmlPath.exists()) {
+                    htmlPath.mkdirs();
+                }
+                final File xlsxPath = new File(project.getBasedir() + "/target/site/route-coverage/xlsx");
+                if (!xlsxPath.exists()) {
+                    xlsxPath.mkdirs();
+                }
+                getLog().info("");
+                getLog().info("Generating HTML and XLSX route coverage reports: " + htmlPath + ", " + xlsxPath + "\n");
+                CoverageResultsProcessor processor = new CoverageResultsProcessor();
+                File xmlPath = new File(project.getBasedir() + "/target/camel-route-coverage");
+                String out = processor.generateReport(project, xmlPath, htmlPath, xlsxPath);
+                getLog().info(out);
+            } catch (Exception e) {
+                getLog().warn("Error generating HTML and XLSX route coverage reports " + e.getMessage());
             }
         }
 

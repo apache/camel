@@ -37,7 +37,6 @@ import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
 import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.project.MavenProject;
 
 public class CoverageResultsProcessor {
@@ -68,10 +67,10 @@ public class CoverageResultsProcessor {
 
     private Log log;
 
-    public void generateReport(MavenProject project, Log log, final File xmlPath, final File htmlPath, final File xlsxPath)
+    public String generateReport(MavenProject project, final File xmlPath, final File htmlPath, final File xlsxPath)
             throws IOException {
 
-        this.log = log;
+        String out;
 
         parseAllTestResults(xmlPath);
 
@@ -89,19 +88,12 @@ public class CoverageResultsProcessor {
 
             generateExcel(xlsxPath);
 
-            getLog().info(String.format("%d routes found%n", routeStatisticMap.size()));
+            out = String.format("Generated HTML and XLSX reports for %d routes%n%n", routeStatisticMap.size());
         } else {
-            getLog().warn("No routes found.");
-        }
-    }
-
-    protected Log getLog() {
-
-        if (log == null) {
-            log = new SystemStreamLog();
+            out = "No routes found. No HTML and XLSX reports were generated%n";
         }
 
-        return log;
+        return out;
     }
 
     protected void parseAllTestResults(final File xmlPath) throws IOException {
@@ -148,13 +140,7 @@ public class CoverageResultsProcessor {
                         eipStatistic.setTotalProcessingTime(eipAttribute.getTotalProcessingTime());
                         eipStatistic.setProperties(eipAttribute.getProperties());
 
-                        getLog().info(eipStatistic.toString());
-                        getLog().info(eipAttribute.getChildEipMap().toString());
-
                         eipAttribute.getChildEipMap().forEach((childKey, childEipList) -> {
-
-                            getLog().info(childKey);
-                            getLog().info(childEipList.toString());
 
                             childEipList.forEach(childEip -> {
                                 ChildEipStatistic childEipStatistic = new ChildEipStatistic();
@@ -180,8 +166,6 @@ public class CoverageResultsProcessor {
             routeStatistic.setEipStatisticMap(eipStatisticMap);
             routeStatisticMap.put(route.getId(), routeStatistic);
         }
-
-        routeStatisticMap.values().forEach(routeStatistic -> getLog().debug(routeStatistic.toString()));
     }
 
     protected void generateChildEipStatistics(ChildEip childEip, ChildEipStatistic childEipStatistic) {
@@ -250,10 +234,10 @@ public class CoverageResultsProcessor {
                     }
                 } catch (Throwable t) {
                     // this is an edge case that needs to be identified. Log some useful debugging information.
-                    getLog().info(t.getClass().toString());
-                    getLog().info(String.format("routeID: %s", routeId));
-                    getLog().info(String.format("route: %s", route));
-                    getLog().info(String.format("mappedRoute: %s", mappedRoute != null ? mappedRoute.toString() : "null"));
+                    System.out.println(t.getClass().toString());
+                    System.out.println(String.format("routeID: %s", routeId));
+                    System.out.println(String.format("route: %s", route));
+                    System.out.println(String.format("mappedRoute: %s", mappedRoute != null ? mappedRoute.toString() : "null"));
                 }
             });
         });

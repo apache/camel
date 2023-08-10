@@ -39,9 +39,15 @@ public class XmlToCamelRouteCoverageConverter {
 
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
 
-            return objectMapper.readValue(json, TestResult.class);
+            return readValue(json);
         } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    protected TestResult readValue(String json) throws JsonProcessingException {
+
+        return objectMapper.readValue(json, TestResult.class);
+
     }
 }
