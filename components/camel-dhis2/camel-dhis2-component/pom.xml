@@ -46,6 +46,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-dhis2-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -110,7 +114,6 @@
                                     <proxyClass>org.apache.camel.component.dhis2.api.Dhis2Get</proxyClass>
                                     <fromJavasource />
                                     <nullableOptions>
-                                        <nullableOption>itemType</nullableOption>
                                         <nullableOption>paging</nullableOption>
                                         <nullableOption>fields</nullableOption>
                                         <nullableOption>filter</nullableOption>
