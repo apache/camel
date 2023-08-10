@@ -26,7 +26,7 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
-         description = "Export Camel integration to Spring Boot or Quarkus based project")
+         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)")
 public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {
