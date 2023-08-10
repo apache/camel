@@ -32,6 +32,10 @@
     <name>Camel :: Spring Web Services</name>
     <description>Camel support for Spring Web Services</description>
 
+    <properties>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+    </properties>
+
     <dependencies>
 
         <dependency>
