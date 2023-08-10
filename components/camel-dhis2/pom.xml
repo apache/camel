@@ -34,7 +34,7 @@
     <description>Camel DHIS2 Component</description>
 
     <properties>
-        <dhis2-java-sdk.version>2.0.0</dhis2-java-sdk.version>
+        <dhis2-java-sdk.version>2.1.0</dhis2-java-sdk.version>
     </properties>
 
     <modules>

@@ -21,10 +21,9 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
 public enum Dhis2GetApiMethod implements ApiMethod {
 
     COLLECTION(
-        java.util.Iterator.class,
+        java.io.InputStream.class,
         "collection",
         arg("path", String.class),
-        arg("itemType", String.class),
         arg("arrayName", String.class),
         arg("paging", Boolean.class),
         arg("fields", String.class),

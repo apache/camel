@@ -154,10 +154,6 @@ public class Dhis2GetTestCase {
 
     @Test
     public void testCollectionGivenMapOfStringsQueryParams() {
-        DefaultPagingCollectOperation defaultPagingCollectOperation = new DefaultPagingCollectOperation(
-                "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(),
-                getOperation);
-
         Dhis2Response dhis2Response = new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
@@ -184,7 +180,7 @@ public class Dhis2GetTestCase {
                         "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
-        dhis2Get.collection("bunnies", null, "bunnies", null, null, null, null, Map.of("foo", "bar"));
+        dhis2Get.collection("bunnies", "bunnies", null, null, null, null, Map.of("foo", "bar"));
         verify(getOperation, times(1)).withParameter("foo", "bar");
     }
 
@@ -216,7 +212,7 @@ public class Dhis2GetTestCase {
                         new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
-        dhis2Get.collection("bunnies", null, "bunnies", null, null, null, RootJunctionEnum.OR, null);
+        dhis2Get.collection("bunnies", "bunnies", null, null, null, RootJunctionEnum.OR, null);
         verify(getOperation, times(1)).withOrRootJunction();
     }
 
@@ -246,7 +242,7 @@ public class Dhis2GetTestCase {
                 "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
-        dhis2Get.collection("bunnies", null, "bunnies", null, null, null, RootJunctionEnum.AND, null);
+        dhis2Get.collection("bunnies", "bunnies", null, null, null, RootJunctionEnum.AND, null);
         verify(getOperation, times(1)).withAndRootJunction();
     }
 }

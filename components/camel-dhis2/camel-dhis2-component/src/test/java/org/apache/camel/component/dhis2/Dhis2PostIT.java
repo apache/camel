@@ -63,7 +63,7 @@ public class Dhis2PostIT extends AbstractDhis2TestSupport {
                 headers);
 
         assertNotNull(result, "resource result");
-        LOG.debug("resource: " + result);
+        LOG.debug("Result: {}", result);
     }
 
     @Override

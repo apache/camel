@@ -46,7 +46,7 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
         apiMethods.put(Dhis2ResourceTablesApiMethod.class, Dhis2ApiName.RESOURCE_TABLES);
 
         aliases.clear();
-        nullableArgs = Arrays.asList("itemType", "paging", "fields", "filter", "rootJunction", "queryParams");
+        nullableArgs = Arrays.asList("paging", "fields", "filter", "rootJunction", "queryParams");
         apiHelpers.put(Dhis2ApiName.GET, new ApiMethodHelper<Dhis2GetApiMethod>(Dhis2GetApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2GetApiMethod.class, Dhis2ApiName.GET);
 

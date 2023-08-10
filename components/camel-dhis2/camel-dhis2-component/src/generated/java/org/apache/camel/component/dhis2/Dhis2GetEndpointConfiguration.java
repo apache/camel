@@ -16,7 +16,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "get", 
            description = "",
-           apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.util.Iterator collection(String path, String itemType, String arrayName, Boolean paging, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.io.InputStream collection(String path, String arrayName, Boolean paging, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
@@ -29,9 +29,6 @@ public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "collection"), @ApiMethod(methodName = "resource")})
     private String filter;
-    @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "collection")})
-    private String itemType;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "collection")})
     private Boolean paging;
@@ -67,14 +64,6 @@ public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
 
     public void setFilter(String filter) {
         this.filter = filter;
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
     }
 
     public Boolean getPaging() {
