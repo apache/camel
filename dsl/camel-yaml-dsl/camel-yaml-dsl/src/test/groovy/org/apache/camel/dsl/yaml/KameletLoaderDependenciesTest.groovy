@@ -38,7 +38,7 @@ class KameletLoaderDependenciesTest extends YamlTestSupport {
     def "kamelet dependencies"() {
         when:
             loadKamelets('''
-                apiVersion: camel.apache.org/v1alpha1
+                apiVersion: camel.apache.org/v1
                 kind: Kamelet
                 metadata:
                   name: myDependency
