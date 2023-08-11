@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-step-functions",
     "title": "AWS StepFunctions",
-    "description": "Manage and invoke AWS Step functions using AWS SDK version 2.x.",
+    "description": "Manage and invoke AWS Step functions.",
     "deprecated": false,
     "firstVersion": "4.0.0",
     "label": "cloud,serverless",

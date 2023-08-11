@@ -2,7 +2,7 @@
 :doctitle: AWS Security Token Service (STS)
 :shortname: aws2-sts
 :artifactid: camel-aws2-sts
-:description: Manage AWS STS cluster instances using AWS SDK version 2.x.
+:description: Manage AWS STS cluster instances.
 :since: 3.5
 :supportlevel: Stable
 :tabs-sync-option:

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.ses.SesClient;
 
 /**
- * Send e-mails through AWS SES service using AWS SDK version 2.x.
+ * Send e-mails through AWS SES service.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS Simple Email Service (SES)", syntax = "aws2-ses:from",
              producerOnly = true, category = { Category.CLOUD, Category.MAIL }, headersClass = Ses2Constants.class)

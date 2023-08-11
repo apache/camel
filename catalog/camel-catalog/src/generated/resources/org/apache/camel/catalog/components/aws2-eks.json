@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-eks",
     "title": "AWS Elastic Kubernetes Service (EKS)",
-    "description": "Manage AWS EKS cluster instances using AWS SDK version 2.x.",
+    "description": "Manage AWS EKS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,management",

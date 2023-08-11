@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-s3",
     "title": "AWS S3 Storage Service",
-    "description": "Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.",
+    "description": "Store and retrieve objects from AWS S3 Storage Service.",
     "deprecated": false,
     "firstVersion": "3.2.0",
     "label": "cloud,file",

@@ -2,7 +2,7 @@
 :doctitle: AWS Simple Email Service (SES)
 :shortname: aws2-ses
 :artifactid: camel-aws2-ses
-:description: Send e-mails through AWS SES service using AWS SDK version 2.x.
+:description: Send e-mails through AWS SES service.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:

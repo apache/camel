@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-sqs",
     "title": "AWS Simple Queue Service (SQS)",
-    "description": "Send and receive messages to\/from AWS SQS service using AWS SDK version 2.x.",
+    "description": "Send and receive messages to\/from AWS SQS.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,messaging",

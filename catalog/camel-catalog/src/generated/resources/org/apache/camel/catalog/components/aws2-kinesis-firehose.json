@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-kinesis-firehose",
     "title": "AWS Kinesis Firehose",
-    "description": "Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.",
+    "description": "Produce data to AWS Kinesis Firehose streams.",
     "deprecated": false,
     "firstVersion": "3.2.0",
     "label": "cloud,messaging",

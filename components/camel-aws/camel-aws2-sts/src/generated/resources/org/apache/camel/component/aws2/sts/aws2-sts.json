@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-sts",
     "title": "AWS Security Token Service (STS)",
-    "description": "Manage AWS STS cluster instances using AWS SDK version 2.x.",
+    "description": "Manage AWS STS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "cloud,management",

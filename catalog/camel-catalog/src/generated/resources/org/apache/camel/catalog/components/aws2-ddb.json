@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-ddb",
     "title": "AWS DynamoDB",
-    "description": "Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.",
+    "description": "Store and retrieve data from AWS DynamoDB.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,database",

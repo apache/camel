@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-kinesis",
     "title": "AWS Kinesis",
-    "description": "Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.",
+    "description": "Consume and produce records from and to AWS Kinesis Streams.",
     "deprecated": false,
     "firstVersion": "3.2.0",
     "label": "cloud,messaging",

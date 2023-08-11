@@ -47,7 +47,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 /**
- * Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
+ * Store and retrieve data from AWS DynamoDB.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS DynamoDB", syntax = "aws2-ddb:tableName",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE },

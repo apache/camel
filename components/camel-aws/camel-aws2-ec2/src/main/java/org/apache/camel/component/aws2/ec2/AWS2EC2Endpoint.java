@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
 /**
- * Manage AWS EC2 instances using AWS SDK version 2.x.
+ * Manage AWS EC2 instances.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS Elastic Compute Cloud (EC2)",
              syntax = "aws2-ec2:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

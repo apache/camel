@@ -2,7 +2,7 @@
 :doctitle: AWS Eventbridge
 :shortname: aws2-eventbridge
 :artifactid: camel-aws2-eventbridge
-:description: Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+:description: Send events to AWS Eventbridge cluster instances.
 :since: 3.6
 :supportlevel: Stable
 :tabs-sync-option:

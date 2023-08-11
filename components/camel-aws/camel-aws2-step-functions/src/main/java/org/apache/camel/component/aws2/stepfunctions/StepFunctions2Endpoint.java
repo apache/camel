@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.sfn.SfnClient;
 
 /**
- * Manage and invoke AWS Step functions using AWS SDK version 2.x.
+ * Manage and invoke AWS Step functions.
  */
 @UriEndpoint(firstVersion = "4.0.0", scheme = "aws2-step-functions", title = "AWS StepFunctions",
              syntax = "aws2-step-functions:label",

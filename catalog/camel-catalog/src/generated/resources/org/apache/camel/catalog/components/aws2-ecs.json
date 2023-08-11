@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-ecs",
     "title": "AWS Elastic Container Service (ECS)",
-    "description": "Manage AWS ECS cluster instances using AWS SDK version 2.x.",
+    "description": "Manage AWS ECS cluster instances.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,management",

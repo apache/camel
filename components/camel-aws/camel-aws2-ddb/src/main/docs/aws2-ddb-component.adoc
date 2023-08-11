@@ -2,7 +2,7 @@
 :doctitle: AWS DynamoDB
 :shortname: aws2-ddb
 :artifactid: camel-aws2-ddb
-:description: Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
+:description: Store and retrieve data from AWS DynamoDB.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
