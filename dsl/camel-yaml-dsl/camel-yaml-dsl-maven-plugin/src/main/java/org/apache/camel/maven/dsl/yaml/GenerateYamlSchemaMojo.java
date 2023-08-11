@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -48,6 +51,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.StringUtils;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
@@ -109,6 +113,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     }
                 });
 
+        Set<String> inheritedDefinitions = new HashSet<>();
+        Set<String> inlineDefinitions = new HashSet<>();
         for (Map.Entry<String, ClassInfo> entry : types.entrySet()) {
             Set<String> nodes = annotationValue(entry.getValue(), YAML_TYPE_ANNOTATION, "nodes")
                     .map(AnnotationValue::asStringArray)
@@ -137,7 +143,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 }
             }
 
-            generate(entry.getKey(), entry.getValue());
+            generate(entry.getKey(), entry.getValue(), inheritedDefinitions, inlineDefinitions);
         }
 
         // filter out unwanted cases when in camelCase mode
@@ -147,6 +153,10 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             }
             kebabToCamelCase(step);
             kebabToCamelCase(root.withObject("/items"));
+        }
+
+        if (!inheritedDefinitions.isEmpty()) {
+            postProcessInheritance(inheritedDefinitions, inlineDefinitions);
         }
 
         try {
@@ -160,7 +170,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
     }
 
-    private void generate(String type, ClassInfo info) {
+    private void generate(String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
         final ObjectNode definition = definitions.withObject("/" + type);
         final List<AnnotationInstance> properties = new ArrayList<>();
 
@@ -179,10 +189,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         ObjectNode objectDefinition = definition;
 
         if (annotationValue(info, YAML_TYPE_ANNOTATION, "inline").map(AnnotationValue::asBoolean).orElse(false)) {
-            ArrayNode anyOf = definition.withArray("oneOf");
-            anyOf.addObject().put("type", "string");
+            ArrayNode oneOf = definition.withArray("oneOf");
+            oneOf.addObject().put("type", "string");
 
-            objectDefinition = anyOf.addObject();
+            objectDefinition = oneOf.addObject();
+            inlineDefinitions.add(type);
         }
 
         objectDefinition.put("type", "object");
@@ -195,6 +206,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         properties.sort(
                 Comparator.comparing(property -> annotationValue(property, "name").map(AnnotationValue::asString).orElse("")));
 
+        Map<String, ObjectNode> oneOfGroups = new HashMap<>();
         for (AnnotationInstance property : properties) {
             final String propertyName = annotationValue(property, "name")
                     .map(AnnotationValue::asString)
@@ -208,7 +220,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             final String propertyDisplayName = annotationValue(property, "displayName")
                     .map(AnnotationValue::asString)
                     .orElse("");
-            final boolean propertyRequired = annotationValue(property, "required")
+            boolean propertyRequired = annotationValue(property, "required")
                     .map(AnnotationValue::asBoolean)
                     .orElse(false);
             final boolean propertyDeprecated = annotationValue(property, "deprecated")
@@ -220,22 +232,39 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             final String propertyFormat = annotationValue(property, "format")
                     .map(AnnotationValue::asString)
                     .orElse("");
+            final String propertyOneOf = annotationValue(property, "oneOf")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
+
+            boolean isInOneOf = !StringUtils.isEmpty(propertyOneOf);
+            if (isInOneOf) {
+                if (!oneOfGroups.containsKey(propertyOneOf)) {
+                    var oneOfGroup = objectDefinition.withArray("anyOf").addObject();
+                    oneOfGroups.put(propertyOneOf, oneOfGroup);
+                }
+            }
 
             //
             // Internal properties
             //
             if (propertyName.equals("__extends") && propertyType.startsWith("object:")) {
                 String objectRef = StringHelper.after(propertyType, ":");
-                definition
-                        .withArray("anyOf")
-                        .addObject()
-                        .put("$ref", "#/items/definitions/" + objectRef);
-
+                if (isInOneOf) {
+                    var oneOf = oneOfGroups.get(propertyOneOf).withArray("oneOf");
+                    var entry = oneOf.addObject();
+                    entry.put("$ref", "#/items/definitions/" + objectRef);
+                    if (!propertyRequired) {
+                        makeOptional(oneOf, entry);
+                    }
+                } else {
+                    objectDefinition.put("$ref", "#/items/definitions/" + objectRef);
+                }
+                inheritedDefinitions.add(objectRef);
                 continue;
             }
             if (propertyName.equals("__extends") && propertyType.startsWith("array:")) {
                 String objectRef = StringHelper.after(propertyType, ":");
-                definition
+                objectDefinition
                         .put("type", "array")
                         .withObject("/items")
                         .put("$ref", "#/items/definitions/" + objectRef);
@@ -247,8 +276,21 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 continue;
             }
 
+            var finalObjectDefinition = objectDefinition;
+            if (isInOneOf) {
+                var oneOf = oneOfGroups.get(propertyOneOf).withArray("oneOf");
+                var entry = oneOf.addObject();
+                entry.put("type", "object");
+                entry.withArray("required").add(propertyName);
+                if (!propertyRequired) {
+                    makeOptional(oneOf, entry);
+                }
+                finalObjectDefinition = entry;
+                propertyRequired = false;
+            }
+
             setProperty(
-                    objectDefinition,
+                    finalObjectDefinition,
                     propertyName,
                     propertyType,
                     propertyDescription,
@@ -397,4 +439,201 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 });
     }
 
+    private void makeOptional(ArrayNode parent, ObjectNode target) {
+        ObjectNode negations = StreamSupport.stream(parent.spliterator(), false)
+                .map(ObjectNode.class::cast)
+                .filter(entry -> entry.has("not"))
+                .findAny()
+                .orElseGet(parent::addObject);
+        negations.withObject("/not");
+        if (target.has("required")) {
+            extractRequiredFromComposition(negations, target);
+            var required = target.withArray("required");
+            negations.withObject("/not")
+                    .withArray("anyOf")
+                    .addObject()
+                    .withArray("required")
+                    .addAll(required);
+        } else if (target.has("$ref")) {
+            // At this point, referred object might not yet be processed.
+            // Just copy the $ref and let postProcessInheritance() handle it.
+            negations.withObject("/not")
+                    .withArray("anyOf")
+                    .addObject()
+                    .set("$ref", target.get("$ref"));
+        }
+    }
+
+    private void extractRequiredFromComposition(ObjectNode negations, ObjectNode object) {
+        ArrayNode composition = extractComposition(object);
+        if (composition == null) {
+            return;
+        }
+
+        composition.forEach(compositionEntry -> {
+            if (!compositionEntry.has("$ref")) {
+                String parentName = StringHelper.after(compositionEntry.get("$ref").asText(), "/definitions/");
+                ObjectNode referredObject = definitions.withObject("/" + parentName);
+                extractRequiredFromComposition(negations, referredObject);
+                if (referredObject.has("required")) {
+                    negations.withObject("/not")
+                            .withArray("anyOf")
+                            .addObject()
+                            .withArray("required")
+                            .addAll((ArrayNode) referredObject.withArray("required"));
+                }
+                return;
+            }
+            if (compositionEntry.has("required")) {
+                negations.withObject("/not")
+                        .withArray("anyOf")
+                        .addObject()
+                        .withArray("required")
+                        .addAll((ArrayNode) compositionEntry.withArray("required"));
+            }
+        });
+    }
+
+    /**
+     * Post-process the definitions to handle inheritance with schema composition. When a definition has "$ref" to refer
+     * other definition, it's possible that the referred definition is not yet generated in the {@link #generate()} main
+     * process, therefore some jobs are left unprocessed. This method handles the rest of the jobs for such cases.
+     *
+     * @param inheritedDefinitions The name of the definitions that are inherited by other definitions
+     * @param inlineDefinitions    The name of the definitions that has inline option enabled
+     */
+    private void postProcessInheritance(Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
+        // additionalProperties=false prevents inheritance with allOf/anyOf/oneOf
+        // Remove it to be true by default
+        for (String inherited : inheritedDefinitions) {
+            ObjectNode node = definitions.withObject("/" + inherited);
+            node.remove("additionalProperties");
+        }
+
+        // Redeclare the inherited properties
+        // https://json-schema.org/understanding-json-schema/reference/object.html#extending-closed-schemas
+        // TODO Consider using unevaluatedProperties instead once we update to draft-2019-09 or later
+        // https://json-schema.org/understanding-json-schema/reference/object.html#unevaluated-properties
+        definitions.properties().forEach(entry -> {
+            String name = entry.getKey();
+            JsonNode temp = entry.getValue();
+            if (inlineDefinitions.contains(name)) {
+                temp = temp.withArray("oneOf").get(1);
+            }
+            if (temp.has("anyOf")) {
+                final var definition = temp;
+                StreamSupport.stream(temp.withArray("anyOf").spliterator(), false)
+                        .forEach(group -> postProcessComposition(name, definition, group, inheritedDefinitions));
+            } else {
+                postProcessComposition(name, temp, temp, inheritedDefinitions);
+            }
+        });
+    }
+
+    private ArrayNode extractComposition(JsonNode target) {
+        if (target.has("allOf")) {
+            return target.withArray("allOf");
+        } else if (target.has("oneOf")) {
+            return target.withArray("oneOf");
+        } else if (target.has("anyOf")) {
+            return target.withArray("anyOf");
+        } else {
+            return null;
+        }
+    }
+
+    private void postProcessComposition(
+            String name, JsonNode definition, JsonNode inherited, Set<String> inheritedDefinitions) {
+        ArrayNode composition = extractComposition(inherited);
+        if (composition == null) {
+            return;
+        }
+
+        int indexToRemove = -1;
+        for (int i = 0; i < composition.size(); i++) {
+            var compositionEntry = composition.get(i);
+            if (compositionEntry.has("not")) {
+                if (inheritedDefinitions.contains(name)) {
+                    indexToRemove = i;
+                    continue;
+                }
+                postProcessNot(compositionEntry.withObject("/not"));
+                continue;
+            }
+            if (compositionEntry.has("properties")) {
+                compositionEntry.withObject("/properties")
+                        .properties()
+                        .stream()
+                        .filter(prop -> !definition.withObject("/properties").has(prop.getKey()))
+                        .forEach(prop -> definition.withObject("/properties").putObject(prop.getKey()));
+            }
+            postProcessComposition(name, definition, compositionEntry, inheritedDefinitions);
+
+            if (!compositionEntry.has("$ref")) {
+                continue;
+            }
+            String parentName = StringHelper.after(compositionEntry.get("$ref").asText(), "/definitions/");
+            if (!inheritedDefinitions.contains(parentName)) {
+                continue;
+            }
+            JsonNode parent = definitions.withObject("/" + parentName);
+            postProcessComposition(parentName, definition, parent, inheritedDefinitions);
+            parent
+                    .withObject("/properties")
+                    .properties()
+                    .stream()
+                    .filter(prop -> !definition.withObject("/properties").has(prop.getKey()))
+                    .forEach(prop -> definition.withObject("/properties").putObject(prop.getKey()));
+        }
+        if (indexToRemove >= 0) {
+            composition.remove(indexToRemove);
+        }
+    }
+
+    private void postProcessNot(JsonNode notEntry) {
+        ArrayNode notAnyOf = notEntry.withArray("anyOf");
+        List<ArrayNode> extractedRequired = new ArrayList<>();
+        StreamSupport.stream(notAnyOf.spliterator(), false)
+                .filter(n -> n.has("$ref"))
+                .forEach(n -> postProcessNotRef(extractedRequired, n));
+        var processed = ((ObjectNode) notEntry).putArray("anyOf");
+        StreamSupport.stream(notAnyOf.spliterator(), false)
+                .filter(n -> !n.has("$ref"))
+                .forEach(processed::add);
+        extractedRequired.forEach(required -> processed
+                .addObject()
+                .withArray("required")
+                .addAll(required));
+    }
+
+    private void postProcessNotRef(List<ArrayNode> extracted, JsonNode objectWithRef) {
+        String parentName = StringHelper.after(objectWithRef.get("$ref").asText(), "/definitions/");
+        ObjectNode referredObject = definitions.withObject("/" + parentName);
+        postProcessNotRefComposition(extracted, referredObject);
+    }
+
+    private void postProcessNotRefComposition(List<ArrayNode> extracted, ObjectNode node) {
+        if (node.has("$ref")) {
+            postProcessNotRef(extracted, node);
+            return;
+        }
+        if (node.has("required")) {
+            extracted.add(node.withArray("required"));
+            return;
+        }
+        var composition = extractComposition(node);
+        if (composition != null) {
+            StreamSupport.stream(composition.spliterator(), false)
+                    .map(ObjectNode.class::cast)
+                    .forEach(entry -> {
+                        if (entry.has("$ref")) {
+                            postProcessNotRef(extracted, entry);
+                        } else if (entry.has("required")) {
+                            extracted.add(entry.withArray("required"));
+                        } else {
+                            postProcessNotRefComposition(extracted, entry);
+                        }
+                    });
+        }
+    }
 }
