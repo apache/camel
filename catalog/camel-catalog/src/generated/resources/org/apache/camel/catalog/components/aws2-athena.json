@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-athena",
     "title": "AWS Athena",
-    "description": "Access AWS Athena service using AWS SDK version 2.x.",
+    "description": "Access AWS Athena.",
     "deprecated": false,
     "firstVersion": "3.4.0",
     "label": "cloud,database",

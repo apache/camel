@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-lambda",
     "title": "AWS Lambda",
-    "description": "Manage and invoke AWS Lambda functions using AWS SDK version 2.x.",
+    "description": "Manage and invoke AWS Lambda functions.",
     "deprecated": false,
     "firstVersion": "3.2.0",
     "label": "cloud,serverless",

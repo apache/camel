@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.sts.StsClient;
 
 /**
- * Manage AWS STS cluster instances using AWS SDK version 2.x.
+ * Manage AWS STS cluster instances.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "aws2-sts", title = "AWS Security Token Service (STS)",
              syntax = "aws2-sts:label", producerOnly = true, category = {

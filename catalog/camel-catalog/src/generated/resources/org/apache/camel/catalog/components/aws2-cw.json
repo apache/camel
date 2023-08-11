@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-cw",
     "title": "AWS CloudWatch",
-    "description": "Sending metrics to AWS CloudWatch using AWS SDK version 2.x.",
+    "description": "Sending metrics to AWS CloudWatch.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,monitoring",

@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 /**
- * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+ * Manage secrets using AWS Secrets Manager.
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "aws-secrets-manager", title = "AWS Secrets Manager",
              syntax = "aws-secrets-manager:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

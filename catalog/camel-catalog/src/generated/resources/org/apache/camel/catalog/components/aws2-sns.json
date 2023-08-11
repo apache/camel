@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-sns",
     "title": "AWS Simple Notification System (SNS)",
-    "description": "Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.",
+    "description": "Send messages to AWS Simple Notification Topic.",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "cloud,messaging,mobile",

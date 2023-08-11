@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.iam.IamClient;
 
 /**
- * Manage AWS IAM instances using AWS SDK version 2.x.
+ * Manage AWS IAM instances.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-iam", title = "AWS Identity and Access Management (IAM)",
              syntax = "aws2-iam:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

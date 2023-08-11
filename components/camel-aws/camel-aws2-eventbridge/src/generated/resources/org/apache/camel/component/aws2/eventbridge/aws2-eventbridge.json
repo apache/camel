@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "aws2-eventbridge",
     "title": "AWS Eventbridge",
-    "description": "Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.",
+    "description": "Send events to AWS Eventbridge cluster instances.",
     "deprecated": false,
     "firstVersion": "3.6.0",
     "label": "cloud,management",

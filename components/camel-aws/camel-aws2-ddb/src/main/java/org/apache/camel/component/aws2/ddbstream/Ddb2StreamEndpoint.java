@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 /**
- * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
+ * Receive messages from AWS DynamoDB Stream.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
              syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING })
