@@ -235,6 +235,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         edAnnotation.addMember("types", "org.apache.camel.model.language.ExpressionDefinition.class");
         edAnnotation.addMember("order", "org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1");
 
+        String oneOfGroup = "expression";
         elementsOf(EXPRESSION_DEFINITION_CLASS).entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(
@@ -245,7 +246,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                     yamlPropertyWithSubtype(
                                             e.getKey(),
                                             "object",
-                                            e.getValue().name().toString()));
+                                            e.getValue().name().toString(),
+                                            oneOfGroup));
 
                             if (!e.getKey().equals(StringHelper.camelCaseToDash(e.getKey()))) {
                                 edAnnotation.addMember(
@@ -254,7 +256,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         yamlPropertyWithSubtype(
                                                 StringHelper.camelCaseToDash(e.getKey()),
                                                 "object",
-                                                e.getValue().name().toString()));
+                                                e.getValue().name().toString(),
+                                                oneOfGroup));
                             }
                         });
 
@@ -290,7 +293,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                     yamlPropertyWithSubtype(
                                             e.getKey(),
                                             "object",
-                                            e.getValue().name().toString()));
+                                            e.getValue().name().toString(),
+                                            oneOfGroup));
 
                             if (!e.getKey().equals(StringHelper.camelCaseToDash(e.getKey()))) {
                                 esdAnnotation.addMember(
@@ -299,7 +303,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         yamlPropertyWithSubtype(
                                                 StringHelper.camelCaseToDash(e.getKey()),
                                                 "object",
-                                                e.getValue().name().toString()));
+                                                e.getValue().name().toString(),
+                                                oneOfGroup));
                             }
                         });
 
@@ -595,7 +600,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 properties.add(
                         yamlProperty(
                                 "__extends",
-                                "object:org.apache.camel.model.language.ExpressionDefinition"));
+                                "object:org.apache.camel.model.language.ExpressionDefinition",
+                                "expression"));
             }
         } else {
             setProperty.beginControlFlow("default:");
@@ -763,6 +769,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         .withDisplayName(descriptor.displayName(fieldName))
                                         .withDefaultValue(descriptor.defaultValue(fieldName))
                                         .withIsSecret(descriptor.isSecret(fieldName))
+                                        .withOneOf(field.name())
                                         .build());
                     }
                 }
@@ -1223,6 +1230,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         .withDisplayName(descriptor.displayName(fieldName))
                                         .withDefaultValue(descriptor.defaultValue(fieldName))
                                         .withIsSecret(descriptor.isSecret(fieldName))
+                                        .withOneOf("expression".equals(fieldName) ? "expression" : "")
                                         .build());
                     } else {
                         throw new UnsupportedOperationException(
