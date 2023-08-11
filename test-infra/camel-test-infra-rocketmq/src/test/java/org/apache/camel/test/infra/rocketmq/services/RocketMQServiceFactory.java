@@ -16,9 +16,35 @@
  */
 package org.apache.camel.test.infra.rocketmq.services;
 
+import java.io.IOException;
+
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class RocketMQServiceFactory {
+
+    static class SingletonKRocketMQService extends SingletonService<RocketMQService> implements RocketMQService {
+        public SingletonKRocketMQService(RocketMQService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String nameserverAddress() {
+            return getService().nameserverAddress();
+        }
+
+        @Override
+        public void createTopic(String topic) {
+            getService().createTopic(topic);
+        }
+
+        @Override
+        public void deleteTopic(String topic) throws IOException, InterruptedException {
+            getService().deleteTopic(topic);
+        }
+    }
+
+
     private RocketMQServiceFactory() {
 
     }
@@ -31,5 +57,21 @@ public final class RocketMQServiceFactory {
         return builder()
                 .addLocalMapping(RocketMQContainer::new)
                 .build();
+    }
+
+    public static RocketMQService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final RocketMQService INSTANCE;
+
+        static {
+            SimpleTestServiceBuilder<RocketMQService> instance = builder();
+
+            instance.addLocalMapping(() -> new SingletonKRocketMQService(new RocketMQContainer(), "rocketmq"));
+
+            INSTANCE = instance.build();
+        }
     }
 }
