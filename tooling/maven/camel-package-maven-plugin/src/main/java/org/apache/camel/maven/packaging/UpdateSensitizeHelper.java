@@ -57,7 +57,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     // extra keys that are regarded as secret which may not yet been in any component
     // they MUST be in lowercase and without a dash
     private static final String[] EXTRA_KEYS
-            = new String[] { "apipassword", "apiuser", "apiusername", "api_key", "api_secret" };
+            = new String[] { "apipassword", "apiuser", "apiusername", "api_key", "api_secret", "secret" };
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/")
     protected File jsonDir;
