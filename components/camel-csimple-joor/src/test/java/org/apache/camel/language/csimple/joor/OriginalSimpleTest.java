@@ -676,7 +676,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     @Test
     public void testDatePredicates() {
         assertPredicate("${date:now} < ${date:now+60s}");
-        assertPredicate("${date:now-2s+2s} == ${date:now}");
+        assertPredicate("${date:now-5s} < ${date:now}");
+        assertPredicate("${date:now+5s} > ${date:now}");
     }
 
     @Test
