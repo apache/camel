@@ -93,7 +93,7 @@ Spring specific DefaultCamelBeanPostProcessor which uses Spring BeanPostProcesso
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A groupping POJO (and related XML root element) that's historically associated with entire application (or its
+A grouping POJO (and related XML root element) that's historically associated with entire application (or its
 distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema
 and MX parser methods.
 ]]>
@@ -439,7 +439,7 @@ Enriches a message with data from a secondary resource
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel error handling.
+Error handler settings
 ]]>
       </xs:documentation>
     </xs:annotation>
