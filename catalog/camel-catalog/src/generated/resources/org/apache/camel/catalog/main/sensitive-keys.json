@@ -54,6 +54,7 @@
   "sascredential",
   "sasljaasconfig",
   "sassignature",
+  "secret",
   "secretkey",
   "securerandom",
   "sharedaccesskey",
