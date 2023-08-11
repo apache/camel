@@ -40,7 +40,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "health", description = "Get health check status of running Camel integrations")
+@Command(name = "health", description = "Get health check status of running Camel integrations", sortOptions = false)
 public class ListHealth extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,

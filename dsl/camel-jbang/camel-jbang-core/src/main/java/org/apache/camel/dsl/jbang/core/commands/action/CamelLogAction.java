@@ -47,7 +47,7 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "log",
-                     description = "Tail logs from running Camel integrations")
+                     description = "Tail logs from running Camel integrations", sortOptions = false)
 public class CamelLogAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

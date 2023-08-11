@@ -25,7 +25,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "gc",
-                     description = "Trigger Java Memory Garbage Collector")
+                     description = "Trigger Java Memory Garbage Collector", sortOptions = false)
 public class CamelGCAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")

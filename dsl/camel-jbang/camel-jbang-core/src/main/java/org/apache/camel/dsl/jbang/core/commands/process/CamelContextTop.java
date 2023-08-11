@@ -35,7 +35,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "context",
-         description = "Top status of Camel integrations")
+         description = "Top status of Camel integrations",
+         sortOptions = false)
 public class CamelContextTop extends ProcessWatchCommand {
 
     public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {

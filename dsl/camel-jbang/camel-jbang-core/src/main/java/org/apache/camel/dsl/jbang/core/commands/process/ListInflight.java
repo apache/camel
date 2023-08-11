@@ -34,7 +34,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "inflight",
-         description = "Get inflight messages of Camel integrations")
+         description = "Get inflight messages of Camel integrations", sortOptions = false)
 public class ListInflight extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
