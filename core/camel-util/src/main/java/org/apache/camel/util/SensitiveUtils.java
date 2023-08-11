@@ -81,6 +81,7 @@ public final class SensitiveUtils {
                     "sascredential",
                     "sasljaasconfig",
                     "sassignature",
+                    "secret",
                     "secretkey",
                     "securerandom",
                     "sharedaccesskey",
