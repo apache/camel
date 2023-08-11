@@ -29,6 +29,7 @@
     <bean id="simpleRoute" class="org.apache.camel.component.properties.route2.SpringBeanInjectRoute"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <routeBuilder ref="simpleRoute"/>
     </camelContext>
 

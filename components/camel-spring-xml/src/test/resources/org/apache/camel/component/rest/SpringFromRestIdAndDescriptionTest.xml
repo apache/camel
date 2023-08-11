@@ -32,6 +32,8 @@
     <propertyPlaceholder id="properties" location="custom.properties" ignoreMissingLocation="true">
     </propertyPlaceholder>
 
+      <jmxAgent id="jmx" disabled="true"/>
+
     <rest id="hello" description="Hello Service" path="/say/hello">
       <get id="get-say" description="Says hello to you">
         <to uri="direct:hello"/>

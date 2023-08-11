@@ -27,6 +27,7 @@
   <bean id="myBean" class="org.apache.camel.spring.processor.SpringThrottlerMethodCallTest"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <route>
       <from uri="direct:expressionMethod"/>

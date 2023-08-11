@@ -55,6 +55,7 @@
     <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelUseOriginalInBodyTest$MyThrowProcessor"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route errorHandlerRef="a">
             <from uri="direct:a"/>
             <setBody><simple>${in.body} World</simple></setBody>

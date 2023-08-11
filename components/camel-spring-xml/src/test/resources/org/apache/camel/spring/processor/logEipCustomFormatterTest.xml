@@ -27,6 +27,7 @@
     <bean id="CamelCustomLogMask" class="org.apache.camel.spring.processor.SpringLogEipMaskTest.MockMaskingFormatter"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route id="foo" logMask="true">
             <from uri="direct:foo"/>

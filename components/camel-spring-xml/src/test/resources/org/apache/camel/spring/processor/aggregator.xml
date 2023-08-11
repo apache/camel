@@ -30,6 +30,7 @@
         <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
         <propertyPlaceholder id="properties"
                              ignoreMissingLocation="true" location="classpath:custom.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>

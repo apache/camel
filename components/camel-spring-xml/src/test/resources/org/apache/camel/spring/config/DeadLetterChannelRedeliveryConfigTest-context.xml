@@ -25,6 +25,7 @@
 
 	<!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <template id="myTemplate"/>
 		<!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
         <route errorHandlerRef="myDeadLetterErrorHandler">

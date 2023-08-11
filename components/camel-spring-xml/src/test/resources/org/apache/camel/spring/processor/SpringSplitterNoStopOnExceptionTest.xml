@@ -27,6 +27,7 @@
     <bean id="myProcessor" class="org.apache.camel.processor.SplitterNoStopOnExceptionTest$MyProcessor"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <split stopOnException="false">

@@ -29,6 +29,7 @@
     <bean id="myHelloBean" factory-bean="factoryBean" factory-method="createMyHelloBean"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <bean ref="myHelloBean" method="hello"/>

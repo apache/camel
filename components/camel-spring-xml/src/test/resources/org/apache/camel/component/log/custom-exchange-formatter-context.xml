@@ -27,6 +27,7 @@
     <bean id="logFormatter" class="org.apache.camel.component.log.TestExchangeFormatter" scope="prototype" />
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <to uri="log:aaa?testProperty=aaa" id="log.aaa" />

@@ -24,6 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <errorHandler id="dlc" deadLetterUri="mock:dead" type="DeadLetterChannel"/>
     <route errorHandlerRef="dlc">
       <from uri="seda:a"/>

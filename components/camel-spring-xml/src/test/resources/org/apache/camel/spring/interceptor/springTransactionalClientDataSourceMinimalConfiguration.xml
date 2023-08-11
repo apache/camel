@@ -45,6 +45,7 @@
 
     <!-- START SNIPPET: e2 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:okay"/>
             <!-- we mark this route as transacted. Camel will lookup the spring transaction manager

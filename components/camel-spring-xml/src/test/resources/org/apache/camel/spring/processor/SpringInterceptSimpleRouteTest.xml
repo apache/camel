@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- here we intercept each processing step in the routing and do a detour
              routing where we route the exchange to the mock:intercepted endpoint.
              Think the intercept as a AOP around that is weaven around each and

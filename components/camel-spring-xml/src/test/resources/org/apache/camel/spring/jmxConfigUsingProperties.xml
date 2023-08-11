@@ -28,7 +28,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
 
-        <!-- we can use propery placeholders when we define the JMX agent -->
+        <!-- we can use property placeholders when we define the JMX agent -->
         <jmxAgent id="agent" disabled="{{myjmx.disabled}}"
                   usePlatformMBeanServer="{{myjmx.usePlatform}}"
                   statisticsLevel="RoutesOnly"

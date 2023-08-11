@@ -38,6 +38,8 @@
                              location="classpath:org/apache/camel/component/properties/myprop.properties"
                              xmlns="http://camel.apache.org/schema/spring"/>
 
+        <jmxAgent id="jmx" disabled="true"/>
+
         <route>
             <from uri="direct:start"/>
             <!-- use prop namespace, to define a property placeholder, which maps to

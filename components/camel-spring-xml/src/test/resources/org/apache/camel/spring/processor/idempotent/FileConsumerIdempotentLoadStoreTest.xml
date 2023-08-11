@@ -37,6 +37,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="file://target/data/FileConsumerIdempotentLoadStoreTest/?initialDelay=0&amp;delay=10&amp;idempotent=true&amp;idempotentRepository=#fileStore&amp;move=done/${file:name}"/>
             <to uri="mock:result"/>

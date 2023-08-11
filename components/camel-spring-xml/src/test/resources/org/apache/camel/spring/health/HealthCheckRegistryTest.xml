@@ -28,6 +28,7 @@
   <bean id="hc-repo-routes" class="org.apache.camel.impl.health.RoutesHealthCheckRepository"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route id="foo">
       <from uri="direct:start"/>
       <to uri="mock:foo"/>

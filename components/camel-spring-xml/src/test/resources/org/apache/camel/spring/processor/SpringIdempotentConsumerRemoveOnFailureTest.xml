@@ -27,6 +27,7 @@
     <bean id="exception" class="java.lang.IllegalArgumentException"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <!-- in case of a failure, we still want to regard any message as duplicates -->

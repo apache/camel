@@ -31,6 +31,7 @@
     <bean id="customFactory" class="org.apache.camel.processor.CustomProcessorFactoryTest$MyFactory"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- a simple route -->
         <route>
             <from uri="direct:start"/>

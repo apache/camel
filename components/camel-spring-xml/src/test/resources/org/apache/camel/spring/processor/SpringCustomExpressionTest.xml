@@ -27,6 +27,7 @@
     <bean id="myExpression" class="org.apache.camel.spring.processor.SpringCustomExpressionTest$MyExpression"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <transform>

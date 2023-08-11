@@ -27,6 +27,9 @@
   <bean id="logFormatter" class="org.apache.camel.impl.TraceExchangeFormatter"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
+      <jmxAgent id="jmx" disabled="true"/>
+
       <properties>
           <property key="CamelLogDebugBodyMaxChars" value="20"/>
       </properties>
