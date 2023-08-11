@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.time.Duration;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +39,7 @@ public class FileConsumerFileNameFilterTest extends ContextTestSupport {
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:txt");
         mockEndpoint.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        mockEndpoint.assertIsSatisfied(Duration.ofSeconds(2).toMillis());
+        mockEndpoint.assertIsSatisfied();
     }
 
     @Override
