@@ -32,6 +32,7 @@
     <description>Camel Freemarker support</description>
 
     <properties>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
     <dependencies>

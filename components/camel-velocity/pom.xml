@@ -32,6 +32,10 @@
     <name>Camel :: Velocity</name>
     <description>Camel Velocity support</description>
 
+    <properties>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+    </properties>
+
     <dependencies>
 
         <dependency>
