@@ -71,7 +71,7 @@ public class Bind extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
 
-        // the kamelet binding source and sink can either be a kamelet or an uri
+        // the pipe source and sink can either be a kamelet or an uri
         String in = "kamelet";
         String out = "kamelet";
         if (source.contains(":")) {
@@ -81,7 +81,7 @@ public class Bind extends CamelCommand {
             out = "uri";
         }
 
-        InputStream is = Bind.class.getClassLoader().getResourceAsStream("templates/binding-" + in + "-" + out + ".yaml.tmpl");
+        InputStream is = Bind.class.getClassLoader().getResourceAsStream("templates/pipe-" + in + "-" + out + ".yaml.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 

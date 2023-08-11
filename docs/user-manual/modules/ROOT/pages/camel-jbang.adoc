@@ -853,17 +853,17 @@ camel version list --runtime=quarkus
 
 TIP: See more options with `camel version list --help`.
 
-=== Running Camel K integrations or bindings
+=== Running Camel K integrations or pipes
 
 Camel also supports running Camel K integrations and binding files, which are in CRD format (Kubernetes Custom Resource Definitions).
 
-For example a kamelet binding file named `joke.yaml`:
+For example a pipe file named `joke.yaml`:
 
 [source,yaml]
 ----
 #!/usr/bin/env jbang camel@apache/camel run
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
+apiVersion: camel.apache.org/v1
+kind: Pipe
 metadata:
   name: joke
 spec:
