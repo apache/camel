@@ -52,7 +52,7 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             SCHEDULER.submit(() -> run(id));
         }
 
-        LATCH.await(1, TimeUnit.MINUTES);
+        LATCH.await(20, TimeUnit.SECONDS);
         SCHEDULER.shutdownNow();
 
         assertEquals(CLIENTS.size(), RESULTS.size());
@@ -71,8 +71,8 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             FileLockClusterService service = new FileLockClusterService();
             service.setId("node-" + id);
             service.setRoot(TestSupport.testDirectory(FileLockClusteredRoutePolicyTest.class, true).toString());
-            service.setAcquireLockDelay(1, TimeUnit.SECONDS);
-            service.setAcquireLockInterval(1, TimeUnit.SECONDS);
+            service.setAcquireLockDelay(100, TimeUnit.MILLISECONDS);
+            service.setAcquireLockInterval(100, TimeUnit.MILLISECONDS);
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
@@ -82,7 +82,7 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:file-lock?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
+                    from("timer:file-lock?delay=10&period=100").routeId("route-" + id).log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
             });
@@ -92,7 +92,7 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             Thread.sleep(ThreadLocalRandom.current().nextInt(500));
             context.start();
 
-            contextLatch.await();
+            contextLatch.await(10, TimeUnit.SECONDS);
 
             LOGGER.debug("Shutting down node {}", id);
             RESULTS.add(id);
