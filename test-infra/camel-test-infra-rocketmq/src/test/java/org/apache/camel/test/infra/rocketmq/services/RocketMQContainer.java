@@ -74,16 +74,6 @@ public class RocketMQContainer implements RocketMQService, ContainerService<Rock
         brokerContainer2.stop();
     }
 
-    @Override
-    public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
-
-    }
-
-    @Override
-    public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
-
-    }
-
     public void createTopic(String topic) {
         Awaitility.await()
                 .atMost(20, TimeUnit.SECONDS)

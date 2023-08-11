@@ -21,6 +21,9 @@ import java.io.IOException;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface RocketMQService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     String nameserverAddress();
@@ -32,4 +35,34 @@ public interface RocketMQService extends TestService, BeforeTestExecutionCallbac
     void createTopic(String topic);
 
     void deleteTopic(String topic) throws IOException, InterruptedException;
+
+    @Override
+    default void beforeAll(ExtensionContext extensionContext) {
+        try {
+            initialize();
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(RocketMQService.class);
+
+            final Object o = extensionContext.getTestInstance().get();
+            log.error("Failed to initialize service {} for test {} on ({})", this.getClass().getSimpleName(),
+                    extensionContext.getDisplayName(), o.getClass().getName());
+
+            throw e;
+        }
+    }
+
+    @Override
+    default void beforeTestExecution(ExtensionContext extensionContext) {
+        //no op
+    }
+
+    @Override
+    default void afterAll(ExtensionContext extensionContext) {
+        shutdown();
+    }
+
+    @Override
+    default void afterTestExecution(ExtensionContext context) {
+        //no op
+    }
 }
