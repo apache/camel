@@ -1,5 +1,5 @@
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
+apiVersion: camel.apache.org/v1
+kind: Pipe
 metadata:
   name: {{ .Name }}
 spec:
@@ -11,6 +11,8 @@ spec:
     {{ .SourceProperties }}
 {{ .Steps }}
   sink:
-    uri: {{ .Sink }}
-    #properties:
-      #key: "value"
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: {{ .Sink }}
+    {{ .SinkProperties }}
