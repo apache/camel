@@ -35,7 +35,8 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "processor", description = "Get status of Camel processors")
+@Command(name = "processor", description = "Get status of Camel processors",
+         sortOptions = false)
 public class CamelProcessorStatus extends ProcessWatchCommand {
 
     public static class PidNameCompletionCandidates implements Iterable<String> {

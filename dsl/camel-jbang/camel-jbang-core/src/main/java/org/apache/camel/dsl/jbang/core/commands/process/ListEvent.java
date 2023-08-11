@@ -34,7 +34,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "event",
-         description = "Get latest events of Camel integrations")
+         description = "Get latest events of Camel integrations", sortOptions = false)
 public class ListEvent extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

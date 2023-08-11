@@ -39,7 +39,8 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "route-controller", description = "List status of route controller in a running Camel integration")
+@Command(name = "route-controller", description = "List status of route controller in a running Camel integration",
+         sortOptions = false)
 public class RouteControllerAction extends ActionWatchCommand {
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
