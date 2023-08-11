@@ -26,6 +26,7 @@
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <interceptSendToEndpoint uri="file:*" skipSendToOriginalEndpoint="true">
       <to uri="mock:result"/>

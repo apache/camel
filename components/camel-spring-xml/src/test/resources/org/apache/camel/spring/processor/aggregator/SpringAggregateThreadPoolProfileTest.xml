@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- define a thread pool profile -->
         <threadPoolProfile id="myProfile" poolSize="2" maxQueueSize="8" rejectedPolicy="Abort"/>

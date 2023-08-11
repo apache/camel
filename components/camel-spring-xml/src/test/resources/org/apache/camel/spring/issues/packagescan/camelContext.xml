@@ -26,6 +26,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
       <package>org.apache.camel.spring.issues.packagescan</package>
+      <jmxAgent id="jmx" disabled="true"/>
       <route id="foo">
         <from uri="direct:foo"/>
         <to uri="mock:foo"/>

@@ -33,6 +33,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route id="idempotent-cache">
             <from uri="direct:start" />
             <log message="Message id: ${header.MessageId}"/>

@@ -25,6 +25,7 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <threadPoolProfile id="myPool" poolSize="2" maxPoolSize="5" maxQueueSize="10"/>
 

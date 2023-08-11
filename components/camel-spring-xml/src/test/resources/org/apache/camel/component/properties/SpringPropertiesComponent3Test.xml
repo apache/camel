@@ -29,6 +29,8 @@
         <propertyPlaceholder id="properties"
                              location="classpath:org/apache/camel/component/properties/cheese.properties"/>
 
+        <jmxAgent id="jmx" disabled="true"/>
+
         <route>
             <from uri="direct:start"/>
             <to uri="{{cool.end}}"/>

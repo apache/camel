@@ -31,6 +31,8 @@
                          location="classpath:org/apache/camel/component/properties/myproperties.properties"
                          xmlns="http://camel.apache.org/schema/spring"/>
 
+    <jmxAgent id="jmx" disabled="true"/>
+
     <route>
       <from uri="direct:start"/>
       <split>

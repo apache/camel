@@ -38,6 +38,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route id="myRoute" routePolicyRef="myRoutePolicy">
             <from uri="seda:foo?concurrentConsumers=20"/>
             <to uri="log:foo?groupSize=10"/>

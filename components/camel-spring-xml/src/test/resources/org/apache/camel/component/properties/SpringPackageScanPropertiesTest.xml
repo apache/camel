@@ -30,7 +30,7 @@
             <package>org.apache.camel.{{routescan}}</package>
             <includes>{{routeincludes}}</includes>
         </packageScan>
-        <jmxAgent id="agent"/>
+        <jmxAgent id="agent" disabled="true"/>
     </camelContext>
 
 </beans>

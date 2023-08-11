@@ -31,6 +31,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- let this route complete all its pending messages when asked to shutdown -->
         <route id="foo" autoStartup="false" shutdownRunningTask="CompleteAllTasks">
             <from uri="file:target/data/SpringShutdownCompleteAllTasksTest?initialDelay=0&amp;delay=10&amp;synchronous=true"/>

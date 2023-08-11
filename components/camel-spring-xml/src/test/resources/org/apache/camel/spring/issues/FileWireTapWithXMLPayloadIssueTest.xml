@@ -25,6 +25,7 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="file://target/data/FileWireTapWithXMLPayloadIssueTest?initialDelay=0&amp;delay=10"/>
             <convertBodyTo type="java.lang.String"/>

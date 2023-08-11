@@ -25,6 +25,7 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
   </camelContext>
 
   <bean id="myProcessor" class="org.apache.camel.spring.bind.ProcessorStub"/>

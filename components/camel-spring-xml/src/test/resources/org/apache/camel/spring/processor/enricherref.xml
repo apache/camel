@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- define cool endpoint -->
         <endpoint id="cool" uri="direct:resource"/>

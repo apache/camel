@@ -29,6 +29,7 @@
     <bean id="proc" class="org.apache.camel.processor.onexception.OnExceptionUseOriginalMessageTest$MyProcessor"/>
  
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <onException useOriginalMessage="true">
             <exception>java.lang.IllegalArgumentException</exception>

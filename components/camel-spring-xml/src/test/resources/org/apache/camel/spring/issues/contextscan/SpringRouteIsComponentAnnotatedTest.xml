@@ -33,6 +33,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- and then let Camel use those @Component scanned route builders -->
         <contextScan/>
+        <jmxAgent id="jmx" disabled="true"/>
     </camelContext>
     <!-- END SNIPPET: e1 -->
 

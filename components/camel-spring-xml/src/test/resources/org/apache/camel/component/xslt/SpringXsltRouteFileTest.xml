@@ -26,6 +26,7 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>
       <to uri="xslt:file:src/test/resources/org/apache/camel/component/xslt/mytransform.xsl"/>
