@@ -5052,7 +5052,7 @@
       },
       "org.apache.camel.model.app.BeansDefinition" : {
         "title" : "Beans",
-        "description" : "A groupping POJO (and related XML root element) that's historically associated with entire application (or its distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.",
+        "description" : "A grouping POJO (and related XML root element) that's historically associated with entire application (or its distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.",
         "type" : "object",
         "properties" : {
           "bean" : {

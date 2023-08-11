@@ -39,7 +39,7 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
 
 /**
  * <p>
- * A groupping POJO (and related XML root element) that's historically associated with "entire application" (or its
+ * A grouping POJO (and related XML root element) that's historically associated with "entire application" (or its
  * distinguished fragment).
  * </p>
  * <p>
