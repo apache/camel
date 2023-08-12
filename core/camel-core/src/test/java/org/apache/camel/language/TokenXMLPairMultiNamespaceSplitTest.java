@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSp
                 .isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(fileUri("pair"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBody("direct:pair", body);
 
         assertMockEndpointsSatisfied();
     }
