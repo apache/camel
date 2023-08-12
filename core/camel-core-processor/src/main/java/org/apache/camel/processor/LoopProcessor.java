@@ -163,11 +163,25 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                     }
+                    if (!cont && expression != null) {
+                        // if we should stop due to an exception etc, then make sure to dec task count
+                        int gap = count - index;
+                        while (gap-- > 0) {
+                            taskCount.decrement();
+                        }
+                    }
                     callback.done(false);
                 }
             } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
+                }
+                if (expression != null) {
+                    // if we should stop due to an exception etc, then make sure to dec task count
+                    int gap = count - index;
+                    while (gap-- > 0) {
+                        taskCount.decrement();
+                    }
                 }
                 exchange.setException(e);
                 callback.done(false);
