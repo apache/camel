@@ -34,6 +34,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Send and receive files to Azure storage file share
+ */
 @UriEndpoint(firstVersion = "3.22.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
              syntax = FilesComponent.SCHEME + ":account/share", category = {
                      Category.CLOUD, Category.FILE },
