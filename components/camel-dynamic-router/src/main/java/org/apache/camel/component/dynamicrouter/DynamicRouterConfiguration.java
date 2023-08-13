@@ -20,10 +20,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.ACTION_GROUP;
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CHANNEL_GROUP;
@@ -120,7 +117,8 @@ public class DynamicRouterConfiguration {
     private String recipientMode = MODE_FIRST_MATCH;
 
     /**
-     * Flag to ensure synchronous processing.
+     * Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to
+     * continue routing after the multicast is complete, even if parallel processing is enabled.
      */
     @UriParam(label = "common", defaultValue = "false")
     private boolean synchronous;
@@ -130,6 +128,103 @@ public class DynamicRouterConfiguration {
      */
     @UriParam(label = "common", defaultValue = "false")
     private boolean warnDroppedMessage;
+
+    /**
+     * The ID of the route.
+     */
+    @UriParam(label = "common")
+    private String routeId;
+
+    /**
+     * If enabled, then sending via multicast occurs concurrently. Note that the caller thread will still wait until all
+     * messages have been fully processed before it continues. It is only the sending and processing of the replies from
+     * the multicast recipients that happens concurrently. When parallel processing is enabled, then the Camel routing
+     * engine will continue processing using the last used thread from the parallel thread pool. However, if you want to
+     * use the original thread that called the multicast, then make sure to enable the synchronous option as well.
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean parallelProcessing;
+
+    /**
+     * If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would
+     * require the implementation of AggregationStrategy to be implemented as thread-safe. By default, this is false,
+     * meaning that Camel synchronizes the call to the aggregate method. Though, in some use-cases, this can be used to
+     * archive higher performance when the AggregationStrategy is implemented as thread-safe.
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean parallelAggregate;
+
+    /**
+     * Will stop further processing if an exception or failure occurred during processing of an
+     * {@link org.apache.camel.Exchange} and the caused exception will be thrown. Will also stop if processing the
+     * exchange failed (has a fault message), or an exception was thrown and handled by the error handler (such as using
+     * onException). In all situations, the multicast will stop further processing. This is the same behavior as in the
+     * pipeline that is used by the routing engine. The default behavior is to not stop, but to continue processing
+     * until the end.
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean stopOnException;
+
+    /**
+     * Ignore the invalid endpoint exception when attempting to create a producer with an invalid endpoint.
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean ignoreInvalidEndpoints;
+
+    /**
+     * If enabled, then Camel will process replies out-of-order (e.g., in the order they come back). If disabled, Camel
+     * will process replies in the same order as defined by the multicast.
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean streaming;
+
+    /**
+     * Sets a total timeout specified in milliseconds, when using parallel processing. If the Multicast has not been
+     * able to send and process all replies within the given timeframe, then the timeout triggers and the Multicast
+     * breaks out and continues. Notice that, if you provide a TimeoutAwareAggregationStrategy, then the timeout method
+     * is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks (for
+     * which it is difficult for Camel to shut down in a graceful manner) may continue to run. So use this option with a
+     * bit of care.
+     */
+    @UriParam(label = "common", defaultValue = "-1")
+    private long timeout;
+
+    /**
+     * Uses the Processor when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or to provide any custom logic that is needed before the exchange is
+     * sent.
+     */
+    @UriParam(label = "common")
+    private String onPrepare;
+
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages. Multicast will,
+     * by default, not share a unit of work between the parent exchange and each multicasted exchange. This means each
+     * sub exchange has its own individual unit of work.
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean shareUnitOfWork;
+
+    /**
+     * Refers to a custom Thread Pool to be used for parallel processing. Notice that, if you set this option, then
+     * parallel processing is automatically implied, and you do not have to enable that option in addition to this one.
+     */
+    @UriParam(label = "common")
+    private String executorService;
+
+    /**
+     * TODO: not a configuration setting
+     */
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean shutdownExecutorService;
+
+    /**
+     * Refers to an AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing
+     * message from the Multicast. By default, Camel will use the last reply as the outgoing message. You can also use a
+     * POJO as the AggregationStrategy.
+     */
+    @UriParam(label = "common")
+    private String aggregationStrategy;
 
     /**
      * Channel for the Dynamic Router. For example, if the Dynamic Router URI is "dynamic-router://test", then the
@@ -347,6 +442,14 @@ public class DynamicRouterConfiguration {
         this.recipientMode = recipientMode;
     }
 
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(final String routeId) {
+        this.routeId = routeId;
+    }
+
     /**
      * Flag to ensure synchronous processing.
      *
@@ -381,6 +484,94 @@ public class DynamicRouterConfiguration {
      */
     public void setWarnDroppedMessage(boolean warnDroppedMessage) {
         this.warnDroppedMessage = warnDroppedMessage;
+    }
+
+    public boolean isStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
+    }
+
+    public boolean isIgnoreInvalidEndpoints() {
+        return ignoreInvalidEndpoints;
+    }
+
+    public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
+        this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
+    }
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    public void setParallelAggregate(boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
+    }
+
+    public boolean isStopOnException() {
+        return stopOnException;
+    }
+
+    public void setStopOnException(boolean stopOnException) {
+        this.stopOnException = stopOnException;
+    }
+
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
+    }
+
+    public boolean isShutdownExecutorService() {
+        return shutdownExecutorService;
+    }
+
+    public void setShutdownExecutorService(boolean shutdownExecutorService) {
+        this.shutdownExecutorService = shutdownExecutorService;
+    }
+
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(String aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+    public String getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(String onPrepare) {
+        this.onPrepare = onPrepare;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
     }
 
     /**

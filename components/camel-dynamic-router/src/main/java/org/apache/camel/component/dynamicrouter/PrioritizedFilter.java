@@ -18,9 +18,7 @@ package org.apache.camel.component.dynamicrouter;
 
 import java.util.Comparator;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.processor.FilterProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +27,16 @@ import org.slf4j.LoggerFactory;
  * This class serves as a wrapper around a {@link FilterProcessor} to include an integer representing the priority of
  * this processor, and a {@link Comparator} to sort by priority, then by id.
  */
-public class PrioritizedFilterProcessor extends FilterProcessor implements Comparable<PrioritizedFilterProcessor> {
+public class PrioritizedFilter implements Comparable<PrioritizedFilter> {
 
     /**
-     * A comparator to sort {@link PrioritizedFilterProcessor}s by their priority field.
+     * A comparator to sort {@link PrioritizedFilter}s by their priority field.
      */
-    public static final Comparator<PrioritizedFilterProcessor> COMPARATOR = Comparator
-            .comparingInt(PrioritizedFilterProcessor::getPriority)
-            .thenComparing(PrioritizedFilterProcessor::getId);
+    public static final Comparator<PrioritizedFilter> COMPARATOR = Comparator
+            .comparingInt(PrioritizedFilter::getPriority)
+            .thenComparing(PrioritizedFilter::getId);
 
-    private static final Logger LOG = LoggerFactory.getLogger(PrioritizedFilterProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PrioritizedFilter.class);
 
     /**
      * The priority value of this processor.
@@ -46,33 +44,67 @@ public class PrioritizedFilterProcessor extends FilterProcessor implements Compa
     private final int priority;
 
     /**
+     * The identifier for this prioritized filter.
+     */
+    private final String id;
+
+    private final Predicate predicate;
+
+    private final String endpoint;
+
+    /**
      * Create this processor with all properties.
      *
      * @param id        the identifier
      * @param priority  the priority of this processor
-     * @param context   the camel context
      * @param predicate the rule expression
-     * @param processor the processor to invoke if the predicate matches
+     * @param endpoint  the destination endpoint for matching exchanges
      */
-    public PrioritizedFilterProcessor(
-                                      final String id,
-                                      final int priority,
-                                      final CamelContext context,
-                                      final Predicate predicate,
-                                      final Processor processor) {
-        super(context, predicate, processor);
-        this.setId(id);
+    public PrioritizedFilter(final String id,
+                             final int priority,
+                             final Predicate predicate,
+                             final String endpoint) {
+        this.id = id;
         this.priority = priority;
+        this.predicate = predicate;
+        this.endpoint = endpoint;
         LOG.debug("Created Dynamic Router Prioritized Filter Processor");
     }
 
     /**
-     * Get the processor priority.
+     * Get the filter priority.
      *
      * @return the priority
      */
     public int getPriority() {
         return priority;
+    }
+
+    /**
+     * Get the filter id.
+     *
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Get the filter predicate.
+     *
+     * @return the predicate
+     */
+    public Predicate getPredicate() {
+        return predicate;
+    }
+
+    /**
+     * Get the filter endpoint.
+     *
+     * @return the endpoint
+     */
+    public String getEndpoint() {
+        return endpoint;
     }
 
     /**
@@ -82,7 +114,7 @@ public class PrioritizedFilterProcessor extends FilterProcessor implements Compa
      * @return       the result of the priority comparison
      */
     @Override
-    public int compareTo(final PrioritizedFilterProcessor other) {
+    public int compareTo(final PrioritizedFilter other) {
         return COMPARATOR.compare(this, other);
     }
 
@@ -93,26 +125,24 @@ public class PrioritizedFilterProcessor extends FilterProcessor implements Compa
     }
 
     /**
-     * Create a {@link PrioritizedFilterProcessor} instance.
+     * Create a {@link PrioritizedFilter} instance.
      */
-    public static class PrioritizedFilterProcessorFactory {
+    public static class PrioritizedFilterFactory {
 
         /**
          * Create this processor with all properties.
          *
          * @param id        the identifier
          * @param priority  the priority of this processor
-         * @param context   the camel context
          * @param predicate the rule expression
-         * @param processor the processor to invoke if the predicate matches
+         * @param endpoint  the destination endpoint for matching exchanges
          */
-        public PrioritizedFilterProcessor getInstance(
+        public PrioritizedFilter getInstance(
                 final String id,
                 final int priority,
-                final CamelContext context,
                 final Predicate predicate,
-                final Processor processor) {
-            return new PrioritizedFilterProcessor(id, priority, context, predicate, processor);
+                final String endpoint) {
+            return new PrioritizedFilter(id, priority, predicate, endpoint);
         }
     }
 }

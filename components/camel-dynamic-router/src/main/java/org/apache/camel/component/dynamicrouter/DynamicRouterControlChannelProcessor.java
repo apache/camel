@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -156,20 +157,22 @@ public class DynamicRouterControlChannelProcessor extends AsyncProcessorSupport 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         LOG.debug("Received control channel message");
         DynamicRouterControlMessage controlMessage = handleControlMessage(exchange);
-        final DynamicRouterProcessor processor = Optional.ofNullable(component.getRoutingProcessor(controlMessage.getChannel()))
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Control channel message is invalid: wrong channel, or no processors present."));
-        switch (controlMessage.getMessageType()) {
-            case SUBSCRIBE:
-                processor.addFilter(controlMessage);
-                exchange.getIn().setBody(controlMessage.getId(), String.class);
-                break;
-            case UNSUBSCRIBE:
-                processor.removeFilter(controlMessage.getId());
-                break;
-            default:
-                // Cannot get here due to enum
-                break;
+        try (DynamicRouterMulticastProcessor processor
+                = Optional.ofNullable(component.getRoutingProcessor(controlMessage.getChannel()))
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Control channel message is invalid: wrong channel, or no processors present."))) {
+            switch (controlMessage.getMessageType()) {
+                case SUBSCRIBE -> {
+                    processor.addFilter(controlMessage);
+                    exchange.getIn().setBody(controlMessage.getId(), String.class);
+                }
+                case UNSUBSCRIBE -> processor.removeFilter(controlMessage.getId());
+                default -> {
+                    // Cannot get here due to enum
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         callback.done(true);
         return true;

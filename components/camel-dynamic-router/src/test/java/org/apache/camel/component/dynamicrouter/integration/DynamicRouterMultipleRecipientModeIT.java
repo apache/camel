@@ -45,7 +45,7 @@ import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.CO
 @CamelSpringTest
 @ContextConfiguration
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-public class DynamicRouterMultipleRecipientModeIT {
+class DynamicRouterMultipleRecipientModeIT {
 
     @Autowired
     CamelContext camelContext;

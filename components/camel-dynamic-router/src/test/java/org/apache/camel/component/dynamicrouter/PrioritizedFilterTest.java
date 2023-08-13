@@ -22,32 +22,32 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class PrioritizedFilterProcessorTest extends DynamicRouterTestSupport {
+class PrioritizedFilterTest extends DynamicRouterTestSupport {
 
     @Test
     void testCompareToAndEqual() {
-        PrioritizedFilterProcessor testProcessor
-                = new PrioritizedFilterProcessor(TEST_ID, TEST_PRIORITY, context, predicate, processor);
-        assertEquals(0, testProcessor.compareTo(prioritizedFilterProcessor));
+        PrioritizedFilter testProcessor
+                = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
+        assertEquals(0, testProcessor.compareTo(prioritizedFilter));
     }
 
     @Test
     void testCompareToAndNotEqualById() {
-        PrioritizedFilterProcessor testProcessor
-                = new PrioritizedFilterProcessor("differentId", TEST_PRIORITY, context, predicate, processor);
-        assertNotEquals(0, testProcessor.compareTo(prioritizedFilterProcessor));
+        PrioritizedFilter testProcessor
+                = new PrioritizedFilter("differentId", TEST_PRIORITY, predicate, endpoint.getEndpointUri());
+        assertNotEquals(0, testProcessor.compareTo(prioritizedFilter));
     }
 
     @Test
     void testCompareToAndNotEqualByPriority() {
-        PrioritizedFilterProcessor testProcessor = new PrioritizedFilterProcessor(TEST_ID, 1, context, predicate, processor);
-        assertNotEquals(0, testProcessor.compareTo(prioritizedFilterProcessor));
+        PrioritizedFilter testProcessor = new PrioritizedFilter(TEST_ID, 1, predicate, endpoint.getEndpointUri());
+        assertNotEquals(0, testProcessor.compareTo(prioritizedFilter));
     }
 
     @Test
     void testToString() {
-        PrioritizedFilterProcessor testProcessor
-                = new PrioritizedFilterProcessor(TEST_ID, TEST_PRIORITY, context, predicate, processor);
+        PrioritizedFilter testProcessor
+                = new PrioritizedFilter(TEST_ID, TEST_PRIORITY, predicate, endpoint.getEndpointUri());
         String expected = String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s]",
                 TEST_ID, TEST_PRIORITY, TEST_PREDICATE);
         String result = testProcessor.toString();

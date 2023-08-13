@@ -18,25 +18,30 @@ package org.apache.camel.component.dynamicrouter;
 
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_ALL_MATCH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
 
     @BeforeEach
     void localSetup() throws Exception {
         super.setup();
-        processor = new DynamicRouterProcessor(PROCESSOR_ID, context, MODE_ALL_MATCH, false, () -> filterProcessorFactory);
+        processor = new DynamicRouterMulticastProcessor(
+                "testProcessorId", context, null, MODE_ALL_MATCH, false,
+                () -> filterProcessorFactory, producerCache,
+                new UseLatestAggregationStrategy(), false, executorService, false,
+                false, false, -1, exchange -> {
+                }, false, false);
         processor.doInit();
     }
 
@@ -44,7 +49,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     void createFilter() {
         when(controlMessage.getPriority()).thenReturn(1);
         when(controlMessage.getPredicate()).thenReturn(e -> true);
-        PrioritizedFilterProcessor result = processor.createFilter(controlMessage);
+        PrioritizedFilter result = processor.createFilter(controlMessage);
         assertEquals(filterProcessorLowPriority, result);
     }
 
@@ -57,7 +62,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     @Test
     void addFilterAsFilterProcessor() {
         processor.addFilter(filterProcessorLowPriority);
-        PrioritizedFilterProcessor result = processor.getFilter(TEST_ID);
+        PrioritizedFilter result = processor.getFilter(TEST_ID);
         assertEquals(filterProcessorLowPriority, result);
     }
 
@@ -67,18 +72,21 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
         processor.addFilter(filterProcessorLowPriority);
         processor.addFilter(filterProcessorLowPriority);
         processor.addFilter(filterProcessorLowPriority);
-        List<PrioritizedFilterProcessor> matchingFilters = processor.matchFilters(exchange);
+        when(predicate.matches(any(Exchange.class))).thenReturn(true);
+        List<PrioritizedFilter> matchingFilters = processor.matchFilters(exchange);
         assertEquals(1, matchingFilters.size());
     }
 
     @Test
     void testMultipleFilterOrderByPriorityNotIdKey() {
+        when(predicate.matches(any(Exchange.class))).thenReturn(true);
         when(filterProcessorLowestPriority.getId()).thenReturn("anIdThatComesLexicallyBeforeTestId");
+        when(filterProcessorLowestPriority.getPredicate()).thenReturn(predicate);
         processor.addFilter(filterProcessorLowestPriority);
-        processor.addFilter(filterProcessorLowPriority);
-        List<PrioritizedFilterProcessor> matchingFilters = processor.matchFilters(exchange);
-        assertEquals(1, matchingFilters.size());
-        PrioritizedFilterProcessor matchingFilter = matchingFilters.get(0);
+        addFilterAsFilterProcessor();
+        List<PrioritizedFilter> matchingFilters = processor.matchFilters(exchange);
+        assertEquals(2, matchingFilters.size());
+        PrioritizedFilter matchingFilter = matchingFilters.get(0);
         assertEquals(TEST_ID, matchingFilter.getId());
     }
 
@@ -86,36 +94,37 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     void removeFilter() {
         addFilterAsFilterProcessor();
         processor.removeFilter(TEST_ID);
-        PrioritizedFilterProcessor result = processor.getFilter(TEST_ID);
+        PrioritizedFilter result = processor.getFilter(TEST_ID);
         Assertions.assertNull(result);
     }
 
     @Test
     void matchFiltersMatches() {
         addFilterAsFilterProcessor();
-        PrioritizedFilterProcessor result = processor.matchFilters(exchange).get(0);
+        when(predicate.matches(any(Exchange.class))).thenReturn(true);
+        PrioritizedFilter result = processor.matchFilters(exchange).get(0);
         assertEquals(TEST_ID, result.getId());
     }
 
     @Test
     void matchFiltersDoesNotMatch() {
-        PrioritizedFilterProcessor result = processor.matchFilters(exchange).get(0);
-        assertEquals(Integer.MAX_VALUE - 1000, result.getPriority());
+        addFilterAsFilterProcessor();
+        when(predicate.matches(any(Exchange.class))).thenReturn(false);
+        assertTrue(processor.matchFilters(exchange).isEmpty());
     }
 
     @Test
     void processMatching() {
         addFilterAsFilterProcessor();
-        when(filterProcessorLowPriority.matches(exchange)).thenReturn(true);
-        lenient().when(filterProcessorLowPriority.process(any(Exchange.class), any(AsyncCallback.class))).thenReturn(true);
-        Assertions.assertFalse(processor.process(exchange, asyncCallback));
+        when(predicate.matches(any(Exchange.class))).thenReturn(true);
+        assertTrue(processor.process(exchange, asyncCallback));
     }
 
     @Test
     void processNotMatching() {
         addFilterAsFilterProcessor();
-        when(filterProcessorLowPriority.matches(exchange)).thenReturn(false);
-        Assertions.assertFalse(processor.process(exchange, asyncCallback));
+        when(predicate.matches(any(Exchange.class))).thenReturn(false);
+        assertTrue(processor.process(exchange, asyncCallback));
     }
 
     @Test

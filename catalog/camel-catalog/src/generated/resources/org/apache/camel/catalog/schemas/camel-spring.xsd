@@ -419,7 +419,7 @@ Enriches a message with data from a secondary resource
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Camel error handling.
+Error handler settings
 ]]>
       </xs:documentation>
     </xs:annotation>
