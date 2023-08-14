@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
                           disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectInOutProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.ReconnectInOutProducerTest";
 
     @Override
     protected boolean useJmx() {

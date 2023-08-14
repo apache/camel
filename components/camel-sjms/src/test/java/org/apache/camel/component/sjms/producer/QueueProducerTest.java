@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QueueProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "test.foo";
+    private static final String TEST_DESTINATION_NAME = "test.foo.QueueProducerTest";
 
     public QueueProducerTest() {
     }

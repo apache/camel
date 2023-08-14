@@ -54,8 +54,8 @@ public class ThreadPoolTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("sjms:queue:foo").routeId(FROM_ROUTE);
-                from("sjms:queue:foo").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
+                from("direct:start").to("sjms:queue:foo.ThreadPoolTest").routeId(FROM_ROUTE);
+                from("sjms:queue:foo.ThreadPoolTest").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
             }
         };
     }

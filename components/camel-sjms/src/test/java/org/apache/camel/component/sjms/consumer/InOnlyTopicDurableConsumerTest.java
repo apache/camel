@@ -39,7 +39,7 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
         // wait a bit and send the message
         Thread.sleep(1000);
 
-        template.sendBody("sjms:topic:foo", "Hello World");
+        template.sendBody("sjms:topic:foo.topic.InOnlyTopicDurableConsumerTest", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -63,10 +63,10 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("sjms:topic:foo?durableSubscriptionName=bar1")
+                from("sjms:topic:foo.topic.InOnlyTopicDurableConsumerTest?durableSubscriptionName=bar1")
                         .to("mock:result");
 
-                from("sjms:topic:foo?durableSubscriptionName=bar2")
+                from("sjms:topic:foo.topic.InOnlyTopicDurableConsumerTest?durableSubscriptionName=bar2")
                         .to("mock:result2");
             }
         };
