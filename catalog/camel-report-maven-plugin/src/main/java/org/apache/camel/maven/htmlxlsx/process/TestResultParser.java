@@ -16,6 +16,9 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,9 +27,6 @@ import org.apache.camel.maven.htmlxlsx.model.Components;
 import org.apache.camel.maven.htmlxlsx.model.Route;
 import org.apache.camel.maven.htmlxlsx.model.Routes;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
-
-import java.util.List;
-import java.util.Map;
 
 public class TestResultParser {
 

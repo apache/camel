@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +26,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
 
 public class FileUtil {
 

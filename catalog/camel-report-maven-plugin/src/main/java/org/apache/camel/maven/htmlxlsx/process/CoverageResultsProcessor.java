@@ -16,18 +16,6 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import org.apache.camel.maven.htmlxlsx.model.ChildEip;
-import org.apache.camel.maven.htmlxlsx.model.ChildEipStatistic;
-import org.apache.camel.maven.htmlxlsx.model.Components;
-import org.apache.camel.maven.htmlxlsx.model.EipAttribute;
-import org.apache.camel.maven.htmlxlsx.model.EipStatistic;
-import org.apache.camel.maven.htmlxlsx.model.Route;
-import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
-import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
-import org.apache.camel.maven.htmlxlsx.model.TestResult;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,6 +28,18 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.maven.htmlxlsx.model.ChildEip;
+import org.apache.camel.maven.htmlxlsx.model.ChildEipStatistic;
+import org.apache.camel.maven.htmlxlsx.model.Components;
+import org.apache.camel.maven.htmlxlsx.model.EipAttribute;
+import org.apache.camel.maven.htmlxlsx.model.EipStatistic;
+import org.apache.camel.maven.htmlxlsx.model.Route;
+import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
+import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
+import org.apache.camel.maven.htmlxlsx.model.TestResult;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 
 public class CoverageResultsProcessor {
 

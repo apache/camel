@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven.htmlxlsx.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Routes {
 

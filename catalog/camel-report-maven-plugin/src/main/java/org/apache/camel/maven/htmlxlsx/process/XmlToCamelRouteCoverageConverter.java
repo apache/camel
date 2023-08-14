@@ -16,13 +16,13 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
-
-import java.util.Map;
 
 public class XmlToCamelRouteCoverageConverter {
 
