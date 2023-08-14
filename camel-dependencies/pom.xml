@@ -520,7 +520,7 @@
     <spring-integration-version>5.5.18</spring-integration-version>
     <spring-ldap-version>2.3.8.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-    <spring-security-version>5.6.10</spring-security-version>
+    <spring-security-version>5.6.12</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.6</spring-ws-version>
