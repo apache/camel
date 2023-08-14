@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,11 +54,11 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
 
         // wait a bit to ensure consumer is suspended, as it could be in a poll mode where
         // it would poll and route (there is a little slack (up till 1 sec) before suspension is empowered)
-        Thread.sleep(2000);
-
-        template.sendBody("disruptor:foo", "B");
-        // wait 2 sec to ensure disruptor consumer thread would have tried to poll otherwise
-        mock.assertIsSatisfied(2000);
+        Awaitility.await().untilAsserted(() -> {
+            template.sendBody("disruptor:foo", "B");
+            // wait 2 sec to ensure disruptor consumer thread would have tried to poll otherwise
+            mock.assertIsSatisfied(2000);
+        });
 
         // resume consumer
         MockEndpoint.resetMocks(context);
