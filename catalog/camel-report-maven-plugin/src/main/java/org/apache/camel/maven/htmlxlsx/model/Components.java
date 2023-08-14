@@ -16,11 +16,6 @@
  */
 package org.apache.camel.maven.htmlxlsx.model;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,12 +23,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Components {
 
     private Map<String, List<EipAttribute>> attributeMap = new HashMap<>();
 
     @JsonIgnore
-    private ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+    private final ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
     @JsonAnySetter
     public void setAttribute(String key, Object value) throws JsonProcessingException {
@@ -51,6 +51,7 @@ public class Components {
         } else {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
             listValue = objectMapper.readValue(json, new TypeReference<List<EipAttribute>>() {
+
             });
         }
 

@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-body">
         <h1 th:text="${route.id}">Route</h1>
-        <table class="table table-striped table-bordered " id="eips" width="100%">
+        <table class="display " id="eips" width="100%">
             <thead>
             <tr>
                 <td class="text-right" width="5%">Index</td>
@@ -47,12 +47,12 @@
                     <span th:unless="${eipStatistic.childEipStatisticMap.isEmpty()}">
                         <td width="76%">
                             <span th:each="childEntry : ${eipStatistic.childEipStatisticMap}">
-                                <table class="table" width="100%">
+                                <table class="display" width="100%">
                                     <tr>
                                         <td th:text="${childEntry.key}"></td>
                                     </tr>
                                 </table>
-                                <table class="table table-striped table-bordered " width="100%">
+                                <table class="display" width="100%">
                                     <thead>
                                     <tr>
                                         <td class="text-right col-1">Index</td>

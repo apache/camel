@@ -21,8 +21,8 @@ import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 
@@ -34,7 +34,7 @@ public class TestResultParserTest {
         // keep jacoco happy
         TestResultParser result = new TestResultParser();
 
-        assertThat(result).isNotNull();
+        assertNotNull(result);
     }
 
     @Test
@@ -45,9 +45,8 @@ public class TestResultParserTest {
         TestResult result = parser.parse(TestUtil.testResult());
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponents())
-                        .isNotNull());
+                () -> assertNotNull(result),
+                () -> assertNotNull(result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponents()));
     }
 
     @Test

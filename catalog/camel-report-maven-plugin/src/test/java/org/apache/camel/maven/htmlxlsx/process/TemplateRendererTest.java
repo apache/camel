@@ -20,7 +20,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TemplateRendererTest {
 
@@ -56,7 +57,7 @@ public class TemplateRendererTest {
         // keep jacoco happy
         TemplateRenderer result = new TemplateRenderer();
 
-        assertThat(result).isNotNull();
+        assertNotNull(result);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class TemplateRendererTest {
 
         String result = TemplateRenderer.render("index", Map.of("testValue", "testRender"));
 
-        assertThat(result).isEqualTo(EXPECTED);
+        assertEquals(EXPECTED, result);
     }
 
 }

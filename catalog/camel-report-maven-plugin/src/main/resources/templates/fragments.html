@@ -46,7 +46,7 @@
 <span th:fragment="route-details(route)" th:remove="tag">
     <tr>
         <td>
-            <table class="table table-striped table-bordered " id="routeInfo" width="100%">
+            <table class="display" id="routeInfo" width="100%">
                 <tbody>
                     <tr>
                         <td>
@@ -79,11 +79,11 @@
 
 <span th:fragment="components-tested(components)" th:remove="tag">
     <strong>EIPs Tested</strong>
-    <table class="table table-striped table-bordered " id="components" width="100%">
+    <table class="display" id="components" width="100%">
         <tbody>
             <tr th:each="entry : ${components.attributeMap.entrySet()}">
                 <td class="col-2">
-                    <table class="table table-striped table-bordered " id="eipAttributes" width="100%">
+                    <table class="display" id="eipAttributes" width="100%">
                         <tbody>
                             <span th:each="eipAttribute : ${entry.value}">
                                 <tr>
@@ -108,7 +108,7 @@
                                 <tr>
                                     <td>
                                         <strong>Properties</strong>
-                                        <table class="table table-striped table-bordered " id="eipProps" width="100%">
+                                        <table class="display" id="eipProps" width="100%">
                                             <tbody>
                                                 <tr th:each="eipProp : ${eipAttribute?.properties}">
                                                     <td>

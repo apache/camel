@@ -20,69 +20,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<span th:fragment="common-head(title)" th:remove="tag">
+
+    <span th:fragment="common-head-datatables(title)" th:remove="tag">
         <head>
             <title th:text="${title}">Page Title</title>
             <meta content="no-cache" http-equiv="Cache-Control"/>
             <meta charset="utf-8"/>
             <meta content="width=device-width, initial-scale=1" name="viewport"/>
-            <link crossorigin="anonymous"
-                  href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-                  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-                  rel="stylesheet"/>
-            <link crossorigin="anonymous"
-                  href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-                  integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
-                  rel="stylesheet"/>
+            <link rel="stylesheet" href="static/css/datatables.min.css" type="text/css"/>
         </head>
     </span>
 
-<span th:fragment="common-head-datatables(title)" th:remove="tag">
-        <head>
-            <title th:text="${title}">Page Title</title>
-            <meta content="no-cache" http-equiv="Cache-Control"/>
-            <meta charset="utf-8"/>
-            <meta content="width=device-width, initial-scale=1" name="viewport"/>
-            <link crossorigin="anonymous"
-                  href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-                  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-                  rel="stylesheet"/>
-            <link crossorigin="anonymous"
-                  href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-                  integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
-                  rel="stylesheet"/>
-            <link crossorigin="anonymous"
-                  href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs4/1.10.24/dataTables.bootstrap4.css"
-                  integrity="sha512-jhdR0L3jk/OLUVbrXEYGydtwIfgnRqY9jBdwrCSs3rD+EozU0LY5rMq6ABpZfgRd2UIYuX4MEEdmM9fx/9dTaw=="
-                  rel="stylesheet"/>
-            <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css"
-                  integrity="sha512-1k7mWiTNoyx2XtmI96o+hdjP8nn0f3Z2N4oF/9ZZRgijyV4omsKOXEnqL1gKQNPy2MTSP9rIEWGcH/CInulptA=="
-                  rel="stylesheet"/>
-        </head>
-    </span>
-
-<span th:fragment="common-js" th:remove="tag">
-        <script crossorigin="anonymous"
-                integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
-                src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script crossorigin="anonymous"
-                integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-                src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    </span>
-
-<span th:fragment="common-js-datatables" th:remove="tag">
-        <script crossorigin="anonymous"
-                integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
-                src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script crossorigin="anonymous"
-                integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-                src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script crossorigin="anonymous"
-                integrity="sha512-p+aLivYlMXnjFoyXgyBqJJWX7YTG1Z1vegVj7dHy6OSClJr6ITdCsWgWnZe0iyLaKGx4aL2SvX/qcRbV45aBcQ=="
-                src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.js"></script>
-        <script crossorigin="anonymous"
-                integrity="sha512-6KdCBr5s+FtLkQmT9ckhhousB1IBXxdQNvW7uyVzXTy2iP8gYPeOroZdju09WI7uSrWT0qLyioQr3DKhOs3K7Q=="
-                src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.js"></script>
+    <span th:fragment="common-js-datatables" th:remove="tag">
+        <script type="text/javascript" src="static/js/datatables.min.js"></script>
     </span>
 
 </html>

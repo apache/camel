@@ -27,8 +27,11 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileUtilTest {
 
@@ -49,7 +52,7 @@ public class FileUtilTest {
         // keep jacoco happy
         FileUtil result = new FileUtil();
 
-        assertThat(result).isNotNull();
+        assertNotNull(result);
     }
 
     @Test
@@ -59,7 +62,7 @@ public class FileUtilTest {
 
         String result = fileUtil.getLastElementOfPath(path.toString());
 
-        assertThat(result).isEqualTo(FOOBAR);
+        assertEquals(FOOBAR, result);
     }
 
     @Test
@@ -73,10 +76,10 @@ public class FileUtilTest {
         String result = fileUtil.readFile(letters.getPath());
 
         assertAll(
-                () -> assertThat(Files.exists(letters.toPath())).isTrue(),
-                () -> assertThat(result).isNotBlank(),
-                () -> assertThat(result.startsWith("x")).isTrue(),
-                () -> assertThat(result.endsWith("z\n")).isTrue());
+                () -> assertTrue(Files.exists(letters.toPath())),
+                () -> assertTrue(result.length() > 0),
+                () -> assertTrue(result.startsWith("x")),
+                () -> assertTrue(result.endsWith("z\n")));
     }
 
     @Test
@@ -92,10 +95,10 @@ public class FileUtilTest {
         String result = Files.readString(outputPath);
 
         assertAll(
-                () -> assertThat(Files.exists(outputPath)).isTrue(),
-                () -> assertThat(result).isNotBlank(),
-                () -> assertThat(result.startsWith("x")).isTrue(),
-                () -> assertThat(result.endsWith("z")).isTrue());
+                () -> assertTrue(Files.exists(outputPath)),
+                () -> assertTrue(result.length() > 0),
+                () -> assertTrue(result.startsWith("x")),
+                () -> assertTrue(result.endsWith("z")));
     }
 
     @Test
@@ -106,21 +109,21 @@ public class FileUtilTest {
         Path result = fileUtil.outputFile(FOOBAR, path.toString());
 
         assertAll(
-                () -> assertThat(result.startsWith(path.toString())).isTrue(),
-                () -> assertThat(result.endsWith(FOOBAR_HTML)).isTrue());
+                () -> assertTrue(result.startsWith(path.toString())),
+                () -> assertTrue(result.endsWith(FOOBAR_HTML)));
     }
 
     @Test
     public void testRemoveFileExtension() {
 
         String result = fileUtil.removeFileExtension(FOOBAR_HTML);
-        assertThat(FOOBAR).isEqualTo(result);
+        assertEquals(FOOBAR, result);
 
         result = fileUtil.removeFileExtension(null);
-        assertThat(result).isNull();
+        assertNull(result);
 
         result = fileUtil.removeFileExtension("");
-        assertThat(result).isBlank();
+        assertEquals(0, result.length());
     }
 
     @Test
@@ -138,9 +141,9 @@ public class FileUtilTest {
         Set<String> result = fileUtil.filesInDirectory(temporaryDirectory);
 
         assertAll(
-                () -> assertThat(result.size()).isEqualTo(2),
-                () -> assertThat(result).contains(letters.getPath()),
-                () -> assertThat(result).contains(letters2.getPath()));
+                () -> assertEquals(2, result.size()),
+                () -> assertTrue(result.contains(letters.getPath())),
+                () -> assertTrue(result.contains(letters2.getPath())));
     }
 
     @Test
@@ -156,7 +159,7 @@ public class FileUtilTest {
 
         Set<String> result = fileUtil.filesInDirectory(temporaryDirectory);
 
-        assertThat(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -164,6 +167,6 @@ public class FileUtilTest {
 
         Set<String> result = fileUtil.filesInDirectory(new File(FOOBAR));
 
-        assertThat(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 }

@@ -26,8 +26,8 @@ import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.spy;
@@ -40,7 +40,7 @@ public class XmlToCamelRouteCoverageTest {
         // keep jacoco happy
         XmlToCamelRouteCoverageConverter result = new XmlToCamelRouteCoverageConverter();
 
-        assertThat(result).isNotNull();
+        assertNotNull(result);
     }
 
     @Test
@@ -51,9 +51,9 @@ public class XmlToCamelRouteCoverageTest {
         TestResult result = converter.convert(loadXml());
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponentsMap())
-                        .isNotNull());
+                () -> assertNotNull(result),
+                () -> assertNotNull(
+                        result.getCamelContextRouteCoverage().getRoutes().getRouteList().get(0).getComponentsMap()));
     }
 
     @Test

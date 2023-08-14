@@ -19,14 +19,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<span th:replace="~{fragments-static :: common-head-datatables(title=${project} + ' - Route Coverage')}"></span>
+<span th:replace="~{fragments-static :: common-head-datatables(title=${project} + ' :: Route Coverage')}"></span>
 
 <body>
 
 <div class="card">
     <div class="card-body">
-        <h1 th:text="${project} + ' Route Coverage'">Camel Route Coverage</h1>
-        <table class="table table-striped table-bordered " id="routes" width="100%">
+        <h1 th:text="${project} + ' :: Route Coverage'">Camel Route Coverage</h1>
+        <table class="display " id="routes" width="100%">
             <thead>
             <tr>
                 <td>Route</td>

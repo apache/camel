@@ -16,17 +16,6 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.maven.htmlxlsx.model.ChildEip;
 import org.apache.camel.maven.htmlxlsx.model.ChildEipStatistic;
 import org.apache.camel.maven.htmlxlsx.model.Components;
@@ -38,6 +27,19 @@ import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CoverageResultsProcessor {
 
@@ -67,8 +69,7 @@ public class CoverageResultsProcessor {
 
     private Log log;
 
-    public String generateReport(MavenProject project, final File xmlPath, final File htmlPath, final File xlsxPath)
-            throws IOException {
+    public String generateReport(MavenProject project, final File xmlPath, final File htmlPath) throws IOException {
 
         String out;
 
@@ -86,11 +87,9 @@ public class CoverageResultsProcessor {
 
             generateHtml(htmlPath);
 
-            generateExcel(xlsxPath);
-
-            out = String.format("Generated HTML and XLSX reports for %d routes%n%n", routeStatisticMap.size());
+            out = String.format("Generated HTML reports for %d routes%n%n", routeStatisticMap.size());
         } else {
-            out = "No routes found. No HTML and XLSX reports were generated%n";
+            out = "No routes found. No HTML reports were generated%n";
         }
 
         return out;
@@ -196,12 +195,6 @@ public class CoverageResultsProcessor {
         });
     }
 
-    protected void generateExcel(final File outputPath) throws IOException {
-
-        ExcelWriter writer = new ExcelWriter(routeStatisticMap.values(), outputPath);
-        writer.write();
-    }
-
     protected void generateHtml(final File outputPath) throws IOException {
 
         for (RouteStatistic routeStatistic : routeStatisticMap.values()) {
@@ -235,9 +228,9 @@ public class CoverageResultsProcessor {
                 } catch (Throwable t) {
                     // this is an edge case that needs to be identified. Log some useful debugging information.
                     System.out.println(t.getClass().toString());
-                    System.out.println(String.format("routeID: %s", routeId));
-                    System.out.println(String.format("route: %s", route));
-                    System.out.println(String.format("mappedRoute: %s", mappedRoute != null ? mappedRoute.toString() : "null"));
+                    System.out.printf("routeID: %s%n", routeId);
+                    System.out.printf("route: %s%n", route);
+                    System.out.printf("mappedRoute: %s%n", mappedRoute != null ? mappedRoute.toString() : "null");
                 }
             });
         });
@@ -359,5 +352,23 @@ public class CoverageResultsProcessor {
         String rendered = TemplateRenderer.render(INDEX_FILE, data);
 
         return fileUtil.write(rendered, "index", outputPath);
+    }
+
+    public void writeCSS(File cssPath) throws IOException {
+
+        writeStaticFile("static/css/", "datatables.min.css", cssPath);
+    }
+
+    public void writeJS(File jsPath) throws IOException {
+
+        writeStaticFile("static/js/", "datatables.min.js", jsPath);
+    }
+
+    protected void writeStaticFile(String baseInputPath, String filename, File baseOutputPath) throws IOException {
+
+        String inputPath = Path.of(baseInputPath, filename).toString();
+        String css = fileUtil.readFileFromClassPath(inputPath);
+        Path outputPath = Paths.get(baseOutputPath.getPath(), filename);
+        fileUtil.write(css, outputPath);
     }
 }

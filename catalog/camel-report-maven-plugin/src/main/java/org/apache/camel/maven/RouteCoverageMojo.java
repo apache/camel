@@ -144,10 +144,10 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     private boolean generateJacocoXmlReport;
 
     /**
-     * Whether to generate a coverage-report in HTML and XLSX format.
+     * Whether to generate a coverage-report in HTML format.
      */
-    @Parameter(property = "camel.generateHtmlXlsxReport", defaultValue = "false")
-    private boolean generateHtmlXlsxReport;
+    @Parameter(property = "camel.generateHtmlReport", defaultValue = "false")
+    private boolean generateHtmlReport;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -322,24 +322,31 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             }
         }
 
-        if (generateHtmlXlsxReport && generateJacocoXmlReport && report != null) {
+        if (generateHtmlReport) {
             try {
-                final File htmlPath = new File(project.getBasedir() + "/target/site/route-coverage/html");
+                final String baseHtmlPath = "/target/site/route-coverage/html";
+                final File htmlPath = new File(project.getBasedir() + baseHtmlPath);
                 if (!htmlPath.exists()) {
                     htmlPath.mkdirs();
                 }
-                final File xlsxPath = new File(project.getBasedir() + "/target/site/route-coverage/xlsx");
-                if (!xlsxPath.exists()) {
-                    xlsxPath.mkdirs();
+                final File cssPath = new File(project.getBasedir() + baseHtmlPath + "/static/css");
+                if (!cssPath.exists()) {
+                    cssPath.mkdirs();
+                }
+                final File jsPath = new File(project.getBasedir() + baseHtmlPath + "/static/js");
+                if (!jsPath.exists()) {
+                    jsPath.mkdirs();
                 }
                 getLog().info("");
-                getLog().info("Generating HTML and XLSX route coverage reports: " + htmlPath + ", " + xlsxPath + "\n");
+                getLog().info("Generating HTML route coverage reports: " + htmlPath + "\n");
                 CoverageResultsProcessor processor = new CoverageResultsProcessor();
+                processor.writeCSS(cssPath);
+                processor.writeJS(jsPath);
                 File xmlPath = new File(project.getBasedir() + "/target/camel-route-coverage");
-                String out = processor.generateReport(project, xmlPath, htmlPath, xlsxPath);
+                String out = processor.generateReport(project, xmlPath, htmlPath);
                 getLog().info(out);
             } catch (Exception e) {
-                getLog().warn("Error generating HTML and XLSX route coverage reports " + e.getMessage());
+                getLog().warn("Error generating HTML route coverage reports ", e);
             }
         }
 

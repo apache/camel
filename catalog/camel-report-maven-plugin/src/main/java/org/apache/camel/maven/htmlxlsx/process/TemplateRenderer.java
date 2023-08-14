@@ -16,12 +16,12 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import java.util.Map;
-
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+
+import java.util.Map;
 
 public class TemplateRenderer {
 

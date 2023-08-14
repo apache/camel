@@ -38,8 +38,11 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,8 +65,6 @@ public class CoverageResultsProcessorTest {
 
     private static final String GREETINGS_ROUTE = "greetings-route";
 
-    private static final String INDEX_XLSX = "index.xlsx";
-
     @Spy
     private CoverageResultsProcessor processor;
 
@@ -77,7 +78,7 @@ public class CoverageResultsProcessorTest {
     public void testCoverageResultsProcessor() {
 
         // keep jacoco happy
-        assertThat(processor).isNotNull();
+        assertNotNull(processor);
     }
 
     @Test
@@ -89,20 +90,12 @@ public class CoverageResultsProcessorTest {
             Files.createDirectories(htmlPathAsPath);
         }
 
-        File xlsxPath = xlsxPath();
-        Path xlsxPathAsPath = Paths.get(xlsxPath.getPath());
-        if (!Files.exists(xlsxPathAsPath)) {
-            Files.createDirectories(xlsxPathAsPath);
-        }
-
         MavenProject mavenProject = new MavenProject();
         mavenProject.setName(RESOURCES);
 
-        processor.generateReport(mavenProject, xmlPath(), htmlPath, xlsxPath);
+        processor.generateReport(mavenProject, xmlPath(), htmlPath);
 
-        assertAll(
-                () -> assertThat(Files.exists(Paths.get(indexPath().getPath()))).isTrue(),
-                () -> assertThat(Files.exists(Paths.get(indexExcelPath().getPath()))).isTrue());
+        assertTrue(Files.exists(Paths.get(indexPath().getPath())));
     }
 
     @Test
@@ -118,14 +111,14 @@ public class CoverageResultsProcessorTest {
         List<TestResult> result = (List<TestResult>) FieldUtils.readDeclaredField(processor, "testResults", true);
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.isEmpty()).isFalse(),
-                () -> assertThat(result.size()).isEqualTo(4),
-                () -> assertThat(result.get(0).getTest()).isNotNull(),
-                () -> assertThat(result.get(0).getTest().getClazz()).isEqualTo("some_class"),
-                () -> assertThat(result.get(0).getTest().getMethod()).isEqualTo("some_method"),
-                () -> assertThat(result.get(0).getCamelContextRouteCoverage()).isNotNull(),
-                () -> assertThat(result.get(0).getCamelContextRouteCoverage().getRoutes().getRouteList()).isNotEmpty());
+                () -> assertNotNull(result),
+                () -> assertFalse(result.isEmpty()),
+                () -> assertEquals(4, result.size()),
+                () -> assertNotNull(result.get(0).getTest()),
+                () -> assertEquals("some_class", result.get(0).getTest().getClazz()),
+                () -> assertEquals("some_method", result.get(0).getTest().getMethod()),
+                () -> assertNotNull(result.get(0).getCamelContextRouteCoverage()),
+                () -> assertFalse(result.get(0).getCamelContextRouteCoverage().getRoutes().getRouteList().isEmpty()));
     }
 
     @Test
@@ -134,13 +127,13 @@ public class CoverageResultsProcessorTest {
         TestResult result = processor.parseTestResult(inputFile());
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getTest()).isNotNull(),
-                () -> assertThat(result.getTest().getClazz()).isEqualTo("com.example.route.ConditionalBeanRouteUnitTest"),
-                () -> assertThat(result.getTest().getMethod())
-                        .isEqualTo("whenSendBodyWithFruit_thenFavouriteHeaderReceivedSuccessfully"),
-                () -> assertThat(result.getCamelContextRouteCoverage()).isNotNull(),
-                () -> assertThat(result.getCamelContextRouteCoverage().getRoutes().getRouteList()).isNotEmpty());
+                () -> assertNotNull(result),
+                () -> assertNotNull(result.getTest()),
+                () -> assertEquals("com.example.route.ConditionalBeanRouteUnitTest", result.getTest().getClazz()),
+                () -> assertEquals("whenSendBodyWithFruit_thenFavouriteHeaderReceivedSuccessfully",
+                        result.getTest().getMethod()),
+                () -> assertNotNull(result.getCamelContextRouteCoverage()),
+                () -> assertFalse(result.getCamelContextRouteCoverage().getRoutes().getRouteList().isEmpty()));
     }
 
     @Test
@@ -167,8 +160,8 @@ public class CoverageResultsProcessorTest {
                 = (Map<String, RouteStatistic>) FieldUtils.readDeclaredField(processor, "routeStatisticMap", true);
 
         assertAll(
-                () -> assertThat(routeStatisticMap).isNotNull(),
-                () -> assertThat(routeStatisticMap).isEmpty());
+                () -> assertNotNull(routeStatisticMap),
+                () -> assertTrue(routeStatisticMap.isEmpty()));
 
         processor.parseAllTestResults(xmlPath());
         processor.gatherBestRouteCoverages();
@@ -176,15 +169,15 @@ public class CoverageResultsProcessorTest {
         processor.generateEipStatistics();
 
         assertAll(
-                () -> assertThat(routeStatisticMap).isNotNull(),
-                () -> assertThat(routeStatisticMap).isNotEmpty());
+                () -> assertNotNull(routeStatisticMap),
+                () -> assertFalse(routeStatisticMap.isEmpty()));
 
         RouteStatistic result = routeStatisticMap.get(GREETINGS_ROUTE);
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getEipStatisticMap()).isNotNull(),
-                () -> assertThat(result.getEipStatisticMap().size()).isEqualTo(3));
+                () -> assertNotNull(result),
+                () -> assertNotNull(result.getEipStatisticMap()),
+                () -> assertEquals(3, result.getEipStatisticMap().size()));
     }
 
     @Test
@@ -214,13 +207,13 @@ public class CoverageResultsProcessorTest {
         testResults.add(TestUtil.testResult());
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.size()).isEqualTo(0));
+                () -> assertNotNull(result),
+                () -> assertEquals(0, result.size()));
 
         processor.gatherBestRouteCoverages();
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.size()).isEqualTo(7));
+                () -> assertNotNull(result),
+                () -> assertEquals(7, result.size()));
     }
 
     @Test
@@ -234,14 +227,14 @@ public class CoverageResultsProcessorTest {
         result.put("route2", TestUtil.route());
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.size()).isEqualTo(2));
+                () -> assertNotNull(result),
+                () -> assertEquals(2, result.size()));
 
         processor.squashDuplicateRoutes();
 
         assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.size()).isEqualTo(1));
+                () -> assertNotNull(result),
+                () -> assertEquals(1, result.size()));
     }
 
     @Test
@@ -258,14 +251,14 @@ public class CoverageResultsProcessorTest {
         processor.gatherBestRouteCoverages();
 
         assertAll(
-                () -> assertThat(routeMap).isNotNull(),
-                () -> assertThat(routeMap.size()).isEqualTo(7));
+                () -> assertNotNull(routeMap),
+                () -> assertEquals(7, routeMap.size()));
 
         String result = processor.generateRouteStatistics("test project", htmlPath());
 
         assertAll(
-                () -> assertThat(result).isNotBlank(),
-                () -> assertThat(result).isEqualTo(indexPath().getPath()));
+                () -> assertTrue(result.length() > 0),
+                () -> assertEquals(indexPath().getPath(), result));
     }
 
     @Test
@@ -281,26 +274,26 @@ public class CoverageResultsProcessorTest {
                 = (Map<String, RouteStatistic>) FieldUtils.readDeclaredField(processor, "routeStatisticMap", true);
 
         assertAll(
-                () -> assertThat(routeStatisticMap).isNotNull(),
-                () -> assertThat(routeStatisticMap.size()).isEqualTo(0));
+                () -> assertNotNull(routeStatisticMap),
+                () -> assertEquals(0, routeStatisticMap.size()));
 
         RouteStatistic result = processor.getRouteStatistic("test");
 
         RouteStatistic finalResult = result;
         assertAll(
-                () -> assertThat(finalResult).isNotNull(),
-                () -> assertThat(finalResult.getId()).isEqualTo("test"),
-                () -> assertThat(routeStatisticMap).isNotNull(),
-                () -> assertThat(routeStatisticMap.size()).isEqualTo(1));
+                () -> assertNotNull(finalResult),
+                () -> assertEquals("test", finalResult.getId()),
+                () -> assertNotNull(routeStatisticMap),
+                () -> assertEquals(1, routeStatisticMap.size()));
 
         result = processor.getRouteStatistic("test");
         RouteStatistic finalResult2 = result;
 
         assertAll(
-                () -> assertThat(finalResult2).isNotNull(),
-                () -> assertThat(finalResult2.getId()).isEqualTo("test"),
-                () -> assertThat(routeStatisticMap).isNotNull(),
-                () -> assertThat(routeStatisticMap.size()).isEqualTo(1));
+                () -> assertNotNull(finalResult2),
+                () -> assertEquals("test", finalResult2.getId()),
+                () -> assertNotNull(routeStatisticMap),
+                () -> assertEquals(1, routeStatisticMap.size()));
     }
 
     @Test
@@ -329,9 +322,9 @@ public class CoverageResultsProcessorTest {
         RouteStatistic routeStatistic = processor.getRouteStatistic(GREETINGS_ROUTE);
 
         assertAll(
-                () -> assertThat(routeStatistic).isNotNull(),
-                () -> assertThat(routeStatistic.getEipStatisticMap()).isNotNull(),
-                () -> assertThat(routeStatistic.getEipStatisticMap().size()).isEqualTo(3));
+                () -> assertNotNull(routeStatistic),
+                () -> assertNotNull(routeStatistic.getEipStatisticMap()),
+                () -> assertEquals(3, routeStatistic.getEipStatisticMap().size()));
 
         processor.writeDetailsAsHtml(routeStatistic, outputPath);
     }
@@ -348,8 +341,8 @@ public class CoverageResultsProcessorTest {
         String result = processor.writeReportIndex("test-project", outputPath);
 
         assertAll(
-                () -> assertThat(result).isNotBlank(),
-                () -> assertThat(result).isEqualTo(indexPath().getPath()));
+                () -> assertTrue(result.length() > 0),
+                () -> assertEquals(indexPath().getPath(), result));
     }
 
     private File xmlPath() {
@@ -382,8 +375,4 @@ public class CoverageResultsProcessorTest {
         return Paths.get(temporaryDirectory.getPath(), TARGET, CAMEL_ROUTE_COVERAGE, "html", INDEX_HTML).toFile();
     }
 
-    private File indexExcelPath() {
-
-        return Paths.get(temporaryDirectory.getPath(), TARGET, CAMEL_ROUTE_COVERAGE, "xlsx", INDEX_XLSX).toFile();
-    }
 }

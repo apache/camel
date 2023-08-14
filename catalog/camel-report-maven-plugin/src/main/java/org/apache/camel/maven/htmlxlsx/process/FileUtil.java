@@ -16,9 +16,11 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,24 +42,30 @@ public class FileUtil {
 
         Path inputFilePath = Paths.get(inputFile);
 
-        return new String(Files.readAllBytes(Paths.get(inputFilePath.toString())), StandardCharsets.UTF_8);
+        return Files.readString(Paths.get(inputFilePath.toString()));
     }
 
     public String write(final String rendered, final String inputFileName, final File outputPath) throws IOException {
 
         Path writeOutputPath = outputFile(inputFileName, outputPath.getPath());
 
-        Files.write(writeOutputPath, rendered.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(writeOutputPath, rendered);
 
         return writeOutputPath.toString();
+    }
+
+    public void write(final String content, final Path outputPath) throws IOException {
+
+        outputPath.getParent().toFile().mkdirs();
+
+        Files.writeString(outputPath, content);
     }
 
     public Path outputFile(final String inputFileName, final String outputPath) {
 
         Path outputFileName = Paths.get(String.format(OUTPUT_FILE, removeFileExtension(inputFileName)));
-        Path writeOutputPath = Paths.get(outputPath, outputFileName.toString());
 
-        return writeOutputPath;
+        return Paths.get(outputPath, outputFileName.toString());
     }
 
     public String removeFileExtension(String filename) {
@@ -88,5 +96,14 @@ public class FileUtil {
         }
 
         return fileList;
+    }
+
+    public String readFileFromClassPath(String path) throws IOException {
+
+        InputStream in = FileUtil.class.getClassLoader().getResourceAsStream(path);
+        assert in != null;
+        byte[] data = IOUtils.toByteArray(in);
+
+        return new String(data);
     }
 }
