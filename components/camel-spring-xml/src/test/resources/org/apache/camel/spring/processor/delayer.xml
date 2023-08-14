@@ -29,6 +29,7 @@
     <bean id="exchangeAwareBean" class="org.apache.camel.processor.ExchangeAwareDelayCalcBean"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="seda:a"/>
             <delay>

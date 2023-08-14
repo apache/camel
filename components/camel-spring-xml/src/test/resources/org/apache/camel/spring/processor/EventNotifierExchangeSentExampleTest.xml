@@ -28,6 +28,7 @@
     <bean id="myLoggingEventNotifier" class="org.apache.camel.processor.MyLoggingSentEventNotifer"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>

@@ -1051,10 +1051,11 @@ public class Run extends CamelCommand {
                         return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                     } else {
                         String data = IOHelper.loadText(fis);
-                        // also support Camel K integrations and Kamelet bindings
+                        // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
                         return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
                                 || data.contains("- rest:") || data.contains("- beans:")
                                 || data.contains("KameletBinding")
+                                || data.contains("Pipe")
                                 || data.contains("kind: Integration");
                     }
                 }

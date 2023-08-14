@@ -32,7 +32,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "ps", description = "List running Camel integrations")
+@Command(name = "ps", description = "List running Camel integrations", sortOptions = false)
 public class ListProcess extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,

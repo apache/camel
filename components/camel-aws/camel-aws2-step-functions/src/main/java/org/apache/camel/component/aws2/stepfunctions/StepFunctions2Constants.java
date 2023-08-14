@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 public interface StepFunctions2Constants {
 
     @Metadata(description = "The operation we want to perform", javaType = "String")
-    String OPERATION = "CamelAwsStateMachineOperation";
+    String OPERATION = "CamelAwsStepFunctionsOperation";
 
     @Metadata(description = "The name of the state machine", javaType = "String")
     String STATE_MACHINE_NAME = "CamelAwsStepFunctionsStateMachineName";
@@ -40,40 +40,40 @@ public interface StepFunctions2Constants {
     String STATE_MACHINE_ARN = "CamelAwsStepFunctionsStateMachineArn";
 
     @Metadata(description = "The limit number of results while listing state machines", javaType = "Integer")
-    String STATE_MACHINES_MAX_RESULTS = "CamelAwsStateMachinesMaxResults";
+    String STATE_MACHINES_MAX_RESULTS = "CamelAwsStepFunctionsStateMachinesMaxResults";
 
     @Metadata(description = "The name of the state machine activity", javaType = "String")
-    String ACTIVITY_NAME = "CamelAwsStepFunctionsStateMachineActivityName";
+    String ACTIVITY_NAME = "CamelAwsStepFunctionsActivityName";
 
     @Metadata(description = "The ARN of the state machine activity", javaType = "String")
-    String ACTIVITY_ARN = "CamelAwsStepFunctionsStateMachineActivityArn";
+    String ACTIVITY_ARN = "CamelAwsStepFunctionsActivityArn";
 
     @Metadata(description = "The limit number of results while listing state machines", javaType = "Integer")
-    String ACTIVITIES_MAX_RESULTS = "CamelAwsStateMachineActivitiesMaxResults";
+    String ACTIVITIES_MAX_RESULTS = "CamelAwsStepFunctionsActivitiesMaxResults";
 
     @Metadata(description = "The Amazon Resource Name (ARN) of the execution.", javaType = "String")
-    String EXECUTION_ARN = "CamelAwsStateMachineExecutionArn";
+    String EXECUTION_ARN = "CamelAwsStepFunctionsExecutionArn";
 
     @Metadata(description = "Optional name of the execution.", javaType = "String")
-    String EXECUTION_NAME = "CamelAwsStateMachineExecutionName";
+    String EXECUTION_NAME = "CamelAwsStepFunctionsExecutionName";
 
     @Metadata(description = "The string that contains the JSON input data for the execution.", javaType = "String")
-    String EXECUTION_INPUT = "CamelAwsStateMachineExecutionInput";
+    String EXECUTION_INPUT = "CamelAwsStepFunctionsExecutionInput";
 
     @Metadata(description = "Passes the X-Ray trace header.", javaType = "String")
-    String EXECUTION_TRACE_HEADER = "CamelAwsStateMachineExecutionTraceHeader";
+    String EXECUTION_TRACE_HEADER = "CamelAwsStepFunctionsExecutionTraceHeader";
 
     @Metadata(description = "The limit number of results while listing execution history", javaType = "Integer")
-    String EXECUTION_HISTORY_MAX_RESULTS = "CamelAwsStateMachineExecutionHistoryMaxResults";
+    String EXECUTION_HISTORY_MAX_RESULTS = "CamelAwsStepFunctionsExecutionHistoryMaxResults";
 
     @Metadata(description = "You can select whether execution data (input or output of a history event) is returned.",
               javaType = "Boolean")
-    String EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA = "CamelAwsStateMachineExecutionHistoryIncludeExecutionData";
+    String EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA = "CamelAwsStepFunctionsExecutionHistoryIncludeExecutionData";
 
     @Metadata(description = "Lists events in descending order of their timeStamp.", javaType = "Boolean")
-    String EXECUTION_HISTORY_REVERSE_ORDER = "CamelAwsStateMachineExecutionHistoryReverseOrder";
+    String EXECUTION_HISTORY_REVERSE_ORDER = "CamelAwsStepFunctionsExecutionHistoryReverseOrder";
 
     @Metadata(description = "The limit number of results while listing executions", javaType = "Integer")
-    String EXECUTIONS_MAX_RESULTS = "CamelAwsStateMachineExecutionMaxResults";
+    String EXECUTIONS_MAX_RESULTS = "CamelAwsStepFunctionsExecutionMaxResults";
 
 }

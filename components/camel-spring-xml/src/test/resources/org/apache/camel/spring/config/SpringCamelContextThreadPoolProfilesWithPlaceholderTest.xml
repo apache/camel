@@ -28,6 +28,8 @@
 
         <propertyPlaceholder id="properties" location="org/apache/camel/spring/config/pool.properties"/>
 
+        <jmxAgent id="jmx" disabled="true"/>
+
         <!-- define a low profile -->
         <threadPoolProfile id="low"
                            poolSize="{{low.min}}"

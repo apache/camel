@@ -36,7 +36,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "logger",
-                     description = "List or change logging levels")
+                     description = "List or change logging levels", sortOptions = false)
 public class LoggerAction extends ActionBaseCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,

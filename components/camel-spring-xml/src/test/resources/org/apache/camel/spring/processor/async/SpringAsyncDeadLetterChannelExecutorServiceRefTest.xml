@@ -25,6 +25,7 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="mock:dead" executorServiceRef="myAsyncPool">
             <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" asyncDelayedRedelivery="true"/>

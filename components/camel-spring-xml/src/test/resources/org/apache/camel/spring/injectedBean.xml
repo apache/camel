@@ -25,6 +25,7 @@
     ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <endpoint id="namedEndpoint1" uri="direct:namedEndpoint1"/>
     <endpoint id="injectByFieldName" uri="direct:injectByFieldName"/>
     <endpoint id="injectByPropertyName" uri="direct:injectByPropertyName"/>

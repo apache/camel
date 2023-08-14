@@ -54,7 +54,7 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
 /**
- * Send and receive messages to/from AWS SQS service using AWS SDK version 2.x.
+ * Send and receive messages to/from AWS SQS.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS Simple Queue Service (SQS)",
              syntax = "aws2-sqs:queueNameOrArn", category = { Category.CLOUD, Category.MESSAGING },

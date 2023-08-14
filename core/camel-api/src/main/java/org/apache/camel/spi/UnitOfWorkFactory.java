@@ -22,6 +22,11 @@ import org.apache.camel.Exchange;
 
 /**
  * Factory to create {@link org.apache.camel.spi.UnitOfWork}.
+ *
+ * <b>IMPORTANT:</b> Implementing a custom {@link UnitOfWorkFactory} is only intended for very rare and special
+ * use-cases. The created {@link UnitOfWork} is highly recommended to extend
+ * org.apache.camel.impl.engine.DefaultUnitOfWork to ensure Camel functionality works correctly during routing of
+ * {@link Exchange}s.
  */
 public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
 

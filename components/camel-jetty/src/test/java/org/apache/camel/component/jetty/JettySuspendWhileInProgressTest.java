@@ -84,9 +84,9 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://" + serverUri).log("Got data will wait 10 sec with reply")
+                from("jetty://" + serverUri).log("Got data will wait 5 sec with reply")
                         .process(e -> latch.countDown())
-                        .delay(10000)
+                        .delay(5000)
                         .transform(simple("Bye ${header.name}"));
             }
         };

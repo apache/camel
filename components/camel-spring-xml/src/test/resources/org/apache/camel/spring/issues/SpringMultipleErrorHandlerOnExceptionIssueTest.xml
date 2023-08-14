@@ -33,6 +33,7 @@
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <errorHandler id="dlcA" type="DeadLetterChannel" deadLetterUri="mock:dead.a" redeliveryPolicyRef="redeliveryPolicyA"/>
     <errorHandler id="dlcB" type="DeadLetterChannel" deadLetterUri="mock:dead.b" redeliveryPolicyRef="redeliveryPolicyB"/>

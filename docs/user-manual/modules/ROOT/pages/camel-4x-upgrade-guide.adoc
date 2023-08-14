@@ -9,4 +9,5 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 You can find upgrade guide for each release in the following pages:
 
+- xref:camel-4x-upgrade-guide-4_1.adoc[Upgrade guide 4.0 -> 4.1]
 

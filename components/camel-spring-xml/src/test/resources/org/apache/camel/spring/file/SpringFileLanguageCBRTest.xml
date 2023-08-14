@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="file://target/data/SpringFileLanguageCBRTest?initialDelay=0&amp;delay=10&amp;delete=true"/>
             <choice>

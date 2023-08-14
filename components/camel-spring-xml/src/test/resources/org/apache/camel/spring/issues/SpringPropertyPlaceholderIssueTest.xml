@@ -30,6 +30,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- use $simple{ start token in the fileName parameter
              to avoid clash with spring property placeholder. However we can still use

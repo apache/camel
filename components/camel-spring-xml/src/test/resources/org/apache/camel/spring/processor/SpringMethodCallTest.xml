@@ -27,6 +27,7 @@
     <bean id="coolBean" class="org.apache.camel.spring.processor.MyCoolBean"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <setHeader name="foo">

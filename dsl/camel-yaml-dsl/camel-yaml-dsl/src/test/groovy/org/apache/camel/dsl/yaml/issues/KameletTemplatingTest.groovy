@@ -35,7 +35,7 @@ class KameletTemplatingTest extends YamlTestSupport {
             '''.stripIndent().bytes)
 
             loadKamelets """
-                apiVersion: camel.apache.org/v1alpha1
+                apiVersion: camel.apache.org/v1
                 kind: Kamelet
                 metadata:
                   name: mustache-template-action

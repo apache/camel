@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sf.flatpack.DataSet;
+import net.sf.flatpack.Record;
 import org.apache.camel.Converter;
 
 @Converter(generateLoader = true)
@@ -42,6 +43,13 @@ public final class FlatpackConverter {
     public static Map<String, Object> toMap(DataSet dataSet) {
         Map<String, Object> map = new HashMap<>();
         putValues(map, dataSet);
+        return map;
+    }
+
+    @Converter
+    public static Map<String, Object> toMap(Record record) {
+        Map<String, Object> map = new HashMap<>();
+        putValues(map, record);
         return map;
     }
 
@@ -97,6 +105,18 @@ public final class FlatpackConverter {
 
         for (String column : columns) {
             String value = dataSet.getString(column);
+            map.put(column, value);
+        }
+    }
+
+    /**
+     * Puts the values of the record into the map
+     */
+    private static void putValues(Map<String, Object> map, Record record) {
+        String[] columns = record.getColumns();
+
+        for (String column : columns) {
+            String value = record.getString(column);
             map.put(column, value);
         }
     }

@@ -2,7 +2,7 @@
 :doctitle: Azure Files
 :shortname: azure-files
 :artifactid: camel-azure-files
-:description: Camel Azure Files Component
+:description: Send and receive files to Azure storage file share
 :since: 3.22
 :supportlevel: Preview
 :tabs-sync-option:

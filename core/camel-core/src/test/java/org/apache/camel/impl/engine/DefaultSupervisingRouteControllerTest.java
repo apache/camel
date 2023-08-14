@@ -66,7 +66,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         MockEndpoint mock4 = context.getEndpoint("mock:bar", MockEndpoint.class);
         mock4.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
@@ -110,7 +110,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         MockEndpoint mock4 = context.getEndpoint("mock:bar", MockEndpoint.class);
         mock4.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
         // these should all start
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());

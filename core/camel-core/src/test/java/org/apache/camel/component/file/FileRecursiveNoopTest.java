@@ -24,12 +24,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FileRecursiveNoopTest extends ContextTestSupport {
-    private final String fileUri = fileUri();
 
     @BeforeEach
     void sendMessages() {
-        template.sendBodyAndHeader(fileUri, "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader(fileUri, "b", Exchange.FILE_NAME, "b.txt");
+        testDirectory(true);
+
+        template.sendBodyAndHeader(fileUri(), "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri(), "b", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(fileUri("foo"), "a2", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(fileUri("bar"), "c", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(fileUri("bar"), "b2", Exchange.FILE_NAME, "b.txt");
@@ -37,6 +38,8 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
 
     @Test
     public void testRecursiveNoop() throws Exception {
+        context.getRouteController().startAllRoutes();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
@@ -56,7 +59,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUri("?initialDelay=0&delay=10&recursive=true&noop=true")).convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&recursive=true&noop=true")).convertBodyTo(String.class).noAutoStartup()
                         .to("mock:result");
             }
         };

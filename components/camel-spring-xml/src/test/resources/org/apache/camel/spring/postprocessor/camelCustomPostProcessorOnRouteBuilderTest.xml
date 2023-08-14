@@ -29,6 +29,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <package>org.apache.camel.spring.postprocessor</package>
+        <jmxAgent id="jmx" disabled="true"/>
     </camelContext>
 
 </beans>

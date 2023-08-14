@@ -63,11 +63,6 @@ public final class GitHubHelper {
 
         // this is a directory, so we need to query github which files are there and filter them
 
-        // URL: https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings
-        // URL: https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings?ref=v1.7.0
-        // https://github.com/apache/camel-k/tree/main/examples/kamelets/kameletbindings
-        // https://github.com/apache/camel-k/tree/v1.7.0/examples/kamelets/kameletbindings
-
         // strip https://github.com/
         url = url.substring(19);
 
@@ -96,7 +91,7 @@ public final class GitHubHelper {
         path = sj.toString();
 
         if ("tree".equals(action)) {
-            // https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings?ref=v1.7.0
+            // https://api.github.com/repos/apache/camel-k-examples/contents/examples/generic-examples
             url = "https://api.github.com/repos/" + org + "/" + repo + "/contents/" + path;
             if (!"main".equals(branch) && !"master".equals(branch)) {
                 url = url + "?ref=" + branch;

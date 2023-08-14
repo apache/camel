@@ -62,7 +62,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
                         .to("log:result?groupSize=10", "mock:result");
 
                 from("jetty:http://0.0.0.0:" + port + "/myapp")
-                        .delay(100)
+                        .delay(10)
                         .transform(body().prepend("Bye "));
             }
         };

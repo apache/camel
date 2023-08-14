@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -290,7 +290,7 @@
         <jsoup-version>1.16.1</jsoup-version>
         <jt400-version>20.0.0</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
-        <junit-jupiter-version>5.9.3</junit-jupiter-version>
+        <junit-jupiter-version>5.10.0</junit-jupiter-version>
         <junit-pioneer-version>2.0.1</junit-pioneer-version>
         <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.3</jython-version>
@@ -390,7 +390,7 @@
         <protostream-version>4.6.2.Final</protostream-version>
         <prowide-version>SRU2022-10.0.2</prowide-version>
         <pubnub-version>6.3.6</pubnub-version>
-        <pulsar-version>3.0.0</pulsar-version>
+        <pulsar-version>3.0.1</pulsar-version>
         <qpid-broker-version>9.0.0</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.4.0</qpid-jms-client-version>

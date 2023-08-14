@@ -38,6 +38,7 @@
   </routeConfigurationContext>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <!-- refer to external snippet -->
     <routeConfigurationContextRef ref="myConf"/>

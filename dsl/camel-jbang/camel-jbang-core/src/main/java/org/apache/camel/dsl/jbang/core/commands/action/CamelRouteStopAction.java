@@ -21,7 +21,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop-route",
-                     description = "Stop Camel routes")
+                     description = "Stop Camel routes", sortOptions = false)
 public class CamelRouteStopAction extends CamelRouteAction {
 
     public CamelRouteStopAction(CamelJBangMain main) {

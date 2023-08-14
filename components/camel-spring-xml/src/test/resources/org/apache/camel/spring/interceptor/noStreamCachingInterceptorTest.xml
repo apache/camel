@@ -27,6 +27,7 @@
     <!--  START SNIPPET: e1 -->
     <!-- stream cache is disabled by default -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:a"/>
             <to uri="mock:a"/>

@@ -29,6 +29,7 @@
     <import resource="myCoolRoutes.xml"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- refer to a given route to be used -->
         <routeContextRef ref="myCoolRoutes"/>

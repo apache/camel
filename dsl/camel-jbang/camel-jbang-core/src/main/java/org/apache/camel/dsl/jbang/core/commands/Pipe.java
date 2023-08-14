@@ -22,13 +22,13 @@ import java.util.Stack;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting")
+@CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting",
+                     sortOptions = false)
 public class Pipe extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of file", arity = "1",
                             paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     Path filePath; // Defined only for file path completion; the field never used
-
     String file;
 
     @CommandLine.Option(names = { "--max-messages" }, defaultValue = "0",

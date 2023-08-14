@@ -48,6 +48,7 @@
     </routeContext>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <errorHandler id="dlc" deadLetterUri="mock:dead" type="DeadLetterChannel"/>
         <errorHandler id="dlc2" deadLetterUri="mock:dead2" type="DeadLetterChannel"/>
         <routeContextRef ref="oneRoutes"/>

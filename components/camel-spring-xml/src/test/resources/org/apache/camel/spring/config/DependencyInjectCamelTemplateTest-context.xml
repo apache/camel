@@ -27,6 +27,7 @@
 
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <template id="myTemplate" defaultEndpoint="mock:results"/>
   </camelContext>
 

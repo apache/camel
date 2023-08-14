@@ -25,6 +25,7 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- define the default thread profile settings -->
         <threadPoolProfile id="customDefault" defaultProfile="true"

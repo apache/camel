@@ -26,6 +26,7 @@
 
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <!-- intercept incoming messages and route them to the mock:middle1 endpoint
              before we proceed and continue routing from the point of interceptions, that
              is mock:end will be the next target -->

@@ -24,7 +24,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "language",
-                     description = "List expression languages from the Camel Catalog")
+                     description = "List expression languages from the Camel Catalog", sortOptions = false)
 public class CatalogLanguage extends CatalogBaseCommand {
 
     public CatalogLanguage(CamelJBangMain main) {

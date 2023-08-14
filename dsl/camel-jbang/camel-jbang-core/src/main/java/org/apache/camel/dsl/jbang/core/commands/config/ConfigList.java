@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays user configuration")
+@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false)
 public class ConfigList extends CamelCommand {
 
     public ConfigList(CamelJBangMain main) {

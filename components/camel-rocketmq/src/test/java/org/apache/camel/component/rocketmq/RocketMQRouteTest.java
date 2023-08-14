@@ -22,16 +22,12 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.rocketmq.services.RocketMQService;
-import org.apache.camel.test.infra.rocketmq.services.RocketMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class RocketMQRouteTest extends CamelTestSupport {
+public class RocketMQRouteTest extends RocketMQTestSupport {
 
     public static final String EXPECTED_MESSAGE = "hello, RocketMQ.";
 
@@ -40,9 +36,6 @@ public class RocketMQRouteTest extends CamelTestSupport {
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
     private MockEndpoint resultEndpoint;
-
-    @RegisterExtension
-    public static RocketMQService rocketMQService = RocketMQServiceFactory.createService();
 
     @BeforeAll
     static void beforeAll() throws Exception {

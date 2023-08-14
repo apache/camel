@@ -132,12 +132,12 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSNSClient", mock);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&"
-                                                                        + "accessKey=xxx&secretKey=yyy&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
+                                                                        + "accessKey=xxx&secretKey=yyy&queueArn=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertEquals("arn:aws:sqs:us-east-1:541925086079:MyQueue", endpoint.getConfiguration().getQueueUrl());
+        assertEquals("arn:aws:sqs:us-east-1:541925086079:MyQueue", endpoint.getConfiguration().getQueueArn());
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
         assertNull(endpoint.getConfiguration().getTopicArn());
         assertNull(endpoint.getConfiguration().getSubject());

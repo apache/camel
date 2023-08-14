@@ -27,6 +27,7 @@
     <bean id="error" class="org.apache.camel.issues.TryCatchWithSplitIssueTest$GenerateError"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <split><tokenize token="@"/>

@@ -24,9 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.rocketmq.services.RocketMQService;
-import org.apache.camel.test.infra.rocketmq.services.RocketMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
@@ -38,11 +35,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class RocketMQRequestReplyRouteTest extends CamelTestSupport {
+public class RocketMQRequestReplyRouteTest extends RocketMQTestSupport {
 
-    private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1";
+    private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC_RRT?producerGroup=p1&consumerGroup=c1";
 
     private static final String INTERMEDIATE_ENDPOINT_URI = "rocketmq:INTERMEDIATE_TOPIC" +
                                                             "?producerGroup=intermediaProducer" +
@@ -61,12 +57,9 @@ public class RocketMQRequestReplyRouteTest extends CamelTestSupport {
 
     private DefaultMQProducer replierProducer;
 
-    @RegisterExtension
-    public static RocketMQService rocketMQService = RocketMQServiceFactory.createService();
-
     @BeforeAll
     static void beforeAll() throws Exception {
-        rocketMQService.createTopic("START_TOPIC");
+        rocketMQService.createTopic("START_TOPIC_RRT");
         rocketMQService.createTopic("INTERMEDIATE_TOPIC");
         rocketMQService.createTopic("REPLY_TO_TOPIC");
     }
@@ -136,7 +129,7 @@ public class RocketMQRequestReplyRouteTest extends CamelTestSupport {
 
     @AfterAll
     public static void afterAll() throws IOException, InterruptedException {
-        rocketMQService.deleteTopic("START_TOPIC");
+        rocketMQService.deleteTopic("START_TOPIC_RRT");
         rocketMQService.deleteTopic("INTERMEDIATE_TOPIC");
         rocketMQService.deleteTopic("REPLY_TO_TOPIC");
     }

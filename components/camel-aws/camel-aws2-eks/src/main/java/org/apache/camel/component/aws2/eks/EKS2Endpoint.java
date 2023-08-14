@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.eks.EksClient;
 
 /**
- * Manage AWS EKS cluster instances using AWS SDK version 2.x.
+ * Manage AWS EKS cluster instances.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS Elastic Kubernetes Service (EKS)",
              syntax = "aws2-eks:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

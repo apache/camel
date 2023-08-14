@@ -2,7 +2,7 @@
 :doctitle: AWS S3 Storage Service
 :shortname: aws2-s3
 :artifactid: camel-aws2-s3
-:description: Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
+:description: Store and retrieve objects from AWS S3 Storage Service.
 :since: 3.2
 :supportlevel: Stable
 :tabs-sync-option:

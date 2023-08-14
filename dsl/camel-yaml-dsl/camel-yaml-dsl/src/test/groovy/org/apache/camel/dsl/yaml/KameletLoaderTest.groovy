@@ -30,7 +30,7 @@ class KameletLoaderTest extends YamlTestSupport {
     def "kamelet with flow"() {
         when:
             loadKamelets('''
-                apiVersion: camel.apache.org/v1alpha1
+                apiVersion: camel.apache.org/v1
                 kind: Kamelet
                 metadata:
                   name: aws-s3-sink                  
@@ -118,7 +118,7 @@ class KameletLoaderTest extends YamlTestSupport {
     def "kamelet with template"() {
         when:
             loadKamelets('''
-                apiVersion: camel.apache.org/v1alpha1
+                apiVersion: camel.apache.org/v1
                 kind: Kamelet
                 metadata:
                   name: aws-s3-sink                  
@@ -192,7 +192,7 @@ class KameletLoaderTest extends YamlTestSupport {
     def "kamelet with template and optional parameters"() {
         setup:
             loadKamelets """
-                apiVersion: camel.apache.org/v1alpha1
+                apiVersion: camel.apache.org/v1
                 kind: Kamelet
                 metadata:
                   name: myTemplate
@@ -275,7 +275,7 @@ class KameletLoaderTest extends YamlTestSupport {
     def "kamelet with filter and flow"() {
         setup:
             loadKamelets '''
-                apiVersion: camel.apache.org/v1alpha1
+                apiVersion: camel.apache.org/v1
                 kind: Kamelet
                 metadata:
                   name: filter-action
