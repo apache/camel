@@ -72,3 +72,20 @@ from("direct:listActivities")
     .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listActivities")
 ----
 
+=== camel-aws2-sns
+
+The `queueUrl` parameter has been replaced by the `queueArn` parameter
+
+For Example before
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxx")
+----
+
+Should be changed to
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:xxxxx")
+----
