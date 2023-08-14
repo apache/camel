@@ -18,13 +18,13 @@ package org.apache.camel.component.whatsapp.model;
 
 import java.util.List;
 
-public class TempalteMessage {
+public class TemplateMessage {
 
     private String name;
     private Language language;
     private List<Component> components;
 
-    public TempalteMessage() {
+    public TemplateMessage() {
     }
 
     public String getName() {
