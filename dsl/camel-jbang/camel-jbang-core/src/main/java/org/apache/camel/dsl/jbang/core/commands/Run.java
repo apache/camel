@@ -204,6 +204,10 @@ public class Run extends CamelCommand {
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     String[] property;
 
+    @Option(names = {"--stub"}, description = "Stubs all the matching endpoint with the given component name or pattern."
+                                              + " Multiple names can be separated by comma. (all = everything).")
+    String stub;
+
     @Option(names = { "--jfr" },
             description = "Enables Java Flight Recorder saving recording to disk on exit")
     boolean jfr;
@@ -367,6 +371,26 @@ public class Run extends CamelCommand {
         main.setDownloadListener(new RunDownloadListener());
         main.setAppName("Apache Camel (JBang)");
 
+        if (stub != null) {
+            if ("all".equals(stub)) {
+                stub = "*";
+            }
+            // we need to match by wildcard, to make it easier
+            StringJoiner sj = new StringJoiner(",");
+            for (String n : stub.split(",")) {
+                // you can either refer to a name or a specific endpoint
+                // if there is a colon then we assume its a specific endpoint then we should not add wildcard
+                boolean colon = n.contains(":");
+                if (!colon && !n.endsWith("*")) {
+                    n = n + "*";
+                }
+                sj.add(n);
+            }
+            stub = sj.toString();
+            writeSetting(main, profileProperties, "camel.jbang.stub", stub);
+            main.setStubPattern(stub);
+        }
+
         writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
         if (dev) {
             writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
@@ -419,8 +443,9 @@ public class Run extends CamelCommand {
         }
 
         if (silentRun) {
+            main.setSilent(true);
             // enable stub in silent mode so we do not use real components
-            main.setStub(true);
+            main.setStubPattern("*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
@@ -704,6 +729,7 @@ public class Run extends CamelCommand {
             jvmDebug = "true".equals(answer.getProperty("camel.jbang.jvmDebug", jvmDebug ? "true" : "false"));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
+            stub = answer.getProperty("camel.jbang.stub", stub);
         }
         return answer;
     }
