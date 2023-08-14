@@ -41,22 +41,22 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
         endpointC.expectedBodiesReceived("Message1", "Message2");
         endpointC.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("sjms:queue:hello", "A blue car!", "color", "blue");
-        template.sendBodyAndHeader("sjms:queue:hello", "A red car!", "color", "red");
-        template.sendBodyAndHeader("sjms:queue:hello", "A blue car, again!", "color", "blue");
-        template.sendBodyAndHeader("sjms:queue:hello", "Message1", "SIZE_NUMBER", 1505);
-        template.sendBodyAndHeader("sjms:queue:hello", "Message3", "SIZE_NUMBER", 1300);
-        template.sendBodyAndHeader("sjms:queue:hello", "Message2", "SIZE_NUMBER", 1600);
+        template.sendBodyAndHeader("sjms:queue:hello.JmsSelectorOptionTest", "A blue car!", "color", "blue");
+        template.sendBodyAndHeader("sjms:queue:hello.JmsSelectorOptionTest", "A red car!", "color", "red");
+        template.sendBodyAndHeader("sjms:queue:hello.JmsSelectorOptionTest", "A blue car, again!", "color", "blue");
+        template.sendBodyAndHeader("sjms:queue:hello.JmsSelectorOptionTest", "Message1", "SIZE_NUMBER", 1505);
+        template.sendBodyAndHeader("sjms:queue:hello.JmsSelectorOptionTest", "Message3", "SIZE_NUMBER", 1300);
+        template.sendBodyAndHeader("sjms:queue:hello.JmsSelectorOptionTest", "Message2", "SIZE_NUMBER", 1600);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testConsumerTemplate() {
-        template.sendBodyAndHeader("sjms:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
-        template.sendBodyAndHeader("sjms:queue:consumer", "Message3", "SIZE_NUMBER", 1300);
-        template.sendBodyAndHeader("sjms:queue:consumer", "Message2", "SIZE_NUMBER", 1600);
+        template.sendBodyAndHeader("sjms:queue:consumer.JmsSelectorOptionTest", "Message1", "SIZE_NUMBER", 1505);
+        template.sendBodyAndHeader("sjms:queue:consumer.JmsSelectorOptionTest", "Message3", "SIZE_NUMBER", 1300);
+        template.sendBodyAndHeader("sjms:queue:consumer.JmsSelectorOptionTest", "Message2", "SIZE_NUMBER", 1600);
 
-        Exchange ex = consumer.receive("sjms:queue:consumer?messageSelector=SIZE_NUMBER<1500", 5000L);
+        Exchange ex = consumer.receive("sjms:queue:consumer.JmsSelectorOptionTest?messageSelector=SIZE_NUMBER<1500", 5000L);
         Message message = ex.getIn();
         int size = message.getHeader("SIZE_NUMBER", int.class);
         assertEquals(1300, size, "The message header SIZE_NUMBER should be less than 1500");
@@ -67,9 +67,9 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:hello?messageSelector=color='blue'").to("mock:a");
-                from("sjms:queue:hello?messageSelector=color='red'").to("mock:b");
-                from("sjms:queue:hello?messageSelector=SIZE_NUMBER>1500").to("mock:c");
+                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=color='blue'").to("mock:a");
+                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=color='red'").to("mock:b");
+                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=SIZE_NUMBER>1500").to("mock:c");
             }
         };
     }

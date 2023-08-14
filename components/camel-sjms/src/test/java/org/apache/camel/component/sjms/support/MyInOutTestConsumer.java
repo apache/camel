@@ -46,7 +46,7 @@ public class MyInOutTestConsumer implements MessageListener {
     private MessageProducer producer;
 
     static {
-        clientQueueName = "client.messages";
+        clientQueueName = "client.messages.MyInOutTestConsumer";
         ackMode = Session.AUTO_ACKNOWLEDGE;
     }
 

@@ -44,8 +44,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class QueueProducerQoSTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(QueueProducerQoSTest.class);
 
-    private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly";
-    private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout";
+    private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly.QueueProducerQoSTest";
+    private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout.QueueProducerQoSTest";
 
     private static final String EXPIRED_MESSAGE_ROUTE_ID = "expiredAdvisoryRoute";
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";

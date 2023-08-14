@@ -33,8 +33,8 @@ public class InOutConsumerTopicTest extends JmsTestSupport {
     @Test
     public void testSynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World");
-        template.sendBody("sjms:topic:start", "Hello Camel");
-        template.sendBody("sjms:topic:start", "Hello World");
+        template.sendBody("sjms:topic:start.topic.InOutConsumerTopicTest", "Hello Camel");
+        template.sendBody("sjms:topic:start.topic.InOutConsumerTopicTest", "Hello World");
         Thread.sleep(3000);
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -43,11 +43,11 @@ public class InOutConsumerTopicTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:topic:start").to("log:request")
-                        .to("sjms:topic:in.out.topic?exchangePattern=InOut&replyTo=in.out.topic.response")
+                from("sjms:topic:start.topic.InOutConsumerTopicTest").to("log:request")
+                        .to("sjms:topic:in.out.topic.InOutConsumerTopicTest?exchangePattern=InOut&replyTo=in.out.topic.response")
                         .to("log:response").to("mock:result");
 
-                from("sjms:topic:in.out.topic?exchangePattern=InOut").process(new Processor() {
+                from("sjms:topic:in.out.topic.InOutConsumerTopicTest?exchangePattern=InOut").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = (String) exchange.getIn().getBody();
                         if (body.contains("Camel")) {

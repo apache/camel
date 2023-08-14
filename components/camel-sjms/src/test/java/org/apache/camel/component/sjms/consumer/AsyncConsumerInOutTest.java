@@ -45,8 +45,8 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
         // process the 2nd message on the queue
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye Camel");
 
-        template.sendBody("sjms:queue:start", "Hello Camel");
-        template.sendBody("sjms:queue:start", "Hello World");
+        template.sendBody("sjms:queue:start.ArtemisService", "Hello Camel");
+        template.sendBody("sjms:queue:start.ArtemisService", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -72,17 +72,17 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // enable async in only mode on the consumer
-                from("sjms:queue:start?asyncConsumer=true")
+                from("sjms:queue:start.ArtemisService?asyncConsumer=true")
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
-                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test?replyTo=response.queue")
+                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test.ArtemisService?replyTo=response.queue")
                         .to("mock:result")
                         .otherwise()
                         .to("log:other")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.test?asyncConsumer=true")
+                from("sjms:queue:in.out.test.ArtemisService?asyncConsumer=true")
                         .to("log:camel")
                         .transform(constant("Bye Camel"));
             }

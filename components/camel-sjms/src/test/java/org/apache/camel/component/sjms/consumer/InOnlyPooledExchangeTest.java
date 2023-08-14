@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InOnlyPooledExchangeTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue.InOnlyPooledExchangeTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Override

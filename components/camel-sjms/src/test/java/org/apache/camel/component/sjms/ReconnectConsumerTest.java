@@ -26,7 +26,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
                           disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectConsumerTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer";
+    private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer.ReconnectConsumerTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test

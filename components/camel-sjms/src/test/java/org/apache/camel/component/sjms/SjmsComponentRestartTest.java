@@ -49,7 +49,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
             public void configure() {
-                from("sjms:queue:test").to("mock:test");
+                from("sjms:queue:test.SjmsComponentRestartTest").to("mock:test");
             }
         };
         context.addRoutes(routeBuilder);
@@ -57,7 +57,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         context.start();
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
-        template.sendBody("sjms:queue:test", "Hello World");
+        template.sendBody("sjms:queue:test.SjmsComponentRestartTest", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
         // restart
@@ -74,7 +74,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
 
         // and re-create template
         template = context.createProducerTemplate();
-        template.sendBody("sjms:queue:test", "Hello World");
+        template.sendBody("sjms:queue:test.SjmsComponentRestartTest", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
@@ -85,7 +85,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
             public void configure() {
-                from("sjms:queue:test").to("mock:test");
+                from("sjms:queue:test.SjmsComponentRestartTest").to("mock:test");
             }
         };
         context.addRoutes(routeBuilder);
@@ -93,7 +93,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         context.start();
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
-        template.sendBody("sjms:queue:test", "Hello World");
+        template.sendBody("sjms:queue:test.SjmsComponentRestartTest", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
         // restart
@@ -104,7 +104,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
 
-        template.sendBody("sjms:queue:test", "Hello World");
+        template.sendBody("sjms:queue:test.SjmsComponentRestartTest", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
