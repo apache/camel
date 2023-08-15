@@ -426,7 +426,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Athena (camel-aws2-athena)
-     * Access AWS Athena service using AWS SDK version 2.x.
+     * Access AWS Athena.
      * 
      * Category: cloud,database
      * Since: 3.4
@@ -446,7 +446,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Athena (camel-aws2-athena)
-     * Access AWS Athena service using AWS SDK version 2.x.
+     * Access AWS Athena.
      * 
      * Category: cloud,database
      * Since: 3.4
@@ -469,7 +469,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS CloudWatch (camel-aws2-cw)
-     * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
+     * Sending metrics to AWS CloudWatch.
      * 
      * Category: cloud,monitoring
      * Since: 3.1
@@ -489,7 +489,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS CloudWatch (camel-aws2-cw)
-     * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
+     * Sending metrics to AWS CloudWatch.
      * 
      * Category: cloud,monitoring
      * Since: 3.1
@@ -512,8 +512,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS DynamoDB (camel-aws2-ddb)
-     * Store and retrieve data from AWS DynamoDB service using AWS SDK version
-     * 2.x.
+     * Store and retrieve data from AWS DynamoDB.
      * 
      * Category: cloud,database
      * Since: 3.1
@@ -533,8 +532,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS DynamoDB (camel-aws2-ddb)
-     * Store and retrieve data from AWS DynamoDB service using AWS SDK version
-     * 2.x.
+     * Store and retrieve data from AWS DynamoDB.
      * 
      * Category: cloud,database
      * Since: 3.1
@@ -557,8 +555,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
-     * Receive messages from AWS DynamoDB Stream service using AWS SDK version
-     * 2.x.
+     * Receive messages from AWS DynamoDB Stream.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -578,8 +575,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
-     * Receive messages from AWS DynamoDB Stream service using AWS SDK version
-     * 2.x.
+     * Receive messages from AWS DynamoDB Stream.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -602,7 +598,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances using AWS SDK version 2.x.
+     * Manage AWS EC2 instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -622,7 +618,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances using AWS SDK version 2.x.
+     * Manage AWS EC2 instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -645,7 +641,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * Manage AWS ECS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -665,7 +661,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+     * Manage AWS ECS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -688,7 +684,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
-     * Manage AWS EKS cluster instances using AWS SDK version 2.x.
+     * Manage AWS EKS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -708,7 +704,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
-     * Manage AWS EKS cluster instances using AWS SDK version 2.x.
+     * Manage AWS EKS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -731,7 +727,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Eventbridge (camel-aws2-eventbridge)
-     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * Send events to AWS Eventbridge cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.6
@@ -751,7 +747,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Eventbridge (camel-aws2-eventbridge)
-     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * Send events to AWS Eventbridge cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.6
@@ -774,7 +770,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances using AWS SDK version 2.x.
+     * Manage AWS IAM instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -794,7 +790,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances using AWS SDK version 2.x.
+     * Manage AWS IAM instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -817,8 +813,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Kinesis (camel-aws2-kinesis)
-     * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
-     * version 2.x.
+     * Consume and produce records from and to AWS Kinesis Streams.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -838,8 +833,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Kinesis (camel-aws2-kinesis)
-     * Consume and produce records from and to AWS Kinesis Streams using AWS SDK
-     * version 2.x.
+     * Consume and produce records from and to AWS Kinesis Streams.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -862,7 +856,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
-     * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
+     * Produce data to AWS Kinesis Firehose streams.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -882,7 +876,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
-     * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
+     * Produce data to AWS Kinesis Firehose streams.
      * 
      * Category: cloud,messaging
      * Since: 3.2
@@ -905,7 +899,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
-     * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
+     * Manage keys stored in AWS KMS instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -925,7 +919,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
-     * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
+     * Manage keys stored in AWS KMS instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -948,7 +942,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Lambda (camel-aws2-lambda)
-     * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
+     * Manage and invoke AWS Lambda functions.
      * 
      * Category: cloud,serverless
      * Since: 3.2
@@ -968,7 +962,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Lambda (camel-aws2-lambda)
-     * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
+     * Manage and invoke AWS Lambda functions.
      * 
      * Category: cloud,serverless
      * Since: 3.2
@@ -991,7 +985,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances using AWS SDK version 2.x.
+     * Send messages to AWS MQ.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -1011,7 +1005,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances using AWS SDK version 2.x.
+     * Send messages to AWS MQ.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -1034,7 +1028,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
-     * Manage AWS MSK instances using AWS SDK version 2.x.
+     * Manage AWS MSK instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1054,7 +1048,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
-     * Manage AWS MSK instances using AWS SDK version 2.x.
+     * Manage AWS MSK instances.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1077,8 +1071,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
-     * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
-     * version 2.x.
+     * Store and retrieve objects from AWS S3 Storage Service.
      * 
      * Category: cloud,file
      * Since: 3.2
@@ -1098,8 +1091,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
-     * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
-     * version 2.x.
+     * Store and retrieve objects from AWS S3 Storage Service.
      * 
      * Category: cloud,file
      * Since: 3.2
@@ -1122,7 +1114,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
-     * Send e-mails through AWS SES service using AWS SDK version 2.x.
+     * Send e-mails through AWS SES service.
      * 
      * Category: cloud,mail
      * Since: 3.1
@@ -1142,7 +1134,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
-     * Send e-mails through AWS SES service using AWS SDK version 2.x.
+     * Send e-mails through AWS SES service.
      * 
      * Category: cloud,mail
      * Since: 3.1
@@ -1165,8 +1157,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to an AWS Simple Notification Topic using AWS SDK version
-     * 2.x.
+     * Send messages to AWS Simple Notification Topic.
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -1186,8 +1177,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to an AWS Simple Notification Topic using AWS SDK version
-     * 2.x.
+     * Send messages to AWS Simple Notification Topic.
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -1210,8 +1200,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
-     * Send and receive messages to/from AWS SQS service using AWS SDK version
-     * 2.x.
+     * Send and receive messages to/from AWS SQS.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -1231,8 +1220,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
-     * Send and receive messages to/from AWS SQS service using AWS SDK version
-     * 2.x.
+     * Send and receive messages to/from AWS SQS.
      * 
      * Category: cloud,messaging
      * Since: 3.1
@@ -1255,7 +1243,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions using AWS SDK version 2.x.
+     * Manage and invoke AWS Step functions.
      * 
      * Category: cloud,serverless
      * Since: 4.0
@@ -1275,7 +1263,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions using AWS SDK version 2.x.
+     * Manage and invoke AWS Step functions.
      * 
      * Category: cloud,serverless
      * Since: 4.0
@@ -1298,7 +1286,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
-     * Manage AWS STS cluster instances using AWS SDK version 2.x.
+     * Manage AWS STS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.5
@@ -1318,7 +1306,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
-     * Manage AWS STS cluster instances using AWS SDK version 2.x.
+     * Manage AWS STS cluster instances.
      * 
      * Category: cloud,management
      * Since: 3.5
@@ -1427,7 +1415,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
-     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * Manage secrets using AWS Secrets Manager.
      * 
      * Category: cloud,management
      * Since: 3.9
@@ -1447,7 +1435,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
-     * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+     * Manage secrets using AWS Secrets Manager.
      * 
      * Category: cloud,management
      * Since: 3.9
@@ -1578,7 +1566,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Camel Azure Files Component
+     * Send and receive files to Azure storage file share
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -1607,7 +1595,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Camel Azure Files Component
+     * Send and receive files to Azure storage file share
      * 
      * Category: cloud,file
      * Since: 3.22
