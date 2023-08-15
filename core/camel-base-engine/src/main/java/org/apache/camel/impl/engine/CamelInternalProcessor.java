@@ -327,7 +327,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (task.hasState()) {
                     states[j++] = state;
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // error in before so break out
                 exchange.setException(e);
                 try {
@@ -356,7 +356,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             } finally {
                 // processing is done
