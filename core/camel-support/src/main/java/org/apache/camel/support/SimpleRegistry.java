@@ -64,7 +64,7 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
         try {
             answer = unwrap(answer);
             return type.cast(answer);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             String msg = "Found bean: " + name + " in SimpleRegistry: " + this
                          + " of type: " + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);

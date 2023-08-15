@@ -532,7 +532,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             throw new RuntimeCamelException(
                     String.format("Error invoking %s with %s: %s", method.getName(), properties, message),
                     cause != null ? cause : e);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(
                     String.format("Error invoking %s with %s: %s", method.getName(), properties, e.getMessage()), e);
         }

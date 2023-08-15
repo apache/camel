@@ -91,7 +91,7 @@ public abstract class LRUCacheFactory {
                     return (LRUCacheFactory) factory;
                 }
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             LOG.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
         }
         // use default

@@ -96,7 +96,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
             try {
                 LOG.trace("Invoking onTimer on {}", listener);
                 listener.onTimer();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
                 LOG.debug("Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
                         listener, e);
