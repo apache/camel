@@ -1346,7 +1346,7 @@ public abstract class AbstractCamelCatalog {
                             int index = (int) result;
                             answer.setIndex(index);
                         }
-                    } catch (Throwable i) {
+                    } catch (Exception i) {
                         // ignore
                     }
                 }
@@ -1360,7 +1360,7 @@ public abstract class AbstractCamelCatalog {
                             String msg = (String) result;
                             answer.setShortError(msg);
                         }
-                    } catch (Throwable i) {
+                    } catch (Exception i) {
                         // ignore
                     }
 
