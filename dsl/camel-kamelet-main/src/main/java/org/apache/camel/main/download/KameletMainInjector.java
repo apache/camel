@@ -25,7 +25,8 @@ import org.apache.camel.util.ObjectHelper;
 public class KameletMainInjector implements Injector {
 
     private static final String ACCEPTED_STUB_NAMES
-            = "StubComponent,BeanComponent,ClassComponent,KameletComponent,RestComponent,RestApiComponent,PlatformHttpComponent,VertxHttpComponent,LogComponent";
+            = "StubComponent,BeanComponent,ClassComponent,DirectComponent,KameletComponent,LogComponent,RestComponent"
+              + ",RestApiComponent,PlatformHttpComponent,SedaComponent,VertxHttpComponent";
 
     private final Injector delegate;
     private final String stubPattern;

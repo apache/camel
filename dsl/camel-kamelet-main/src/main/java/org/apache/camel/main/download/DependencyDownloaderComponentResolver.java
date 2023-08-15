@@ -40,7 +40,8 @@ import org.apache.camel.tooling.model.ComponentModel;
  */
 public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver {
 
-    private static final String ACCEPTED_STUB_NAMES = "stub,bean,class,log,kamelet,rest,rest-api,platform-http,vertx-http";
+    private static final String ACCEPTED_STUB_NAMES
+            = "stub,bean,class,direct,kamelet,log,platform-http,rest,rest-api,seda,vertx-http";
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final CamelContext camelContext;
