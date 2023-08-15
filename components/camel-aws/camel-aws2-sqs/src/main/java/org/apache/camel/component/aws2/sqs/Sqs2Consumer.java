@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -67,6 +68,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Consumer.class);
 
+    private TimeoutExtender timeoutExtender;
+    private ScheduledFuture<?> scheduledFuture;
     private ScheduledExecutorService scheduledExecutor;
     private transient String sqsConsumerToString;
     private Collection<String> attributeNames;
@@ -158,35 +161,43 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
-        TimeoutExtender extender = new TimeoutExtender();
-        Queue<Exchange> toProcess = new LinkedList<>();
 
-        for (int index = 0; index < total; index++) {
-
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
+            // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
             exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
             exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
-            extender.addExchange((exchange));
-            toProcess.add(exchange);
-        }
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
 
-        extender.schedule();
+            if (this.timeoutExtender != null) {
+                timeoutExtender.add(exchange);
+            }
 
-        while (!toProcess.isEmpty() && isBatchAllowed()) {
+            // add on completion to handle after work when the exchange is done
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
+                @Override
+                public void onComplete(Exchange exchange) {
+                    processCommit(exchange);
+                }
 
-            pendingExchanges = toProcess.size();
-            Exchange exchange = toProcess.poll();
+                @Override
+                public void onFailure(Exchange exchange) {
+                    processRollback(exchange);
+                }
+
+                @Override
+                public String toString() {
+                    return "SqsConsumerOnCompletion";
+                }
+            });
+
+            // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
-        }
-
-        if (!toProcess.isEmpty()) {
-            // we are shutting down so shut down the extender as it won't cancel itself with
-            // exchanges remaining unprocessed
-            extender.cancel();
         }
 
         return total;
@@ -327,6 +338,22 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
                     "SqsTimeoutExtender", profile);
+
+            Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
+            if (visibilityTimeout != null && visibilityTimeout > 0) {
+
+                int delay = visibilityTimeout;
+                int repeatSeconds = (int) (visibilityTimeout.doubleValue() * 1.5);
+                this.timeoutExtender = new TimeoutExtender(repeatSeconds);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(
+                            "Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds)",
+                            delay, delay, repeatSeconds);
+                }
+                this.scheduledFuture
+                        = scheduledExecutor.scheduleAtFixedRate(this.timeoutExtender, delay, delay, TimeUnit.SECONDS);
+            }
         }
 
         super.doStart();
@@ -334,6 +361,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doShutdown() throws Exception {
+        if (timeoutExtender != null) {
+            timeoutExtender.cancel();
+            timeoutExtender = null;
+        }
+
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
+
         if (scheduledExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
@@ -342,88 +379,27 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         super.doShutdown();
     }
 
-    private class TimeoutExtender {
+    private class TimeoutExtender implements Runnable {
 
-        private final Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
-        private final boolean isValidTimeout = visibilityTimeout != null && (visibilityTimeout / 2) > 0;
-
-        private final Map<String, ChangeMessageVisibilityBatchRequestEntry> requests = new HashMap<>();
-
-        private TimeoutTask task;
-
-        private ScheduledFuture<?> scheduledFuture;
-
-        void addExchange(Exchange exchange) {
-            if (isValidTimeout) {
-
-                int repeatSeconds = (int) (visibilityTimeout.doubleValue() * 1.5);
-
-                ChangeMessageVisibilityBatchRequestEntry entry
-                        = ChangeMessageVisibilityBatchRequestEntry.builder()
-                                .id(exchange.getExchangeId()).visibilityTimeout(repeatSeconds)
-                                .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class))
-                                .build();
-
-                exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
-                    @Override
-                    public void onComplete(Exchange exchange) {
-                        cancelExtender(exchange);
-                    }
-
-                    @Override
-                    public void onFailure(Exchange exchange) {
-                        cancelExtender(exchange);
-                    }
-
-                    private void cancelExtender(Exchange exchange) {
-                        LOG.trace("Processing done for exchangeId {}", exchange.getExchangeId());
-                        requests.remove(exchange.getExchangeId());
-
-                        if (requests.isEmpty()) {
-                            LOG.trace("No further exchanges to process so cancelling Extender");
-                            cancel();
-                        } else {
-                            LOG.trace("Remaining exchanges to process {}", requests.keySet());
-                        }
-                    }
-                });
-
-                LOG.trace("Adding exchangeId {} for processing", exchange.getExchangeId());
-                requests.put(exchange.getExchangeId(), entry);
-            }
-        }
-
-        void cancel() {
-            if (task != null) {
-                task.cancel();
-            }
-            if (scheduledFuture != null) {
-                boolean cancelled = scheduledFuture.cancel(true);
-                if (!cancelled) {
-                    LOG.warn("Extender task could not be cancelled");
-                }
-            }
-        }
-
-        // schedule task to extend visibility,
-        void schedule() {
-            // executor could be null if shutting down
-            if (scheduledExecutor != null && isValidTimeout) {
-                task = new TimeoutTask(requests.values());
-                int delay = visibilityTimeout / 2;
-                int period = visibilityTimeout;
-                scheduledFuture = scheduledExecutor.scheduleAtFixedRate(task, delay, period, TimeUnit.SECONDS);
-            }
-        }
-    }
-
-    private class TimeoutTask implements Runnable {
-
-        private final Collection<ChangeMessageVisibilityBatchRequestEntry> entries;
+        private static final int MAX_REQUESTS = 10;
+        private final int repeatSeconds;
         private final AtomicBoolean run = new AtomicBoolean(true);
+        private final ConcurrentLinkedQueue<ChangeMessageVisibilityBatchRequestEntry> requestQueue
+                = new ConcurrentLinkedQueue<>();
 
-        TimeoutTask(Collection<ChangeMessageVisibilityBatchRequestEntry> entries) {
-            this.entries = entries;
+        TimeoutExtender(int repeatSeconds) {
+            this.repeatSeconds = repeatSeconds;
+        }
+
+        void add(Exchange exchange) {
+
+            ChangeMessageVisibilityBatchRequestEntry entry
+                    = ChangeMessageVisibilityBatchRequestEntry.builder()
+                            .id(exchange.getExchangeId()).visibilityTimeout(repeatSeconds)
+                            .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class))
+                            .build();
+
+            requestQueue.add(entry);
         }
 
         public void cancel() {
@@ -434,28 +410,41 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         @Override
         public void run() {
             if (run.get()) {
-                ChangeMessageVisibilityBatchRequest.Builder request
-                        = ChangeMessageVisibilityBatchRequest.builder().queueUrl(getQueueUrl()).entries(entries);
 
-                try {
-                    LOG.trace("Extending visibility window for request entries {}", entries);
-                    getEndpoint().getClient().changeMessageVisibilityBatch(request.build());
-                    LOG.debug("Extended visibility window for request entries {}", entries);
-                } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
-                    // Ignore.
-                } catch (SqsException e) {
-                    if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
-                        // Ignore.
-                    } else {
-                        logException(e);
+                List<ChangeMessageVisibilityBatchRequestEntry> entries = new LinkedList<>();
+
+                while (!requestQueue.isEmpty()) {
+
+                    // up to 10 requests can be sent with each ChangeMessageVisibilityBatch action
+                    while (!requestQueue.isEmpty() && entries.size() < MAX_REQUESTS) {
+                        entries.add(requestQueue.poll());
                     }
-                } catch (Exception e) {
-                    logException(e);
+
+                    ChangeMessageVisibilityBatchRequest request
+                            = ChangeMessageVisibilityBatchRequest.builder().queueUrl(getQueueUrl()).entries(entries).build();
+
+                    try {
+                        LOG.trace("Extending visibility window by {} seconds for request entries {}", repeatSeconds, entries);
+                        getEndpoint().getClient().changeMessageVisibilityBatch(request);
+                        LOG.debug("Extended visibility window for request entries {}", entries);
+                    } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
+                        // Ignore.
+                    } catch (SqsException e) {
+                        if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
+                            // Ignore.
+                        } else {
+                            logException(e, entries);
+                        }
+                    } catch (Exception e) {
+                        logException(e, entries);
+                    }
+
+                    entries.clear();
                 }
             }
         }
 
-        private void logException(Exception e) {
+        private void logException(Exception e, List<ChangeMessageVisibilityBatchRequestEntry> entries) {
             LOG.warn("Extending visibility window failed for entries {}"
                      + ". Will not attempt to extend visibility further. This exception will be ignored.",
                     entries, e);
