@@ -411,9 +411,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         public void run() {
             if (run.get()) {
 
-                List<ChangeMessageVisibilityBatchRequestEntry> entries = new LinkedList<>();
-
                 while (!requestQueue.isEmpty()) {
+
+                    List<ChangeMessageVisibilityBatchRequestEntry> entries = new LinkedList<>();
 
                     // up to 10 requests can be sent with each ChangeMessageVisibilityBatch action
                     while (!requestQueue.isEmpty() && entries.size() < MAX_REQUESTS) {
@@ -438,8 +438,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     } catch (Exception e) {
                         logException(e, entries);
                     }
-
-                    entries.clear();
                 }
             }
         }
