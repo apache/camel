@@ -18,7 +18,7 @@ package org.apache.camel.maven.htmlxlsx.process;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,10 +100,6 @@ public class FileUtil {
 
     public String readFileFromClassPath(String path) throws IOException {
 
-        InputStream in = FileUtil.class.getClassLoader().getResourceAsStream(path);
-        assert in != null;
-        byte[] data = IOUtils.toByteArray(in);
-
-        return new String(data);
+        return IOUtils.resourceToString(path, Charset.defaultCharset(), FileUtil.class.getClassLoader());
     }
 }

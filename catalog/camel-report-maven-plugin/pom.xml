@@ -33,10 +33,6 @@
     <name>Camel :: Catalog :: Camel Report Maven Plugin</name>
     <description>Maven plugin with tools to generate reports on your Camel projects</description>
 
-    <properties>
-        <poi-version>5.2.3</poi-version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -158,20 +154,14 @@
             <version>${commons-collections4-version}</version>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poi-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi-version}</version>
         </dependency>
 
         <!-- logging -->
