@@ -27,12 +27,8 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MainAutowiredLifecycleStrategy.class);
 
     // provisional maps to hold components, dataformats, languages that are created during
     // starting camel, but need to defer autowiring until later in case additional configuration
@@ -100,26 +96,34 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
         }
     }
 
+    protected boolean isEnabled(String name, Component component) {
+        return camelContext.isAutowiredEnabled() && component.isAutowiredEnabled();
+    }
+
+    protected boolean isEnabled(String name, Language language) {
+        // autowiring can be turned off on context level
+        return camelContext.isAutowiredEnabled();
+    }
+
+    protected boolean isEnabled(String name, DataFormat dataFormat) {
+        // autowiring can be turned off on context level
+        return camelContext.isAutowiredEnabled();
+    }
+
     private void autowireComponent(String name, Component component) {
-        // autowiring can be turned off on context level and per component
-        boolean enabled = camelContext.isAutowiredEnabled() && component.isAutowiredEnabled();
-        if (enabled) {
+        if (isEnabled(name, component)) {
             autowire(name, "component", component);
         }
     }
 
     private void autowireDataFormat(String name, DataFormat dataFormat) {
-        // autowiring can be turned off on context level
-        boolean enabled = camelContext.isAutowiredEnabled();
-        if (enabled) {
+        if (isEnabled(name, dataFormat)) {
             autowire(name, "dataformat", dataFormat);
         }
     }
 
     private void autowireLanguage(String name, Language language) {
-        // autowiring can be turned off on context level
-        boolean enabled = camelContext.isAutowiredEnabled();
-        if (enabled) {
+        if (isEnabled(name, language)) {
             autowire(name, "language", language);
         }
     }

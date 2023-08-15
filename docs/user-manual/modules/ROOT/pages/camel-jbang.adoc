@@ -214,6 +214,53 @@ camel run --source-dir=mycode
 
 This starts Camel where it will load the files from the _source dir_ (also sub folders).
 
+=== Stub components that should not be active
+
+Sometimes you need to troubleshoot an existing integration and is given some Camel code (routes).
+These routes may use different components, and those components may be tricky to run as they are configured
+in a custom way, or need connection to servers you may not have access too.
+
+You can run Camel JBang by stubbing those components (or all of them).
+
+For example suppose you need access to a JMS broker in the given route below.
+
+[source,java]
+----
+from("jms:inbox")
+  .log("Incoming order")
+  .to("bean:transform")
+  .log("After transformation")
+  .to("jms:process");
+----
+
+Then you can run this by stub the `jms` component by:
+
+[source,bash]
+----
+camel run syncToDatabase.java --stub=jms
+----
+
+Then Camel will not start up the JMS component but replace it with the `stub` component, but keep the actual endpoint URIs.
+
+You can then simulate sending messages to Camel with the `cmd send` command:
+
+[source,bash]
+----
+camel cmd send --body='Something here'
+----
+
+Which then will send the message to the incoming endpoint in the route, i.e. `jms:inbox` which has been stubbed.
+
+You can also stub a specific endpoint by providing the full uri, such as:
+
+[source,bash]
+----
+camel run syncToDatabase.java --stub=jms:inbox
+----
+
+Then only the `jms:inbox` endpoint is stubbed.
+
+TIP: You can stub multiple components separated by comma, such as `--stub=jms,sql`
 
 === Dev mode with live reload
 
