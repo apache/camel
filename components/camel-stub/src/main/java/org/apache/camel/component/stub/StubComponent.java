@@ -30,8 +30,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 
 /**
- * The <a href="http://camel.apache.org/stub.html">Stub Component</a> is for stubbing out endpoints while developing or
- * testing.
+ * The stub component is for stubbing out endpoints while developing or testing.
  *
  * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is handy for testing out
  * routes, or isolating bits of middleware.
@@ -98,7 +97,8 @@ public class StubComponent extends SedaComponent {
     }
 
     /**
-     * If shadow is enabled then this pattern can be used to filter which components to match.
+     * If shadow is enabled then this pattern can be used to filter which components to match. Multiple patterns can be
+     * separated by comma.
      *
      * @see org.apache.camel.support.EndpointHelper#matchEndpoint(CamelContext, String, String)
      */

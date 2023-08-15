@@ -393,7 +393,7 @@ public class KameletMain extends MainCommandLineSupport {
             CircuitBreakerDownloader.registerDownloadReifiers();
         }
         if (silent || "*".equals(stubPattern)) {
-            // turn off auto-wiring when running in stub mode
+            // turn off auto-wiring when running in silent mode (or stub = *)
             mainConfigurationProperties.setAutowiredEnabled(false);
             // and turn off fail fast as we stub components
             mainConfigurationProperties.setAutoConfigurationFailFast(false);
@@ -411,6 +411,7 @@ public class KameletMain extends MainCommandLineSupport {
         AnnotationDependencyInjection.initAnnotationBasedDependencyInjection(answer);
 
         if (!silent) {
+            // silent should not include cli-connector
             // setup cli-connector if not already done
             if (answer.hasService(CliConnector.class) == null) {
                 CliConnectorFactory ccf = answer.getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
