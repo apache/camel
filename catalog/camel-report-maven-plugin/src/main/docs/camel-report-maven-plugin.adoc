@@ -328,6 +328,6 @@ The maven plugin *coverage* goal supports the following options which can be con
  Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
  that was tested corresponds to which of the routes from the source code.
 | generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format. When enabled it will generate the file: `target/site/jacoco/xmlJacoco.xml`
-| generateHtmlReport | false | Whether to generate a coverage-report in HTML format. When enabled it will generate the file: `target/site/site/route-coverage/html/index.html`
+| generateHtmlReport | false | Whether to generate a coverage-report in HTML format. When enabled it will generate the file: `target/site/route-coverage/html/index.html`
 |===
 
