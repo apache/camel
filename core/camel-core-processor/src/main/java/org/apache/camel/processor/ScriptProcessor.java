@@ -42,7 +42,7 @@ public class ScriptProcessor extends AsyncProcessorSupport implements Traceable,
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             expression.evaluate(exchange, Object.class);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
 

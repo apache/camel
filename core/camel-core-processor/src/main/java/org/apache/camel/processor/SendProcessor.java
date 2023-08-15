@@ -174,7 +174,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                     EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
                 }
                 return sync;
-            } catch (Throwable throwable) {
+            } catch (Exception throwable) {
                 exchange.setException(throwable);
                 callback.done(true);
             }

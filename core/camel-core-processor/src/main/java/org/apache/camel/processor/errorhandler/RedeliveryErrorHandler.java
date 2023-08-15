@@ -535,7 +535,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                             onExceptionProcessor, exchange);
                 }
                 onExceptionProcessor.process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // we dont not want new exception to override existing, so log it as a WARN
                 LOG.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
             }
@@ -730,7 +730,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             try {
                 doRun();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // unexpected exception during running so set exception and trigger callback
                 // (do not do taskFactory.release as that happens later)
                 exchange.setException(e);
@@ -1084,7 +1084,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                             onExceptionProcessor, exchange);
                 }
                 onExceptionProcessor.process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // we dont not want new exception to override existing, so log it as a WARN
                 LOG.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
             }
@@ -1108,7 +1108,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // run this synchronously as its just a Processor
             try {
                 onRedeliveryProcessor.process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
             LOG.trace("Redelivery processor done");
