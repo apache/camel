@@ -47,6 +47,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.apache.camel.maven.htmlxlsx.process.CoverageResultsProcessor;
 import org.apache.camel.maven.model.RouteCoverageNode;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
@@ -141,6 +142,12 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      */
     @Parameter(property = "camel.generateJacocoXmlReport", defaultValue = "false")
     private boolean generateJacocoXmlReport;
+
+    /**
+     * Whether to generate a coverage-report in HTML format.
+     */
+    @Parameter(property = "camel.generateHtmlReport", defaultValue = "false")
+    private boolean generateHtmlReport;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -266,7 +273,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         if (generateJacocoXmlReport && report != null) {
             try {
-                getLog().info("Generating Jacoco XML report: " + file);
+                getLog().info("Generating Jacoco XML report: " + file + "\n\n");
                 createJacocoXmlFile(document, file);
             } catch (Exception e) {
                 getLog().warn("Error generating Jacoco XML report due " + e.getMessage());
@@ -311,7 +318,35 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     }
                 }
             } catch (Exception e) {
-                throw new MojoExecutionException("Error during gathering route coverage data", e);
+                throw new MojoExecutionException("Error during gathering route coverage data ", e);
+            }
+        }
+
+        if (generateHtmlReport) {
+            try {
+                final String baseHtmlPath = "/target/site/route-coverage/html";
+                final File htmlPath = new File(project.getBasedir() + baseHtmlPath);
+                if (!htmlPath.exists()) {
+                    htmlPath.mkdirs();
+                }
+                final File cssPath = new File(project.getBasedir() + baseHtmlPath + "/static/css");
+                if (!cssPath.exists()) {
+                    cssPath.mkdirs();
+                }
+                final File jsPath = new File(project.getBasedir() + baseHtmlPath + "/static/js");
+                if (!jsPath.exists()) {
+                    jsPath.mkdirs();
+                }
+                getLog().info("");
+                getLog().info("Generating HTML route coverage reports: " + htmlPath + "\n");
+                CoverageResultsProcessor processor = new CoverageResultsProcessor();
+                processor.writeCSS(cssPath);
+                processor.writeJS(jsPath);
+                File xmlPath = new File(project.getBasedir() + "/target/camel-route-coverage");
+                String out = processor.generateReport(project, xmlPath, htmlPath);
+                getLog().info(out);
+            } catch (Exception e) {
+                getLog().warn("Error generating HTML route coverage reports " + e.getMessage());
             }
         }
 
