@@ -204,8 +204,8 @@ public class Run extends CamelCommand {
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     String[] property;
 
-    @Option(names = {"--stub"}, description = "Stubs all the matching endpoint with the given component name or pattern."
-                                              + " Multiple names can be separated by comma. (all = everything).")
+    @Option(names = { "--stub" }, description = "Stubs all the matching endpoint with the given component name or pattern."
+                                                + " Multiple names can be separated by comma. (all = everything).")
     String stub;
 
     @Option(names = { "--jfr" },
