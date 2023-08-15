@@ -71,7 +71,7 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         } else {
             answer = super.resolveComponent("stub", context);
         }
-        if (silent || stubPattern != null && answer instanceof StubComponent) {
+        if ((silent || stubPattern != null) && answer instanceof StubComponent) {
             StubComponent sc = (StubComponent) answer;
             // enable shadow mode on stub component
             sc.setShadow(true);
