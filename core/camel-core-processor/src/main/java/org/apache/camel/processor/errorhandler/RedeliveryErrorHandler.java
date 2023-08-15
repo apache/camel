@@ -216,7 +216,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 reactiveExecutor.scheduleMain(task);
             }
             return false;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
