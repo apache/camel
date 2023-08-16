@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
+    private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerTest";
 
     public InOutQueueProducerTest() {
     }

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyConsumerQueueSynchronousTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue.InOnlyConsumerQueueSynchronousTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test

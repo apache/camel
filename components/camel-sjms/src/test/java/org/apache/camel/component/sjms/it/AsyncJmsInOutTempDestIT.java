@@ -41,7 +41,7 @@ public class AsyncJmsInOutTempDestIT extends JmsTestSupport {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < 100; i++) {
-            template.sendBody("seda:start", "" + i);
+            template.sendBody("seda:start.AsyncJmsInOutTempDestIT", "" + i);
         }
 
         // just in case we run on slow boxes
@@ -56,11 +56,11 @@ public class AsyncJmsInOutTempDestIT extends JmsTestSupport {
             @Override
             public void configure() {
 
-                from("seda:start")
-                        .to("sjms:in.foo.tempQ?exchangePattern=InOut")
+                from("seda:start.AsyncJmsInOutTempDestIT")
+                        .to("sjms:in.foo.tempQ.AsyncJmsInOutTempDestIT?exchangePattern=InOut")
                         .to("mock:result");
 
-                from("sjms:in.foo.tempQ?asyncConsumer=true")
+                from("sjms:in.foo.tempQ.AsyncJmsInOutTempDestIT?asyncConsumer=true")
                         .log("Using ${threadName} to process ${body}")
                         .transform(body().prepend("Bye "));
             }

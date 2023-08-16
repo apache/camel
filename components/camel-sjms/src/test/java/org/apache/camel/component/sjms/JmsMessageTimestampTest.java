@@ -30,7 +30,7 @@ public class JmsMessageTimestampTest extends JmsTestSupport {
         result.expectedMessageCount(1);
         result.message(0).header(Exchange.MESSAGE_TIMESTAMP).isGreaterThan(0);
 
-        template.sendBody("sjms:queue:hello", "Hello World");
+        template.sendBody("sjms:queue:hello.JmsMessageTimestampTest", "Hello World");
 
         result.assertIsSatisfied();
     }
@@ -39,7 +39,7 @@ public class JmsMessageTimestampTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:hello").to("mock:result");
+                from("sjms:queue:hello.JmsMessageTimestampTest").to("mock:result");
             }
         };
     }

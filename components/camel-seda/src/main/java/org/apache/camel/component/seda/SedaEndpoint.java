@@ -274,6 +274,15 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         }
     }
 
+    void setName(String name) {
+        this.name = name;
+    }
+
+    @ManagedAttribute(description = "Queue name")
+    public String getName() {
+        return name;
+    }
+
     /**
      * Define the queue instance which will be used by the endpoint.
      * <p/>

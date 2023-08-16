@@ -37,7 +37,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("proxyHost");
         props.add("proxyPort");
         props.add("proxyProtocol");
-        props.add("queueUrl");
+        props.add("queueArn");
         props.add("region");
         props.add("secretKey");
         props.add("serverSideEncryptionEnabled");

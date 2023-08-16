@@ -27,8 +27,8 @@ public class EmptyMessageBodyTest extends JmsTestSupport {
     public void testSynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("sjms:start", "");
-        template.sendBody("sjms:start", null);
+        template.sendBody("sjms:start.queue.EmptyMessageBodyTest", "");
+        template.sendBody("sjms:start.queue.EmptyMessageBodyTest", null);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -36,7 +36,7 @@ public class EmptyMessageBodyTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:start").to("mock:result");
+                from("sjms:queue:start.queue.EmptyMessageBodyTest").to("mock:result");
             }
         };
     }

@@ -241,6 +241,7 @@ public class SedaComponent extends DefaultComponent {
         } else {
             answer = createEndpoint(uri, this, queue, consumers);
         }
+        answer.setName(remaining);
 
         // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
         boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", Boolean.class, defaultBlockWhenFull);

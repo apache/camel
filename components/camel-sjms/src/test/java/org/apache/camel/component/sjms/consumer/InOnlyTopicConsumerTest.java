@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyTopicConsumerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "sjms:topic:in.only.topic.consumer.test";
+    private static final String TEST_DESTINATION_NAME = "sjms:topic:in.only.topic.consumer.test.InOnlyTopicConsumerTest";
 
     @Override
     protected boolean useJmx() {

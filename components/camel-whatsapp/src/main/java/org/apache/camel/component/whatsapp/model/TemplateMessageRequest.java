@@ -18,17 +18,17 @@ package org.apache.camel.component.whatsapp.model;
 
 public class TemplateMessageRequest extends BaseMessage {
 
-    private TempalteMessage template;
+    private TemplateMessage template;
 
     public TemplateMessageRequest() {
         setType("template");
     }
 
-    public TempalteMessage getTemplate() {
+    public TemplateMessage getTemplate() {
         return template;
     }
 
-    public void setTemplate(TempalteMessage template) {
+    public void setTemplate(TemplateMessage template) {
         this.template = template;
     }
 

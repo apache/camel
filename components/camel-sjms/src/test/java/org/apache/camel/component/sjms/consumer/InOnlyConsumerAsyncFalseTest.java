@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.synch";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.synch.InOnlyConsumerAsyncFalseTest";
     private static final String MOCK_RESULT = "mock:result";
     private static String beforeThreadName;
     private static String afterThreadName;

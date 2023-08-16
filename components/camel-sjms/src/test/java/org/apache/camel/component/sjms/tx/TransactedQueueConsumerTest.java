@@ -26,7 +26,7 @@ public class TransactedQueueConsumerTest extends TransactedConsumerSupport {
      */
     @Test
     public void testRoute() throws Exception {
-        final String destinationName = "sjms:queue:one.consumer.one.route.tx.test";
+        final String destinationName = "sjms:queue:one.consumer.one.route.tx.test.TransactedQueueConsumerTest";
         int routeCount = 1;
         int concurrentConsumers = 1;
         int messageCount = 20;

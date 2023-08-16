@@ -16,7 +16,8 @@
 *{component-header}*
 
 The AWS2 Step Functions component supports following operations on
-https://aws.amazon.com/step-functions/[AWS Step Functions]
+https://aws.amazon.com/step-functions/[AWS Step Functions]:
+
 - Create, delete, update, describe, list state machines.
 - Create, delete, describe, list activities.
 - Start, start sync, stop, list, describe executions.

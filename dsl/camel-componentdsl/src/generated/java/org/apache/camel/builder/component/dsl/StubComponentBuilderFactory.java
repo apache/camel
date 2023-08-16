@@ -67,6 +67,22 @@ public interface StubComponentBuilderFactory {
             return this;
         }
         /**
+         * If shadow is enabled then this pattern can be used to filter which
+         * components to match. Multiple patterns can be separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param shadowPattern the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder shadowPattern(
+                java.lang.String shadowPattern) {
+            doSetProperty("shadowPattern", shadowPattern);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -274,6 +290,7 @@ public interface StubComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "shadow": ((StubComponent) component).setShadow((boolean) value); return true;
+            case "shadowPattern": ((StubComponent) component).setShadowPattern((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((StubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((StubComponent) component).setConcurrentConsumers((int) value); return true;
             case "defaultPollTimeout": ((StubComponent) component).setDefaultPollTimeout((int) value); return true;

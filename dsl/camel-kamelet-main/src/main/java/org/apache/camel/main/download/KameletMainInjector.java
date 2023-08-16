@@ -19,49 +19,48 @@ package org.apache.camel.main.download;
 import org.apache.camel.Component;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public class KameletMainInjector implements Injector {
 
     private static final String ACCEPTED_STUB_NAMES
-            = "StubComponent,BeanComponent,ClassComponent,KameletComponent,RestComponent,RestApiComponent,PlatformHttpComponent,VertxHttpComponent";
+            = "StubComponent,BeanComponent,ClassComponent,DirectComponent,KameletComponent,LogComponent,RestComponent"
+              + ",RestApiComponent,PlatformHttpComponent,SedaComponent,VertxHttpComponent";
 
     private final Injector delegate;
-    private final boolean stub;
+    private final String stubPattern;
+    private final boolean silent;
 
-    public KameletMainInjector(Injector delegate, boolean stub) {
+    public KameletMainInjector(Injector delegate, String stubPattern, boolean silent) {
         this.delegate = delegate;
-        this.stub = stub;
+        this.stubPattern = stubPattern;
+        this.silent = silent;
     }
 
     @Override
     public <T> T newInstance(Class<T> type) {
-        if (stub && Component.class.isAssignableFrom(type)) {
-            boolean accept = accept(type);
-            if (!accept) {
-                return (T) delegate.newInstance(StubComponent.class);
-            }
+        boolean accept = acceptComponent(type);
+        if (!accept) {
+            return (T) delegate.newInstance(StubComponent.class);
         }
         return delegate.newInstance(type);
     }
 
     @Override
     public <T> T newInstance(Class<T> type, String factoryMethod) {
-        if (stub && Component.class.isAssignableFrom(type)) {
-            boolean accept = accept(type);
-            if (!accept) {
-                return (T) delegate.newInstance(StubComponent.class);
-            }
+        boolean accept = acceptComponent(type);
+        if (!accept) {
+            return (T) delegate.newInstance(StubComponent.class);
         }
         return delegate.newInstance(type, factoryMethod);
     }
 
     @Override
     public <T> T newInstance(Class<T> type, boolean postProcessBean) {
-        if (stub && Component.class.isAssignableFrom(type)) {
-            boolean accept = accept(type);
-            if (!accept) {
-                return (T) delegate.newInstance(StubComponent.class);
-            }
+        boolean accept = acceptComponent(type);
+        if (!accept) {
+            return (T) delegate.newInstance(StubComponent.class);
         }
         return delegate.newInstance(type, postProcessBean);
     }
@@ -71,11 +70,31 @@ public class KameletMainInjector implements Injector {
         return delegate.supportsAutoWiring();
     }
 
-    private boolean accept(Class<?> type) {
-        if (!stub) {
-            return true;
+    private boolean acceptComponent(Class<?> type) {
+        boolean accept = true;
+        if (stubPattern != null && Component.class.isAssignableFrom(type)) {
+            accept = accept(type);
+            if (!accept && !"*".equals(stubPattern)) {
+                // grab component name via annotation trick!
+                org.apache.camel.spi.annotations.Component ann
+                        = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
+                if (ann != null) {
+                    boolean found = false;
+                    String name = ann.value();
+                    for (String n : name.split(",")) {
+                        if (PatternHelper.matchPattern(n, stubPattern)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    accept = !found;
+                }
+            }
         }
+        return accept;
+    }
 
+    private boolean accept(Class<?> type) {
         String shortName = type.getSimpleName();
         // we are stubbing but need to accept the following
         return ACCEPTED_STUB_NAMES.contains(shortName);

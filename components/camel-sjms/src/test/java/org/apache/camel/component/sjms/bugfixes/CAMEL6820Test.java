@@ -37,7 +37,7 @@ public class CAMEL6820Test extends JmsTestSupport {
     private static final String TEST_DATA_DIR = "target/testdata";
     private static final String FILE_OUTPUT_URI = "file:" + TEST_DATA_DIR;
     private static final String FILE_INPUT_URI = "file:" + TEST_DATA_DIR;
-    private static final String SJMS_QUEUE_URI = "sjms:queue:file.converter.queue";
+    private static final String SJMS_QUEUE_URI = "sjms:queue:file.converter.queue.CAMEL6820Test";
     private static final String MOCK_RESULT_URI = "mock:result";
 
     @Test

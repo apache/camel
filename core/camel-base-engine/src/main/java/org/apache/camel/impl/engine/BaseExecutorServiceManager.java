@@ -476,9 +476,8 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                     }
                 } catch (Throwable e) {
                     // only log if something goes wrong as we want to shutdown them all
-                    LOG.warn("Error occurred during shutdown of ExecutorService: "
-                             + executorService + ". This exception will be ignored.",
-                            e);
+                    LOG.warn("Error occurred during shutdown of ExecutorService: {}. This exception will be ignored.", 
+                          executorService, e);
                 }
             }
         }

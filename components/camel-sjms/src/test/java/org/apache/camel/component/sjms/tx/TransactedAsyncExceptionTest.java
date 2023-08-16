@@ -48,7 +48,7 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
 
     @Test
     public void testRouteWithThread() throws Exception {
-        String destination = "sjms:queue:async.exception";
+        String destination = "sjms:queue:async.exception.queue.TransactedAsyncExceptionTest";
 
         context.addRoutes(new RouteBuilder() {
             @Override
