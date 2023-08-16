@@ -30,11 +30,9 @@ class ConstructorResolverTest extends Specification {
 
     static int getJavaMajorVersion() {
         String javaSpecVersion = System.getProperty("java.specification.version");
-        if (javaSpecVersion.contains(".")) { // before jdk 9
-            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
-        } else {
-            return Integer.parseInt(javaSpecVersion);
-        }
+
+        return Integer.parseInt(javaSpecVersion);
+
     }
 
     def "test"() {
@@ -54,10 +52,6 @@ class ConstructorResolverTest extends Specification {
                       message: nested
             '''.stripLeading())
         then:
-           if (getJavaMajorVersion() == 8) {
-               return;
-           }
-
             with(result, List) {
                 size() == 1
 

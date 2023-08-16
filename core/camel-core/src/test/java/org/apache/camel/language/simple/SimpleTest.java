@@ -447,12 +447,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
-
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -471,11 +466,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -969,11 +960,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${header.unknown[cool]}", null);
     }
@@ -992,11 +979,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${header.unknown[cool]}", null);
     }
