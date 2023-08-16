@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanThrowAssertionErrorTest extends ContextTestSupport {
 
@@ -33,12 +33,9 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello Camel");
         assertMockEndpointsSatisfied();
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should fail");
-        } catch (Exception e) {
-            // ignore
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should fail");
     }
 
     @Test
@@ -47,12 +44,9 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
         template.sendBody("direct:start2", "Hello World");
         assertMockEndpointsSatisfied();
 
-        try {
-            template.sendBody("direct:start2", "Hello Camel");
-            fail("Should fail");
-        } catch (Exception e) {
-            // ignore
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBody("direct:start2", "Hello Camel"),
+                "Should fail");
     }
 
     @Override

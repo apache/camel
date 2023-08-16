@@ -23,7 +23,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MethodCallBeanRefMethodNotFoundTest extends ContextTestSupport {
 
@@ -44,15 +44,15 @@ public class MethodCallBeanRefMethodNotFoundTest extends ContextTestSupport {
                 from("direct:b").routeId("b").split().method("foo", "bye").to("mock:b");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            assertEquals("b", failed.getRouteId());
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
-            assertEquals("bye", cause.getMethodName());
-        }
+
+        Exception e = assertThrows(Exception.class,
+                () -> context.start(),
+                "Should have thrown exception");
+
+        FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        assertEquals("b", failed.getRouteId());
+        MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+        assertEquals("bye", cause.getMethodName());
     }
 
     @Override
