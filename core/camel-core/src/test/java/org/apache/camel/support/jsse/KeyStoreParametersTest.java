@@ -124,21 +124,6 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         } catch (KeyStoreException e) {
             // expected
         }
-
-        if (getJavaMajorVersion() >= 9) {
-            // checkout http://openjdk.java.net/jeps/229
-            return;
-        }
-
-        ksp = this.createMinimalKeyStoreParameters();
-        ksp.setType("JCEKS");
-
-        try {
-            ksp.createKeyStore();
-            fail();
-        } catch (IOException e) {
-            // expected
-        }
     }
 
     @Test
