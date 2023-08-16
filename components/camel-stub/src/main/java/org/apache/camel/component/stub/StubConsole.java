@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -34,9 +35,24 @@ import org.apache.camel.util.json.JsonObject;
 public class StubConsole extends AbstractDevConsole {
 
     /**
+     * Filters the routes matching by queue name
+     */
+    public static final String FILTER = "filter";
+
+    /**
+     * Limits the number of messages dumped
+     */
+    public static final String LIMIT = "limit";
+
+    /**
      * To use either xml or json output format
      */
     public static final String FORMAT = "format";
+
+    /**
+     * Whether to browse messages
+     */
+    public static final String BROWSE = "browse";
 
     public StubConsole() {
         super("camel", "stub", "Stub", "Browse messages on stub");
@@ -44,13 +60,19 @@ public class StubConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String filter = (String) options.get(FILTER);
+        String limit = (String) options.get(LIMIT);
+        String browse = (String) options.get(BROWSE);
+        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        final boolean dump = browse == null ? Boolean.FALSE : Boolean.parseBoolean(browse);
+
         StringBuilder sb = new StringBuilder();
 
-        StubComponent sc = getCamelContext().getComponent("stub", StubComponent.class);
-
         List<StubEndpoint> list = getCamelContext().getEndpoints()
-                .stream().filter(e -> e instanceof StubEndpoint)
+                .stream()
+                .filter(e -> e instanceof StubEndpoint)
                 .map(StubEndpoint.class::cast)
+                .filter(e -> accept(e.getName(), filter))
                 .toList();
 
         Set<String> names = new HashSet<>();
@@ -65,23 +87,30 @@ public class StubConsole extends AbstractDevConsole {
 
             sb.append(String.format("Queue: %s (max: %d, size: %d)%n", name, se.getSize(), se.getCurrentQueueSize()));
 
-            // browse messages
-            Queue<Exchange> q = se.getQueue();
-            for (Exchange exchange : q) {
-                // dump to xml or json
-                try {
-                    String format = (String) options.get(FORMAT);
-                    String dump = null;
-                    if (format == null || "xml".equals(format)) {
-                        dump = MessageHelper.dumpAsXml(exchange.getMessage(), true, 4);
-                    } else if ("json".equals(format)) {
-                        dump = MessageHelper.dumpAsJSon(exchange.getMessage(), true, 4);
+            if (dump) {
+                Queue<Exchange> q = se.getQueue();
+                List<Exchange> copy = new ArrayList<>(q);
+                if (max > 0 && q.size() > max) {
+                    int pos = q.size() - 1 - max;
+                    int end = q.size() - 1;
+                    copy = copy.subList(pos, end);
+                }
+                for (Exchange exchange : copy) {
+                    // dump to xml or json
+                    try {
+                        String format = (String) options.get(FORMAT);
+                        String msg = null;
+                        if (format == null || "xml".equals(format)) {
+                            msg = MessageHelper.dumpAsXml(exchange.getMessage(), true, 4);
+                        } else if ("json".equals(format)) {
+                            msg = MessageHelper.dumpAsJSon(exchange.getMessage(), true, 4);
+                        }
+                        if (msg != null) {
+                            sb.append("\n").append(msg).append("\n");
+                        }
+                    } catch (Exception e) {
+                        // ignore
                     }
-                    if (dump != null) {
-                        sb.append("\n").append(dump).append("\n");
-                    }
-                } catch (Exception e) {
-                    // ignore
                 }
             }
         }
@@ -91,12 +120,19 @@ public class StubConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        String filter = (String) options.get(FILTER);
+        String limit = (String) options.get(LIMIT);
+        String browse = (String) options.get(BROWSE);
+        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        final boolean dump = browse == null ? Boolean.FALSE : Boolean.parseBoolean(browse);
+
         JsonObject root = new JsonObject();
         JsonArray queues = new JsonArray();
 
         List<StubEndpoint> list = getCamelContext().getEndpoints()
                 .stream().filter(e -> e instanceof StubEndpoint)
                 .map(StubEndpoint.class::cast)
+                .filter(e -> accept(e.getName(), filter))
                 .toList();
 
         Set<String> names = new HashSet<>();
@@ -111,27 +147,48 @@ public class StubConsole extends AbstractDevConsole {
 
             JsonObject jo = new JsonObject();
             jo.put("name", name);
+            jo.put("endpointUri", se.getEndpointUri());
             jo.put("max", se.getSize());
             jo.put("size", se.getCurrentQueueSize());
-            List<JsonObject> arr = new ArrayList<>();
-            Queue<Exchange> q = se.getQueue();
-            for (Exchange exchange : q) {
-                try {
-                    JsonObject dump
-                            = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, true, true, false, true, 128 * 1024);
-                    arr.add(dump);
-                } catch (Exception e) {
-                    // ignore
+
+            // browse messages
+            if (dump) {
+                List<JsonObject> arr = new ArrayList<>();
+
+                Queue<Exchange> q = se.getQueue();
+                List<Exchange> copy = new ArrayList<>(q);
+                if (max > 0 && q.size() > max) {
+                    int pos = q.size() - 1 - max;
+                    int end = q.size() - 1;
+                    copy = copy.subList(pos, end);
                 }
-            }
-            if (!arr.isEmpty()) {
-                jo.put("messages", arr);
+                for (Exchange exchange : copy) {
+                    try {
+                        JsonObject msg
+                                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, true, true, false, true,
+                                        128 * 1024);
+                        arr.add(msg);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+                if (!arr.isEmpty()) {
+                    jo.put("messages", arr);
+                }
             }
             queues.add(jo);
         }
 
         root.put("queues", queues);
         return root;
+    }
+
+    private static boolean accept(String name, String filter) {
+        if (filter == null || filter.isBlank()) {
+            return true;
+        }
+
+        return PatternHelper.matchPattern(name, filter);
     }
 
 }
