@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -340,8 +340,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     "SqsTimeoutExtender", profile);
 
             Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
-            if (visibilityTimeout != null && visibilityTimeout > 0) {
 
+            if (visibilityTimeout != null && visibilityTimeout > 0) {
                 int delay = visibilityTimeout;
                 int repeatSeconds = (int) (visibilityTimeout.doubleValue() * 1.5);
                 this.timeoutExtender = new TimeoutExtender(repeatSeconds);
@@ -384,14 +384,30 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private static final int MAX_REQUESTS = 10;
         private final int repeatSeconds;
         private final AtomicBoolean run = new AtomicBoolean(true);
-        private final ConcurrentLinkedQueue<ChangeMessageVisibilityBatchRequestEntry> requestQueue
-                = new ConcurrentLinkedQueue<>();
+        private final Map<String, ChangeMessageVisibilityBatchRequestEntry> entries = new ConcurrentHashMap<>();
 
         TimeoutExtender(int repeatSeconds) {
             this.repeatSeconds = repeatSeconds;
         }
 
-        void add(Exchange exchange) {
+        public void add(Exchange exchange) {
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
+                @Override
+                public void onComplete(Exchange exchange) {
+                    remove(exchange);
+                }
+
+                @Override
+                public void onFailure(Exchange exchange) {
+                    remove(exchange);
+                }
+
+                private void remove(Exchange exchange) {
+                    LOG.trace("Removing exchangeId {} from the TimeoutExtender, processing done",
+                            exchange.getExchangeId());
+                    entries.remove(exchange.getExchangeId());
+                }
+            });
 
             ChangeMessageVisibilityBatchRequestEntry entry
                     = ChangeMessageVisibilityBatchRequestEntry.builder()
@@ -399,7 +415,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class))
                             .build();
 
-            requestQueue.add(entry);
+            entries.put(exchange.getExchangeId(), entry);
         }
 
         public void cancel() {
@@ -410,18 +426,18 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         @Override
         public void run() {
             if (run.get()) {
+                Queue<ChangeMessageVisibilityBatchRequestEntry> entryQueue = new LinkedList<>(entries.values());
 
-                while (!requestQueue.isEmpty()) {
-
-                    List<ChangeMessageVisibilityBatchRequestEntry> entries = new LinkedList<>();
-
+                while (!entryQueue.isEmpty()) {
+                    List<ChangeMessageVisibilityBatchRequestEntry> batchEntries = new LinkedList<>();
                     // up to 10 requests can be sent with each ChangeMessageVisibilityBatch action
-                    while (!requestQueue.isEmpty() && entries.size() < MAX_REQUESTS) {
-                        entries.add(requestQueue.poll());
+                    while (!entryQueue.isEmpty() && batchEntries.size() < MAX_REQUESTS) {
+                        batchEntries.add(entryQueue.poll());
                     }
 
                     ChangeMessageVisibilityBatchRequest request
-                            = ChangeMessageVisibilityBatchRequest.builder().queueUrl(getQueueUrl()).entries(entries).build();
+                            = ChangeMessageVisibilityBatchRequest.builder().queueUrl(getQueueUrl()).entries(batchEntries)
+                                    .build();
 
                     try {
                         LOG.trace("Extending visibility window by {} seconds for request entries {}", repeatSeconds, entries);
@@ -430,13 +446,14 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
                         // Ignore.
                     } catch (SqsException e) {
-                        if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
+                        if (e.getMessage()
+                                .contains("Message does not exist or is not available for visibility timeout change")) {
                             // Ignore.
                         } else {
-                            logException(e, entries);
+                            logException(e, batchEntries);
                         }
                     } catch (Exception e) {
-                        logException(e, entries);
+                        logException(e, batchEntries);
                     }
                 }
             }
