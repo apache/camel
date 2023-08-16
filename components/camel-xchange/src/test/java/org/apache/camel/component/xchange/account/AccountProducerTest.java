@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeComponent;
 import org.apache.camel.component.xchange.XChangeTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
@@ -29,6 +30,7 @@ import org.knowm.xchange.dto.account.Wallet;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+@Disabled("See CAMEL-19751 before enabling")
 public class AccountProducerTest extends XChangeTestSupport {
 
     @Override
