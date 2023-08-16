@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
+import software.amazon.awssdk.services.timestreamquery.model.CreateScheduledQueryRequest;
+import software.amazon.awssdk.services.timestreamquery.model.CreateScheduledQueryResponse;
 import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsRequest;
 import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsResponse;
 
@@ -56,6 +58,14 @@ public class Timestream2QueryProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
             case describeEndpoints -> describeEndpoints(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case createScheduledQuery -> createScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case deleteScheduledQuery -> deleteScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case executeScheduledQuery -> executeScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case updateScheduledQuery -> updateScheduledQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case listScheduledQueries -> listScheduledQueries(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case prepareQuery -> prepareQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case query -> query(getEndpoint().getAwsTimestreamQueryClient(), exchange);
+            case cancelQuery -> cancelQuery(getEndpoint().getAwsTimestreamQueryClient(), exchange);
             default -> throw new IllegalArgumentException("Unsupported operation");
         }
     }
@@ -115,6 +125,35 @@ public class Timestream2QueryProducer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
+    }
+
+    private void createScheduledQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
+    }
+
+    private void deleteScheduledQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
+    }
+
+    private void executeScheduledQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
+    }
+
+    private void updateScheduledQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
+    }
+
+    private void listScheduledQueries(TimestreamQueryClient timestreamQueryClient, Exchange exchange)
+            throws InvalidPayloadException {
+    }
+
+    private void prepareQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange) throws InvalidPayloadException {
+    }
+
+    private void query(TimestreamQueryClient timestreamQueryClient, Exchange exchange) throws InvalidPayloadException {
+    }
+
+    private void cancelQuery(TimestreamQueryClient timestreamQueryClient, Exchange exchange) throws InvalidPayloadException {
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

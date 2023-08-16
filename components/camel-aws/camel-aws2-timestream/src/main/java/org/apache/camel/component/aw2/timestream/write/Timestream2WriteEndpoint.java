@@ -17,39 +17,23 @@
 package org.apache.camel.component.aw2.timestream.write;
 
 import org.apache.camel.*;
-import org.apache.camel.component.aw2.timestream.Timestream2Component;
+import org.apache.camel.component.aw2.timestream.Timestream2AbstractEndpoint;
 import org.apache.camel.component.aw2.timestream.Timestream2Configuration;
-import org.apache.camel.component.aw2.timestream.Timestream2Constants;
 import org.apache.camel.component.aw2.timestream.client.Timestream2ClientFactory;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 
 /**
  * Manage and invoke AWS Timestream.
  */
-@UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-timestream", title = "AWS Timestream Write",
-             syntax = "aws2-timestream:write:label",
-             producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
-             headersClass = Timestream2Constants.class)
-public class Timestream2WriteEndpoint extends DefaultEndpoint {
+
+public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint {
 
     /** AWS TimestreamWriteClient for TimestreamWrite Endpoint **/
     private TimestreamWriteClient awsTimestreamWriteClient;
 
-    @UriParam
-    private Timestream2Configuration configuration;
-
     public Timestream2WriteEndpoint(String uri, Component component, Timestream2Configuration configuration) {
-        super(uri, component);
-        this.configuration = configuration;
-    }
-
-    @Override
-    public Timestream2Component getComponent() {
-        return (Timestream2Component) super.getComponent();
+        super(uri, component, configuration);
     }
 
     @Override
@@ -65,24 +49,20 @@ public class Timestream2WriteEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsTimestreamWriteClient = configuration.getAwsTimestreamWriteClient() != null
-                ? configuration.getAwsTimestreamWriteClient()
-                : Timestream2ClientFactory.getTimestreamClient(configuration).getTimestreamWriteClient();
+        awsTimestreamWriteClient = getConfiguration().getAwsTimestreamWriteClient() != null
+                ? getConfiguration().getAwsTimestreamWriteClient()
+                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamWriteClient();
     }
 
     @Override
     public void doStop() throws Exception {
 
-        if (ObjectHelper.isEmpty(configuration.getAwsTimestreamWriteClient())) {
+        if (ObjectHelper.isEmpty(getConfiguration().getAwsTimestreamWriteClient())) {
             if (awsTimestreamWriteClient != null) {
                 awsTimestreamWriteClient.close();
             }
         }
         super.doStop();
-    }
-
-    public Timestream2Configuration getConfiguration() {
-        return configuration;
     }
 
     public TimestreamWriteClient getAwsTimestreamWriteClient() {

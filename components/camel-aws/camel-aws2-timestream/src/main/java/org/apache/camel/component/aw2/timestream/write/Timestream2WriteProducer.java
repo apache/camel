@@ -56,6 +56,21 @@ public class Timestream2WriteProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
             case describeEndpoints -> describeEndpoints(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case createBatchLoadTask -> createBatchLoadTask(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case describeBatchLoadTask -> describeBatchLoadTask(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case resumeBatchLoadTask -> resumeBatchLoadTask(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case listBatchLoadTasks -> listBatchLoadTasks(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case createDatabase -> createDatabase(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case deleteDatabase -> deleteDatabase(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case describeDatabase -> describeDatabase(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case updateDatabase -> updateDatabase(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case listDatabases -> listDatabases(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case createTable -> createTable(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case deleteTable -> deleteTable(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case describeTable -> describeTable(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case updateTable -> updateTable(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case listTables -> listTables(getEndpoint().getAwsTimestreamWriteClient(), exchange);
+            case writeRecords -> writeRecords(getEndpoint().getAwsTimestreamWriteClient(), exchange);
             default -> throw new IllegalArgumentException("Unsupported operation");
         }
     }
@@ -116,6 +131,22 @@ public class Timestream2WriteProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
+
+    private void createBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void describeBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void resumeBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void listBatchLoadTasks(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void createDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void deleteDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void describeDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void updateDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void listDatabases(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void createTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void deleteTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void describeTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void updateTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void listTables(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void writeRecords(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();

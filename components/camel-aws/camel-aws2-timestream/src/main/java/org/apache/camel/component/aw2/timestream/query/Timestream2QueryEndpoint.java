@@ -17,39 +17,22 @@
 package org.apache.camel.component.aw2.timestream.query;
 
 import org.apache.camel.*;
-import org.apache.camel.component.aw2.timestream.Timestream2Component;
+import org.apache.camel.component.aw2.timestream.Timestream2AbstractEndpoint;
 import org.apache.camel.component.aw2.timestream.Timestream2Configuration;
-import org.apache.camel.component.aw2.timestream.Timestream2Constants;
 import org.apache.camel.component.aw2.timestream.client.Timestream2ClientFactory;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
 
 /**
  * Manage and invoke AWS Timestream.
  */
-@UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-timestream", title = "AWS Timestream Query",
-             syntax = "aws2-timestream:query:label",
-             producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
-             headersClass = Timestream2Constants.class)
-public class Timestream2QueryEndpoint extends DefaultEndpoint {
+public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint {
 
     /** AWS TimestreamQueryClient for TimestreamQuery Endpoint **/
     private TimestreamQueryClient awsTimestreamQueryClient;
 
-    @UriParam
-    private Timestream2Configuration configuration;
-
     public Timestream2QueryEndpoint(String uri, Component component, Timestream2Configuration configuration) {
-        super(uri, component);
-        this.configuration = configuration;
-    }
-
-    @Override
-    public Timestream2Component getComponent() {
-        return (Timestream2Component) super.getComponent();
+        super(uri, component, configuration);
     }
 
     @Override
@@ -65,24 +48,20 @@ public class Timestream2QueryEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsTimestreamQueryClient = configuration.getAwsTimestreamQueryClient() != null
-                ? configuration.getAwsTimestreamQueryClient()
-                : Timestream2ClientFactory.getTimestreamClient(configuration).getTimestreamQueryClient();
+        awsTimestreamQueryClient = getConfiguration().getAwsTimestreamQueryClient() != null
+                ? getConfiguration().getAwsTimestreamQueryClient()
+                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamQueryClient();
     }
 
     @Override
     public void doStop() throws Exception {
 
-        if (ObjectHelper.isEmpty(configuration.getAwsTimestreamQueryClient())) {
+        if (ObjectHelper.isEmpty(getConfiguration().getAwsTimestreamQueryClient())) {
             if (awsTimestreamQueryClient != null) {
                 awsTimestreamQueryClient.close();
             }
         }
         super.doStop();
-    }
-
-    public Timestream2Configuration getConfiguration() {
-        return configuration;
     }
 
     public TimestreamQueryClient getAwsTimestreamQueryClient() {

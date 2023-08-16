@@ -18,6 +18,33 @@ package org.apache.camel.component.aw2.timestream;
 
 public enum Timestream2Operations {
 
-    describeEndpoints
+    /** Describes Endpoints available for Write or Query **/
+    describeEndpoints,
 
+    /** Write Operations **/
+    createBatchLoadTask,
+    describeBatchLoadTask,
+    resumeBatchLoadTask,
+    listBatchLoadTasks,
+    createDatabase,
+    deleteDatabase,
+    describeDatabase,
+    updateDatabase,
+    listDatabases,
+    createTable,
+    deleteTable,
+    describeTable,
+    updateTable,
+    listTables,
+    writeRecords,
+
+    /** Query Operations **/
+    createScheduledQuery,
+    deleteScheduledQuery,
+    executeScheduledQuery,
+    updateScheduledQuery,
+    listScheduledQueries,
+    prepareQuery,
+    query,
+    cancelQuery
 }
