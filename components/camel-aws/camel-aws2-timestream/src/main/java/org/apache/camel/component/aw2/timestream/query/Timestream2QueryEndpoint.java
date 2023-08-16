@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
 /**
  * Manage and invoke AWS Timestream.
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "aws2-timestream", title = "AWS Timestream Query",
+@UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-timestream", title = "AWS Timestream Query",
              syntax = "aws2-timestream:query:label",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
              headersClass = Timestream2Constants.class)

@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 /**
  * Manage and invoke AWS Timestream.
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "aws2-timestream", title = "AWS Timestream Write",
+@UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-timestream", title = "AWS Timestream Write",
              syntax = "aws2-timestream:write:label",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE },
              headersClass = Timestream2Constants.class)
