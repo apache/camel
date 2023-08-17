@@ -496,7 +496,7 @@ public final class StringHelper {
             return null;
         }
 
-        final char[] chars = text.toCharArray();
+        final char[] chars = ret.toCharArray();
 
         // We are OK with the limitations of Character.toUpperCase. The symbols and ideographs
         // for which it does not return the capitalized value should not be used here (this is
