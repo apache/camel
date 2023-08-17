@@ -33,8 +33,8 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.SqsServiceClientConfiguration;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResponse;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResponse;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -63,7 +63,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     List<Message> messages = new ArrayList<>();
     Map<String, Map<String, String>> queueAttributes = new HashMap<>();
-    List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<>();
+    List<ChangeMessageVisibilityBatchRequest> changeMessageVisibilityBatchRequests = new CopyOnWriteArrayList<>();
     private Map<String, CreateQueueRequest> queues = new LinkedHashMap<>();
     private Map<String, ScheduledFuture<?>> inFlight = new LinkedHashMap<>();
     private ScheduledExecutorService scheduler;
@@ -232,12 +232,12 @@ public class AmazonSQSClientMock implements SqsClient {
     public SqsServiceClientConfiguration serviceClientConfiguration() {
         return null;
     }
-
+    
     @Override
-    public ChangeMessageVisibilityResponse changeMessageVisibility(
-            ChangeMessageVisibilityRequest changeMessageVisibilityRequest) {
-        this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
-        return ChangeMessageVisibilityResponse.builder().build();
+    public ChangeMessageVisibilityBatchResponse changeMessageVisibilityBatch(
+            ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest) {
+        this.changeMessageVisibilityBatchRequests.add(changeMessageVisibilityBatchRequest);
+        return ChangeMessageVisibilityBatchResponse.builder().build();
     }
 
     @Override

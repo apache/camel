@@ -60,8 +60,8 @@ public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
         // Wait for message to arrive.
         MockEndpoint.assertIsSatisfied(context);
 
-        assertTrue(this.client.changeMessageVisibilityRequests.size() >= 1);
-        assertTrue(this.client.changeMessageVisibilityRequests.size() <= 3);
+        assertTrue(this.client.changeMessageVisibilityBatchRequests.size() >= 1);
+        assertTrue(this.client.changeMessageVisibilityBatchRequests.size() <= 3);
     }
 
     @Override
