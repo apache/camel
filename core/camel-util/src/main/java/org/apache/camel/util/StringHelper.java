@@ -497,15 +497,14 @@ public final class StringHelper {
         }
 
         int length = ret.length();
-        if (length == 0) {
-            return ret;
-        }
+        final char[] chars = new char[length];
+        ret.getChars(0, length, chars, 0);
 
-        String answer = ret.substring(0, 1).toUpperCase(Locale.ENGLISH);
-        if (length > 1) {
-            answer += ret.substring(1, length);
-        }
-        return answer;
+        // We are OK with the limitations of Character.toUpperCase. The symbols and ideographs
+        // for which it does not return the capitalized value should not be used here (this is
+        // mostly used to capitalize setters/getters)
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
     }
 
     /**
