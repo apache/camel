@@ -203,7 +203,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
             // create task which has state used during routing
             PooledExchangeTask task = taskFactory.acquire(target, null);
             executorService.submit(task);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // in case the thread pool rejects or cannot submit the task then we need to catch
             // so camel error handler can react
             exchange.setException(e);

@@ -160,7 +160,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 prototype = false;
             }
             destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(endpoint.getEndpointUri());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (isIgnoreInvalidEndpoint()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", recipient, e);
@@ -184,7 +184,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 if (preProcessor != null) {
                     preProcessor.process(target);
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 e.setException(t);
                 // restore previous MEP
                 target.setPattern(existingPattern);
@@ -201,7 +201,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                         if (postProcessor != null) {
                             postProcessor.process(target);
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         target.setException(e);
                     }
                     // stop endpoint if prototype as it was only used once
@@ -339,7 +339,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                         }
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
