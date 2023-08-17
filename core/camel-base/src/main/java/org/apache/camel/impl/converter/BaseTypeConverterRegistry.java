@@ -147,7 +147,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             for (ClassLoader loader : getResolver().getClassLoaders()) {
                 try {
                     clazz = loader.loadClass(name);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // ignore
                 }
                 if (clazz != null) {
