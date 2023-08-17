@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tooling.util.srcgen;
 
+import org.apache.camel.tooling.util.Strings;
+
 public class Property {
 
     GenericType type;
@@ -28,10 +30,10 @@ public class Property {
         this.type = type;
         this.name = name;
         field = new Field().setPrivate().setType(type).setName(name);
-        accessor = new Method().setPublic().setName("get" + name.substring(0, 1).toUpperCase() + name.substring(1))
+        accessor = new Method().setPublic().setName("get" + Strings.capitalize(name))
                 .setReturnType(type)
                 .setBody("return " + name + ";\n");
-        mutator = new Method().setPublic().setName("set" + name.substring(0, 1).toUpperCase() + name.substring(1))
+        mutator = new Method().setPublic().setName("set" + Strings.capitalize(name))
                 .addParameter(type, name)
                 .setReturnType(void.class)
                 .setBody("this." + name + " = " + name + ";\n");

@@ -992,7 +992,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private static String camelCaseAtIndex(String s, int i) {
-        return s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
+        return s.substring(0, i) + Strings.capitalize(s.substring(i + 1));
     }
 
     private String getComponentNameFromType(String type) {
