@@ -1039,22 +1039,24 @@ public final class StringHelper {
             if (ch == '-' || ch == '_') {
                 answer.append("-");
             } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
-                if (prev != '-' && prev != '_') {
-                    answer.append("-");
-                }
-                answer.append(ch);
+                applyDashPrefix(prev, answer, ch);
             } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
-                if (prev != '-' && prev != '_') {
-                    answer.append("-");
-                }
-                answer.append(ch);
+                applyDashPrefix(prev, answer, ch);
             } else {
-                answer.append(ch);
+                answer.append(Character.toLowerCase(ch));
             }
             prev = ch;
         }
 
-        return answer.toString().toLowerCase(Locale.ENGLISH);
+
+        return answer.toString();
+    }
+
+    private static void applyDashPrefix(Character prev, StringBuilder answer, char ch) {
+        if (prev != '-' && prev != '_') {
+            answer.append("-");
+        }
+        answer.append(Character.toLowerCase(ch));
     }
 
     /**
