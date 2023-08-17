@@ -147,7 +147,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         if (context.getCamelContextExtension().isEventNotificationApplicable()) {
             try {
                 EventHelper.notifyExchangeCreated(context, exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch exceptions to ensure the exchange is not failing due to notification event failed
                 log.warn("Exception occurred during event notification. This exception will be ignored.", e);
             }
@@ -261,7 +261,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
                 } else {
                     EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during event notification. This exception will be ignored.", e);
             }
@@ -277,7 +277,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
                 if (pooled.isAutoRelease()) {
                     ((PooledExchange) exchange).done();
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
             }

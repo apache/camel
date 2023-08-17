@@ -36,7 +36,7 @@ final class AdviceIterator {
             }
             try {
                 task.after(exchange, state);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
                 // allow all advices to complete even if there was an exception
             }

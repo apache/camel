@@ -224,7 +224,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
                 // done the unit of work
                 exchange.getUnitOfWork().done(exchange);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
                     exchange, e);
         }

@@ -80,7 +80,7 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
                     return entry.getKey().process(exchange, callback);
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
         callback.done(true);

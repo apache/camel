@@ -194,7 +194,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         LOG.trace("Worker #{} running: {}", number, polled);
                     }
                     polled.run();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
                             t.getMessage(), t);
                 }
@@ -214,7 +214,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                     LOG.trace("Running: {}", polled);
                 }
                 polled.run();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // should not happen
                 LOG.warn("Error executing reactive work due to {}. This exception is ignored.", t.getMessage(), t);
             }
