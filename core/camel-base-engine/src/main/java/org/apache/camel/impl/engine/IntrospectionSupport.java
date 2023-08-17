@@ -335,7 +335,7 @@ final class IntrospectionSupport {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(propertyName, "property");
 
-        propertyName = propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
+        propertyName = StringHelper.capitalize(propertyName);
 
         Class<?> clazz = target.getClass();
         Method method = getPropertyGetter(clazz, propertyName);

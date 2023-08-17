@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 
 public class MyAsyncComponent extends DefaultComponent {
 
@@ -39,7 +40,7 @@ public class MyAsyncComponent extends DefaultComponent {
         StringBuilder result = new StringBuilder();
         for (String word : words) {
             result.append(result.isEmpty() ? "" : " ");
-            result.append(word.substring(0, 1).toUpperCase(Locale.ENGLISH)).append(word.substring(1));
+            result.append(StringHelper.capitalize(word));
         }
         return result.toString();
     }
