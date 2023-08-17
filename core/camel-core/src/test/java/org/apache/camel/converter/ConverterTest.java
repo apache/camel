@@ -234,7 +234,7 @@ public class ConverterTest extends TestSupport {
         CamelContext camel = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(camel);
 
-        Exception ex = assertThrows(NoTypeConversionAvailableException.class,
+        assertThrows(NoTypeConversionAvailableException.class,
                 () -> converter.mandatoryConvertTo(InputStream.class, exchange),
                 "Expected to get a NoTypeConversionAvailableException here");
     }

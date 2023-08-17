@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -47,10 +48,12 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     public void testRenameFileExists() throws Exception {
         // create a file in done to let there be a duplicate file
         testDirectory("done", true);
-        try (FileWriter fw = new FileWriter(testFile("done/london.txt").toFile())) {
+
+        assertDoesNotThrow(() -> {
+            FileWriter fw = new FileWriter(testFile("done/london.txt").toFile());
             fw.write("I was there once in London");
             fw.flush();
-        }
+        });
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");

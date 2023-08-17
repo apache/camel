@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileConsumerSpringSchedulerTest extends ContextTestSupport {
 
@@ -38,13 +38,13 @@ public class FileConsumerSpringSchedulerTest extends ContextTestSupport {
                 from(fileUri("?scheduler=spring")).routeId("foo").noAutoStartup().to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            ClassNotFoundException cnfe = assertIsInstanceOf(ClassNotFoundException.class, e.getCause().getCause().getCause());
-            assertEquals("org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler", cnfe.getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class,
+                () -> context.start(),
+                "Should throw exception");
+
+        ClassNotFoundException cnfe = assertIsInstanceOf(ClassNotFoundException.class, e.getCause().getCause().getCause());
+        assertEquals("org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler", cnfe.getMessage());
     }
 
 }

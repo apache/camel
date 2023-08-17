@@ -27,8 +27,8 @@ import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
@@ -105,16 +105,15 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     @Test
     public void testStartingDirectoryMustExistDirectory() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUri("foo?autoCreate=false&startingDirectoryMustExist=true"));
-        try {
-            endpoint.createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    // noop
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (FileNotFoundException e) {
-            assertTrue(e.getMessage().startsWith("Starting directory does not exist"));
-        }
+
+        FileNotFoundException e = assertThrows(FileNotFoundException.class,
+                () -> {
+                    endpoint.createConsumer(exchange -> {
+                        // noop
+                    });
+                }, "Should have thrown an exception");
+
+        assertTrue(e.getMessage().startsWith("Starting directory does not exist"));
 
         // the directory should NOT exists
         assertFalse(Files.exists(testDirectory("foo")), "Directory should NOT be created");

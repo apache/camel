@@ -20,10 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for overridden methods in an inheritance.
@@ -67,8 +64,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        assertThrows(AmbiguousMethodCallException.class,
-                () -> beanInfo.createInvocation(null, exchange),
+        assertThrows(AmbiguousMethodCallException.class, () -> beanInfo.createInvocation(null, exchange),
                 "This should be ambiguous!");
     }
 
