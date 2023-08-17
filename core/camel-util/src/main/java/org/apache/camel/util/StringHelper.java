@@ -508,6 +508,28 @@ public final class StringHelper {
     }
 
     /**
+     * De-capitalize the string (lower case first character)
+     *
+     * @param  text            the string
+     * @return                 the string decapitalized (lower case first character)
+     */
+    public static String decapitalize(final String text) {
+        if (text == null) {
+            return null;
+        }
+
+        int length = text.length();
+        final char[] chars = new char[length];
+        text.getChars(0, length, chars, 0);
+
+        // We are OK with the limitations of Character.toLowerCase. The symbols and ideographs
+        // for which it does not return the lower case value should not be used here (this is
+        // mostly used to convert part of setters/getters to properties)
+        chars[0] = Character.toLowerCase(chars[0]);
+        return new String(chars);
+    }
+
+    /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
      *
      * @param  text the string

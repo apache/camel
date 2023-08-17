@@ -158,11 +158,9 @@ final class IntrospectionSupport {
 
         String name = method.getName();
         if (name.startsWith("get")) {
-            name = name.substring(3);
-            name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
+            name = StringHelper.decapitalize(name.substring(3));
         } else if (name.startsWith("is")) {
-            name = name.substring(2);
-            name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
+            name = StringHelper.decapitalize(name.substring(2));
         }
 
         return name;
