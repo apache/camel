@@ -63,7 +63,7 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
         try {
             dataFormat.marshal(exchange, body, osb);
             out.setBody(osb.build());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
             exchange.setException(e);
