@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Contains information about a Zeebe process
  */
 @JsonInclude(Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true, value = { "success", "error_message", "error_code" }, allowGetters = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessRequest implements ZeebeMessage {
 
     @JsonProperty(value = "process_id")
