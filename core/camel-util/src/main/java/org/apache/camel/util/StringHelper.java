@@ -496,9 +496,7 @@ public final class StringHelper {
             return null;
         }
 
-        int length = ret.length();
-        final char[] chars = new char[length];
-        ret.getChars(0, length, chars, 0);
+        final char[] chars = text.toCharArray();
 
         // We are OK with the limitations of Character.toUpperCase. The symbols and ideographs
         // for which it does not return the capitalized value should not be used here (this is
@@ -518,9 +516,7 @@ public final class StringHelper {
             return null;
         }
 
-        int length = text.length();
-        final char[] chars = new char[length];
-        text.getChars(0, length, chars, 0);
+        final char[] chars = text.toCharArray();
 
         // We are OK with the limitations of Character.toLowerCase. The symbols and ideographs
         // for which it does not return the lower case value should not be used here (this is
