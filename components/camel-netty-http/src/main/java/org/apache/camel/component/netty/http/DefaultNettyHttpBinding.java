@@ -108,7 +108,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
-                    ReferenceCountUtil.release(request.content());
+                    if (request.content().refCnt() > 0) {
+                        LOG.debug("Releasing Netty HttpResponse ByteBuf");
+                        ReferenceCountUtil.release(request.content());
+                    }
                 }
             });
         } else {
