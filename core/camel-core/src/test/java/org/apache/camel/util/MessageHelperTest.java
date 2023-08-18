@@ -271,8 +271,8 @@ public class MessageHelperTest {
         message.setHeader("foo", 123);
 
         String out = MessageHelper.dumpAsJSon(message);
-        // xml is escaped in json output
-        assertTrue(out.contains("<?xml version=\\\"1.0\\\"?><hi>Hello World<\\/hi>"));
+        // xml is escaped in json output (a lot of escape)
+        assertTrue(out.contains("<?xml version=\\\\\\\"1.0\\\\\\\"?><hi>Hello World<\\\\\\/hi>"));
         assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
 
         context.stop();
