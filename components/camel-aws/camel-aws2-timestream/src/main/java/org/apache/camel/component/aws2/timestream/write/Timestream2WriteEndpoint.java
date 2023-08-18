@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aw2.timestream.query;
+package org.apache.camel.component.aws2.timestream.write;
 
 import org.apache.camel.*;
-import org.apache.camel.component.aw2.timestream.Timestream2AbstractEndpoint;
-import org.apache.camel.component.aw2.timestream.Timestream2Configuration;
-import org.apache.camel.component.aw2.timestream.client.Timestream2ClientFactory;
+import org.apache.camel.component.aws2.timestream.Timestream2AbstractEndpoint;
+import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
+import org.apache.camel.component.aws2.timestream.client.Timestream2ClientFactory;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
+import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 
 /**
  * Manage and invoke AWS Timestream.
  */
-public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint {
 
-    /** AWS TimestreamQueryClient for TimestreamQuery Endpoint **/
-    private TimestreamQueryClient awsTimestreamQueryClient;
+public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint {
 
-    public Timestream2QueryEndpoint(String uri, Component component, Timestream2Configuration configuration) {
+    /** AWS TimestreamWriteClient for TimestreamWrite Endpoint **/
+    private TimestreamWriteClient awsTimestreamWriteClient;
+
+    public Timestream2WriteEndpoint(String uri, Component component, Timestream2Configuration configuration) {
         super(uri, component, configuration);
     }
 
@@ -42,30 +43,30 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new Timestream2QueryProducer(this);
+        return new Timestream2WriteProducer(this);
     }
 
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsTimestreamQueryClient = getConfiguration().getAwsTimestreamQueryClient() != null
-                ? getConfiguration().getAwsTimestreamQueryClient()
-                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamQueryClient();
+        awsTimestreamWriteClient = getConfiguration().getAwsTimestreamWriteClient() != null
+                ? getConfiguration().getAwsTimestreamWriteClient()
+                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamWriteClient();
     }
 
     @Override
     public void doStop() throws Exception {
 
-        if (ObjectHelper.isEmpty(getConfiguration().getAwsTimestreamQueryClient())) {
-            if (awsTimestreamQueryClient != null) {
-                awsTimestreamQueryClient.close();
+        if (ObjectHelper.isEmpty(getConfiguration().getAwsTimestreamWriteClient())) {
+            if (awsTimestreamWriteClient != null) {
+                awsTimestreamWriteClient.close();
             }
         }
         super.doStop();
     }
 
-    public TimestreamQueryClient getAwsTimestreamQueryClient() {
-        return awsTimestreamQueryClient;
+    public TimestreamWriteClient getAwsTimestreamWriteClient() {
+        return awsTimestreamWriteClient;
     }
 
 }

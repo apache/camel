@@ -14,15 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aw2.timestream;
+package org.apache.camel.component.aws2.timestream;
 
-import org.apache.camel.spi.Metadata;
-
-public interface Timestream2Constants {
-
-    @Metadata(description = "The operation we want to perform", javaType = "String")
-    String OPERATION = "CamelAwsTimestreamOperation";
-    @Metadata(description = "The limit number of results while listing databases", javaType = "Integer")
-    String LIST_DATABASES_MAX_RESULTS = "CamelAwsTimestreamListDatabases";
-
+public enum Timestream2ClientType {
+    write,
+    query
 }

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.aws2.timestream;
 
-import org.apache.camel.component.aw2.timestream.Timestream2Configuration;
-import org.apache.camel.component.aw2.timestream.client.Timestream2ClientFactory;
-import org.apache.camel.component.aw2.timestream.client.Timestream2InternalClient;
-import org.apache.camel.component.aw2.timestream.client.impl.Timestream2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aw2.timestream.client.impl.Timestream2ClientStandardImpl;
+import org.apache.camel.component.aws2.timestream.client.Timestream2ClientFactory;
+import org.apache.camel.component.aws2.timestream.client.Timestream2InternalClient;
+import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

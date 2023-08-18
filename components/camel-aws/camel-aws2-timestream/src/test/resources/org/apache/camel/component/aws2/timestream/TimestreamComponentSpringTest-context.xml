@@ -44,6 +44,51 @@
             <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=describeEndpoints"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:cancelQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=cancelQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=createScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=deleteScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:executeScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=executeScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:updateScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=updateScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=describeScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listScheduledQueries"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=listScheduledQueries"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:prepareQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=prepareQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:query"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=query"/>
+            <to uri="mock:result"/>
+        </route>
 
     </camelContext>
 

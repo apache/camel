@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
-import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsRequest;
-import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsResponse;
-import software.amazon.awssdk.services.timestreamquery.model.Endpoint;
+import software.amazon.awssdk.services.timestreamquery.model.*;
 
 public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
 
@@ -37,6 +35,60 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
         List<Endpoint> endpointList = new ArrayList<>();
         endpointList.add(endpoint.build());
         result.endpoints(endpointList);
+        return result.build();
+    }
+
+    @Override
+    public CancelQueryResponse cancelQuery(CancelQueryRequest cancelQueryRequest) {
+        CancelQueryResponse.Builder result = CancelQueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public CreateScheduledQueryResponse createScheduledQuery(CreateScheduledQueryRequest createScheduledQueryRequest) {
+        CreateScheduledQueryResponse.Builder result = CreateScheduledQueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public DeleteScheduledQueryResponse deleteScheduledQuery(DeleteScheduledQueryRequest deleteScheduledQueryRequest) {
+        DeleteScheduledQueryResponse.Builder result = DeleteScheduledQueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public DescribeScheduledQueryResponse describeScheduledQuery(DescribeScheduledQueryRequest describeScheduledQueryRequest) {
+        DescribeScheduledQueryResponse.Builder result = DescribeScheduledQueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public ExecuteScheduledQueryResponse executeScheduledQuery(ExecuteScheduledQueryRequest executeScheduledQueryRequest) {
+        ExecuteScheduledQueryResponse.Builder result = ExecuteScheduledQueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public ListScheduledQueriesResponse listScheduledQueries(ListScheduledQueriesRequest listScheduledQueriesRequest) {
+        ListScheduledQueriesResponse.Builder result = ListScheduledQueriesResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public PrepareQueryResponse prepareQuery(PrepareQueryRequest prepareQueryRequest) {
+        PrepareQueryResponse.Builder result = PrepareQueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public QueryResponse query(QueryRequest queryRequest) {
+        QueryResponse.Builder result = QueryResponse.builder();
+        return result.build();
+    }
+
+    @Override
+    public UpdateScheduledQueryResponse updateScheduledQuery(UpdateScheduledQueryRequest updateScheduledQueryRequest) {
+        UpdateScheduledQueryResponse.Builder result = UpdateScheduledQueryResponse.builder();
         return result.build();
     }
 

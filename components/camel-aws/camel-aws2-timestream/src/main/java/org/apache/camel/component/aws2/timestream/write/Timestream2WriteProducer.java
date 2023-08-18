@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aw2.timestream.write;
+package org.apache.camel.component.aws2.timestream.write;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.component.aw2.timestream.Timestream2Configuration;
-import org.apache.camel.component.aw2.timestream.Timestream2Constants;
-import org.apache.camel.component.aw2.timestream.Timestream2Operations;
+import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
+import org.apache.camel.component.aws2.timestream.Timestream2Constants;
+import org.apache.camel.component.aws2.timestream.Timestream2Operations;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -132,21 +132,50 @@ public class Timestream2WriteProducer extends DefaultProducer {
         }
     }
 
-    private void createBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void describeBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void resumeBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void listBatchLoadTasks(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void createDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void deleteDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void describeDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void updateDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void listDatabases(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void createTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void deleteTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void describeTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void updateTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void listTables(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
-    private void writeRecords(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {}
+    private void createBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void describeBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void resumeBatchLoadTask(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void listBatchLoadTasks(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void createDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void deleteDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void describeDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void updateDatabase(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void listDatabases(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void createTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void deleteTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void describeTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void updateTable(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void listTables(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
+
+    private void writeRecords(TimestreamWriteClient timestreamWriteClient, Exchange exchange) {
+    }
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aw2.timestream;
+package org.apache.camel.component.aws2.timestream;
 
 public enum Timestream2Operations {
 
@@ -43,6 +43,7 @@ public enum Timestream2Operations {
     deleteScheduledQuery,
     executeScheduledQuery,
     updateScheduledQuery,
+    describeScheduledQuery,
     listScheduledQueries,
     prepareQuery,
     query,

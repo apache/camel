@@ -15,40 +15,40 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.aw2.timestream.write;
+package org.apache.camel.component.aws2.timestream.query;
 
 import java.util.Map;
 
-import org.apache.camel.component.aw2.timestream.Timestream2Configuration;
+import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
-import software.amazon.awssdk.services.timestreamwrite.model.DescribeEndpointsRequest;
+import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
+import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsRequest;
 
-public class Timestream2WriteProducerHealthCheck extends AbstractHealthCheck {
+public class Timestream2QueryProducerHealthCheck extends AbstractHealthCheck {
 
-    private final Timestream2WriteEndpoint timestream2WriteEndpoint;
+    private final Timestream2QueryEndpoint timestream2QueryEndpoint;
 
-    public Timestream2WriteProducerHealthCheck(Timestream2WriteEndpoint timestream2WriteEndpoint, String clientId) {
-        super("camel", "producer:aws2-timestream-write-" + clientId);
-        this.timestream2WriteEndpoint = timestream2WriteEndpoint;
+    public Timestream2QueryProducerHealthCheck(Timestream2QueryEndpoint timestream2QueryEndpoint, String clientId) {
+        super("camel", "producer:aws2-timestream-query-" + clientId);
+        this.timestream2QueryEndpoint = timestream2QueryEndpoint;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        Timestream2Configuration configuration = timestream2WriteEndpoint.getConfiguration();
+        Timestream2Configuration configuration = timestream2QueryEndpoint.getConfiguration();
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            if (!TimestreamWriteClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+            if (!TimestreamQueryClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
         }
         try {
-            TimestreamWriteClient client = timestream2WriteEndpoint.getAwsTimestreamWriteClient();
+            TimestreamQueryClient client = timestream2QueryEndpoint.getAwsTimestreamQueryClient();
             client.describeEndpoints(DescribeEndpointsRequest.builder().build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

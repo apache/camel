@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.aws2.timestream;
 
-import org.apache.camel.component.aw2.timestream.Timestream2Component;
-import org.apache.camel.component.aw2.timestream.query.Timestream2QueryEndpoint;
-import org.apache.camel.component.aw2.timestream.write.Timestream2WriteEndpoint;
 import org.apache.camel.component.aws2.timestream.query.AmazonTimestreamQueryClientMock;
+import org.apache.camel.component.aws2.timestream.query.Timestream2QueryEndpoint;
 import org.apache.camel.component.aws2.timestream.write.AmazonTimestreamWriteClientMock;
+import org.apache.camel.component.aws2.timestream.write.Timestream2WriteEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
