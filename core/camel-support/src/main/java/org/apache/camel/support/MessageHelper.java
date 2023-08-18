@@ -869,7 +869,7 @@ public final class MessageHelper {
 
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (data != null) {
-                jb.put("value", Jsoner.unescape(data));
+                jb.put("value", Jsoner.escape(data));
             }
         }
 
