@@ -499,3 +499,6 @@ NOTE: The `platform-http-starter` can also be used with Rest DSL.
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
+=== camel-twitter
+
+The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Twit status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.
