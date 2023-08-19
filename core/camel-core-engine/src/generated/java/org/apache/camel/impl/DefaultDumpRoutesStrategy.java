@@ -53,7 +53,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
 
     // TODO: configure what to log (routes,rests,route-templates) default routes
     // TODO: xml customId=true
-    // TODO: LOG new file should use same LOG
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);
     private static final String DIVIDER = "--------------------------------------------------------------------------------";
