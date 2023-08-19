@@ -68,7 +68,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     @Metadata(description = "The id of this node")
     public void setId(String id) {
         this.id = id;
-        customId = true;
+        customId = id != null ? true : null;
     }
 
     @Override

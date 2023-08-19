@@ -60,6 +60,7 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
 import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
 import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
+import static org.apache.camel.xml.jaxb.JaxbHelper.removeAutoAssignedIds;
 import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
 
 /**
@@ -204,6 +205,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // okay there were some property placeholder or delegate endpoints
             // replaced so re-create the model
             if (changed.get()) {
+                // remove all generated ID from dom, as we do not want to copy those over
+                removeAutoAssignedIds(dom.getDocumentElement());
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
                 xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy);
