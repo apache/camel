@@ -134,7 +134,7 @@ public class OpenAPI3to2 {
         SecuritySchemeDefinition swaggerScheme = null;
         switch (securityScheme.getType()) {
             case HTTP:
-                if ("basic".equals(securityScheme.getName())) {
+                if ("basic".equals(securityScheme.getScheme())) {
                     swaggerScheme = new BasicAuthDefinition();
                 } else {
                     throw new IllegalStateException("OpenAPI 2.0 does not support bearer token security schemes.");
