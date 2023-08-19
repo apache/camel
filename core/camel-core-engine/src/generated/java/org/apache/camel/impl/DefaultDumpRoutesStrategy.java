@@ -51,6 +51,10 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 @JdkService("default-" + DumpRoutesStrategy.FACTORY)
 public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelContextAware {
 
+    // TODO: configure what to log (routes,rests,route-templates) default routes
+    // TODO: xml customId=true
+    // TODO: LOG new file should use same LOG
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);
     private static final String DIVIDER = "--------------------------------------------------------------------------------";
 
@@ -75,18 +79,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         }
     }
 
-    protected void onDump(Resource resource, String dump) {
-        String loc = null;
-        if (resource != null) {
-            loc = extractLocationName(resource.getLocation());
-        }
-        if (loc != null) {
-            LOG.info("\nSource: {}\n{}\n{}\n", loc, DIVIDER, dump);
-        } else {
-            LOG.info("\n\n{}\n", dump);
-        }
-    }
-
     protected void doDumpRoutesAsYaml(CamelContext camelContext) {
         final ModelToYAMLDumper dumper = PluginHelper.getModelToYAMLDumper(camelContext);
         final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
@@ -94,7 +86,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
 
         int size = model.getRouteDefinitions().size();
         if (size > 0) {
-            LOG.info("Dumping {} routes as YAML", size);
             Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
             for (RouteDefinition route : model.getRouteDefinitions()) {
                 Resource res = route.getResource();
@@ -104,16 +95,20 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
                 RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
                 routes.getRoutes().add(route);
             }
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<Resource, RoutesDefinition> entry : groups.entrySet()) {
                 RoutesDefinition def = entry.getValue();
                 Resource resource = entry.getKey();
-                doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "routes");
+                doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "routes", sb);
+            }
+            if (!sb.isEmpty()) {
+                LOG.info("Dumping {} routes as YAML", size);
+                LOG.info("{}", sb);
             }
         }
 
         size = model.getRestDefinitions().size();
         if (size > 0) {
-            LOG.info("Dumping {} rests as YAML", size);
             Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
             for (RestDefinition rest : model.getRestDefinitions()) {
                 Resource res = rest.getResource();
@@ -123,16 +118,20 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
                 RestsDefinition rests = groups.computeIfAbsent(res, resource -> new RestsDefinition());
                 rests.getRests().add(rest);
             }
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<Resource, RestsDefinition> entry : groups.entrySet()) {
                 RestsDefinition def = entry.getValue();
                 Resource resource = entry.getKey();
-                doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "rests");
+                doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "rests", sb);
+            }
+            if (!sb.isEmpty()) {
+                LOG.info("Dumping {} rests as YAML", size);
+                LOG.info("{}", sb);
             }
         }
 
         size = model.getRouteTemplateDefinitions().size();
         if (size > 0) {
-            LOG.info("Dumping {} route templates as YAML", size);
             Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
             for (RouteTemplateDefinition rt : model.getRouteTemplateDefinitions()) {
                 Resource res = rt.getResource();
@@ -142,19 +141,24 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
                 RouteTemplatesDefinition rests = groups.computeIfAbsent(res, resource -> new RouteTemplatesDefinition());
                 rests.getRouteTemplates().add(rt);
             }
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<Resource, RouteTemplatesDefinition> entry : groups.entrySet()) {
                 RouteTemplatesDefinition def = entry.getValue();
                 Resource resource = entry.getKey();
-                doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-templates");
+                doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-templates", sb);
+            }
+            if (!sb.isEmpty()) {
+                LOG.info("Dumping {} route templates as YAML", size);
+                LOG.info("{}", sb);
             }
         }
     }
 
     protected void doDumpYaml(CamelContext camelContext, NamedNode def, Resource resource,
-                              ModelToYAMLDumper dumper, String kind) {
+                              ModelToYAMLDumper dumper, String kind, StringBuilder sb) {
         try {
             String dump = dumper.dumpModelAsYaml(camelContext, def, true, false);
-            onDump(resource, dump);
+            appendDump(resource, dump, sb);
         } catch (Exception e) {
             LOG.warn("Error dumping {}} to YAML due to {}. This exception is ignored.", kind, e.getMessage(), e);
         }
@@ -167,7 +171,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
 
         int size = model.getRouteDefinitions().size();
         if (size > 0) {
-            LOG.info("Dumping {} routes as XML", size);
             Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
             for (RouteDefinition route : model.getRouteDefinitions()) {
                 Resource res = route.getResource();
@@ -177,16 +180,20 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
                 RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
                 routes.getRoutes().add(route);
             }
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<Resource, RoutesDefinition> entry : groups.entrySet()) {
                 RoutesDefinition def = entry.getValue();
                 Resource resource = entry.getKey();
-                doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "route", "routes");
+                doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "route", "routes", sb);
+            }
+            if (!sb.isEmpty()) {
+                LOG.info("Dumping {} routes as XML", size);
+                LOG.info("{}", sb);
             }
         }
 
         size = model.getRestDefinitions().size();
         if (size > 0) {
-            LOG.info("Dumping {} rests as XML", size);
             Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
             for (RestDefinition rest : model.getRestDefinitions()) {
                 Resource res = rest.getResource();
@@ -196,16 +203,20 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
                 RestsDefinition routes = groups.computeIfAbsent(res, resource -> new RestsDefinition());
                 routes.getRests().add(rest);
             }
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<Resource, RestsDefinition> entry : groups.entrySet()) {
                 RestsDefinition def = entry.getValue();
                 Resource resource = entry.getKey();
-                doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "rests");
+                doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "rests", sb);
+            }
+            if (!sb.isEmpty()) {
+                LOG.info("Dumping {} rests as XML", size);
+                LOG.info("{}", sb);
             }
         }
 
         size = model.getRouteTemplateDefinitions().size();
         if (size > 0) {
-            LOG.info("Dumping {} route templates as XML", size);
             Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
             for (RouteTemplateDefinition rt : model.getRouteTemplateDefinitions()) {
                 Resource res = rt.getResource();
@@ -215,25 +226,42 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
                 RouteTemplatesDefinition routes = groups.computeIfAbsent(res, resource -> new RouteTemplatesDefinition());
                 routes.getRouteTemplates().add(rt);
             }
+            StringBuilder sb = new StringBuilder();
             for (Map.Entry<Resource, RouteTemplatesDefinition> entry : groups.entrySet()) {
                 RouteTemplatesDefinition def = entry.getValue();
                 Resource resource = entry.getKey();
-                doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "routeTemplate", "route-templates");
+                doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "routeTemplate", "route-templates", sb);
+            }
+            if (!sb.isEmpty()) {
+                LOG.info("Dumping {} route templates as XML", size);
+                LOG.info("{}", sb);
             }
         }
     }
 
     protected void doDumpXml(CamelContext camelContext, NamedNode def, Resource resource,
-                              ModelToXMLDumper dumper, String replace, String kind) {
+                              ModelToXMLDumper dumper, String replace, String kind, StringBuilder sb) {
         try {
             String xml = dumper.dumpModelAsXml(camelContext, def, true);
             // lets separate with empty line
             xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
                     "xmlns=\"http://camel.apache.org/schema/spring\">\n");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");
-            onDump(resource, xml);
+            appendDump(resource, xml, sb);
         } catch (Exception e) {
             LOG.warn("Error dumping {}} to XML due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
+    }
+
+    protected void appendDump(Resource resource, String dump, StringBuilder sb) {
+        String loc = null;
+        if (resource != null) {
+            loc = extractLocationName(resource.getLocation());
+        }
+        if (loc != null) {
+            sb.append(String.format("\nSource: %s%n%s%n%s%n", loc, DIVIDER, dump));
+        } else {
+            sb.append(String.format("%n%n%s%n", dump));
         }
     }
 
