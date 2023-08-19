@@ -50,10 +50,11 @@ public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request(1));
 
-        assertDoesNotThrow(() -> {MyPackagePrivateService myService = new MyPackagePrivateService();
-        MethodInvocation mi = beanInfo.createInvocation(null, exchange);
-        assertEquals("Service", mi.getMethod().getDeclaringClass().getSimpleName());
-        assertEquals(4, mi.getMethod().invoke(myService, new Request(2)));
+        assertDoesNotThrow(() -> {
+            MyPackagePrivateService myService = new MyPackagePrivateService();
+            MethodInvocation mi = beanInfo.createInvocation(null, exchange);
+            assertEquals("Service", mi.getMethod().getDeclaringClass().getSimpleName());
+            assertEquals(4, mi.getMethod().invoke(myService, new Request(2)));
         }, "This should not be ambiguous!");
     }
 

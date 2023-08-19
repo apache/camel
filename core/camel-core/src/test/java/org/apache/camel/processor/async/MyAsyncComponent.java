@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;

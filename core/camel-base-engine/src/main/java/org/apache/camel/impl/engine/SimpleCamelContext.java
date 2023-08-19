@@ -47,6 +47,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -90,6 +91,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
@@ -407,6 +409,38 @@ public class SimpleCamelContext extends AbstractCamelContext {
         } else {
             throw new IllegalArgumentException(
                     "Cannot find RuntimeCamelCatalog on classpath. Add camel-core-catalog to classpath.");
+        }
+    }
+
+    @Override
+    protected DumpRoutesStrategy createDumpRoutesStrategy() {
+        // any custom in registry
+        DumpRoutesStrategy answer = CamelContextHelper.findSingleByType(this, DumpRoutesStrategy.class);
+        if (answer != null) {
+            return answer;
+        }
+
+        // is there any custom which we prioritize over default
+        Optional<DumpRoutesStrategy> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                DumpRoutesStrategy.FACTORY,
+                DumpRoutesStrategy.class);
+
+        if (result.isEmpty()) {
+            // lookup default factory
+            result = ResolverHelper.resolveService(
+                    getCamelContextReference(),
+                    getBootstrapFactoryFinder(),
+                    "default-" + DumpRoutesStrategy.FACTORY,
+                    DumpRoutesStrategy.class);
+        }
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find DumpRoutesStrategy on classpath. Add camel-core-engine to classpath.");
         }
     }
 

@@ -73,7 +73,6 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);
 
-
         AmbiguousMethodCallException e = assertThrows(AmbiguousMethodCallException.class,
                 () -> beanInfo.createInvocation(new Bean(), exchange),
                 "Should have thrown an exception");

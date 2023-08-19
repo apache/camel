@@ -111,7 +111,7 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
 
-/*        try {
+        /*        try {
             service.invalidReturnType("<order type=\"beer\">Carlsberg</order>");
             fail("Should have thrown exception");
         } catch (Exception e) {

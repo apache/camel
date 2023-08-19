@@ -46,7 +46,7 @@ public class BeanRefMethodNotFoundTest extends ContextTestSupport {
         });
 
         Exception e = assertThrows(Exception.class,
-                () ->  context.start(),
+                () -> context.start(),
                 "Should have thrown exception");
 
         FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
