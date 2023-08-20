@@ -64,12 +64,12 @@ include::partial$component-endpoint-options.adoc[]
 
 Required Timestream component options
 
-You have to provide the awsSfnClient in the
+Based on the type of operation to be performed, type of client (write/query) needs to be provided
+as clientType URI path parameter
+
+You have to provide either the awsTimestreamWriteClient(for write operations) or awsTimestreamQueryClient(for query operations) in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/timestream/[AWS Timestream] service.
-
-Based on the type of operation to be performed type of client (write/query) needs to be provided
-as clientType URI path parameter
 
 == Usage
 
