@@ -22,12 +22,43 @@ public interface Timestream2Constants {
 
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsTimestreamOperation";
-    @Metadata(description = "The limit number of results while listing databases", javaType = "Integer")
-    String LIST_DATABASES_MAX_RESULTS = "CamelAwsTimestreamListDatabaseMaxResults";
+    @Metadata(description = "Represents a time-series data point being written into Timestream",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.Record")
+    String RECORD = "CamelAwsTimestreamRecord";
+    @Metadata(description = "List of Records", javaType = "List")
+    String RECORD_LIST = "CamelAwsTimestreamRecordList";
+    @Metadata(description = "Status of Batch Load Task", javaType = "String")
+    String TASK_STATUS = "CamelAwsTimestreamTaskStatus";
+    @Metadata(description = "The ID of the batch load task to resume.", javaType = "String")
+    String TASK_ID = "CamelAwsTimestreamTaskId";
     @Metadata(description = "Name of Database", javaType = "String")
     String DATABASE_NAME = "CamelAwsTimestreamDatabaseName";
     @Metadata(description = "Name of Table", javaType = "String")
     String TABLE_NAME = "CamelAwsTimestreamTableName";
+    @Metadata(description = "Name of Target Database", javaType = "String")
+    String TARGET_DATABASE_NAME = "CamelAwsTimestreamTargetDatabaseName";
+    @Metadata(description = "Name of Target Table", javaType = "String")
+    String TARGET_TABLE_NAME = "CamelAwsTimestreamTargetTableName";
+    @Metadata(description = "Record version", javaType = "String")
+    String RECORD_VERSION = "CamelAwsTimestreamRecordVersion";
+    @Metadata(description = "Configuration of Data Model",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.DataModelConfiguration")
+    String DATA_MODEL_CONFIGURATION = "CamelAwsTimestreamDataModelConfiguration";
+    @Metadata(description = "Configuration of Data Source",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.DataSourceConfiguration")
+    String DATA_SOURCE_CONFIGURATION = "CamelAwsTimestreamDataSourceConfiguration";
+    @Metadata(description = "Reporting Configuration",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.ReportConfiguration")
+    String REPORT_CONFIGURATION = "CamelAwsTimestreamReportConfiguration";
+    @Metadata(description = "Timestream Table Schema",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.Schema")
+    String SCHEMA = "CamelAwsTimestreamTableSchema";
+    @Metadata(description = "Timestream Table Retention Properties",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.RetentionProperties")
+    String RETENTION_PROPERTIES = "CamelAwsTimestreamRetentionProperties";
+    @Metadata(description = "Timestream Table Magentic Store Write properties",
+              javaType = "software.amazon.awssdk.services.timestreamwrite.model.MagneticStoreWriteProperties")
+    String MAGNETIC_STORE_WRITE_PROPERTIES = "CamelAwsTimestreamMagneticStoreWriteProperties";
     @Metadata(description = "Name of Time column", javaType = "String")
     String TIME_COLUMN = "CamelAwsTimestreamTimeColumn";
     @Metadata(description = "Name of the measure column.", javaType = "String")
@@ -35,7 +66,8 @@ public interface Timestream2Constants {
     @Metadata(description = "This is to allow mapping column(s) from the query result to the dimension in the destination table.",
               javaType = "List")
     String DIMENSION_MAPPING_LIST = "CamelAwsTimestreamDimensionMappingList";
-    @Metadata(description = "Multi-measure mappings.", javaType = "String")
+    @Metadata(description = "Multi-measure mappings.",
+              javaType = "software.amazon.awssdk.services.timestreamquery.model.MultiMeasureMappings")
     String MULTI_MEASURE_MAPPINGS = "CamelAwsTimestreamMultiMeasureMappings";
     @Metadata(description = "Specifies how to map measures to multi-measure records.", javaType = "List")
     String MIXED_MEASURE_MAPPING_LIST = "CamelAwsTimestreamMixedMeasureMappingList";

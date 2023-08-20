@@ -41,12 +41,14 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
     @Override
     public CancelQueryResponse cancelQuery(CancelQueryRequest cancelQueryRequest) {
         CancelQueryResponse.Builder result = CancelQueryResponse.builder();
+        result.cancellationMessage("Query Cancelled");
         return result.build();
     }
 
     @Override
     public CreateScheduledQueryResponse createScheduledQuery(CreateScheduledQueryRequest createScheduledQueryRequest) {
         CreateScheduledQueryResponse.Builder result = CreateScheduledQueryResponse.builder();
+        result.arn("aws-timestream:test:scheduled-query:arn");
         return result.build();
     }
 
@@ -59,6 +61,9 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
     @Override
     public DescribeScheduledQueryResponse describeScheduledQuery(DescribeScheduledQueryRequest describeScheduledQueryRequest) {
         DescribeScheduledQueryResponse.Builder result = DescribeScheduledQueryResponse.builder();
+        ScheduledQueryDescription.Builder description = ScheduledQueryDescription.builder();
+        description.arn("aws-timestream:test:scheduled-query:arn");
+        result.scheduledQuery(description.build());
         return result.build();
     }
 
@@ -71,18 +76,25 @@ public class AmazonTimestreamQueryClientMock implements TimestreamQueryClient {
     @Override
     public ListScheduledQueriesResponse listScheduledQueries(ListScheduledQueriesRequest listScheduledQueriesRequest) {
         ListScheduledQueriesResponse.Builder result = ListScheduledQueriesResponse.builder();
+        List<ScheduledQuery> scheduledQueries = new ArrayList<>();
+        ScheduledQuery.Builder scheduledQuery = ScheduledQuery.builder();
+        scheduledQuery.arn("aws-timestream:test:scheduled-query:arn");
+        scheduledQueries.add(scheduledQuery.build());
+        result.scheduledQueries(scheduledQueries);
         return result.build();
     }
 
     @Override
     public PrepareQueryResponse prepareQuery(PrepareQueryRequest prepareQueryRequest) {
         PrepareQueryResponse.Builder result = PrepareQueryResponse.builder();
+        result.queryString("select * from test_db");
         return result.build();
     }
 
     @Override
     public QueryResponse query(QueryRequest queryRequest) {
         QueryResponse.Builder result = QueryResponse.builder();
+        result.queryId("query-1");
         return result.build();
     }
 

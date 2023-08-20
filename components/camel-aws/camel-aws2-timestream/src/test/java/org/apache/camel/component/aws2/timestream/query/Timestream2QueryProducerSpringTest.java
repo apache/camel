@@ -25,10 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsRequest;
-import software.amazon.awssdk.services.timestreamquery.model.DescribeEndpointsResponse;
+import software.amazon.awssdk.services.timestreamquery.model.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
 
@@ -70,6 +70,160 @@ public class Timestream2QueryProducerSpringTest extends CamelSpringTestSupport {
         DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
         assertEquals("query.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+    }
+
+    @Test
+    public void timestreamCreateScheduledQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createScheduledQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.createScheduledQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        CreateScheduledQueryResponse resultGet = (CreateScheduledQueryResponse) exchange.getIn().getBody();
+        assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.arn());
+    }
+
+    @Test
+    public void timestreamDeleteScheduledQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:deleteScheduledQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.deleteScheduledQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        DeleteScheduledQueryResponse resultGet = (DeleteScheduledQueryResponse) exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
+
+    @Test
+    public void timestreamExecuteScheduledQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:executeScheduledQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.executeScheduledQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        ExecuteScheduledQueryResponse resultGet = (ExecuteScheduledQueryResponse) exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
+
+    @Test
+    public void timestreamUpdateScheduledQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:updateScheduledQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.updateScheduledQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        UpdateScheduledQueryResponse resultGet = (UpdateScheduledQueryResponse) exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
+
+    @Test
+    public void timestreamDescribeScheduledQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeScheduledQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.describeScheduledQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        DescribeScheduledQueryResponse resultGet = (DescribeScheduledQueryResponse) exchange.getIn().getBody();
+        assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.scheduledQuery().arn());
+    }
+
+    @Test
+    public void timestreamListScheduledQueriesTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listScheduledQueries", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.listScheduledQueries);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        ListScheduledQueriesResponse resultGet = (ListScheduledQueriesResponse) exchange.getIn().getBody();
+        assertEquals(1, resultGet.scheduledQueries().size());
+        assertEquals("aws-timestream:test:scheduled-query:arn", resultGet.scheduledQueries().get(0).arn());
+    }
+
+    @Test
+    public void timestreamPrepareQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:prepareQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.prepareQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        PrepareQueryResponse resultGet = (PrepareQueryResponse) exchange.getIn().getBody();
+        assertEquals("select * from test_db", resultGet.queryString());
+    }
+
+    @Test
+    public void timestreamQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:query", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.query);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        QueryResponse resultGet = (QueryResponse) exchange.getIn().getBody();
+        assertEquals("query-1", resultGet.queryId());
+    }
+
+    @Test
+    public void timestreamCancelQueryTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:cancelQuery", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Timestream2Constants.OPERATION, Timestream2Operations.cancelQuery);
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        CancelQueryResponse resultGet = (CancelQueryResponse) exchange.getIn().getBody();
+        assertEquals("Query Cancelled", resultGet.cancellationMessage());
     }
 
     @Override

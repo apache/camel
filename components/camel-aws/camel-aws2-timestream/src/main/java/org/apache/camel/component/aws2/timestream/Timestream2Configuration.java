@@ -135,7 +135,11 @@ public class Timestream2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be
+     * The operation to perform. It can be describeEndpoints,createBatchLoadTask,describeBatchLoadTask,
+     * resumeBatchLoadTask,listBatchLoadTasks,createDatabase,deleteDatabase,describeDatabase,updateDatabase,
+     * listDatabases,createTable,deleteTable,describeTable,updateTable,listTables,writeRecords,
+     * createScheduledQuery,deleteScheduledQuery,executeScheduledQuery,updateScheduledQuery,
+     * describeScheduledQuery,listScheduledQueries,prepareQuery,query,cancelQuery
      */
     public void setOperation(Timestream2Operations operation) {
         this.operation = operation;

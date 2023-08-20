@@ -37,8 +37,8 @@ import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClientBuil
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage an AWS TimestreamWrite client for all users to use. This implementation is for local instances to use a static
- * and solid credential set.
+ * Manage an AWS Timestream client for all users to use. This implementation is for local instances to use a static and
+ * solid credential set.
  */
 public class Timestream2ClientStandardImpl implements Timestream2InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(Timestream2ClientStandardImpl.class);
