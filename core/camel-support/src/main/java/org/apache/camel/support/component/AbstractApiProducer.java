@@ -93,7 +93,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
                     interceptResult(result, exchange);
 
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
                 } finally {
                     callback.done(false);

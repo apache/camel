@@ -159,7 +159,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
                 if (task.hasState()) {
                     states[j++] = state;
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
                 originalCallback.done(true);
                 return true;
@@ -185,7 +185,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             // ----------------------------------------------------------
             try {
                 processor.process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
             // ----------------------------------------------------------
@@ -254,7 +254,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             if (resultProcessor != null) {
                 try {
                     resultProcessor.process(exchange);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     exchange.setException(e);
                 }
             }

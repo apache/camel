@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for overridden methods in an inheritance.
@@ -28,52 +31,45 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BeanInfoInheritanceTest extends ContextTestSupport {
 
     @Test
-    public void testInheritance() throws Exception {
+    public void testInheritance() {
         BeanInfo beanInfo = new BeanInfo(context, Y.class);
 
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        try {
+        assertDoesNotThrow(() -> {
             MethodInvocation mi = beanInfo.createInvocation(null, exchange);
             assertNotNull(mi);
             assertEquals("process", mi.getMethod().getName());
             assertEquals("Y", mi.getMethod().getDeclaringClass().getSimpleName());
-        } catch (AmbiguousMethodCallException e) {
-            fail("This should not be ambiguous!");
-        }
+        }, "This should not be ambiguous!");
     }
 
     @Test
-    public void testNoInheritance() throws Exception {
+    public void testNoInheritance() {
         BeanInfo beanInfo = new BeanInfo(context, A.class);
 
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        try {
+        assertDoesNotThrow(() -> {
             MethodInvocation mi = beanInfo.createInvocation(null, exchange);
             assertNotNull(mi);
             assertEquals("process", mi.getMethod().getName());
             assertEquals("A", mi.getMethod().getDeclaringClass().getSimpleName());
-        } catch (AmbiguousMethodCallException e) {
-            fail("This should not be ambiguous!");
-        }
+        }, "This should not be ambiguous!");
     }
 
     @Test
-    public void testInheritanceAndOverload() throws Exception {
+    public void testInheritanceAndOverload() {
         BeanInfo beanInfo = new BeanInfo(context, Z.class);
 
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request());
 
-        try {
-            beanInfo.createInvocation(null, exchange);
-            fail("This should be ambiguous!");
-        } catch (AmbiguousMethodCallException e) {
-            // expected (currently not supported in camel)
-        }
+        assertThrows(AmbiguousMethodCallException.class,
+                () -> beanInfo.createInvocation(null, exchange),
+                "This should be ambiguous!");
     }
 
     public static class Request {

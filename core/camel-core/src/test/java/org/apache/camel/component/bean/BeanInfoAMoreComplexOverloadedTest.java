@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
 
@@ -65,7 +65,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAmbigious() throws Exception {
+    public void testAmbigious() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
         Message message = new DefaultMessage(context);
@@ -73,12 +73,11 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);
 
-        try {
-            beanInfo.createInvocation(new Bean(), exchange);
-            fail("Should have thrown an exception");
-        } catch (AmbiguousMethodCallException e) {
-            assertEquals(2, e.getMethods().size());
-        }
+
+        AmbiguousMethodCallException e = assertThrows(AmbiguousMethodCallException.class,
+                () -> beanInfo.createInvocation(new Bean(), exchange),
+                "Should have thrown an exception");
+        assertEquals(2, e.getMethods().size());
     }
 
     static class Bean {

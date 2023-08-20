@@ -431,7 +431,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.stopService(consumer);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error occurred while shutting down route: {}. This exception will be ignored.", routeId, e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
@@ -452,7 +452,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.suspendService(consumer);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error occurred while suspending route: {}. This exception will be ignored.", routeId, e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);

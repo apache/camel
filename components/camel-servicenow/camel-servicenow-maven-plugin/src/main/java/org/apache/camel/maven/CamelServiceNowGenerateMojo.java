@@ -47,6 +47,7 @@ import org.apache.camel.component.servicenow.ServiceNowComponent;
 import org.apache.camel.component.servicenow.annotations.ServiceNowSysParm;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -274,7 +275,7 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
 
     private String toCamelCase(String text, boolean lowerCaseFirst) {
         String result = Stream.of(text.split("[^a-zA-Z0-9]"))
-                .map(v -> v.substring(0, 1).toUpperCase() + v.substring(1).toLowerCase())
+                .map(StringHelper::capitalize)
                 .collect(Collectors.joining());
 
         if (lowerCaseFirst) {

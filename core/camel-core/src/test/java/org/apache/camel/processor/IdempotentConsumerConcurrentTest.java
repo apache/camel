@@ -169,7 +169,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
                         for (int j = 0; j < loopCount; j++) {
                             sendMessage(String.valueOf(j), "multithreadedTest" + j);
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         LOG.error("Failed to send message: {}", e.getMessage(), e);
                         failedFlag[0] = true;
                     }

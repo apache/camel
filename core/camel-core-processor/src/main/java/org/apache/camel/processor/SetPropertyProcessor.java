@@ -54,7 +54,7 @@ public class SetPropertyProcessor extends AsyncProcessorSupport implements Trace
 
             String key = propertyName.evaluate(exchange, String.class);
             exchange.setProperty(key, newProperty);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
 

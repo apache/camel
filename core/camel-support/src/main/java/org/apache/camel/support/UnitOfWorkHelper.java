@@ -51,7 +51,7 @@ public final class UnitOfWorkHelper {
         // unit of work is done
         try {
             uow.done(exchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
                     exchange, e);
         }
@@ -92,7 +92,7 @@ public final class UnitOfWorkHelper {
                 LOG.trace("Invoking synchronization.onComplete: {} with {}", synchronization, exchange);
                 synchronization.onComplete(exchange);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // must catch exceptions to ensure all synchronizations have a chance to run
             LOG.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
         }

@@ -42,7 +42,7 @@ public class EvaluateExpressionProcessor extends AsyncProcessorSupport implement
         try {
             Object result = expression.evaluate(exchange, Object.class);
             exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         } finally {
             callback.done(true);

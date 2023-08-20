@@ -76,7 +76,7 @@ public class LoggingExceptionHandler implements ExceptionHandler {
                     }
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // the logging exception handler must not cause new exceptions to occur
         }
     }

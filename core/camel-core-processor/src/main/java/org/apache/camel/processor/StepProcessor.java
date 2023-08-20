@@ -65,7 +65,7 @@ public class StepProcessor extends Pipeline {
                 } else {
                     EventHelper.notifyStepDone(exchange.getContext(), exchange, stepId);
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 LOG.warn("Exception occurred during event notification. This exception will be ignored.", t);
             } finally {

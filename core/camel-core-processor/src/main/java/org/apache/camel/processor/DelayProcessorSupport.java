@@ -171,7 +171,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                 }
                 return processor.process(exchange, callback);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;

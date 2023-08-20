@@ -23,7 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanCreateBodyExceptionTest extends ContextTestSupport {
 
@@ -111,16 +114,18 @@ public class BeanCreateBodyExceptionTest extends ContextTestSupport {
             });
         });
 
-        try {
-            // turn on fail mode
-            fail.set(true);
+        // turn on fail mode
+        fail.set(true);
 
-            consumer.receiveBody("seda:empty", 10000);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e);
-            assertEquals("Forced internal error", e.getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> consumer.receiveBody("seda:empty", 10000),
+                "Should throw exception");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e);
+        assertEquals("Forced internal error", e.getMessage());
+
+        fail.set(false);
+        assertDoesNotThrow(() -> consumer.receiveBody("seda:empty", 10000), "");
     }
 
     @Override

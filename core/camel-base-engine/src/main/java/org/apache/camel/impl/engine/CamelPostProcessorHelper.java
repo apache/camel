@@ -376,7 +376,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 // attempt to create a new instance
                 try {
                     bean = ecc.getInjector().newInstance(type);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     // ignore
                     return null;
                 }

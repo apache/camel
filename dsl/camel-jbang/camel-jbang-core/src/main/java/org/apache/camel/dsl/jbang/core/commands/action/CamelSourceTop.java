@@ -140,7 +140,9 @@ public class CamelSourceTop extends ActionWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        clearScreen();
+        if (watch) {
+            clearScreen();
+        }
         if (!rows.isEmpty()) {
             printSource(rows);
         }

@@ -299,11 +299,11 @@ public class RestOpenApiReader {
             for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
                 if (def instanceof BasicAuthDefinition) {
                     SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                            .name("basic").description(def.getDescription());
+                            .scheme("basic").description(def.getDescription());
                     openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
                 } else if (def instanceof BearerTokenDefinition) {
                     SecurityScheme auth = new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                            .name("bearer").description(def.getDescription())
+                            .scheme("bearer").description(def.getDescription())
                             .bearerFormat(((BearerTokenDefinition) def).getFormat());
                     openApi.getComponents().addSecuritySchemes(def.getKey(), auth);
                 } else if (def instanceof ApiKeyDefinition) {

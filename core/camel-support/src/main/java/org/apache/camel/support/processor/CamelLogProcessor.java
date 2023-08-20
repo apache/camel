@@ -141,7 +141,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             try {
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
