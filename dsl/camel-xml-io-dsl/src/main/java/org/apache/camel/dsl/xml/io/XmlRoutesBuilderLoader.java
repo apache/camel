@@ -223,7 +223,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void addRoutes(RoutesDefinition routes) {
-                CamelContextAware.trySetCamelContext(routes, getCamelContext());
+                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
 
                 // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                 // so create a copy and use the fluent builder to add the route
