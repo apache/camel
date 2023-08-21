@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,6 +71,7 @@ import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.Transformer;
@@ -78,10 +80,14 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.NamedThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +156,22 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     protected void doDumpRoutes() {
         DumpRoutesStrategy strategy = getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
         if (strategy != null) {
-            strategy.dumpRoutes(getDumpRoutes());
+            String format = getDumpRoutes();
+            if (format.contains("?")) {
+                // advanced configuration using query parameters
+                String query = StringHelper.after(format, "?");
+                format = StringHelper.before(format, "?");
+                try {
+                    Map<String, Object> map = URISupport.parseQuery(query);
+                    PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(this)
+                            .resolvePropertyConfigurer(strategy.getClass().getName(), this);
+                    PropertyBindingSupport.build().withCamelContext(this).withConfigurer(configurer)
+                            .withProperties(map).withTarget(strategy).bind();
+                } catch (URISyntaxException e) {
+                    throw new IllegalArgumentException("Invalid query parameters for dumpRoutes", e);
+                }
+            }
+            strategy.dumpRoutes(format);
         }
     }
 

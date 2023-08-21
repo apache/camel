@@ -16,10 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.StaticService;
+
 /**
  * Strategy for dumping routes during startup dump all loaded routes (incl rests and route templates).
  */
-public interface DumpRoutesStrategy {
+public interface DumpRoutesStrategy extends StaticService {
 
     /**
      * Service factory key.
@@ -32,5 +34,37 @@ public interface DumpRoutesStrategy {
      * @param format xml or yaml
      */
     void dumpRoutes(String format);
+
+    String getInclude();
+
+    /**
+     * Controls what to include in output.
+     *
+     * Possible values: routes, rests, routeTemplates. Multiple values can be separated by comma. Default is routes.
+     */
+    void setInclude(String include);
+
+    boolean isLog();
+
+    /**
+     * Whether to log route dumps to Logger
+     */
+    void setLog(boolean log);
+
+    String getDirectory();
+
+    /**
+     * Whether to save route dumps to files in the given directory. The name of the files are based on ids (route ids,
+     * etc.). Existing files will be overwritten.
+     */
+    void setDirectory(String directory);
+
+    boolean isUriAsParameters();
+
+    /**
+     * When dumping to YAML format, then this option controls whether endpoint URIs should be expanded into a key/value
+     * parameters.
+     */
+    void setUriAsParameters(boolean uriAsParameters);
 
 }

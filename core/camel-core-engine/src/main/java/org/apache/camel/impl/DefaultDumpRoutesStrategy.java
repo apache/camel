@@ -38,6 +38,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ServiceFactory;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -49,10 +50,9 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
  * Default {@link DumpRoutesStrategy} that dumps the routes to standard logger.
  */
 @ServiceFactory("default-" + DumpRoutesStrategy.FACTORY)
-public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelContextAware {
+public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRoutesStrategy, CamelContextAware {
 
     // TODO: save to disk
-    // TODO: dumpRoutes=yaml?log=false&directory=mydir
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);
     private static final String DIVIDER = "--------------------------------------------------------------------------------";
@@ -78,11 +78,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         return include;
     }
 
-    /**
-     * Controls what to include in output.
-     *
-     * Possible values: routes, rests, routeTemplates. Multiple values can be separated by comma. Default is routes.
-     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -91,9 +86,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         return log;
     }
 
-    /**
-     * Whether to log route dumps to Logger
-     */
     public void setLog(boolean log) {
         this.log = log;
     }
@@ -102,10 +94,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         return directory;
     }
 
-    /**
-     * Whether to save route dumps to files in the given directory. The name of the files are based on ids (route ids,
-     * etc.). Existing files will be overwritten.
-     */
     public void setDirectory(String directory) {
         this.directory = directory;
     }
@@ -114,10 +102,6 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         return uriAsParameters;
     }
 
-    /**
-     * When dumping to YAML format, then this option controls whether endpoint URIs should be expanded into a key/value
-     * parameters.
-     */
     public void setUriAsParameters(boolean uriAsParameters) {
         this.uriAsParameters = uriAsParameters;
     }
@@ -136,7 +120,7 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         final DummyResource dummy = new DummyResource(null, null);
 
-        if (include.contains("routes")) {
+        if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
                 Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
@@ -161,7 +145,7 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
             }
         }
 
-        if (include.contains("rests")) {
+        if (include.contains("*") || include.contains("all") || include.contains("rests")) {
             int size = model.getRestDefinitions().size();
             if (size > 0) {
                 Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
@@ -186,7 +170,8 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
             }
         }
 
-        if (include.contains("routeTemplates") || include.contains("route-templates")) {
+        if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
+                || include.contains("route-templates")) {
             int size = model.getRouteTemplateDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
@@ -228,7 +213,7 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
         final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         final DummyResource dummy = new DummyResource(null, null);
 
-        if (include.contains("routes")) {
+        if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
                 Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
@@ -253,7 +238,7 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
             }
         }
 
-        if (include.contains("rests")) {
+        if (include.contains("*") || include.contains("all") || include.contains("rests")) {
             int size = model.getRestDefinitions().size();
             if (size > 0) {
                 Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
@@ -278,7 +263,8 @@ public class DefaultDumpRoutesStrategy implements DumpRoutesStrategy, CamelConte
             }
         }
 
-        if (include.contains("routeTemplates") || include.contains("route-templates")) {
+        if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
+                || include.contains("route-templates")) {
             int size = model.getRouteTemplateDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();

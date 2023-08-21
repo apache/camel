@@ -57,6 +57,7 @@ import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedBeanIntrospection;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
+import org.apache.camel.management.mbean.ManagedDumpRouteStrategy;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedExchangeFactoryManager;
@@ -84,6 +85,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -518,6 +520,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             ManagedTracer mt = new ManagedTracer(camelContext, (Tracer) service);
             mt.init(getManagementStrategy());
             answer = mt;
+        } else if (service instanceof DumpRoutesStrategy) {
+            ManagedDumpRouteStrategy mdrs = new ManagedDumpRouteStrategy(camelContext, (DumpRoutesStrategy) service);
+            mdrs.init(getManagementStrategy());
+            answer = mdrs;
         } else if (service instanceof DataFormat) {
             answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, (DataFormat) service);
         } else if (service instanceof Producer) {
