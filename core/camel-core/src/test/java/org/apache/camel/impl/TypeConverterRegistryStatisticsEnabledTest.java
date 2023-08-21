@@ -22,7 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSupport {
 
@@ -50,12 +52,8 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         Long miss = reg.getStatistics().getMissCounter();
         assertEquals(4, miss.intValue()); // stream caching misses
 
-        try {
-            template.sendBody("direct:start", "foo");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "foo"),
+                "Should have thrown exception");
 
         // should now have a failed
         failed = reg.getStatistics().getFailedCounter();
