@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -89,6 +90,35 @@ public class XmlLoadTest {
             MockEndpoint bar = context.getEndpoint("mock:bar2", MockEndpoint.class);
             bar.expectedBodiesReceived("Hi World");
             context.createProducerTemplate().sendBody("direct:bar2", "Hi World");
+            bar.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadRoutesAndConfig() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            // Load routeConfiguration from XML
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            Resource configResource = ecc.getResourceLoader().resolveResource(
+                    "/org/apache/camel/dsl/xml/io/routeConfig.xml");
+
+            ecc.getRoutesLoader().loadRoutes(configResource);
+            // load route from XML and add them to the existing camel context
+            Resource resource = ecc.getResourceLoader().resolveResource(
+                    "/org/apache/camel/dsl/xml/io/routeWithRouteConfig.xml");
+
+            ecc.getRoutesLoader().loadRoutes(resource);
+
+            Route routewithConfig = context.getRoute("routeWithConfig");
+            assertNotNull(routewithConfig, "Loaded routeWithConfig route should be there");
+            assertEquals(1, routewithConfig.getOnExceptions().size(), "Loaded route should have onException");
+            assertEquals(1, context.getRoutes().size());
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:afterException", MockEndpoint.class);
+            bar.expectedBodiesReceived("Hi World");
+            context.createProducerTemplate().sendBody("direct:throwException", "Hi World");
             bar.assertIsSatisfied();
         }
     }
