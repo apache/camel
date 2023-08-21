@@ -253,7 +253,7 @@ public final class StringHelper {
                 return false;
             }
 
-             return Character.isUpperCase(text.charAt(lastIndexOf + 1));
+            return Character.isUpperCase(text.charAt(lastIndexOf + 1));
         }
 
         return false;
@@ -508,8 +508,8 @@ public final class StringHelper {
     /**
      * De-capitalize the string (lower case first character)
      *
-     * @param  text            the string
-     * @return                 the string decapitalized (lower case first character)
+     * @param  text the string
+     * @return      the string decapitalized (lower case first character)
      */
     public static String decapitalize(final String text) {
         if (text == null) {
@@ -1047,7 +1047,6 @@ public final class StringHelper {
             }
             prev = ch;
         }
-
 
         return answer.toString();
     }

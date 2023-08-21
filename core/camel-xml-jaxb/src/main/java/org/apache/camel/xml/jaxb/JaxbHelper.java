@@ -496,4 +496,38 @@ public final class JaxbHelper {
         }
     }
 
+    public static void removeAutoAssignedIds(Element element) {
+        final NamedNodeMap attrs = element.getAttributes();
+
+        Attr id = null;
+        Attr customId = null;
+        for (int index = 0; index < attrs.getLength(); index++) {
+            final Attr attr = (Attr) attrs.item(index);
+            final String attName = attr.getName();
+
+            if (attName.equals("id")) {
+                id = attr;
+            } else if (attName.equals("customId")) {
+                customId = attr;
+            }
+        }
+
+        // remove auto-assigned id
+        if (id != null && customId == null) {
+            attrs.removeNamedItem("id");
+        }
+        // remove customId as its noisy
+        if (customId != null) {
+            attrs.removeNamedItem("customId");
+        }
+
+        final NodeList children = element.getChildNodes();
+        for (int index = 0; index < children.getLength(); index++) {
+            final Node child = children.item(index);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeAutoAssignedIds((Element) child);
+            }
+        }
+    }
+
 }

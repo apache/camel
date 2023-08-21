@@ -101,6 +101,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
@@ -385,6 +386,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(DumpRoutesStrategy.class, this::createDumpRoutesStrategy);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4063,6 +4065,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory();
 
     protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
+
+    protected abstract DumpRoutesStrategy createDumpRoutesStrategy();
 
     protected abstract Tracer createTracer();
 

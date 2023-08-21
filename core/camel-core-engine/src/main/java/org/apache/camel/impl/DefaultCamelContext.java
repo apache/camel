@@ -55,23 +55,19 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.model.RouteTemplatesDefinition;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.LocalBeanRepositoryAware;
 import org.apache.camel.spi.ModelReifierFactory;
-import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
@@ -82,12 +78,10 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.NamedThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,112 +148,12 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     protected void doDumpRoutes() {
-        if ("yaml".equalsIgnoreCase(getDumpRoutes())) {
-            doDumpRoutesAsYaml();
-        } else {
-            // xml is default
-            doDumpRoutesAsXml();
+        DumpRoutesStrategy strategy = CamelContextHelper.findSingleByType(this, DumpRoutesStrategy.class);
+        if (strategy == null) {
+            strategy = getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
         }
-    }
-
-    protected void doDumpRoutesAsXml() {
-        final ModelToXMLDumper dumper = PluginHelper.getModelToXMLDumper(this);
-
-        int size = getRouteDefinitions().size();
-        if (size > 0) {
-            LOG.info("Dumping {} routes as XML", size);
-            // for XML to output nicely all routes in one XML then lets put them into <routes>
-            RoutesDefinition def = new RoutesDefinition();
-            def.setRoutes(getRouteDefinitions());
-            try {
-                String xml = dumper.dumpModelAsXml(this, def, true);
-                // lets separate routes with empty line
-                xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
-                        "xmlns=\"http://camel.apache.org/schema/spring\">\n");
-                xml = xml.replace("</route>", "</route>\n");
-                LOG.info("\n\n{}\n", xml);
-            } catch (Exception e) {
-                LOG.warn("Error dumping routes to XML due to {}. This exception is ignored.", e.getMessage(), e);
-            }
-        }
-
-        size = getRestDefinitions().size();
-        if (size > 0) {
-            LOG.info("Dumping {} rests as XML", size);
-            // for XML to output nicely all routes in one XML then lets put them into <routes>
-            RestsDefinition def = new RestsDefinition();
-            def.setRests(getRestDefinitions());
-            try {
-                String xml = dumper.dumpModelAsXml(this, def, true);
-                // lets separate rests with empty line
-                xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
-                        "xmlns=\"http://camel.apache.org/schema/spring\">\n");
-                xml = xml.replace("</rest>", "</rest>\n");
-                LOG.info("\n\n{}\n", xml);
-            } catch (Exception e) {
-                LOG.warn("Error dumping rests to XML due to {}. This exception is ignored.", e.getMessage(), e);
-            }
-        }
-
-        size = getRouteTemplateDefinitions().size();
-        if (size > 0) {
-            LOG.info("Dumping {} route templates as XML", size);
-            // for XML to output nicely all routes in one XML then lets put them into <routes>
-            RouteTemplatesDefinition def = new RouteTemplatesDefinition();
-            def.setRouteTemplates(getRouteTemplateDefinitions());
-            try {
-                String xml = dumper.dumpModelAsXml(this, def, true);
-                // lets separate rests with empty line
-                xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
-                        "xmlns=\"http://camel.apache.org/schema/spring\">\n");
-                xml = xml.replace("</routeTemplate>", "</routeTemplate>\n");
-                LOG.info("\n\n{}\n", xml);
-            } catch (Exception e) {
-                LOG.warn("Error dumping route-templates to XML due to {}. This exception is ignored.", e.getMessage(), e);
-            }
-        }
-    }
-
-    protected void doDumpRoutesAsYaml() {
-        final ModelToYAMLDumper dumper = PluginHelper.getModelToYAMLDumper(this);
-
-        int size = getRouteDefinitions().size();
-        if (size > 0) {
-            LOG.info("Dumping {} routes as YAML", size);
-            RoutesDefinition def = new RoutesDefinition();
-            def.setRoutes(getRouteDefinitions());
-            try {
-                String yaml = dumper.dumpModelAsYaml(this, def, true, false);
-                LOG.info("\n\n{}\n", yaml);
-            } catch (Exception e) {
-                LOG.warn("Error dumping routes to YAML due to {}. This exception is ignored.", e.getMessage(), e);
-            }
-        }
-
-        size = getRestDefinitions().size();
-        if (size > 0) {
-            LOG.info("Dumping {} rests as YAML", size);
-            RestsDefinition def = new RestsDefinition();
-            def.setRests(getRestDefinitions());
-            try {
-                String taml = dumper.dumpModelAsYaml(this, def, true, false);
-                LOG.info("\n\n{}\n", taml);
-            } catch (Exception e) {
-                LOG.warn("Error dumping rests to YAML due to {}. This exception is ignored.", e.getMessage(), e);
-            }
-        }
-
-        size = getRouteTemplateDefinitions().size();
-        if (size > 0) {
-            LOG.info("Dumping {} route templates as YAML", size);
-            RouteTemplatesDefinition def = new RouteTemplatesDefinition();
-            def.setRouteTemplates(getRouteTemplateDefinitions());
-            try {
-                String yaml = dumper.dumpModelAsYaml(this, def, true, false);
-                LOG.info("\n\n{}\n", yaml);
-            } catch (Exception e) {
-                LOG.warn("Error dumping route-templates to YAML due to {}. This exception is ignored.", e.getMessage(), e);
-            }
+        if (strategy != null) {
+            strategy.dumpRoutes(getDumpRoutes());
         }
     }
 

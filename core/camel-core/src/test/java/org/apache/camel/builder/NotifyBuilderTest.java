@@ -978,7 +978,8 @@ public class NotifyBuilderTest extends ContextTestSupport {
         template.sendBody("direct:foo", "Hello World");
         assertFalse(notify.matches());
 
-        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:fail", "Bye World"), "Should have thrown exception");
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:fail", "Bye World"),
+                "Should have thrown exception");
         assertTrue(notify.matches());
     }
 

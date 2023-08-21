@@ -41,6 +41,7 @@ import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
+import org.apache.camel.management.mbean.ManagedDumpRouteStrategy;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedProcessor;
@@ -162,6 +163,9 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else if (managedObject instanceof ManagedBacklogDebugger) {
             ManagedBacklogDebugger md = (ManagedBacklogDebugger) managedObject;
             objectName = getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
+        } else if (managedObject instanceof ManagedDumpRouteStrategy) {
+            ManagedDumpRouteStrategy md = (ManagedDumpRouteStrategy) managedObject;
+            objectName = getObjectNameForService(md.getContext(), md.getDumpRoutesStrategy());
         } else if (managedObject instanceof ManagedEventNotifier) {
             ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
             objectName = getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());

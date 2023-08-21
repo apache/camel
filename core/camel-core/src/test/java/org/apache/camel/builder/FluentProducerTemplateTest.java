@@ -236,9 +236,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     public void testExceptionUsingProcessorAndBody() {
         assertThrows(IllegalArgumentException.class, () -> DefaultFluentProducerTemplate.on(context)
                 .withBody("World")
-                .withProcessor(exchange -> exchange.getIn().setHeader("foo", 123)).
-                to("direct:async").
-                send(), "");
+                .withProcessor(exchange -> exchange.getIn().setHeader("foo", 123)).to("direct:async").send(), "");
     }
 
     @Test
