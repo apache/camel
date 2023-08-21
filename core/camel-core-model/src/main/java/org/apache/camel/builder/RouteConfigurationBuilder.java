@@ -103,6 +103,9 @@ public abstract class RouteConfigurationBuilder extends RouteBuilder implements 
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         getRouteConfigurationCollection().setCamelContext(camelContext);
+        if (getResource() != null) {
+            getRouteConfigurationCollection().setResource(getResource());
+        }
         camelContext.getCamelContextExtension().getContextPlugin(Model.class)
                 .addRouteConfigurations(getRouteConfigurationCollection().getRouteConfigurations());
     }
