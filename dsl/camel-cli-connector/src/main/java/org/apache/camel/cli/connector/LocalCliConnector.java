@@ -471,9 +471,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         } catch (Throwable e) {
             // ignore
-            LOG.debug(
-                    "Error executing action file: " + actionFile + " due to: " + e.getMessage()
-                      + ". This exception is ignored.",
+            LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(), 
                     e);
         }
     }
@@ -654,9 +652,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             IOHelper.writeText(root.toJson(), statusFile);
         } catch (Throwable e) {
             // ignore
-            LOG.trace(
-                    "Error updating status file: " + statusFile + " due to: " + e.getMessage() + ". This exception is ignored.",
-                    e);
+            LOG.trace("Error updating status file: {} due to: {}. This exception is ignored.",
+                    statusFile, e.getMessage(), e);
         }
     }
 
