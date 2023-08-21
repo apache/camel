@@ -144,8 +144,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
         }
 
         private ParameterContext getContext() throws NoSuchMethodException {
-            Executable executable =
-                    this.getClass().getConstructor(Object[].class).getParameters()[0].getDeclaringExecutable();
+            Executable executable = this.getClass().getConstructor(Object[].class).getParameters()[0].getDeclaringExecutable();
             ParameterContext parameterContext = mock(ParameterContext.class);
             when(parameterContext.getDeclaringExecutable()).thenReturn(executable);
             return parameterContext;

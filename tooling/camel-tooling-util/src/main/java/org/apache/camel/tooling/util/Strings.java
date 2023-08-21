@@ -237,8 +237,8 @@ public final class Strings {
     /**
      * A simpler version of StringHelper#capitlize for usage in the tooling code
      *
-     * @param  text            the string
-     * @return                 the string capitalized (upper case first character) or null if the input is null
+     * @param  text the string
+     * @return      the string capitalized (upper case first character) or null if the input is null
      */
     public static String capitalize(final String text) {
         if (text == null) {
