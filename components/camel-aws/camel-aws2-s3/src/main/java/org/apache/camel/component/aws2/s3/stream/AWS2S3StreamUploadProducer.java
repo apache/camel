@@ -52,7 +52,6 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage Service
@@ -133,7 +132,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
 
-        buffer.write(IoUtils.toByteArray(is));
+        buffer.write(AWS2S3Utils.toByteArray(is, getConfiguration().getBufferSize()));
 
         final String keyName = getConfiguration().getKeyName();
         final String fileName = AWS2S3Utils.determineFileName(keyName);

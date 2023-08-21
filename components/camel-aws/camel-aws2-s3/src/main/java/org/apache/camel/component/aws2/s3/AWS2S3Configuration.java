@@ -128,6 +128,8 @@ public class AWS2S3Configuration implements Cloneable {
     private int batchMessageNumber = 10;
     @UriParam(defaultValue = "1000000", label = "producer")
     private int batchSize = 1000000;
+    @UriParam(defaultValue = "1000000", label = "producer")
+    private int bufferSize = 1000000;
     @UriParam(defaultValue = "progressive", label = "producer")
     private AWSS3NamingStrategyEnum namingStrategy = AWSS3NamingStrategyEnum.progressive;
     @UriParam(label = "producer")
@@ -663,6 +665,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    /**
+     * The buffer size (in bytes) in streaming upload mode
+     */
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
     }
 
     public AWSS3NamingStrategyEnum getNamingStrategy() {
