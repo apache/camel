@@ -58,11 +58,10 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed XML RoutesBuilderLoader")
 @RoutesLoader(XmlRoutesBuilderLoader.EXTENSION)
 public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
+
     public static final Logger LOG = LoggerFactory.getLogger(XmlRoutesBuilderLoader.class);
 
     public static final String EXTENSION = "xml";
-    public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
-    private static final List<String> NAMESPACES = List.of("", NAMESPACE);
 
     private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
     private final Map<String, Resource> resourceCache = new ConcurrentHashMap<>();
@@ -292,14 +291,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     /**
      * Try to instantiate bean from the definition. Depending on the stage ({@link #preParseRoute} or
      * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
-     *
-     * @param def
-     * @param delayIfFailed
      */
     private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
-        if (name == null || "".equals(name.trim())) {
+        if (name == null || name.trim().isEmpty()) {
             name = type;
         }
         if (type != null && !type.startsWith("#")) {
@@ -316,7 +312,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 if (delayIfFailed) {
                     delayedRegistrations.add(def);
                 } else {
-                    LOG.warn("Problem creating bean {}", type, e);
+                    LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
                 }
             }
         }
