@@ -47,8 +47,7 @@ public interface DumpRoutesStrategy extends StaticService {
     boolean isResolvePlaceholders();
 
     /**
-     * Whether to resolve property placeholders in the dumped output.
-     * Default is true.
+     * Whether to resolve property placeholders in the dumped output. Default is true.
      */
     void setResolvePlaceholders(boolean resolvePlaceholders);
 

@@ -1420,8 +1420,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to resolve property placeholders in the dumped output.
-     * Default is true.
+     * Whether to resolve property placeholders in the dumped output. Default is true.
      */
     public void setDumpRoutesResolvePlaceholders(boolean dumpRoutesResolvePlaceholders) {
         this.dumpRoutesResolvePlaceholders = dumpRoutesResolvePlaceholders;
@@ -2662,8 +2661,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to resolve property placeholders in the dumped output.
-     * Default is true.
+     * Whether to resolve property placeholders in the dumped output. Default is true.
      */
     public T withDumpRoutesResolvePlaceholders(boolean dumpRoutesResolvePlaceholders) {
         this.dumpRoutesResolvePlaceholders = dumpRoutesResolvePlaceholders;
