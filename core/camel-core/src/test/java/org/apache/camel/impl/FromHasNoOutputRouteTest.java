@@ -21,8 +21,8 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FromHasNoOutputRouteTest extends ContextTestSupport {
 
@@ -40,16 +40,14 @@ public class FromHasNoOutputRouteTest extends ContextTestSupport {
                 from("direct:start");
             }
         });
-        try {
-            context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            assertTrue(failed.getRouteId().matches("route[0-9]+"));
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(cause.getMessage().matches(
-                    "Route route[0-9]+\\Q has no output processors. You need to add outputs to the route such as to(\"log:foo\").\\E"));
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should throw exception");
+
+        FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        assertTrue(failed.getRouteId().matches("route[0-9]+"));
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().matches(
+                "Route route[0-9]+\\Q has no output processors. You need to add outputs to the route such as to(\"log:foo\").\\E"));
     }
 
 }
