@@ -93,7 +93,7 @@ public class JdbcProducer extends DefaultProducer {
                 if (conn != null) {
                     conn.rollback();
                 }
-            } catch (Throwable sqle) {
+            } catch (Exception sqle) {
                 LOG.warn("Error occurred during JDBC rollback. This exception will be ignored.", sqle);
             }
             throw e;

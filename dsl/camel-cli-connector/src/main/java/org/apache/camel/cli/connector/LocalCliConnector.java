@@ -469,7 +469,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             // action done so delete file
             FileUtil.deleteFile(actionFile);
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
             LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(), 
                     e);
@@ -486,7 +486,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     return (JsonObject) Jsoner.deserialize(text);
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         return null;
@@ -650,7 +650,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
             LOG.trace("Updating status file: {}", statusFile);
             IOHelper.writeText(root.toJson(), statusFile);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
             LOG.trace("Error updating status file: {} due to: {}. This exception is ignored.",
                     statusFile, e.getMessage(), e);
