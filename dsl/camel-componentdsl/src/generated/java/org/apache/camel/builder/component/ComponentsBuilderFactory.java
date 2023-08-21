@@ -449,6 +449,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2StsComponentBuilderFactory.aws2Sts();
     }
     /**
+     * AWS Timestream (camel-aws2-timestream)
+     * A Camel Amazon Web Services TimeStream component
+     * 
+     * Category: cloud,database
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-timestream
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Aws2TimestreamComponentBuilderFactory.Aws2TimestreamComponentBuilder aws2Timestream() {
+        return org.apache.camel.builder.component.dsl.Aws2TimestreamComponentBuilderFactory.aws2Timestream();
+    }
+    /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 
