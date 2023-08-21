@@ -91,7 +91,6 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
@@ -414,8 +413,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected DumpRoutesStrategy createDumpRoutesStrategy() {
-        // any custom in registry
-        DumpRoutesStrategy answer = CamelContextHelper.findSingleByType(this, DumpRoutesStrategy.class);
+        DumpRoutesStrategy answer = getCamelContextReference().hasService(DumpRoutesStrategy.class);
         if (answer != null) {
             return answer;
         }

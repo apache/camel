@@ -48,6 +48,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -257,6 +258,13 @@ public final class DefaultConfigurationConfigurer {
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
             camelContext.addService(reloader);
+        }
+        if (config.getDumpRoutes() != null) {
+            DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
+            drs.setInclude(config.getDumpRoutesInclude());
+            drs.setLog(config.isDumpRoutesLog());
+            drs.setUriAsParameters(config.isDumpRoutesUriAsParameters());
+            drs.setDirectory(config.getDumpRoutesDirectory());
         }
         if (config.isContextReloadEnabled() && camelContext.hasService(ContextReloadStrategy.class) == null) {
             ContextReloadStrategy reloader = new DefaultContextReloadStrategy();

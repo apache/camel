@@ -43,7 +43,14 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         String dir = testDirectory().toString();
 
         CamelContext context = super.createCamelContext();
-        context.setDumpRoutes("xml?include=all&log=false&directory=" + dir); // dump route is lazy
+        context.setDumpRoutes("xml");
+
+        DefaultDumpRoutesStrategy drd = new DefaultDumpRoutesStrategy();
+        drd.setInclude("all");
+        drd.setLog(false);
+        drd.setDirectory(dir);
+        context.addService(drd);
+
         return context;
     }
 
