@@ -25,10 +25,13 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * Reusable configuration for Camel route(s).
@@ -37,8 +40,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<RouteConfigurationDefinition>
-        implements PreconditionContainer {
+        implements PreconditionContainer, ResourceAware {
 
+    @XmlTransient
+    private Resource resource;
     @XmlElement
     private ErrorHandlerDefinition errorHandler;
     @XmlElement(name = "intercept")
@@ -71,6 +76,16 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
     @Override
     public String getLabel() {
         return "RoutesConfiguration " + getId();
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     public ErrorHandlerDefinition getErrorHandler() {

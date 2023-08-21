@@ -987,12 +987,12 @@ public class ModelParser extends BaseParser {
     }
     protected RouteConfigurationsDefinition doParseRouteConfigurationsDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteConfigurationsDefinition(),
-            noAttributeHandler(), (def, key) -> {
+            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
             if ("routeConfiguration".equals(key)) {
                 doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations);
                 return true;
             }
-            return false;
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
         }, noValueHandler());
     }
     protected RouteContextRefDefinition doParseRouteContextRefDefinition() throws IOException, XmlPullParserException {

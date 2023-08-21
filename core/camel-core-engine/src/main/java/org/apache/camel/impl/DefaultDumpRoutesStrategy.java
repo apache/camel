@@ -27,6 +27,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -160,6 +162,38 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
+        if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
+                || include.contains("route-configurations")) {
+            int size = model.getRouteConfigurationDefinitions().size();
+            if (size > 0) {
+                Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
+                for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                    Resource res = config.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    RouteConfigurationsDefinition routes
+                            = groups.computeIfAbsent(res, resource -> new RouteConfigurationsDefinition());
+                    routes.getRouteConfigurations().add(config);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, RouteConfigurationsDefinition> entry : groups.entrySet()) {
+                    RouteConfigurationsDefinition def = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-configurations", sbLocal,
+                            sbLog);
+                    // dump each resource into its own file
+                    doDumpToDirectory(resource, sbLocal, "route-configurations", "yaml");
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} route-configurations as YAML", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
         if (include.contains("*") || include.contains("all") || include.contains("rests")) {
             int size = model.getRestDefinitions().size();
             if (size > 0) {
@@ -263,6 +297,38 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} routes as XML", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
+        if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
+                || include.contains("route-configurations")) {
+            int size = model.getRouteConfigurationDefinitions().size();
+            if (size > 0) {
+                Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
+                for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                    Resource res = config.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    RouteConfigurationsDefinition routes
+                            = groups.computeIfAbsent(res, resource -> new RouteConfigurationsDefinition());
+                    routes.getRouteConfigurations().add(config);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, RouteConfigurationsDefinition> entry : groups.entrySet()) {
+                    RouteConfigurationsDefinition def = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "route-configurations",
+                            sbLocal, sbLog);
+                    // dump each resource into its own file
+                    doDumpToDirectory(resource, sbLocal, "route-configurations", "xml");
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} route-configurations as XML", size);
                     LOG.info("{}", sbLog);
                 }
             }
