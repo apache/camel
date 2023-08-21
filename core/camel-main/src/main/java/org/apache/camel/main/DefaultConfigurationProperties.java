@@ -133,6 +133,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
     private boolean dumpRoutesLog = true;
+    private boolean dumpRoutesResolvePlaceholders = true;
     private boolean dumpRoutesUriAsParameters;
     private String dumpRoutesDirectory;
     private Map<String, String> globalOptions;
@@ -1414,6 +1415,18 @@ public abstract class DefaultConfigurationProperties<T> {
         this.dumpRoutesLog = dumpRoutesLog;
     }
 
+    public boolean isDumpRoutesResolvePlaceholders() {
+        return dumpRoutesResolvePlaceholders;
+    }
+
+    /**
+     * Whether to resolve property placeholders in the dumped output.
+     * Default is true.
+     */
+    public void setDumpRoutesResolvePlaceholders(boolean dumpRoutesResolvePlaceholders) {
+        this.dumpRoutesResolvePlaceholders = dumpRoutesResolvePlaceholders;
+    }
+
     public boolean isDumpRoutesUriAsParameters() {
         return dumpRoutesUriAsParameters;
     }
@@ -2645,6 +2658,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDumpRoutesLog(boolean dumpRoutesLog) {
         this.dumpRoutesLog = dumpRoutesLog;
+        return (T) this;
+    }
+
+    /**
+     * Whether to resolve property placeholders in the dumped output.
+     * Default is true.
+     */
+    public T withDumpRoutesResolvePlaceholders(boolean dumpRoutesResolvePlaceholders) {
+        this.dumpRoutesResolvePlaceholders = dumpRoutesResolvePlaceholders;
         return (T) this;
     }
 

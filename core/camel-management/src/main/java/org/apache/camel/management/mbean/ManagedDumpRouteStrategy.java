@@ -100,4 +100,13 @@ public class ManagedDumpRouteStrategy implements ManagedDumpRoutesStrategyMBean 
         dumpRoutesStrategy.setUriAsParameters(uriAsParameters);
     }
 
+    @Override
+    public boolean isResolvePlaceholders() {
+        return dumpRoutesStrategy.isResolvePlaceholders();
+    }
+
+    @Override
+    public void setResolvePlaceholders(boolean resolvePlaceholders) {
+        dumpRoutesStrategy.setResolvePlaceholders(resolvePlaceholders);
+    }
 }

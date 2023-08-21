@@ -49,6 +49,7 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         drd.setInclude("all");
         drd.setLog(false);
         drd.setDirectory(dir);
+        drd.setResolvePlaceholders(false);
         context.addService(drd);
 
         return context;
@@ -77,6 +78,8 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         assertEquals("all", include);
         Boolean log = (Boolean) mbeanServer.getAttribute(on, "Log");
         assertFalse(log);
+        Boolean rp = (Boolean) mbeanServer.getAttribute(on, "ResolvePlaceholders");
+        assertFalse(rp);
 
         // dump should pre-exist
         File dir = testDirectory().toFile();

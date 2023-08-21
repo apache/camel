@@ -29,6 +29,8 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "Include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "log":
         case "Log": target.setLog(property(camelContext, boolean.class, value)); return true;
+        case "resolveplaceholders":
+        case "ResolvePlaceholders": target.setResolvePlaceholders(property(camelContext, boolean.class, value)); return true;
         case "uriasparameters":
         case "UriAsParameters": target.setUriAsParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -46,6 +48,8 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "Include": return java.lang.String.class;
         case "log":
         case "Log": return boolean.class;
+        case "resolveplaceholders":
+        case "ResolvePlaceholders": return boolean.class;
         case "uriasparameters":
         case "UriAsParameters": return boolean.class;
         default: return null;
@@ -64,6 +68,8 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "Include": return target.getInclude();
         case "log":
         case "Log": return target.isLog();
+        case "resolveplaceholders":
+        case "ResolvePlaceholders": return target.isResolvePlaceholders();
         case "uriasparameters":
         case "UriAsParameters": return target.isUriAsParameters();
         default: return null;

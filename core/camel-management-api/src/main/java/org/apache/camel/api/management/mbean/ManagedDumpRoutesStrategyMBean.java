@@ -54,4 +54,10 @@ public interface ManagedDumpRoutesStrategyMBean {
     @ManagedAttribute(description = "When dumping to YAML format, then this option controls whether endpoint URIs should be expanded into a key/value parameters")
     void setUriAsParameters(boolean uriAsParameters);
 
+    @ManagedAttribute(description = "")
+    boolean isResolvePlaceholders();
+
+    @ManagedAttribute(description = "Whether to resolve property placeholders in the dumped output. Default is true.")
+    void setResolvePlaceholders(boolean resolvePlaceholders);
+
 }

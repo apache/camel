@@ -79,6 +79,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DumpRoutesInclude": target.setDumpRoutesInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "dumprouteslog":
         case "DumpRoutesLog": target.setDumpRoutesLog(property(camelContext, boolean.class, value)); return true;
+        case "dumproutesresolveplaceholders":
+        case "DumpRoutesResolvePlaceholders": target.setDumpRoutesResolvePlaceholders(property(camelContext, boolean.class, value)); return true;
         case "dumproutesuriasparameters":
         case "DumpRoutesUriAsParameters": target.setDumpRoutesUriAsParameters(property(camelContext, boolean.class, value)); return true;
         case "durationhitexitcode":
@@ -334,6 +336,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DumpRoutesInclude": return java.lang.String.class;
         case "dumprouteslog":
         case "DumpRoutesLog": return boolean.class;
+        case "dumproutesresolveplaceholders":
+        case "DumpRoutesResolvePlaceholders": return boolean.class;
         case "dumproutesuriasparameters":
         case "DumpRoutesUriAsParameters": return boolean.class;
         case "durationhitexitcode":
@@ -590,6 +594,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DumpRoutesInclude": return target.getDumpRoutesInclude();
         case "dumprouteslog":
         case "DumpRoutesLog": return target.isDumpRoutesLog();
+        case "dumproutesresolveplaceholders":
+        case "DumpRoutesResolvePlaceholders": return target.isDumpRoutesResolvePlaceholders();
         case "dumproutesuriasparameters":
         case "DumpRoutesUriAsParameters": return target.isDumpRoutesUriAsParameters();
         case "durationhitexitcode":
