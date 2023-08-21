@@ -170,7 +170,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder local = new StringBuilder();
-                    doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "rests", sb);
+                    doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "rests", local);
                     sb.append(local);
                     // dump each resource into its own file
                     doDumpTiDisk(resource, local, "rests", "yaml");
@@ -201,7 +201,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder local = new StringBuilder();
-                    doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-templates", sb);
+                    doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-templates", local);
                     sb.append(local);
                     // dump each resource into its own file
                     doDumpTiDisk(resource, local, "route-templates", "yaml");
@@ -248,7 +248,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder local = new StringBuilder();
-                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "route", "routes", sb);
+                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "route", "routes", local);
                     sb.append(local);
                     // dump each resource into its own file
                     doDumpTiDisk(resource, local, "routes", "xml");
@@ -278,7 +278,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder local = new StringBuilder();
-                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "rests", sb);
+                    doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "rests", local);
                     sb.append(local);
                     // dump each resource into its own file
                     doDumpTiDisk(resource, local, "rests", "xml");
@@ -310,7 +310,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
 
                     StringBuilder local = new StringBuilder();
                     doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "routeTemplate",
-                            "route-templates", sb);
+                            "route-templates", local);
                     sb.append(local);
                     // dump each resource into its own file
                     doDumpTiDisk(resource, local, "route-templates", "xml");
@@ -339,12 +339,15 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     }
 
     protected void doDumpTiDisk(Resource resource, StringBuilder local, String kind, String ext) {
-        if (directory != null) {
+        if (directory != null && !local.isEmpty()) {
             // make sure directory exists
             File dir = new File(directory);
             dir.mkdirs();
 
-            String name = resource != null ? resource.getLocation() : "dump" + counter.incrementAndGet();
+            String name = resource != null ? resource.getLocation() : null;
+            if (name == null) {
+                name = "dump" + counter.incrementAndGet();
+            }
             // strip scheme
             if (name.contains(":")) {
                 name = StringHelper.after(name, ":");

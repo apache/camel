@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.io.File;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -38,8 +39,11 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        testDirectory(true);
+        String dir = testDirectory().toString();
+
         CamelContext context = super.createCamelContext();
-        context.setDumpRoutes("xml?include=all&log=false"); // dump route is lazy
+        context.setDumpRoutes("xml?include=all&log=false&directory=" + dir); // dump route is lazy
         return context;
     }
 
@@ -66,6 +70,12 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         assertEquals("all", include);
         Boolean log = (Boolean) mbeanServer.getAttribute(on, "Log");
         assertFalse(log);
+
+        // dump should pre-exist
+        File dir = testDirectory().toFile();
+        String[] files = dir.list();
+        assertEquals(1, files.length);
+        assertEquals("dump1.xml", files[0]);
     }
 
     @Override
