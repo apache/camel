@@ -63,7 +63,7 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRoutesStrategy, CamelContextAware {
 
     // TODO: XML to disk with beans should use <camel>
-    // TODO: inlined routes in <camel> should be array of <route> and not have <routes>
+    // TODO: inlined routes in <camel> should be array of <route> and not have <routes> (the same for rests, etc.)
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);
     private static final String DIVIDER = "--------------------------------------------------------------------------------";
