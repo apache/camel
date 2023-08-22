@@ -54,6 +54,9 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             setDeserializationContext(item, dc);
 
             RegistryBeanDefinition bean = asType(item, RegistryBeanDefinition.class);
+            if (dc != null) {
+                bean.setResource(dc.getResource());
+            }
 
             ObjectHelper.notNull(bean.getName(), "The bean name must be set");
             ObjectHelper.notNull(bean.getType(), "The bean type must be set");

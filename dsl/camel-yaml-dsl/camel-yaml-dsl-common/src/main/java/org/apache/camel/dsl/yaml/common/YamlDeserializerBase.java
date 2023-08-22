@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -141,6 +142,13 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
             YamlDeserializationContext ctx = getDeserializationContext(node);
             if (ctx != null) {
                 lna.setLocation(ctx.getResource().getLocation());
+            }
+        }
+        if (target instanceof ResourceAware) {
+            ResourceAware ra = (ResourceAware) target;
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                ra.setResource(ctx.getResource());
             }
         }
     }
