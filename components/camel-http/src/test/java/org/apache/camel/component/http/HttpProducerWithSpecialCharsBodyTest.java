@@ -35,20 +35,21 @@ import static org.mockito.Mockito.when;
 
 class HttpProducerWithSpecialCharsBodyTest {
 
-    private static final String TEST_MESSAGE_WITH_SPECIAL_CHARACTERS = """
-            {
-                "description": "Example with special characters",
-                "BasicLatin": "! # $ % & ' ( ) * + , - . / : ; < = > ?",
-                "Latin1": "¡ ¿ © ® ñ ö ü",
-                "Greek": "Α β γ Δ Ω",
-                "Cyrillic": "А б в Г д",
-                "Hebrew": "א ב ג ד ה",
-                "Arabic": "ا ب ت ث ج",
-                "Devanagari": "अ आ इ ई उ",
-                "CJK Unified Ideographs" : "一 二 三 四 五",
-                "Emoticons": "😀 😎 😊 🌍"
-            }
-            """;
+    private static final String TEST_MESSAGE_WITH_SPECIAL_CHARACTERS
+            = """
+                    {
+                        "description": "Example with special characters",
+                        "BasicLatin": "\u0021 \u0023 \u0024 \u0025 \u0026 \u0027 \u0028 \u0029 \u002A \u002B \u002C \u002D \u002E \u002F \u003A \u003B \u003C \u003D \u003E \u003F",
+                        "Latin1": "\u00A1 \u00BF \u00A9 \u00AE \u00F1 \u00F6 \u00FC",
+                        "Greek": "\u0391 \u03B2 \u03B3 \u0394 \u03A9",
+                        "Cyrillic": "\u0410 \u0431 \u0432 \u0413 \u0434",
+                        "Hebrew": "\u05D0 \u05D1 \u05D2 \u05D3 \u05D4",
+                        "Arabic": "\u0627 \u0628 \u062A \u062B \u062C",
+                        "Devanagari": "\u0905 \u0906 \u0907 \u0908 \u0909",
+                        "CJK Unified Ideographs" : "\u4E00 \u4E8C \u4E09 \u56DB \u4E94",
+                        "Emoticons": "\uD83D\uDE00 \uD83D\uDE0E \uD83D\uDE0A \uD83C\uDF0D"
+                    }
+                    """;
 
     private static final String APPLICATION_JSON_UTF8
             = APPLICATION_JSON.getMimeType() + "; charset=" + StandardCharsets.UTF_8.name();
