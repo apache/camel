@@ -105,7 +105,7 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
     private static Object doInvokeProvider(Class<? extends Annotation> annotationClass, Method method) {
         var methodName = method.getName();
         LOG.trace("Checking instance method: {}", methodName);
-        if (method.getReturnType() == null) {
+        if (method.getReturnType() == Void.class) {
             throw new RuntimeException(
                     commonProviderMessage(annotationClass, method.getDeclaringClass()) + " provider does not return any value");
         }
