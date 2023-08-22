@@ -123,9 +123,11 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").log("Sending ${body} to queue.start.JmsPollingConsumerTest").to("sjms:queue.start.JmsPollingConsumerTest");
+                from("direct:start").log("Sending ${body} to queue.start.JmsPollingConsumerTest")
+                        .to("sjms:queue.start.JmsPollingConsumerTest");
 
-                from("sjms:queue.foo.JmsPollingConsumerTest").log("Received ${body} from queue.start.JmsPollingConsumerTest").to("mock:result");
+                from("sjms:queue.foo.JmsPollingConsumerTest").log("Received ${body} from queue.start.JmsPollingConsumerTest")
+                        .to("mock:result");
             }
         };
     }

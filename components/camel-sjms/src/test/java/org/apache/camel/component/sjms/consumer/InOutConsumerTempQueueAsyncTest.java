@@ -42,7 +42,8 @@ public class InOutConsumerTempQueueAsyncTest extends JmsTestSupport {
             public void configure() {
                 from("sjms:queue:start.queue.InOutConsumerTempQueueAsyncTest?asyncConsumer=true")
                         .log("Requesting ${body} with thread ${threadName}")
-                        .to(ExchangePattern.InOut, "sjms:queue:in.out.temp.queue.InOutConsumerTempQueueAsyncTest?replyToConcurrentConsumers=2")
+                        .to(ExchangePattern.InOut,
+                                "sjms:queue:in.out.temp.queue.InOutConsumerTempQueueAsyncTest?replyToConcurrentConsumers=2")
                         .log("Result ${body} with thread ${threadName}")
                         .to("mock:result");
 

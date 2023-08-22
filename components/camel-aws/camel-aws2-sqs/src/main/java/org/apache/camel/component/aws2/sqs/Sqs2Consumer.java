@@ -440,7 +440,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                                     .build();
 
                     try {
-                        LOG.trace("Extending visibility window by {} seconds for request entries {}", repeatSeconds, batchEntries);
+                        LOG.trace("Extending visibility window by {} seconds for request entries {}", repeatSeconds,
+                                batchEntries);
                         getEndpoint().getClient().changeMessageVisibilityBatch(request);
                         LOG.debug("Extended visibility window for request entries {}", batchEntries);
                     } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
