@@ -263,7 +263,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile String version;
     private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
@@ -1908,57 +1907,12 @@ public abstract class AbstractCamelContext extends BaseService
         return new Date(startDate);
     }
 
+
     @Override
     public String getVersion() {
-        if (version == null) {
-            synchronized (lock) {
-                if (version == null) {
-                    version = doGetVersion();
-                }
-            }
-        }
-        return version;
+        return VersionHolder.VERSION;
     }
 
-    private String doGetVersion() {
-        String resolvedVersion = null;
-
-        InputStream is = null;
-        // try to load from maven properties first
-        try {
-            Properties p = new Properties();
-            is = AbstractCamelContext.class
-                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties");
-            if (is != null) {
-                p.load(is);
-                resolvedVersion = p.getProperty("version", "");
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            if (is != null) {
-                IOHelper.close(is);
-            }
-        }
-
-        // fallback to using Java API
-        if (resolvedVersion == null) {
-            Package aPackage = getClass().getPackage();
-            if (aPackage != null) {
-                resolvedVersion = aPackage.getImplementationVersion();
-                if (resolvedVersion == null) {
-                    resolvedVersion = aPackage.getSpecificationVersion();
-                }
-            }
-        }
-
-        if (resolvedVersion == null) {
-            // we could not compute the version so use a blank
-            resolvedVersion = "";
-        }
-
-        return resolvedVersion;
-    }
 
     @Override
     protected void doSuspend() throws Exception {
