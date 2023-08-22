@@ -772,15 +772,13 @@ public class HttpProducer extends DefaultProducer {
                                 charset = cs.name();
                             }
                         }
-                        final StringEntity entity;
-                        if (contentType != null) {
-                            entity = new StringEntity(content, contentType);
-                        } else if (charset != null) {
-                            entity = new StringEntity(content, null, charset, false);
-                        } else {
-                            entity = new StringEntity(content, null, null, false);
+
+                        // sync contentType.charset and charset
+                        if (contentType != null && contentType.getCharset() == null && charset != null) {
+                            contentType = ContentType.parse(contentType + ";charset=" + charset);
                         }
-                        answer = entity;
+
+                        answer = new StringEntity(content, contentType, charset, false);
                     }
 
                     // fallback as input stream
