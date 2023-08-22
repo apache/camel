@@ -120,7 +120,7 @@ public class RouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToStartRouteException(getId(), route.getDescription(), e);
+            throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
         }
     }
 
@@ -129,7 +129,7 @@ public class RouteService extends ChildServiceSupport {
             try {
                 doSetup();
             } catch (Exception e) {
-                throw new FailedToStartRouteException(getId(), route.getDescription(), e);
+                throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
             }
         }
     }
