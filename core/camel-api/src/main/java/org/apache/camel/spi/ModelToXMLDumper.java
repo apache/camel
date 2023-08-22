@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 
@@ -51,5 +53,15 @@ public interface ModelToXMLDumper {
     String dumpModelAsXml(
             CamelContext context, NamedNode definition, boolean resolvePlaceholders)
             throws Exception;
+
+    /**
+     * Dumps the beans as XML
+     *
+     * @param  context   the CamelContext
+     * @param  beans     list of beans (RegistryBeanDefinition)
+     * @return           the output in XML (is formatted)
+     * @throws Exception is throw if error marshalling to XML
+     */
+    String dumpBeansAsXml(CamelContext context, List<Object> beans) throws Exception;
 
 }

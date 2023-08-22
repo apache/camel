@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 
@@ -53,5 +55,15 @@ public interface ModelToYAMLDumper {
             CamelContext context, NamedNode definition,
             boolean resolvePlaceholders, boolean uriAsParameters)
             throws Exception;
+
+    /**
+     * Dumps the beans as YAML
+     *
+     * @param  context   the CamelContext
+     * @param  beans     list of beans (RegistryBeanDefinition)
+     * @return           the output in YAML (is formatted)
+     * @throws Exception is throw if error marshalling to YAML
+     */
+    String dumpBeansAsYaml(CamelContext context, List<Object> beans) throws Exception;
 
 }

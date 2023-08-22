@@ -1398,8 +1398,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Controls what to include in output for route dumping.
      *
-     * Possible values: all, routes, rests, routeConfigurations, routeTemplates. Multiple values can be separated by
-     * comma. Default is routes.
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
      */
     public void setDumpRoutesInclude(String dumpRoutesInclude) {
         this.dumpRoutesInclude = dumpRoutesInclude;
@@ -2646,8 +2646,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Controls what to include in output for route dumping.
      *
-     * Possible values: all, routes, rests, routeConfigurations, routeTemplates. Multiple values can be separated by
-     * comma. Default is routes.
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
      */
     public T withDumpRoutesInclude(String dumpRoutesInclude) {
         this.dumpRoutesInclude = dumpRoutesInclude;

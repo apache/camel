@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -488,5 +489,15 @@ public interface Model {
      * Sets a custom {@link ModelReifierFactory}
      */
     void setModelReifierFactory(ModelReifierFactory modelReifierFactory);
+
+    /**
+     * Adds the custom bean
+     */
+    void addRegistryBean(RegistryBeanDefinition bean);
+
+    /**
+     * Gets the custom beans
+     */
+    List<RegistryBeanDefinition> getRegistryBeans();
 
 }
