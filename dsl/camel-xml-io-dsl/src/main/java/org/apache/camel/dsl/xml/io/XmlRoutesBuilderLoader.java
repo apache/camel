@@ -181,41 +181,51 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 // decides to do so)
 
                 app.getRests().forEach(r -> {
+                    r.setResource(getResource());
                     List<RestDefinition> list = new ArrayList<>();
                     list.add(r);
                     RestsDefinition def = new RestsDefinition();
+                    def.setResource(getResource());
                     def.setRests(list);
                     setRestCollection(def);
                 });
 
                 app.getRouteConfigurations().forEach(rc -> {
+                    rc.setResource(getResource());
                     List<RouteConfigurationDefinition> list = new ArrayList<>();
                     list.add(rc);
                     RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+                    def.setResource(getResource());
                     def.setRouteConfigurations(list);
                     addConfigurations(def);
                 });
 
                 app.getRouteTemplates().forEach(rt -> {
+                    rt.setResource(getResource());
                     List<RouteTemplateDefinition> list = new ArrayList<>();
                     list.add(rt);
                     RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+                    def.setResource(getResource());
                     def.setRouteTemplates(list);
                     setRouteTemplateCollection(def);
                 });
 
                 app.getTemplatedRoutes().forEach(tr -> {
+                    tr.setResource(getResource());
                     List<TemplatedRouteDefinition> list = new ArrayList<>();
                     list.add(tr);
                     TemplatedRoutesDefinition def = new TemplatedRoutesDefinition();
+                    def.setResource(getResource());
                     def.setTemplatedRoutes(list);
                     setTemplatedRouteCollection(def);
                 });
 
                 app.getRoutes().forEach(r -> {
+                    r.setResource(getResource());
                     List<RouteDefinition> list = new ArrayList<>();
                     list.add(r);
                     RoutesDefinition def = new RoutesDefinition();
+                    def.setResource(getResource());
                     def.setRoutes(list);
                     addRoutes(def);
                 });

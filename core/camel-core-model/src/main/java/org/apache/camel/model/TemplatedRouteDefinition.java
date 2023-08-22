@@ -33,6 +33,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * Defines a templated route (a route built from a route template)
@@ -41,10 +43,12 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "templatedRoute")
 @XmlType(propOrder = { "parameters", "beans" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TemplatedRouteDefinition implements CamelContextAware {
+public class TemplatedRouteDefinition implements CamelContextAware, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private Resource resource;
 
     @XmlAttribute(required = true)
     private String routeTemplateRef;
@@ -107,6 +111,16 @@ public class TemplatedRouteDefinition implements CamelContextAware {
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Fluent API
