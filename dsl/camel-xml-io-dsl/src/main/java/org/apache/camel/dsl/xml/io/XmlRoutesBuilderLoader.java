@@ -169,8 +169,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             private void configureCamel(BeansDefinition app) {
                 if (!delayedRegistrations.isEmpty()) {
                     // some of the beans were not available yet, so we have to try register them now
-                    for (RegistryBeanDefinition bean : delayedRegistrations) {
-                        registerBeanDefinition(bean, false);
+                    for (RegistryBeanDefinition def : delayedRegistrations) {
+                        def.setResource(getResource());
+                        registerBeanDefinition(def, false);
                     }
                     delayedRegistrations.clear();
                 }
@@ -283,8 +284,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         PackageScanHelper.registerBeans(getCamelContext(), packagesToScan);
 
         // <bean>s - register Camel beans directly with Camel injection
-        for (RegistryBeanDefinition bean : app.getBeans()) {
-            registerBeanDefinition(bean, true);
+        for (RegistryBeanDefinition def : app.getBeans()) {
+            def.setResource(resource);
+            registerBeanDefinition(def, true);
         }
 
         // <s:bean>, <s:beans> and <s:alias> elements - all the elements in single BeansDefinition have
