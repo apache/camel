@@ -471,7 +471,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         } catch (Exception e) {
             // ignore
-            LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(), 
+            LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
                     e);
         }
     }

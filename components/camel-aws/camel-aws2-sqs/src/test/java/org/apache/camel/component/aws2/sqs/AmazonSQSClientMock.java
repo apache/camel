@@ -232,7 +232,7 @@ public class AmazonSQSClientMock implements SqsClient {
     public SqsServiceClientConfiguration serviceClientConfiguration() {
         return null;
     }
-    
+
     @Override
     public ChangeMessageVisibilityBatchResponse changeMessageVisibilityBatch(
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest) {

@@ -40,7 +40,8 @@ public class DestinationNameParserTest {
 
     @Test
     public void testGetShortName() {
-        assertEquals("foo.DestinationNameParserTest", DestinationNameParser.getShortName("topic:foo.DestinationNameParserTest"));
+        assertEquals("foo.DestinationNameParserTest",
+                DestinationNameParser.getShortName("topic:foo.DestinationNameParserTest"));
         assertFalse(DestinationNameParser.isTopic("queue:bar.DestinationNameParserTest"), "bar");
         assertFalse(DestinationNameParser.isTopic("bar"), "bar");
     }

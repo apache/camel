@@ -504,6 +504,21 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The buffer size (in bytes) in streaming upload mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
          * Delete file object after the S3 file has been uploaded.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1028,6 +1043,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
             case "batchMessageNumber": getOrCreateConfiguration((AWS2S3Component) component).setBatchMessageNumber((int) value); return true;
             case "batchSize": getOrCreateConfiguration((AWS2S3Component) component).setBatchSize((int) value); return true;
+            case "bufferSize": getOrCreateConfiguration((AWS2S3Component) component).setBufferSize((int) value); return true;
             case "deleteAfterWrite": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterWrite((boolean) value); return true;
             case "keyName": getOrCreateConfiguration((AWS2S3Component) component).setKeyName((java.lang.String) value); return true;
             case "lazyStartProducer": ((AWS2S3Component) component).setLazyStartProducer((boolean) value); return true;

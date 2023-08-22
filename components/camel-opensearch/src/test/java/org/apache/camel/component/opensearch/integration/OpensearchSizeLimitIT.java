@@ -26,7 +26,6 @@ import org.opensearch.client.opensearch.core.search.HitsMetadata;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OpensearchSizeLimitIT extends OpensearchTestSupport {
 
