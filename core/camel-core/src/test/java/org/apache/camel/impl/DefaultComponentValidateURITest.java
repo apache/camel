@@ -37,7 +37,8 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
 
     @Test
     public void testUnknownParameter() {
-        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("timer://foo?delay=250&unknown=1&period=500"),
+        assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("timer://foo?delay=250&unknown=1&period=500"),
                 "Should have thrown ResolveEndpointFailedException");
     }
 

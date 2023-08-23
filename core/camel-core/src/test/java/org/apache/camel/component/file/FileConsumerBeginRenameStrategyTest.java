@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -51,10 +50,11 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         // create a file in inprogress to let there be a duplicate file
         testDirectory("inprogress", true);
 
-        try(FileWriter fw = new FileWriter(testFile("inprogress/london.txt").toFile())) {
+        try (FileWriter fw = new FileWriter(testFile("inprogress/london.txt").toFile())) {
             fw.write("I was there once in London");
             fw.flush();
-        };
+        }
+        ;
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");

@@ -542,6 +542,10 @@ public final class PropertyBindingSupport {
                 // resolve property placeholders
                 str = camelContext.resolvePropertyPlaceholders(str.toString());
             }
+            if (str == null && reference && mandatory && !optional) {
+                // we could not resolve the reference and this is mandatory
+                throw new PropertyBindingException(target, key, value);
+            }
             value = str;
         } catch (Exception e) {
             // report the exception using the long key and parent target

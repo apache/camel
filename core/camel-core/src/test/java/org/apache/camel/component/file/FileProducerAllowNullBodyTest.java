@@ -44,7 +44,7 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody(fileUri("?fileName=allowNullBody.txt"), null),
-        "Should have thrown a GenericFileOperationFailedException");
+                "Should have thrown a GenericFileOperationFailedException");
 
         GenericFileOperationFailedException cause
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());

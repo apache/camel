@@ -47,7 +47,7 @@ public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
         }, "Should have thrown exception");
 
         assertEquals("A new choice clause should start with a when() or otherwise()."
-                        + " If you intend to end the entire choice and are using endChoice() then use end() instead.",
+                     + " If you intend to end the entire choice and are using endChoice() then use end() instead.",
                 e.getMessage());
     }
 

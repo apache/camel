@@ -42,7 +42,7 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
                             .throwException(new IllegalArgumentException("Forced"));
                 }
             });
-        },"Should have thrown an exception");
+        }, "Should have thrown an exception");
 
         assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
                 e.getMessage());

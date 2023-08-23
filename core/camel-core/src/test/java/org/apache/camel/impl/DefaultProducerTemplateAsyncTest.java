@@ -225,8 +225,9 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, ()  -> template.extractFutureBody(future, Exchange.class),
-                "Should have thrown exception");
+        RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.extractFutureBody(future, Exchange.class),
+                        "Should have thrown exception");
 
         assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
@@ -243,8 +244,9 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, ()  -> template.extractFutureBody(future, String.class),
-                "Should have thrown exception");
+        RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.extractFutureBody(future, String.class),
+                        "Should have thrown exception");
 
         assertEquals("Damn forced by unit test", e.getCause().getMessage());
 

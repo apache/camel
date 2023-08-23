@@ -36,7 +36,8 @@ public class XsltFeatureRouteTest extends ContextTestSupport {
     }
 
     public void sendXmlMessage(String uri, String message) {
-        Exception ex = assertThrows(Exception.class, () -> template.sendBody("direct:start1", message), "Expected an exception here");
+        Exception ex = assertThrows(Exception.class, () -> template.sendBody("direct:start1", message),
+                "Expected an exception here");
 
         // expect an exception here
         boolean b1 = ex instanceof CamelExecutionException;

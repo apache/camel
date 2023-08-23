@@ -125,7 +125,7 @@ public class DefaultClassResolverTest {
         DefaultClassResolver resolver = new DefaultClassResolver();
 
         assertThrows(ClassNotFoundException.class,
-                () ->  resolver.resolveMandatoryClass("com.FooBar"),
+                () -> resolver.resolveMandatoryClass("com.FooBar"),
                 "Should thrown an exception");
     }
 

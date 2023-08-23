@@ -127,7 +127,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     public void testGetThreadNameCustomPatternInvalid() {
         context.getExecutorServiceManager().setThreadNamePattern("Cool #xxx#");
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> context.getExecutorServiceManager().resolveThreadName("foo"),
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> context.getExecutorServiceManager().resolveThreadName("foo"),
                 "Should thrown an exception");
 
         assertEquals("Pattern is invalid: [Cool #xxx#] in resolved thread name: [Cool #xxx#]", e.getMessage());

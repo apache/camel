@@ -667,8 +667,6 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
         template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
 
-
-
         AssertionError e = assertThrows(AssertionError.class,
                 this::assertMockEndpointsSatisfied,
                 "Should have thrown exception");
