@@ -333,7 +333,11 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         }
 
         private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
-            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), b.getType()));
+            String type = b.getType();
+            if (type.startsWith("#class:")) {
+                type = type.substring(7);
+            }
+            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), type));
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("        <properties>%n"));
                 for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
