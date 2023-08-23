@@ -135,6 +135,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean dumpRoutesLog = true;
     private boolean dumpRoutesResolvePlaceholders = true;
     private boolean dumpRoutesUriAsParameters;
+    private boolean dumpRoutesGeneratedIds;
     private String dumpRoutesDirectory;
     private Map<String, String> globalOptions;
     // route controller
@@ -1398,8 +1399,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Controls what to include in output for route dumping.
      *
-     * Possible values: all, routes, rests, routeConfigurations, routeTemplates. Multiple values can be separated by
-     * comma. Default is routes.
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
      */
     public void setDumpRoutesInclude(String dumpRoutesInclude) {
         this.dumpRoutesInclude = dumpRoutesInclude;
@@ -1437,6 +1438,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDumpRoutesUriAsParameters(boolean dumpRoutesUriAsParameters) {
         this.dumpRoutesUriAsParameters = dumpRoutesUriAsParameters;
+    }
+
+    public boolean isDumpRoutesGeneratedIds() {
+        return dumpRoutesGeneratedIds;
+    }
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    public void setDumpRoutesGeneratedIds(boolean dumpRoutesGeneratedIds) {
+        this.dumpRoutesGeneratedIds = dumpRoutesGeneratedIds;
     }
 
     public String getDumpRoutesDirectory() {
@@ -2646,8 +2658,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Controls what to include in output for route dumping.
      *
-     * Possible values: all, routes, rests, routeConfigurations, routeTemplates. Multiple values can be separated by
-     * comma. Default is routes.
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
      */
     public T withDumpRoutesInclude(String dumpRoutesInclude) {
         this.dumpRoutesInclude = dumpRoutesInclude;
@@ -2676,6 +2688,14 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDumpRoutesUriAsParameters(boolean dumpRoutesUriAsParameters) {
         this.dumpRoutesUriAsParameters = dumpRoutesUriAsParameters;
+        return (T) this;
+    }
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    public T withDumpRoutesGeneratedIds(boolean dumpRoutesGeneratedIds) {
+        this.dumpRoutesGeneratedIds = dumpRoutesGeneratedIds;
         return (T) this;
     }
 

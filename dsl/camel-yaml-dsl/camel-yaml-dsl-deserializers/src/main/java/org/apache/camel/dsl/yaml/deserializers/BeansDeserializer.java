@@ -24,6 +24,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
@@ -74,6 +75,11 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
                         camelContext.getRegistry().bind(
                                 name,
                                 newInstance(bean, camelContext));
+
+                        // register bean in model
+                        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+                        model.addRegistryBean(bean);
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

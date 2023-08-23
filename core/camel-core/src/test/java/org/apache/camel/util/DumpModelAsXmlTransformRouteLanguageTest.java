@@ -55,7 +55,6 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
         assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:result", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));
-        assertEquals("true", node.getAttribute("customId"));
     }
 
     @Override

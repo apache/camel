@@ -32,6 +32,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -320,6 +321,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
                 getCamelContext().getRegistry().unbind(name);
                 getCamelContext().getRegistry().bind(name, target);
+
+                // register bean in model
+                Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
+                model.addRegistryBean(def);
+
             } catch (Exception e) {
                 if (delayIfFailed) {
                     delayedRegistrations.add(def);

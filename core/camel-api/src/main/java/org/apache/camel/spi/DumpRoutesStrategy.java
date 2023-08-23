@@ -40,8 +40,8 @@ public interface DumpRoutesStrategy extends StaticService {
     /**
      * Controls what to include in output.
      *
-     * Possible values: all, routes, rests, routeConfigurations, routeTemplates. Multiple values can be separated by
-     * comma. Default is routes.
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
      */
     void setInclude(String include);
 
@@ -59,6 +59,13 @@ public interface DumpRoutesStrategy extends StaticService {
      * parameters.
      */
     void setUriAsParameters(boolean uriAsParameters);
+
+    boolean isGeneratedIds();
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    void setGeneratedIds(boolean generatedIds);
 
     boolean isLog();
 

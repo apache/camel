@@ -56,6 +56,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -515,6 +516,16 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     @Override
     public Function<RouteDefinition, Boolean> getRouteFilter() {
         return model.getRouteFilter();
+    }
+
+    @Override
+    public void addRegistryBean(RegistryBeanDefinition bean) {
+        model.addRegistryBean(bean);
+    }
+
+    @Override
+    public List<RegistryBeanDefinition> getRegistryBeans() {
+        return model.getRegistryBeans();
     }
 
     @Override

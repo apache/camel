@@ -46,6 +46,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -75,6 +76,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
     private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private final List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
+    // XML and YAML DSL allows to define custom beans which we need to capture
+    private final List<RegistryBeanDefinition> beans = new ArrayList<>();
 
     private RestsDefinition restCollection = new RestsDefinition();
     private RestConfigurationDefinition restConfiguration;
@@ -603,6 +606,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         configureRests(context);
 
         // but populate rests before routes, as we want to turn rests into routes
+        populateBeans();
         populateRests();
         populateTransformers();
         populateValidators();
@@ -633,6 +637,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         configureRests(context);
 
         // but populate rests before routes, as we want to turn rests into routes
+        populateBeans();
         populateRests();
         populateTransformers();
         populateValidators();
@@ -731,6 +736,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             getRouteCollection().setResource(getResource());
             getRestCollection().setResource(getResource());
             getRouteTemplateCollection().setResource(getResource());
+            for (RegistryBeanDefinition def : beans) {
+                def.setResource(getResource());
+            }
 
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 // ensure the route is prepared after configure method is complete
@@ -853,6 +861,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (ValidatorBuilder vb : validatorBuilders) {
             vb.configure(camelContext);
         }
+    }
+
+    protected void populateBeans() {
+        CamelContext camelContext = notNullCamelContext();
+
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        for (RegistryBeanDefinition def : beans) {
+            // add to model
+            model.addRegistryBean(def);
+        }
+    }
+
+    public List<RegistryBeanDefinition> getBeans() {
+        return beans;
     }
 
     public RestsDefinition getRestCollection() {

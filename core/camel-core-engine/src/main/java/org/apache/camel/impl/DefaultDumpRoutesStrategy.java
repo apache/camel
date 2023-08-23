@@ -17,10 +17,15 @@
 package org.apache.camel.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +38,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -66,6 +72,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private String include = "routes";
     private boolean resolvePlaceholders = true;
     private boolean uriAsParameters;
+    private boolean generatedIds = true;
     private boolean log = true;
     private String directory;
 
@@ -93,6 +100,14 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
 
     public void setResolvePlaceholders(boolean resolvePlaceholders) {
         this.resolvePlaceholders = resolvePlaceholders;
+    }
+
+    public boolean isGeneratedIds() {
+        return generatedIds;
+    }
+
+    public void setGeneratedIds(boolean generatedIds) {
+        this.generatedIds = generatedIds;
     }
 
     public boolean isLog() {
@@ -132,6 +147,36 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final ModelToYAMLDumper dumper = PluginHelper.getModelToYAMLDumper(camelContext);
         final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         final DummyResource dummy = new DummyResource(null, null);
+        final Set<String> files = new HashSet<>();
+
+        if (include.contains("*") || include.contains("all") || include.contains("beans")) {
+            int size = model.getRegistryBeans().size();
+            if (size > 0) {
+                Map<Resource, List<RegistryBeanDefinition>> groups = new LinkedHashMap<>();
+                for (RegistryBeanDefinition bean : model.getRegistryBeans()) {
+                    Resource res = bean.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    List<RegistryBeanDefinition> beans = groups.computeIfAbsent(res, resource -> new ArrayList<>());
+                    beans.add(bean);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, List<RegistryBeanDefinition>> entry : groups.entrySet()) {
+                    List<RegistryBeanDefinition> beans = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpYamlBeans(camelContext, beans, resource == dummy ? null : resource, dumper, "beans", sbLocal, sbLog);
+                    // dump each resource into its own file
+                    doDumpToDirectory(resource, sbLocal, "beans", "yaml", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} beans as YAML", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
 
         if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
@@ -153,7 +198,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     StringBuilder sbLocal = new StringBuilder();
                     doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "routes", sbLocal, sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "routes", "yaml");
+                    doDumpToDirectory(resource, sbLocal, "routes", "yaml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} routes as YAML", size);
@@ -185,7 +230,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-configurations", sbLocal,
                             sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "route-configurations", "yaml");
+                    doDumpToDirectory(resource, sbLocal, "route-configurations", "yaml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} route-configurations as YAML", size);
@@ -214,7 +259,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     StringBuilder sbLocal = new StringBuilder();
                     doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "rests", sbLocal, sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "rests", "yaml");
+                    doDumpToDirectory(resource, sbLocal, "rests", "yaml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} rests as YAML", size);
@@ -245,7 +290,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     doDumpYaml(camelContext, def, resource == dummy ? null : resource, dumper, "route-templates", sbLocal,
                             sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "route-templates", "yaml");
+                    doDumpToDirectory(resource, sbLocal, "route-templates", "yaml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} route-templates as YAML", size);
@@ -259,7 +304,19 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             CamelContext camelContext, NamedNode def, Resource resource,
             ModelToYAMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
-            String dump = dumper.dumpModelAsYaml(camelContext, def, resolvePlaceholders, uriAsParameters);
+            String dump = dumper.dumpModelAsYaml(camelContext, def, resolvePlaceholders, uriAsParameters, generatedIds);
+            sbLocal.append(dump);
+            appendLogDump(resource, dump, sbLog);
+        } catch (Exception e) {
+            LOG.warn("Error dumping {}} to YAML due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
+    }
+
+    protected void doDumpYamlBeans(
+            CamelContext camelContext, List beans, Resource resource,
+            ModelToYAMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+        try {
+            String dump = dumper.dumpBeansAsYaml(camelContext, beans);
             sbLocal.append(dump);
             appendLogDump(resource, dump, sbLog);
         } catch (Exception e) {
@@ -271,6 +328,36 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final ModelToXMLDumper dumper = PluginHelper.getModelToXMLDumper(camelContext);
         final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         final DummyResource dummy = new DummyResource(null, null);
+        final Set<String> files = new HashSet<>();
+
+        if (include.contains("*") || include.contains("all") || include.contains("beans")) {
+            int size = model.getRegistryBeans().size();
+            if (size > 0) {
+                Map<Resource, List<RegistryBeanDefinition>> groups = new LinkedHashMap<>();
+                for (RegistryBeanDefinition bean : model.getRegistryBeans()) {
+                    Resource res = bean.getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    List<RegistryBeanDefinition> beans = groups.computeIfAbsent(res, resource -> new ArrayList<>());
+                    beans.add(bean);
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, List<RegistryBeanDefinition>> entry : groups.entrySet()) {
+                    List<RegistryBeanDefinition> beans = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpXmlBeans(camelContext, beans, resource == dummy ? null : resource, dumper, "beans", sbLocal, sbLog);
+                    // dump each resource into its own file
+                    doDumpToDirectory(resource, sbLocal, "beans", "xml", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} beans as XML", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
 
         if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
@@ -293,7 +380,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "route", "routes", sbLocal,
                             sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "routes", "xml");
+                    doDumpToDirectory(resource, sbLocal, "routes", "xml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} routes as XML", size);
@@ -325,7 +412,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "route-configurations",
                             sbLocal, sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "route-configurations", "xml");
+                    doDumpToDirectory(resource, sbLocal, "route-configurations", "xml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} route-configurations as XML", size);
@@ -354,7 +441,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     StringBuilder sbLocal = new StringBuilder();
                     doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "rest", "rests", sbLocal, sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "rests", "xml");
+                    doDumpToDirectory(resource, sbLocal, "rests", "xml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} rests as XML", size);
@@ -385,7 +472,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     doDumpXml(camelContext, def, resource == dummy ? null : resource, dumper, "routeTemplate",
                             "route-templates", sbLocal, sbLog);
                     // dump each resource into its own file
-                    doDumpToDirectory(resource, sbLocal, "route-templates", "xml");
+                    doDumpToDirectory(resource, sbLocal, "route-templates", "xml", files);
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} route-templates as XML", size);
@@ -393,17 +480,37 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 }
             }
         }
+
+        if (directory != null && !files.isEmpty()) {
+            // all XML files need to have <camel> as root tag
+            doAdjustXmlFiles(files);
+        }
+    }
+
+    protected void doDumpXmlBeans(
+            CamelContext camelContext, List beans, Resource resource,
+            ModelToXMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+        try {
+            String dump = dumper.dumpBeansAsXml(camelContext, beans);
+            sbLocal.append(dump);
+            appendLogDump(resource, dump, sbLog);
+        } catch (Exception e) {
+            LOG.warn("Error dumping {}} to XML due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
     }
 
     protected void doDumpXml(
             CamelContext camelContext, NamedNode def, Resource resource,
             ModelToXMLDumper dumper, String replace, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
-            String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders);
-            // lets separate with empty line
-            xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
-                    "xmlns=\"http://camel.apache.org/schema/spring\">\n");
+            String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders, generatedIds);
+            // remove spring schema xmlns that camel-jaxb dumper includes
+            xml = StringHelper.replaceFirst(xml, " xmlns=\"http://camel.apache.org/schema/spring\">", ">");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");
+            // remove outer routes tag
+            xml = StringHelper.replaceFirst(xml, "<routes>", "");
+            xml = StringHelper.replaceFirst(xml, "</routes>", "");
+
             sbLocal.append(xml);
             appendLogDump(resource, xml, sbLog);
         } catch (Exception e) {
@@ -411,7 +518,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         }
     }
 
-    protected void doDumpToDirectory(Resource resource, StringBuilder sbLocal, String kind, String ext) {
+    protected void doDumpToDirectory(Resource resource, StringBuilder sbLocal, String kind, String ext, Set<String> files) {
         if (directory != null && !sbLocal.isEmpty()) {
             // make sure directory exists
             File dir = new File(directory);
@@ -425,13 +532,42 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             if (name.contains(":")) {
                 name = StringHelper.after(name, ":");
             }
+
             name = FileUtil.onlyName(name) + "." + ext;
+            boolean newFile = files.isEmpty() || !files.contains(name);
             File target = new File(directory, name);
             try {
-                IOHelper.writeText(sbLocal.toString(), target);
+                if (newFile) {
+                    // write as new file (override old file if exists)
+                    IOHelper.writeText(sbLocal.toString(), target);
+                } else {
+                    // append to existing file
+                    IOHelper.appendText(sbLocal.toString(), target);
+                }
+                files.add(name);
                 LOG.info("Dumped {} to file: {}", kind, target);
             } catch (IOException e) {
                 throw new RuntimeException("Error dumping " + kind + " to file: " + target, e);
+            }
+        }
+    }
+
+    protected void doAdjustXmlFiles(Set<String> files) {
+        for (String name : files) {
+            if (name.endsWith(".xml")) {
+                try {
+                    File file = new File(directory, name);
+                    // wrap xml files with <camel> root tag
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("<camel>\n\n");
+                    String xml = IOHelper.loadText(new FileInputStream(file));
+                    sb.append(xml);
+                    sb.append("\n</camel>\n");
+                    IOHelper.writeText(sb.toString(), file);
+                } catch (Exception e) {
+                    LOG.warn("Error adjusting dumped XML file: {} due to {}. This exception is ignored.", name, e.getMessage(),
+                            e);
+                }
             }
         }
     }

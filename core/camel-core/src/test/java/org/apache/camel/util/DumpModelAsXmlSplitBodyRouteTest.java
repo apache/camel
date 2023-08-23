@@ -56,7 +56,6 @@ public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
         assertNotNull(node, "Node <to> expected to be instanceof Element");
         assertEquals("mock:sub", node.getAttribute("uri"));
         assertEquals("myMock", node.getAttribute("id"));
-        assertEquals("true", node.getAttribute("customId"));
     }
 
     @Override

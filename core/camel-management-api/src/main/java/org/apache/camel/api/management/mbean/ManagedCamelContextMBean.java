@@ -195,6 +195,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the routes as XML")
     String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception;
 
+    @ManagedOperation(description = "Dumps the routes as XML")
+    String dumpRoutesAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
+
     @ManagedOperation(description = "Dumps the CamelContext and routes stats as XML")
     String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
 
@@ -215,6 +218,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedOperation(description = "Dumps the routes as YAML")
     String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as YAML")
+    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds) throws Exception;
 
     /**
      * Creates the endpoint by the given uri

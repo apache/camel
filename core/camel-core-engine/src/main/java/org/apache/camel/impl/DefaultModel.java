@@ -56,6 +56,7 @@ import org.apache.camel.model.TemplatedRouteBeanDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -91,6 +92,8 @@ public class DefaultModel implements Model {
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
+    // XML and YAML DSL allows to declare beans in the DSL
+    private List<RegistryBeanDefinition> beans = new ArrayList<>();
     private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
@@ -915,6 +918,18 @@ public class DefaultModel implements Model {
     @Override
     public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
         this.modelReifierFactory = modelReifierFactory;
+    }
+
+    @Override
+    public void addRegistryBean(RegistryBeanDefinition bean) {
+        // remove exiting bean with same name to update
+        beans.removeIf(b -> bean.getName().equals(b.getName()));
+        beans.add(bean);
+    }
+
+    @Override
+    public List<RegistryBeanDefinition> getRegistryBeans() {
+        return beans;
     }
 
     /**
