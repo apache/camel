@@ -96,7 +96,8 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
         boolean complete = false;
         if (maxMessages > 0) {
-             complete = event.getType() == CamelEvent.Type.ExchangeCompleted || event.getType() == CamelEvent.Type.ExchangeFailed;
+            complete = event.getType() == CamelEvent.Type.ExchangeCompleted
+                    || event.getType() == CamelEvent.Type.ExchangeFailed;
 
             if (complete) {
                 boolean result = doneMessages.incrementAndGet() >= maxMessages;

@@ -24,8 +24,7 @@ import org.apache.camel.util.IOHelper;
 
 class VersionHolder {
     public static final String VERSION;
-    private static final String POM_PROPERTIES =
-            "/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties";
+    private static final String POM_PROPERTIES = "/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties";
 
     static {
         VERSION = doGetVersion();
@@ -67,7 +66,6 @@ class VersionHolder {
                 resolvedVersion = aPackage.getSpecificationVersion();
             }
         }
-
 
         if (resolvedVersion == null) {
             // we could not compute the version so use a blank

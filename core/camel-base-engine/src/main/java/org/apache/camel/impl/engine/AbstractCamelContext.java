@@ -1906,12 +1906,10 @@ public abstract class AbstractCamelContext extends BaseService
         return new Date(startDate);
     }
 
-
     @Override
     public String getVersion() {
         return VersionHolder.VERSION;
     }
-
 
     @Override
     protected void doSuspend() throws Exception {
