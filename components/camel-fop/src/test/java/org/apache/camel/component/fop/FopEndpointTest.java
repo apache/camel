@@ -23,8 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultExchange;
+<<<<<<< HEAD
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pdfbox.Loader;
+=======
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
+>>>>>>> 76ca97bc61a (CAMEL-19742: created base test class in camel-test-infra-core, added dependencies to pom files)
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
