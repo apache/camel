@@ -39,7 +39,7 @@ public class XsltFileNotFoundTest extends TestSupport {
         RouteBuilder builder = createRouteBuilder();
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(builder);
-        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, () -> context.start());
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, context::start);
 
         assertIsInstanceOf(TransformerException.class, exception.getCause().getCause().getCause());
         assertIsInstanceOf(FileNotFoundException.class, exception.getCause().getCause().getCause().getCause());

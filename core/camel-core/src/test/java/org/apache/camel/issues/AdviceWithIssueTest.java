@@ -26,7 +26,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AdviceWithIssueTest extends ContextTestSupport {
 
@@ -35,31 +35,27 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBody("direct:start", "World");
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"),
+                "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testAdviceWithErrorHandler() throws Exception {
+    public void testAdviceWithErrorHandler() {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     errorHandler(deadLetterChannel("mock:dead"));
                 }
             });
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
-                    e.getMessage());
-        }
+        }, "Should have thrown exception");
+
+        assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
+                e.getMessage());
     }
 
     @Test

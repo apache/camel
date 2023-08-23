@@ -39,7 +39,13 @@ import static org.apache.camel.impl.engine.IntrospectionSupport.getPropertySette
 import static org.apache.camel.impl.engine.IntrospectionSupport.isGetter;
 import static org.apache.camel.impl.engine.IntrospectionSupport.isSetter;
 import static org.apache.camel.impl.engine.IntrospectionSupport.setProperty;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for IntrospectionSupport
@@ -417,12 +423,11 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method name = getPropertyGetter(ExampleBean.class, "name");
         assertEquals("getName", name.getName());
 
-        try {
-            getPropertyGetter(ExampleBean.class, "xxx");
-            fail("Should have thrown exception");
-        } catch (NoSuchMethodException e) {
-            assertEquals("org.apache.camel.support.jndi.ExampleBean.getXxx()", e.getMessage());
-        }
+        NoSuchMethodException e = assertThrows(NoSuchMethodException.class,
+                () -> getPropertyGetter(ExampleBean.class, "xxx"),
+                "Should have thrown exception");
+
+        assertEquals("org.apache.camel.support.jndi.ExampleBean.getXxx()", e.getMessage());
     }
 
     @Test
@@ -434,12 +439,11 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method name = getPropertySetter(ExampleBean.class, "name");
         assertEquals("setName", name.getName());
 
-        try {
-            getPropertySetter(ExampleBean.class, "xxx");
-            fail("Should have thrown exception");
-        } catch (NoSuchMethodException e) {
-            assertEquals("org.apache.camel.support.jndi.ExampleBean.setXxx", e.getMessage());
-        }
+        NoSuchMethodException e = assertThrows(NoSuchMethodException.class,
+                () -> getPropertySetter(ExampleBean.class, "xxx"),
+                "Should have thrown exception");
+
+        assertEquals("org.apache.camel.support.jndi.ExampleBean.setXxx", e.getMessage());
     }
 
     @Test

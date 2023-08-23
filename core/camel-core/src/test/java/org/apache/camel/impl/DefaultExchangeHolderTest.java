@@ -29,7 +29,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultExchangeHolderTest extends ContextTestSupport {
 
@@ -138,16 +141,12 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFileNotSupported() throws Exception {
+    public void testFileNotSupported() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/log4j2.properties"));
 
-        try {
-            DefaultExchangeHolder.marshal(exchange);
-            fail("Should have thrown exception");
-        } catch (RuntimeExchangeException e) {
-            // expected
-        }
+        assertThrows(RuntimeExchangeException.class, () -> DefaultExchangeHolder.marshal(exchange),
+                "Should have thrown exception");
     }
 
     @Test

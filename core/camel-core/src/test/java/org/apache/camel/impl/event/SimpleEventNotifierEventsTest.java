@@ -31,7 +31,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SimpleEventNotifierEventsTest {
 
@@ -111,13 +113,11 @@ public class SimpleEventNotifierEventsTest {
         // optimized as this does not require exchange events
         assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
-        try {
-            template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:fail", "Hello World"),
+                "Should have thrown an exception");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
 
         assertEquals(12, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));
