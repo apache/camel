@@ -41,7 +41,11 @@ public class Transform extends CamelCommand {
 
     @CommandLine.Option(names = { "--format" },
                         description = "Output format (xml or yaml)", defaultValue = "yaml")
-    String format;
+    String format = "yaml";
+
+    @CommandLine.Option(names = { "--resolve-placeholders" }, defaultValue = "false",
+                        description = "Whether to resolve property placeholders in the dumped output")
+    boolean resolvePlaceholders;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
@@ -59,7 +63,7 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutes", format);
                 main.addInitialProperty("camel.main.dumpRoutesInclude", "routes,rests,routeConfigurations,beans");
                 main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "false");
+                main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "" + resolvePlaceholders);
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
                 main.addInitialProperty("camel.main.dumpRoutesDirectory", directory);
             }
