@@ -17,12 +17,12 @@
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
-import org.apache.camel.dsl.yaml.common.YamlSupport;
-import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
@@ -86,10 +86,6 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             Object bean = newInstance(def, camelContext);
             camelContext.getRegistry().unbind(name);
             camelContext.getRegistry().bind(name, bean);
-
-            // register bean in model
-            Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-            model.addRegistryBean(def);
 
         } catch (Exception e) {
             if (delayIfFailed) {
