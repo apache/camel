@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -62,8 +63,7 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 @ServiceFactory("default-" + DumpRoutesStrategy.FACTORY)
 public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRoutesStrategy, CamelContextAware {
 
-    // TODO: XML to disk with beans should use <camel>
-    // TODO: inlined routes in <camel> should be array of <route> and not have <routes> (the same for rests, etc.)
+    // yaml dump (remove auto-generated id - option to turn on|off)
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);
     private static final String DIVIDER = "--------------------------------------------------------------------------------";
@@ -473,6 +473,11 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 }
             }
         }
+
+        if (directory != null && !files.isEmpty()) {
+            // all XML files need to have <camel> as root tag
+            doAdjustXmlFiles(files);
+        }
     }
 
     protected void doDumpXmlBeans(
@@ -492,10 +497,13 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             ModelToXMLDumper dumper, String replace, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
             String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders);
-            // lets separate with empty line
-            xml = StringHelper.replaceFirst(xml, "xmlns=\"http://camel.apache.org/schema/spring\">",
-                    "xmlns=\"http://camel.apache.org/schema/spring\">\n");
+            // remove spring schema xmlns that camel-jaxb dumper includes
+            xml = StringHelper.replaceFirst(xml, " xmlns=\"http://camel.apache.org/schema/spring\">", ">");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");
+            // remove outer routes tag
+            xml = StringHelper.replaceFirst(xml, "<routes>", "");
+            xml = StringHelper.replaceFirst(xml, "</routes>", "");
+
             sbLocal.append(xml);
             appendLogDump(resource, xml, sbLog);
         } catch (Exception e) {
@@ -533,6 +541,25 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 LOG.info("Dumped {} to file: {}", kind, target);
             } catch (IOException e) {
                 throw new RuntimeException("Error dumping " + kind + " to file: " + target, e);
+            }
+        }
+    }
+
+    protected void doAdjustXmlFiles(Set<String> files) {
+        for (String name : files) {
+            if (name.endsWith(".xml")) {
+                try {
+                    File file = new File(directory, name);
+                    // wrap xml files with <camel> root tag
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("<camel>\n\n");
+                    String xml = IOHelper.loadText(new FileInputStream(file));
+                    sb.append(xml);
+                    sb.append("\n</camel>\n");
+                    IOHelper.writeText(sb.toString(), file);
+                } catch (Exception e) {
+                    LOG.warn("Error adjusting dumped XML file: {} due to {}. This exception is ignored.", name, e.getMessage(), e);
+                }
             }
         }
     }
