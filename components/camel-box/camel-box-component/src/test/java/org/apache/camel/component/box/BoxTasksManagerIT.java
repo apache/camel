@@ -103,7 +103,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -156,7 +156,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     ((BoxTaskAssignment) result.getResource()).delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -273,7 +273,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     private void deleteTestTask() {
         try {
             testTask.delete();
-        } catch (Throwable t) {
+        } catch (Exception t) {
         }
         testTask = null;
     }

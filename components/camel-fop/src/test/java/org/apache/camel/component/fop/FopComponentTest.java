@@ -51,7 +51,7 @@ public class FopComponentTest extends CamelTestSupport {
 
         try {
             super.setUp();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             canTest = false;
         }
     }
