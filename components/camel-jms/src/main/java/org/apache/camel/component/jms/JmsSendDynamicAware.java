@@ -109,8 +109,13 @@ public class JmsSendDynamicAware extends ServiceSupport implements SendDynamicAw
         if (pos != -1) {
             uri = uri.substring(0, pos);
         }
-        // destination name is after last colon
-        pos = uri.lastIndexOf(':');
+
+        // destination name is after last colon (but not after double colon)
+        String shortUri = StringHelper.before(uri, "::");
+        pos = shortUri == null
+                ? uri.lastIndexOf(':')
+                : shortUri.lastIndexOf(':');
+
         if (pos != -1) {
             return uri.substring(pos + 1);
         } else {
