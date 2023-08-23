@@ -6,6 +6,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.0 to 4.1
 
+=== camel-management
+
+Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.
+
 === camel-aws2-step-functions
 
 The following Message Headers of `camel-aws2-step-functions` component have been renamed to follow standard camel naming convention.
