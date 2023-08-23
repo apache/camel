@@ -674,6 +674,13 @@ public class KameletMain extends MainCommandLineSupport {
             });
         }
 
+        if (!xmls.isEmpty()) {
+            processSpringBeans(camelContext, config, xmls);
+        }
+    }
+
+    private void processSpringBeans(
+            CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
         // we _could_ create something like org.apache.camel.spring.spi.ApplicationContextBeanRepository, but
         // wrapping DefaultListableBeanFactory and use it as one of the
         // org.apache.camel.support.DefaultRegistry.repositories, but for now let's use it to populate
@@ -711,7 +718,6 @@ public class KameletMain extends MainCommandLineSupport {
         // org.springframework.context.support.AbstractApplicationContext.refresh()
         // see org.springframework.context.support.AbstractApplicationContext.prepareBeanFactory() to check
         // which extra/infra beans are added
-
         beanFactory.freezeConfiguration();
 
         List<String> beanNames = Arrays.asList(beanFactory.getBeanDefinitionNames());
