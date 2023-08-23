@@ -25,6 +25,8 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "CamelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "directory":
         case "Directory": target.setDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "generatedids":
+        case "GeneratedIds": target.setGeneratedIds(property(camelContext, boolean.class, value)); return true;
         case "include":
         case "Include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "log":
@@ -44,6 +46,8 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "CamelContext": return org.apache.camel.CamelContext.class;
         case "directory":
         case "Directory": return java.lang.String.class;
+        case "generatedids":
+        case "GeneratedIds": return boolean.class;
         case "include":
         case "Include": return java.lang.String.class;
         case "log":
@@ -64,6 +68,8 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         case "CamelContext": return target.getCamelContext();
         case "directory":
         case "Directory": return target.getDirectory();
+        case "generatedids":
+        case "GeneratedIds": return target.isGeneratedIds();
         case "include":
         case "Include": return target.getInclude();
         case "log":

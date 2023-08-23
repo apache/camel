@@ -63,8 +63,6 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 @ServiceFactory("default-" + DumpRoutesStrategy.FACTORY)
 public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRoutesStrategy, CamelContextAware {
 
-    // yaml dump (remove auto-generated id - option to turn on|off)
-
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDumpRoutesStrategy.class);
     private static final String DIVIDER = "--------------------------------------------------------------------------------";
 
@@ -74,6 +72,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private String include = "routes";
     private boolean resolvePlaceholders = true;
     private boolean uriAsParameters;
+    private boolean generatedIds = true;
     private boolean log = true;
     private String directory;
 
@@ -101,6 +100,14 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
 
     public void setResolvePlaceholders(boolean resolvePlaceholders) {
         this.resolvePlaceholders = resolvePlaceholders;
+    }
+
+    public boolean isGeneratedIds() {
+        return generatedIds;
+    }
+
+    public void setGeneratedIds(boolean generatedIds) {
+        this.generatedIds = generatedIds;
     }
 
     public boolean isLog() {
@@ -297,7 +304,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             CamelContext camelContext, NamedNode def, Resource resource,
             ModelToYAMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
-            String dump = dumper.dumpModelAsYaml(camelContext, def, resolvePlaceholders, uriAsParameters);
+            String dump = dumper.dumpModelAsYaml(camelContext, def, resolvePlaceholders, uriAsParameters, generatedIds);
             sbLocal.append(dump);
             appendLogDump(resource, dump, sbLog);
         } catch (Exception e) {
@@ -496,7 +503,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             CamelContext camelContext, NamedNode def, Resource resource,
             ModelToXMLDumper dumper, String replace, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
-            String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders);
+            String xml = dumper.dumpModelAsXml(camelContext, def, resolvePlaceholders, generatedIds);
             // remove spring schema xmlns that camel-jaxb dumper includes
             xml = StringHelper.replaceFirst(xml, " xmlns=\"http://camel.apache.org/schema/spring\">", ">");
             xml = xml.replace("</" + replace + ">", "</" + replace + ">\n");

@@ -75,6 +75,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "dumproutesdirectory":
         case "DumpRoutesDirectory": target.setDumpRoutesDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "dumproutesgeneratedids":
+        case "DumpRoutesGeneratedIds": target.setDumpRoutesGeneratedIds(property(camelContext, boolean.class, value)); return true;
         case "dumproutesinclude":
         case "DumpRoutesInclude": target.setDumpRoutesInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "dumprouteslog":
@@ -332,6 +334,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DumpRoutes": return java.lang.String.class;
         case "dumproutesdirectory":
         case "DumpRoutesDirectory": return java.lang.String.class;
+        case "dumproutesgeneratedids":
+        case "DumpRoutesGeneratedIds": return boolean.class;
         case "dumproutesinclude":
         case "DumpRoutesInclude": return java.lang.String.class;
         case "dumprouteslog":
@@ -590,6 +594,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DumpRoutes": return target.getDumpRoutes();
         case "dumproutesdirectory":
         case "DumpRoutesDirectory": return target.getDumpRoutesDirectory();
+        case "dumproutesgeneratedids":
+        case "DumpRoutesGeneratedIds": return target.isDumpRoutesGeneratedIds();
         case "dumproutesinclude":
         case "DumpRoutesInclude": return target.getDumpRoutesInclude();
         case "dumprouteslog":

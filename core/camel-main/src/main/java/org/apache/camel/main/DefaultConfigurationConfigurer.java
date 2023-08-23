@@ -264,6 +264,7 @@ public final class DefaultConfigurationConfigurer {
             drs.setInclude(config.getDumpRoutesInclude());
             drs.setLog(config.isDumpRoutesLog());
             drs.setUriAsParameters(config.isDumpRoutesUriAsParameters());
+            drs.setGeneratedIds(config.isDumpRoutesGeneratedIds());
             drs.setResolvePlaceholders(config.isDumpRoutesResolvePlaceholders());
             drs.setDirectory(config.getDumpRoutesDirectory());
         }

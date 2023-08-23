@@ -135,6 +135,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean dumpRoutesLog = true;
     private boolean dumpRoutesResolvePlaceholders = true;
     private boolean dumpRoutesUriAsParameters;
+    private boolean dumpRoutesGeneratedIds;
     private String dumpRoutesDirectory;
     private Map<String, String> globalOptions;
     // route controller
@@ -1439,6 +1440,17 @@ public abstract class DefaultConfigurationProperties<T> {
         this.dumpRoutesUriAsParameters = dumpRoutesUriAsParameters;
     }
 
+    public boolean isDumpRoutesGeneratedIds() {
+        return dumpRoutesGeneratedIds;
+    }
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    public void setDumpRoutesGeneratedIds(boolean dumpRoutesGeneratedIds) {
+        this.dumpRoutesGeneratedIds = dumpRoutesGeneratedIds;
+    }
+
     public String getDumpRoutesDirectory() {
         return dumpRoutesDirectory;
     }
@@ -2676,6 +2688,14 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDumpRoutesUriAsParameters(boolean dumpRoutesUriAsParameters) {
         this.dumpRoutesUriAsParameters = dumpRoutesUriAsParameters;
+        return (T) this;
+    }
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    public T withDumpRoutesGeneratedIds(boolean dumpRoutesGeneratedIds) {
+        this.dumpRoutesGeneratedIds = dumpRoutesGeneratedIds;
         return (T) this;
     }
 

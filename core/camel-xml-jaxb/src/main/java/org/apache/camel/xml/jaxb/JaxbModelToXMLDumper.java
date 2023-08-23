@@ -74,6 +74,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
+        return doDumpModelAsXml(context, definition, true);
+    }
+
+    public String doDumpModelAsXml(CamelContext context, NamedNode definition, boolean generatedIds) throws Exception {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
         final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
@@ -129,10 +133,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             throw new TypeConversionException(xml, Document.class, e);
         }
 
-        sanitizeXml(dom);
         if (context.isDebugging()) {
             enrichLocations(dom, locations);
         }
+        sanitizeXml(dom, generatedIds);
 
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
@@ -156,7 +160,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
         String xml = dumpModelAsXml(context, definition);
 
@@ -208,11 +212,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // okay there were some property placeholder or delegate endpoints
             // replaced so re-create the model
             if (changed.get()) {
-                // remove all generated ID from dom, as we do not want to copy those over
                 removeAutoAssignedIds(dom.getDocumentElement());
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy);
+                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds);
             }
         }
 
@@ -241,18 +244,26 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         return buffer.toString();
     }
 
-    private static void sanitizeXml(Node node) {
+    private static void sanitizeXml(Node node, boolean generatedIds) {
         // we want to remove all customId="false" attributes as they are noisy
         if (node.hasAttributes()) {
             Node att = node.getAttributes().getNamedItem("customId");
-            if (att != null && "false".equals(att.getNodeValue())) {
+            boolean custom = att != null && "true".equals(att.getNodeValue());
+            if (att != null) {
                 node.getAttributes().removeNamedItem("customId");
+            }
+            if (!generatedIds && !custom) {
+                // remove auto-generated ids
+                Node attId = node.getAttributes().getNamedItem("id");
+                if (attId != null) {
+                    node.getAttributes().removeNamedItem("id");
+                }
             }
         }
         if (node.hasChildNodes()) {
             for (int i = 0; i < node.getChildNodes().getLength(); i++) {
                 Node child = node.getChildNodes().item(i);
-                sanitizeXml(child);
+                sanitizeXml(child, generatedIds);
             }
         }
     }

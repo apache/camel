@@ -30,12 +30,27 @@ public class DumpModelAsYamlUriAsParametersTest extends DumpModelAsYamlTestSuppo
     @Test
     public void testDumpModelAsYaml() throws Exception {
         String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true);
+                true, true, true);
         assertNotNull(out);
         log.info(out);
 
         String expected
                 = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/uri-as-parameters.yaml"), "#",
+                        true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testDumpModelAsYamlGeneratedIds() throws Exception {
+        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
+                true, true, false);
+        assertNotNull(out);
+        log.info(out);
+
+        String expected
+                = IOHelper.stripLineComments(
+                        Paths.get("src/test/resources/org/apache/camel/util/uri-as-parameters-no-ids.yaml"),
+                        "#",
                         true);
         Assertions.assertEquals(expected, out);
     }

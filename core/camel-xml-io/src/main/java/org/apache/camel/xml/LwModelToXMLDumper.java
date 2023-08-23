@@ -58,12 +58,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        return dumpModelAsXml(context, definition, false);
+        return dumpModelAsXml(context, definition, false, true);
     }
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
 
         Properties properties = new Properties();
@@ -88,12 +88,11 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
-                // write customId if not false
-                if (Boolean.TRUE.equals(def.getCustomId())) {
-                    doWriteAttribute("customId", toString(def.getCustomId()));
+
+                if (generatedIds || Boolean.TRUE.equals(def.getCustomId())) {
+                    // write id
+                    doWriteAttribute("id", def.getId());
                 }
-                // write id
-                doWriteAttribute("id", def.getId());
                 // write description
                 if (def.getDescriptionText() != null) {
                     doWriteAttribute("description", def.getDescriptionText());

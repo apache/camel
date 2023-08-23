@@ -60,6 +60,13 @@ public interface DumpRoutesStrategy extends StaticService {
      */
     void setUriAsParameters(boolean uriAsParameters);
 
+    boolean isGeneratedIds();
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    void setGeneratedIds(boolean generatedIds);
+
     boolean isLog();
 
     /**
