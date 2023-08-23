@@ -139,7 +139,6 @@ public class Init extends CamelCommand {
             StringBuilder sb = new StringBuilder();
             String[] lines = content.split("\n");
             boolean top = true;
-            boolean ann = false;
             for (String line : lines) {
                 // remove top license header
                 if (top && line.startsWith("#")) {
