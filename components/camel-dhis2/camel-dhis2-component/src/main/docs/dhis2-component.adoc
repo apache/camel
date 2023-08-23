@@ -122,7 +122,8 @@ public class MyRouteBuilder extends RouteBuilder {
     public void configure() {
         from("direct:getCollection")
             .to("dhis2://get/collection?path=organisationUnits&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
-            .split().body().unmarshal().json(org.hisp.dhis.api.model.v2_39_1.OrganisationUnit.class).log("${body}");
+            .split().body()
+            .convertBody(org.hisp.dhis.api.model.v2_39_1.OrganisationUnit.class).log("${body}");
     }
 }
 ----
@@ -141,7 +142,7 @@ public class MyRouteBuilder extends RouteBuilder {
         from("direct:getCollection")
             .to("dhis2://get/collection?path=organisationUnits&fields=code&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
             .split().body()
-            .unmarshal().json(org.hisp.dhis.api.model.v2_39_1.OrganisationUnit.class)
+            .convertBody(org.hisp.dhis.api.model.v2_39_1.OrganisationUnit.class)
             .log("${body}");
     }
 }
@@ -161,7 +162,7 @@ public class MyRouteBuilder extends RouteBuilder {
         from("direct:getCollection")
             .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&arrayName=users&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
             .split().body()
-            .unmarshal().json(org.hisp.dhis.api.model.v2_39_1.User.class)
+            .convertBody(org.hisp.dhis.api.model.v2_39_1.User.class)
             .log("${body}");
     }
 }
