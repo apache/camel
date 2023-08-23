@@ -62,7 +62,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             keyStore.load(in, "security".toCharArray());
             privateKey = (PrivateKey) keyStore.getKey("ECDSA", "security".toCharArray());
             x509 = (X509Certificate) keyStore.getCertificate("ECDSA");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Cannot setup keystore for running this test due {}. This test is skipped.", e.getMessage(), e);
             canRun = false;
         }

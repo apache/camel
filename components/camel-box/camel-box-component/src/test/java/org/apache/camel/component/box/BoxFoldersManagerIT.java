@@ -119,7 +119,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete(true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }

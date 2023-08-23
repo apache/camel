@@ -419,7 +419,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -448,7 +448,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -479,7 +479,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
