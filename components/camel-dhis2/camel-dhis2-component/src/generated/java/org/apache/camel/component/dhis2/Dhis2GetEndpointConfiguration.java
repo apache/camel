@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "get", 
            description = "",
-           apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.io.InputStream collection(String path, String arrayName, Boolean paging, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.util.Iterator<org.apache.camel.component.dhis2.api.Dhis2Resource> collection(String path, String arrayName, Boolean paging, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
