@@ -110,6 +110,7 @@ public class Run extends CamelCommand {
 
     private boolean silentRun;
     private boolean pipeRun;
+    private boolean transformRun;
 
     private File logFile;
 
@@ -266,6 +267,12 @@ public class Run extends CamelCommand {
     protected Integer runSilent() throws Exception {
         // just boot silently and exit
         silentRun = true;
+        return run();
+    }
+
+    protected Integer runTransform() throws Exception {
+        // just boot silently and exit
+        transformRun = true;
         return run();
     }
 
@@ -449,10 +456,21 @@ public class Run extends CamelCommand {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        } else if (transformRun) {
+            main.setSilent(true);
+            // enable stub in silent mode so we do not use real components
+            main.setStubPattern("*");
+            // do not run for very long in silent run
+            main.addInitialProperty("camel.main.autoStartup", "false");
+            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
         } else if (pipeRun) {
             // auto terminate if being idle
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", "1");
         }
+        // any custom initial property
+        doAddInitialProperty(main);
+
         writeSetting(main, profileProperties, "camel.main.durationMaxMessages",
                 () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxSeconds",
@@ -667,6 +685,10 @@ public class Run extends CamelCommand {
             // run default in current JVM with same camel version
             return runKameletMain(main);
         }
+    }
+
+    protected void doAddInitialProperty(KameletMain main) {
+        // noop
     }
 
     private void setupReload(KameletMain main, StringJoiner sjReload) {

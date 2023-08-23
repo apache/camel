@@ -91,6 +91,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("trace", new CommandLine(new CamelTraceAction(main)))
+                .addSubcommand("transform", new CommandLine(new Transform(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))

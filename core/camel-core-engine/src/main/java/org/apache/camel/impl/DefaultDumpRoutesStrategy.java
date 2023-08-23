@@ -183,6 +183,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             if (size > 0) {
                 Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
                 for (RouteDefinition route : model.getRouteDefinitions()) {
+                    if ((route.isRest() != null && route.isRest()) || (route.isTemplate() != null && route.isTemplate())) {
+                        // skip routes that are rest/templates
+                        continue;
+                    }
                     Resource res = route.getResource();
                     if (res == null) {
                         res = dummy;
@@ -364,6 +368,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             if (size > 0) {
                 Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
                 for (RouteDefinition route : model.getRouteDefinitions()) {
+                    if ((route.isRest() != null && route.isRest()) || (route.isTemplate() != null && route.isTemplate())) {
+                        // skip routes that are rest/templates
+                        continue;
+                    }
                     Resource res = route.getResource();
                     if (res == null) {
                         res = dummy;
