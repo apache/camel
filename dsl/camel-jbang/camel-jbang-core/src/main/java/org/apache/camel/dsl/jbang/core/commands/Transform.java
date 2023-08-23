@@ -58,6 +58,8 @@ public class Transform extends CamelCommand {
             protected void doAddInitialProperty(KameletMain main) {
                 main.addInitialProperty("camel.main.dumpRoutes", format);
                 main.addInitialProperty("camel.main.dumpRoutesInclude", "routes,rests,routeConfigurations,beans");
+                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "false");
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
                 main.addInitialProperty("camel.main.dumpRoutesDirectory", directory);
             }
