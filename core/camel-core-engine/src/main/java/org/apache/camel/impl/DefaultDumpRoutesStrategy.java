@@ -558,7 +558,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     sb.append("\n</camel>\n");
                     IOHelper.writeText(sb.toString(), file);
                 } catch (Exception e) {
-                    LOG.warn("Error adjusting dumped XML file: {} due to {}. This exception is ignored.", name, e.getMessage(), e);
+                    LOG.warn("Error adjusting dumped XML file: {} due to {}. This exception is ignored.", name, e.getMessage(),
+                            e);
                 }
             }
         }
