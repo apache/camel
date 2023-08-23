@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,8 @@ import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -84,11 +87,15 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.SmartFactoryBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -797,6 +804,34 @@ public class KameletMain extends MainCommandLineSupport {
             } else {
                 // rely on the bean factory to implement prototype scope
                 registry.bind(name, (Supplier<Object>) () -> beanFactory.getBean(name));
+            }
+
+            // register bean into model (as a BeanRegistry that allows Camel DSL to know about these beans)
+            Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+            if (model != null) {
+                RegistryBeanDefinition rrd = new RegistryBeanDefinition();
+                // TODO: Resource
+                // rrd.setResource();
+                rrd.setType(def.getBeanClassName());
+                rrd.setName(name);
+                model.addRegistryBean(rrd);
+                if (def.hasPropertyValues()) {
+                    Map<String, Object> properties = new LinkedHashMap<>();
+                    rrd.setProperties(properties);
+
+                    MutablePropertyValues values = def.getPropertyValues();
+                    for (PropertyValue v : values) {
+                        String key = v.getName();
+                        PropertyValue src = v.getOriginalPropertyValue();
+                        Object val = src.getValue();
+                        // ref was string value
+                        if (val instanceof TypedStringValue tsv) {
+                            properties.put(key, tsv.getValue());
+                        } else if (val instanceof BeanReference br) {
+                            properties.put(key, "#bean:" + br.getBeanName());
+                        }
+                    }
+                }
             }
         }
     }

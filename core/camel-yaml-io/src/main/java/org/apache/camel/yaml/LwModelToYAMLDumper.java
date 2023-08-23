@@ -309,7 +309,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
         private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
             buffer.write(String.format("    - name: %s%n", b.getName()));
-            buffer.write(String.format("      type: %s%n", b.getType()));
+            buffer.write(String.format("      type: \"%s\"%n", b.getType()));
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("      properties:%n"));
                 for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
