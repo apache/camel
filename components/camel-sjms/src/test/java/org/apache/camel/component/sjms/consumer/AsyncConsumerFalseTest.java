@@ -24,7 +24,7 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -48,8 +48,7 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext camelContext = super.createCamelContext();
 
         camelContext.addComponent("async", new MyAsyncComponent());
@@ -63,7 +62,6 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
         return camelContext;
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
