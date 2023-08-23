@@ -19,7 +19,7 @@ package org.apache.camel.main;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
@@ -42,8 +42,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private final boolean stopCamelContext;
     private final boolean restartDuration;
     private final String action;
-    private final AtomicInteger doneMessages;
-
+    private final LongAdder doneMessages;
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
 
@@ -57,7 +56,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         this.stopCamelContext = stopCamelContext;
         this.restartDuration = restartDuration;
         this.action = action.toLowerCase();
-        this.doneMessages = new AtomicInteger();
+        this.doneMessages = new LongAdder();
 
         if (maxMessages == 0 && maxIdleSeconds == 0) {
             // we do not need exchange events
@@ -86,7 +85,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             if (restartDuration) {
                 LOG.debug("Routes reloaded. Resetting maxMessages/maxIdleSeconds/maxSeconds");
                 shutdownStrategy.restartAwait();
-                doneMessages.set(0);
+                doneMessages.reset();
                 if (watch != null) {
                     watch.restart();
                 }
@@ -100,9 +99,12 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
                     || event.getType() == CamelEvent.Type.ExchangeFailed;
 
             if (complete) {
-                boolean result = doneMessages.incrementAndGet() >= maxMessages;
+                doneMessages.increment();
+                final int doneCount = doneMessages.intValue();
+                final boolean result = doneCount >= maxMessages;
+
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Duration max messages check {} >= {} -> {}", doneMessages.get(), maxMessages, result);
+                    LOG.trace("Duration max messages check {} >= {} -> {}", doneCount, maxMessages, result);
                 }
 
                 if (result && shutdownStrategy.isRunAllowed()) {
