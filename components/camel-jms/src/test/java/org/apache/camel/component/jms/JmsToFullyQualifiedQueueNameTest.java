@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 /**
  * Queue can be specified using `Fully Qualified Queue Name`.
  */
@@ -56,9 +58,10 @@ public class JmsToFullyQualifiedQueueNameTest extends AbstractJMSTest {
     }
 
     private void expect(String uri, String body) {
-        MockEndpoint mockDynamicFoo = getMockEndpoint(uri);
-        mockDynamicFoo.expectedMessageCount(1);
-        mockDynamicFoo.expectedBodiesReceived(body);
+        MockEndpoint mockEndpoint = getMockEndpoint(uri);
+        mockEndpoint.expectedMessageCount(1);
+        mockEndpoint.expectedBodiesReceived(body);
+        mockEndpoint.whenAnyExchangeReceived(x -> assertNull(x.getMessage().getHeader(JmsConstants.JMS_DESTINATION_NAME)));
     }
 
     @Override
