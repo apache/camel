@@ -87,6 +87,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.StringHelper;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
@@ -98,8 +99,10 @@ import org.springframework.beans.factory.config.BeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.metrics.StartupStep;
 
 /**
@@ -675,7 +678,7 @@ public class KameletMain extends MainCommandLineSupport {
         Map<String, Document> springBeansDocs = registry.findByTypeWithName(Document.class);
         if (springBeansDocs != null) {
             springBeansDocs.forEach((id, doc) -> {
-                if (id.startsWith("spring-document:")) {
+                if (id.startsWith("camel-xml-io-dsl-spring-xml:")) {
                     xmls.put(id, doc);
                 }
             });
@@ -709,6 +712,15 @@ public class KameletMain extends MainCommandLineSupport {
         final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
         xmls.forEach((id, doc) -> {
             reader.registerBeanDefinitions(doc, new AbstractResource() {
+                @Override
+                public String getFilename() {
+                    if (id.startsWith("camel-xml-io-dsl-spring-xml:")) {
+                        // this is a camel bean via camel-xml-io-dsl
+                        return StringHelper.afterLast(id, ":");
+                    }
+                    return null;
+                }
+
                 @Override
                 public String getDescription() {
                     return id;
@@ -810,8 +822,17 @@ public class KameletMain extends MainCommandLineSupport {
             Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
             if (model != null) {
                 RegistryBeanDefinition rrd = new RegistryBeanDefinition();
-                // TODO: Resource
-                // rrd.setResource();
+                if (def instanceof GenericBeanDefinition gbd) {
+                    // set camel resource to refer to the source file
+                    Resource res = gbd.getResource();
+                    if (res != null) {
+                        String fn = res.getFilename();
+                        if (fn != null) {
+                            rrd.setResource(camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                                    .resolveResource("file:" + fn));
+                        }
+                    }
+                }
                 rrd.setType(def.getBeanClassName());
                 rrd.setName(name);
                 model.addRegistryBean(rrd);

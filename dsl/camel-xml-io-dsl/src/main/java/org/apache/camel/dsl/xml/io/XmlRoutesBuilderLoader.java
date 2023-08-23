@@ -296,7 +296,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             Document doc = app.getSpringBeans().get(0).getOwnerDocument();
             // bind as Document, to be picked up later - bean id allows nice sorting
             // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
-            String id = String.format("spring-document:%05d:%s", counter.incrementAndGet(), resource.getLocation());
+            String id = String.format("camel-xml-io-dsl-spring-xml:%05d:%s", counter.incrementAndGet(), resource.getLocation());
             getCamelContext().getRegistry().bind(id, doc);
         }
     }
