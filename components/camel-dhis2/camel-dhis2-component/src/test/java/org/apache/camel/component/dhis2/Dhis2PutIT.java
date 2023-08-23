@@ -63,8 +63,9 @@ public class Dhis2PutIT extends AbstractDhis2TestSupport {
         String name = RandomStringUtils.randomAlphabetic(8);
         final java.io.InputStream result = requestBodyAndHeaders(endpointUri,
                 new OrganisationUnit().withName(name).withShortName(name).withOpeningDate(new Date()), headers);
-        OrganisationUnit organisationUnit = Environment.DHIS2_CLIENT.get("organisationUnits/{id}", Environment.ORG_UNIT_ID_UNDER_TEST)
-                .transfer().returnAs(OrganisationUnit.class);
+        OrganisationUnit organisationUnit
+                = Environment.DHIS2_CLIENT.get("organisationUnits/{id}", Environment.ORG_UNIT_ID_UNDER_TEST)
+                        .transfer().returnAs(OrganisationUnit.class);
         assertEquals(name, organisationUnit.getName().get());
 
         assertNotNull(result, "resource result");
