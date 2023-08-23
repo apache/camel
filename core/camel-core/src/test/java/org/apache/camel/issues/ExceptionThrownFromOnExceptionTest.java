@@ -80,9 +80,9 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () ->
-                template.sendBody("direct:start", "Hello World"),
-                "Should have thrown an exception");
+        CamelExecutionException e
+                = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
+                        "Should have thrown an exception");
 
         IOException cause = assertIsInstanceOf(IOException.class, e.getCause());
         assertEquals("Some other IOException", cause.getMessage());
@@ -132,9 +132,9 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () ->
-                template.sendBody("direct:start", "Hello World"),
-                "Should have thrown an exception");
+        CamelExecutionException e
+                = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
+                        "Should have thrown an exception");
 
         IOException cause = assertIsInstanceOf(IOException.class, e.getCause());
         assertEquals("Some other IOException", cause.getMessage());
@@ -312,7 +312,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         IOException cause = assertIsInstanceOf(IOException.class, e.getCause());
         assertEquals("IO error", cause.getMessage());
-        
+
         assertMockEndpointsSatisfied();
 
         assertEquals(4, RETRY.get(), "Should try 4 times (1 first, 3 retry)");

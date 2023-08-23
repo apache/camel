@@ -188,7 +188,6 @@ public final class ServiceHelper {
         }
     }
 
-
     /**
      * Stops the given {@code value}, rethrowing the first exception caught.
      * <p/>
@@ -202,7 +201,6 @@ public final class ServiceHelper {
             service.stop();
         }
     }
-
 
     /**
      * Stops the given {@code value}, rethrowing the first exception caught.

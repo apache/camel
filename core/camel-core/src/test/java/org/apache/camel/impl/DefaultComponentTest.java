@@ -129,7 +129,7 @@ public class DefaultComponentTest extends ContextTestSupport {
 
         assertEquals(
                 "Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
-                        + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"",
+                     + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"",
                 ex.getMessage());
     }
 
@@ -139,8 +139,8 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("date", "#somewhen");
         MyComponent my = new MyComponent(this.context);
 
-        NoSuchBeanException e = assertThrows(NoSuchBeanException.class, () ->
-                my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class),
+        NoSuchBeanException e = assertThrows(NoSuchBeanException.class,
+                () -> my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class),
                 "returned without finding object in registry");
 
         assertEquals("No bean could be found in the registry for: somewhen of type: java.util.Date", e.getMessage());
@@ -231,8 +231,8 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("dates", "#bean1,#bean3");
         MyComponent my = new MyComponent(this.context);
 
-        NoSuchBeanException e = assertThrows(NoSuchBeanException.class, () ->
-                my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class),
+        NoSuchBeanException e = assertThrows(NoSuchBeanException.class,
+                () -> my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class),
                 "returned without finding object in registry");
 
         assertEquals("No bean could be found in the registry for: bean3 of type: java.util.Date", e.getMessage());

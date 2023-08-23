@@ -90,9 +90,9 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () ->
-                template.sendBody("direct:exception", "Hello World"),
-                "Should have thrown RuntimeCamelException");
+        RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:exception", "Hello World"),
+                        "Should have thrown RuntimeCamelException");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced exception by unit test", e.getCause().getMessage());
@@ -104,8 +104,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () ->
-                template.requestBody("direct:exception", "Hello World", Integer.class),
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("direct:exception", "Hello World", Integer.class),
                 "Should have thrown RuntimeCamelException");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
