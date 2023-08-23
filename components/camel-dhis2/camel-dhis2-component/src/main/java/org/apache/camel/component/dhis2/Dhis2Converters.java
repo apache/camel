@@ -24,7 +24,11 @@ import org.apache.camel.spi.TypeConverterRegistry;
 
 @Converter(generateLoader = true)
 public final class Dhis2Converters {
-    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private Dhis2Converters() {
+
+    }
 
     @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object resource, TypeConverterRegistry registry) {
