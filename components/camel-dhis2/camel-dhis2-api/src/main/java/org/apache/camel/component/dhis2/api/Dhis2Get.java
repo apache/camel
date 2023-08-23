@@ -17,10 +17,10 @@
 package org.apache.camel.component.dhis2.api;
 
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.support.InputStreamIterator;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.IterableDhis2Response;
 import org.hisp.dhis.integration.sdk.api.operation.GetOperation;
@@ -75,21 +75,20 @@ public class Dhis2Get {
         return getOperation;
     }
 
-    public InputStream collection(
+    public Iterator<Dhis2Resource> collection(
             String path, String arrayName, Boolean paging, String fields, String filter,
             RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
         GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
 
         IterableDhis2Response iteratorDhis2Response;
-        if (paging == null || paging) {
+        if (paging != null && paging) {
             iteratorDhis2Response = getOperation.withPaging().transfer();
         } else {
             iteratorDhis2Response = getOperation.withoutPaging().transfer();
         }
 
-        Iterable<Map> iterable = iteratorDhis2Response.returnAs(Map.class, arrayName);
-        return new InputStreamIterator(new ItemTypeConverter(dhis2Client), iterable.iterator());
+        return iteratorDhis2Response.returnAs(Dhis2Resource.class, arrayName).iterator();
     }
 
 }

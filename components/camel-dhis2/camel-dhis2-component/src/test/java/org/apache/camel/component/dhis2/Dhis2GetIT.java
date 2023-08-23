@@ -20,16 +20,19 @@
 package org.apache.camel.component.dhis2;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2GetApiMethod;
+import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -41,8 +44,8 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
     private static final String PATH_PREFIX = Dhis2ApiCollection.getCollection().getApiName(Dhis2GetApiMethod.class).getName();
 
     @Test
-    public void testCollection() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+    public void testCollection() {
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelDhis2.path", "organisationUnits");
         headers.put("CamelDhis2.arrayName", "organisationUnits");
         headers.put("CamelDhis2.paging", true);
@@ -50,16 +53,16 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
         headers.put("CamelDhis2.filter", null);
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
-        final Object result = requestBodyAndHeaders("direct://COLLECTION", null, headers);
+        final List<OrganisationUnit> result = requestBodyAndHeaders("direct://COLLECTION", null, headers);
 
-        assertNotNull(result, "collection result");
+        assertEquals(2, result.size());
         LOG.debug("collection: {}", result);
     }
 
     @Test
-    public void testResource() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("CamelDhis2.path", String.format("organisationUnits/%s", Environment.ORG_UNIT_ID));
+    public void testResource() {
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put("CamelDhis2.path", String.format("organisationUnits/%s", Environment.ORG_UNIT_ID_UNDER_TEST));
         headers.put("CamelDhis2.fields", null);
         headers.put("CamelDhis2.filter", null);
         headers.put("CamelDhis2.queryParams", null);
@@ -76,14 +79,13 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
             public void configure() {
                 // test route for collection
                 from("direct://COLLECTION")
-                        .to("dhis2://" + PATH_PREFIX + "/collection").split().body()
-                        .unmarshal()
-                        .json(OrganisationUnit.class);
+                        .to("dhis2://" + PATH_PREFIX + "/collection")
+                        .split().body().aggregationStrategy(new GroupedBodyAggregationStrategy())
+                        .convertBodyTo(OrganisationUnit.class);
 
                 // test route for resource
                 from("direct://RESOURCE")
                         .to("dhis2://" + PATH_PREFIX + "/resource");
-
             }
         };
     }
