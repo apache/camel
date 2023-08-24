@@ -73,7 +73,6 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,7 @@ public class Olingo4AppAPITest {
     private static final String COUNT_OPTION = "/$count";
     private static final String TEST_UNBOUND_ACTION_RESETDATASOURCE = "ResetDataSource";
     private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP
-            = TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip";
+            = TEST_PEOPLE + "/Trippin.ShareTrip";
 
     private static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
@@ -573,7 +572,6 @@ public class Olingo4AppAPITest {
     }
 
     @Test
-    @Disabled
     public void testBoundActionRequest() throws Exception {
         final ClientEntity clientEntity = objFactory.newEntity(null);
         clientEntity.getProperties().add(
@@ -591,7 +589,6 @@ public class Olingo4AppAPITest {
     // Unfortunately there is no action that returns a client entity. So we fake
     // one
     @Test
-    @Disabled
     public void testBoundActionRequestWithClientEntityResponse() throws Exception {
         final ODataClient odataClient = ODataClientFactory.getClient();
         final ODataWriter odataWriter = odataClient.getWriter();
