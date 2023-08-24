@@ -78,6 +78,5 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
                 "Should have thrown an exception");
 
         assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getCause().getMessage());
-        ;
     }
 }

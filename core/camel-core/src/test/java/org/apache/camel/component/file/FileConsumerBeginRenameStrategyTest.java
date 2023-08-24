@@ -54,7 +54,6 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
             fw.write("I was there once in London");
             fw.flush();
         }
-        ;
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
