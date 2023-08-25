@@ -498,6 +498,7 @@
         <smallrye-fault-tolerance-version>5.6.0</smallrye-fault-tolerance-version>
         <snakeyaml-version>1.33</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
+        <snappy-java-version>1.1.10.3</snappy-java-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
         <solr-version>8.11.2</solr-version>
@@ -3819,6 +3820,12 @@
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb-version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>${snappy-java-version}</version>
             </dependency>
 
             <!-- optional SNMP4J -->
