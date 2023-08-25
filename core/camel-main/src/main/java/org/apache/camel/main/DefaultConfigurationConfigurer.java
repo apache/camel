@@ -266,7 +266,7 @@ public final class DefaultConfigurationConfigurer {
             drs.setUriAsParameters(config.isDumpRoutesUriAsParameters());
             drs.setGeneratedIds(config.isDumpRoutesGeneratedIds());
             drs.setResolvePlaceholders(config.isDumpRoutesResolvePlaceholders());
-            drs.setDirectory(config.getDumpRoutesDirectory());
+            drs.setOutput(config.getDumpRoutesOutput());
         }
         if (config.isContextReloadEnabled() && camelContext.hasService(ContextReloadStrategy.class) == null) {
             ContextReloadStrategy reloader = new DefaultContextReloadStrategy();

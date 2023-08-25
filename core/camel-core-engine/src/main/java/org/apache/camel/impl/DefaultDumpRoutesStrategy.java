@@ -74,7 +74,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private boolean uriAsParameters;
     private boolean generatedIds = true;
     private boolean log = true;
-    private String directory;
+    private String output;
+    private String outputFileName;
 
     @Override
     public CamelContext getCamelContext() {
@@ -84,6 +85,19 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // output can be a filename, dir, or both
+        String name = FileUtil.stripPath(output);
+        if (name != null && name.contains(".")) {
+            outputFileName = name;
+            output = FileUtil.onlyPath(output);
+            if (output == null || output.isEmpty()) {
+                output = ".";
+            }
+        }
     }
 
     public String getInclude() {
@@ -118,12 +132,12 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         this.log = log;
     }
 
-    public String getDirectory() {
-        return directory;
+    public String getOutput() {
+        return output;
     }
 
-    public void setDirectory(String directory) {
-        this.directory = directory;
+    public void setOutput(String output) {
+        this.output = output;
     }
 
     public boolean isUriAsParameters() {
@@ -489,7 +503,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (directory != null && !files.isEmpty()) {
+        if (output != null && !files.isEmpty()) {
             // all XML files need to have <camel> as root tag
             doAdjustXmlFiles(files);
         }
@@ -527,23 +541,14 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     }
 
     protected void doDumpToDirectory(Resource resource, StringBuilder sbLocal, String kind, String ext, Set<String> files) {
-        if (directory != null && !sbLocal.isEmpty()) {
+        if (output != null && !sbLocal.isEmpty()) {
             // make sure directory exists
-            File dir = new File(directory);
+            File dir = new File(output);
             dir.mkdirs();
 
-            String name = resource != null ? resource.getLocation() : null;
-            if (name == null) {
-                name = "dump" + counter.incrementAndGet();
-            }
-            // strip scheme
-            if (name.contains(":")) {
-                name = StringHelper.after(name, ":");
-            }
-
-            name = FileUtil.onlyName(name) + "." + ext;
+            String name = resolveFileName(ext, resource);
             boolean newFile = files.isEmpty() || !files.contains(name);
-            File target = new File(directory, name);
+            File target = new File(output, name);
             try {
                 if (newFile) {
                     // write as new file (override old file if exists)
@@ -564,7 +569,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         for (String name : files) {
             if (name.endsWith(".xml")) {
                 try {
-                    File file = new File(directory, name);
+                    File file = new File(output, name);
                     // wrap xml files with <camel> root tag
                     StringBuilder sb = new StringBuilder();
                     sb.append("<camel>\n\n");
@@ -623,6 +628,23 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
         return loc;
+    }
+
+    protected String resolveFileName(String ext, Resource resource) {
+        if (outputFileName != null) {
+            return outputFileName;
+        }
+
+        // compute name from resource or auto-generated
+        String name = resource != null ? resource.getLocation() : null;
+        if (name == null) {
+            name = "dump" + counter.incrementAndGet();
+        }
+        // strip scheme
+        if (name.contains(":")) {
+            name = StringHelper.after(name, ":");
+        }
+        return FileUtil.onlyName(name) + "." + ext;
     }
 
 }

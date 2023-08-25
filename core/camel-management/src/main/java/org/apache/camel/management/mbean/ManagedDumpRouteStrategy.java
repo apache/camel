@@ -81,13 +81,13 @@ public class ManagedDumpRouteStrategy implements ManagedDumpRoutesStrategyMBean 
     }
 
     @Override
-    public String getDirectory() {
-        return dumpRoutesStrategy.getDirectory();
+    public String getOutput() {
+        return dumpRoutesStrategy.getOutput();
     }
 
     @Override
-    public void setDirectory(String directory) {
-        dumpRoutesStrategy.setDirectory(directory);
+    public void setOutput(String output) {
+        dumpRoutesStrategy.setOutput(output);
     }
 
     @Override

@@ -35,9 +35,8 @@ public class Transform extends CamelCommand {
     List<String> files = new ArrayList<>();
 
     @CommandLine.Option(names = {
-            "--dir",
-            "--directory" }, description = "Directory where the transformed files will be saved", required = true)
-    private String directory;
+            "--output" }, description = "File or directory to store transformed files", required = true)
+    private String output;
 
     @CommandLine.Option(names = { "--format" },
                         description = "Output format (xml or yaml)", defaultValue = "yaml")
@@ -65,7 +64,7 @@ public class Transform extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesLog", "false");
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "" + resolvePlaceholders);
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
-                main.addInitialProperty("camel.main.dumpRoutesDirectory", directory);
+                main.addInitialProperty("camel.main.dumpRoutesOutput", output);
             }
         };
         run.files = files;

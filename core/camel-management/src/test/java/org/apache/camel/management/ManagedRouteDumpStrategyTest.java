@@ -48,7 +48,7 @@ public class ManagedRouteDumpStrategyTest extends ManagementTestSupport {
         DefaultDumpRoutesStrategy drd = new DefaultDumpRoutesStrategy();
         drd.setInclude("all");
         drd.setLog(false);
-        drd.setDirectory(dir);
+        drd.setOutput(dir);
         drd.setResolvePlaceholders(false);
         context.addService(drd);
 

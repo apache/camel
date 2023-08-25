@@ -42,11 +42,11 @@ public interface ManagedDumpRoutesStrategyMBean {
     @ManagedAttribute(description = "Whether to log route dumps to Logger")
     void setLog(boolean log);
 
-    @ManagedAttribute(description = "Whether to save route dumps to files in the given directory. The name of the files are based on ids (route ids, etc.). Existing files will be overwritten.")
-    String getDirectory();
+    @ManagedAttribute(description = "Whether to save route dumps to file(s)")
+    String getOutput();
 
-    @ManagedAttribute(description = "Whether to save route dumps to files in the given directory. The name of the files are based on ids (route ids, etc.). Existing files will be overwritten.")
-    void setDirectory(String directory);
+    @ManagedAttribute(description = "Whether to save route dumps to file(s)")
+    void setOutput(String output);
 
     @ManagedAttribute(description = "When dumping to YAML format, then this option controls whether endpoint URIs should be expanded into a key/value parameters")
     boolean isUriAsParameters();
