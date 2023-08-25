@@ -212,9 +212,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.java-json-tools</groupId>
+            <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
-            <version>${json-schema-validator-version}</version>
+            <version>${networknt-json-schema-validator-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
