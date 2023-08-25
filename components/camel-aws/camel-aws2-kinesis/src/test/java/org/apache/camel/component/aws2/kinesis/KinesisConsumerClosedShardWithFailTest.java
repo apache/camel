@@ -81,7 +81,7 @@ public class KinesisConsumerClosedShardWithFailTest {
 
         when(kinesisClient
                 .getRecords(any(GetRecordsRequest.class)))
-                .thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").build());
+                .thenReturn(GetRecordsResponse.builder().nextShardIterator(null).build());
         when(kinesisClient
                 .getShardIterator(any(GetShardIteratorRequest.class)))
                 .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
