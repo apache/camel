@@ -1294,12 +1294,14 @@ public final class PropertyBindingSupport {
                         }
                     }
                 }
-                if (val == null) {
-                    val = camelContext.getTypeConverter().convertTo(paramType, param);
-                }
                 // unquote text
                 if (val instanceof String) {
                     val = StringHelper.removeLeadingAndEndingQuotes((String) val);
+                }
+                if (val != null) {
+                    val = camelContext.getTypeConverter().tryConvertTo(paramType, val);
+                } else {
+                    val = camelContext.getTypeConverter().convertTo(paramType, param);
                 }
                 arr[i] = val;
             }
@@ -1603,7 +1605,7 @@ public final class PropertyBindingSupport {
             }
         } else if (strval.startsWith("#bean:")) {
             String key = strval.substring(6);
-            answer = camelContext.getRegistry().lookupByName(key);
+            answer = CamelContextHelper.mandatoryLookup(camelContext, key);
         } else if (strval.startsWith("#valueAs(")) {
             String text = strval.substring(8);
             String typeName = StringHelper.between(text, "(", ")");
