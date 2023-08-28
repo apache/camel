@@ -794,6 +794,17 @@ public final class ExchangeHelper {
         return copyExchangeAndSetCamelContext(exchange, context, true);
     }
 
+    /*
+     * Safe copy message history using a defensive copy
+     */
+    private static void setMessageHistory(Exchange target, Exchange source) {
+        final Object history = source.getProperty(ExchangePropertyKey.MESSAGE_HISTORY);
+        if (history != null) {
+            // use thread-safe list as message history may be accessed concurrently
+            target.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>((List<MessageHistory>) history));
+        }
+    }
+
     /**
      * Copies the exchange but the copy will be tied to the given context
      *
@@ -808,13 +819,8 @@ public final class ExchangeHelper {
             answer.getExchangeExtension().setProperties(safeCopyProperties(exchange.getProperties()));
         }
         exchange.getExchangeExtension().copyInternalProperties(answer);
-        // safe copy message history using a defensive copy
-        List<MessageHistory> history
-                = (List<MessageHistory>) exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY);
-        if (history != null) {
-            // use thread-safe list as message history may be accessed concurrently
-            answer.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
-        }
+
+        setMessageHistory(answer, exchange);
 
         if (handover) {
             // Need to hand over the completion for async invocation
