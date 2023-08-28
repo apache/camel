@@ -1294,12 +1294,14 @@ public final class PropertyBindingSupport {
                         }
                     }
                 }
-                if (val == null) {
-                    val = camelContext.getTypeConverter().convertTo(paramType, param);
-                }
                 // unquote text
                 if (val instanceof String) {
                     val = StringHelper.removeLeadingAndEndingQuotes((String) val);
+                }
+                if (val != null) {
+                    val = camelContext.getTypeConverter().tryConvertTo(paramType, val);
+                } else {
+                    val = camelContext.getTypeConverter().convertTo(paramType, param);
                 }
                 arr[i] = val;
             }
