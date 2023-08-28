@@ -219,7 +219,7 @@
         <influx-client-java-driver-version>6.10.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
-        <ivy-version>2.5.1</ivy-version>
+        <ivy-version>2.5.2</ivy-version>
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
         <jackson2-version>2.15.2</jackson2-version>
         <jackrabbit-version>2.21.18</jackrabbit-version>
