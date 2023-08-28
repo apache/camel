@@ -48,7 +48,6 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     public Object construct(Node node) {
         final BeansCustomizer answer = new BeansCustomizer();
         final SequenceNode sn = asSequenceNode(node);
-        final List<CamelContextCustomizer> customizers = new ArrayList<>();
         final YamlDeserializationContext dc = getDeserializationContext(node);
 
         for (Node item : sn.getValue()) {
