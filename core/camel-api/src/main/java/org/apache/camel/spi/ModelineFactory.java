@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Collection;
-
 /**
  * Factory for parsing camel-k modeline when running Camel standalone with DSLs.
  */

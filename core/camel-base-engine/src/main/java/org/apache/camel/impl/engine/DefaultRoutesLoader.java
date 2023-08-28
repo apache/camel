@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
-import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
