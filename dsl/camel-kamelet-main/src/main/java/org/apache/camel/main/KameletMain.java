@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
@@ -98,6 +99,7 @@ import org.springframework.beans.factory.SmartFactoryBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -838,6 +840,22 @@ public class KameletMain extends MainCommandLineSupport {
                 rrd.setType(def.getBeanClassName());
                 rrd.setName(name);
                 model.addRegistryBean(rrd);
+
+                // constructor arguments
+                ConstructorArgumentValues ctr = def.getConstructorArgumentValues();
+                StringJoiner sj = new StringJoiner(", ");
+                for (ConstructorArgumentValues.ValueHolder v : ctr.getIndexedArgumentValues().values()) {
+                    Object val = v.getValue();
+                    if (val instanceof TypedStringValue tsv) {
+                        sj.add("'" + tsv.getValue() + "'");
+                    } else if (val instanceof BeanReference br) {
+                        sj.add("'#bean:" + br.getBeanName() + "'");
+                    }
+                }
+                if (sj.length() > 0) {
+                    rrd.setType("#class:" + def.getBeanClassName() + "(" + sj + ")");
+                }
+                // property values
                 if (def.hasPropertyValues()) {
                     Map<String, Object> properties = new LinkedHashMap<>();
                     rrd.setProperties(properties);
