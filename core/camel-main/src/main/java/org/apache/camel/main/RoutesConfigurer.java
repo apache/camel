@@ -18,7 +18,9 @@ package org.apache.camel.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -27,11 +29,15 @@ import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -302,20 +308,73 @@ public class RoutesConfigurer {
 
     protected void doConfigureModeline(CamelContext camelContext, Collection<Resource> resources, boolean optional)
             throws Exception {
-        RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
 
-        if (camelContext.isModeline()) {
-            ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
-            for (Resource resource : resources) {
-                LOG.debug("Parsing modeline: {}", resource);
-                factory.parseModeline(resource);
+        // sort groups so java is first
+        List<Resource> sort = new ArrayList<>(resources);
+        sort.sort((o1, o2) -> {
+            String ext1 = FileUtil.onlyExt(o1.getLocation(), false);
+            String ext2 = FileUtil.onlyExt(o2.getLocation(), false);
+            if ("java".equals(ext1)) {
+                return -1;
+            } else if ("java".equals(ext2)) {
+                return 1;
+            }
+            return 0;
+        });
+
+        // group resources by loader (java, xml, yaml in their own group)
+        Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
+        for (Resource resource : sort) {
+            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(camelContext, resource, optional);
+            if (loader != null) {
+                List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
+                list.add(resource);
+                groups.put(loader, list);
             }
         }
-        // the resource may also have additional configurations which we need to detect via pre-parsing
-        for (Resource resource : resources) {
-            LOG.debug("Pre-parsing: {}", resource);
-            loader.preParseRoute(resource, optional);
+
+        if (camelContext.isModeline()) {
+            // parse modelines for all resources
+            ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
+            for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+                for (Resource resource : entry.getValue()) {
+                    factory.parseModeline(resource);
+                }
+            }
         }
+
+        // the resource may also have additional configurations which we need to detect via pre-parsing
+        for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+            RoutesBuilderLoader loader = entry.getKey();
+            if (loader instanceof ExtendedRoutesBuilderLoader) {
+                // extended loader can pre-parse all resources ine one unit
+                ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
+                extLoader.preParseRoutes(entry.getValue());
+            } else {
+                for (Resource resource : entry.getValue()) {
+                    loader.preParseRoute(resource);
+                }
+            }
+        }
+    }
+
+    protected RoutesBuilderLoader resolveRoutesBuilderLoader(CamelContext camelContext, Resource resource,
+                                                             boolean optional) throws Exception {
+        // the loader to use is derived from the file extension
+        final String extension = FileUtil.onlyExt(resource.getLocation(), false);
+
+        if (ObjectHelper.isEmpty(extension)) {
+            throw new IllegalArgumentException(
+                    "Unable to determine file extension for resource: " + resource.getLocation());
+        }
+
+        RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
+        RoutesBuilderLoader answer = loader.getRoutesLoader(extension);
+        if (!optional && answer == null) {
+            throw new IllegalArgumentException(
+                    "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
+        }
+        return answer;
     }
 
 }

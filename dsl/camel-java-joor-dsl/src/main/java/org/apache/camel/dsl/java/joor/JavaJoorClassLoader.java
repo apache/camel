@@ -19,10 +19,7 @@ package org.apache.camel.dsl.java.joor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.CompilePostProcessor;
-
-public class JavaJoorClassLoader extends ClassLoader implements CompilePostProcessor {
+public class JavaJoorClassLoader extends ClassLoader {
 
     private final Map<String, Class<?>> classes = new HashMap<>();
 
@@ -35,8 +32,7 @@ public class JavaJoorClassLoader extends ClassLoader implements CompilePostProce
         return classes.get(name);
     }
 
-    @Override
-    public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) {
+    public void addClass(String name, Class<?> clazz) {
         if (name != null && clazz != null) {
             classes.put(name, clazz);
         }

@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -92,9 +94,22 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources, boolean optional) throws Exception {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
+        // sort groups so java is first
+        List<Resource> sort = new ArrayList<>(resources);
+        sort.sort((o1, o2) -> {
+            String ext1 = FileUtil.onlyExt(o1.getLocation(), false);
+            String ext2 = FileUtil.onlyExt(o2.getLocation(), false);
+            if ("java".equals(ext1)) {
+                return -1;
+            } else if ("java".equals(ext2)) {
+                return 1;
+            }
+            return 0;
+        });
+
         // group resources by loader (java, xml, yaml in their own group)
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
-        for (Resource resource : resources) {
+        for (Resource resource : sort) {
             RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
             if (loader != null) {
                 List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
@@ -106,36 +121,25 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         // first we need to parse for modeline to gather all the configurations
         if (camelContext.isModeline()) {
             ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
-
             for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
-                RoutesBuilderLoader loader = entry.getKey();
-                if (loader instanceof ExtendedRoutesBuilderLoader) {
-                    // parse modelines for all resources
-                    for (Resource resource : entry.getValue()) {
-                        factory.parseModeline(resource);
-                    }
-                    // extended loader can load all resources ine one unit
-                    ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
-                    // pre-parse before loading
-                    extLoader.preParseRoutes(entry.getValue());
-                } else {
-                    for (Resource resource : entry.getValue()) {
-                        RoutesBuilder builder = loader.loadRoutesBuilder(resource);
-                        if (builder != null) {
-                            answer.add(builder);
-                        }
-                    }
+                // parse modelines for all resources
+                for (Resource resource : entry.getValue()) {
+                    factory.parseModeline(resource);
                 }
             }
+        }
 
-            for (Resource resource : resources) {
-                try (RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional)) {
-                    if (loader != null) {
-                        // gather resources for modeline
-                        factory.parseModeline(resource);
-                        // pre-parse before loading
-                        loader.preParseRoute(resource);
-                    }
+        // then pre-parse routes
+        for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+            RoutesBuilderLoader loader = entry.getKey();
+            if (loader instanceof ExtendedRoutesBuilderLoader) {
+                // extended loader can load all resources ine one unit
+                ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
+                // pre-parse before loading
+                extLoader.preParseRoutes(entry.getValue());
+            } else {
+                for (Resource resource : entry.getValue()) {
+                    loader.preParseRoute(resource);
                 }
             }
         }
