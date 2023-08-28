@@ -22,9 +22,11 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PropertiesComponent;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -463,6 +465,30 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
+        assertFalse(foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassConstructorParameterMandatoryBean() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        try {
+            PropertyBindingSupport.build().bind(context, foo, "animal",
+                    "#class:org.apache.camel.support.Animal('#bean:myName', false)");
+            fail("Should have thrown exception");
+        } catch (PropertyBindingException e) {
+            NoSuchBeanException nsb = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
+            assertEquals("myName", nsb.getName());
+        }
+
+        // add bean and try again
+        context.getRegistry().bind("myName", "Acme");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.Animal('#bean:myName', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
         assertFalse(foo.getAnimal().isDangerous());
     }
 
