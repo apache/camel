@@ -21,7 +21,7 @@ import org.apache.camel.spi.DependencyStrategy
 
 class IntegrationLoaderDependenciesTest extends YamlTestSupport {
 
-    var List<String> deps = new ArrayList<>()
+    var Set<String> deps = new LinkedHashSet<>()
 
     @Override
     def doSetup() {
