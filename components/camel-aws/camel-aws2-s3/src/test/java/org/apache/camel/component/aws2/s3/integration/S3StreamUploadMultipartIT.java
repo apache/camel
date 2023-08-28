@@ -71,7 +71,7 @@ public class S3StreamUploadMultipartIT extends Aws2S3Base {
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(60, resp.size());
 
-        assertEquals( 10 * Files.size(Paths.get("src/test/resources/empty.bin")),
+        assertEquals(10 * Files.size(Paths.get("src/test/resources/empty.bin")),
                 resp.stream().mapToLong(S3Object::size).sum());
     }
 
