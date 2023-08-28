@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,6 +84,7 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.support.DefaultContextReloadStrategy;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
@@ -845,11 +847,34 @@ public class KameletMain extends MainCommandLineSupport {
                         String key = v.getName();
                         PropertyValue src = v.getOriginalPropertyValue();
                         Object val = src.getValue();
-                        // ref was string value
                         if (val instanceof TypedStringValue tsv) {
                             properties.put(key, tsv.getValue());
                         } else if (val instanceof BeanReference br) {
                             properties.put(key, "#bean:" + br.getBeanName());
+                        } else if (val instanceof List) {
+                            int i = 0;
+                            Iterator<?> it = ObjectHelper.createIterator(val);
+                            while (it.hasNext()) {
+                                String k = key + "[" + i + "]";
+                                val = it.next();
+                                if (val instanceof TypedStringValue tsv) {
+                                    properties.put(k, tsv.getValue());
+                                } else if (val instanceof BeanReference br) {
+                                    properties.put(k, "#bean:" + br.getBeanName());
+                                }
+                                i++;
+                            }
+                        } else if (val instanceof Map) {
+                            Map<TypedStringValue, Object> map = (Map) val;
+                            for (Map.Entry<TypedStringValue, Object> entry : map.entrySet()) {
+                                String k = key + "[" + entry.getKey().getValue() + "]";
+                                val = entry.getValue();
+                                if (val instanceof TypedStringValue tsv) {
+                                    properties.put(k, tsv.getValue());
+                                } else if (val instanceof BeanReference br) {
+                                    properties.put(k, "#bean:" + br.getBeanName());
+                                }
+                            }
                         }
                     }
                 }
