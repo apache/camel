@@ -92,9 +92,42 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources, boolean optional) throws Exception {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
+        // group resources by loader (java, xml, yaml in their own group)
+        Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
+        for (Resource resource : resources) {
+            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
+            if (loader != null) {
+                List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
+                list.add(resource);
+                groups.put(loader, list);
+            }
+        }
+
         // first we need to parse for modeline to gather all the configurations
         if (camelContext.isModeline()) {
             ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
+
+            for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+                RoutesBuilderLoader loader = entry.getKey();
+                if (loader instanceof ExtendedRoutesBuilderLoader) {
+                    // parse modelines for all resources
+                    for (Resource resource : entry.getValue()) {
+                        factory.parseModeline(resource);
+                    }
+                    // extended loader can load all resources ine one unit
+                    ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
+                    // pre-parse before loading
+                    extLoader.preParseRoutes(entry.getValue());
+                } else {
+                    for (Resource resource : entry.getValue()) {
+                        RoutesBuilder builder = loader.loadRoutesBuilder(resource);
+                        if (builder != null) {
+                            answer.add(builder);
+                        }
+                    }
+                }
+            }
+
             for (Resource resource : resources) {
                 try (RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional)) {
                     if (loader != null) {
@@ -104,17 +137,6 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         loader.preParseRoute(resource);
                     }
                 }
-            }
-        }
-
-        // now group resources by loader
-        Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
-        for (Resource resource : resources) {
-            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
-            if (loader != null) {
-                List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
-                list.add(resource);
-                groups.put(loader, list);
             }
         }
 
