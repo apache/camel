@@ -102,7 +102,7 @@ public class AbstractBoxITSupport extends CamelTestSupport {
     protected void deleteTestFolder() {
         try {
             testFolder.delete(true);
-        } catch (Throwable t) {
+        } catch (Exception t) {
         }
         testFolder = null;
     }
@@ -110,7 +110,7 @@ public class AbstractBoxITSupport extends CamelTestSupport {
     protected void deleteTestFile() {
         try {
             testFile.delete();
-        } catch (Throwable t) {
+        } catch (Exception t) {
         }
         testFile = null;
     }

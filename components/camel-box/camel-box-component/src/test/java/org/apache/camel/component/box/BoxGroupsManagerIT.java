@@ -87,7 +87,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -261,7 +261,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         if (testGroup != null) {
             try {
                 testGroup.delete();
-            } catch (Throwable t) {
+            } catch (Exception t) {
             }
             testGroup = null;
         }

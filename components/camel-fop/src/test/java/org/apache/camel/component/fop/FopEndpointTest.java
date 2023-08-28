@@ -36,7 +36,7 @@ public class FopEndpointTest extends CamelTestSupport {
     private boolean canTest() {
         try {
             context().getEndpoint("fop:pdf");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
 

@@ -35,8 +35,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.WINDOWS)
 public class FileProducerChmodOptionTest extends ContextTestSupport {
@@ -68,23 +68,22 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalidChmod() throws Exception {
-        try {
+    public void testInvalidChmod() {
+        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:writeBadChmod1").to(fileUri("?chmod=abc")).to("mock:badChmod1");
                 }
             });
-            fail("Expected FailedToCreateRouteException");
-        } catch (FailedToCreateRouteException e) {
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
-            assertEquals("chmod", pbe.getPropertyName());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
-            assertTrue(iae.getMessage().contains("chmod option [abc] is not valid"));
-        }
+        }, "Expected FailedToCreateRouteException");
+
+        assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+        PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
+        assertEquals("chmod", pbe.getPropertyName());
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
+        assertTrue(iae.getMessage().contains("chmod option [abc] is not valid"));
     }
 
     /**

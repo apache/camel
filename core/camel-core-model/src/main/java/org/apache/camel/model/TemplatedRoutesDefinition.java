@@ -28,6 +28,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * A series of templated routes
@@ -36,15 +38,27 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "templatedRoutes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<TemplatedRoutesDefinition>
-        implements TemplatedRouteContainer, CamelContextAware {
+        implements TemplatedRouteContainer, CamelContextAware, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private Resource resource;
 
     @XmlElementRef
     private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
 
     public TemplatedRoutesDefinition() {
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     @Override
@@ -97,9 +111,9 @@ public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<Temp
      * @param routeTemplateId the id of the route template
      */
     public TemplatedRouteDefinition templatedRoute(String routeTemplateId) {
-        TemplatedRouteDefinition templatedRoute = new TemplatedRouteDefinition();
-        templatedRoute.routeTemplateRef(routeTemplateId);
-        return templatedRoute(templatedRoute);
+        TemplatedRouteDefinition template = createTemplatedRouteDefinition(routeTemplateId);
+        getTemplatedRoutes().add(template);
+        return template;
     }
 
     /**
@@ -108,6 +122,21 @@ public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<Temp
     public TemplatedRouteDefinition templatedRoute(TemplatedRouteDefinition template) {
         getTemplatedRoutes().add(template);
         return template;
+    }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
+
+    protected TemplatedRouteDefinition createTemplatedRouteDefinition(String id) {
+        TemplatedRouteDefinition templatedRoute = new TemplatedRouteDefinition();
+        if (id != null) {
+            templatedRoute.setRouteTemplateRef(id);
+        }
+        if (resource != null) {
+            templatedRoute.setResource(resource);
+        }
+        CamelContextAware.trySetCamelContext(templatedRoute, camelContext);
+        return templatedRoute;
     }
 
 }

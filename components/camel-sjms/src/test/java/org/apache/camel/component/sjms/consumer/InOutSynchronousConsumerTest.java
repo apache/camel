@@ -50,7 +50,8 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
                         .to("log:after")
                         .to("mock:result");
 
-                from("sjms:queue:in.queue.InOutSynchronousConsumerTest").process(exchange -> exchange.getMessage().setBody("Bye World"));
+                from("sjms:queue:in.queue.InOutSynchronousConsumerTest")
+                        .process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

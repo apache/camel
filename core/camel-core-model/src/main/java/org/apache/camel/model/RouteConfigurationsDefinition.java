@@ -28,6 +28,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * A series of route configurations
@@ -35,15 +37,28 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeConfigurations")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteConfigurationsDefinition implements RouteConfigurationContainer {
+public class RouteConfigurationsDefinition extends OptionalIdentifiedDefinition<RouteConfigurationsDefinition>
+        implements RouteConfigurationContainer, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private Resource resource;
 
     @XmlElementRef
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
 
     public RouteConfigurationsDefinition() {
+    }
+
+    @Override
+    public String getShortName() {
+        return "routeConfigurations";
+    }
+
+    @Override
+    public String getLabel() {
+        return "RouteConfigurations " + getId();
     }
 
     @Override
@@ -65,6 +80,16 @@ public class RouteConfigurationsDefinition implements RouteConfigurationContaine
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Fluent API
@@ -109,6 +134,9 @@ public class RouteConfigurationsDefinition implements RouteConfigurationContaine
         RouteConfigurationDefinition config = new RouteConfigurationDefinition();
         if (id != null) {
             config.setId(id);
+        }
+        if (resource != null) {
+            config.setResource(resource);
         }
         CamelContextAware.trySetCamelContext(config, camelContext);
         return config;

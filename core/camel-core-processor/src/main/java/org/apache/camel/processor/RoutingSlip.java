@@ -526,7 +526,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
                         // copy results back to the original exchange
                         ExchangeHelper.copyResults(original, current);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         ex.setException(e);
                     }
 

@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -39,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Tag("not-parallel")
-@Disabled("Disabled due to CAMEL-18998")
 class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FromFileToFtpSplitParallelIT.class);
 

@@ -177,7 +177,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                                 resourceExchange.getExchangeExtension().handoverCompletions(exchange);
                             }
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         // if the aggregationStrategy threw an exception, set it on the original exchange
                         exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
                     }

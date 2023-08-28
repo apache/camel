@@ -110,9 +110,32 @@ public final class ServiceHelper {
      */
     public static void startService(Object value) {
         if (value instanceof Service) {
-            ((Service) value).start();
+            startService((Service) value);
         } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+            startService((Iterable<?>) value);
+        }
+    }
+
+    /**
+     * Starts the given {@code value} if it's a {@link Service} or a collection of it.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     */
+    public static void startService(Service service) {
+        if (service != null) {
+            service.start();
+        }
+
+    }
+
+    /**
+     * Starts the given {@code value} if it's a {@link Service} or a collection of it.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     */
+    public static void startService(Iterable<?> value) {
+        if (value != null) {
+            for (Object o : value) {
                 startService(o);
             }
         }
@@ -159,9 +182,37 @@ public final class ServiceHelper {
      */
     public static void stopService(Object value) {
         if (value instanceof Service) {
-            ((Service) value).stop();
+            stopService((Service) value);
         } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+            stopService((Iterable<?>) value);
+        }
+    }
+
+    /**
+     * Stops the given {@code value}, rethrowing the first exception caught.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     *
+     * @see Service#stop()
+     * @see #stopService(Collection)
+     */
+    public static void stopService(Service service) {
+        if (service != null) {
+            service.stop();
+        }
+    }
+
+    /**
+     * Stops the given {@code value}, rethrowing the first exception caught.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     *
+     * @see Service#stop()
+     * @see #stopService(Collection)
+     */
+    public static void stopService(Iterable<?> value) {
+        if (value != null) {
+            for (Object o : value) {
                 stopService(o);
             }
         }
@@ -235,6 +286,23 @@ public final class ServiceHelper {
     }
 
     /**
+     * Stops and shutdowns the given {@code service}, rethrowing the first exception caught.
+     * <p/>
+     * Calling this method has no effect if {@code value} is {@code null}.
+     *
+     * @see #stopService(Object)
+     * @see ShutdownableService#shutdown()
+     */
+    public static void stopAndShutdownService(ShutdownableService service) {
+        stopService(service);
+
+        if (service != null) {
+            LOG.trace("Shutting down service {}", service);
+            service.shutdown();
+        }
+    }
+
+    /**
      * Stops and shutdowns each element of the given {@code services} if {@code services} itself is not {@code null},
      * otherwise this method would return immediately.
      * <p/>
@@ -253,15 +321,7 @@ public final class ServiceHelper {
         for (Object value : services) {
 
             try {
-                // must stop it first
-                stopService(value);
-
-                // then try to shutdown
-                if (value instanceof ShutdownableService) {
-                    ShutdownableService service = (ShutdownableService) value;
-                    LOG.trace("Shutting down service: {}", service);
-                    service.shutdown();
-                }
+                stopAndShutdownService(value);
             } catch (RuntimeException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Caught exception shutting down service: {}", value, e);
@@ -421,11 +481,24 @@ public final class ServiceHelper {
      */
     public static boolean isStopped(Object value) {
         if (value instanceof StatefulService) {
-            StatefulService service = (StatefulService) value;
-            if (service.isStopping() || service.isStopped()) {
-                return true;
-            }
+            return isStopped((StatefulService) value);
         }
+
+        return false;
+    }
+
+    /**
+     * Is the given service stopping or already stopped?
+     *
+     * @return <tt>true</tt> if stopping or already stopped, <tt>false</tt> otherwise
+     * @see    StatefulService#isStopping()
+     * @see    StatefulService#isStopped()
+     */
+    public static boolean isStopped(StatefulService service) {
+        if (service != null && (service.isStopping() || service.isStopped())) {
+            return true;
+        }
+
         return false;
     }
 
@@ -438,11 +511,24 @@ public final class ServiceHelper {
      */
     public static boolean isStarted(Object value) {
         if (value instanceof StatefulService) {
-            StatefulService service = (StatefulService) value;
-            if (service.isStarting() || service.isStarted()) {
-                return true;
-            }
+            return isStarted((StatefulService) value);
         }
+
+        return false;
+    }
+
+    /**
+     * Is the given service starting or already started?
+     *
+     * @return <tt>true</tt> if starting or already started, <tt>false</tt> otherwise
+     * @see    StatefulService#isStarting()
+     * @see    StatefulService#isStarted()
+     */
+    public static boolean isStarted(StatefulService service) {
+        if (service != null && (service.isStarting() || service.isStarted())) {
+            return true;
+        }
+
         return false;
     }
 
@@ -455,11 +541,24 @@ public final class ServiceHelper {
      */
     public static boolean isSuspended(Object value) {
         if (value instanceof StatefulService) {
-            StatefulService service = (StatefulService) value;
-            if (service.isSuspending() || service.isSuspended()) {
-                return true;
-            }
+            return isSuspended((StatefulService) value);
         }
+
+        return false;
+    }
+
+    /**
+     * Is the given service suspending or already suspended?
+     *
+     * @return <tt>true</tt> if suspending or already suspended, <tt>false</tt> otherwise
+     * @see    StatefulService#isSuspending()
+     * @see    StatefulService#isSuspended()
+     */
+    public static boolean isSuspended(StatefulService service) {
+        if (service != null && (service.isSuspending() || service.isSuspended())) {
+            return true;
+        }
+
         return false;
     }
 

@@ -57,7 +57,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     private final CamelContext context;
     private final Deque<Route> routes = new ArrayDeque<>(8);
-    private Logger log;
+    private final Logger log;
     private Exchange exchange;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
@@ -70,19 +70,20 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     protected DefaultUnitOfWork(Exchange exchange, Logger logger, InflightRepository inflightRepository,
                                 boolean allowUseOriginalMessage, boolean useBreadcrumb) {
-        this(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
-        this.log = logger;
-    }
-
-    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage,
-                             boolean useBreadcrumb) {
-        this.log = LOG;
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         this.useBreadcrumb = useBreadcrumb;
         this.context = exchange.getContext();
         this.inflightRepository = inflightRepository;
         this.streamCachingStrategy = exchange.getContext().getStreamCachingStrategy();
+        this.log = logger;
+
         doOnPrepare(exchange);
+    }
+
+    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage,
+                             boolean useBreadcrumb) {
+        this(exchange, LOG, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
+
     }
 
     UnitOfWork newInstance(Exchange exchange) {
@@ -147,7 +148,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         if (context.getCamelContextExtension().isEventNotificationApplicable()) {
             try {
                 EventHelper.notifyExchangeCreated(context, exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch exceptions to ensure the exchange is not failing due to notification event failed
                 log.warn("Exception occurred during event notification. This exception will be ignored.", e);
             }
@@ -261,7 +262,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
                 } else {
                     EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during event notification. This exception will be ignored.", e);
             }
@@ -277,7 +278,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
                 if (pooled.isAutoRelease()) {
                     ((PooledExchange) exchange).done();
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
             }

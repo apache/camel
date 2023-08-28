@@ -74,6 +74,7 @@ We have removed deprecated APIs such as the following:
 - Removed `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` as you should use `value` (default) instead.
   For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
 - Removed `label` on `@UriEndpoint` as you should use `category` instead.
+- Removed `consumerClass` on `@UriEndpoint`.
 - Removed all `asyncCallback` methods on `ProducerTemplate`. Use `asyncSend` or `asyncRequest` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
@@ -84,7 +85,7 @@ We have removed deprecated APIs such as the following:
 - Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
 - Removed `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 - Removed `org.apache.camel.builder.SimpleBuilder`. Was mostly used internally in Camel with the Java DSL in some situations.
-- Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanInspection` instead.
+- Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanIntrospection` instead.
 - Removed `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog`.
 - The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`.
 - Added `position` method to `org.apache.camel.StreamCache`.
@@ -499,3 +500,6 @@ NOTE: The `platform-http-starter` can also be used with Rest DSL.
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
+=== camel-twitter
+
+The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Twit status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.

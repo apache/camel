@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
@@ -65,6 +68,8 @@ import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -80,19 +85,28 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.support.DefaultContextReloadStrategy;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.StringHelper;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.SmartFactoryBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.metrics.StartupStep;
 
 /**
@@ -668,12 +682,19 @@ public class KameletMain extends MainCommandLineSupport {
         Map<String, Document> springBeansDocs = registry.findByTypeWithName(Document.class);
         if (springBeansDocs != null) {
             springBeansDocs.forEach((id, doc) -> {
-                if (id.startsWith("spring-document:")) {
+                if (id.startsWith("camel-xml-io-dsl-spring-xml:")) {
                     xmls.put(id, doc);
                 }
             });
         }
 
+        if (!xmls.isEmpty()) {
+            processSpringBeans(camelContext, config, xmls);
+        }
+    }
+
+    private void processSpringBeans(
+            CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
         // we _could_ create something like org.apache.camel.spring.spi.ApplicationContextBeanRepository, but
         // wrapping DefaultListableBeanFactory and use it as one of the
         // org.apache.camel.support.DefaultRegistry.repositories, but for now let's use it to populate
@@ -696,6 +717,15 @@ public class KameletMain extends MainCommandLineSupport {
         xmls.forEach((id, doc) -> {
             reader.registerBeanDefinitions(doc, new AbstractResource() {
                 @Override
+                public String getFilename() {
+                    if (id.startsWith("camel-xml-io-dsl-spring-xml:")) {
+                        // this is a camel bean via camel-xml-io-dsl
+                        return StringHelper.afterLast(id, ":");
+                    }
+                    return null;
+                }
+
+                @Override
                 public String getDescription() {
                     return id;
                 }
@@ -711,7 +741,6 @@ public class KameletMain extends MainCommandLineSupport {
         // org.springframework.context.support.AbstractApplicationContext.refresh()
         // see org.springframework.context.support.AbstractApplicationContext.prepareBeanFactory() to check
         // which extra/infra beans are added
-
         beanFactory.freezeConfiguration();
 
         List<String> beanNames = Arrays.asList(beanFactory.getBeanDefinitionNames());
@@ -791,6 +820,82 @@ public class KameletMain extends MainCommandLineSupport {
             } else {
                 // rely on the bean factory to implement prototype scope
                 registry.bind(name, (Supplier<Object>) () -> beanFactory.getBean(name));
+            }
+
+            // register bean into model (as a BeanRegistry that allows Camel DSL to know about these beans)
+            Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+            if (model != null) {
+                RegistryBeanDefinition rrd = new RegistryBeanDefinition();
+                if (def instanceof GenericBeanDefinition gbd) {
+                    // set camel resource to refer to the source file
+                    Resource res = gbd.getResource();
+                    if (res != null) {
+                        String fn = res.getFilename();
+                        if (fn != null) {
+                            rrd.setResource(camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                                    .resolveResource("file:" + fn));
+                        }
+                    }
+                }
+                rrd.setType(def.getBeanClassName());
+                rrd.setName(name);
+                model.addRegistryBean(rrd);
+
+                // constructor arguments
+                ConstructorArgumentValues ctr = def.getConstructorArgumentValues();
+                StringJoiner sj = new StringJoiner(", ");
+                for (ConstructorArgumentValues.ValueHolder v : ctr.getIndexedArgumentValues().values()) {
+                    Object val = v.getValue();
+                    if (val instanceof TypedStringValue tsv) {
+                        sj.add("'" + tsv.getValue() + "'");
+                    } else if (val instanceof BeanReference br) {
+                        sj.add("'#bean:" + br.getBeanName() + "'");
+                    }
+                }
+                if (sj.length() > 0) {
+                    rrd.setType("#class:" + def.getBeanClassName() + "(" + sj + ")");
+                }
+                // property values
+                if (def.hasPropertyValues()) {
+                    Map<String, Object> properties = new LinkedHashMap<>();
+                    rrd.setProperties(properties);
+
+                    MutablePropertyValues values = def.getPropertyValues();
+                    for (PropertyValue v : values) {
+                        String key = v.getName();
+                        PropertyValue src = v.getOriginalPropertyValue();
+                        Object val = src.getValue();
+                        if (val instanceof TypedStringValue tsv) {
+                            properties.put(key, tsv.getValue());
+                        } else if (val instanceof BeanReference br) {
+                            properties.put(key, "#bean:" + br.getBeanName());
+                        } else if (val instanceof List) {
+                            int i = 0;
+                            Iterator<?> it = ObjectHelper.createIterator(val);
+                            while (it.hasNext()) {
+                                String k = key + "[" + i + "]";
+                                val = it.next();
+                                if (val instanceof TypedStringValue tsv) {
+                                    properties.put(k, tsv.getValue());
+                                } else if (val instanceof BeanReference br) {
+                                    properties.put(k, "#bean:" + br.getBeanName());
+                                }
+                                i++;
+                            }
+                        } else if (val instanceof Map) {
+                            Map<TypedStringValue, Object> map = (Map) val;
+                            for (Map.Entry<TypedStringValue, Object> entry : map.entrySet()) {
+                                String k = key + "[" + entry.getKey().getValue() + "]";
+                                val = entry.getValue();
+                                if (val instanceof TypedStringValue tsv) {
+                                    properties.put(k, tsv.getValue());
+                                } else if (val instanceof BeanReference br) {
+                                    properties.put(k, "#bean:" + br.getBeanName());
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

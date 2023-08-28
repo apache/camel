@@ -21,24 +21,22 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteSetRouteIdTwoTimesTest extends TestSupport {
 
     @Test
-    public void testRouteIdTwice() throws Exception {
+    public void testRouteIdTwice() {
         CamelContext context = new DefaultCamelContext();
-        try {
+
+        assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("direct:hello").routeId("foo").to("mock:result").to("mock:bar").routeId("bar");
                 }
             });
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        }, "Should have thrown exception");
     }
 
 }

@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.2</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.122</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.135</aws-java-sdk2-version>
         <aws-xray-version>2.14.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.15</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
@@ -147,7 +147,7 @@
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.17.1</flink-version>
-        <fop-version>2.8</fop-version>
+        <fop-version>2.9</fop-version>
         <formatter-maven-plugin-version>2.23.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.0</ftpserver-version>
         <freemarker-version>2.3.32</freemarker-version>
@@ -176,9 +176,9 @@
         <google-api-services-sheets-version>v4-rev20230526-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20230612-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.34.1</google-oauth-client-version>
-        <google-cloud-bom-version>26.21.0</google-cloud-bom-version>
-        <google-cloud-functions-bom-version>2.24.0</google-cloud-functions-bom-version>
-        <google-cloud-secretmanager-bom-version>2.22.0</google-cloud-secretmanager-bom-version>
+        <google-cloud-bom-version>26.22.0</google-cloud-bom-version>
+        <google-cloud-functions-bom-version>2.25.0</google-cloud-functions-bom-version>
+        <google-cloud-secretmanager-bom-version>2.23.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>23.0.1</graaljs-version>
         <graphql-java-version>21.0</graphql-java-version>
         <greenmail-version>2.0.0</greenmail-version>
@@ -196,7 +196,7 @@
         <hapi-version>2.3</hapi-version>
         <hapi-base-version>2.3</hapi-base-version>
         <hapi-fhir-version>6.6.2</hapi-fhir-version>
-        <hazelcast-version>5.3.1</hazelcast-version>
+        <hazelcast-version>5.3.2</hazelcast-version>
         <hdrhistrogram-version>2.1.12</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <hibernate-version>5.6.15.Final</hibernate-version>
@@ -214,22 +214,22 @@
         <icu4j-version>73.2</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.13.Final</infinispan-version>
+        <infinispan-version>14.0.14.Final</infinispan-version>
         <influx-java-driver-version>2.23</influx-java-driver-version>
         <influx-client-java-driver-version>6.10.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
-        <ivy-version>2.5.1</ivy-version>
+        <ivy-version>2.5.2</ivy-version>
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
         <jackson2-version>2.15.2</jackson2-version>
-        <jackrabbit-version>2.21.18</jackrabbit-version>
+        <jackrabbit-version>2.21.19</jackrabbit-version>
         <jasminb-jsonapi-version>0.12</jasminb-jsonapi-version>
         <jandex-version>3.1.2</jandex-version>
         <jansi-version>2.4.0</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>2.0.0</java-util-version>
-        <jnats-version>2.16.13</jnats-version>
+        <jnats-version>2.16.14</jnats-version>
         <javacc-maven-plugin-version>3.0.1</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -273,7 +273,7 @@
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
-        <jooq-version>3.18.5</jooq-version>
+        <jooq-version>3.18.6</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.21</johnzon-version>
         <jslt-version>0.1.14</jslt-version>
@@ -285,7 +285,6 @@
         <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.5.0</json-smart-version>
         <jsonata4java-version>2.4.3</jsonata4java-version>
-        <json-schema-validator-version>2.2.14</json-schema-validator-version>
         <json-unit-version>3.0.0</json-unit-version>
         <jsoup-version>1.16.1</jsoup-version>
         <jt400-version>20.0.0</jt400-version>
@@ -318,7 +317,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.2.1</maven-archetype-packaging-version>
-        <maven-owasp-plugin-version>8.3.1</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>8.4.0</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.9.0</maven-plugin-plugin-version>
@@ -342,7 +341,7 @@
         <mina-version>2.2.2</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
-        <minio-version>8.5.4</minio-version>
+        <minio-version>8.5.5</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.2.2</mockwebserver-version>
         <mockito-version>3.12.4</mockito-version>
@@ -354,7 +353,7 @@
         <mybatis-version>3.5.13</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.96.Final</netty-version>
+        <netty-version>4.1.97.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.86</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.31</nimbus-jose-jwt>
@@ -424,13 +423,13 @@
         <snmp4j-version>3.7.7</snmp4j-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
-        <spring-batch-version>5.0.2</spring-batch-version>
+        <spring-batch-version>5.0.3</spring-batch-version>
         <spring-data-redis-version>3.1.2</spring-data-redis-version>
-        <spring-ldap-version>3.1.0</spring-ldap-version>
+        <spring-ldap-version>3.1.1</spring-ldap-version>
         <spring-vault-core-version>3.0.4</spring-vault-core-version>
         <spring-version>6.0.11</spring-version>
         <spring-rabbitmq-version>3.0.7</spring-rabbitmq-version>
-        <spring-security-version>6.1.2</spring-security-version>
+        <spring-security-version>6.1.3</spring-security-version>
         <spring-ws-version>4.0.5</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
@@ -470,7 +469,6 @@
         <xml-apis-version>1.4.01</xml-apis-version>
         <xml-apis-ext-version>1.3.04</xml-apis-ext-version>
         <xml-resolver-version>1.2</xml-resolver-version>
-        <xmlgraphics-batik-version>1.16</xmlgraphics-batik-version>
         <xmlsec-version>2.2.4</xmlsec-version>
         <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
@@ -823,6 +821,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-aws2-sts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-aws2-timestream</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

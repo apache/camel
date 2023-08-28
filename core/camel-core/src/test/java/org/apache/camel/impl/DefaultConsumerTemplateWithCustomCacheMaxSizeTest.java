@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTestSupport {
 
@@ -64,22 +64,20 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     @Test
     public void testInvalidSizeABC() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
-        try {
-            context.createConsumerTemplate();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: ABC", e.getCause().getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.createConsumerTemplate(),
+                "Should have thrown an exception");
+
+        assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: ABC", e.getCause().getMessage());
     }
 
     @Test
     public void testInvalidSizeZero() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
-        try {
-            context.createConsumerTemplate();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getCause().getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.createConsumerTemplate(),
+                "Should have thrown an exception");
+
+        assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getCause().getMessage());
     }
 }

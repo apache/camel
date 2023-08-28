@@ -53,12 +53,18 @@ public class EndpointDevConsole extends AbstractDevConsole {
         Collection<Endpoint> col = reg.getReadOnlyValues();
         if (!col.isEmpty()) {
             for (Endpoint e : col) {
+                boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
+                String uri = e.toString();
+                if (!uri.startsWith("stub:") && stub) {
+                    // shadow-stub
+                    uri = uri + " (stub)";
+                }
                 var stat = findStats(stats, e.getEndpointUri());
                 if (stat.isPresent()) {
                     var st = stat.get();
-                    sb.append(String.format("\n    %s (direction: %s, usage: %s)", e, st.getDirection(), st.getHits()));
+                    sb.append(String.format("\n    %s (direction: %s, usage: %s)", uri, st.getDirection(), st.getHits()));
                 } else {
-                    sb.append(String.format("\n    %s", e));
+                    sb.append(String.format("\n    %s", uri));
                 }
             }
         }
@@ -88,7 +94,9 @@ public class EndpointDevConsole extends AbstractDevConsole {
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
             JsonObject jo = new JsonObject();
+            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
             jo.put("uri", e.getEndpointUri());
+            jo.put("stub", stub);
             var stat = findStats(stats, e.getEndpointUri());
             if (stat.isPresent()) {
                 var st = stat.get();

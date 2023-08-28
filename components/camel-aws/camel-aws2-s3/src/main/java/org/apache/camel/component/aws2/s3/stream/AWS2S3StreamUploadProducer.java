@@ -52,7 +52,6 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage Service
@@ -133,68 +132,74 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
 
-        buffer.write(IoUtils.toByteArray(is));
+        int totalSize = 0;
+        byte[] b;
+        while ((b = AWS2S3Utils.toByteArray(is, getConfiguration().getBufferSize())).length > 0) {
+            totalSize += b.length;
+            buffer.write(b);
 
-        final String keyName = getConfiguration().getKeyName();
-        final String fileName = AWS2S3Utils.determineFileName(keyName);
-        final String extension = AWS2S3Utils.determineFileExtension(keyName);
-        if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
-            id = UUID.randomUUID();
-        }
-        dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension, part, id);
-        CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(dynamicKeyName);
+            final String keyName = getConfiguration().getKeyName();
+            final String fileName = AWS2S3Utils.determineFileName(keyName);
+            final String extension = AWS2S3Utils.determineFileExtension(keyName);
+            if (index.get() == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
+                id = UUID.randomUUID();
+            }
+            dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension, part, id);
+            CreateMultipartUploadRequest.Builder createMultipartUploadRequest
+                    = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(dynamicKeyName);
 
-        String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
-        if (storageClass != null) {
-            createMultipartUploadRequest.storageClass(storageClass);
-        }
-
-        String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
-        if (cannedAcl != null) {
-            ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
-            createMultipartUploadRequest.acl(objectAcl);
-        }
-
-        BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
-        if (acl != null) {
-            // note: if cannedacl and acl are both specified the last one will
-            // be used. refer to
-            // PutObjectRequest#setAccessControlList for more details
-            createMultipartUploadRequest.acl(acl.toString());
-        }
-
-        AWS2S3Utils.setEncryption(createMultipartUploadRequest, getConfiguration());
-
-        LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
-        if (index.get() == 1) {
-            initResponse
-                    = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
-            completedParts = new ArrayList<>();
-        }
-
-        try {
-            if (buffer.size() >= getConfiguration().getBatchSize()
-                    || index.get() == getConfiguration().getBatchMessageNumber()) {
-
-                uploadPart();
-                completeUpload();
-
-                Message message = getMessageForResponse(exchange);
-                message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
-                if (uploadResult.versionId() != null) {
-                    message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
-                }
+            String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
+            if (storageClass != null) {
+                createMultipartUploadRequest.storageClass(storageClass);
             }
 
-        } catch (Exception e) {
-            getEndpoint().getS3Client()
-                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                            .key(dynamicKeyName).uploadId(initResponse.uploadId()).build());
-            throw e;
-        }
+            String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
+            if (cannedAcl != null) {
+                ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
+                createMultipartUploadRequest.acl(objectAcl);
+            }
 
-        index.getAndIncrement();
+            BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
+            if (acl != null) {
+                // note: if cannedacl and acl are both specified the last one will
+                // be used. refer to
+                // PutObjectRequest#setAccessControlList for more details
+                createMultipartUploadRequest.acl(acl.toString());
+            }
+
+            AWS2S3Utils.setEncryption(createMultipartUploadRequest, getConfiguration());
+
+            LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
+            if (index.get() == 1) {
+                initResponse
+                        = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
+                completedParts = new ArrayList<>();
+            }
+
+            try {
+                if (totalSize >= getConfiguration().getBatchSize()
+                        || buffer.size() >= getConfiguration().getBatchSize()
+                        || index.get() == getConfiguration().getBatchMessageNumber()) {
+
+                    uploadPart();
+                    completeUpload();
+
+                    Message message = getMessageForResponse(exchange);
+                    message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
+                    if (uploadResult.versionId() != null) {
+                        message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
+                    }
+                }
+
+            } catch (Exception e) {
+                getEndpoint().getS3Client()
+                        .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                                .key(dynamicKeyName).uploadId(initResponse.uploadId()).build());
+                throw e;
+            }
+
+            index.getAndIncrement();
+        }
     }
 
     private void completeUpload() {

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:describeWriteEndpoints"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=describeEndpoints"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeWriteEndpointsPojo"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=describeEndpoints"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createBatchLoadTask"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=createBatchLoadTask"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeBatchLoadTask"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=describeBatchLoadTask"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:resumeBatchLoadTask"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=resumeBatchLoadTask"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listBatchLoadTasks"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=listBatchLoadTasks"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createDatabase"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=createDatabase"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteDatabase"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=deleteDatabase"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeDatabase"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=describeDatabase"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:updateDatabase"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=updateDatabase"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listDatabases"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=listDatabases"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createTable"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=createTable"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteTable"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=deleteTable"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeTable"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=describeTable"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:updateTable"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=updateTable"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listTables"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=listTables"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:writeRecords"/>
+            <to uri="aws2-timestream://write:test?awsTimestreamWriteClient=#awsTimestreamWriteClient&amp;operation=writeRecords"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeQueryEndpoints"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=describeEndpoints"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeQueryEndpointsPojo"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=describeEndpoints"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:cancelQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=cancelQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=createScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=deleteScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:executeScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=executeScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:updateScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=updateScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeScheduledQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=describeScheduledQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listScheduledQueries"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=listScheduledQueries"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:prepareQuery"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=prepareQuery"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:query"/>
+            <to uri="aws2-timestream://query:test?awsTimestreamQueryClient=#awsTimestreamQueryClient&amp;operation=query"/>
+            <to uri="mock:result"/>
+        </route>
+
+    </camelContext>
+
+    <bean id="awsTimestreamWriteClient" class="org.apache.camel.component.aws2.timestream.write.AmazonTimestreamWriteClientMock"/>
+    <bean id="awsTimestreamQueryClient" class="org.apache.camel.component.aws2.timestream.query.AmazonTimestreamQueryClientMock"/>
+</beans>

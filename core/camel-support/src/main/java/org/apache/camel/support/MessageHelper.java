@@ -131,7 +131,7 @@ public final class MessageHelper {
         Object body = null;
         try {
             body = message.getBody();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
         if (body instanceof StreamCache) {
@@ -386,14 +386,14 @@ public final class MessageHelper {
             try {
                 body = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class, message.getExchange(),
                         obj);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore as the body is for logging purpose
             }
         }
         if (body == null) {
             try {
                 body = obj.toString();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore as the body is for logging purpose
             }
         }
@@ -534,7 +534,7 @@ public final class MessageHelper {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         // ignore as the body is for logging purpose
                     }
                 }
@@ -570,7 +570,7 @@ public final class MessageHelper {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
                         }
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         // ignore as the body is for logging purpose
                     }
                 }
@@ -937,7 +937,7 @@ public final class MessageHelper {
                         try {
                             s = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
                                     message.getExchange(), value);
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             // ignore
                         }
                     } else {
@@ -973,7 +973,7 @@ public final class MessageHelper {
                         try {
                             s = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
                                     message.getExchange(), value);
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             // ignore
                         }
                     } else {
@@ -1040,7 +1040,7 @@ public final class MessageHelper {
             // must always xml encode
             sb.append(StringHelper.xmlEncode(trace));
             sb.append(prefix).append("</exception>");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
 
@@ -1088,7 +1088,7 @@ public final class MessageHelper {
         String trace = sw.toString();
         try {
             jo.put("stackTrace", Jsoner.escape(trace));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore as the body is for logging purpose
         }
         return root;

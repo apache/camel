@@ -29,6 +29,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * A series of route templates
@@ -37,12 +39,14 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
-        implements RouteTemplateContainer, CamelContextAware {
+        implements RouteTemplateContainer, CamelContextAware, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
     private ErrorHandlerFactory errorHandlerFactory;
+    @XmlTransient
+    private Resource resource;
 
     @XmlElementRef
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
@@ -98,6 +102,14 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
         this.errorHandlerFactory = errorHandlerFactory;
     }
 
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -129,7 +141,9 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
         if (handler != null) {
             template.getRoute().setErrorHandlerFactoryIfNull(handler);
         }
-
+        if (resource != null) {
+            template.setResource(resource);
+        }
         return template;
     }
 

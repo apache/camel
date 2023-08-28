@@ -93,7 +93,8 @@ public class ConsulMasterIT {
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS).untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
+            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
             context.start();
 
             contextLatch.await();

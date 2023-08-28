@@ -189,7 +189,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
                     LOG.info("Suspending all routes {}", tail);
                     camelContext.suspend();
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.warn("Error performing action: {}", action, e);
             }
         };

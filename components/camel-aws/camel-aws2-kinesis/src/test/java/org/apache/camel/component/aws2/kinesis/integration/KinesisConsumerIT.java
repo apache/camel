@@ -122,6 +122,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
                 .untilAsserted(() -> result.assertIsSatisfied());
 
         assertEquals(messageCount, receivedMessages.size());
+        int messageCount = 0;
         for (KinesisData data : receivedMessages) {
             ObjectHelper.notNull(data, "data");
             assertNotNull(data.body, "The body should not be null");
@@ -131,6 +132,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
              and so on. This is just testing that the code is not mixing things up.
              */
             assertTrue(data.partition.endsWith(data.body), "The data/partition mismatch for record: " + data);
+            assertEquals(messageCount++, Integer.valueOf(data.partition.substring(data.partition.lastIndexOf('-') + 1)));
         }
     }
 }

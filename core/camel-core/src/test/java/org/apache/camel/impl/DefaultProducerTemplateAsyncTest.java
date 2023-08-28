@@ -29,7 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
@@ -223,12 +225,11 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        try {
-            template.extractFutureBody(future, Exchange.class);
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            assertEquals("Damn forced by unit test", e.getCause().getMessage());
-        }
+        RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.extractFutureBody(future, Exchange.class),
+                        "Should have thrown exception");
+
+        assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
         long delta = System.currentTimeMillis() - start;
         assertTrue(delta > 50, "Should take longer than: " + delta);
@@ -243,12 +244,11 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        try {
-            template.extractFutureBody(future, String.class);
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            assertEquals("Damn forced by unit test", e.getCause().getMessage());
-        }
+        RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.extractFutureBody(future, String.class),
+                        "Should have thrown exception");
+
+        assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
         long delta = System.currentTimeMillis() - start;
         assertTrue(delta > 50, "Should take longer than: " + delta);

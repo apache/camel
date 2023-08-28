@@ -23,8 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit tests to ensure that When the allowNullBody option is set to true it will create an empty file and not throw an
@@ -40,15 +40,15 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAllowNullBodyFalse() throws Exception {
-        try {
-            template.sendBody(fileUri("?fileName=allowNullBody.txt"), null);
-            fail("Should have thrown a GenericFileOperationFailedException");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause
-                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
-        }
+    public void testAllowNullBodyFalse() {
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(fileUri("?fileName=allowNullBody.txt"), null),
+                "Should have thrown a GenericFileOperationFailedException");
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+        assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
 
         assertFalse(Files.exists(testFile("allowNullBody.txt")),
                 "allowNullBody set to false with null body should not create a new file");

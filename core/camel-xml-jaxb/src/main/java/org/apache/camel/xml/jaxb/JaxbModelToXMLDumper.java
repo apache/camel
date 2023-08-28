@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -40,6 +41,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -47,6 +49,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
@@ -60,6 +63,7 @@ import static org.apache.camel.xml.jaxb.JaxbHelper.extractSourceLocations;
 import static org.apache.camel.xml.jaxb.JaxbHelper.getJAXBContext;
 import static org.apache.camel.xml.jaxb.JaxbHelper.modelToXml;
 import static org.apache.camel.xml.jaxb.JaxbHelper.newXmlConverter;
+import static org.apache.camel.xml.jaxb.JaxbHelper.removeAutoAssignedIds;
 import static org.apache.camel.xml.jaxb.JaxbHelper.resolveEndpointDslUris;
 
 /**
@@ -70,6 +74,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
+        return doDumpModelAsXml(context, definition, true);
+    }
+
+    public String doDumpModelAsXml(CamelContext context, NamedNode definition, boolean generatedIds) throws Exception {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
         final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
@@ -125,10 +133,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             throw new TypeConversionException(xml, Document.class, e);
         }
 
-        sanitizeXml(dom);
         if (context.isDebugging()) {
             enrichLocations(dom, locations);
         }
+        sanitizeXml(dom, generatedIds);
 
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
@@ -152,7 +160,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
         String xml = dumpModelAsXml(context, definition);
 
@@ -204,27 +212,58 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // okay there were some property placeholder or delegate endpoints
             // replaced so re-create the model
             if (changed.get()) {
+                removeAutoAssignedIds(dom.getDocumentElement());
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy);
+                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds);
             }
         }
 
         return xml;
     }
 
-    private static void sanitizeXml(Node node) {
+    @Override
+    public String dumpBeansAsXml(CamelContext context, List<Object> beans) throws Exception {
+        StringWriter buffer = new StringWriter();
+        BeanModelWriter writer = new BeanModelWriter(buffer);
+
+        List<RegistryBeanDefinition> list = new ArrayList<>();
+        for (Object bean : beans) {
+            if (bean instanceof RegistryBeanDefinition rb) {
+                list.add(rb);
+            }
+        }
+        writer.setCamelContext(context);
+        writer.start();
+        try {
+            writer.writeBeans(list);
+        } finally {
+            writer.stop();
+        }
+
+        return buffer.toString();
+    }
+
+    private static void sanitizeXml(Node node, boolean generatedIds) {
         // we want to remove all customId="false" attributes as they are noisy
         if (node.hasAttributes()) {
             Node att = node.getAttributes().getNamedItem("customId");
-            if (att != null && "false".equals(att.getNodeValue())) {
+            boolean custom = att != null && "true".equals(att.getNodeValue());
+            if (att != null) {
                 node.getAttributes().removeNamedItem("customId");
+            }
+            if (!generatedIds && !custom) {
+                // remove auto-generated ids
+                Node attId = node.getAttributes().getNamedItem("id");
+                if (attId != null) {
+                    node.getAttributes().removeNamedItem("id");
+                }
             }
         }
         if (node.hasChildNodes()) {
             for (int i = 0; i < node.getChildNodes().getLength(); i++) {
                 Node child = node.getChildNodes().item(i);
-                sanitizeXml(child);
+                sanitizeXml(child, generatedIds);
             }
         }
     }
@@ -254,6 +293,61 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 Node child = node.getChildNodes().item(i);
                 enrichLocations(child, locations);
             }
+        }
+    }
+
+    private static class BeanModelWriter implements CamelContextAware {
+
+        private final StringWriter buffer;
+        private CamelContext camelContext;
+
+        public BeanModelWriter(StringWriter buffer) {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public void start() {
+            // noop
+        }
+
+        public void stop() {
+            // noop
+        }
+
+        public void writeBeans(List<RegistryBeanDefinition> beans) {
+            if (beans.isEmpty()) {
+                return;
+            }
+            for (RegistryBeanDefinition b : beans) {
+                doWriteRegistryBeanDefinition(b);
+            }
+        }
+
+        private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
+            String type = b.getType();
+            if (type.startsWith("#class:")) {
+                type = type.substring(7);
+            }
+            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), type));
+            if (b.getProperties() != null && !b.getProperties().isEmpty()) {
+                buffer.write(String.format("        <properties>%n"));
+                for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    buffer.write(String.format("            <property key=\"%s\" value=\"%s\"/>%n", key, value));
+                }
+                buffer.write(String.format("        </properties>%n"));
+            }
+            buffer.write(String.format("    </bean>%n"));
         }
     }
 

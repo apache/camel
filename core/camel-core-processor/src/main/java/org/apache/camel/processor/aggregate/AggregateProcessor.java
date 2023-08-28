@@ -314,7 +314,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             return doProcess(exchange, callback);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -511,7 +511,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
                 // remove it afterwards
                 newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_SIZE);
                 newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch any exception from aggregation
                 throw new CamelExchangeException("Error occurred during preComplete", newExchange, e);
             }
@@ -547,7 +547,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         boolean aggregateFailed = false;
         try {
             answer = onAggregation(oldExchange, newExchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             aggregateFailed = true;
             if (isDiscardOnAggregationFailure()) {
                 // discard due failure in aggregation strategy
@@ -1438,7 +1438,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
                                         exchange.getExchangeExtension().setRedeliveryExhausted(false);
                                         exchange.setRollbackOnly(false);
                                         deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
-                                    } catch (Throwable e) {
+                                    } catch (Exception e) {
                                         exchange.setException(e);
                                     }
 

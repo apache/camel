@@ -141,7 +141,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             }
 
             return producer;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }
     }
@@ -179,7 +179,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                 // invoke the synchronous method
                 sharedInternalProcessor.process(exchange, producer, resultProcessor);
 
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ensure exceptions is caught and set on the exchange
                 exchange.setException(e);
             } finally {
@@ -227,7 +227,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                 }
                 doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // populate failed so return
             exchange.setException(e);
             future.complete(exchange);
@@ -259,7 +259,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     return true;
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -294,7 +294,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     callback.done(doneSync);
                 }
             });
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ensure exceptions is caught and set on the exchange
             if (exchange != null) {
                 exchange.setException(e);
@@ -320,7 +320,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             }
             // invoke the asynchronous method
             return sharedInternalProcessor.process(exchange, callback, producer, resultProcessor);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ensure exceptions is caught and set on the exchange
             exchange.setException(e);
             callback.done(true);

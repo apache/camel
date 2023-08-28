@@ -36,7 +36,9 @@ import org.apache.camel.util.xml.StreamSourceConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for {@link StreamCacheConverter}
@@ -101,15 +103,11 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         InputStream is = getTestFileStream();
         InputStream cache = (InputStream) StreamCacheConverter.convertToStreamCache(is, exchange);
         assertNotNull(IOConverter.toString(cache, null));
-        try {
-            // since the stream is closed you delete the temp file
-            // reset will not work any more
+
+        assertThrows(Exception.class, () -> {
             cache.reset();
             exchange.getUnitOfWork().done(exchange);
-            fail("except the exception here");
-        } catch (Exception exception) {
-            // do nothing
-        }
+        }, "We except the exception here");
     }
 
     @Test

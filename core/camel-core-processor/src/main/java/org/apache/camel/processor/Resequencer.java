@@ -377,7 +377,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                 // exchange is valid so enqueue the exchange
                 sender.enqueueExchange(exchange);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
         callback.done(true);
@@ -482,7 +482,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
                         try {
                             try {
                                 sendExchanges();
-                            } catch (Throwable t) {
+                            } catch (Exception t) {
                                 // a fail safe to handle all exceptions being thrown
                                 getExceptionHandler().handleException(t);
                             }

@@ -49,12 +49,10 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     public void testRenameFileExists() throws Exception {
         // create a file in inprogress to let there be a duplicate file
         testDirectory("inprogress", true);
-        FileWriter fw = new FileWriter(testFile("inprogress/london.txt").toFile());
-        try {
+
+        try (FileWriter fw = new FileWriter(testFile("inprogress/london.txt").toFile())) {
             fw.write("I was there once in London");
             fw.flush();
-        } finally {
-            fw.close();
         }
 
         MockEndpoint mock = getMockEndpoint("mock:report");

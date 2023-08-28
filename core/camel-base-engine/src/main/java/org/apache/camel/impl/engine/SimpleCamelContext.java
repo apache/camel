@@ -47,6 +47,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -407,6 +408,37 @@ public class SimpleCamelContext extends AbstractCamelContext {
         } else {
             throw new IllegalArgumentException(
                     "Cannot find RuntimeCamelCatalog on classpath. Add camel-core-catalog to classpath.");
+        }
+    }
+
+    @Override
+    protected DumpRoutesStrategy createDumpRoutesStrategy() {
+        DumpRoutesStrategy answer = getCamelContextReference().hasService(DumpRoutesStrategy.class);
+        if (answer != null) {
+            return answer;
+        }
+
+        // is there any custom which we prioritize over default
+        Optional<DumpRoutesStrategy> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                DumpRoutesStrategy.FACTORY,
+                DumpRoutesStrategy.class);
+
+        if (result.isEmpty()) {
+            // lookup default factory
+            result = ResolverHelper.resolveService(
+                    getCamelContextReference(),
+                    getBootstrapFactoryFinder(),
+                    "default-" + DumpRoutesStrategy.FACTORY,
+                    DumpRoutesStrategy.class);
+        }
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find DumpRoutesStrategy on classpath. Add camel-core-engine to classpath.");
         }
     }
 

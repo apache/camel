@@ -44,7 +44,6 @@ public final class RocketMQServiceFactory {
         }
     }
 
-
     private RocketMQServiceFactory() {
 
     }

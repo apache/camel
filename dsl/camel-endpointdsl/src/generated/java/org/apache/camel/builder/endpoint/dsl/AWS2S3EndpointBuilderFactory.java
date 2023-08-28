@@ -1964,6 +1964,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The buffer size (in bytes) in streaming upload mode.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The buffer size (in bytes) in streaming upload mode.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000000
+         * Group: producer
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder bufferSize(String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
          * Delete file object after the S3 file has been uploaded.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
