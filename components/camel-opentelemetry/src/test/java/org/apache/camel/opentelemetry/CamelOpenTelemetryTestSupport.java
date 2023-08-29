@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.opentelemetry.api.common.AttributeKey;
@@ -38,6 +39,7 @@ import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tracing.SpanDecorator;
 import org.awaitility.Awaitility;
@@ -86,6 +88,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
         ottracer.addDecorator(new TestSEDASpanDecorator());
+        ottracer.setTracingStrategy(getTracingStrategy().apply(ottracer));
         ottracer.init(context);
         return context;
     }
@@ -207,6 +210,10 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     protected void verifySameTrace() {
         assertEquals(1, inMemorySpanExporter.getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
+    }
+
+    protected Function<OpenTelemetryTracer, InterceptStrategy> getTracingStrategy() {
+        return ottracer -> new NoopTracingStrategy();
     }
 
     private static class LoggingSpanProcessor implements SpanProcessor {
