@@ -8523,14 +8523,14 @@
           "level" : {
             "type" : "string",
             "title" : "Level",
-            "description" : "Logging level to use when using the logging error handler type.",
+            "description" : "Logging level to use by error handler",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string",
             "title" : "Log Name",
-            "description" : "Name of the logger to use for the logging error handler"
+            "description" : "Name of the logger to use by the error handler"
           },
           "logger-ref" : {
             "type" : "string",
@@ -8598,14 +8598,14 @@
           "level" : {
             "type" : "string",
             "title" : "Level",
-            "description" : "Logging level to use when using the logging error handler type.",
+            "description" : "Logging level to use by error handler",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string",
             "title" : "Log Name",
-            "description" : "Name of the logger to use for the logging error handler"
+            "description" : "Name of the logger to use by the error handler"
           },
           "logger-ref" : {
             "type" : "string",
@@ -8672,14 +8672,14 @@
           "level" : {
             "type" : "string",
             "title" : "Level",
-            "description" : "Logging level to use when using the logging error handler type.",
+            "description" : "Logging level to use by error handler",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string",
             "title" : "Log Name",
-            "description" : "Name of the logger to use for the logging error handler"
+            "description" : "Name of the logger to use by the error handler"
           },
           "logger-ref" : {
             "type" : "string",
@@ -8792,14 +8792,14 @@
           "level" : {
             "type" : "string",
             "title" : "Level",
-            "description" : "Logging level to use when using the logging error handler type.",
+            "description" : "Logging level to use by error handler",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string",
             "title" : "Log Name",
-            "description" : "Name of the logger to use for the logging error handler"
+            "description" : "Name of the logger to use by the error handler"
           },
           "logger-ref" : {
             "type" : "string",
