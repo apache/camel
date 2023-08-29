@@ -60,6 +60,12 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     private Predicate retryWhilePredicate;
 
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String useOriginalMessage;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String useOriginalBody;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String loggerRef;
     @XmlAttribute
@@ -69,12 +75,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String logName;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    private String useOriginalMessage;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    private String useOriginalBody;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onRedeliveryRef;
