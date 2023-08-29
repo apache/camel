@@ -24,7 +24,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A0;
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A1;
@@ -68,11 +67,11 @@ public class PdfConfiguration {
     private float fontSize = 14;
     @UriParam(defaultValue = "A4", enums = "LETTER,LEGAL,A0,A1,A2,A3,A4,A5,A6")
     private String pageSize = PAGE_SIZE_A4;
-    @UriParam(defaultValue = "Helvetica", enums = "Courier,Courier-Bold,Courier-Oblique,Courier-BoldOblique,"
-                                                  + "Helvetica,Helvetica-Bold,Helvetica-Oblique,Helvetica-BoldOblique,"
-                                                  + "Times-Roman,Times-Bold,Times-Italic,Times-BoldItalic,"
-                                                  + "Symbol,ZapfDingbats")
-    private String font = "Helvetica";
+    @UriParam(defaultValue = "HELVETICA", enums = "COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE,"
+                                                  + "HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,"
+                                                  + "TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,"
+                                                  + "SYMBOL,ZAPF_DINGBATS")
+    private String font = "HELVETICA";
     @UriParam(defaultValue = "lineTermination")
     private TextProcessingFactory textProcessingFactory = TextProcessingFactory.lineTermination;
 
@@ -154,8 +153,8 @@ public class PdfConfiguration {
         this.pageSize = pageSize;
     }
 
-    public PDFont getFont() {
-        return Standard14Fonts.getByName(font);
+    public String getFont() {
+        return font;
     }
 
     /**
