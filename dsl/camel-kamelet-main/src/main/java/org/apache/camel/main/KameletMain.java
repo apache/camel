@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
 
@@ -79,6 +81,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RoutesLoader;
@@ -115,6 +118,8 @@ import org.springframework.core.metrics.StartupStep;
 public class KameletMain extends MainCommandLineSupport {
 
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
+
+    private static final Pattern SPRING_PATTERN = Pattern.compile("(\\$\\{.*?})"); // non-greedy mode
 
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
@@ -902,9 +907,16 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     protected String extractValue(String val) {
-        if (val != null && val.startsWith("${") && val.endsWith("}")) {
-            // spring placeholder ${xxx} should be converted into Camel {{xxx}} style
-            val = "{{" + val.substring(2, val.length() - 1) + "}}";
+        // spring placeholder prefix
+        if (val != null && val.contains("${")) {
+            Matcher matcher = SPRING_PATTERN.matcher(val);
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                String replace = "{{" + group.substring(2, group.length() - 1) + "}}";
+                val = matcher.replaceFirst(replace);
+                // we changed so reset matcher so it can find more
+                matcher.reset(val);
+            }
         }
 
         if (!isSilent() && camelContext != null) {
