@@ -443,6 +443,10 @@ public final class EntityParser {
             try {
                 // Determine Content Type of Message
                 String contentTypeStr = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TYPE);
+                if (contentTypeStr == null) {
+                    // contentTypeStr can be null when dispositionNotificationTo isn't set
+                    return;
+                }
                 ContentType contentType = ContentType.parse(contentTypeStr);
 
                 // Determine Charset
@@ -456,7 +460,8 @@ public final class EntityParser {
                 String boundary = HttpMessageUtils.getParameterValue(message, AS2Header.CONTENT_TYPE, "boundary");
 
                 // Determine content transfer encoding
-                String contentTransferEncoding = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
+                String contentTransferEncoding
+                        = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
 
                 AS2SessionInputBuffer inBuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
                 inBuffer.bind(entity.getContent());
@@ -496,6 +501,7 @@ public final class EntityParser {
                 throw new HttpException("Failed to parse entity content", e);
             }
         }
+
     }
 
     public static MultipartSignedEntity parseMultipartSignedEntityBody(
