@@ -264,4 +264,12 @@ public interface ExchangeExtension {
      * @param failureHandled true if failure handled or false otherwise
      */
     void setFailureHandled(boolean failureHandled);
+
+    /**
+     * Create a new exchange copied from this, with the context set to the given context
+     *
+     * @param  context the context associated with the new exchange
+     * @return         A new Exchange instance
+     */
+    Exchange createCopyWithProperties(CamelContext context);
 }
