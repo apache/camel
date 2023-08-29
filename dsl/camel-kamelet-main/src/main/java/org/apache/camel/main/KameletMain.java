@@ -706,7 +706,7 @@ public class KameletMain extends MainCommandLineSupport {
         final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         beanFactory.setAllowCircularReferences(true); // for now
         beanFactory.setBeanClassLoader(classLoader);
-        beanFactory.setBeanExpressionResolver((value, beanExpressionContext) -> extractValue(value));
+        beanFactory.setBeanExpressionResolver((value, beanExpressionContext) -> extractValue(value, true));
         registry.bind("SpringBeanFactory", beanFactory);
 
         // register some existing beans (the list may change)
@@ -852,7 +852,7 @@ public class KameletMain extends MainCommandLineSupport {
                 for (ConstructorArgumentValues.ValueHolder v : ctr.getIndexedArgumentValues().values()) {
                     Object val = v.getValue();
                     if (val instanceof TypedStringValue tsv) {
-                        sj.add("'" + extractValue(tsv.getValue()) + "'");
+                        sj.add("'" + extractValue(tsv.getValue(), false) + "'");
                     } else if (val instanceof BeanReference br) {
                         sj.add("'#bean:" + br.getBeanName() + "'");
                     }
@@ -871,7 +871,7 @@ public class KameletMain extends MainCommandLineSupport {
                         PropertyValue src = v.getOriginalPropertyValue();
                         Object val = src.getValue();
                         if (val instanceof TypedStringValue tsv) {
-                            properties.put(key, extractValue(tsv.getValue()));
+                            properties.put(key, extractValue(tsv.getValue(), false));
                         } else if (val instanceof BeanReference br) {
                             properties.put(key, "#bean:" + br.getBeanName());
                         } else if (val instanceof List) {
@@ -881,7 +881,7 @@ public class KameletMain extends MainCommandLineSupport {
                                 String k = key + "[" + i + "]";
                                 val = it.next();
                                 if (val instanceof TypedStringValue tsv) {
-                                    properties.put(k, extractValue(tsv.getValue()));
+                                    properties.put(k, extractValue(tsv.getValue(), false));
                                 } else if (val instanceof BeanReference br) {
                                     properties.put(k, "#bean:" + br.getBeanName());
                                 }
@@ -893,7 +893,7 @@ public class KameletMain extends MainCommandLineSupport {
                                 String k = key + "[" + entry.getKey().getValue() + "]";
                                 val = entry.getValue();
                                 if (val instanceof TypedStringValue tsv) {
-                                    properties.put(k, extractValue(tsv.getValue()));
+                                    properties.put(k, extractValue(tsv.getValue(), false));
                                 } else if (val instanceof BeanReference br) {
                                     properties.put(k, "#bean:" + br.getBeanName());
                                 }
@@ -905,7 +905,7 @@ public class KameletMain extends MainCommandLineSupport {
         }
     }
 
-    protected String extractValue(String val) {
+    protected String extractValue(String val, boolean resolve) {
         // spring placeholder prefix
         if (val != null && val.contains("${")) {
             Matcher matcher = SPRING_PATTERN.matcher(val);
@@ -918,7 +918,7 @@ public class KameletMain extends MainCommandLineSupport {
             }
         }
 
-        if (!isSilent() && camelContext != null) {
+        if (resolve && camelContext != null) {
             // if running camel then resolve property placeholders from beans
             val = camelContext.resolvePropertyPlaceholders(val);
         }
