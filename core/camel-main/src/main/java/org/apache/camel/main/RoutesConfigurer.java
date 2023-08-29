@@ -358,8 +358,10 @@ public class RoutesConfigurer {
         }
     }
 
-    protected RoutesBuilderLoader resolveRoutesBuilderLoader(CamelContext camelContext, Resource resource,
-                                                             boolean optional) throws Exception {
+    protected RoutesBuilderLoader resolveRoutesBuilderLoader(
+            CamelContext camelContext, Resource resource,
+            boolean optional)
+            throws Exception {
         // the loader to use is derived from the file extension
         final String extension = FileUtil.onlyExt(resource.getLocation(), false);
 
