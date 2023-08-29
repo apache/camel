@@ -37,6 +37,8 @@ public class XmlModelParser extends ModelParser {
 
     @Override
     protected boolean handleUnexpectedElement(String namespace, String name) throws XmlPullParserException {
+        // accept embedded <camelContext> inside Spring XML <beans> files, so we can discover
+        // embedded <routes> inside this <camelContext>.
         if ("camelContext".equals(name) && SPRING_NS.equals(namespace)) {
             return true;
         }
