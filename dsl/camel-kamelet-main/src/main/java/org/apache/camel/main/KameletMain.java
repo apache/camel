@@ -553,7 +553,12 @@ public class KameletMain extends MainCommandLineSupport {
             }
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
             if (download) {
-                answer.addService(new DependencyDownloaderKamelet(answer));
+                Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
+                if (kameletsVersion != null) {
+                    answer.addService(new DependencyDownloaderKamelet(answer, kameletsVersion.toString()));
+                } else {
+                    answer.addService(new DependencyDownloaderKamelet(answer));
+                }
                 answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
                         new DownloadModelineParser(answer));
             }
@@ -647,9 +652,18 @@ public class KameletMain extends MainCommandLineSupport {
     @Override
     protected void configureRoutesLoader(CamelContext camelContext) {
         if (download) {
+            DependencyDownloaderRoutesLoader routesLoader;
+
+            Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
+            if (kameletsVersion != null) {
+                routesLoader = new DependencyDownloaderRoutesLoader(camelContext, kameletsVersion.toString());
+            } else {
+                routesLoader = new DependencyDownloaderRoutesLoader(camelContext);
+            }
+
             // use resolvers that can auto downloaded
             camelContext.getCamelContextExtension()
-                    .addContextPlugin(RoutesLoader.class, new DependencyDownloaderRoutesLoader(camelContext));
+                    .addContextPlugin(RoutesLoader.class, routesLoader);
         } else {
             super.configureRoutesLoader(camelContext);
         }

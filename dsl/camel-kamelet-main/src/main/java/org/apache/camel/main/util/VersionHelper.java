@@ -16,9 +16,18 @@
  */
 package org.apache.camel.main.util;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.camel.util.StringHelper;
 
 public final class VersionHelper {
+
+    private static final String KAMELETS_DEFAULT_VERSION = "4.0.0-RC1";
+    private static final Pattern KAMELETS_LIBRARY = Pattern.compile("camel-kamelets-(\\d[A-Z\\d.-]*).jar", Pattern.DOTALL);
+    private static final String CP = System.getProperty("java.class.path");
 
     private VersionHelper() {
     }
@@ -83,4 +92,20 @@ public final class VersionHelper {
         return s.compareTo(t);
     }
 
+    public static String extractKameletsVersion() {
+        Matcher matcher = KAMELETS_LIBRARY.matcher(CP);
+        if (matcher.find() && matcher.groupCount() > 0) {
+            return matcher.group(1);
+        }
+
+        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+        if (mb != null) {
+            matcher = KAMELETS_LIBRARY.matcher(mb.getClassPath());
+            if (matcher.find() && matcher.groupCount() > 0) {
+                return matcher.group(1);
+            }
+        }
+
+        return KAMELETS_DEFAULT_VERSION;
+    }
 }
