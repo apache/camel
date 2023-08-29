@@ -50,7 +50,6 @@ import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.scan.PackageScanHelper;
-import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
@@ -91,7 +90,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         if (xmlInfo.isValid()) {
             String root = xmlInfo.getRootElementName();
             if ("beans".equals(root) || "camel".equals(root)) {
-                new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                         .parseBeansDefinition()
                         .ifPresent(bd -> {
                             registerBeans(resource, bd);
@@ -122,25 +121,25 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         if (def != null) {
                             configureCamel(def);
                         } else {
-                            new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                            new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                     .parseBeansDefinition()
                                     .ifPresent(this::configureCamel);
                         }
                     }
                     case "routeTemplate", "routeTemplates" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteTemplatesDefinition()
                                 .ifPresent(this::setRouteTemplateCollection);
                     case "templatedRoutes", "templatedRoute" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseTemplatedRoutesDefinition()
                                 .ifPresent(this::setTemplatedRouteCollection);
                     case "rests", "rest" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRestsDefinition()
                                 .ifPresent(this::setRestCollection);
                     case "routes", "route" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRoutesDefinition()
                                 .ifPresent(this::addRoutes);
                     default -> {
@@ -159,7 +158,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             public void configuration() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
                     case "routeConfigurations", "routeConfiguration" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
                     default -> {

@@ -33,6 +33,7 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
+import org.springframework.util.StringValueResolver;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -847,7 +848,7 @@ public class KameletMain extends MainCommandLineSupport {
                 for (ConstructorArgumentValues.ValueHolder v : ctr.getIndexedArgumentValues().values()) {
                     Object val = v.getValue();
                     if (val instanceof TypedStringValue tsv) {
-                        sj.add("'" + tsv.getValue() + "'");
+                        sj.add("'" + extractValue(tsv) + "'");
                     } else if (val instanceof BeanReference br) {
                         sj.add("'#bean:" + br.getBeanName() + "'");
                     }
@@ -866,7 +867,7 @@ public class KameletMain extends MainCommandLineSupport {
                         PropertyValue src = v.getOriginalPropertyValue();
                         Object val = src.getValue();
                         if (val instanceof TypedStringValue tsv) {
-                            properties.put(key, tsv.getValue());
+                            properties.put(key, extractValue(tsv));
                         } else if (val instanceof BeanReference br) {
                             properties.put(key, "#bean:" + br.getBeanName());
                         } else if (val instanceof List) {
@@ -876,7 +877,7 @@ public class KameletMain extends MainCommandLineSupport {
                                 String k = key + "[" + i + "]";
                                 val = it.next();
                                 if (val instanceof TypedStringValue tsv) {
-                                    properties.put(k, tsv.getValue());
+                                    properties.put(k, extractValue(tsv));
                                 } else if (val instanceof BeanReference br) {
                                     properties.put(k, "#bean:" + br.getBeanName());
                                 }
@@ -888,7 +889,7 @@ public class KameletMain extends MainCommandLineSupport {
                                 String k = key + "[" + entry.getKey().getValue() + "]";
                                 val = entry.getValue();
                                 if (val instanceof TypedStringValue tsv) {
-                                    properties.put(k, tsv.getValue());
+                                    properties.put(k, extractValue(tsv));
                                 } else if (val instanceof BeanReference br) {
                                     properties.put(k, "#bean:" + br.getBeanName());
                                 }
@@ -898,6 +899,15 @@ public class KameletMain extends MainCommandLineSupport {
                 }
             }
         }
+    }
+
+    protected String extractValue(TypedStringValue tsv) {
+        String val = tsv.getValue();
+        if (val != null && val.startsWith("${") && val.endsWith("}")) {
+            // spring placeholder ${xxx} should be converted into Camel {{xxx}} style
+            val = "{{" + val.substring(2, val.length() - 1) + "}}";
+        }
+        return val;
     }
 
     @Override
