@@ -26,6 +26,7 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -60,7 +61,7 @@ public class Init extends CamelCommand {
     private String fromKamelet;
 
     @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "4.0.0-RC1")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version")
     private String kameletsVersion;
 
     @Option(names = { "--integration" },
@@ -95,6 +96,9 @@ public class Init extends CamelCommand {
         InputStream is = null;
         if ("kamelet.yaml".equals(ext)) {
             if (fromKamelet != null) {
+                if (kameletsVersion == null) {
+                    kameletsVersion = VersionHelper.extractKameletsVersion();
+                }
                 // load existing kamelet
                 is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion);
             } else if (file.contains("source")) {

@@ -31,10 +31,16 @@ import org.apache.camel.support.service.ServiceHelper;
 public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
 
     private final DependencyDownloader downloader;
+    private final String kameletsVersion;
 
     public DependencyDownloaderRoutesLoader(CamelContext camelContext) {
+        this(camelContext, null);
+    }
+
+    public DependencyDownloaderRoutesLoader(CamelContext camelContext, String kameletsVersion) {
         setCamelContext(camelContext);
         this.downloader = camelContext.hasService(DependencyDownloader.class);
+        this.kameletsVersion = kameletsVersion;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
         // special for kamelet as we want to track loading kamelets
         RoutesBuilderLoader loader;
         if (KameletRoutesBuilderLoader.EXTENSION.equals(extension)) {
-            loader = new KnownKameletRoutesBuilderLoader();
+            loader = new KnownKameletRoutesBuilderLoader(kameletsVersion);
             CamelContextAware.trySetCamelContext(loader, getCamelContext());
             // allows for custom initialization
             initRoutesBuilderLoader(loader);
