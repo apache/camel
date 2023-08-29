@@ -52,7 +52,7 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  * @see DefaultExchange
  */
 class AbstractExchange implements Exchange {
-    protected final EnumMap<ExchangePropertyKey, Object> internalProperties = new EnumMap<>(ExchangePropertyKey.class);
+    protected final EnumMap<ExchangePropertyKey, Object> internalProperties;
 
     protected final CamelContext context;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
@@ -69,6 +69,14 @@ class AbstractExchange implements Exchange {
     private final ExtendedExchangeExtension privateExtension;
     private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
+    AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
+                     Map<String, Object> properties) {
+        this.context = context;
+        this.internalProperties = new EnumMap<>(internalProperties);
+        this.privateExtension = new ExtendedExchangeExtension(this);
+        this.properties = properties;
+    }
+
     public AbstractExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
     }
@@ -78,6 +86,7 @@ class AbstractExchange implements Exchange {
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
 
+        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
         privateExtension = new ExtendedExchangeExtension(this);
     }
 
@@ -85,6 +94,8 @@ class AbstractExchange implements Exchange {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
         this.created = parent.getCreated();
+
+        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
 
         privateExtension = new ExtendedExchangeExtension(this);
         privateExtension.setFromEndpoint(parent.getFromEndpoint());
@@ -97,6 +108,7 @@ class AbstractExchange implements Exchange {
         this.pattern = fromEndpoint.getExchangePattern();
         this.created = System.currentTimeMillis();
 
+        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
         privateExtension = new ExtendedExchangeExtension(this);
         privateExtension.setFromEndpoint(fromEndpoint);
     }
@@ -106,6 +118,7 @@ class AbstractExchange implements Exchange {
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
 
+        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
         privateExtension = new ExtendedExchangeExtension(this);
         privateExtension.setFromEndpoint(fromEndpoint);
     }

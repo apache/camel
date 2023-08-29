@@ -16,15 +16,24 @@
  */
 package org.apache.camel.support;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 
 /**
  * The default and only implementation of {@link Exchange}.
  */
 public final class DefaultExchange extends AbstractExchange {
+
+    DefaultExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
+                    Map<String, Object> properties) {
+        super(context, internalProperties, properties);
+    }
 
     public DefaultExchange(CamelContext context) {
         super(context);
@@ -45,5 +54,4 @@ public final class DefaultExchange extends AbstractExchange {
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         super(fromEndpoint, pattern);
     }
-
 }

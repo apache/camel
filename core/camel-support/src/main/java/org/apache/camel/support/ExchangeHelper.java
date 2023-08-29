@@ -24,7 +24,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -783,17 +782,6 @@ public final class ExchangeHelper {
         return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId() + ")";
     }
 
-    /**
-     * Copies the exchange but the copy will be tied to the given context
-     *
-     * @param  exchange the source exchange
-     * @param  context  the camel context
-     * @return          a copy with the given camel context
-     */
-    public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
-        return copyExchangeAndSetCamelContext(exchange, context, true);
-    }
-
     /*
      * Safe copy message history using a defensive copy
      */
@@ -809,23 +797,13 @@ public final class ExchangeHelper {
      * Copies the exchange but the copy will be tied to the given context
      *
      * @param  exchange the source exchange
-     * @param  context  the camel context
-     * @param  handover whether to handover on completions from the source to the copy
      * @return          a copy with the given camel context
      */
-    public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context, boolean handover) {
-        DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
-        if (exchange.hasProperties()) {
-            answer.getExchangeExtension().setProperties(safeCopyProperties(exchange.getProperties()));
-        }
-        exchange.getExchangeExtension().copyInternalProperties(answer);
+    public static Exchange copyExchangeWithProperties(Exchange exchange, CamelContext context) {
+        Exchange answer = exchange.getExchangeExtension().createCopyWithProperties(context);
 
         setMessageHistory(answer, exchange);
 
-        if (handover) {
-            // Need to hand over the completion for async invocation
-            exchange.getExchangeExtension().handoverCompletions(answer);
-        }
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
             answer.setOut(exchange.getOut().copy());
@@ -890,13 +868,6 @@ public final class ExchangeHelper {
      */
     public static String resolveScheme(String uri) {
         return StringHelper.before(uri, ":");
-    }
-
-    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
-        }
-        return new ConcurrentHashMap<>(properties);
     }
 
     /**
