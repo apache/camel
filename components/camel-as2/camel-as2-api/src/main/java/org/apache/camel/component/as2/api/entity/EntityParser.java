@@ -444,52 +444,56 @@ public final class EntityParser {
             try {
                 // Determine Content Type of Message
                 String contentTypeStr = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TYPE);
-                ContentType contentType = ContentType.parse(contentTypeStr);
+                if (contentTypeStr != null) {
+                    // contentTypeStr can be null when dispositionNotificationTo isn't set
+                    ContentType contentType = ContentType.parse(contentTypeStr);
 
-                // Determine Charset
-                String charsetName = StandardCharsets.US_ASCII.name();
-                Charset charset = contentType.getCharset();
-                if (charset != null) {
-                    charsetName = charset.name();
-                }
+                    // Determine Charset
+                    String charsetName = StandardCharsets.US_ASCII.name();
+                    Charset charset = contentType.getCharset();
+                    if (charset != null) {
+                        charsetName = charset.name();
+                    }
 
-                // Get any Boundary Value
-                String boundary = HttpMessageUtils.getParameterValue(message, AS2Header.CONTENT_TYPE, "boundary");
+                    // Get any Boundary Value
+                    String boundary = HttpMessageUtils.getParameterValue(message, AS2Header.CONTENT_TYPE, "boundary");
 
-                // Determine content transfer encoding
-                String contentTransferEncoding = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
+                    // Determine content transfer encoding
+                    String contentTransferEncoding
+                            = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
 
-                AS2SessionInputBuffer inBuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
-                inBuffer.bind(entity.getContent());
+                    AS2SessionInputBuffer inBuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
+                    inBuffer.bind(entity.getContent());
 
-                switch (contentType.getMimeType().toLowerCase()) {
-                    case AS2MimeType.APPLICATION_EDIFACT:
-                    case AS2MimeType.APPLICATION_EDI_X12:
-                    case AS2MimeType.APPLICATION_EDI_CONSENT:
-                        parseApplicationEDIEntity(message, inBuffer, contentType, contentTransferEncoding);
-                        break;
-                    case AS2MimeType.MULTIPART_SIGNED:
-                        parseMultipartSignedEntity(message, inBuffer, boundary, charsetName, contentTransferEncoding);
-                        break;
-                    case AS2MimeType.APPLICATION_PKCS7_MIME:
-                        switch (contentType.getParameter("smime-type")) {
-                            case "compressed-data":
-                                parseApplicationPkcs7MimeCompressedEntity(message, inBuffer, contentType,
-                                        contentTransferEncoding);
-                                break;
-                            case "enveloped-data":
-                                parseApplicationPkcs7MimeEnvelopedEntity(message, inBuffer, contentType,
-                                        contentTransferEncoding);
-                                break;
-                            default:
-                        }
-                        break;
-                    case AS2MimeType.MULTIPART_REPORT:
-                        parseMessageDispositionNotificationReportEntity(message, inBuffer, boundary, charsetName,
-                                contentTransferEncoding);
-                        break;
-                    default:
-                        break;
+                    switch (contentType.getMimeType().toLowerCase()) {
+                        case AS2MimeType.APPLICATION_EDIFACT:
+                        case AS2MimeType.APPLICATION_EDI_X12:
+                        case AS2MimeType.APPLICATION_EDI_CONSENT:
+                            parseApplicationEDIEntity(message, inBuffer, contentType, contentTransferEncoding);
+                            break;
+                        case AS2MimeType.MULTIPART_SIGNED:
+                            parseMultipartSignedEntity(message, inBuffer, boundary, charsetName, contentTransferEncoding);
+                            break;
+                        case AS2MimeType.APPLICATION_PKCS7_MIME:
+                            switch (contentType.getParameter("smime-type")) {
+                                case "compressed-data":
+                                    parseApplicationPkcs7MimeCompressedEntity(message, inBuffer, contentType,
+                                            contentTransferEncoding);
+                                    break;
+                                case "enveloped-data":
+                                    parseApplicationPkcs7MimeEnvelopedEntity(message, inBuffer, contentType,
+                                            contentTransferEncoding);
+                                    break;
+                                default:
+                            }
+                            break;
+                        case AS2MimeType.MULTIPART_REPORT:
+                            parseMessageDispositionNotificationReportEntity(message, inBuffer, boundary, charsetName,
+                                    contentTransferEncoding);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             } catch (HttpException e) {
                 throw e;
