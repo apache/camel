@@ -22,6 +22,10 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.XmlPullParserException;
 
+/**
+ * XML {@link ModelParser} that supports loading classic Spring XML <beans> with embedded <camelContext>, with limited
+ * parsing, to discover <routes> inside <camelContext>.
+ */
 public class XmlModelParser extends ModelParser {
 
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
