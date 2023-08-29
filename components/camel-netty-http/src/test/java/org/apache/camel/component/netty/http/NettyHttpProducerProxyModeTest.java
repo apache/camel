@@ -22,19 +22,18 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.netty.http.NettyHttpEndpoint.PROXY_NOT_SUPPORTED_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpProducerProxyModeTest extends CamelTestSupport {
 
+    private final int port = AvailablePortFinder.getNextAvailable();
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
-
-    private static final int port = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testProxyNotSupported() throws Exception {
@@ -51,9 +50,9 @@ public class NettyHttpProducerProxyModeTest extends CamelTestSupport {
 
         FailedToStartRouteException thrown = assertThrows(FailedToStartRouteException.class, () -> {
             context.start();
-        }, PROXY_NOT_SUPPORTED_MESSAGE);
+        }, "Netty Http Producer does not support proxy mode");
 
         assertNotNull(thrown.getMessage());
-        assertTrue(thrown.getMessage().contains(PROXY_NOT_SUPPORTED_MESSAGE));
+        assertTrue(thrown.getMessage().contains("Netty Http Producer does not support proxy mode"));
     }
 }
