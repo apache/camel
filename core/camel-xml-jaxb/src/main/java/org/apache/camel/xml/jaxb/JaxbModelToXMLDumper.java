@@ -162,7 +162,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
     public String dumpModelAsXml(
             CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
-        String xml = dumpModelAsXml(context, definition);
+        String xml = doDumpModelAsXml(context, definition, generatedIds);
 
         // if resolving placeholders we parse the xml, and resolve the property
         // placeholders during parsing

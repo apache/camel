@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
 
@@ -115,6 +117,8 @@ import org.springframework.core.metrics.StartupStep;
 public class KameletMain extends MainCommandLineSupport {
 
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
+
+    private static final Pattern SPRING_PATTERN = Pattern.compile("(\\$\\{.*?})"); // non-greedy mode
 
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
@@ -702,6 +706,7 @@ public class KameletMain extends MainCommandLineSupport {
         final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         beanFactory.setAllowCircularReferences(true); // for now
         beanFactory.setBeanClassLoader(classLoader);
+        beanFactory.setBeanExpressionResolver((value, beanExpressionContext) -> extractValue(value, true));
         registry.bind("SpringBeanFactory", beanFactory);
 
         // register some existing beans (the list may change)
@@ -847,7 +852,7 @@ public class KameletMain extends MainCommandLineSupport {
                 for (ConstructorArgumentValues.ValueHolder v : ctr.getIndexedArgumentValues().values()) {
                     Object val = v.getValue();
                     if (val instanceof TypedStringValue tsv) {
-                        sj.add("'" + tsv.getValue() + "'");
+                        sj.add("'" + extractValue(tsv.getValue(), false) + "'");
                     } else if (val instanceof BeanReference br) {
                         sj.add("'#bean:" + br.getBeanName() + "'");
                     }
@@ -866,7 +871,7 @@ public class KameletMain extends MainCommandLineSupport {
                         PropertyValue src = v.getOriginalPropertyValue();
                         Object val = src.getValue();
                         if (val instanceof TypedStringValue tsv) {
-                            properties.put(key, tsv.getValue());
+                            properties.put(key, extractValue(tsv.getValue(), false));
                         } else if (val instanceof BeanReference br) {
                             properties.put(key, "#bean:" + br.getBeanName());
                         } else if (val instanceof List) {
@@ -876,7 +881,7 @@ public class KameletMain extends MainCommandLineSupport {
                                 String k = key + "[" + i + "]";
                                 val = it.next();
                                 if (val instanceof TypedStringValue tsv) {
-                                    properties.put(k, tsv.getValue());
+                                    properties.put(k, extractValue(tsv.getValue(), false));
                                 } else if (val instanceof BeanReference br) {
                                     properties.put(k, "#bean:" + br.getBeanName());
                                 }
@@ -888,7 +893,7 @@ public class KameletMain extends MainCommandLineSupport {
                                 String k = key + "[" + entry.getKey().getValue() + "]";
                                 val = entry.getValue();
                                 if (val instanceof TypedStringValue tsv) {
-                                    properties.put(k, tsv.getValue());
+                                    properties.put(k, extractValue(tsv.getValue(), false));
                                 } else if (val instanceof BeanReference br) {
                                     properties.put(k, "#bean:" + br.getBeanName());
                                 }
@@ -898,6 +903,26 @@ public class KameletMain extends MainCommandLineSupport {
                 }
             }
         }
+    }
+
+    protected String extractValue(String val, boolean resolve) {
+        // spring placeholder prefix
+        if (val != null && val.contains("${")) {
+            Matcher matcher = SPRING_PATTERN.matcher(val);
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                String replace = "{{" + group.substring(2, group.length() - 1) + "}}";
+                val = matcher.replaceFirst(replace);
+                // we changed so reset matcher so it can find more
+                matcher.reset(val);
+            }
+        }
+
+        if (resolve && camelContext != null) {
+            // if running camel then resolve property placeholders from beans
+            val = camelContext.resolvePropertyPlaceholders(val);
+        }
+        return val;
     }
 
     @Override
