@@ -72,7 +72,7 @@ public class DataTypeProcessor implements Processor {
         DataType fromDataType = DataType.ANY;
         if (fromType != null) {
             fromDataType = new DataType(fromType);
-        } else if (message instanceof DataTypeAware) {
+        } else if (message instanceof DataTypeAware && ((DataTypeAware) message).hasDataType()) {
             fromDataType = ((DataTypeAware) message).getDataType();
         }
 
