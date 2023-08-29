@@ -72,7 +72,7 @@ class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
 
                 from("direct:serviceB").routeId("serviceB")
                         .process(exchange -> {
-                            Thread.sleep(100);
+                            // noop
                         }).id("direct-processor");
             }
 
@@ -80,7 +80,6 @@ class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
                 Span span = getTracer().spanBuilder("third-party-span").startSpan();
                 try (Scope ignored = span.makeCurrent()) {
                     span.setAttribute(COMPONENT_KEY, "third-party-component");
-                    Thread.sleep(100);
                 } finally {
                     span.end();
                 }
