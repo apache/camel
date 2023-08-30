@@ -20,6 +20,8 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.util.ObjectHelper;
 
 public final class XmlHelper {
@@ -58,6 +60,16 @@ public final class XmlHelper {
         } catch (Exception e) {
         }
         return factory;
+    }
+
+    public static String getAttribute(Node node, String key) {
+        if (node != null && node.hasAttributes()) {
+            Node attr = node.getAttributes().getNamedItem(key);
+            if (attr != null) {
+                return attr.getNodeValue();
+            }
+        }
+        return null;
     }
 
 }

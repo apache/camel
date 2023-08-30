@@ -245,7 +245,7 @@ public class SpringXmlBeansHandler {
                 if (val instanceof TypedStringValue tsv) {
                     sj.add("'" + extractValue(camelContext, tsv.getValue(), false) + "'");
                 } else if (val instanceof BeanReference br) {
-                    sj.add("'#bean:" + br.getBeanName() + "'");
+                    sj.add("'#bean:" + extractValue(camelContext, br.getBeanName(), false) + "'");
                 }
             }
             if (sj.length() > 0) {
@@ -264,7 +264,7 @@ public class SpringXmlBeansHandler {
                     if (val instanceof TypedStringValue tsv) {
                         properties.put(key, extractValue(camelContext, tsv.getValue(), false));
                     } else if (val instanceof BeanReference br) {
-                        properties.put(key, "#bean:" + br.getBeanName());
+                        properties.put(key, "#bean:" + extractValue(camelContext, br.getBeanName(), false));
                     } else if (val instanceof List) {
                         int i = 0;
                         Iterator<?> it = ObjectHelper.createIterator(val);
@@ -274,7 +274,7 @@ public class SpringXmlBeansHandler {
                             if (val instanceof TypedStringValue tsv) {
                                 properties.put(k, extractValue(camelContext, tsv.getValue(), false));
                             } else if (val instanceof BeanReference br) {
-                                properties.put(k, "#bean:" + br.getBeanName());
+                                properties.put(k, "#bean:" + extractValue(camelContext, br.getBeanName(), false));
                             }
                             i++;
                         }
@@ -286,7 +286,7 @@ public class SpringXmlBeansHandler {
                             if (val instanceof TypedStringValue tsv) {
                                 properties.put(k, extractValue(camelContext, tsv.getValue(), false));
                             } else if (val instanceof BeanReference br) {
-                                properties.put(k, "#bean:" + br.getBeanName());
+                                properties.put(k, "#bean:" + extractValue(camelContext, br.getBeanName(), false));
                             }
                         }
                     }

@@ -16,13 +16,25 @@
  */
 package org.apache.camel.main.xml.blueprint;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.app.RegistryBeanDefinition;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +45,12 @@ import org.slf4j.LoggerFactory;
 public class BlueprintXmlBeansHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringXmlBeansHandler.class);
+    private static final Pattern BLUEPRINT_PATTERN = Pattern.compile("(\\$\\{.*?})"); // non-greedy mode
+
+    // when preparing blueprint-based beans, we may have problems loading classes which are provided with Java DSL
+    // that's why some beans should be processed later
+    private final Map<String, Node> delayedBeans = new LinkedHashMap<>();
+    private final Map<String, Resource> resources = new LinkedHashMap<>();
 
     /**
      * Parses the XML documents and discovers blueprint beans, which will be created manually via Camel.
@@ -41,13 +59,124 @@ public class BlueprintXmlBeansHandler {
             CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
 
         LOG.debug("Loading beans from classic OSGi <blueprint> XML");
+
+        xmls.forEach((id, doc) -> {
+            if (id.startsWith("camel-xml-io-dsl-blueprint-xml:")) {
+                // this is a camel bean via camel-xml-io-dsl
+                String fileName = StringHelper.afterLast(id, ":");
+                discoverBeans(camelContext, fileName, doc);
+            }
+        });
     }
 
     /**
      * Invoked at later stage to create and register Blueprint beans into Camel {@link org.apache.camel.spi.Registry}.
      */
     public void createAndRegisterBeans(CamelContext camelContext) {
+        LOG.info("Discovered {} OSGi <blueprint> XML beans", delayedBeans.size());
 
+        for (Map.Entry<String, Node> entry : delayedBeans.entrySet()) {
+            String id = entry.getKey();
+            Node n = entry.getValue();
+            RegistryBeanDefinition bean = createBeanModel(camelContext, id, n);
+            // create bean and register to camel
+
+            LOG.info("Creating bean: {}", bean);
+            // TODO: create bean from the model
+
+            // register bean into model (as a BeanRegistry that allows Camel DSL to know about these beans)
+            Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+            model.addRegistryBean(bean);
+        }
+    }
+
+    private RegistryBeanDefinition createBeanModel(CamelContext camelContext, String name, Node node) {
+        RegistryBeanDefinition rrd = new RegistryBeanDefinition();
+        rrd.setResource(resources.get(name));
+        rrd.setType(XmlHelper.getAttribute(node, "class"));
+        rrd.setName(name);
+
+        // constructor arguments
+        StringJoiner sj = new StringJoiner(", ");
+        NodeList props = node.getChildNodes();
+        for (int i = 0; i < props.getLength(); i++) {
+            Node child = props.item(i);
+            // assume the args are in order (1, 2)
+            if ("argument".equals(child.getNodeName())) {
+                String val = XmlHelper.getAttribute(child, "value");
+                String ref = XmlHelper.getAttribute(child, "ref");
+                if (val != null) {
+                    sj.add("'" + extractValue(camelContext, val, false) + "'");
+                } else if (ref != null) {
+                    sj.add("'#bean:" + extractValue(camelContext, ref, false) + "'");
+                }
+            }
+        }
+        if (sj.length() > 0) {
+            rrd.setType("#class:" + rrd.getType() + "(" + sj + ")");
+        }
+
+        // property values
+        Map<String, Object> properties = new LinkedHashMap<>();
+        props = node.getChildNodes();
+        for (int i = 0; i < props.getLength(); i++) {
+            Node child = props.item(i);
+            // assume the args are in order (1, 2)
+            if ("property".equals(child.getNodeName())) {
+                String key = XmlHelper.getAttribute(child, "name");
+                String val = XmlHelper.getAttribute(child, "value");
+                String ref = XmlHelper.getAttribute(child, "ref");
+
+                // TODO: List/Map properties
+                if (key != null && val != null) {
+                    properties.put(key, extractValue(camelContext, val, false));
+                } else if (key != null && ref != null) {
+                    properties.put(key, extractValue(camelContext, "#bean:" + ref, false));
+                }
+            }
+        }
+        if (!properties.isEmpty()) {
+            rrd.setProperties(properties);
+        }
+
+        return rrd;
+    }
+
+    private void discoverBeans(CamelContext camelContext, String fileName, Document dom) {
+        Resource resource = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                .resolveResource("file:" + fileName);
+
+        NodeList beans = dom.getElementsByTagName("bean");
+        for (int i = 0; i < beans.getLength(); i++) {
+            Node n = beans.item(i);
+            if (n.hasAttributes()) {
+                String id = XmlHelper.getAttribute(n, "id");
+                if (id != null) {
+                    delayedBeans.put(id, n);
+                    resources.put(id, resource);
+                }
+            }
+        }
+    }
+
+    protected String extractValue(CamelContext camelContext, String val, boolean resolve) {
+        // blueprint placeholder prefix
+        if (val != null && val.contains("${")) {
+            Matcher matcher = BLUEPRINT_PATTERN.matcher(val);
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                String replace = "{{" + group.substring(2, group.length() - 1) + "}}";
+                val = matcher.replaceFirst(replace);
+                // we changed so reset matcher so it can find more
+                matcher.reset(val);
+            }
+        }
+
+        if (resolve && camelContext != null) {
+            // if running camel then resolve property placeholders from beans
+            val = camelContext.resolvePropertyPlaceholders(val);
+        }
+        return val;
     }
 
 }
