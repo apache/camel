@@ -57,10 +57,10 @@ public final class KinesisUtils {
 
     }
 
-    private static void doCreateStream(KinesisClient kinesisClient, String streamName) {
+    private static void doCreateStream(KinesisClient kinesisClient, String streamName, int shardCount) {
         CreateStreamRequest request = CreateStreamRequest.builder()
                 .streamName(streamName)
-                .shardCount(1)
+                .shardCount(shardCount)
                 .build();
 
         try {
@@ -78,6 +78,10 @@ public final class KinesisUtils {
     }
 
     public static void createStream(KinesisClient kinesisClient, String streamName) {
+        createStream(kinesisClient, streamName, 1);
+    }
+
+    public static void createStream(KinesisClient kinesisClient, String streamName, int shardCount) {
         try {
             LOG.info("Checking whether the stream exists already");
             int status = getStreamStatus(kinesisClient, streamName);
@@ -89,7 +93,7 @@ public final class KinesisUtils {
                 LOG.info("The stream does not exist, auto creating it: {}", e.getMessage());
             }
 
-            doCreateStream(kinesisClient, streamName);
+            doCreateStream(kinesisClient, streamName, shardCount);
             TestUtils.waitFor(() -> {
                 try {
                     GetRecordsRequest getRecordsRequest = KinesisUtils.getGetRecordsRequest(kinesisClient, streamName);
