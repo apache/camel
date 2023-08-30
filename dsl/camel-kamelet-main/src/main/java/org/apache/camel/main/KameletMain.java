@@ -59,7 +59,8 @@ import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
-import org.apache.camel.main.xml.SpringXmlBeansHandler;
+import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
+import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -100,6 +101,7 @@ public class KameletMain extends MainCommandLineSupport {
     private DependencyDownloaderClassLoader classLoader;
 
     private final SpringXmlBeansHandler springXmlBeansHandler = new SpringXmlBeansHandler();
+    private final BlueprintXmlBeansHandler blueprintXmlBeansHandler = new BlueprintXmlBeansHandler();
 
     public KameletMain() {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
@@ -662,14 +664,14 @@ public class KameletMain extends MainCommandLineSupport {
             springXmlBeansHandler.processSpringBeans(camelContext, config, springXmls);
         }
         if (!blueprintXmls.isEmpty()) {
-            // TODO: blueprint
+            blueprintXmlBeansHandler.processBlueprintBeans(camelContext, config, blueprintXmls);
         }
     }
 
     @Override
     protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
         springXmlBeansHandler.createAndRegisterBeans(camelContext);
-        // TODO: blueprint
+        blueprintXmlBeansHandler.createAndRegisterBeans(camelContext);
     }
 
     @Override

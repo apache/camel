@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.xml;
+package org.apache.camel.main.xml.spring;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,6 +60,10 @@ import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.metrics.StartupStep;
 
+/**
+ * Used for parsing and discovering legacy Spring XML <beans> to make it runnable on camel-jbang, and for tooling to
+ * migrate this to modern Camel DSL in plain Camel XML or YAML DSL.
+ */
 public class SpringXmlBeansHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringXmlBeansHandler.class);
@@ -134,7 +138,7 @@ public class SpringXmlBeansHandler {
     }
 
     /**
-     * Invoked at later stage to create and register spring beans into Camel {@link org.apache.camel.spi.Registry}.
+     * Invoked at later stage to create and register Spring beans into Camel {@link org.apache.camel.spi.Registry}.
      */
     public void createAndRegisterBeans(CamelContext camelContext) {
         if (delayedBeans.isEmpty()) {
