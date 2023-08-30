@@ -37,16 +37,19 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanLocalContainerService.class);
 
     private final GenericContainer container;
+    private final boolean isNetworkHost;
 
     public InfinispanLocalContainerService() {
         this(System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER, CONTAINER_IMAGE));
     }
 
     public InfinispanLocalContainerService(String containerImage) {
+        isNetworkHost = isHostNetworkMode();
         container = initContainer(containerImage, CONTAINER_NAME);
     }
 
     public InfinispanLocalContainerService(GenericContainer container) {
+        isNetworkHost = isHostNetworkMode();
         this.container = container;
     }
 
@@ -54,16 +57,21 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
         final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
-        return new GenericContainer<>(imageName)
+        final GenericContainer c = new GenericContainer<>(imageName)
                 .withNetworkAliases(containerName)
                 .withEnv("USER", DEFAULT_USERNAME)
                 .withEnv("PASS", DEFAULT_PASSWORD)
                 .withLogConsumer(logConsumer)
                 .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
                 .withCommand("-c", "/user-config/infinispan.xml")
-                .withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
-                .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
+        if (isNetworkHost) {
+            c.withNetworkMode("host");
+        } else {
+            c.withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
+                    .waitingFor(Wait.forListeningPort());
+        }
+        return c;
     }
 
     @Override
@@ -73,6 +81,7 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
         System.setProperty(InfinispanProperties.SERVICE_ADDRESS, getServiceAddress());
         System.setProperty(InfinispanProperties.SERVICE_USERNAME, DEFAULT_USERNAME);
         System.setProperty(InfinispanProperties.SERVICE_PASSWORD, DEFAULT_PASSWORD);
+        System.setProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST, String.valueOf(isNetworkHost));
     }
 
     @Override
@@ -94,6 +103,7 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
         System.clearProperty(InfinispanProperties.SERVICE_ADDRESS);
         System.clearProperty(InfinispanProperties.SERVICE_USERNAME);
         System.clearProperty(InfinispanProperties.SERVICE_PASSWORD);
+        System.clearProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST);
     }
 
     @Override
@@ -108,7 +118,9 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
 
     @Override
     public int port() {
-        return container.getMappedPort(InfinispanProperties.DEFAULT_SERVICE_PORT);
+        return isNetworkHost
+                ? InfinispanProperties.DEFAULT_SERVICE_PORT
+                : container.getMappedPort(InfinispanProperties.DEFAULT_SERVICE_PORT);
     }
 
     @Override
@@ -124,5 +136,10 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
     @Override
     public String password() {
         return DEFAULT_PASSWORD;
+    }
+
+    private boolean isHostNetworkMode() {
+        return Boolean.parseBoolean(System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST,
+                String.valueOf(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST_DEFAULT)));
     }
 }
