@@ -31,7 +31,6 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.main.util.XmlHelper;
-import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.Resource;

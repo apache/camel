@@ -72,7 +72,9 @@ public class SpringXmlBeansHandler {
     // when preparing spring-based beans, we may have problems loading classes which are provided with Java DSL
     // that's why some beans should be processed later
     private final List<String> delayedBeans = new LinkedList<>();
-    private Set<String> infraBeanNames;
+    // register some existing beans (the list may change)
+    // would be nice to keep the documentation up to date: docs/user-manual/modules/ROOT/pages/camel-jbang.adoc
+    private final Set<String> infraBeanNames = Set.of("CamelContext", "MainConfiguration");
 
     /**
      * Parses the XML documents and discovers spring beans, which will be created by Spring {@link BeanFactory}.
@@ -92,9 +94,6 @@ public class SpringXmlBeansHandler {
         beanFactory.setBeanExpressionResolver((value, beanExpressionContext) -> extractValue(camelContext, value, true));
         camelContext.getRegistry().bind("SpringBeanFactory", beanFactory);
 
-        // register some existing beans (the list may change)
-        // would be nice to keep the documentation up to date: docs/user-manual/modules/ROOT/pages/camel-jbang.adoc
-        infraBeanNames = Set.of("CamelContext", "MainConfiguration");
         beanFactory.registerSingleton("CamelContext", camelContext);
         beanFactory.registerSingleton("MainConfiguration", config);
         // ...
