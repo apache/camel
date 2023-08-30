@@ -19,6 +19,7 @@ package org.apache.camel.dsl.xml.io;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class XmlSpringBeansLoadTest {
@@ -30,9 +31,10 @@ public class XmlSpringBeansLoadTest {
             Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/springBeans.xml");
 
-            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
-
-            // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
+            Assertions.assertDoesNotThrow(() -> {
+                // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
+                PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+            });
         }
     }
 
