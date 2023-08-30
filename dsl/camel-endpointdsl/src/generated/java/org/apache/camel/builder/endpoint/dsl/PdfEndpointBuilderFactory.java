@@ -46,7 +46,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: Helvetica
+         * Default: HELVETICA
          * Group: producer
          * 
          * @param font the value to set
