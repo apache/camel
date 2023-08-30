@@ -42,6 +42,7 @@ public final class YamlProperties {
         private boolean deprecated;
         private boolean secret;
         private Schema schema;
+        private String oneOf;
 
         public AnnotationBuilder withName(String name) {
             this.name = name;
@@ -149,6 +150,11 @@ public final class YamlProperties {
             return withIsSecret(node.asBoolean());
         }
 
+        public AnnotationBuilder withOneOf(String oneOf) {
+            this.oneOf = oneOf;
+            return this;
+        }
+
         public AnnotationSpec build() {
             AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
             builder.addMember("name", "$S", name);
@@ -181,6 +187,9 @@ public final class YamlProperties {
             }
             if (!Strings.isNullOrEmpty(displayName)) {
                 builder.addMember("displayName", "$S", displayName);
+            }
+            if (!Strings.isNullOrEmpty(oneOf)) {
+                builder.addMember("oneOf", "$S", oneOf);
             }
 
             return builder.build();

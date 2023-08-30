@@ -41,4 +41,6 @@ public @interface YamlProperty {
     boolean required() default false;
 
     String[] values() default {};
+
+    String oneOf() default "";
 }
