@@ -133,6 +133,7 @@ public class SpringXmlBeansHandler {
         List<String> beanNames = Arrays.asList(beanFactory.getBeanDefinitionNames());
 
         // Trigger initialization of all non-lazy singleton beans...
+        LOG.info("Discovered {} Spring XML <beans>", beanNames.size());
         instantiateAndRegisterBeans(camelContext, beanFactory, beanNames);
     }
 

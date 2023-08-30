@@ -76,20 +76,23 @@ public class BlueprintXmlBeansHandler {
      * Invoked at later stage to create and register Blueprint beans into Camel {@link org.apache.camel.spi.Registry}.
      */
     public void createAndRegisterBeans(CamelContext camelContext) {
-        LOG.info("Discovered {} OSGi <blueprint> XML beans", delayedBeans.size());
+        if (delayedBeans.isEmpty()) {
+            return;
+        }
 
+        LOG.info("Discovered {} OSGi <blueprint> XML beans", delayedBeans.size());
         for (Map.Entry<String, Node> entry : delayedBeans.entrySet()) {
             String id = entry.getKey();
             Node n = entry.getValue();
             RegistryBeanDefinition def = createBeanModel(camelContext, id, n);
-            LOG.info("Creating bean: {}", def);
+            LOG.debug("Creating bean: {}", def.getName());
             registerBeanDefinition(camelContext, def, true);
         }
 
         if (!delayedRegistrations.isEmpty()) {
             // some of the beans were not available yet, so we have to try register them now
             for (RegistryBeanDefinition def : delayedRegistrations) {
-                LOG.info("Creating bean (2nd-try): {}", def);
+                LOG.debug("Creating bean (2nd-try): {}", def.getName());
                 registerBeanDefinition(camelContext, def, false);
             }
             delayedRegistrations.clear();
