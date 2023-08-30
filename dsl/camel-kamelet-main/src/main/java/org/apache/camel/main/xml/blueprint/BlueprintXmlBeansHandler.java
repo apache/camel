@@ -16,7 +16,9 @@
  */
 package org.apache.camel.main.xml.blueprint;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
@@ -34,6 +36,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +54,7 @@ public class BlueprintXmlBeansHandler {
     // that's why some beans should be processed later
     private final Map<String, Node> delayedBeans = new LinkedHashMap<>();
     private final Map<String, Resource> resources = new LinkedHashMap<>();
+    private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
 
     /**
      * Parses the XML documents and discovers blueprint beans, which will be created manually via Camel.
@@ -78,16 +82,20 @@ public class BlueprintXmlBeansHandler {
         for (Map.Entry<String, Node> entry : delayedBeans.entrySet()) {
             String id = entry.getKey();
             Node n = entry.getValue();
-            RegistryBeanDefinition bean = createBeanModel(camelContext, id, n);
-            // create bean and register to camel
-
-            LOG.info("Creating bean: {}", bean);
-            // TODO: create bean from the model
-
-            // register bean into model (as a BeanRegistry that allows Camel DSL to know about these beans)
-            Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-            model.addRegistryBean(bean);
+            RegistryBeanDefinition def = createBeanModel(camelContext, id, n);
+            LOG.info("Creating bean: {}", def);
+            registerBeanDefinition(camelContext, def, true);
         }
+
+        if (!delayedRegistrations.isEmpty()) {
+            // some of the beans were not available yet, so we have to try register them now
+            for (RegistryBeanDefinition def : delayedRegistrations) {
+                LOG.info("Creating bean (2nd-try): {}", def);
+                registerBeanDefinition(camelContext, def, false);
+            }
+            delayedRegistrations.clear();
+        }
+
     }
 
     private RegistryBeanDefinition createBeanModel(CamelContext camelContext, String name, Node node) {
@@ -177,6 +185,42 @@ public class BlueprintXmlBeansHandler {
             val = camelContext.resolvePropertyPlaceholders(val);
         }
         return val;
+    }
+
+    /**
+     * Try to instantiate bean from the definition.
+     */
+    private void registerBeanDefinition(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
+        String type = def.getType();
+        String name = def.getName();
+        if (name == null || name.trim().isEmpty()) {
+            name = type;
+        }
+        if (type != null) {
+            if (!type.startsWith("#")) {
+                type = "#class:" + type;
+            }
+            try {
+                final Object target = PropertyBindingSupport.resolveBean(camelContext, type);
+
+                if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+                    PropertyBindingSupport.setPropertiesOnTarget(camelContext, target, def.getProperties());
+                }
+                camelContext.getRegistry().unbind(name);
+                camelContext.getRegistry().bind(name, target);
+
+                // register bean in model
+                Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+                model.addRegistryBean(def);
+
+            } catch (Exception e) {
+                if (delayIfFailed) {
+                    delayedRegistrations.add(def);
+                } else {
+                    LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
+                }
+            }
+        }
     }
 
 }
