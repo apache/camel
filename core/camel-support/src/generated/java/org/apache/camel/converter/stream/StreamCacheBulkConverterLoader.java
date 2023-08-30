@@ -9,6 +9,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -43,6 +44,7 @@ public final class StreamCacheBulkConverterLoader implements TypeConverterLoader
     @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
         registry.addBulkTypeConverters(this);
+        doRegistration(registry);
     }
 
     @Override
@@ -85,6 +87,17 @@ public final class StreamCacheBulkConverterLoader implements TypeConverterLoader
             }
         }
         return null;
+    }
+
+    private void doRegistration(TypeConverterRegistry registry) {
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayInputStream.class, org.apache.camel.StreamCache.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, org.apache.camel.StreamCache.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.converter.stream.CachedOutputStream.class, org.apache.camel.StreamCache.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, org.apache.camel.StreamCache.class), this);
+        
+        
     }
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {

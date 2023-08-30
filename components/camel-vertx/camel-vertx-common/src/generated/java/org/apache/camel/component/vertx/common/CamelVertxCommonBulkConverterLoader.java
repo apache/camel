@@ -9,6 +9,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -43,6 +44,7 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
     @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
         registry.addBulkTypeConverters(this);
+        doRegistration(registry);
     }
 
     @Override
@@ -163,6 +165,41 @@ public final class CamelVertxCommonBulkConverterLoader implements TypeConverterL
             }
         }
         return null;
+    }
+
+    private void doRegistration(TypeConverterRegistry registry) {
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, io.vertx.core.buffer.Buffer.class), this);
+        registry.addConverter(new TypeConvertible<>(io.netty.buffer.ByteBuf.class, io.vertx.core.buffer.Buffer.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, io.vertx.core.buffer.Buffer.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, io.vertx.core.buffer.Buffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, io.vertx.core.buffer.Buffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, io.vertx.core.buffer.Buffer.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, io.vertx.core.json.JsonArray.class), this);
+        registry.addConverter(new TypeConvertible<>(io.netty.buffer.ByteBuf.class, io.vertx.core.json.JsonArray.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, io.vertx.core.json.JsonArray.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, io.vertx.core.json.JsonArray.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, io.vertx.core.json.JsonArray.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.List.class, io.vertx.core.json.JsonArray.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, io.vertx.core.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(io.netty.buffer.ByteBuf.class, io.vertx.core.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, io.vertx.core.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, io.vertx.core.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, io.vertx.core.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Map.class, io.vertx.core.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonArray.class, java.util.List.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.json.JsonObject.class, java.util.Map.class), this);
+        registry.addConverter(new TypeConvertible<>(io.vertx.core.buffer.Buffer.class, org.apache.camel.StreamCache.class), this);
+        
+        
     }
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {
