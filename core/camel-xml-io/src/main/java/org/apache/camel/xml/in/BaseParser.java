@@ -16,29 +16,6 @@
  */
 package org.apache.camel.xml.in;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
@@ -48,12 +25,34 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class BaseParser {
 
     protected final MXParser parser;
     protected String namespace;
-    protected String secondNamespace = "";
+    protected Set<String> secondaryNamespaces = new HashSet<>();
     protected Resource resource;
 
     public BaseParser(Resource resource) throws IOException, XmlPullParserException {
@@ -88,8 +87,8 @@ public class BaseParser {
         this.namespace = namespace != null ? namespace : "";
     }
 
-    public void addSecondNamespace(String secondNamespace) {
-        this.secondNamespace = secondNamespace;
+    public void addSecondaryNamespace(String namespace) {
+        this.secondaryNamespaces.add(namespace);
     }
 
     protected <T> T doParse(
@@ -368,6 +367,20 @@ public class BaseParser {
         return pn;
     }
 
+    protected String getNextTag(String name, String name2, String name3) throws XmlPullParserException, IOException {
+        if (parser.nextTag() != XmlPullParser.START_TAG) {
+            throw new XmlPullParserException("Expected starting tag");
+        }
+
+        String pn = parser.getName();
+        boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn) || Objects.equals(name3, pn);
+        if (!match || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
+            return ""; // empty tag
+        }
+
+        return pn;
+    }
+
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         // Ignore
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
@@ -465,15 +478,22 @@ public class BaseParser {
     }
 
     protected boolean matchNamespace(String ns, boolean optional) {
-        return matchNamespace(ns, namespace, secondNamespace, optional);
+        return matchNamespace(ns, namespace, secondaryNamespaces, optional);
     }
 
-    protected static boolean matchNamespace(String ns, String namespace, String namespace2, boolean optional) {
+    protected static boolean matchNamespace(String ns, String namespace, Set<String> secondaryNamespaces, boolean optional) {
         if (optional && ns.isEmpty()) {
             return true;
         }
-
-        return Objects.equals(ns, namespace) || Objects.equals(ns, namespace2);
+        if (Objects.equals(ns, namespace)) {
+            return true;
+        }
+        for (String second : secondaryNamespaces) {
+            if (Objects.equals(ns, second)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

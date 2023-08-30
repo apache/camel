@@ -22,19 +22,20 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class XmlSpringBeansLoadTest {
+public class XmlBlueprintLoadTest {
 
     @Test
     public void testLoadRoutesBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            // load spring XML <beans> with embedded <camelContext>
+            // load OSGi blueprint XML <blueprint> with embedded <camelContext>
             Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/springBeans.xml");
+                    "/org/apache/camel/dsl/xml/io/blueprintRoutes.xml");
 
             Assertions.assertDoesNotThrow(() -> {
                 // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
                 PluginHelper.getRoutesLoader(context).loadRoutes(resource);
             });
+
         }
     }
 

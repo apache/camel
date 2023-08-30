@@ -93,7 +93,7 @@ public class Run extends CamelCommand {
             "templatedRoute", "templatedRoutes",
             "rest", "rests",
             "routeConfiguration",
-            "beans", "camel"
+            "beans", "blueprint", "camel"
     };
 
     private static final Set<String> ACCEPTED_XML_ROOT_ELEMENTS

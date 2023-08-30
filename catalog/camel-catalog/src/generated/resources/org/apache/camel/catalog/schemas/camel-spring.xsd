@@ -13583,6 +13583,7 @@ org.apache.camel.builder.RouteBuilder.
       </xs:element>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition"/>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+      <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:restConfiguration"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>

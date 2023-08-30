@@ -1568,7 +1568,7 @@ public class ModelParser extends BaseParser {
     }
     public Optional<ApplicationDefinition> parseApplicationDefinition()
             throws IOException, XmlPullParserException {
-        String tag = getNextTag("beans", "camel");
+        String tag = getNextTag("beans", "blueprint", "camel");
         if (tag != null) {
             return Optional.of(doParseApplicationDefinition());
         }
@@ -1580,7 +1580,7 @@ public class ModelParser extends BaseParser {
     }
     public Optional<BeansDefinition> parseBeansDefinition()
             throws IOException, XmlPullParserException {
-        String tag = getNextTag("beans", "camel");
+        String tag = getNextTag("beans", "blueprint", "camel");
         if (tag != null) {
             return Optional.of(doParseBeansDefinition());
         }
@@ -1588,7 +1588,15 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends BeansDefinition> ElementHandler<T> beansDefinitionElementHandler() {
         return (def, key) -> {
-            if ("http://www.springframework.org/schema/beans".equals(parser.getNamespace())) {
+            if ("http://www.osgi.org/xmlns/blueprint/v1.0.0".equals(parser.getNamespace())) {
+                Element el = doParseDOMElement("blueprint", "http://www.osgi.org/xmlns/blueprint/v1.0.0", def.getBlueprintBeans());
+                if (el != null) {
+                    doAddElement(el, def.getBlueprintBeans(), def::setBlueprintBeans);
+                    return true;
+                }
+                return false;
+            }
+            else if ("http://www.springframework.org/schema/beans".equals(parser.getNamespace())) {
                 Element el = doParseDOMElement("beans", "http://www.springframework.org/schema/beans", def.getSpringBeans());
                 if (el != null) {
                     doAddElement(el, def.getSpringBeans(), def::setSpringBeans);

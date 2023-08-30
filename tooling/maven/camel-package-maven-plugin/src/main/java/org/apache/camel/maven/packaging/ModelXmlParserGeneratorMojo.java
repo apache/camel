@@ -594,7 +594,9 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                         .setName("parse" + name)
                         .addThrows(IOException.class)
                         .addThrows(XML_PULL_PARSER_EXCEPTION)
-                        .setBody(String.format("String tag = getNextTag(\"%s\", \"%s\");", "beans", "camel"),
+                        .setBody(
+                                String.format("String tag = getNextTag(\"%s\", \"%s\", \"%s\");", "beans", "blueprint",
+                                        "camel"),
                                 "if (tag != null) {",
                                 String.format("    return Optional.of(doParse%s());", name),
                                 "}",
