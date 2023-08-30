@@ -67,7 +67,7 @@ import org.springframework.core.metrics.StartupStep;
 public class SpringXmlBeansHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringXmlBeansHandler.class);
-    private static final Pattern SPRING_PATTERN = Pattern.compile("(\\$\\{.*?})"); // non-greedy mode
+    private static final Pattern SPRING_PATTERN = Pattern.compile("\\$\\{(.*?)}"); // non-greedy mode
 
     // when preparing spring-based beans, we may have problems loading classes which are provided with Java DSL
     // that's why some beans should be processed later
@@ -299,8 +299,7 @@ public class SpringXmlBeansHandler {
         if (val != null && val.contains("${")) {
             Matcher matcher = SPRING_PATTERN.matcher(val);
             while (matcher.find()) {
-                String group = matcher.group(1);
-                String replace = "{{" + group.substring(2, group.length() - 1) + "}}";
+                String replace = "{{" + matcher.group(1) + "}}";
                 val = matcher.replaceFirst(replace);
                 // we changed so reset matcher so it can find more
                 matcher.reset(val);
