@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BlueprintXmlBeansHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SpringXmlBeansHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlueprintXmlBeansHandler.class);
     private static final Pattern BLUEPRINT_PATTERN = Pattern.compile("(\\$\\{.*?})"); // non-greedy mode
 
     // when preparing blueprint-based beans, we may have problems loading classes which are provided with Java DSL

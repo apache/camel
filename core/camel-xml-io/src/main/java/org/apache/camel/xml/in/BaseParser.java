@@ -373,7 +373,7 @@ public class BaseParser {
         }
 
         String pn = parser.getName();
-        boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn) || Objects.equals(name3, pn);;
+        boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn) || Objects.equals(name3, pn);
         if (!match || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
             return ""; // empty tag
         }
