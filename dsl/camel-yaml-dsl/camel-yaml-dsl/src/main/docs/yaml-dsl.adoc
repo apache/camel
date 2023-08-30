@@ -86,7 +86,7 @@ In general, `expression` can be defined inline like in the examples above. But i
 filter:
   tokenize:
     token: "<"
-    end-token: ">"
+    endToken: ">"
 ----
 
 - *Data Format Aware Steps*
@@ -202,12 +202,12 @@ as shown below:
           when:
           - jsonpath:
               expression: "person.middlename"
-              suppress-exceptions: true
+              suppressExceptions: true
             steps:
             - to: "mock:middle"
           - jsonpath:
               expression: "person.lastname"
-              suppress-exceptions: true
+              suppressExceptions: true
             steps:
             - to: "mock:last"
           otherwise:
@@ -240,7 +240,7 @@ where each Kamelet is defined using YAML.
 
 == Supported EIPs
 
-The following set of high level EIPs are supported in the yaml DSL language. For full details on their expected configuration, please refer to the https://github.com/apache/camel/blob/main/dsl/camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema/camel-yaml-dsl.json[Camel YAML DSL specification].
+The following set of high level EIPs are supported in the yaml DSL language. For full details on their expected configuration, please refer to the https://github.com/apache/camel/blob/main/dsl/camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema/camelYamlDsl.json[Camel YAML DSL specification].
 
 - Aggregate
 - Bean

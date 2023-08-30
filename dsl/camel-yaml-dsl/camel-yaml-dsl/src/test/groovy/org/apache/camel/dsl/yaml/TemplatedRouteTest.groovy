@@ -35,8 +35,8 @@ class TemplatedRouteTest extends YamlTestSupport {
                             ref: "{{myProcessor}}"
                         - to: "mock:result"
                 - templatedRoute:
-                    route-id: "myRoute"
-                    route-template-ref: "myTemplate"
+                    routeId: "myRoute"
+                    routeTemplateRef: "myTemplate"
                     parameters:
                       - name: "directName"
                         value: "foo"
@@ -46,15 +46,15 @@ class TemplatedRouteTest extends YamlTestSupport {
                         script: |
                             new ${MyUppercaseProcessor.class.name}()
                 - templatedRoute:
-                    route-id: "myRoute2"
-                    route-template-ref: "myTemplate"
+                    routeId: "myRoute2"
+                    routeTemplateRef: "myTemplate"
                     parameters:
                       - name: "directName"
                         value: "foo2"
                     beans:
                       - name: "myProcessor"
                         type: "groovy"
-                        bean-type: "org.apache.camel.Processor"
+                        beanType: "org.apache.camel.Processor"
                         script: "new ${MyUppercaseProcessor.class.name}()"                 
             """
         withMock('mock:result') {
@@ -91,9 +91,9 @@ class TemplatedRouteTest extends YamlTestSupport {
                         - process:
                             ref: "{{myProcessor}}"
                         - to: "mock:result"
-                - templated-route:
-                    route-id: "myRoute"
-                    route-template-ref: "myTemplate"
+                - templatedRoute:
+                    routeId: "myRoute"
+                    routeTemplateRef: "myTemplate"
                     parameters:
                       - name: "directName"
                         value: "foo"
@@ -102,9 +102,9 @@ class TemplatedRouteTest extends YamlTestSupport {
                         type: "groovy"
                         script: |
                             new ${MyUppercaseProcessor.class.name}()
-                - templated-route:
-                    route-id: "myRoute2"
-                    route-template-ref: "myTemplate"
+                - templatedRoute:
+                    routeId: "myRoute2"
+                    routeTemplateRef: "myTemplate"
                     parameters:
                       - name: "directName"
                         value: "foo2"
