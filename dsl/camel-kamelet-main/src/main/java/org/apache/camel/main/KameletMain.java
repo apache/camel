@@ -679,26 +679,41 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     protected void preProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
-        // camel-kamelet-main has access to Spring libraries, so we can grab XML documents representing
-        // actual Spring Beans and read them using Spring's BeanFactory to populate Camel registry
-        final Map<String, Document> xmls = new TreeMap<>();
+        final Map<String, Document> springXmls = new TreeMap<>();
+        final Map<String, Document> blueprintXmls = new TreeMap<>();
 
-        Map<String, Document> springBeansDocs = registry.findByTypeWithName(Document.class);
-        if (springBeansDocs != null) {
-            springBeansDocs.forEach((id, doc) -> {
+        Map<String, Document> xmlDocs = registry.findByTypeWithName(Document.class);
+        if (xmlDocs != null) {
+            xmlDocs.forEach((id, doc) -> {
                 if (id.startsWith("camel-xml-io-dsl-spring-xml:")) {
-                    xmls.put(id, doc);
+                    springXmls.put(id, doc);
+                } else if (id.startsWith("camel-xml-io-dsl-blueprint-xml:")) {
+                    blueprintXmls.put(id, doc);
                 }
             });
         }
-
-        if (!xmls.isEmpty()) {
-            processSpringBeans(camelContext, config, xmls);
+        if (!springXmls.isEmpty()) {
+            // camel-kamelet-main has access to Spring libraries, so we can grab XML documents representing
+            // actual Spring Beans and read them using Spring's BeanFactory to populate Camel registry
+            processSpringBeans(camelContext, config, springXmls);
         }
+        if (!blueprintXmls.isEmpty()) {
+            processBlueprintBeans(camelContext, config, blueprintXmls);
+        }
+    }
+
+    private void processBlueprintBeans(
+            CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
+
+        LOG.debug("Loading beans from legacy OSGi <blueprint> XML");
+        // TODO: detect and process beans
     }
 
     private void processSpringBeans(
             CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
+
+        LOG.debug("Loading beans from classic Spring <beans> XML");
+
         // we _could_ create something like org.apache.camel.spring.spi.ApplicationContextBeanRepository, but
         // wrapping DefaultListableBeanFactory and use it as one of the
         // org.apache.camel.support.DefaultRegistry.repositories, but for now let's use it to populate

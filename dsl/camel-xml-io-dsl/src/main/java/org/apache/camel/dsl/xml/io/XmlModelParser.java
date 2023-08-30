@@ -23,23 +23,31 @@ import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.XmlPullParserException;
 
 /**
- * XML {@link ModelParser} that supports loading classic Spring XML <beans> with embedded <camelContext>, with limited
- * parsing, to discover <routes> inside <camelContext>.
+ * XML {@link ModelParser} that supports loading:
+ * <ul>
+ * <li>Standard Camel XML DSL</li>
+ * <li>Classic Spring XML <beans> with embedded <camelContext> (limited parsing, to discover <routes> inside
+ * <camelContext>)</li>
+ * <li>Legacy OSGi <blueprint> with embedded <camelContext> (limited parsing, to discover <routes> inside
+ * <camelContext>)</li>
+ * </ul>
  */
 public class XmlModelParser extends ModelParser {
 
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
+    private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
 
     public XmlModelParser(Resource input, String namespace) throws IOException, XmlPullParserException {
         super(input, namespace);
-        addSecondNamespace(SPRING_NS);
+        addSecondaryNamespace(SPRING_NS);
+        addSecondaryNamespace(BLUEPRINT_NS);
     }
 
     @Override
     protected boolean handleUnexpectedElement(String namespace, String name) throws XmlPullParserException {
-        // accept embedded <camelContext> inside Spring XML <beans> files, so we can discover
-        // embedded <routes> inside this <camelContext>.
-        if ("camelContext".equals(name) && SPRING_NS.equals(namespace)) {
+        // accept embedded <camelContext> inside Spring XML <beans> files or OSGi <blueprint> files,
+        // so we can discover embedded <routes> inside this <camelContext>.
+        if ("camelContext".equals(name) && (SPRING_NS.equals(namespace) || BLUEPRINT_NS.equals(namespace))) {
             return true;
         }
         return super.handleUnexpectedElement(namespace, name);

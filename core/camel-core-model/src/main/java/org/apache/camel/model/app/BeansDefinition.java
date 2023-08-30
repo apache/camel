@@ -52,6 +52,7 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
         "componentScanning",
         "beans",
         "springBeans",
+        "blueprintBeans",
         "restConfigurations",
         "rests",
         "routeConfigurations",
@@ -82,6 +83,11 @@ public class BeansDefinition {
                            documentElement = "beans")
     @XmlAnyElement
     private List<Element> springBeans = new ArrayList<>();
+    @ExternalSchemaElement(names = { "bean" },
+                           namespace = "http://www.osgi.org/xmlns/blueprint/v1.0.0",
+                           documentElement = "blueprint")
+    @XmlAnyElement
+    private List<Element> blueprintBeans = new ArrayList<>();
 
     // the order comes from <camelContext> (org.apache.camel.spring.xml.CamelContextFactoryBean)
     // to make things less confusing, as it's not easy to simply tell JAXB to use <xsd:choice maxOccurs="unbounded">
@@ -125,6 +131,14 @@ public class BeansDefinition {
 
     public void setSpringBeans(List<Element> springBeans) {
         this.springBeans = springBeans;
+    }
+
+    public List<Element> getBlueprintBeans() {
+        return blueprintBeans;
+    }
+
+    public void setBlueprintBeans(List<Element> blueprintBeans) {
+        this.blueprintBeans = blueprintBeans;
     }
 
     public List<RestConfigurationDefinition> getRestConfigurations() {

@@ -89,7 +89,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         XmlStreamInfo xmlInfo = xmlInfo(resource);
         if (xmlInfo.isValid()) {
             String root = xmlInfo.getRootElementName();
-            if ("beans".equals(root) || "camel".equals(root)) {
+            if ("beans".equals(root) || "blueprint".equals(root) || "camel".equals(root)) {
                 new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                         .parseBeansDefinition()
                         .ifPresent(bd -> {
@@ -116,7 +116,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             public void configure() throws Exception {
                 String resourceLocation = input.getLocation();
                 switch (xmlInfo.getRootElementName()) {
-                    case "beans", "camel" -> {
+                    case "beans", "blueprint", "camel" -> {
                         BeansDefinition def = camelAppCache.get(resourceLocation);
                         if (def != null) {
                             configureCamel(def);
@@ -296,6 +296,17 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             // bind as Document, to be picked up later - bean id allows nice sorting
             // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
             String id = String.format("camel-xml-io-dsl-spring-xml:%05d:%s", counter.incrementAndGet(), resource.getLocation());
+            getCamelContext().getRegistry().bind(id, doc);
+        }
+
+        // <s:bean> elements - all the elements in single BeansDefinition have
+        // one parent org.w3c.dom.Document - and this is what we collect from each resource
+        if (!app.getBlueprintBeans().isEmpty()) {
+            Document doc = app.getBlueprintBeans().get(0).getOwnerDocument();
+            // bind as Document, to be picked up later - bean id allows nice sorting
+            // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
+            String id = String.format("camel-xml-io-dsl-blueprint-xml:%05d:%s", counter.incrementAndGet(),
+                    resource.getLocation());
             getCamelContext().getRegistry().bind(id, doc);
         }
     }
