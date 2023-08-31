@@ -44,7 +44,6 @@ public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
             Exchange exchange = iter.next();
             assertEquals("negativeDelay", exchange.getProperty(Exchange.TIMER_NAME));
             assertNotNull(exchange.getProperty(Exchange.TIMER_FIRED_TIME));
-            assertNotNull(exchange.getIn().getHeader("firedTime"));
         }
     }
 
@@ -53,7 +52,8 @@ public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://negativeDelay?delay=-1&repeatCount=10").routeId("routeTest").to("mock:result");
+                from("timer://negativeDelay?delay=-1&repeatCount=10&includeMetadata=true").routeId("routeTest")
+                        .to("mock:result");
             }
         };
     }

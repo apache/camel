@@ -106,11 +106,11 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * Whether to include metadata in the exchange such as fired time, timer
-         * name, timer count etc. This information is default included.
+         * name, timer count etc.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: consumer
          * 
          * @param includeMetadata the value to set
@@ -122,12 +122,12 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * Whether to include metadata in the exchange such as fired time, timer
-         * name, timer count etc. This information is default included.
+         * name, timer count etc.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: consumer
          * 
          * @param includeMetadata the value to set
@@ -541,10 +541,10 @@ public interface TimerEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code firedTime}.
+         * @return the name of the header {@code TimerFiredTime}.
          */
-        public String firedTime() {
-            return "firedTime";
+        public String timerFiredTime() {
+            return "TimerFiredTime";
         }
 
         /**
