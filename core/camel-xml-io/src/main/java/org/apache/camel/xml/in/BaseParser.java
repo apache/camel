@@ -16,22 +16,6 @@
  */
 package org.apache.camel.xml.in;
 
-import org.apache.camel.LineNumberAware;
-import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
-import org.apache.camel.xml.io.MXParser;
-import org.apache.camel.xml.io.XmlPullParser;
-import org.apache.camel.xml.io.XmlPullParserException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -47,6 +31,24 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import org.apache.camel.LineNumberAware;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.xml.io.MXParser;
+import org.apache.camel.xml.io.XmlPullParser;
+import org.apache.camel.xml.io.XmlPullParserException;
 
 public class BaseParser {
 
