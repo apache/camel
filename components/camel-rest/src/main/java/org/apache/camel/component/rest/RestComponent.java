@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Metadata;
@@ -209,7 +210,7 @@ public class RestComponent extends DefaultComponent {
     private EndpointUriFactory getEndpointUriFactory(String name) {
         if (name != null) {
             UriFactoryResolver resolver
-                    = getCamelContext().getCamelContextExtension().getContextPlugin(UriFactoryResolver.class);
+                    = getCamelContext().adapt(ExtendedCamelContext.class).getUriFactoryResolver();
             if (resolver != null) {
                 return resolver.resolveFactory(name, getCamelContext());
             }
