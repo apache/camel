@@ -93,7 +93,6 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     public void setHost(String accountOrHostname) {
         var dot = accountOrHostname.indexOf('.');
         var hasDot = dot >= 0;
-        account = hasDot ? accountOrHostname.substring(0, dot) : accountOrHostname;
         super.setHost(hasDot ? accountOrHostname : account + '.' + DEFAULT_INTERNET_DOMAIN);
     }
 

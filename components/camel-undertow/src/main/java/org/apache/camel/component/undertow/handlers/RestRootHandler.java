@@ -29,6 +29,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 import org.apache.camel.component.undertow.UndertowConsumer;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
@@ -160,10 +161,7 @@ public class RestRootHandler implements HttpHandler {
         }
 
         // strip out query parameters
-        int idx = path.indexOf('?');
-        if (idx > -1) {
-            path = path.substring(0, idx);
-        }
+        path = StringHelper.before(path, "?", path);
 
         // strip of ending /
         if (path.endsWith("/")) {

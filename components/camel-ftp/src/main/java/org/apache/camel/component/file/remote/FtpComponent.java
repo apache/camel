@@ -26,6 +26,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -66,11 +67,7 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
      * $ for the expression (file language)
      */
     protected String getBaseUri(String uri) {
-        String baseUri = uri;
-        if (uri.indexOf('?') != -1) {
-            baseUri = uri.substring(0, uri.indexOf('?'));
-        }
-        return baseUri;
+        return StringHelper.before(uri, "?", uri);
     }
 
     /**

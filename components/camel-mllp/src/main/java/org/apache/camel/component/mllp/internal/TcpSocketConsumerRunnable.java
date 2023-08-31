@@ -26,6 +26,7 @@ import org.apache.camel.component.mllp.MllpInvalidMessageException;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -110,12 +111,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
     String createThreadName() {
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
-        String endpointKey;
-        if (fullEndpointKey.contains("?")) {
-            endpointKey = fullEndpointKey.substring(0, fullEndpointKey.indexOf('?'));
-        } else {
-            endpointKey = fullEndpointKey;
-        }
+        String endpointKey = StringHelper.before(fullEndpointKey, "?", fullEndpointKey);
 
         // Now put it all together
         return String.format("%s[%s] - %s", this.getClass().getSimpleName(), endpointKey, combinedAddress);

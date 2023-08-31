@@ -873,11 +873,7 @@ public abstract class CamelTestSupport
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
         // strip query
-        int idx = n.indexOf('?');
-        if (idx != -1) {
-            n = n.substring(0, idx);
-        }
-        final String target = n;
+        final String target = StringHelper.before(n, "?", n);
 
         // lookup endpoints in registry and try to find it
         MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()

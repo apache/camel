@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Secure FTP Component
@@ -45,10 +46,7 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
         // and the URI constructor will regard $ as an illegal character and we
         // dont want to enforce end users to
         // to escape the $ for the expression (file language)
-        String baseUri = uri;
-        if (uri.contains("?")) {
-            baseUri = uri.substring(0, uri.indexOf('?'));
-        }
+        String baseUri = StringHelper.before(uri, "?", uri);
 
         // lets make sure we create a new configuration as each endpoint can
         // customize its own version

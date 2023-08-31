@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -41,10 +42,7 @@ final class FilesURIStrings {
      * $ for the expression (file language)
      */
     static URI getBaseURI(String uri) throws URISyntaxException {
-        String baseUri = uri;
-        if (uri.indexOf(QUERY_SEPARATOR) != -1) {
-            baseUri = uri.substring(0, uri.indexOf(QUERY_SEPARATOR));
-        }
+        String baseUri = StringHelper.before(uri, QUERY_SEPARATOR, uri);
         return new URI(baseUri);
     }
 

@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Expose WebSocket endpoints using the Atmosphere framework.
@@ -56,10 +57,7 @@ public class WebsocketEndpoint extends ServletEndpoint {
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri);
 
-        //TODO find a better way of assigning the store
-        int idx = endPointURI.indexOf('?');
-
-        this.servicePath = idx > -1 ? endPointURI.substring(0, idx) : endPointURI;
+        this.servicePath = StringHelper.before(endPointURI, "?", endPointURI);
         this.store = component.getWebSocketStore(servicePath);
     }
 

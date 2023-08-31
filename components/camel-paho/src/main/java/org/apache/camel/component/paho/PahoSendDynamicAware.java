@@ -105,12 +105,11 @@ public class PahoSendDynamicAware extends ServiceSupport implements SendDynamicA
     private String parseTopicName(String uri) {
         // strip query
         uri = uri.replaceFirst(scheme + "://", ":");
-        int pos = uri.indexOf('?');
-        if (pos != -1) {
-            uri = uri.substring(0, pos);
-        }
+
+        uri = StringHelper.before(uri, "?", uri);
         // topic name is after first colon
-        pos = uri.indexOf(':');
+
+        int pos = uri.indexOf(':');
         if (pos != -1) {
             return uri.substring(pos + 1);
         } else {
