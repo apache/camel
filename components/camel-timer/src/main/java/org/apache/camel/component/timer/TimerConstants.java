@@ -22,7 +22,7 @@ import org.apache.camel.spi.Metadata;
 public final class TimerConstants {
 
     @Metadata(description = "The fired time", javaType = "Date")
-    public static final String HEADER_FIRED_TIME = "firedTime";
+    public static final String HEADER_FIRED_TIME = Exchange.TIMER_FIRED_TIME;
     @Metadata(description = "The timestamp of the message", javaType = "long")
     public static final String HEADER_MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 

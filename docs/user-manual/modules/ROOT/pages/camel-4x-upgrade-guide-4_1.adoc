@@ -10,6 +10,16 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.
 
+=== camel-timer
+
+The `timer` no longer includes header `firedTime` with the timestamp of when the exchange was fired.
+This means the exchange by default has no headers, and `null` body.
+
+The `firedTime` header has been renamed to `CamelTimerFireTime`.
+
+The option `includeMetadata` can be set to `true` on the endpoint or component level, to turn on
+these additional metadata headers again.
+
 === camel-aws2-step-functions
 
 The following Message Headers of `camel-aws2-step-functions` component have been renamed to follow standard camel naming convention.

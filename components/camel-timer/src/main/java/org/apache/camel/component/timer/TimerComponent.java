@@ -25,6 +25,8 @@ import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 
 /**
@@ -39,7 +41,23 @@ public class TimerComponent extends DefaultComponent {
     private final Map<String, Timer> timers = new HashMap<>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
+    @Metadata
+    private boolean includeMetadata;
+
     public TimerComponent() {
+    }
+
+    @ManagedAttribute(description = "Include metadata")
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
+    }
+
+    /**
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     */
+    @ManagedAttribute(description = "Include metadata")
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
     }
 
     public Timer getTimer(TimerConsumer consumer) {
@@ -93,6 +111,7 @@ public class TimerComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
+        answer.setIncludeMetadata(includeMetadata);
 
         // convert time from String to a java.util.Date using the supported patterns
         String time = getAndRemoveOrResolveReferenceParameter(parameters, "time", String.class);
