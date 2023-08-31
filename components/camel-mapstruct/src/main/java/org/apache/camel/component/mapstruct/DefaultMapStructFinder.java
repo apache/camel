@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mapstruct;
 
+import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -59,6 +60,10 @@ public class DefaultMapStructFinder extends ServiceSupport implements MapStructM
             final Object mapper = Mappers.getMapper(clazz);
             if (mapper != null) {
                 ReflectionHelper.doWithMethods(mapper.getClass(), mc -> {
+                    // must be public
+                    if (!Modifier.isPublic(mc.getModifiers())) {
+                        return;
+                    }
                     // must not be a default method
                     if (mc.isDefault()) {
                         return;
