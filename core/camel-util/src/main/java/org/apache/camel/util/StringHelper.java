@@ -655,8 +655,21 @@ public final class StringHelper {
      * @return              the text before the token, or the supplied defaultValue if text does not contain the token
      */
     public static String before(String text, String before, String defaultValue) {
-        String answer = before(text, before);
-        return answer != null ? answer : defaultValue;
+        int pos = text.indexOf(before);
+        return pos == -1 ? defaultValue : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string before the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  before       the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String before(String text, char before, String defaultValue) {
+        int pos = text.indexOf(before);
+        return pos == -1 ? defaultValue : text.substring(0, pos);
     }
 
     /**

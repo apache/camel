@@ -382,11 +382,8 @@ public final class PropertyBindingSupport {
                 // now lets update the target/name/class before next iterator (next part)
                 if (configurer instanceof PropertyConfigurerGetter) {
                     // lets see if we have a specialized configurer
-                    String key = part;
-                    int pos = part.indexOf('[');
-                    if (pos != -1) {
-                        key = part.substring(0, pos);
-                    }
+                    String key = StringHelper.before(part, "[", part);
+
                     // if its a map/list/array type then find out what type the collection uses
                     // so we can use that to lookup as configurer
                     Class<?> collectionType = (Class<?>) ((PropertyConfigurerGetter) configurer)
@@ -451,11 +448,7 @@ public final class PropertyBindingSupport {
             boolean ignoreCase, PropertyConfigurer configurer) {
 
         // if the name has collection lookup then ignore that as we want to create the instance
-        String key = name;
-        int pos = name.indexOf('[');
-        if (pos != -1) {
-            key = name.substring(0, pos);
-        }
+        String key = StringHelper.before(name, "[", name);
 
         Object answer = null;
         Class<?> parameterType = null;

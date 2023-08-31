@@ -176,11 +176,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         if (isLenientProperties()) {
             // only use the endpoint uri without parameters as the properties are lenient
             String uri = getEndpointUri();
-            if (uri.indexOf('?') != -1) {
-                return StringHelper.before(uri, "?");
-            } else {
-                return uri;
-            }
+            return StringHelper.before(uri, "?", uri);
         } else {
             // use the full endpoint uri
             return getEndpointUri();
