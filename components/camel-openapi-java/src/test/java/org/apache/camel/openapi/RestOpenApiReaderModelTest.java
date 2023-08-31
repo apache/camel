@@ -89,6 +89,7 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
+        assertFalse(json.contains("\"$ref\" : \"#/definitions/org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"type\" : \"string\""));
@@ -119,6 +120,7 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/components/schemas/User\""));
+        assertFalse(json.contains("\"$ref\" : \"#/components/schemas/org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));

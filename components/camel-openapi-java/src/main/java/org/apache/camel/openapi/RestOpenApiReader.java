@@ -1066,7 +1066,7 @@ public class RestOpenApiReader {
                 Parameter parameter, Operation operation, ApiDescription api,
                 Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
             if (parameter.getContent() != null) {
-                processRefsInContent(parameter.getContent());
+                processRefsInContent(parameter.getContent(), params, cookies, headers);
             }
             return Optional.of(parameter);
         }
@@ -1076,7 +1076,7 @@ public class RestOpenApiReader {
                 RequestBody requestBody, Operation operation, ApiDescription api,
                 Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
             if (requestBody.getContent() != null) {
-                processRefsInContent(requestBody.getContent());
+                processRefsInContent(requestBody.getContent(), params, cookies, headers);
             }
             return Optional.of(requestBody);
         }
@@ -1086,7 +1086,7 @@ public class RestOpenApiReader {
                 ApiResponse response, Operation operation, ApiDescription api,
                 Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
             if (response.getContent() != null) {
-                processRefsInContent(response.getContent());
+                processRefsInContent(response.getContent(), params, cookies, headers);
             }
             return Optional.of(response);
         }
@@ -1135,10 +1135,12 @@ public class RestOpenApiReader {
             return Optional.of(schema);
         }
 
-        private void processRefsInContent(Content content) {
+        private void processRefsInContent(
+                Content content, Map<String, List<String>> params,
+                Map<String, String> cookies, Map<String, List<String>> headers) {
             for (MediaType media : content.values()) {
-                if (media.getSchema() != null && media.getSchema().get$ref() != null) {
-                    media.getSchema().set$ref(fixSchemaReference(media.getSchema().get$ref(), OAS30_SCHEMA_DEFINITION_PREFIX));
+                if (media.getSchema() != null) {
+                    filterSchema(media.getSchema(), params, cookies, headers);
                 }
             }
         }
