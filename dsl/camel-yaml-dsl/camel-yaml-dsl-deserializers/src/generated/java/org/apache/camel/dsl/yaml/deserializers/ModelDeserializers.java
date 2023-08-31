@@ -6844,6 +6844,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = "intercept",
             types = org.apache.camel.model.InterceptDefinition.class,
@@ -6905,6 +6906,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = {
                     "intercept-from",
@@ -6981,6 +6983,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = {
                     "intercept-send-to-endpoint",
@@ -9594,6 +9597,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = {
                     "on-completion",

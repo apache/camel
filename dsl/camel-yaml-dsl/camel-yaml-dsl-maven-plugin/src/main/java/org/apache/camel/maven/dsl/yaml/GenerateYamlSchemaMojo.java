@@ -90,6 +90,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         items = root.putObject("items");
         items.put("maxProperties", 1);
+        if (!additionalProperties) {
+            items.put("additionalProperties", false);
+        }
 
         definitions = items.putObject("definitions");
         step = definitions.withObject("/org.apache.camel.model.ProcessorDefinition")
@@ -301,7 +304,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     propertyDefaultValue,
                     propertyFormat,
                     propertyDeprecated,
-                    propertyWrapItem);
+                    propertyWrapItem,
+                    additionalProperties);
 
             if (propertyRequired) {
                 String name = kebabCase ? propertyName : StringHelper.dashToCamelCase(propertyName);
@@ -317,6 +321,15 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         var composition = extractComposition(node);
         if (composition != null) {
             composition.forEach(this::kebabToCamelCase);
+        }
+        if (node.has("required")) {
+            ArrayNode required = node.withArray("required");
+            if (required != null) {
+                for (int i = 0; i < required.size(); i++) {
+                    String name = required.get(i).asText();
+                    required.set(i, StringHelper.dashToCamelCase(name));
+                }
+            }
         }
         if (node.has("properties")) {
             ObjectNode props = node.withObject("/properties");
@@ -364,7 +377,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             String propertyDefaultValue,
             String propertyFormat,
             boolean deprecated,
-            boolean wrapItem) {
+            boolean wrapItem,
+            boolean additionalProperties) {
 
         final ObjectNode current = objectDefinition.withObject("/properties/" + propertyName);
         current.put("type", propertyType);
@@ -399,8 +413,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             String arrayType = StringHelper.after(propertyType, ":");
             if (arrayType.contains(".")) {
                 if (wrapItem) {
-                    current.withObject("/items")
-                            .put("type", "object")
+                    ObjectNode itemSchema = current.withObject("/items");
+                    if (!additionalProperties) {
+                        itemSchema.put("additionalProperties", false);
+                    }
+                    itemSchema.put("type", "object")
                             .withObject("/properties/" + propertyName)
                             .put("$ref", "#/items/definitions/" + arrayType);
                 } else {
@@ -408,8 +425,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 }
             } else {
                 if (wrapItem) {
-                    current.withObject("/items")
-                            .put("type", "object")
+                    ObjectNode itemSchema = current.withObject("/items");
+                    if (!additionalProperties) {
+                        itemSchema.put("additionalProperties", false);
+                    }
+                    itemSchema.put("type", "object")
                             .withObject("/properties/" + propertyName)
                             .put("type", arrayType);
                 } else {
