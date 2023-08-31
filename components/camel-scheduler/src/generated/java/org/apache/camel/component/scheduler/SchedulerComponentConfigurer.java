@@ -29,6 +29,8 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "includemetadata":
+        case "includeMetadata": target.setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
         case "poolsize":
         case "poolSize": target.setPoolSize(property(camelContext, int.class, value)); return true;
         default: return false;
@@ -46,6 +48,8 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "includemetadata":
+        case "includeMetadata": return boolean.class;
         case "poolsize":
         case "poolSize": return int.class;
         default: return null;
@@ -64,6 +68,8 @@ public class SchedulerComponentConfigurer extends PropertyConfigurerSupport impl
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "includemetadata":
+        case "includeMetadata": return target.isIncludeMetadata();
         case "poolsize":
         case "poolSize": return target.getPoolSize();
         default: return null;

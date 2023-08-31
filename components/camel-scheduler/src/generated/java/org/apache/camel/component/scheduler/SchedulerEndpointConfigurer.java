@@ -35,6 +35,8 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "includemetadata":
+        case "includeMetadata": target.setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "pollstrategy":
@@ -80,6 +82,8 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "greedy": return boolean.class;
+        case "includemetadata":
+        case "includeMetadata": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "pollstrategy":
@@ -126,6 +130,8 @@ public class SchedulerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "greedy": return target.isGreedy();
+        case "includemetadata":
+        case "includeMetadata": return target.isIncludeMetadata();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "pollstrategy":
