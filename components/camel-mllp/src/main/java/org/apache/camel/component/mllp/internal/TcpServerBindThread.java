@@ -28,6 +28,7 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -44,12 +45,7 @@ public class TcpServerBindThread extends Thread {
 
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
-        String endpointKey;
-        if (fullEndpointKey.contains("?")) {
-            endpointKey = fullEndpointKey.substring(0, fullEndpointKey.indexOf('?'));
-        } else {
-            endpointKey = fullEndpointKey;
-        }
+        String endpointKey = StringHelper.before(fullEndpointKey, "?", fullEndpointKey);
 
         this.setName(String.format("%s - %s", this.getClass().getSimpleName(), endpointKey));
     }
