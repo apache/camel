@@ -307,26 +307,38 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     }
 
     private void kebabToCamelCase(JsonNode node) {
-        if (node instanceof ObjectNode) {
-            ObjectNode on = (ObjectNode) node;
-            JsonNode jn = on.get("properties");
-            if (jn == null || jn.isEmpty()) {
-                jn = on.findPath("properties");
+        if (node.has("not")) {
+            node = node.withObject("/not");
+        }
+        var composition = extractComposition(node);
+        if (composition != null) {
+            composition.forEach(this::kebabToCamelCase);
+        }
+        if (node.has("properties")) {
+            ObjectNode props = node.withObject("/properties");
+            ArrayNode required = null;
+            if (node.has("required")) {
+                required = node.withArray("required");
             }
-            if (jn != null && !jn.isEmpty() && jn instanceof ObjectNode) {
-                ObjectNode p = (ObjectNode) jn;
-                Map<String, JsonNode> rebuild = new LinkedHashMap<>();
-                // the properties are in mixed kebab-case and camelCase
-                for (Iterator<String> it = p.fieldNames(); it.hasNext();) {
-                    String n = it.next();
-                    String t = StringHelper.dashToCamelCase(n);
-                    JsonNode prop = p.get(n);
-                    rebuild.put(t, prop);
+            Map<String, JsonNode> rebuild = new LinkedHashMap<>();
+            // the properties are in mixed kebab-case and camelCase
+            for (Iterator<String> it = props.fieldNames(); it.hasNext();) {
+                String n = it.next();
+                String t = StringHelper.dashToCamelCase(n);
+                JsonNode prop = props.get(n);
+                rebuild.put(t, prop);
+                if (required != null) {
+                    for (int i = 0; i < required.size(); i++) {
+                        String r = required.get(i).asText();
+                        if (r.equals(n)) {
+                            required.set(i, t);
+                        }
+                    }
                 }
-                if (!rebuild.isEmpty()) {
-                    p.removeAll();
-                    rebuild.forEach(p::set);
-                }
+            }
+            if (!rebuild.isEmpty()) {
+                props.removeAll();
+                rebuild.forEach(props::set);
             }
         }
     }

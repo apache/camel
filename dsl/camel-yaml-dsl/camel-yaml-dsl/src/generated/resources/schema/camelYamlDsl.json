@@ -793,7 +793,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -885,7 +885,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -927,7 +926,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1020,7 +1019,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -1062,7 +1060,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1179,7 +1177,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -1210,9 +1207,9 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "dead-letter-channel" ],
+            "required" : [ "deadLetterChannel" ],
             "properties" : {
-              "dead-letter-channel" : {
+              "deadLetterChannel" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
               }
             }
@@ -1232,33 +1229,33 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "default-error-handler" ],
+            "required" : [ "defaultErrorHandler" ],
             "properties" : {
-              "default-error-handler" : {
+              "defaultErrorHandler" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "jta-transaction-error-handler" ],
+            "required" : [ "jtaTransactionErrorHandler" ],
             "properties" : {
-              "jta-transaction-error-handler" : {
+              "jtaTransactionErrorHandler" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "no-error-handler" ],
+            "required" : [ "noErrorHandler" ],
             "properties" : {
-              "no-error-handler" : {
+              "noErrorHandler" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "spring-transaction-error-handler" ],
+            "required" : [ "springTransactionErrorHandler" ],
             "properties" : {
-              "spring-transaction-error-handler" : {
+              "springTransactionErrorHandler" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
               }
             }
@@ -1270,11 +1267,11 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "dead-letter-channel" : { },
-          "default-error-handler" : { },
-          "jta-transaction-error-handler" : { },
-          "no-error-handler" : { },
-          "spring-transaction-error-handler" : { }
+          "deadLetterChannel" : { },
+          "defaultErrorHandler" : { },
+          "jtaTransactionErrorHandler" : { },
+          "noErrorHandler" : { },
+          "springTransactionErrorHandler" : { }
         }
       },
       "org.apache.camel.model.ExpressionSubElementDefinition" : {
@@ -1358,9 +1355,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "exchange-property" ],
+            "required" : [ "exchangeProperty" ],
             "properties" : {
-              "exchange-property" : {
+              "exchangeProperty" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
               }
             }
@@ -1530,7 +1527,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -1656,7 +1652,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1744,7 +1740,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -1874,7 +1869,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1982,7 +1977,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -2189,9 +2183,9 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "custom-load-balancer" ],
+            "required" : [ "customLoadBalancer" ],
             "properties" : {
-              "custom-load-balancer" : {
+              "customLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition"
               }
             }
@@ -2231,9 +2225,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "round-robin" ],
+            "required" : [ "roundRobin" ],
             "properties" : {
-              "round-robin" : {
+              "roundRobin" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition"
               }
             }
@@ -2290,10 +2284,10 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           },
-          "custom-load-balancer" : { },
+          "customLoadBalancer" : { },
           "failover" : { },
           "random" : { },
-          "round-robin" : { },
+          "roundRobin" : { },
           "sticky" : { },
           "topic" : { },
           "weighted" : { }
@@ -2374,7 +2368,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -2472,7 +2466,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -2659,17 +2652,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "fhir-json" ],
+            "required" : [ "fhirJson" ],
             "properties" : {
-              "fhir-json" : {
+              "fhirJson" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "fhir-xml" ],
+            "required" : [ "fhirXml" ],
             "properties" : {
-              "fhir-xml" : {
+              "fhirXml" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirXmlDataFormat"
               }
             }
@@ -2691,9 +2684,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "gzip-deflater" ],
+            "required" : [ "gzipDeflater" ],
             "properties" : {
-              "gzip-deflater" : {
+              "gzipDeflater" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
               }
             }
@@ -2715,9 +2708,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "jackson-xml" ],
+            "required" : [ "jacksonXml" ],
             "properties" : {
-              "jackson-xml" : {
+              "jacksonXml" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
               }
             }
@@ -2739,9 +2732,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "json-api" ],
+            "required" : [ "jsonApi" ],
             "properties" : {
-              "json-api" : {
+              "jsonApi" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JsonApiDataFormat"
               }
             }
@@ -2755,17 +2748,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "mime-multipart" ],
+            "required" : [ "mimeMultipart" ],
             "properties" : {
-              "mime-multipart" : {
+              "mimeMultipart" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "parquet-avro" ],
+            "required" : [ "parquetAvro" ],
             "properties" : {
-              "parquet-avro" : {
+              "parquetAvro" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
               }
             }
@@ -2803,17 +2796,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "swift-mt" ],
+            "required" : [ "swiftMt" ],
             "properties" : {
-              "swift-mt" : {
+              "swiftMt" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "swift-mx" ],
+            "required" : [ "swiftMx" ],
             "properties" : {
-              "swift-mx" : {
+              "swiftMx" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
               }
             }
@@ -2827,9 +2820,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tar-file" ],
+            "required" : [ "tarFile" ],
             "properties" : {
-              "tar-file" : {
+              "tarFile" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
               }
             }
@@ -2843,41 +2836,41 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidy-markup" ],
+            "required" : [ "tidyMarkup" ],
             "properties" : {
-              "tidy-markup" : {
+              "tidyMarkup" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-csv" ],
+            "required" : [ "univocityCsv" ],
             "properties" : {
-              "univocity-csv" : {
+              "univocityCsv" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-fixed" ],
+            "required" : [ "univocityFixed" ],
             "properties" : {
-              "univocity-fixed" : {
+              "univocityFixed" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-tsv" ],
+            "required" : [ "univocityTsv" ],
             "properties" : {
-              "univocity-tsv" : {
+              "univocityTsv" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "xml-security" ],
+            "required" : [ "xmlSecurity" ],
             "properties" : {
-              "xml-security" : {
+              "xmlSecurity" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
               }
             }
@@ -2891,17 +2884,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "zip-deflater" ],
+            "required" : [ "zipDeflater" ],
             "properties" : {
-              "zip-deflater" : {
+              "zipDeflater" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "zip-file" ],
+            "required" : [ "zipFile" ],
             "properties" : {
-              "zip-file" : {
+              "zipFile" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
               }
             }
@@ -2935,37 +2928,37 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
-          "fhir-json" : { },
-          "fhir-xml" : { },
+          "fhirJson" : { },
+          "fhirXml" : { },
           "flatpack" : { },
           "grok" : { },
-          "gzip-deflater" : { },
+          "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
-          "jackson-xml" : { },
+          "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
-          "json-api" : { },
+          "jsonApi" : { },
           "lzf" : { },
-          "mime-multipart" : { },
-          "parquet-avro" : { },
+          "mimeMultipart" : { },
+          "parquetAvro" : { },
           "pgp" : { },
           "protobuf" : { },
           "rss" : { },
           "soap" : { },
-          "swift-mt" : { },
-          "swift-mx" : { },
+          "swiftMt" : { },
+          "swiftMx" : { },
           "syslog" : { },
-          "tar-file" : { },
+          "tarFile" : { },
           "thrift" : { },
-          "tidy-markup" : { },
-          "univocity-csv" : { },
-          "univocity-fixed" : { },
-          "univocity-tsv" : { },
-          "xml-security" : { },
+          "tidyMarkup" : { },
+          "univocityCsv" : { },
+          "univocityFixed" : { },
+          "univocityTsv" : { },
+          "xmlSecurity" : { },
           "yaml" : { },
-          "zip-deflater" : { },
-          "zip-file" : { }
+          "zipDeflater" : { },
+          "zipFile" : { }
         }
       },
       "org.apache.camel.model.MulticastDefinition" : {
@@ -3522,7 +3515,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -3635,7 +3628,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -3759,7 +3751,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -3913,7 +3905,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -4244,7 +4235,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -4301,9 +4292,9 @@
         }, {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "batch-config" ],
+            "required" : [ "batchConfig" ],
             "properties" : {
-              "batch-config" : {
+              "batchConfig" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.config.BatchResequencerConfig"
               }
             }
@@ -4317,9 +4308,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "stream-config" ],
+            "required" : [ "streamConfig" ],
             "properties" : {
-              "stream-config" : {
+              "streamConfig" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.config.StreamResequencerConfig"
               }
             }
@@ -4353,7 +4344,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -4375,8 +4365,8 @@
           "xquery" : { },
           "xtokenize" : { },
           "expression" : { },
-          "batch-config" : { },
-          "stream-config" : { }
+          "batchConfig" : { },
+          "streamConfig" : { }
         }
       },
       "org.apache.camel.model.Resilience4jConfigurationDefinition" : {
@@ -4866,7 +4856,7 @@
                 }, {
                   "required" : [ "datasonnet" ]
                 }, {
-                  "required" : [ "exchange-property" ]
+                  "required" : [ "exchangeProperty" ]
                 }, {
                   "required" : [ "exchangeProperty" ]
                 }, {
@@ -4922,7 +4912,7 @@
             } ]
           } ],
           "properties" : {
-            "cache-size" : {
+            "cacheSize" : {
               "type" : "number",
               "title" : "Cache Size",
               "description" : "Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers."
@@ -4942,15 +4932,15 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "ignore-invalid-endpoints" : {
+            "ignoreInvalidEndpoints" : {
               "type" : "boolean",
               "title" : "Ignore Invalid Endpoints",
               "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
             },
-            "inherit-error-handler" : {
+            "inheritErrorHandler" : {
               "type" : "boolean"
             },
-            "uri-delimiter" : {
+            "uriDelimiter" : {
               "type" : "string",
               "title" : "Uri Delimiter",
               "description" : "Sets the uri delimiter to use",
@@ -4959,7 +4949,6 @@
             "constant" : { },
             "csimple" : { },
             "datasonnet" : { },
-            "exchange-property" : { },
             "exchangeProperty" : { },
             "groovy" : { },
             "header" : { },
@@ -5143,7 +5132,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5220,7 +5209,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -5262,7 +5250,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5339,7 +5327,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -5416,7 +5403,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5498,7 +5485,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -5541,7 +5527,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5623,7 +5609,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -5666,7 +5651,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5748,7 +5733,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -5790,7 +5774,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -5940,7 +5924,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -6248,7 +6231,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -6356,7 +6339,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -6582,7 +6564,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -6669,7 +6651,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -6770,37 +6751,37 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
-          "fhir-json" : { },
-          "fhir-xml" : { },
+          "fhirJson" : { },
+          "fhirXml" : { },
           "flatpack" : { },
           "grok" : { },
-          "gzip-deflater" : { },
+          "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
-          "jackson-xml" : { },
+          "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
-          "json-api" : { },
+          "jsonApi" : { },
           "lzf" : { },
-          "mime-multipart" : { },
-          "parquet-avro" : { },
+          "mimeMultipart" : { },
+          "parquetAvro" : { },
           "pgp" : { },
           "protobuf" : { },
           "rss" : { },
           "soap" : { },
-          "swift-mt" : { },
-          "swift-mx" : { },
+          "swiftMt" : { },
+          "swiftMx" : { },
           "syslog" : { },
-          "tar-file" : { },
+          "tarFile" : { },
           "thrift" : { },
-          "tidy-markup" : { },
-          "univocity-csv" : { },
-          "univocity-fixed" : { },
-          "univocity-tsv" : { },
-          "xml-security" : { },
+          "tidyMarkup" : { },
+          "univocityCsv" : { },
+          "univocityFixed" : { },
+          "univocityTsv" : { },
+          "xmlSecurity" : { },
           "yaml" : { },
-          "zip-deflater" : { },
-          "zip-file" : { }
+          "zipDeflater" : { },
+          "zipFile" : { }
         },
         "anyOf" : [ {
           "oneOf" : [ {
@@ -6961,17 +6942,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "fhir-json" ],
+            "required" : [ "fhirJson" ],
             "properties" : {
-              "fhir-json" : {
+              "fhirJson" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "fhir-xml" ],
+            "required" : [ "fhirXml" ],
             "properties" : {
-              "fhir-xml" : {
+              "fhirXml" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirXmlDataFormat"
               }
             }
@@ -6993,9 +6974,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "gzip-deflater" ],
+            "required" : [ "gzipDeflater" ],
             "properties" : {
-              "gzip-deflater" : {
+              "gzipDeflater" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
               }
             }
@@ -7017,9 +6998,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "jackson-xml" ],
+            "required" : [ "jacksonXml" ],
             "properties" : {
-              "jackson-xml" : {
+              "jacksonXml" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
               }
             }
@@ -7041,9 +7022,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "json-api" ],
+            "required" : [ "jsonApi" ],
             "properties" : {
-              "json-api" : {
+              "jsonApi" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JsonApiDataFormat"
               }
             }
@@ -7057,17 +7038,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "mime-multipart" ],
+            "required" : [ "mimeMultipart" ],
             "properties" : {
-              "mime-multipart" : {
+              "mimeMultipart" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "parquet-avro" ],
+            "required" : [ "parquetAvro" ],
             "properties" : {
-              "parquet-avro" : {
+              "parquetAvro" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
               }
             }
@@ -7105,17 +7086,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "swift-mt" ],
+            "required" : [ "swiftMt" ],
             "properties" : {
-              "swift-mt" : {
+              "swiftMt" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "swift-mx" ],
+            "required" : [ "swiftMx" ],
             "properties" : {
-              "swift-mx" : {
+              "swiftMx" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
               }
             }
@@ -7129,9 +7110,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tar-file" ],
+            "required" : [ "tarFile" ],
             "properties" : {
-              "tar-file" : {
+              "tarFile" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
               }
             }
@@ -7145,41 +7126,41 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidy-markup" ],
+            "required" : [ "tidyMarkup" ],
             "properties" : {
-              "tidy-markup" : {
+              "tidyMarkup" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-csv" ],
+            "required" : [ "univocityCsv" ],
             "properties" : {
-              "univocity-csv" : {
+              "univocityCsv" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-fixed" ],
+            "required" : [ "univocityFixed" ],
             "properties" : {
-              "univocity-fixed" : {
+              "univocityFixed" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-tsv" ],
+            "required" : [ "univocityTsv" ],
             "properties" : {
-              "univocity-tsv" : {
+              "univocityTsv" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "xml-security" ],
+            "required" : [ "xmlSecurity" ],
             "properties" : {
-              "xml-security" : {
+              "xmlSecurity" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
               }
             }
@@ -7193,17 +7174,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "zip-deflater" ],
+            "required" : [ "zipDeflater" ],
             "properties" : {
-              "zip-deflater" : {
+              "zipDeflater" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "zip-file" ],
+            "required" : [ "zipFile" ],
             "properties" : {
-              "zip-file" : {
+              "zipFile" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
               }
             }
@@ -7228,7 +7209,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -7310,7 +7291,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -7368,7 +7348,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -7451,7 +7431,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -7493,7 +7472,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -7576,7 +7555,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -7886,9 +7864,9 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "combined-service-discovery" ],
+            "required" : [ "combinedServiceDiscovery" ],
             "properties" : {
-              "combined-service-discovery" : {
+              "combinedServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration"
               }
             }
@@ -7908,33 +7886,33 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "consul-service-discovery" ],
+            "required" : [ "consulServiceDiscovery" ],
             "properties" : {
-              "consul-service-discovery" : {
+              "consulServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "dns-service-discovery" ],
+            "required" : [ "dnsServiceDiscovery" ],
             "properties" : {
-              "dns-service-discovery" : {
+              "dnsServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "kubernetes-service-discovery" ],
+            "required" : [ "kubernetesServiceDiscovery" ],
             "properties" : {
-              "kubernetes-service-discovery" : {
+              "kubernetesServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "static-service-discovery" ],
+            "required" : [ "staticServiceDiscovery" ],
             "properties" : {
-              "static-service-discovery" : {
+              "staticServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration"
               }
             }
@@ -7967,11 +7945,11 @@
             "default" : "SECONDS",
             "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
           },
-          "combined-service-discovery" : { },
-          "consul-service-discovery" : { },
-          "dns-service-discovery" : { },
-          "kubernetes-service-discovery" : { },
-          "static-service-discovery" : { }
+          "combinedServiceDiscovery" : { },
+          "consulServiceDiscovery" : { },
+          "dnsServiceDiscovery" : { },
+          "kubernetesServiceDiscovery" : { },
+          "staticServiceDiscovery" : { }
         }
       },
       "org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration" : {
@@ -8348,9 +8326,9 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "blacklist-service-filter" ],
+            "required" : [ "blacklistServiceFilter" ],
             "properties" : {
-              "blacklist-service-filter" : {
+              "blacklistServiceFilter" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration"
               }
             }
@@ -8370,33 +8348,33 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "combined-service-filter" ],
+            "required" : [ "combinedServiceFilter" ],
             "properties" : {
-              "combined-service-filter" : {
+              "combinedServiceFilter" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "custom-service-filter" ],
+            "required" : [ "customServiceFilter" ],
             "properties" : {
-              "custom-service-filter" : {
+              "customServiceFilter" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "healthy-service-filter" ],
+            "required" : [ "healthyServiceFilter" ],
             "properties" : {
-              "healthy-service-filter" : {
+              "healthyServiceFilter" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "pass-through-service-filter" ],
+            "required" : [ "passThroughServiceFilter" ],
             "properties" : {
-              "pass-through-service-filter" : {
+              "passThroughServiceFilter" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"
               }
             }
@@ -8404,9 +8382,9 @@
         }, {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "caching-service-discovery" ],
+            "required" : [ "cachingServiceDiscovery" ],
             "properties" : {
-              "caching-service-discovery" : {
+              "cachingServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration"
               }
             }
@@ -8430,49 +8408,49 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "combined-service-discovery" ],
+            "required" : [ "combinedServiceDiscovery" ],
             "properties" : {
-              "combined-service-discovery" : {
+              "combinedServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "consul-service-discovery" ],
+            "required" : [ "consulServiceDiscovery" ],
             "properties" : {
-              "consul-service-discovery" : {
+              "consulServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "dns-service-discovery" ],
+            "required" : [ "dnsServiceDiscovery" ],
             "properties" : {
-              "dns-service-discovery" : {
+              "dnsServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "kubernetes-service-discovery" ],
+            "required" : [ "kubernetesServiceDiscovery" ],
             "properties" : {
-              "kubernetes-service-discovery" : {
+              "kubernetesServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "static-service-discovery" ],
+            "required" : [ "staticServiceDiscovery" ],
             "properties" : {
-              "static-service-discovery" : {
+              "staticServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "zookeeper-service-discovery" ],
+            "required" : [ "zookeeperServiceDiscovery" ],
             "properties" : {
-              "zookeeper-service-discovery" : {
+              "zookeeperServiceDiscovery" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration"
               }
             }
@@ -8480,9 +8458,9 @@
         }, {
           "oneOf" : [ {
             "type" : "object",
-            "required" : [ "default-load-balancer" ],
+            "required" : [ "defaultLoadBalancer" ],
             "properties" : {
-              "default-load-balancer" : {
+              "defaultLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"
               }
             }
@@ -8560,19 +8538,19 @@
             "title" : "Uri",
             "description" : "The uri of the endpoint to send to. The uri can be dynamic computed using the simple language expression."
           },
-          "blacklist-service-filter" : { },
-          "combined-service-filter" : { },
-          "custom-service-filter" : { },
-          "healthy-service-filter" : { },
-          "pass-through-service-filter" : { },
-          "caching-service-discovery" : { },
-          "combined-service-discovery" : { },
-          "consul-service-discovery" : { },
-          "dns-service-discovery" : { },
-          "kubernetes-service-discovery" : { },
-          "static-service-discovery" : { },
-          "zookeeper-service-discovery" : { },
-          "default-load-balancer" : { },
+          "blacklistServiceFilter" : { },
+          "combinedServiceFilter" : { },
+          "customServiceFilter" : { },
+          "healthyServiceFilter" : { },
+          "passThroughServiceFilter" : { },
+          "cachingServiceDiscovery" : { },
+          "combinedServiceDiscovery" : { },
+          "consulServiceDiscovery" : { },
+          "dnsServiceDiscovery" : { },
+          "kubernetesServiceDiscovery" : { },
+          "staticServiceDiscovery" : { },
+          "zookeeperServiceDiscovery" : { },
+          "defaultLoadBalancer" : { },
           "expression" : { }
         }
       },
@@ -8587,7 +8565,7 @@
           "anyOf" : [ {
             "oneOf" : [ {
               "type" : "object",
-              "required" : [ "blacklist-service-filter" ],
+              "required" : [ "blacklistServiceFilter" ],
               "properties" : {
                 "blacklistServiceFilter" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration"
@@ -8609,33 +8587,33 @@
               }
             }, {
               "type" : "object",
-              "required" : [ "combined-service-filter" ],
+              "required" : [ "combinedServiceFilter" ],
               "properties" : {
-                "combined-service-filter" : {
+                "combinedServiceFilter" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "custom-service-filter" ],
+              "required" : [ "customServiceFilter" ],
               "properties" : {
-                "custom-service-filter" : {
+                "customServiceFilter" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "healthy-service-filter" ],
+              "required" : [ "healthyServiceFilter" ],
               "properties" : {
-                "healthy-service-filter" : {
+                "healthyServiceFilter" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "pass-through-service-filter" ],
+              "required" : [ "passThroughServiceFilter" ],
               "properties" : {
-                "pass-through-service-filter" : {
+                "passThroughServiceFilter" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"
                 }
               }
@@ -8643,9 +8621,9 @@
           }, {
             "oneOf" : [ {
               "type" : "object",
-              "required" : [ "caching-service-discovery" ],
+              "required" : [ "cachingServiceDiscovery" ],
               "properties" : {
-                "caching-service-discovery" : {
+                "cachingServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration"
                 }
               }
@@ -8669,49 +8647,49 @@
               }
             }, {
               "type" : "object",
-              "required" : [ "combined-service-discovery" ],
+              "required" : [ "combinedServiceDiscovery" ],
               "properties" : {
-                "combined-service-discovery" : {
+                "combinedServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "consul-service-discovery" ],
+              "required" : [ "consulServiceDiscovery" ],
               "properties" : {
-                "consul-service-discovery" : {
+                "consulServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "dns-service-discovery" ],
+              "required" : [ "dnsServiceDiscovery" ],
               "properties" : {
-                "dns-service-discovery" : {
+                "dnsServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "kubernetes-service-discovery" ],
+              "required" : [ "kubernetesServiceDiscovery" ],
               "properties" : {
-                "kubernetes-service-discovery" : {
+                "kubernetesServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "static-service-discovery" ],
+              "required" : [ "staticServiceDiscovery" ],
               "properties" : {
-                "static-service-discovery" : {
+                "staticServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration"
                 }
               }
             }, {
               "type" : "object",
-              "required" : [ "zookeeper-service-discovery" ],
+              "required" : [ "zookeeperServiceDiscovery" ],
               "properties" : {
-                "zookeeper-service-discovery" : {
+                "zookeeperServiceDiscovery" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration"
                 }
               }
@@ -8719,9 +8697,9 @@
           }, {
             "oneOf" : [ {
               "type" : "object",
-              "required" : [ "default-load-balancer" ],
+              "required" : [ "defaultLoadBalancer" ],
               "properties" : {
-                "default-load-balancer" : {
+                "defaultLoadBalancer" : {
                   "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"
                 }
               }
@@ -8758,7 +8736,7 @@
               "description" : "The component to use.",
               "default" : "http"
             },
-            "configuration-ref" : {
+            "configurationRef" : {
               "type" : "string",
               "title" : "Configuration Ref",
               "description" : "Refers to a ServiceCall configuration to use"
@@ -8773,7 +8751,7 @@
               "title" : "Disabled",
               "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
             },
-            "expression-ref" : {
+            "expressionRef" : {
               "type" : "string",
               "title" : "Expression Ref",
               "description" : "Set a reference to a custom Expression to use."
@@ -8783,10 +8761,10 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
-            "inherit-error-handler" : {
+            "inheritErrorHandler" : {
               "type" : "boolean"
             },
-            "load-balancer-ref" : {
+            "loadBalancerRef" : {
               "type" : "string",
               "title" : "Load Balancer Ref",
               "description" : "Sets a reference to a custom ServiceLoadBalancer to use."
@@ -8802,17 +8780,17 @@
               "description" : "Sets the optional ExchangePattern used to invoke this endpoint",
               "enum" : [ "InOnly", "InOut" ]
             },
-            "service-chooser-ref" : {
+            "serviceChooserRef" : {
               "type" : "string",
               "title" : "Service Chooser Ref",
               "description" : "Sets a reference to a custom ServiceChooser to use."
             },
-            "service-discovery-ref" : {
+            "serviceDiscoveryRef" : {
               "type" : "string",
               "title" : "Service Discovery Ref",
               "description" : "Sets a reference to a custom ServiceDiscovery to use."
             },
-            "service-filter-ref" : {
+            "serviceFilterRef" : {
               "type" : "string",
               "title" : "Service Filter Ref",
               "description" : "Sets a reference to a custom ServiceFilter to use."
@@ -8823,18 +8801,18 @@
               "description" : "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression."
             },
             "blacklistServiceFilter" : { },
-            "combined-service-filter" : { },
-            "custom-service-filter" : { },
-            "healthy-service-filter" : { },
-            "pass-through-service-filter" : { },
-            "caching-service-discovery" : { },
-            "combined-service-discovery" : { },
-            "consul-service-discovery" : { },
-            "dns-service-discovery" : { },
-            "kubernetes-service-discovery" : { },
-            "static-service-discovery" : { },
-            "zookeeper-service-discovery" : { },
-            "default-load-balancer" : { },
+            "combinedServiceFilter" : { },
+            "customServiceFilter" : { },
+            "healthyServiceFilter" : { },
+            "passThroughServiceFilter" : { },
+            "cachingServiceDiscovery" : { },
+            "combinedServiceDiscovery" : { },
+            "consulServiceDiscovery" : { },
+            "dnsServiceDiscovery" : { },
+            "kubernetesServiceDiscovery" : { },
+            "staticServiceDiscovery" : { },
+            "zookeeperServiceDiscovery" : { },
+            "defaultLoadBalancer" : { },
             "expression" : { }
           }
         } ],
@@ -12060,9 +12038,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "exchange-property" ],
+            "required" : [ "exchangeProperty" ],
             "properties" : {
-              "exchange-property" : {
+              "exchangeProperty" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
               }
             }
@@ -12232,7 +12210,6 @@
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
-          "exchange-property" : { },
           "exchangeProperty" : { },
           "groovy" : { },
           "header" : { },
@@ -14812,17 +14789,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "fhir-json" ],
+            "required" : [ "fhirJson" ],
             "properties" : {
-              "fhir-json" : {
+              "fhirJson" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "fhir-xml" ],
+            "required" : [ "fhirXml" ],
             "properties" : {
-              "fhir-xml" : {
+              "fhirXml" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirXmlDataFormat"
               }
             }
@@ -14844,9 +14821,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "gzip-deflater" ],
+            "required" : [ "gzipDeflater" ],
             "properties" : {
-              "gzip-deflater" : {
+              "gzipDeflater" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
               }
             }
@@ -14868,9 +14845,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "jackson-xml" ],
+            "required" : [ "jacksonXml" ],
             "properties" : {
-              "jackson-xml" : {
+              "jacksonXml" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
               }
             }
@@ -14892,9 +14869,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "json-api" ],
+            "required" : [ "jsonApi" ],
             "properties" : {
-              "json-api" : {
+              "jsonApi" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JsonApiDataFormat"
               }
             }
@@ -14908,17 +14885,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "mime-multipart" ],
+            "required" : [ "mimeMultipart" ],
             "properties" : {
-              "mime-multipart" : {
+              "mimeMultipart" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "parquet-avro" ],
+            "required" : [ "parquetAvro" ],
             "properties" : {
-              "parquet-avro" : {
+              "parquetAvro" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
               }
             }
@@ -14956,17 +14933,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "swift-mt" ],
+            "required" : [ "swiftMt" ],
             "properties" : {
-              "swift-mt" : {
+              "swiftMt" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "swift-mx" ],
+            "required" : [ "swiftMx" ],
             "properties" : {
-              "swift-mx" : {
+              "swiftMx" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
               }
             }
@@ -14980,9 +14957,9 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tar-file" ],
+            "required" : [ "tarFile" ],
             "properties" : {
-              "tar-file" : {
+              "tarFile" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TarFileDataFormat"
               }
             }
@@ -14996,41 +14973,41 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidy-markup" ],
+            "required" : [ "tidyMarkup" ],
             "properties" : {
-              "tidy-markup" : {
+              "tidyMarkup" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-csv" ],
+            "required" : [ "univocityCsv" ],
             "properties" : {
-              "univocity-csv" : {
+              "univocityCsv" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-fixed" ],
+            "required" : [ "univocityFixed" ],
             "properties" : {
-              "univocity-fixed" : {
+              "univocityFixed" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "univocity-tsv" ],
+            "required" : [ "univocityTsv" ],
             "properties" : {
-              "univocity-tsv" : {
+              "univocityTsv" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityTsvDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "xml-security" ],
+            "required" : [ "xmlSecurity" ],
             "properties" : {
-              "xml-security" : {
+              "xmlSecurity" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
               }
             }
@@ -15044,17 +15021,17 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "zip-deflater" ],
+            "required" : [ "zipDeflater" ],
             "properties" : {
-              "zip-deflater" : {
+              "zipDeflater" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipDeflaterDataFormat"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "zip-file" ],
+            "required" : [ "zipFile" ],
             "properties" : {
-              "zip-file" : {
+              "zipFile" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
               }
             }
@@ -15082,37 +15059,37 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
-          "fhir-json" : { },
-          "fhir-xml" : { },
+          "fhirJson" : { },
+          "fhirXml" : { },
           "flatpack" : { },
           "grok" : { },
-          "gzip-deflater" : { },
+          "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
-          "jackson-xml" : { },
+          "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
-          "json-api" : { },
+          "jsonApi" : { },
           "lzf" : { },
-          "mime-multipart" : { },
-          "parquet-avro" : { },
+          "mimeMultipart" : { },
+          "parquetAvro" : { },
           "pgp" : { },
           "protobuf" : { },
           "rss" : { },
           "soap" : { },
-          "swift-mt" : { },
-          "swift-mx" : { },
+          "swiftMt" : { },
+          "swiftMx" : { },
           "syslog" : { },
-          "tar-file" : { },
+          "tarFile" : { },
           "thrift" : { },
-          "tidy-markup" : { },
-          "univocity-csv" : { },
-          "univocity-fixed" : { },
-          "univocity-tsv" : { },
-          "xml-security" : { },
+          "tidyMarkup" : { },
+          "univocityCsv" : { },
+          "univocityFixed" : { },
+          "univocityTsv" : { },
+          "xmlSecurity" : { },
           "yaml" : { },
-          "zip-deflater" : { },
-          "zip-file" : { }
+          "zipDeflater" : { },
+          "zipFile" : { }
         }
       },
       "org.apache.camel.model.transformer.EndpointTransformerDefinition" : {

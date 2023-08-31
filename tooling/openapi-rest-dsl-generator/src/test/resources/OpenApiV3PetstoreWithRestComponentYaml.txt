@@ -1,4 +1,4 @@
-- rest-configuration:
+- restConfiguration:
     component: "servlet"
     contextPath: "/foo"
 - rest:
