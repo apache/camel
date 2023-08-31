@@ -405,7 +405,7 @@
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.1.3</rocketmq-version>
         <rome-version>2.1.0</rome-version>
-        <rssreader-version>3.4.5</rssreader-version>
+        <rssreader-version>3.4.6</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.3</saxon-version>
         <scala-datasonnet-version>2.13.11</scala-datasonnet-version>
