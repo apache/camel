@@ -59,6 +59,7 @@ import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -476,8 +477,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else {
             // non singleton then add hashcoded id
             String uri = ep.getEndpointKey();
-            int pos = uri.indexOf('?');
-            String id = (pos == -1) ? uri : uri.substring(0, pos);
+            String id = StringHelper.before(uri, "?", uri);
             id += "?id=" + ObjectHelper.getIdentityHashCode(ep);
             return id;
         }

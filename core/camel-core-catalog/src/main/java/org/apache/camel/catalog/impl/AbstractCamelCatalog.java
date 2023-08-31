@@ -813,10 +813,7 @@ public abstract class AbstractCamelCatalog {
 
     public String endpointComponentName(String uri) {
         if (uri != null) {
-            int idx = uri.indexOf(':');
-            if (idx > 0) {
-                return uri.substring(0, idx);
-            }
+            return StringHelper.before(uri, ":");
         }
         return null;
     }
