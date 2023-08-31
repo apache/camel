@@ -16,23 +16,28 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class S3StreamUploadTimeoutIT extends Aws2S3Base {
+public class S3StreamUploadMultipartAsyncIT extends Aws2S3Base {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -42,31 +47,37 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
     @Test
     public void sendIn() throws Exception {
+        result.expectedMessageCount(10);
+        for (int i = 0; i < 10; i++) {
 
-        for(int i = 1; i <= 2; i++) {
-            int count = i * 23;
-            
-            result.expectedMessageCount(count);
+            final CompletableFuture<Exchange> future = template.asyncSend("direct:stream1", new Processor() {
 
-            for (int j = 0; j < 23; j++) {
-                template.sendBody("direct:stream1", "Andrea\n");
-            }
+                @Override
+                public void process(Exchange exchange) {
+                    exchange.getIn().setHeader(AWS2S3Constants.KEY, "empty.bin");
+                    exchange.getIn().setBody(new File("src/test/resources/empty.bin"));
+                }
+            });
 
-            Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
-
-            Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                    .untilAsserted(() -> {
-                        Exchange ex = template.request("direct:listObjects", this::process);
-
-                        List<S3Object> resp = ex.getMessage().getBody(List.class);
-                        assertEquals(1, resp.size());
-                    });
+            assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
         }
-    }
 
-    private void process(Exchange exchange) {
-        exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+
+        Exchange ex = template.request("direct:listObjects", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
+            }
+        });
+
+        // file size: 5,242,880 bytes, 10 * (5 chunks of 1,000,000 + remainder of 242,880)
+        List<S3Object> resp = ex.getMessage().getBody(List.class);
+        assertEquals(60, resp.size());
+
+        assertEquals(10 * Files.size(Paths.get("src/test/resources/empty.bin")),
+                resp.stream().mapToLong(S3Object::size).sum());
     }
 
     @Override
@@ -75,7 +86,7 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
             @Override
             public void configure() {
                 String awsEndpoint1
-                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random&streamingUploadTimeout=10000";
+                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random";
 
                 from("direct:stream1").to(awsEndpoint1).to("mock:result");
 
