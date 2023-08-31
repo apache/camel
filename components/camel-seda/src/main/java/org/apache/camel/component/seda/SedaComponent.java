@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -53,7 +54,7 @@ public class SedaComponent extends DefaultComponent {
     @Metadata(label = "consumer,advanced", defaultValue = "1000")
     private int defaultPollTimeout = 1000;
 
-    private final Map<String, QueueReference> queues = new HashMap<>();
+    private final Map<String, QueueReference> queues = new ConcurrentHashMap<>();
     private final Map<String, Integer> customSize = new HashMap<>();
 
     public SedaComponent() {
@@ -144,56 +145,63 @@ public class SedaComponent extends DefaultComponent {
         this.defaultPollTimeout = defaultPollTimeout;
     }
 
-    public synchronized QueueReference getOrCreateQueue(
+    public QueueReference getOrCreateQueue(
             SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
 
-        String key = getQueueKey(endpoint.getEndpointUri());
+        final String key = getQueueKey(endpoint.getEndpointUri());
 
         if (size == null) {
             // there may be a custom size during startup
             size = customSize.get(key);
         }
 
-        QueueReference ref = getQueues().get(key);
-        if (ref != null) {
-            // if the given size is not provided, we just use the existing queue as is
-            if (size != null && !size.equals(ref.getSize())) {
-                // there is already a queue, so make sure the size matches
-                throw new IllegalArgumentException(
-                        "Cannot use existing queue " + key + " as the existing queue size "
-                                                   + (ref.getSize() != null ? ref.getSize() : SedaConstants.QUEUE_SIZE)
-                                                   + " does not match given queue size " + size);
-            }
-            // add the reference before returning queue
-            ref.addReference(endpoint);
-
-            if (log.isDebugEnabled()) {
-                log.debug("Reusing existing queue {} with size {} and reference count {}", key, size, ref.getCount());
-            }
-            return ref;
-        }
+        final Integer size2 = size;
 
         // create queue
+        QueueReference ref = getQueues().computeIfAbsent(key, k -> createNewQueueRef(size2, multipleConsumers, customQueueFactory, k));
+        validateQueueSize(size, ref.getSize(), key);
+
+        // add the reference before returning queue
+        ref.addReference(endpoint);
+
+        return ref;
+    }
+
+    private QueueReference createNewQueueRef(Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory,
+            String key) {
+
         BlockingQueue<Exchange> queue;
+
         BlockingQueueFactory<Exchange> queueFactory = customQueueFactory == null ? defaultQueueFactory : customQueueFactory;
         if (size != null && size > 0) {
             queue = queueFactory.create(size);
+            log.debug("Created queue {} with size {}", key, size);
+            return new QueueReference(queue, size, multipleConsumers);
         } else {
-            if (getQueueSize() > 0) {
-                size = getQueueSize();
-                queue = queueFactory.create(getQueueSize());
+            int componentSize = getQueueSize();
+            if (componentSize > 0) {
+                queue = queueFactory.create(componentSize);
+                log.debug("Created queue {} with size {}", key, componentSize);
+
             } else {
                 queue = queueFactory.create();
+                log.debug("Created queue {} with default size {}", key, componentSize);
             }
+
+            return new QueueReference(queue, componentSize, multipleConsumers);
         }
-        log.debug("Created queue {} with size {}", key, size);
+    }
 
-        // create and add a new reference queue
-        ref = new QueueReference(queue, size, multipleConsumers);
-        ref.addReference(endpoint);
-        getQueues().put(key, ref);
+    private void validateQueueSize(Integer size, Integer refSize, String key) {
+        // if the given size is not provided, we just use the existing queue as is
+        if (size != null && !size.equals(refSize)) {
+            // there is already a queue, so make sure the size matches
+            throw new IllegalArgumentException(
+                    "Cannot use existing queue " + key + " as the existing queue size "
+                                               + (refSize != null ? refSize : SedaConstants.QUEUE_SIZE)
+                                               + " does not match given queue size " + size);
+        }
 
-        return ref;
     }
 
     public synchronized QueueReference registerQueue(SedaEndpoint endpoint, BlockingQueue<Exchange> queue) {

@@ -70,7 +70,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @Metadata(required = true)
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
-    private BlockingQueue<Exchange> queue;
+    private volatile BlockingQueue<Exchange> queue;
     @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE)
     private int size = SedaConstants.QUEUE_SIZE;
 
@@ -174,30 +174,39 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         return answer;
     }
 
-    public synchronized BlockingQueue<Exchange> getQueue() {
+    public BlockingQueue<Exchange> getQueue() {
         if (queue == null) {
-            // prefer to lookup queue from component, so if this endpoint is re-created or re-started
-            // then the existing queue from the component can be used, so new producers and consumers
-            // can use the already existing queue referenced from the component
-            if (getComponent() != null) {
-                // use null to indicate default size (= use what the existing queue has been configured with)
-                Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
-                QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
-                queue = ref.getQueue();
-                String key = getComponent().getQueueKey(getEndpointUri());
-                LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
-                        ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
-                // and set the size we are using
-                if (ref.getSize() != null) {
-                    setSize(ref.getSize());
+            synchronized (this) {
+                if (queue == null) {
+                    resolveQueue();
                 }
-            } else {
-                // fallback and create queue (as this endpoint has no component)
-                queue = createQueue();
-                LOG.debug("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
             }
+
         }
         return queue;
+    }
+
+    private void resolveQueue() {
+        // prefer to lookup queue from component, so if this endpoint is re-created or re-started
+        // then the existing queue from the component can be used, so new producers and consumers
+        // can use the already existing queue referenced from the component
+        if (getComponent() != null) {
+            // use null to indicate default size (= use what the existing queue has been configured with)
+            Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
+            QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+            queue = ref.getQueue();
+            String key = getComponent().getQueueKey(getEndpointUri());
+            LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
+                    ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
+            // and set the size we are using
+            if (ref.getSize() != null) {
+                setSize(ref.getSize());
+            }
+        } else {
+            // fallback and create queue (as this endpoint has no component)
+            queue = createQueue();
+            LOG.debug("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
+        }
     }
 
     protected BlockingQueue<Exchange> createQueue() {
@@ -216,9 +225,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     public QueueReference getQueueReference() {
         String key = getComponent().getQueueKey(getEndpointUri());
 
-        synchronized (this) {
-            return getComponent().getQueueReference(key);
-        }
+        return getComponent().getQueueReference(key);
     }
 
     protected synchronized AsyncProcessor getConsumerMulticastProcessor() {
