@@ -10,6 +10,14 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.
 
+=== camel-scheduler
+
+The `scheduler` no longer includes header with the timestamp of when the exchange was fired.
+This means the exchange by default has no headers, and `null` body.
+
+The option `includeMetadata` can be set to `true` on the endpoint or component level, to turn on
+these additional metadata headers again.
+
 === camel-timer
 
 The `timer` no longer includes header `firedTime` with the timestamp of when the exchange was fired.
