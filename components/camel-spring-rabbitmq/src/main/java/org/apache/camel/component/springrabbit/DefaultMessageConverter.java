@@ -31,24 +31,16 @@ public class DefaultMessageConverter extends AbstractMessageConverter implements
 
     private final String defaultCharset = Charset.defaultCharset().name();
     private final CamelContext camelContext;
-    private final boolean allowNullBody;
 
-    public DefaultMessageConverter(CamelContext camelContext, boolean allowNullBody) {
+    public DefaultMessageConverter(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.allowNullBody = allowNullBody;
     }
 
     @Override
     public Message createMessage(Object body, MessageProperties messageProperties) throws MessageConversionException {
         if (body == null) {
-            if (!allowNullBody) {
-                throw new MessageConversionException(
-                        "Cannot send message as message body is null, and option allowNullBody is false.");
-            } else {
-                // cannot use null so use an empty array
-                byte[] empty = new byte[0];
-                return new Message(empty, messageProperties);
-            }
+            throw new MessageConversionException(
+                    "Cannot send message as message body is null, and option allowNullBody is false.");
         }
 
         boolean text = body instanceof String;
