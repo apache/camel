@@ -225,8 +225,11 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(state)) {
             // exchange wasn't large enough to send, batch it with subsequent exchanges.
             synchronized (lock) {
-                if (this.uploadAggregate == null) {
+                if (ObjectHelper.isEmpty(this.uploadAggregate)) {
                     this.uploadAggregate = state;
+                } else {
+                    // handle potential race condition.
+                    this.uploadAggregate.buffer.write(state.buffer.toByteArray());
                 }
             }
         }
