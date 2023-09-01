@@ -174,6 +174,11 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                 message.setHeader(ElasticsearchConstants.PARAM_FROM, configuration.getFrom());
             }
 
+            Boolean enableDocumentOnlyMode = message.getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.class);
+            if (enableDocumentOnlyMode == null) {
+                message.setHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, configuration.isEnableDocumentOnlyMode());
+            }
+
             boolean configWaitForActiveShards = false;
             Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
             if (waitForActiveShards == null) {

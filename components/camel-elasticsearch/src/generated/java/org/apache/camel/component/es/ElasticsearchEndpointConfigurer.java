@@ -28,6 +28,8 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "documentclass":
         case "documentClass": target.getConfiguration().setDocumentClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "enabledocumentonlymode":
+        case "enableDocumentOnlyMode": target.getConfiguration().setEnableDocumentOnlyMode(property(camelContext, boolean.class, value)); return true;
         case "enablessl":
         case "enableSSL": target.getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
         case "enablesniffer":
@@ -69,6 +71,8 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "disconnect": return boolean.class;
         case "documentclass":
         case "documentClass": return java.lang.Class.class;
+        case "enabledocumentonlymode":
+        case "enableDocumentOnlyMode": return boolean.class;
         case "enablessl":
         case "enableSSL": return boolean.class;
         case "enablesniffer":
@@ -111,6 +115,8 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "disconnect": return target.getConfiguration().isDisconnect();
         case "documentclass":
         case "documentClass": return target.getConfiguration().getDocumentClass();
+        case "enabledocumentonlymode":
+        case "enableDocumentOnlyMode": return target.getConfiguration().isEnableDocumentOnlyMode();
         case "enablessl":
         case "enableSSL": return target.getConfiguration().isEnableSSL();
         case "enablesniffer":
