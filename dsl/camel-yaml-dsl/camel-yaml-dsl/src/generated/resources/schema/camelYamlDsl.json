@@ -210,25 +210,80 @@
       },
       "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer" : {
         "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "type" : "object",
+            "required" : [ "deadLetterChannel" ],
+            "properties" : {
+              "deadLetterChannel" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+              }
+            }
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "dead-letter-channel" ]
+              }, {
+                "required" : [ "default-error-handler" ]
+              }, {
+                "required" : [ "jta-transaction-error-handler" ]
+              }, {
+                "required" : [ "no-error-handler" ]
+              }, {
+                "required" : [ "ref-error-handler" ]
+              }, {
+                "required" : [ "spring-transaction-error-handler" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "defaultErrorHandler" ],
+            "properties" : {
+              "defaultErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jtaTransactionErrorHandler" ],
+            "properties" : {
+              "jtaTransactionErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "noErrorHandler" ],
+            "properties" : {
+              "noErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "refErrorHandler" ],
+            "properties" : {
+              "refErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.RefErrorHandlerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "springTransactionErrorHandler" ],
+            "properties" : {
+              "springTransactionErrorHandler" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
+              }
+            }
+          } ]
+        } ],
         "properties" : {
-          "deadLetterChannel" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
-          },
-          "defaultErrorHandler" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
-          },
-          "jtaTransactionErrorHandler" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
-          },
-          "noErrorHandler" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
-          },
-          "refErrorHandler" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.RefErrorHandlerDefinition"
-          },
-          "springTransactionErrorHandler" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
-          }
+          "deadLetterChannel" : { },
+          "defaultErrorHandler" : { },
+          "jtaTransactionErrorHandler" : { },
+          "noErrorHandler" : { },
+          "refErrorHandler" : { },
+          "springTransactionErrorHandler" : { }
         }
       },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition" : {
