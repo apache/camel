@@ -549,7 +549,7 @@ public interface Aws2SnsComponentBuilderFactory {
             case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Sns2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
-            case "queueUrl": getOrCreateConfiguration((Sns2Component) component).setQueueUrl((java.lang.String) value); return true;
+            case "queueArn": getOrCreateConfiguration((Sns2Component) component).setQueueArn((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Sns2Component) component).setRegion((java.lang.String) value); return true;
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((Sns2Component) component).setServerSideEncryptionEnabled((boolean) value); return true;
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
