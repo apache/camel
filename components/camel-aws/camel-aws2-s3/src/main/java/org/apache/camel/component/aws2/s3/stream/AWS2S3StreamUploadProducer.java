@@ -229,7 +229,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     this.uploadAggregate = state;
                 } else {
                     // handle potential race condition.
-                    this.uploadAggregate.buffer.write(b);
+                    this.uploadAggregate.buffer.write(state.buffer.toByteArray());
                 }
             }
         }
