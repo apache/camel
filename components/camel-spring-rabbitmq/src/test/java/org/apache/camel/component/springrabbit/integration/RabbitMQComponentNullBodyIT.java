@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.springrabbit.integration;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -27,7 +29,15 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
-public class RabbitMQProducerNullBodyIT extends RabbitMQITSupport {
+public class RabbitMQComponentNullBodyIT extends RabbitMQITSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        SpringRabbitMQComponent rmq = camelContext.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class);
+        rmq.setAllowNullBody(true);
+        return camelContext;
+    }
 
     @Test
     public void testProducer() {
@@ -50,7 +60,7 @@ public class RabbitMQProducerNullBodyIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar&allowNullBody=true");
+                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
             }
         };
     }

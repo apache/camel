@@ -121,7 +121,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
             setHeaderFilterStrategy(new SpringRabbitMQHeaderFilterStrategy());
         }
         if (messageConverter == null) {
-            messageConverter = new DefaultMessageConverter(getCamelContext(), allowNullBody);
+            messageConverter = new DefaultMessageConverter(getCamelContext());
         }
         if (messagePropertiesConverter == null) {
             messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext(), getHeaderFilterStrategy());
@@ -150,6 +150,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setMaximumRetryAttempts(maximumRetryAttempts);
         endpoint.setRetryDelay(retryDelay);
         endpoint.setRejectAndDontRequeue(rejectAndDontRequeue);
+        endpoint.setAllowNullBody(allowNullBody);
 
         endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
         setProperties(endpoint, parameters);
