@@ -174,14 +174,14 @@ public class FilesOperations extends NormalizedOperations {
         log.trace("renameFile({}, {})", from, to);
 
         try {
-            return renameRemote(getFileClient(FilesPath.ensureRelative(from)), FilesPath.ensureRelative(to));
+            return renameRemote(getFileClient(from), FilesPath.ensureRelative(to));
         } catch (RuntimeException e) {
             throw new GenericFileOperationFailedException("Cannot rename: " + from + " to: " + to, e);
         }
     }
 
     private boolean renameRemote(ShareFileClient fileClient, String shareRelativeTo) {
-        // TODO replace existing?
+        // TODO set the replace flag? likely yes, callers strategy should avoid this call when otherwise 
         var options = new ShareFileRenameOptions(shareRelativeTo);
         var renamed = fileClient.renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE).getValue();
         return existsRemote(renamed);
@@ -667,8 +667,9 @@ public class FilesOperations extends NormalizedOperations {
 
     private ShareFileClient getFileClient(String path) {
 
-        assert FilesPath.isAbsolute(path);
-        assert !FilesPath.isRoot(path);
+        assert FilesPath.isAbsolute(path) : "Expecting /a_path from share root, got: " + path;
+        assert !FilesPath.isRoot(path) : "Expecting /a_path from share root, got: " + path;
+        // if we got a relative path we need to figure out its base
 
         return root.getFileClient(FilesPath.ensureRelative(path));
     }
