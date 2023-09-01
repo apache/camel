@@ -43,9 +43,9 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
     @Test
     public void sendIn() throws Exception {
 
-        for(int i = 1; i <= 2; i++) {
+        for (int i = 1; i <= 2; i++) {
             int count = i * 23;
-            
+
             result.expectedMessageCount(count);
 
             for (int j = 0; j < 23; j++) {

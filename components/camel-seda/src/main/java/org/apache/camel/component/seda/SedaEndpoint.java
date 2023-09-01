@@ -221,7 +221,6 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         }
     }
 
-
     protected synchronized AsyncProcessor getConsumerMulticastProcessor() {
         if (!multicastStarted && consumerMulticastProcessor != null) {
             // only start it on-demand to avoid starting it during stopping
@@ -588,7 +587,5 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         // clear queue, as we are shutdown, so if re-created then the queue must be updated
         queue = null;
     }
-
-
 
 }

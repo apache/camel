@@ -213,7 +213,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     }
                     state = null;
                 }
-                
+
             } catch (Exception e) {
                 getEndpoint().getS3Client()
                         .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
