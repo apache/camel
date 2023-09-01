@@ -21,8 +21,9 @@ public class SpringRabbitMQEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(37);
+        Set<String> props = new HashSet<>(38);
         props.add("acknowledgeMode");
+        props.add("allowNullBody");
         props.add("args");
         props.add("asyncConsumer");
         props.add("autoDeclare");

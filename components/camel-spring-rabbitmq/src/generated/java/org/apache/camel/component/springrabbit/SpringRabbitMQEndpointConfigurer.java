@@ -23,6 +23,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acknowledgemode":
         case "acknowledgeMode": target.setAcknowledgeMode(property(camelContext, org.springframework.amqp.core.AcknowledgeMode.class, value)); return true;
+        case "allownullbody":
+        case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "args": target.setArgs(property(camelContext, java.util.Map.class, value)); return true;
         case "asyncconsumer":
         case "asyncConsumer": target.setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
@@ -96,6 +98,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acknowledgemode":
         case "acknowledgeMode": return org.springframework.amqp.core.AcknowledgeMode.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
         case "args": return java.util.Map.class;
         case "asyncconsumer":
         case "asyncConsumer": return boolean.class;
@@ -170,6 +174,8 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acknowledgemode":
         case "acknowledgeMode": return target.getAcknowledgeMode();
+        case "allownullbody":
+        case "allowNullBody": return target.isAllowNullBody();
         case "args": return target.getArgs();
         case "asyncconsumer":
         case "asyncConsumer": return target.isAsyncConsumer();
