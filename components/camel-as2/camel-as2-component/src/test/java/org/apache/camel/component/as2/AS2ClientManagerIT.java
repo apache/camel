@@ -340,8 +340,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
         assertNotNull(entity, "Request body");
-        assertTrue(entity instanceof ApplicationEntity, "Request body does not contain EDI entity");
-        String ediMessage = ((ApplicationEntity) entity).getEdiMessage();
+        assertTrue(entity instanceof ApplicationEDIEntity, "Request body does not contain EDI entity");
+        String ediMessage = ((ApplicationEDIEntity) entity).getEdiMessage();
         assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
 
         assertNotNull(response, "Response");
