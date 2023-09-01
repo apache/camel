@@ -89,7 +89,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=5&repeatCount=30")
+                from("timer:tick?period=5&repeatCount=30&includeMetadata=true")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:tick");
@@ -145,7 +145,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=50")
+                from("timer:tick?period=50&includeMetadata=true")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:tick");
             }
@@ -182,7 +182,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testFrom() throws Exception {
         context.start();
 
-        Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3");
+        Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3&includeMetadata=true");
 
         AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(3);
