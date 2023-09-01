@@ -49,7 +49,7 @@ class MarshalTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - marshal:
-                             data-format-type:
+                             dataFormatType:
                                json: 
                                  library: Gson
                           - to: "mock:result"
@@ -67,7 +67,7 @@ class MarshalTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - marshal:
-                             data-format-type:
+                             dataFormatType:
                                json: {}
                           - to: "mock:result"
                     '''),
@@ -96,7 +96,7 @@ class MarshalTest extends YamlTestSupport {
                           - marshal:
                              json: 
                                library: Gson
-                             jackson-xml: {}
+                             jacksonXml: {}
                           - to: "mock:result"
             '''
         then:
