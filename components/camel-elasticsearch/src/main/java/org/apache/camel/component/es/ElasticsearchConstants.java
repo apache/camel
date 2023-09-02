@@ -41,6 +41,9 @@ public interface ElasticsearchConstants {
     String PARAM_SIZE = "size";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_FROM = "from";
+    @Metadata(description = "Indicates whether the body of the message contains only documents.", javaType = "Boolean",
+              defaultValue = "false")
+    String PARAM_DOCUMENT_MODE = "enableDocumentOnlyMode";
 
     String PROPERTY_SCROLL_ES_QUERY_COUNT = "CamelElasticsearchScrollQueryCount";
 
