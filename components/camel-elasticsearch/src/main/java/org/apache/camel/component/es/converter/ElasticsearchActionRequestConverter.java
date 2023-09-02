@@ -121,17 +121,20 @@ public final class ElasticsearchActionRequestConverter {
             return builder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
         }
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
+        Boolean enableDocumentOnlyMode
+                = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.FALSE, Boolean.class);
+        Mode mode = enableDocumentOnlyMode == Boolean.TRUE ? Mode.DOCUMENT_ONLY : Mode.DEFAULT;
         if (document instanceof byte[]) {
-            builder.withJson(new ByteArrayInputStream((byte[]) document));
+            mode.addDocToUpdateRequestBuilder(builder, new ByteArrayInputStream((byte[]) document));
         } else if (document instanceof InputStream) {
-            builder.withJson((InputStream) document);
+            mode.addDocToUpdateRequestBuilder(builder, (InputStream) document);
         } else if (document instanceof String) {
-            builder.withJson(new StringReader((String) document));
+            mode.addDocToUpdateRequestBuilder(builder, new StringReader((String) document));
         } else if (document instanceof Reader) {
-            builder.withJson((Reader) document);
+            mode.addDocToUpdateRequestBuilder(builder, (Reader) document);
         } else if (document instanceof Map) {
             ObjectMapper objectMapper = new ObjectMapper();
-            builder.withJson(new StringReader(objectMapper.writeValueAsString(document)));
+            mode.addDocToUpdateRequestBuilder(builder, new StringReader(objectMapper.writeValueAsString(document)));
         } else {
             builder.doc(document);
         }
@@ -292,5 +295,35 @@ public final class ElasticsearchActionRequestConverter {
             return builder;
         }
         return null;
+    }
+
+    enum Mode {
+        DEFAULT {
+            @Override
+            protected void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, InputStream in) {
+                builder.withJson(in);
+            }
+
+            @Override
+            protected void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, Reader in) {
+                builder.withJson(in);
+            }
+
+        },
+        DOCUMENT_ONLY {
+            @Override
+            protected void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, InputStream in) {
+                builder.doc(JsonData.from(in));
+            }
+
+            @Override
+            protected void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, Reader in) {
+                builder.doc(JsonData.from(in));
+            }
+        };
+
+        protected abstract void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, InputStream in);
+
+        protected abstract void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, Reader in);
     }
 }
