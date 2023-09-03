@@ -423,11 +423,7 @@ public final class PropertyBindingSupport {
             boolean allowPrivateSetter, boolean ignoreCase) {
 
         // if the name has collection lookup then ignore that as we want to create the instance
-        String key = name;
-        int pos = name.indexOf('[');
-        if (pos != -1) {
-            key = name.substring(0, pos);
-        }
+        String key = StringHelper.before(name, "[", name);
 
         Object answer = null;
         Method method = findBestSetterMethod(camelContext, newClass, key, fluentBuilder, allowPrivateSetter, ignoreCase);

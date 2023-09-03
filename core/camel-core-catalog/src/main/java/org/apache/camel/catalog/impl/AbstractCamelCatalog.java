@@ -520,10 +520,7 @@ public abstract class AbstractCamelCatalog {
 
         // strip user info from uri path
         if (!userInfoOptions.isEmpty()) {
-            int idx = uriPath.indexOf('@');
-            if (idx > -1) {
-                uriPath = uriPath.substring(idx + 1);
-            }
+            uriPath = StringHelper.after(uriPath, "@", uriPath);
         }
 
         // strip double slash in the start
@@ -1110,8 +1107,7 @@ public abstract class AbstractCamelCatalog {
                 || key.startsWith("lra.")
                 || key.startsWith("health.")
                 || key.startsWith("rest.")) {
-            int idx = key.indexOf('.');
-            String name = key.substring(0, idx);
+            String name = StringHelper.before(key, ".");
             if (value != null) {
                 MainModel model = mainModel();
                 if (model == null) {
