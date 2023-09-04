@@ -181,7 +181,7 @@ public class FilesOperations extends NormalizedOperations {
     }
 
     private boolean renameRemote(ShareFileClient fileClient, String shareRelativeTo) {
-        // TODO set the replace flag? likely yes, callers strategy should avoid this call when otherwise 
+        // TODO set the replace flag? likely yes, callers strategy should avoid this call when otherwise
         var options = new ShareFileRenameOptions(shareRelativeTo);
         var renamed = fileClient.renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE).getValue();
         return existsRemote(renamed);

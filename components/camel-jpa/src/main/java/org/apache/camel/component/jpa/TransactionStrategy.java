@@ -24,7 +24,7 @@ public interface TransactionStrategy {
     /**
      * Execute the work in transaction.
      *
-     * @param runnable  the work to execute.
+     * @param runnable the work to execute.
      */
     void executeInTransaction(Runnable runnable);
 }
