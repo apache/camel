@@ -26,29 +26,39 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class CamelTestSupport implements ConfigurableContext, ConfigurableRoute {
 
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected volatile ProducerTemplate template;
-    /*    protected volatile Service camelContextService;
-    private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();*/
 
     @BeforeEach
-    public void beforeAll(ExtensionContext context) {
-                context.getTestInstanceLifecycle().filter(lc -> lc.equals(TestInstance.Lifecycle.PER_CLASS)).isPresent();
+    public void doSetup() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
     }
 
-    public CamelContext context() {
+/*    public CamelContext context() {
         return context;
+    }*/
+
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 
     protected MockEndpoint getMockEndpoint(String uri) {

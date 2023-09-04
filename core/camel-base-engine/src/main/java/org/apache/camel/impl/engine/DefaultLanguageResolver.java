@@ -42,7 +42,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     public Language resolveLanguage(String name, CamelContext context) {
         Class<?> type = null;
         try {
-            type = findLanguage(name, context);
+             type = findLanguage(name, context);
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Exception e) {

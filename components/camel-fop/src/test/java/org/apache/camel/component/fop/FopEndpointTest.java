@@ -41,8 +41,8 @@ public class FopEndpointTest extends CamelTestSupport {
 
     private boolean canTest() {
         try {
-            context().getEndpoint("fop:pdf");
-        } catch (Exception e) {
+            context.getEndpoint("fop:pdf");
+        } catch (Throwable e) {
             return false;
         }
 
@@ -56,7 +56,7 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        Endpoint endpoint = context().getEndpoint("fop:pdf");
+        Endpoint endpoint = context.getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
@@ -74,7 +74,7 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        FopEndpoint customConfiguredEndpoint = context()
+        FopEndpoint customConfiguredEndpoint = context
                 .getEndpoint("fop:pdf?userConfigURL=file:src/test/data/conf/testcfg.xml",
                         FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
@@ -88,7 +88,7 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        FopEndpoint customConfiguredEndpoint = context()
+        FopEndpoint customConfiguredEndpoint = context
                 .getEndpoint("fop:pdf?userConfigURL=myconf/testcfg.xml",
                         FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
@@ -102,7 +102,7 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        Endpoint endpoint = context().getEndpoint("fop:pdf");
+        Endpoint endpoint = context.getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("CamelFop.Render.Creator", "Test User");
@@ -121,7 +121,7 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        Endpoint endpoint = context().getEndpoint("fop:pdf");
+        Endpoint endpoint = context.getEndpoint("fop:pdf");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         final String password = "secret";
@@ -143,7 +143,7 @@ public class FopEndpointTest extends CamelTestSupport {
         }
 
         String defaultOutputFormat = "pdf";
-        Endpoint endpoint = context().getEndpoint("fop:" + defaultOutputFormat);
+        Endpoint endpoint = context.getEndpoint("fop:" + defaultOutputFormat);
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, "txt");
