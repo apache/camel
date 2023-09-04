@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,46 +25,72 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+
 
 /**
  *
  */
 public class AsyncConsumerFalseTest extends CamelTestSupport {
 
+
     private static final String SJMS_QUEUE_URI = "sjms:queue:start.AsyncConsumerFalseTest";
 
+
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+
 
     @Test
     public void testAsyncJmsConsumer() throws Exception {
         // async is disabled (so we should receive in same order)
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel", "Hello World");
 
+
         template.sendBody("sjms:queue:start.AsyncConsumerFalseTest", "Hello Camel");
         template.sendBody("sjms:queue:start.AsyncConsumerFalseTest", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
 
-        camelContext.addComponent("async", new MyAsyncComponent());
+    protected CamelContext createCamelContext() {
+
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
+        context.addComponent("sjms", component);
 
-        return camelContext;
+
+        return context;
     }
 
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.addComponent("async", new MyAsyncComponent());
+    }
+
+
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+
+
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
