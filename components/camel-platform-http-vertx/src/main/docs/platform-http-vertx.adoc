@@ -27,7 +27,9 @@ and the platform http component should auto-detect this.
 |=======================================================================
 |Name |Type |Description
 
-|`CamelVertxPlatformHttpAuthenticatedUser` |`io.vertx.ext.auth.User` |If an authenticated user is present on the Vert.x Web `RoutingContext`, this header is populated with a `User` object continaing the `Principal`.
+|`CamelVertxPlatformHttpAuthenticatedUser` |`io.vertx.ext.auth.User` |If an authenticated user is present on the Vert.x Web `RoutingContext`, this header is populated with a `User` object containing the `Principal`.
+|`CamelVertxPlatformHttpLocalAddress` |`io.vertx.core.net.SocketAddress` |The local address for the connection if present on the Vert.x Web `RoutingContext`.
+|`CamelVertxPlatformHttpRemoteAddress` |`io.vertx.core.net.SocketAddress` |The remote address for the connection if present on the Vert.x Web `RoutingContext`.
 |=======================================================================
 
 Camel also populates *all* request.parameter and Camel also populates *all* request.parameter and request.headers. For
