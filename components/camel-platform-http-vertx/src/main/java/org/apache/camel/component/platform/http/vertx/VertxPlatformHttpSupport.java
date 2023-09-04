@@ -31,6 +31,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -252,6 +253,16 @@ public final class VertxPlatformHttpSupport {
         // Path parameters
         for (Map.Entry<String, String> en : ctx.pathParams().entrySet()) {
             appendHeader(headersMap, en.getKey(), en.getValue());
+        }
+
+        SocketAddress localAddress = request.localAddress();
+        if (localAddress != null) {
+            headersMap.put(VertxPlatformHttpConstants.LOCAL_ADDRESS, localAddress);
+        }
+
+        SocketAddress remoteAddress = request.remoteAddress();
+        if (remoteAddress != null) {
+            headersMap.put(VertxPlatformHttpConstants.REMOTE_ADDRESS, remoteAddress);
         }
 
         // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
