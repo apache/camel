@@ -192,14 +192,14 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         // can use the already existing queue referenced from the component
         if (getComponent() != null) {
             // use null to indicate default size (= use what the existing queue has been configured with)
-            Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
+            int size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? SedaConstants.UNDEFINED_SIZE : getSize();
             QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
             queue = ref.getQueue();
             String key = getComponent().getQueueKey(getEndpointUri());
             LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
-                    ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
+                    ref.getSize() != SedaConstants.UNDEFINED_SIZE ? ref.getSize() : Integer.MAX_VALUE);
             // and set the size we are using
-            if (ref.getSize() != null) {
+            if (ref.getSize() != SedaConstants.UNDEFINED_SIZE) {
                 setSize(ref.getSize());
             }
         } else {

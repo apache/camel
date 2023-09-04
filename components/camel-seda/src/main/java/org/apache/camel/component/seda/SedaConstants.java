@@ -22,6 +22,8 @@ public final class SedaConstants {
     public static final int CONCURRENT_CONSUMERS = 1;
     public static final int QUEUE_SIZE = 1000;
 
+    public static final int UNDEFINED_SIZE = -1;
+
     private SedaConstants() {
     }
 

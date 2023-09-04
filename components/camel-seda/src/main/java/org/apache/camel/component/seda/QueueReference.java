@@ -31,12 +31,12 @@ import org.apache.camel.Exchange;
 public final class QueueReference {
 
     private final BlockingQueue<Exchange> queue;
-    private Integer size;
+    private int size;
     private Boolean multipleConsumers;
 
     private List<SedaEndpoint> endpoints = new LinkedList<>();
 
-    QueueReference(BlockingQueue<Exchange> queue, Integer size, Boolean multipleConsumers) {
+    QueueReference(BlockingQueue<Exchange> queue, int size, Boolean multipleConsumers) {
         this.queue = queue;
         this.size = size;
         this.multipleConsumers = multipleConsumers;
@@ -70,7 +70,7 @@ public final class QueueReference {
      *
      * @return <tt>null</tt> if unbounded
      */
-    public Integer getSize() {
+    public int getSize() {
         return size;
     }
 

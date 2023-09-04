@@ -146,20 +146,15 @@ public class SedaComponent extends DefaultComponent {
     }
 
     public QueueReference getOrCreateQueue(
-            SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
+            SedaEndpoint endpoint, int size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
 
         final String key = getQueueKey(endpoint.getEndpointUri());
 
-        if (size == null) {
-            // there may be a custom size during startup
-            size = customSize.get(key);
-        }
-
-        final Integer size2 = size;
+        final int resolvedSize = resolveSize(size, key);
 
         // create queue
-        QueueReference ref = getQueues().computeIfAbsent(key, k -> createNewQueueRef(size2, multipleConsumers, customQueueFactory, k));
-        validateQueueSize(size, ref.getSize(), key);
+        QueueReference ref = getQueues().computeIfAbsent(key, k -> createNewQueueRef(resolvedSize, multipleConsumers, customQueueFactory, k));
+        validateQueueSize(resolvedSize, ref.getSize(), key);
 
         // add the reference before returning queue
         ref.addReference(endpoint);
@@ -167,13 +162,26 @@ public class SedaComponent extends DefaultComponent {
         return ref;
     }
 
-    private QueueReference createNewQueueRef(Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory,
+    private int resolveSize(int size, String key) {
+        if (size == SedaConstants.UNDEFINED_SIZE) {
+            // there may be a custom size during startup
+            Integer ret = customSize.get(key);
+            if (ret == null) {
+                return size;
+            } else {
+                return ret;
+            }
+        }
+        return size;
+    }
+
+    private QueueReference createNewQueueRef(int size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory,
             String key) {
 
         BlockingQueue<Exchange> queue;
 
         BlockingQueueFactory<Exchange> queueFactory = customQueueFactory == null ? defaultQueueFactory : customQueueFactory;
-        if (size != null && size > 0) {
+        if (size > 0) {
             queue = queueFactory.create(size);
             log.debug("Created queue {} with size {}", key, size);
             return new QueueReference(queue, size, multipleConsumers);
@@ -192,9 +200,9 @@ public class SedaComponent extends DefaultComponent {
         }
     }
 
-    private void validateQueueSize(Integer size, Integer refSize, String key) {
+    private void validateQueueSize(int size, Integer refSize, String key) {
         // if the given size is not provided, we just use the existing queue as is
-        if (size != null && !size.equals(refSize)) {
+        if (size != SedaConstants.UNDEFINED_SIZE && !refSize.equals(size)) {
             // there is already a queue, so make sure the size matches
             throw new IllegalArgumentException(
                     "Cannot use existing queue " + key + " as the existing queue size "
