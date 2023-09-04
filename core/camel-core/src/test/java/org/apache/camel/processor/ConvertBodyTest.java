@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
-import java.util.Locale;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
