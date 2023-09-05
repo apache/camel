@@ -28,7 +28,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        disabledReason = "These tests are flaky on Apache CI - see CAMEL-19832")
 public class RocketMQRouteTest extends RocketMQTestSupport {
 
     public static final String EXPECTED_MESSAGE = "hello, RocketMQ.";
