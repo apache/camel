@@ -66,6 +66,12 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         this.properties = new ConcurrentHashMap<>(8);
     }
 
+    @Override
+    AbstractExchange newCopy() {
+        // NOTE: this is the same behavior as done previously from AbstractExchange when returning a copy.
+        return new DefaultExchange(this);
+    }
+
     public boolean isAutoRelease() {
         return autoRelease;
     }
