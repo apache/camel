@@ -47,11 +47,20 @@ public final class DefaultExchange extends AbstractExchange {
         super(parent);
     }
 
+    DefaultExchange(AbstractExchange parent) {
+        super(parent);
+    }
+
     public DefaultExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
     }
 
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         super(fromEndpoint, pattern);
+    }
+
+    @Override
+    AbstractExchange newCopy() {
+        return new DefaultExchange(this);
     }
 }
