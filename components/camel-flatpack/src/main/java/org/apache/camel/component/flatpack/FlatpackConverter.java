@@ -40,16 +40,14 @@ public final class FlatpackConverter {
     }
 
     @Converter
-    public static Map<String, Object> toMap(DataSet dataSet) {
-        Map<String, Object> map = new HashMap<>();
-        putValues(map, dataSet);
-        return map;
-    }
-
-    @Converter
     public static Map<String, Object> toMap(Record record) {
         Map<String, Object> map = new HashMap<>();
-        putValues(map, record);
+        if (record instanceof DataSet dataSet) {
+            putValues(map, dataSet);
+        } else {
+            putValues(map, record);
+        }
+
         return map;
     }
 
