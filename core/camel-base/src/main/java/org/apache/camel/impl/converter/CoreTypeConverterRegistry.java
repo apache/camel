@@ -108,46 +108,63 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        // optimize for a few common conversions
-        if (value != null) {
-            if (type.isInstance(value)) {
-                // same instance
+    private <T> T fastConvertTo(Class<T> type, Exchange exchange, Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        if (type.isInstance(value)) {
+            // same instance
+            return (T) value;
+        }
+
+        if (type == boolean.class) {
+            // primitive boolean which must return a value so throw exception if not possible
+            Object answer = ObjectConverter.toBoolean(value);
+            requireNonNullBoolean(type, value, answer);
+            return (T) answer;
+        } else if (type == Boolean.class && value instanceof String) {
+            // String -> Boolean
+            Boolean parsedBoolean = customParseBoolean((String) value);
+            if (parsedBoolean != null) {
+                return (T) parsedBoolean;
+            }
+        } else if (type.isPrimitive()) {
+            // okay its a wrapper -> primitive then return as-is for some common types
+            Class<?> cls = value.getClass();
+            if (cls == Integer.class || cls == Long.class) {
                 return (T) value;
             }
-            if (type == boolean.class) {
-                // primitive boolean which must return a value so throw exception if not possible
-                Object answer = ObjectConverter.toBoolean(value);
-                requireNonNullBoolean(type, value, answer);
-                return (T) answer;
-            } else if (type == Boolean.class && value instanceof String) {
-                // String -> Boolean
-                Boolean parsedBoolean = customParseBoolean((String) value);
-                if (parsedBoolean != null) {
-                    return (T) parsedBoolean;
-                }
-            } else if (type.isPrimitive()) {
-                // okay its a wrapper -> primitive then return as-is for some common types
-                Class<?> cls = value.getClass();
-                if (cls == Integer.class || cls == Long.class) {
-                    return (T) value;
-                }
-            } else if (type == String.class) {
-                // okay its a primitive -> string then return as-is for some common types
-                Class<?> cls = value.getClass();
-                if (cls.isPrimitive()
-                        || cls == Boolean.class
-                        || cls == Integer.class
-                        || cls == Long.class) {
-                    return (T) value.toString();
-                }
-            } else if (type.isEnum()) {
-                // okay its a conversion to enum
-                try {
-                    return enumTypeConverter.convertTo(type, exchange, value);
-                } catch (Exception e) {
-                    throw createTypeConversionException(exchange, type, value, e);
-                }
+        } else if (type == String.class) {
+            // okay its a primitive -> string then return as-is for some common types
+            Class<?> cls = value.getClass();
+            if (cls.isPrimitive()
+                    || cls == Boolean.class
+                    || cls == Integer.class
+                    || cls == Long.class) {
+                return (T) value.toString();
+            }
+        } else if (type.isEnum()) {
+            // okay its a conversion to enum
+            try {
+                return enumTypeConverter.convertTo(type, exchange, value);
+            } catch (Exception e) {
+                throw createTypeConversionException(exchange, type, value, e);
+            }
+        }
+
+        // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        // optimize for a few common conversions
+
+        if (value != null) {
+            T ret = fastConvertTo(type, exchange, value);
+            if (ret != null) {
+                return ret;
             }
 
             // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
@@ -195,45 +212,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         // optimize for a few common conversions
         if (value != null) {
-            if (type.isInstance(value)) {
-                // same instance
-                return (T) value;
+            T ret = fastConvertTo(type, exchange, value);
+            if (ret != null) {
+                return ret;
             }
-            if (type == boolean.class) {
-                // primitive boolean which must return a value so throw exception if not possible
-                Object answer = ObjectConverter.toBoolean(value);
-                requireNonNullBoolean(type, value, answer);
-                return (T) answer;
-            } else if (type == Boolean.class && value instanceof String) {
-                // String -> Boolean
-                Boolean parsedBoolean = customParseBoolean((String) value);
-                if (parsedBoolean != null) {
-                    return (T) parsedBoolean;
-                }
-            } else if (type.isPrimitive()) {
-                // okay its a wrapper -> primitive then return as-is for some common types
-                Class<?> cls = value.getClass();
-                if (cls == Integer.class || cls == Long.class) {
-                    return (T) value;
-                }
-            } else if (type == String.class) {
-                // okay its a primitive -> string then return as-is for some common types
-                Class<?> cls = value.getClass();
-                if (cls.isPrimitive()
-                        || cls == Boolean.class
-                        || cls == Integer.class
-                        || cls == Long.class) {
-                    return (T) value.toString();
-                }
-            } else if (type.isEnum()) {
-                // okay its a conversion to enum
-                try {
-                    return enumTypeConverter.convertTo(type, exchange, value);
-                } catch (Exception e) {
-                    throw createTypeConversionException(exchange, type, value, e);
-                }
-            }
-            // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
         }
 
         Object answer = doConvertToAndStat(type, exchange, value, false);
