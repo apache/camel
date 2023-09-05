@@ -103,10 +103,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         throw new UnsupportedOperationException();
     }
 
-    public List<FallbackTypeConverter> getFallbackConverters() {
-        return fallbackConverters;
-    }
-
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
@@ -496,15 +492,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         }
 
         return null;
-    }
-
-    private static Object doConvert(
-            Exchange exchange, Object value, boolean tryConvert, Class<?> primitiveType, TypeConverter tc) {
-        if (tryConvert) {
-            return tc.tryConvertTo(primitiveType, exchange, value);
-        } else {
-            return tc.convertTo(primitiveType, exchange, value);
-        }
     }
 
     private static Object doConvert(
