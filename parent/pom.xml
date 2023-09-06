@@ -442,7 +442,7 @@
         <swagger-openapi3-java-parser-version>2.1.16</swagger-openapi3-java-parser-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <testcontainers-version>1.18.3</testcontainers-version>
+        <testcontainers-version>1.19.0</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.0</tika-version>
         <twilio-version>9.9.1</twilio-version>
