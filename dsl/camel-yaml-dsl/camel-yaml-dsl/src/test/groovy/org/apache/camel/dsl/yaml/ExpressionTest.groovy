@@ -109,7 +109,7 @@ class ExpressionTest extends YamlTestSupport {
             loadRoutes(route);
             Assertions.fail("Should have thrown exception")
         } catch (Exception e) {
-            Assertions.assertTrue(e.getMessage().contains("Unsupported field: notsimple"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("additional properties"), e.getMessage());
         }
     }
 

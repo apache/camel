@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LogDefinition
+import org.junit.jupiter.api.Assertions
 
 class LogTest extends YamlTestSupport {
 
@@ -28,9 +29,9 @@ class LogTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                       - log:
-                         logging-level: "ERROR"
+                         loggingLevel: "ERROR"
                          message: "test"
-                         log-name: "yaml"
+                         logName: "yaml"
                       - to: "direct:_result"   
             '''
         then:
@@ -41,5 +42,26 @@ class LogTest extends YamlTestSupport {
                 message == 'test'
                 logName == 'yaml'
             }
+    }
+
+    def "Error: kebab-case: logging-level"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - log:
+                         logging-level: "ERROR"
+                         message: "test"
+                         logName: "yaml"
+                      - to: "direct:_result"   
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
     }
 }

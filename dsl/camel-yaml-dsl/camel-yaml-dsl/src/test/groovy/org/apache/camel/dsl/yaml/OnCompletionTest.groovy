@@ -18,12 +18,13 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.junit.jupiter.api.Assertions
 
 class OnCompletionTest extends YamlTestSupport {
-    def "on-completion"() {
+    def "onCompletion"() {
         setup:
             loadRoutes """
-                - on-completion:
+                - onCompletion:
                     steps:
                       - transform:
                           constant: "Processed"
@@ -46,5 +47,31 @@ class OnCompletionTest extends YamlTestSupport {
             }
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "Error: kebab-case: on-completion"() {
+        when:
+        var route = """
+                - on-completion:
+                    steps:
+                      - transform:
+                          constant: "Processed"
+                      - to: "mock:on-success"  
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "mock:end"
+            """
+
+        withMock('mock:on-success') {
+            expectedBodiesReceived 'Processed'
+        }
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
     }
 }

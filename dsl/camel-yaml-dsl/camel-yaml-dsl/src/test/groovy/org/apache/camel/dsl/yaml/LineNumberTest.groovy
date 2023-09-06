@@ -33,9 +33,9 @@ class LineNumberTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - log:
-                         logging-level: "ERROR"
+                         loggingLevel: "ERROR"
                          message: "test"
-                         log-name: "yaml"
+                         logName: "yaml"
                       - to: "direct:result"
             '''
         then:

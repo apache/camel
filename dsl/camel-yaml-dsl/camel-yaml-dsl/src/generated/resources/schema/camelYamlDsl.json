@@ -3,10 +3,12 @@
   "type" : "array",
   "items" : {
     "maxProperties" : 1,
+    "additionalProperties" : false,
     "definitions" : {
       "org.apache.camel.model.ProcessorDefinition" : {
         "type" : "object",
         "maxProperties" : 1,
+        "additionalProperties" : false,
         "properties" : {
           "aggregate" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.AggregateDefinition"
@@ -47,15 +49,6 @@
           "idempotentConsumer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.IdempotentConsumerDefinition"
           },
-          "intercept" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
-          },
-          "interceptFrom" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
-          },
-          "interceptSendToEndpoint" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
-          },
           "kamelet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.KameletDefinition"
           },
@@ -73,9 +66,6 @@
           },
           "multicast" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.MulticastDefinition"
-          },
-          "onCompletion" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
           },
           "onFallback" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
@@ -204,12 +194,14 @@
       },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
         "type" : "array",
+        "additionalProperties" : false,
         "items" : {
           "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
         }
       },
       "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer" : {
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -222,17 +214,17 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "dead-letter-channel" ]
+                "required" : [ "deadLetterChannel" ]
               }, {
-                "required" : [ "default-error-handler" ]
+                "required" : [ "defaultErrorHandler" ]
               }, {
-                "required" : [ "jta-transaction-error-handler" ]
+                "required" : [ "jtaTransactionErrorHandler" ]
               }, {
-                "required" : [ "no-error-handler" ]
+                "required" : [ "noErrorHandler" ]
               }, {
-                "required" : [ "ref-error-handler" ]
+                "required" : [ "refErrorHandler" ]
               }, {
-                "required" : [ "spring-transaction-error-handler" ]
+                "required" : [ "springTransactionErrorHandler" ]
               } ]
             }
           }, {
@@ -312,6 +304,7 @@
       },
       "org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer" : {
         "type" : "object",
+        "additionalProperties" : false,
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition",
         "properties" : {
           "description" : {
@@ -339,6 +332,7 @@
         "title" : "Aggregate",
         "description" : "Aggregates many messages into a single message",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "aggregateController" : {
             "type" : "string",
@@ -510,6 +504,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "beanType" : {
               "type" : "string",
@@ -558,6 +553,7 @@
         "title" : "Do Catch",
         "description" : "Catches exceptions as part of a try, catch, finally block",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -602,6 +598,7 @@
         "title" : "Choice",
         "description" : "Route messages based on a series of predicates",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -651,6 +648,7 @@
         "title" : "Circuit Breaker",
         "description" : "Route messages in a fault tolerance way using Circuit Breaker",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "configuration" : {
             "type" : "string",
@@ -702,6 +700,7 @@
         "title" : "Claim Check",
         "description" : "The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "aggregationStrategy" : {
             "type" : "string",
@@ -753,6 +752,7 @@
         "title" : "Context Scan",
         "description" : "Scans for Java org.apache.camel.builder.RouteBuilder instances in the context org.apache.camel.spi.Registry .",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "excludes" : {
             "type" : "array",
@@ -784,6 +784,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "charset" : {
               "type" : "string",
@@ -824,6 +825,7 @@
       },
       "org.apache.camel.model.DataFormatDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string"
@@ -834,6 +836,7 @@
         "title" : "Delay",
         "description" : "Delays processing for a specified length of time",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -967,6 +970,7 @@
         "title" : "Dynamic Router",
         "description" : "Route messages based on dynamic rules",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -1101,6 +1105,7 @@
         "title" : "Enrich",
         "description" : "Enriches a message with data from a secondary resource",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -1259,6 +1264,7 @@
         "title" : "Error Handler",
         "description" : "Camel error handling.",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -1271,15 +1277,15 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "dead-letter-channel" ]
+                "required" : [ "deadLetterChannel" ]
               }, {
-                "required" : [ "default-error-handler" ]
+                "required" : [ "defaultErrorHandler" ]
               }, {
-                "required" : [ "jta-transaction-error-handler" ]
+                "required" : [ "jtaTransactionErrorHandler" ]
               }, {
-                "required" : [ "no-error-handler" ]
+                "required" : [ "noErrorHandler" ]
               }, {
-                "required" : [ "spring-transaction-error-handler" ]
+                "required" : [ "springTransactionErrorHandler" ]
               } ]
             }
           }, {
@@ -1331,6 +1337,7 @@
       },
       "org.apache.camel.model.ExpressionSubElementDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -1349,7 +1356,7 @@
               }, {
                 "required" : [ "datasonnet" ]
               }, {
-                "required" : [ "exchange-property" ]
+                "required" : [ "exchangeProperty" ]
               }, {
                 "required" : [ "exchangeProperty" ]
               }, {
@@ -1608,6 +1615,7 @@
         "title" : "Fault Tolerance Configuration",
         "description" : "MicroProfile Fault Tolerance Circuit Breaker EIP configuration",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "bulkheadEnabled" : {
             "type" : "boolean",
@@ -1693,6 +1701,7 @@
         "title" : "Filter",
         "description" : "Filter out messages based using a predicate",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -1822,6 +1831,7 @@
         "title" : "Do Finally",
         "description" : "Path traversed when a try, catch, finally block exits",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -1851,6 +1861,7 @@
       },
       "org.apache.camel.model.FromDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string"
@@ -1877,6 +1888,7 @@
         "title" : "Global Option",
         "description" : "Models a string key/value pair for configuring some global options on a Camel context such as max debug log length.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "key" : {
             "type" : "string",
@@ -1895,6 +1907,7 @@
         "title" : "Global Options",
         "description" : "Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug log length.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "globalOption" : {
             "type" : "array",
@@ -1910,6 +1923,7 @@
         "title" : "Idempotent Consumer",
         "description" : "Filters out duplicate messages",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -2060,6 +2074,7 @@
         "title" : "Input Type",
         "description" : "Set the expected data type of the input message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the transformation from/to XML.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -2088,6 +2103,7 @@
         "title" : "Intercept",
         "description" : "Intercepts a message at each step in the route",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -2122,6 +2138,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -2162,6 +2179,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "afterUri" : {
               "type" : "string",
@@ -2211,6 +2229,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "inheritErrorHandler" : {
               "type" : "boolean"
@@ -2235,6 +2254,7 @@
         "title" : "Load Balance",
         "description" : "Balances message processing among a number of nodes",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -2247,13 +2267,13 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "custom-load-balancer" ]
+                "required" : [ "customLoadBalancer" ]
               }, {
                 "required" : [ "failover" ]
               }, {
                 "required" : [ "random" ]
               }, {
-                "required" : [ "round-robin" ]
+                "required" : [ "roundRobin" ]
               }, {
                 "required" : [ "sticky" ]
               }, {
@@ -2355,6 +2375,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -2409,6 +2430,7 @@
         "title" : "Loop",
         "description" : "Processes a message multiple times",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -2548,6 +2570,7 @@
         "title" : "Marshal",
         "description" : "Marshals data into a specified format for transmission over a transport or component",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -2578,33 +2601,33 @@
               }, {
                 "required" : [ "custom" ]
               }, {
-                "required" : [ "fhir-json" ]
+                "required" : [ "fhirJson" ]
               }, {
-                "required" : [ "fhir-xml" ]
+                "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
               }, {
                 "required" : [ "grok" ]
               }, {
-                "required" : [ "gzip-deflater" ]
+                "required" : [ "gzipDeflater" ]
               }, {
                 "required" : [ "hl7" ]
               }, {
                 "required" : [ "ical" ]
               }, {
-                "required" : [ "jackson-xml" ]
+                "required" : [ "jacksonXml" ]
               }, {
                 "required" : [ "jaxb" ]
               }, {
                 "required" : [ "json" ]
               }, {
-                "required" : [ "json-api" ]
+                "required" : [ "jsonApi" ]
               }, {
                 "required" : [ "lzf" ]
               }, {
-                "required" : [ "mime-multipart" ]
+                "required" : [ "mimeMultipart" ]
               }, {
-                "required" : [ "parquet-avro" ]
+                "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
               }, {
@@ -2614,31 +2637,31 @@
               }, {
                 "required" : [ "soap" ]
               }, {
-                "required" : [ "swift-mt" ]
+                "required" : [ "swiftMt" ]
               }, {
-                "required" : [ "swift-mx" ]
+                "required" : [ "swiftMx" ]
               }, {
                 "required" : [ "syslog" ]
               }, {
-                "required" : [ "tar-file" ]
+                "required" : [ "tarFile" ]
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidy-markup" ]
+                "required" : [ "tidyMarkup" ]
               }, {
-                "required" : [ "univocity-csv" ]
+                "required" : [ "univocityCsv" ]
               }, {
-                "required" : [ "univocity-fixed" ]
+                "required" : [ "univocityFixed" ]
               }, {
-                "required" : [ "univocity-tsv" ]
+                "required" : [ "univocityTsv" ]
               }, {
-                "required" : [ "xml-security" ]
+                "required" : [ "xmlSecurity" ]
               }, {
                 "required" : [ "yaml" ]
               }, {
-                "required" : [ "zip-deflater" ]
+                "required" : [ "zipDeflater" ]
               }, {
-                "required" : [ "zip-file" ]
+                "required" : [ "zipFile" ]
               } ]
             }
           }, {
@@ -3020,6 +3043,7 @@
         "title" : "Multicast",
         "description" : "Routes the same message to multiple paths either sequentially or in parallel.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "aggregationStrategy" : {
             "type" : "string",
@@ -3112,6 +3136,7 @@
         "title" : "On Completion",
         "description" : "Route to be executed when normal route processing completes",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3180,6 +3205,7 @@
         "title" : "On Exception",
         "description" : "Route to be executed when an exception is thrown",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "continued" : {
             "title" : "Continued",
@@ -3269,6 +3295,7 @@
         "title" : "On Fallback",
         "description" : "Route to be executed when Circuit Breaker EIP executes fallback",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3305,6 +3332,7 @@
         "title" : "Optimistic Lock Retry Policy",
         "description" : "To configure optimistic locking",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "exponentialBackOff" : {
             "type" : "boolean",
@@ -3339,6 +3367,7 @@
         "title" : "Otherwise",
         "description" : "Route to be executed when all other choices evaluate to false",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3368,6 +3397,7 @@
       },
       "org.apache.camel.model.OutputDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string"
@@ -3393,6 +3423,7 @@
         "title" : "Output Type",
         "description" : "Set the expected data type of the output message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer/validator for all the XML-Java transformation.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3421,6 +3452,7 @@
         "title" : "Package Scan",
         "description" : "Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "excludes" : {
             "type" : "array",
@@ -3452,6 +3484,7 @@
         "title" : "Pausable",
         "description" : "Pausable EIP to support resuming processing from last known offset.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "consumerListener" : {
             "type" : "string",
@@ -3488,6 +3521,7 @@
         "title" : "Pipeline",
         "description" : "Routes the message to a sequence of processors.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3519,6 +3553,7 @@
         "title" : "Policy",
         "description" : "Defines a policy the route will use",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3556,6 +3591,7 @@
         "title" : "Poll Enrich",
         "description" : "Enriches messages with data polled from a secondary resource",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -3710,6 +3746,7 @@
         "title" : "Process",
         "description" : "Calls a Camel processor",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -3741,6 +3778,7 @@
         "title" : "Property",
         "description" : "A key value pair where the value is a literal value",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "key" : {
             "type" : "string",
@@ -3759,6 +3797,7 @@
         "title" : "Property Expression",
         "description" : "A key value pair where the value is an expression.",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -3792,6 +3831,7 @@
         "title" : "Recipient List",
         "description" : "Route messages to a number of dynamically specified recipients",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -3987,6 +4027,7 @@
         "title" : "Redelivery Policy",
         "description" : "To configure re-delivery for error handling",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowRedeliveryWhileStopping" : {
             "type" : "boolean",
@@ -4129,6 +4170,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -4164,6 +4206,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -4204,6 +4247,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -4244,6 +4288,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -4276,6 +4321,7 @@
         "title" : "Resequence",
         "description" : "Resequences (re-order) messages based on an expression",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -4356,9 +4402,9 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "batch-config" ]
+                "required" : [ "batchConfig" ]
               }, {
-                "required" : [ "stream-config" ]
+                "required" : [ "streamConfig" ]
               } ]
             }
           }, {
@@ -4428,6 +4474,7 @@
         "title" : "Resilience4j Configuration",
         "description" : "Resilience4j Circuit Breaker EIP configuration",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "automaticTransitionFromOpenToHalfOpenEnabled" : {
             "type" : "boolean",
@@ -4555,6 +4602,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "ref" : {
               "type" : "string",
@@ -4569,6 +4617,7 @@
         "title" : "Resumable",
         "description" : "Resume EIP to support resuming processing from last known offset.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -4614,6 +4663,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -4658,6 +4708,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -4680,6 +4731,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "ref" : {
               "type" : "string",
@@ -4692,6 +4744,7 @@
       },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "errorHandler" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"
@@ -4702,6 +4755,7 @@
           "intercept" : {
             "type" : "array",
             "items" : {
+              "additionalProperties" : false,
               "type" : "object",
               "properties" : {
                 "intercept" : {
@@ -4713,6 +4767,7 @@
           "interceptFrom" : {
             "type" : "array",
             "items" : {
+              "additionalProperties" : false,
               "type" : "object",
               "properties" : {
                 "interceptFrom" : {
@@ -4724,6 +4779,7 @@
           "interceptSendToEndpoint" : {
             "type" : "array",
             "items" : {
+              "additionalProperties" : false,
               "type" : "object",
               "properties" : {
                 "interceptSendToEndpoint" : {
@@ -4735,6 +4791,7 @@
           "onCompletion" : {
             "type" : "array",
             "items" : {
+              "additionalProperties" : false,
               "type" : "object",
               "properties" : {
                 "onCompletion" : {
@@ -4746,6 +4803,7 @@
           "onException" : {
             "type" : "array",
             "items" : {
+              "additionalProperties" : false,
               "type" : "object",
               "properties" : {
                 "onException" : {
@@ -4766,6 +4824,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "ref" : {
               "type" : "string",
@@ -4778,6 +4837,7 @@
       },
       "org.apache.camel.model.RouteDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "autoStartup" : {
             "type" : "boolean"
@@ -4832,6 +4892,7 @@
       },
       "org.apache.camel.model.RouteTemplateBeanDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "beanType" : {
             "type" : "string"
@@ -4859,6 +4920,7 @@
       },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "beans" : {
             "type" : "array",
@@ -4891,6 +4953,7 @@
         "title" : "Template Parameter",
         "description" : "A route template parameter",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "defaultValue" : {
             "type" : "string",
@@ -4922,6 +4985,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "anyOf" : [ {
             "oneOf" : [ {
               "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -5058,6 +5122,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string"
@@ -5085,6 +5150,7 @@
         "title" : "Saga",
         "description" : "Enables Sagas on the route",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "compensation" : {
             "title" : "Compensation",
@@ -5161,6 +5227,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -5198,6 +5265,7 @@
         "title" : "Script",
         "description" : "Executes a script from a language which does not change the message body.",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -5316,6 +5384,7 @@
         "title" : "Set Body",
         "description" : "Sets the contents of the message body",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -5437,6 +5506,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -5469,6 +5539,7 @@
         "title" : "Set Header",
         "description" : "Sets the value of a message header",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -5593,6 +5664,7 @@
         "title" : "Set Property",
         "description" : "Sets a named property on the message exchange",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -5717,6 +5789,7 @@
         "title" : "Sort",
         "description" : "Sorts the contents of the message",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -5840,6 +5913,7 @@
         "title" : "Split",
         "description" : "Splits a single message into many sub-messages.",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -6031,6 +6105,7 @@
         "title" : "Step",
         "description" : "Routes the message to a sequence of processors which is grouped together as one logical name",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -6062,6 +6137,7 @@
         "title" : "Stop",
         "description" : "Stops the processing of the current message",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -6085,6 +6161,7 @@
       },
       "org.apache.camel.model.TemplatedRouteBeanDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "beanType" : {
             "type" : "string"
@@ -6112,6 +6189,7 @@
       },
       "org.apache.camel.model.TemplatedRouteDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "beans" : {
             "type" : "array",
@@ -6141,6 +6219,7 @@
         "title" : "Templated Route Parameter",
         "description" : "An input parameter of a route template.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "name" : {
             "type" : "string",
@@ -6159,6 +6238,7 @@
         "title" : "Thread Pool Profile",
         "description" : "To configure thread pools",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowCoreThreadTimeOut" : {
             "type" : "boolean",
@@ -6218,6 +6298,7 @@
         "title" : "Threads",
         "description" : "Specifies that all steps after this node are processed asynchronously",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowCoreThreadTimeOut" : {
             "type" : "boolean",
@@ -6297,6 +6378,7 @@
         "title" : "Throttle",
         "description" : "Controls the rate at which messages are passed to the next node in the route",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -6446,6 +6528,7 @@
         "title" : "Throw Exception",
         "description" : "Throws an exception",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -6489,6 +6572,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "description" : {
               "type" : "string",
@@ -6533,6 +6617,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "allowOptimisedComponents" : {
               "type" : "boolean",
@@ -6594,6 +6679,7 @@
         "title" : "Transacted",
         "description" : "Enables transaction on the route",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -6630,6 +6716,7 @@
         "title" : "Transform",
         "description" : "Transforms the message body based on an expression",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -6758,6 +6845,7 @@
         "title" : "Do Try",
         "description" : "Marks the beginning of a try, catch, finally block",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -6798,6 +6886,7 @@
         "title" : "Unmarshal",
         "description" : "Converts the message data received from the wire into a format that Apache Camel processors can consume",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowNullBody" : {
             "type" : "boolean",
@@ -6893,33 +6982,33 @@
               }, {
                 "required" : [ "custom" ]
               }, {
-                "required" : [ "fhir-json" ]
+                "required" : [ "fhirJson" ]
               }, {
-                "required" : [ "fhir-xml" ]
+                "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
               }, {
                 "required" : [ "grok" ]
               }, {
-                "required" : [ "gzip-deflater" ]
+                "required" : [ "gzipDeflater" ]
               }, {
                 "required" : [ "hl7" ]
               }, {
                 "required" : [ "ical" ]
               }, {
-                "required" : [ "jackson-xml" ]
+                "required" : [ "jacksonXml" ]
               }, {
                 "required" : [ "jaxb" ]
               }, {
                 "required" : [ "json" ]
               }, {
-                "required" : [ "json-api" ]
+                "required" : [ "jsonApi" ]
               }, {
                 "required" : [ "lzf" ]
               }, {
-                "required" : [ "mime-multipart" ]
+                "required" : [ "mimeMultipart" ]
               }, {
-                "required" : [ "parquet-avro" ]
+                "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
               }, {
@@ -6929,31 +7018,31 @@
               }, {
                 "required" : [ "soap" ]
               }, {
-                "required" : [ "swift-mt" ]
+                "required" : [ "swiftMt" ]
               }, {
-                "required" : [ "swift-mx" ]
+                "required" : [ "swiftMx" ]
               }, {
                 "required" : [ "syslog" ]
               }, {
-                "required" : [ "tar-file" ]
+                "required" : [ "tarFile" ]
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidy-markup" ]
+                "required" : [ "tidyMarkup" ]
               }, {
-                "required" : [ "univocity-csv" ]
+                "required" : [ "univocityCsv" ]
               }, {
-                "required" : [ "univocity-fixed" ]
+                "required" : [ "univocityFixed" ]
               }, {
-                "required" : [ "univocity-tsv" ]
+                "required" : [ "univocityTsv" ]
               }, {
-                "required" : [ "xml-security" ]
+                "required" : [ "xmlSecurity" ]
               }, {
                 "required" : [ "yaml" ]
               }, {
-                "required" : [ "zip-deflater" ]
+                "required" : [ "zipDeflater" ]
               }, {
-                "required" : [ "zip-file" ]
+                "required" : [ "zipFile" ]
               } ]
             }
           }, {
@@ -7275,6 +7364,7 @@
         "title" : "Validate",
         "description" : "Validates a message based on an expression",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -7401,6 +7491,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "value" : {
               "type" : "string",
@@ -7414,6 +7505,7 @@
         "title" : "When",
         "description" : "Triggers a route when the expression evaluates to true",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -7538,6 +7630,7 @@
         "title" : "When Skip Send To Endpoint",
         "description" : "Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.",
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -7662,6 +7755,7 @@
         "title" : "Wire Tap",
         "description" : "Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowOptimisedComponents" : {
             "type" : "boolean",
@@ -7742,6 +7836,7 @@
         "title" : "Camel",
         "description" : "If beans reminds Spring application too much, we can use camel.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "bean" : {
             "type" : "array",
@@ -7802,6 +7897,7 @@
       },
       "org.apache.camel.model.app.BeanPropertiesDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "property" : {
             "type" : "array",
@@ -7813,6 +7909,7 @@
       },
       "org.apache.camel.model.app.BeanPropertyDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "key" : {
             "type" : "string"
@@ -7829,6 +7926,7 @@
         "title" : "Beans",
         "description" : "A grouping POJO (and related XML root element) that's historically associated with entire application (or its distinguished fragment). This class is not meant to be used with Camel Java DSL, but it's needed to generate XML Schema and MX parser methods.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "bean" : {
             "type" : "array",
@@ -7889,6 +7987,7 @@
       },
       "org.apache.camel.model.app.ComponentScanDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "basePackage" : {
             "type" : "string"
@@ -7897,6 +7996,7 @@
       },
       "org.apache.camel.model.app.RegistryBeanDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "name" : {
             "type" : "string"
@@ -7913,6 +8013,7 @@
         "title" : "Blacklist Service Filter",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -7941,6 +8042,7 @@
         "title" : "Caching Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -7953,15 +8055,15 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "combined-service-discovery" ]
+                "required" : [ "combinedServiceDiscovery" ]
               }, {
-                "required" : [ "consul-service-discovery" ]
+                "required" : [ "consulServiceDiscovery" ]
               }, {
-                "required" : [ "dns-service-discovery" ]
+                "required" : [ "dnsServiceDiscovery" ]
               }, {
-                "required" : [ "kubernetes-service-discovery" ]
+                "required" : [ "kubernetesServiceDiscovery" ]
               }, {
-                "required" : [ "static-service-discovery" ]
+                "required" : [ "staticServiceDiscovery" ]
               } ]
             }
           }, {
@@ -8036,6 +8138,7 @@
         "title" : "Combined Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "cachingServiceDiscovery" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration"
@@ -8071,6 +8174,7 @@
         "title" : "Combined Service Filter",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "blacklistServiceFilter" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration"
@@ -8103,6 +8207,7 @@
         "title" : "Consul Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "aclToken" : {
             "type" : "string",
@@ -8169,6 +8274,7 @@
         "title" : "Custom Service Filter",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8194,6 +8300,7 @@
         "title" : "Default Load Balancer",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8214,6 +8321,7 @@
         "title" : "Dns Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "domain" : {
             "type" : "string",
@@ -8245,6 +8353,7 @@
         "title" : "Healthy Service Filter",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8265,6 +8374,7 @@
         "title" : "Kubernetes Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiVersion" : {
             "type" : "string",
@@ -8382,6 +8492,7 @@
         "title" : "Pass Through Service Filter",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8403,6 +8514,7 @@
         "description" : "Remote service call configuration",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -8415,15 +8527,15 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "blacklist-service-filter" ]
+                "required" : [ "blacklistServiceFilter" ]
               }, {
-                "required" : [ "combined-service-filter" ]
+                "required" : [ "combinedServiceFilter" ]
               }, {
-                "required" : [ "custom-service-filter" ]
+                "required" : [ "customServiceFilter" ]
               }, {
-                "required" : [ "healthy-service-filter" ]
+                "required" : [ "healthyServiceFilter" ]
               }, {
-                "required" : [ "pass-through-service-filter" ]
+                "required" : [ "passThroughServiceFilter" ]
               } ]
             }
           }, {
@@ -8471,19 +8583,19 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "caching-service-discovery" ]
+                "required" : [ "cachingServiceDiscovery" ]
               }, {
-                "required" : [ "combined-service-discovery" ]
+                "required" : [ "combinedServiceDiscovery" ]
               }, {
-                "required" : [ "consul-service-discovery" ]
+                "required" : [ "consulServiceDiscovery" ]
               }, {
-                "required" : [ "dns-service-discovery" ]
+                "required" : [ "dnsServiceDiscovery" ]
               }, {
-                "required" : [ "kubernetes-service-discovery" ]
+                "required" : [ "kubernetesServiceDiscovery" ]
               }, {
-                "required" : [ "static-service-discovery" ]
+                "required" : [ "staticServiceDiscovery" ]
               }, {
-                "required" : [ "zookeeper-service-discovery" ]
+                "required" : [ "zookeeperServiceDiscovery" ]
               } ]
             }
           }, {
@@ -8547,7 +8659,7 @@
           }, {
             "not" : {
               "anyOf" : [ {
-                "required" : [ "default-load-balancer" ]
+                "required" : [ "defaultLoadBalancer" ]
               } ]
             }
           } ]
@@ -8642,6 +8754,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "anyOf" : [ {
             "oneOf" : [ {
               "type" : "object",
@@ -8654,15 +8767,15 @@
             }, {
               "not" : {
                 "anyOf" : [ {
-                  "required" : [ "blacklist-service-filter" ]
+                  "required" : [ "blacklistServiceFilter" ]
                 }, {
-                  "required" : [ "combined-service-filter" ]
+                  "required" : [ "combinedServiceFilter" ]
                 }, {
-                  "required" : [ "custom-service-filter" ]
+                  "required" : [ "customServiceFilter" ]
                 }, {
-                  "required" : [ "healthy-service-filter" ]
+                  "required" : [ "healthyServiceFilter" ]
                 }, {
-                  "required" : [ "pass-through-service-filter" ]
+                  "required" : [ "passThroughServiceFilter" ]
                 } ]
               }
             }, {
@@ -8710,19 +8823,19 @@
             }, {
               "not" : {
                 "anyOf" : [ {
-                  "required" : [ "caching-service-discovery" ]
+                  "required" : [ "cachingServiceDiscovery" ]
                 }, {
-                  "required" : [ "combined-service-discovery" ]
+                  "required" : [ "combinedServiceDiscovery" ]
                 }, {
-                  "required" : [ "consul-service-discovery" ]
+                  "required" : [ "consulServiceDiscovery" ]
                 }, {
-                  "required" : [ "dns-service-discovery" ]
+                  "required" : [ "dnsServiceDiscovery" ]
                 }, {
-                  "required" : [ "kubernetes-service-discovery" ]
+                  "required" : [ "kubernetesServiceDiscovery" ]
                 }, {
-                  "required" : [ "static-service-discovery" ]
+                  "required" : [ "staticServiceDiscovery" ]
                 }, {
-                  "required" : [ "zookeeper-service-discovery" ]
+                  "required" : [ "zookeeperServiceDiscovery" ]
                 } ]
               }
             }, {
@@ -8786,7 +8899,7 @@
             }, {
               "not" : {
                 "anyOf" : [ {
-                  "required" : [ "default-load-balancer" ]
+                  "required" : [ "defaultLoadBalancer" ]
                 } ]
               }
             } ]
@@ -8902,6 +9015,7 @@
         "title" : "Service Expression",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "expressionType" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -8937,6 +9051,7 @@
         "title" : "Service Chooser Configuration",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8957,6 +9072,7 @@
         "title" : "Service Discovery Configuration",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8977,6 +9093,7 @@
         "title" : "Service Filter Configuration",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -8997,6 +9114,7 @@
         "title" : "Load Balancer Configuration",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -9017,6 +9135,7 @@
         "title" : "Static Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -9045,6 +9164,7 @@
         "title" : "Zookeeper Service Discovery",
         "deprecated" : true,
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "basePath" : {
             "type" : "string",
@@ -9106,6 +9226,7 @@
         "title" : "Batch-config",
         "description" : "Configures batch-processing resequence eip.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowDuplicates" : {
             "type" : "boolean",
@@ -9140,6 +9261,7 @@
         "title" : "Stream-config",
         "description" : "Configures stream-processing resequence eip.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "capacity" : {
             "type" : "number",
@@ -9183,6 +9305,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -9209,6 +9332,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "allowJmsType" : {
               "type" : "boolean",
@@ -9324,6 +9448,7 @@
         "title" : "Barcode",
         "description" : "Transform strings to various 1D/2D barcode bitmap formats and back.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "barcodeFormat" : {
             "type" : "string",
@@ -9356,6 +9481,7 @@
         "title" : "Base64",
         "description" : "Encode and decode data using Base64.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -9384,6 +9510,7 @@
         "title" : "Bindy",
         "description" : "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowEmptyStream" : {
             "type" : "boolean",
@@ -9422,6 +9549,7 @@
         "title" : "CBOR",
         "description" : "Unmarshal a CBOR payload to POJO and back.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowJmsType" : {
             "type" : "boolean",
@@ -9484,6 +9612,7 @@
         "title" : "Crypto (Java Cryptographic Extension)",
         "description" : "Encrypt and decrypt messages using Java Cryptography Extension (JCE).",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "algorithm" : {
             "type" : "string",
@@ -9544,6 +9673,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "allowMissingColumnNames" : {
               "type" : "boolean",
@@ -9711,6 +9841,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -9730,6 +9861,7 @@
         "title" : "Data formats",
         "description" : "Configure data formats.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
@@ -9857,6 +9989,7 @@
         "title" : "FHIR JSon",
         "description" : "Marshall and unmarshall FHIR objects to/from JSON.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "contentTypeHeader" : {
             "type" : "boolean",
@@ -9961,6 +10094,7 @@
         "title" : "FHIR XML",
         "description" : "Marshall and unmarshall FHIR objects to/from XML.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "contentTypeHeader" : {
             "type" : "boolean",
@@ -10065,6 +10199,7 @@
         "title" : "Flatpack",
         "description" : "Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowShortLines" : {
             "type" : "boolean",
@@ -10118,6 +10253,7 @@
         "title" : "Grok",
         "description" : "Unmarshal unstructured data to objects using Logstash based Grok patterns.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowMultipleMatchesPerLine" : {
             "type" : "boolean",
@@ -10151,6 +10287,7 @@
         "title" : "GZip Deflater",
         "description" : "Compress and decompress messages using java.util.zip.GZIPStream.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10163,6 +10300,7 @@
         "title" : "HL7",
         "description" : "Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10180,6 +10318,7 @@
         "title" : "iCal",
         "description" : "Marshal and unmarshal iCal (.ics) documents to/from model objects.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10197,6 +10336,7 @@
         "title" : "Jackson XML",
         "description" : "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowJmsType" : {
             "type" : "boolean",
@@ -10289,6 +10429,7 @@
         "title" : "JAXB",
         "description" : "Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "accessExternalSchemaProtocols" : {
             "type" : "string",
@@ -10401,6 +10542,7 @@
         "title" : "JSonApi",
         "description" : "Marshal and unmarshal JSON:API resources using JSONAPI-Converter library.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "dataFormatTypes" : {
             "type" : "string",
@@ -10423,6 +10565,7 @@
         "title" : "JSon",
         "description" : "Marshal POJOs to JSON and back.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowJmsType" : {
             "type" : "boolean",
@@ -10547,6 +10690,7 @@
         "title" : "LZF Deflate Compression",
         "description" : "Compress and decompress streams using LZF deflate algorithm.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10564,6 +10708,7 @@
         "title" : "MIME Multipart",
         "description" : "Marshal Camel messages with attachments into MIME-Multipart messages and back.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "binaryContent" : {
             "type" : "boolean",
@@ -10602,6 +10747,7 @@
         "title" : "PGP",
         "description" : "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "algorithm" : {
             "type" : "number",
@@ -10687,6 +10833,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "compressionCodecName" : {
               "type" : "string",
@@ -10714,6 +10861,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "allowJmsType" : {
               "type" : "boolean",
@@ -10836,6 +10984,7 @@
         "title" : "RSS",
         "description" : "Transform from ROME SyndFeed Java Objects to XML and vice-versa.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10851,6 +11000,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "contextPath" : {
               "type" : "string",
@@ -10900,6 +11050,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -10918,6 +11069,7 @@
         "title" : "SWIFT MX",
         "description" : "Encode and decode SWIFT MX messages.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10950,6 +11102,7 @@
         "title" : "Syslog",
         "description" : "Marshall SyslogMessages to RFC3164 and RFC5424 messages and back.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -10962,6 +11115,7 @@
         "title" : "Tar File",
         "description" : "Archive files into tarballs or extract files from tarballs.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowEmptyDirectory" : {
             "type" : "boolean",
@@ -10998,6 +11152,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "contentTypeFormat" : {
               "type" : "string",
@@ -11028,6 +11183,7 @@
         "title" : "TidyMarkup",
         "description" : "Parse (potentially invalid) HTML into valid HTML or DOM.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "dataObjectType" : {
             "type" : "string",
@@ -11052,6 +11208,7 @@
         "title" : "uniVocity CSV",
         "description" : "Marshal and unmarshal Java objects from and to CSV (Comma Separated Values) using UniVocity Parsers.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "asMap" : {
             "type" : "boolean",
@@ -11160,6 +11317,7 @@
         "title" : "uniVocity Fixed Length",
         "description" : "Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "asMap" : {
             "type" : "boolean",
@@ -11260,6 +11418,7 @@
         "title" : "uniVocity Header",
         "description" : "To configure headers for UniVocity data formats.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "length" : {
             "type" : "string",
@@ -11277,6 +11436,7 @@
         "title" : "uniVocity TSV",
         "description" : "Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "asMap" : {
             "type" : "boolean",
@@ -11368,6 +11528,7 @@
         "title" : "XML Security",
         "description" : "Encrypt and decrypt XML payloads using Apache Santuario.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "addKeyValueForEncryptedKey" : {
             "type" : "boolean",
@@ -11449,6 +11610,7 @@
         "title" : "YAML",
         "description" : "Marshal and unmarshal Java objects to and from YAML.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowAnyType" : {
             "type" : "boolean",
@@ -11526,6 +11688,7 @@
       "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition" : {
         "title" : "YAML Type Filter",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "type" : {
             "type" : "string",
@@ -11543,6 +11706,7 @@
         "title" : "Zip Deflater",
         "description" : "Compress and decompress streams using java.util.zip.Deflater and java.util.zip.Inflater.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "compressionLevel" : {
             "type" : "string",
@@ -11562,6 +11726,7 @@
         "title" : "Zip File",
         "description" : "Compression and decompress streams using java.util.zip.ZipStream.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowEmptyDirectory" : {
             "type" : "boolean",
@@ -11595,6 +11760,7 @@
         "title" : "Dead Letter Channel",
         "description" : "Error handler with dead letter queue.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "deadLetterHandleNewException" : {
             "type" : "boolean",
@@ -11680,6 +11846,7 @@
         "title" : "Default Error Handler",
         "description" : "The default error handler.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "executorServiceRef" : {
             "type" : "string",
@@ -11754,6 +11921,7 @@
         "title" : "Jta Transaction Error Handler",
         "description" : "JTA based transactional error handler (requires camel-jta).",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "executorServiceRef" : {
             "type" : "string",
@@ -11840,6 +12008,7 @@
         "title" : "No Error Handler",
         "description" : "To not use an error handler.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -11855,6 +12024,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -11874,6 +12044,7 @@
         "title" : "Spring Transaction Error Handler",
         "description" : "Spring based transactional error handler (requires camel-spring).",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "executorServiceRef" : {
             "type" : "string",
@@ -11963,6 +12134,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -11995,6 +12167,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12027,6 +12200,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "bodyMediaType" : {
               "type" : "string",
@@ -12069,6 +12243,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12319,6 +12494,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12351,6 +12527,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12378,6 +12555,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12420,6 +12598,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12452,6 +12631,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12494,6 +12674,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12536,6 +12717,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "allowEasyPredicate" : {
               "type" : "boolean",
@@ -12606,6 +12788,7 @@
         "title" : "Language",
         "description" : "Evaluates a custom language.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "expression" : {
             "type" : "string",
@@ -12637,6 +12820,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "beanType" : {
               "type" : "string",
@@ -12685,6 +12869,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12717,6 +12902,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12749,6 +12935,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12781,6 +12968,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12813,6 +13001,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12845,6 +13034,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -12877,6 +13067,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "endToken" : {
               "type" : "string",
@@ -12954,6 +13145,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "expression" : {
               "type" : "string",
@@ -13011,6 +13203,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "documentType" : {
               "type" : "string",
@@ -13098,6 +13291,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "configurationRef" : {
               "type" : "string",
@@ -13158,6 +13352,7 @@
           "type" : "string"
         }, {
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -13177,6 +13372,7 @@
         "title" : "Failover",
         "description" : "In case of failures the exchange will be tried on the next endpoint.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "exception" : {
             "type" : "array",
@@ -13213,6 +13409,7 @@
         "title" : "Random",
         "description" : "The destination endpoints are selected by random.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -13225,6 +13422,7 @@
         "title" : "Round Robin",
         "description" : "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -13237,6 +13435,7 @@
         "title" : "Sticky",
         "description" : "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "correlationExpression" : {
             "title" : "Correlation Expression",
@@ -13254,6 +13453,7 @@
         "title" : "Topic",
         "description" : "Topic which sends to all destinations.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -13266,6 +13466,7 @@
         "title" : "Weighted",
         "description" : "Uses a weighted load distribution ratio for each server with respect to others.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "distributionRatio" : {
             "type" : "string",
@@ -13295,6 +13496,7 @@
         "title" : "Api Key",
         "description" : "Rest security basic auth definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -13333,6 +13535,7 @@
         "title" : "Basic Auth",
         "description" : "Rest security basic auth definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -13351,6 +13554,7 @@
         "title" : "Bearer Token",
         "description" : "Rest security bearer token authentication definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -13374,6 +13578,7 @@
         "title" : "Delete",
         "description" : "Rest DELETE command",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -13479,6 +13684,7 @@
         "title" : "Get",
         "description" : "Rest GET command",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -13584,6 +13790,7 @@
         "title" : "Head",
         "description" : "Rest HEAD command",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -13689,6 +13896,7 @@
         "title" : "Mutual TLS",
         "description" : "Rest security mutual TLS authentication definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -13707,6 +13915,7 @@
         "title" : "Oauth2",
         "description" : "Rest security OAuth2 definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "authorizationUrl" : {
             "type" : "string",
@@ -13754,6 +13963,7 @@
         "title" : "Open Id Connect",
         "description" : "Rest security OpenID Connect definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -13777,6 +13987,7 @@
         "title" : "Param",
         "description" : "To specify the rest operation parameters.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowableValues" : {
             "type" : "array",
@@ -13852,6 +14063,7 @@
         "title" : "Patch",
         "description" : "Rest PATCH command",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -13957,6 +14169,7 @@
         "title" : "Post",
         "description" : "Rest POST command",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -14062,6 +14275,7 @@
         "title" : "Put",
         "description" : "Rest PUT command",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -14167,6 +14381,7 @@
         "title" : "Response Header",
         "description" : "To specify the rest operation response headers.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "allowableValues" : {
             "type" : "array",
@@ -14222,6 +14437,7 @@
         "title" : "Response Message",
         "description" : "To specify the rest operation response messages.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "code" : {
             "type" : "string",
@@ -14262,6 +14478,7 @@
         "title" : "Rest Binding",
         "description" : "To configure rest binding",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "bindingMode" : {
             "type" : "string",
@@ -14324,6 +14541,7 @@
         "title" : "Rest Configuration",
         "description" : "To configure rest",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiComponent" : {
             "type" : "string",
@@ -14489,6 +14707,7 @@
         "title" : "Rest",
         "description" : "Defines a rest service using the rest-dsl",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiDocs" : {
             "type" : "boolean",
@@ -14605,6 +14824,7 @@
         "title" : "Rest Property",
         "description" : "A key value pair",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "key" : {
             "type" : "string",
@@ -14623,6 +14843,7 @@
         "title" : "Rest Security Definitions",
         "description" : "To configure rest security definitions.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "apiKey" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.ApiKeyDefinition"
@@ -14648,6 +14869,7 @@
         "title" : "Rests",
         "description" : "A series of rest services defined using the rest-dsl",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string",
@@ -14671,6 +14893,7 @@
         "title" : "Rest Security",
         "description" : "Rest security definition",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "key" : {
             "type" : "string",
@@ -14687,6 +14910,7 @@
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "className" : {
             "type" : "string"
@@ -14710,6 +14934,7 @@
       },
       "org.apache.camel.model.transformer.DataFormatTransformerDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -14740,33 +14965,33 @@
               }, {
                 "required" : [ "custom" ]
               }, {
-                "required" : [ "fhir-json" ]
+                "required" : [ "fhirJson" ]
               }, {
-                "required" : [ "fhir-xml" ]
+                "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
               }, {
                 "required" : [ "grok" ]
               }, {
-                "required" : [ "gzip-deflater" ]
+                "required" : [ "gzipDeflater" ]
               }, {
                 "required" : [ "hl7" ]
               }, {
                 "required" : [ "ical" ]
               }, {
-                "required" : [ "jackson-xml" ]
+                "required" : [ "jacksonXml" ]
               }, {
                 "required" : [ "jaxb" ]
               }, {
                 "required" : [ "json" ]
               }, {
-                "required" : [ "json-api" ]
+                "required" : [ "jsonApi" ]
               }, {
                 "required" : [ "lzf" ]
               }, {
-                "required" : [ "mime-multipart" ]
+                "required" : [ "mimeMultipart" ]
               }, {
-                "required" : [ "parquet-avro" ]
+                "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
               }, {
@@ -14776,31 +15001,31 @@
               }, {
                 "required" : [ "soap" ]
               }, {
-                "required" : [ "swift-mt" ]
+                "required" : [ "swiftMt" ]
               }, {
-                "required" : [ "swift-mx" ]
+                "required" : [ "swiftMx" ]
               }, {
                 "required" : [ "syslog" ]
               }, {
-                "required" : [ "tar-file" ]
+                "required" : [ "tarFile" ]
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidy-markup" ]
+                "required" : [ "tidyMarkup" ]
               }, {
-                "required" : [ "univocity-csv" ]
+                "required" : [ "univocityCsv" ]
               }, {
-                "required" : [ "univocity-fixed" ]
+                "required" : [ "univocityFixed" ]
               }, {
-                "required" : [ "univocity-tsv" ]
+                "required" : [ "univocityTsv" ]
               }, {
-                "required" : [ "xml-security" ]
+                "required" : [ "xmlSecurity" ]
               }, {
                 "required" : [ "yaml" ]
               }, {
-                "required" : [ "zip-deflater" ]
+                "required" : [ "zipDeflater" ]
               }, {
-                "required" : [ "zip-file" ]
+                "required" : [ "zipFile" ]
               } ]
             }
           }, {
@@ -15174,6 +15399,7 @@
       },
       "org.apache.camel.model.transformer.EndpointTransformerDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "fromType" : {
             "type" : "string"
@@ -15197,6 +15423,7 @@
       },
       "org.apache.camel.model.transformer.LoadTransformerDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "defaults" : {
             "type" : "boolean"
@@ -15222,6 +15449,7 @@
         "title" : "Transformations",
         "description" : "To configure transformers.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "customTransformer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.transformer.CustomTransformerDefinition"
@@ -15239,6 +15467,7 @@
       },
       "org.apache.camel.model.validator.CustomValidatorDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "className" : {
             "type" : "string"
@@ -15253,6 +15482,7 @@
       },
       "org.apache.camel.model.validator.EndpointValidatorDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "ref" : {
             "type" : "string"
@@ -15267,6 +15497,7 @@
       },
       "org.apache.camel.model.validator.PredicateValidatorDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -15295,6 +15526,7 @@
         "title" : "Validations",
         "description" : "To configure validators.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "customValidator" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.validator.CustomValidatorDefinition"
@@ -15317,6 +15549,18 @@
       },
       "from" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer"
+      },
+      "intercept" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
+      },
+      "interceptFrom" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
+      },
+      "interceptSendToEndpoint" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
+      },
+      "onCompletion" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
       },
       "onException" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"

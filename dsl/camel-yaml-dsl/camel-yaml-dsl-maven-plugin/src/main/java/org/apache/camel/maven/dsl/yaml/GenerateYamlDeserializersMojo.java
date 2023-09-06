@@ -414,7 +414,19 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         TypeSpecHolder.put(attributes, "type", info.name().toString());
 
         //TODO: add an option on Camel's definitions to distinguish between IN/OUT types
+        if (info.name().toString().equals("org.apache.camel.model.InterceptDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.InterceptFromDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.InterceptSendToEndpointDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
         if (info.name().toString().equals("org.apache.camel.model.OnExceptionDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.OnCompletionDefinition")) {
             builder.addAnnotation(CN_YAML_IN);
         }
         if (info.name().toString().equals("org.apache.camel.model.rest.RestDefinition")) {
