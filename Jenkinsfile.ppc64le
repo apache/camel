@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-def AGENT_LABEL = 'power9'
+def AGENT_LABEL = 'jenkins-osu-power9-2'
 def JDK_NAME = env.JDK_NAME ?: 'jdk_17_latest'
 
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
