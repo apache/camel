@@ -48,7 +48,6 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
         }
     }
 
-
     @AfterEach
     void cleanupFile() {
         try {
