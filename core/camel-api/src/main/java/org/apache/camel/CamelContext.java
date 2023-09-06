@@ -1401,7 +1401,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
      *
-     * @param format xml or yaml
+     * @param format xml or yaml (additional configuration can be specified using query parameters, eg
+     *               ?include=all&uriAsParameters=true)
      */
     void setDumpRoutes(String format);
 

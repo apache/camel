@@ -45,7 +45,7 @@ public class StatefulQuartzRouteTest extends BaseQuartzTest {
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
-            log.debug("Received: " + in + " with headers: " + in.getHeaders());
+            log.debug("Received: {} with headers: {}", in, in.getHeaders());
         }
     }
 

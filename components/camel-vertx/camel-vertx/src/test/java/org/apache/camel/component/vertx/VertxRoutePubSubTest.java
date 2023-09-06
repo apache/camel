@@ -45,7 +45,7 @@ public class VertxRoutePubSubTest extends VertxBaseTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            log.info("Received exchange: {} headers: {}", exchange, exchange.getIn().getHeaders());
         }
     }
 

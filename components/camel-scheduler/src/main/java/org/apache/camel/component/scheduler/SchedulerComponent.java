@@ -32,6 +32,8 @@ public class SchedulerComponent extends HealthCheckComponent {
     private final Map<String, ScheduledExecutorService> executors = new HashMap<>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
+    @Metadata
+    private boolean includeMetadata;
     @Metadata(defaultValue = "1", label = "scheduler")
     private int poolSize = 1;
 
@@ -41,9 +43,21 @@ public class SchedulerComponent extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SchedulerEndpoint answer = new SchedulerEndpoint(uri, this, remaining);
+        answer.setIncludeMetadata(isIncludeMetadata());
         answer.setPoolSize(getPoolSize());
         setProperties(answer, parameters);
         return answer;
+    }
+
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
+    }
+
+    /**
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     */
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
     }
 
     public int getPoolSize() {

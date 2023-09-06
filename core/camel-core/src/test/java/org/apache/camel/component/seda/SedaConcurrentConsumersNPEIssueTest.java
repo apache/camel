@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
@@ -36,14 +36,13 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        try {
-            context.getRouteController().startRoute("first");
-            fail("Should have thrown exception");
-        } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                         + " seda://foo?concurrentConsumers=5",
-                    e.getMessage());
-        }
+        FailedToStartRouteException e
+                = assertThrows(FailedToStartRouteException.class, () -> context.getRouteController().startRoute("first"),
+                        "Should have thrown exception");
+
+        assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                     + " seda://foo?concurrentConsumers=5",
+                e.getMessage());
     }
 
     @Test
@@ -58,14 +57,13 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         // this should be okay
         context.getRouteController().startRoute("third");
 
-        try {
-            context.getRouteController().startRoute("first");
-            fail("Should have thrown exception");
-        } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                         + " seda://foo?concurrentConsumers=5",
-                    e.getMessage());
-        }
+        FailedToStartRouteException e
+                = assertThrows(FailedToStartRouteException.class, () -> context.getRouteController().startRoute("first"),
+                        "Should have thrown exception");
+
+        assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                     + " seda://foo?concurrentConsumers=5",
+                e.getMessage());
     }
 
     @Override

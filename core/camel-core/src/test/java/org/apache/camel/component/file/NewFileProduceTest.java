@@ -21,7 +21,6 @@ import java.util.HashMap;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,12 +34,10 @@ public class NewFileProduceTest extends ContextTestSupport {
         comp.setCamelContext(context);
 
         Endpoint endpoint = comp.createEndpoint(fileUri(), testDirectory().toString(),
-                new HashMap<String, Object>());
-        template.send(endpoint, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.FILE_NAME, "bye.txt");
-                exchange.getIn().setBody("Bye World");
-            }
+                new HashMap<>());
+        template.send(endpoint, exchange -> {
+            exchange.getIn().setHeader(Exchange.FILE_NAME, "bye.txt");
+            exchange.getIn().setBody("Bye World");
         });
 
         assertFileExists(testFile("bye.txt"));

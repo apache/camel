@@ -30,6 +30,7 @@
   <bean id="myDummy" class="org.apache.camel.impl.FooBar"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
     <restConfiguration component="dummy-rest" host="localhost" port="9090">
       <componentProperty key="foo" value="bar"/>

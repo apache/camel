@@ -46,7 +46,7 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
 
         // we update using the same key, which means we should be able to do this within the file size limit
         for (int i = 0; i < SIZE; i++) {
-            LOG.debug("Updating " + i);
+            LOG.debug("Updating {}", i);
             exchange = repoAddAndGet(key, exchange);
         }
 

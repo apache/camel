@@ -7,7 +7,7 @@ The Camel Report Maven Plugin supports the following goals
 
 == camel:validate
 
-For validating the source code for mis configured Camel:
+For validating the source code for mis-configured Camel:
 
 - endpoint uris
 - simple expressions or predicates
@@ -15,13 +15,13 @@ For validating the source code for mis configured Camel:
 - seda/direct endpoint pairs
 - configuration in properties files
 
-Then you can run the validate goal from the command line or from within your Java editor such as IDEA or Eclipse.
+Then you can run the `validate` goal from the command line or from within your Java editor such as IDEA or Eclipse.
 
 ----
 mvn camel-report:validate
 ----
 
-You can also enable the plugin to automatic run as part of the build to catch these errors.
+You can also enable the plugin to run automatically as part of the build to catch these errors.
 
 [source,xml]
 ----
@@ -105,7 +105,7 @@ is changed to include a typo error in the `period` option
 @Uri("timer:foo?perid=5000")
 ----
 
-And when running the validate goal again reports the following:
+And when running the `validate` goal again reports the following:
 
 ----
 [INFO] ------------------------------------------------------------------------
@@ -153,7 +153,7 @@ The maven plugin *validate* goal supports the following options which can be con
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
 |===
 
-For example to turn off ignoring usage of deprecated options from the command line, you can run:
+For example to turn on ignoring usage of deprecated options from the command line, you can run:
 
 ----
 $mvn camel-report:validate -Dcamel.ignoreDeprecated=true
@@ -176,9 +176,9 @@ $mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTe
 
 For generating a report of the coverage of your Camel routes from unit testing.
 In the same manner you can generate Java code coverage reports, then this is the same but for Camel routes.
-You can therefore use this to know which parts of your Camel routes has been used or not.
+You can therefore use this to know which parts of your Camel routes have been used or not.
 
-Camel uses JMX to capture metrics during tests which is used for calculating route coverage.
+Camel uses JMX to capture metrics during tests which are used for calculating route coverage.
 You must have `camel-management` JAR on the classpath (can be test scoped)
 such as by declaring the following Maven dependency in your pom.xml file:
 
@@ -327,6 +327,7 @@ The maven plugin *coverage* goal supports the following options which can be con
  By using route id's then its safer to match the route cover data with the route source code.
  Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
  that was tested corresponds to which of the routes from the source code.
-| generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format, when enabled it will generate a file: `target/site/jacoco/xmlJacoco.xml`
+| generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format. When enabled it will generate the file: `target/site/jacoco/xmlJacoco.xml`
+| generateHtmlReport | false | Whether to generate a coverage-report in HTML format. When enabled it will generate the file: `target/site/route-coverage/html/index.html`
 |===
 

@@ -81,7 +81,7 @@ public final class EventNotifierProducer extends DefaultAsyncProducer {
                     }
                 }
             });
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
             exchange.setException(throwable);
             callback.done(true);
         }

@@ -17,13 +17,31 @@
 
 package org.apache.camel.component.xmpp;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.xmpp.services.XmppServerContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class XmppBaseContainerTest extends CamelTestSupport {
     protected XmppServerContainer xmppServer = new XmppServerContainer();
+
+    static {
+        try (InputStream is = XmppBaseContainerTest.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            Logger logger = LoggerFactory.getLogger(XmppBaseContainerTest.class);
+
+            logger.warn(
+                    "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
+                    e.getMessage(), e);
+        }
+    }
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

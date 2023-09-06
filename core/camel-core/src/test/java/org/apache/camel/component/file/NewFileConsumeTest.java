@@ -24,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,15 +51,16 @@ public class NewFileConsumeTest extends ContextTestSupport {
         Files.write(testFile("hello.txt"), "Hello World".getBytes());
 
         Endpoint endpoint = comp.createEndpoint(fileUri(), testDirectory().toString(),
-                new HashMap<String, Object>());
-        Consumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                assertNotNull(exchange);
-                String body = exchange.getIn().getBody(String.class);
-                assertEquals("Hello World", body);
-                latch.countDown();
-            }
+                new HashMap<>());
+        Consumer consumer = endpoint.createConsumer(exchange -> {
+            assertNotNull(exchange);
+            String body = exchange.getIn().getBody(String.class);
+            assertEquals("Hello World", body);
+            latch.countDown();
         });
+
+        assertFileExists(testFile("hello.txt"));
+
         consumer.start();
         latch.await(5, TimeUnit.SECONDS);
 

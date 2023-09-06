@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true, value = { "success", "error_message", "error_code" }, allowGetters = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageRequest implements ZeebeMessage {
 
     private String name;

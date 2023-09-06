@@ -87,7 +87,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             }
         } catch (Exception e) {
             System.err.println("Cannot test due " + e.getMessage());
-            log.warn("Cannot test due " + e.getMessage(), e);
+            log.warn("Cannot test due {}", e.getMessage(), e);
             canTest = false;
         }
     }
@@ -252,7 +252,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             super.setUp();
         } catch (Exception e) {
             System.err.println("Cannot test due " + e.getMessage());
-            log.warn("Cannot test due " + e.getMessage(), e);
+            log.warn("Cannot test due {}", e.getMessage(), e);
             canTest = false;
         }
     }

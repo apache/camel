@@ -119,7 +119,147 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
     }
 
     @Test
-    public void testSendWithInvalidConnectionKey() throws Exception {
+    void testSendWithConnectionKeyForParameterizedPath() throws Exception {
+        int expectedResultCount = 1;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) {
+            openWebSocketConnection("localhost", port, "/test/paramA/other/paramB", message -> {
+                synchronized (latch) {
+                    results.add(message);
+                    latch.countDown();
+                }
+            });
+        }
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
+                        VertxWebsocketEndpoint.class);
+        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
+        assertEquals(2, connectedPeers.size());
+
+        String connectionKey = connectedPeers.keySet().iterator().next();
+
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
+                "Hello World",
+                VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+        assertTrue(results.contains("Hello World"));
+    }
+
+    @Test
+    void testSendWithConnectionKeyForRawParameterizedPath() throws Exception {
+        int expectedResultCount = 1;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) {
+            openWebSocketConnection("localhost", port, "/test/paramA/other/paramB", message -> {
+                synchronized (latch) {
+                    results.add(message);
+                    latch.countDown();
+                }
+            });
+        }
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
+                        VertxWebsocketEndpoint.class);
+        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
+        assertEquals(2, connectedPeers.size());
+
+        String connectionKey = connectedPeers.keySet().iterator().next();
+
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test/{paramA}/other/{paramB}",
+                "Hello World",
+                VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+        assertTrue(results.contains("Hello World"));
+    }
+
+    @Test
+    void testSendWithConnectionKeyForWildcardPath() throws Exception {
+        int expectedResultCount = 1;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) {
+            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+                synchronized (latch) {
+                    results.add(message);
+                    latch.countDown();
+                }
+            });
+        }
+
+        openWebSocketConnection("localhost", port, "/test/wildcarded/otherpath", message -> {
+            synchronized (latch) {
+                results.add(message);
+                latch.countDown();
+            }
+        });
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/wildcarded/path",
+                        VertxWebsocketEndpoint.class);
+        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
+        assertEquals(2, connectedPeers.size());
+
+        String connectionKey = connectedPeers.keySet().iterator().next();
+
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test/wildcarded/path", "Hello World",
+                VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+        assertTrue(results.contains("Hello World"));
+    }
+
+    @Test
+    void testSendWithConnectionKeyForRawPath() throws Exception {
+        int expectedResultCount = 1;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) {
+            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+                synchronized (latch) {
+                    results.add(message);
+                    latch.countDown();
+                }
+            });
+        }
+
+        openWebSocketConnection("localhost", port, "/test/wildcarded/otherpath", message -> {
+            synchronized (latch) {
+                results.add(message);
+                latch.countDown();
+            }
+        });
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/wildcarded/path",
+                        VertxWebsocketEndpoint.class);
+        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
+        assertEquals(2, connectedPeers.size());
+
+        String connectionKey = connectedPeers.keySet().iterator().next();
+
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test/wildcarded/*", "Hello World",
+                VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+        assertTrue(results.contains("Hello World"));
+    }
+
+    @Test
+    void testSendWithInvalidConnectionKey() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived("Hello world");
         mockEndpoint.setResultWaitTime(500);
@@ -247,6 +387,137 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         }
 
         mockEndpoint.assertIsSatisfied(TimeUnit.SECONDS.toMillis(1));
+    }
+
+    @Test
+    void testSendToAllForExactParameterizedPath() throws Exception {
+        int expectedResultCount = 5;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < expectedResultCount; i++) {
+            openWebSocketConnection("localhost", port, "/test/firstParam/other/secondParam", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+
+            // Below we produce to an explicit path so this peer should be ignored
+            openWebSocketConnection("localhost", port, "/test/otherFirstParam/other/otherSecondParam", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+        }
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/test/firstParam/other/secondParam?sendToAll=true",
+                "Hello World");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+
+        for (int i = 1; i <= expectedResultCount; i++) {
+            assertTrue(results.contains("Hello World " + i));
+        }
+    }
+
+    @Test
+    void testSendToAllForRawParameterizedPath() throws Exception {
+        int expectedResultCount = 10;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            openWebSocketConnection("localhost", port, "/test/firstParam/other/secondParam", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+
+            openWebSocketConnection("localhost", port, "/test/otherFirstParam/other/otherSecondParam", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+        }
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/test/{paramA}/other/{paramB}?sendToAll=true", "Hello World");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+
+        for (int i = 1; i <= expectedResultCount; i++) {
+            assertTrue(results.contains("Hello World " + i));
+        }
+    }
+
+    @Test
+    void testSendToAllForWildcardPath() throws Exception {
+        int expectedResultCount = 5;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < expectedResultCount; i++) {
+            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+
+            // Below we produce to an explicit path so this peer should be ignored
+            openWebSocketConnection("localhost", port, "/test/wildcarded/other", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+        }
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/test/wildcarded/path?sendToAll=true", "Hello World");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+
+        for (int i = 1; i <= expectedResultCount; i++) {
+            assertTrue(results.contains("Hello World " + i));
+        }
+    }
+
+    @Test
+    void testSendToAllForRawWildcardPath() throws Exception {
+        int expectedResultCount = 10;
+        CountDownLatch latch = new CountDownLatch(expectedResultCount);
+        List<String> results = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+
+            openWebSocketConnection("localhost", port, "/test/wildcarded/other", message -> {
+                synchronized (latch) {
+                    results.add(message + " " + latch.getCount());
+                    latch.countDown();
+                }
+            });
+        }
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/test/wildcarded/*?sendToAll=true", "Hello World");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(expectedResultCount, results.size());
+
+        for (int i = 1; i <= expectedResultCount; i++) {
+            assertTrue(results.contains("Hello World " + i));
+        }
     }
 
     @Test
@@ -422,6 +693,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                         .setBody(simple("${body} ${header.firstParam} ${header.secondParam}"))
                         .toF("vertx-websocket:localhost:%d/testA/echo/testB", port);
 
+                fromF("vertx-websocket:localhost:%d/test/{paramA}/other/{paramB}", port)
+                        .setBody(simple("${header.firstParam} ${header.secondParam}"));
+
                 fromF("vertx-websocket:localhost:%d/query/params", port)
                         .setBody(simple("${header.firstParam} ${header.secondParam}"))
                         .to("mock:queryParamResult");
@@ -448,6 +722,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 fromF("vertx-websocket:localhost:%d/wildcard/echo*", port)
                         .setBody().simple("${body} World")
                         .toF("vertx-websocket:localhost:%d/wildcard/echo/foo/bar", port);
+
+                fromF("vertx-websocket:localhost:%d/test/wildcarded*", port)
+                        .setBody().simple("Hello ${body} from the wildcard path");
             }
         };
     }

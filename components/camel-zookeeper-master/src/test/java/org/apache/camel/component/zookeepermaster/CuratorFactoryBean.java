@@ -55,7 +55,7 @@ public class CuratorFactoryBean implements FactoryBean<CuratorFramework>, Dispos
     //-------------------------------------------------------------------------
     @Override
     public CuratorFramework getObject() {
-        LOG.debug("Connecting to ZooKeeper on " + connectString);
+        LOG.debug("Connecting to ZooKeeper on {}", connectString);
 
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
                 .connectString(connectString)
@@ -63,7 +63,7 @@ public class CuratorFactoryBean implements FactoryBean<CuratorFramework>, Dispos
                 .connectionTimeoutMs(getTimeout());
 
         this.curator = builder.build();
-        LOG.debug("Starting curator " + curator);
+        LOG.debug("Starting curator {}", curator);
         curator.start();
         return curator;
     }

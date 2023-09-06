@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -54,8 +55,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "export",
-                     description = "Export to other runtimes such as Spring Boot or Quarkus")
 abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = ".camel-jbang/work";
@@ -65,7 +64,8 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.component.properties.location",
             "camel.component.kamelet.location",
             "camel.jbang.classpathFiles",
-            "camel.jbang.localKameletDir"
+            "camel.jbang.localKameletDir",
+            "camel.jbang.jkubeFiles"
     };
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
@@ -109,7 +109,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String camelVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "4.0.0-RC1")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version")
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -132,7 +132,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.2.2.Final")
+                        defaultValue = "3.2.5.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -157,6 +157,12 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     protected String loggingLevel;
+
+    @CommandLine.Option(names = { "--package-name" },
+                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                                      +
+                                      "Use false to turn off and not include package name in the Java source files.")
+    protected String packageName;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
@@ -275,6 +281,10 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
             return o1.compareTo(o2);
         });
+
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
 
         // custom dependencies
         if (dependencies != null) {
@@ -411,6 +421,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                     boolean camel = "camel.main.routesIncludePattern".equals(k);
                     boolean kamelet = "camel.component.kamelet.location".equals(k)
                             || "camel.jbang.localKameletDir".equals(k);
+                    boolean jkube = "camel.jbang.jkubeFiles".equals(k);
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
                     File out;
@@ -422,6 +433,13 @@ abstract class ExportBaseCommand extends CamelCommand {
                     if (!java) {
                         if (kamelet) {
                             out = srcKameletsResourcesDir;
+                            safeCopy(source, out, true);
+                        } else if (jkube) {
+                            // file should be renamed and moved into src/main/jkube
+                            f = f.replace(".jkube.yaml", ".yaml");
+                            f = f.replace(".jkube.yml", ".yml");
+                            out = new File(srcCamelResourcesDir.getParentFile().getParentFile(), "jkube/" + f);
+                            out.mkdirs();
                             safeCopy(source, out, true);
                         } else {
                             safeCopy(source, out, true);
@@ -443,8 +461,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                             }
                         } else {
                             fos = new FileOutputStream(out);
-                            lines.add(0, "");
-                            lines.add(0, "package " + packageName + ";");
+                            if (packageName != null && !"false".equalsIgnoreCase(packageName)) {
+                                lines.add(0, "");
+                                lines.add(0, "package " + packageName + ";");
+                            }
                         }
                         for (String line : lines) {
                             adjustJavaSourceFileLine(line, fos);
@@ -462,7 +482,15 @@ abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
-    protected String exportPackageName(String groupId, String artifactId) {
+    protected String exportPackageName(String groupId, String artifactId, String packageName) {
+        if ("false".equalsIgnoreCase(packageName)) {
+            return null; // package names are turned off (we should use root package)
+        }
+        if (packageName != null) {
+            return packageName; // use specific package name
+        }
+
+        // compute package name based on Maven GAV
         // for package name it must be in lower-case and alpha/numeric
         String s = groupId + "." + artifactId;
         StringBuilder sb = new StringBuilder();

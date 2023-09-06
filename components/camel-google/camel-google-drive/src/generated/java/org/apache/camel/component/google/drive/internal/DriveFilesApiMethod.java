@@ -25,6 +25,17 @@ public enum DriveFilesApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("file", com.google.api.services.drive.model.File.class)),
 
+    CREATE(
+        com.google.api.services.drive.Drive.Files.Create.class,
+        "create",
+        arg("content", com.google.api.services.drive.model.File.class)),
+
+    CREATE_1(
+        com.google.api.services.drive.Drive.Files.Create.class,
+        "create",
+        arg("content", com.google.api.services.drive.model.File.class),
+        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
+
     DELETE(
         com.google.api.services.drive.Drive.Files.Delete.class,
         "delete",
@@ -49,17 +60,6 @@ public enum DriveFilesApiMethod implements ApiMethod {
         "get",
         arg("fileId", String.class)),
 
-    INSERT(
-        com.google.api.services.drive.Drive.Files.Insert.class,
-        "insert",
-        arg("file", com.google.api.services.drive.model.File.class)),
-
-    INSERT_1(
-        com.google.api.services.drive.Drive.Files.Insert.class,
-        "insert",
-        arg("file", com.google.api.services.drive.model.File.class),
-        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
-
     LIST(
         com.google.api.services.drive.Drive.Files.List.class,
         "list"),
@@ -74,27 +74,6 @@ public enum DriveFilesApiMethod implements ApiMethod {
         "modifyLabels",
         arg("fileId", String.class),
         arg("modifyLabelsRequest", com.google.api.services.drive.model.ModifyLabelsRequest.class)),
-
-    PATCH(
-        com.google.api.services.drive.Drive.Files.Patch.class,
-        "patch",
-        arg("fileId", String.class),
-        arg("file", com.google.api.services.drive.model.File.class)),
-
-    TOUCH(
-        com.google.api.services.drive.Drive.Files.Touch.class,
-        "touch",
-        arg("fileId", String.class)),
-
-    TRASH(
-        com.google.api.services.drive.Drive.Files.Trash.class,
-        "trash",
-        arg("fileId", String.class)),
-
-    UNTRASH(
-        com.google.api.services.drive.Drive.Files.Untrash.class,
-        "untrash",
-        arg("fileId", String.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Files.Update.class,

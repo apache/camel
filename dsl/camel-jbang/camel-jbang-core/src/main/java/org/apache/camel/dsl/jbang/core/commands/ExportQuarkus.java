@@ -85,10 +85,14 @@ class ExportQuarkus extends Export {
         FileUtil.removeDir(buildDir);
         buildDir.mkdirs();
 
-        // copy source files
-        String packageName = exportPackageName(ids[0], ids[1]);
         File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
-        File srcJavaDir = new File(srcJavaDirRoot, packageName.replace('.', File.separatorChar));
+        String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
+        File srcJavaDir;
+        if (srcPackageName == null) {
+            srcJavaDir = srcJavaDirRoot;
+        } else {
+            srcJavaDir = new File(srcJavaDirRoot, srcPackageName.replace('.', File.separatorChar));
+        }
         srcJavaDir.mkdirs();
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
@@ -96,8 +100,9 @@ class ExportQuarkus extends Export {
         srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
         srcKameletsResourcesDir.mkdirs();
+        // copy source files
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, packageName);
+                srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {

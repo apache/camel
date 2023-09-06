@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-core-engine</artifactId>
@@ -128,6 +128,7 @@
                                 <!-- we want to have configurer for RestConfiguration in camel-core-engine -->
                                 <class>org.apache.camel.spi.RestConfiguration=org.apache.camel.impl.RestConfiguration</class>
                                 <class>org.apache.camel.CamelContext=org.apache.camel.impl.CamelContext</class>
+                                <class>org.apache.camel.impl.DefaultDumpRoutesStrategy</class>
                             </classes>
                         </configuration>
                     </execution>

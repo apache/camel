@@ -75,8 +75,8 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("sjms:queue:test.queue?transacted=true")
-                        .to("sjms:queue:test.queue2?transacted=true")
+                        .to("sjms:queue:test.queue.TransactedQueueProducerTest.queue?transacted=true")
+                        .to("sjms:queue:test.queue2.TransactedQueueProducerTest.queue2?transacted=true")
                         .process(
                                 new Processor() {
                                     @Override
@@ -90,10 +90,10 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
                                     }
                                 });
 
-                from("sjms:queue:test.queue?transacted=true")
+                from("sjms:queue:test.queue.TransactedQueueProducerTest.queue?transacted=true")
                         .to("mock:result");
 
-                from("sjms:queue:test.queue2?transacted=true")
+                from("sjms:queue:test.queue2.TransactedQueueProducerTest.queue2?transacted=true")
                         .to("mock:result2");
             }
         };

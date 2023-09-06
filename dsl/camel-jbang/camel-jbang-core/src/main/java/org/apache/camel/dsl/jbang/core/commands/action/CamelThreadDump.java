@@ -38,7 +38,7 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "thread-dump", description = "List threads in a running Camel integration")
+@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false)
 public class CamelThreadDump extends ActionWatchCommand {
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {
@@ -145,7 +145,9 @@ public class CamelThreadDump extends ActionWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        clearScreen();
+        if (watch) {
+            clearScreen();
+        }
         if (!rows.isEmpty()) {
             int total = jo.getInteger("threadCount");
             int peak = jo.getInteger("peakThreadCount");

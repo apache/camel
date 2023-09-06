@@ -83,7 +83,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
             answer = idempotentRepository.add(exchange, key);
         } catch (Exception e) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot acquire read lock due to " + e.getMessage() + ". Will skip the file: " + file, e);
+                LOG.trace("Cannot acquire read lock due to {}. Will skip the file: {}", e.getMessage(), file, e);
             }
         }
         if (!answer) {

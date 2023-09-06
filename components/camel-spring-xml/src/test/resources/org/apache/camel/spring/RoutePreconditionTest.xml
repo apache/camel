@@ -25,6 +25,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="classpath:org/apache/camel/spring/PreconditionTest.properties"/>
+        <jmxAgent id="jmx" disabled="true"/>
         <routeTemplate id="myTemplate">
             <templateParameter name="activateT"/>
             <route precondition="{{activateT}}">

@@ -46,7 +46,7 @@ public class DrivePermissionsIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.model.PermissionList result = requestBody("direct://LIST", fileId);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
     }
 
     private void assertNotNull(PermissionList result, String listResult) {

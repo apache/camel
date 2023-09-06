@@ -1,0 +1,18 @@
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: {{ .Name }}
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: {{ .Source }}
+    {{ .SourceProperties }}
+{{ .Steps }}
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: {{ .Sink }}
+    {{ .SinkProperties }}

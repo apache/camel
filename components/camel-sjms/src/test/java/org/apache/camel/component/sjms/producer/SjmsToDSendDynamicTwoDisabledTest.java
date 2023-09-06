@@ -26,12 +26,12 @@ public class SjmsToDSendDynamicTwoDisabledTest extends JmsTestSupport {
 
     @Test
     public void testToD() {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
-        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin.SjmsToDSendDynamicTwoDisabledTest");
 
-        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer");
-        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey");
+        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey.SjmsToDSendDynamicTwoDisabledTest");
 
         // there should be 4 sjms endpoint
         long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("sjms:")).count();

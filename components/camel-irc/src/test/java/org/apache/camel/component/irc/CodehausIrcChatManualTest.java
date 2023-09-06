@@ -45,44 +45,44 @@ public final class CodehausIrcChatManualTest {
         @Override
         public void onMode(String string, IRCUser ircUser, IRCModeParser ircModeParser) {
             super.onMode(string, ircUser, ircModeParser);
-            LOG.info("onMode.string = " + string);
-            LOG.info("onMode.ircUser = " + ircUser);
-            LOG.info("onMode.ircModeParser = " + ircModeParser);
+            LOG.info("onMode.string = {}", string);
+            LOG.info("onMode.ircUser = {}", ircUser);
+            LOG.info("onMode.ircModeParser = {}", ircModeParser);
         }
 
         @Override
         public void onMode(IRCUser ircUser, String string, String string1) {
             super.onMode(ircUser, string, string1);
-            LOG.info("onMode.ircUser = " + ircUser);
-            LOG.info("onMode.string = " + string);
-            LOG.info("onMode.string1 = " + string1);
+            LOG.info("onMode.ircUser = {}", ircUser);
+            LOG.info("onMode.string = {}", string);
+            LOG.info("onMode.string1 = {}", string1);
         }
 
         @Override
         public void onPing(String string) {
             super.onPing(string);
-            LOG.info("onPing.string = " + string);
+            LOG.info("onPing.string = {}", string);
         }
 
         @Override
         public void onError(String string) {
-            LOG.info("onError.string = " + string);
+            LOG.info("onError.string = {}", string);
         }
 
         @Override
         public void onError(int i, String string) {
             super.onError(i, string);
-            LOG.info("onError.i = " + i);
-            LOG.info("onError.string = " + string);
+            LOG.info("onError.i = {}", i);
+            LOG.info("onError.string = {}", string);
         }
 
         @Override
         public void unknown(String string, String string1, String string2, String string3) {
             super.unknown(string, string1, string2, string3);
-            LOG.info("unknown.string = " + string);
-            LOG.info("unknown.string1 = " + string1);
-            LOG.info("unknown.string2 = " + string2);
-            LOG.info("unknown.string3 = " + string3);
+            LOG.info("unknown.string = {}", string);
+            LOG.info("unknown.string1 = {}", string1);
+            LOG.info("unknown.string2 = {}", string2);
+            LOG.info("unknown.string3 = {}", string3);
         }
     }
 

@@ -16,28 +16,43 @@
  */
 package org.apache.camel.component.xmpp.integration;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 class XmppMultiUserChatIT extends XmppBaseIT {
 
     private static final String BODY_1 = "the first message";
     private static final String BODY_2 = "the second message";
 
+    private CountDownLatch latch = new CountDownLatch(2);
+
+    @BeforeEach
+    void doSetup() {
+        template.sendBody("direct:toProducer", BODY_1);
+        template.sendBody("direct:toProducer", BODY_2);
+    }
+
     @Test
     void testXmppChat() throws Exception {
+
         MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
         consumerEndpoint.expectedBodiesReceived(BODY_1, BODY_2);
 
-        //will send chat messages to the room
-        template.sendBody("direct:toProducer", BODY_1);
-        Thread.sleep(50);
-        template.sendBody("direct:toProducer", BODY_2);
+        if (!latch.await(5, TimeUnit.SECONDS)) {
+            Assertions.fail("Some error");
+        }
 
         consumerEndpoint.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
+
         consumerEndpoint.assertIsSatisfied();
     }
 
@@ -47,6 +62,7 @@ class XmppMultiUserChatIT extends XmppBaseIT {
             public void configure() {
 
                 from("direct:toProducer")
+                        .process(e -> latch.countDown())
                         .to(getProducerUri());
 
                 from(getConsumerUri())

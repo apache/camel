@@ -42,7 +42,7 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:onCompletion").expectedBodiesReceived("onCompletion");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start.TransactedOnCompletionTest", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -63,14 +63,14 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
+                from("direct:start.TransactedOnCompletionTest")
                         .onCompletion()
                         .setBody(simple("onCompletion"))
                         .to("mock:onCompletion")
                         .end()
-                        .to("sjms:queue:test.queue?transacted=true");
+                        .to("sjms:queue:test.queue.TransactedOnCompletionTest?transacted=true");
 
-                from("sjms:queue:test.queue?transacted=true")
+                from("sjms:queue:test.queue.TransactedOnCompletionTest?transacted=true")
                         .to("mock:result");
             }
         };

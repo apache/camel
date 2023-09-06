@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
 
@@ -51,12 +51,10 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
 
         context.start();
 
-        try {
-            template.sendBody("direct:foo", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertEquals("Forced", e.getCause().getMessage());
-        }
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:foo", "Hello World"),
+                "Should throw exception");
+
+        assertEquals("Forced", e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

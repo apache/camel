@@ -167,7 +167,7 @@ public abstract class MainSupport extends BaseMainSupport {
                 camelTemplate = null;
             }
         } catch (Exception e) {
-            LOG.debug("Error stopping camelTemplate due " + e.getMessage() + ". This exception is ignored.", e);
+            LOG.debug("Error stopping camelTemplate due {}. This exception is ignored.", e.getMessage(), e);
         }
     }
 

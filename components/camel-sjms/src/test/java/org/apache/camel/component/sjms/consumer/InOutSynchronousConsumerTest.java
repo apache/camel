@@ -28,7 +28,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "sjms:queue:in?replyTo=response.queue&synchronous=true";
+    private String url = "sjms:queue:in.queue.InOutSynchronousConsumerTest?replyTo=response.queue&synchronous=true";
 
     @Test
     public void testSynchronous() {
@@ -50,7 +50,8 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
                         .to("log:after")
                         .to("mock:result");
 
-                from("sjms:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
+                from("sjms:queue:in.queue.InOutSynchronousConsumerTest")
+                        .process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

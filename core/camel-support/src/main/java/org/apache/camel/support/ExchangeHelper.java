@@ -24,7 +24,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -783,43 +782,28 @@ public final class ExchangeHelper {
         return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId() + ")";
     }
 
-    /**
-     * Copies the exchange but the copy will be tied to the given context
-     *
-     * @param  exchange the source exchange
-     * @param  context  the camel context
-     * @return          a copy with the given camel context
+    /*
+     * Safe copy message history using a defensive copy
      */
-    public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
-        return copyExchangeAndSetCamelContext(exchange, context, true);
+    private static void setMessageHistory(Exchange target, Exchange source) {
+        final Object history = source.getProperty(ExchangePropertyKey.MESSAGE_HISTORY);
+        if (history != null) {
+            // use thread-safe list as message history may be accessed concurrently
+            target.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>((List<MessageHistory>) history));
+        }
     }
 
     /**
      * Copies the exchange but the copy will be tied to the given context
      *
      * @param  exchange the source exchange
-     * @param  context  the camel context
-     * @param  handover whether to handover on completions from the source to the copy
      * @return          a copy with the given camel context
      */
-    public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context, boolean handover) {
-        DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
-        if (exchange.hasProperties()) {
-            answer.getExchangeExtension().setProperties(safeCopyProperties(exchange.getProperties()));
-        }
-        exchange.getExchangeExtension().copyInternalProperties(answer);
-        // safe copy message history using a defensive copy
-        List<MessageHistory> history
-                = (List<MessageHistory>) exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY);
-        if (history != null) {
-            // use thread-safe list as message history may be accessed concurrently
-            answer.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
-        }
+    public static Exchange copyExchangeWithProperties(Exchange exchange, CamelContext context) {
+        Exchange answer = exchange.getExchangeExtension().createCopyWithProperties(context);
 
-        if (handover) {
-            // Need to hand over the completion for async invocation
-            exchange.getExchangeExtension().handoverCompletions(answer);
-        }
+        setMessageHistory(answer, exchange);
+
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
             answer.setOut(exchange.getOut().copy());
@@ -884,13 +868,6 @@ public final class ExchangeHelper {
      */
     public static String resolveScheme(String uri) {
         return StringHelper.before(uri, ":");
-    }
-
-    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
-        }
-        return new ConcurrentHashMap<>(properties);
     }
 
     /**

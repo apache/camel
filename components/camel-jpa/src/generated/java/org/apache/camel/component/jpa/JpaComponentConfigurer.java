@@ -38,8 +38,6 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "sharedentitymanager":
         case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
-        case "transactionmanager":
-        case "transactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
         case "transactionstrategy":
         case "transactionStrategy": target.setTransactionStrategy(property(camelContext, org.apache.camel.component.jpa.TransactionStrategy.class, value)); return true;
         default: return false;
@@ -66,8 +64,6 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "sharedentitymanager":
         case "sharedEntityManager": return boolean.class;
-        case "transactionmanager":
-        case "transactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
         case "transactionstrategy":
         case "transactionStrategy": return org.apache.camel.component.jpa.TransactionStrategy.class;
         default: return null;
@@ -95,8 +91,6 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "sharedentitymanager":
         case "sharedEntityManager": return target.isSharedEntityManager();
-        case "transactionmanager":
-        case "transactionManager": return target.getTransactionManager();
         case "transactionstrategy":
         case "transactionStrategy": return target.getTransactionStrategy();
         default: return null;

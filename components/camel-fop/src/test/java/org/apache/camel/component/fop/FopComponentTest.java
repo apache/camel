@@ -26,6 +26,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class FopComponentTest extends CamelTestSupport {
 
         try {
             super.setUp();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             canTest = false;
         }
     }
@@ -69,7 +70,7 @@ public class FopComponentTest extends CamelTestSupport {
         template.sendBody(inputStream);
         resultEndpoint.assertIsSatisfied();
 
-        PDDocument document = PDDocument.load(new File("target/data/result.pdf"));
+        PDDocument document = Loader.loadPDF(new File("target/data/result.pdf"));
         String pdfText = FopHelper.extractTextFrom(document);
         assertTrue(pdfText.contains("Project"));    //from xsl template
         assertTrue(pdfText.contains("John Doe"));   //from data xml

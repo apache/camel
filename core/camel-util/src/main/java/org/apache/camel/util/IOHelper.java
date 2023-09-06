@@ -276,7 +276,7 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot force FileChannel: " + name + ". Reason: " + e.getMessage(), e);
+                log.warn("Cannot force FileChannel: {}. Reason: {}", name, e.getMessage(), e);
             } else {
                 log.warn("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
             }
@@ -302,7 +302,7 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot sync FileDescriptor: " + name + ". Reason: " + e.getMessage(), e);
+                log.warn("Cannot sync FileDescriptor: {}. Reason: {}", name, e.getMessage(), e);
             } else {
                 log.warn("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
             }
@@ -331,7 +331,7 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot flush Writer: " + name + ". Reason: " + e.getMessage(), e);
+                    log.warn("Cannot flush Writer: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
                     log.warn("Cannot flush Writer. Reason: {}", e.getMessage(), e);
                 }
@@ -359,7 +359,7 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
+                    log.warn("Cannot close: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
                     log.warn("Cannot close. Reason: {}", e.getMessage(), e);
                 }
@@ -479,26 +479,24 @@ public final class IOHelper {
      * Appends the text to the file.
      */
     public static void appendText(String text, File file) throws IOException {
-        if (!file.exists()) {
-            String path = FileUtil.onlyPath(file.getPath());
-            if (path != null) {
-                new File(path).mkdirs();
-            }
-        }
-        writeText(text, new FileOutputStream(file, true));
+        doWriteText(text, file, true);
     }
 
     /**
      * Writes the text to the file.
      */
     public static void writeText(String text, File file) throws IOException {
+        doWriteText(text, file, false);
+    }
+
+    private static void doWriteText(String text, File file, boolean append) throws IOException {
         if (!file.exists()) {
             String path = FileUtil.onlyPath(file.getPath());
             if (path != null) {
                 new File(path).mkdirs();
             }
         }
-        writeText(text, new FileOutputStream(file, false));
+        writeText(text, new FileOutputStream(file, append));
     }
 
     /**

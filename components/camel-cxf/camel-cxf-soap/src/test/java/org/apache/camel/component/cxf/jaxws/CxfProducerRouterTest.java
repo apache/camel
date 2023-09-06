@@ -130,7 +130,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         // If there are some holder parameters, the holder parameter will be filled in the reset of List.
         // The result will be extract from the MessageContentsList with the String class type
         MessageContentsList result = (MessageContentsList) out.getBody();
-        LOG.info("Received output text: " + result.get(0));
+        LOG.info("Received output text: {}", result.get(0));
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         assertEquals("UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING),

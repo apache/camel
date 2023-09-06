@@ -214,6 +214,69 @@ camel run --source-dir=mycode
 
 This starts Camel where it will load the files from the _source dir_ (also sub folders).
 
+=== Stub components that should not be active
+
+Sometimes you need to troubleshoot an existing integration and is given some Camel code (routes).
+These routes may use different components, and those components may be tricky to run as they are configured
+in a custom way, or need connection to servers you may not have access too.
+
+You can run Camel JBang by stubbing those components (or all of them).
+
+For example suppose you need access to a JMS broker in the given route below.
+
+[source,java]
+----
+from("jms:inbox")
+  .log("Incoming order")
+  .to("bean:transform")
+  .log("After transformation")
+  .to("jms:process");
+----
+
+Then you can run this by stub the `jms` component by:
+
+[source,bash]
+----
+camel run syncToDatabase.java --stub=jms
+----
+
+Then Camel will not start up the JMS component but replace it with the `stub` component, but keep the actual endpoint URIs.
+
+You can then simulate sending messages to Camel with the `cmd send` command:
+
+[source,bash]
+----
+camel cmd send --body='Something here'
+----
+
+Which then will send the message to the incoming endpoint in the route, i.e. `jms:inbox` which has been stubbed.
+
+You can also stub a specific endpoint by providing the full uri, such as:
+
+[source,bash]
+----
+camel run syncToDatabase.java --stub=jms:inbox
+----
+
+Then only the `jms:inbox` endpoint is stubbed.
+
+TIP: You can stub multiple components separated by comma, such as `--stub=jms,sql`
+
+Camel JBang comes with the `camel cmd stub` command that allows to list all endpoints which
+has been stubbed, and also browse any messages that are currently present in their internal queues.
+A stub endpoint is based on the `seda` component.
+
+[source,bash]
+----
+camel cmd stub
+----
+
+And to browse the messages:
+
+[source,bash]
+----
+camel cmd stub --browse
+----
 
 === Dev mode with live reload
 
@@ -853,17 +916,17 @@ camel version list --runtime=quarkus
 
 TIP: See more options with `camel version list --help`.
 
-=== Running Camel K integrations or bindings
+=== Running Camel K integrations or pipes
 
 Camel also supports running Camel K integrations and binding files, which are in CRD format (Kubernetes Custom Resource Definitions).
 
-For example a kamelet binding file named `joke.yaml`:
+For example a pipe file named `joke.yaml`:
 
 [source,yaml]
 ----
 #!/usr/bin/env jbang camel@apache/camel run
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
+apiVersion: camel.apache.org/v1
+kind: Pipe
 metadata:
   name: joke
 spec:
@@ -1583,8 +1646,8 @@ based dependency injection in Java classes.
 
 You can use the following Camel annotations on Camel standalone:
 
-- `@org.apache.camel.BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@org.apache.camel.Configuration` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.BindToRegistry` on class level (for custom beans, processors, etc.) to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.Configuration` on class level for `CamelConfiguation` classes, which is used during Camel startup (only Camel Main runtime) to allow custom setup that requires some coding.
 
 And these annotations should work on all runtimes
 (if target runtime is either Quarkus or Spring Boot then favour using their annotations):
@@ -2211,6 +2274,7 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=..
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+[#_exporting_to_camel_main_for_kubernetes]
 ==== Exporting to Camel Main for Kubernetes
 
 If your want to run Camel Main on Kubernetes, then it's possible to export to Maven based project
@@ -2245,6 +2309,30 @@ jkube.recreate=true
 ----
 
 You can find more details in the https://eclipse.dev/jkube/docs/[Eclipse JKube] and https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin[Jib] documentations.
+
+===== Resource fragments
+
+Resource fragments allows to store external configuration in YAML resource descriptions, which
+will be exported to `src/main/jkube` directory.
+
+Camel JBang will export files that ends with `jkube.yaml` or `jkube.yml` into `src/main/jkube` directory.
+
+For example having the following file named `configmap.jkube.yaml`:
+
+[source,yaml]
+----
+metadata:
+  name: ${project.artifactId}
+data:
+  application.properties: |
+    # spring application properties file
+    welcome = Hello from Kubernetes ConfigMap!!!
+    dummy = some value
+----
+
+Will let Camel JBang export this into as `src/main/jkube/configmap.yaml`.
+
+You can find more information about resource fragments at the https://eclipse.dev/jkube/docs/kubernetes-maven-plugin/#_resource_fragments[Eclipse JKube] website.
 
 === Exporting with selected files
 
@@ -2335,6 +2423,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.classpathFiles`
 |Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
+
+|`camel.jbang.jkubeFiles`
+|Resource fragments for Kubernetes (Use commas to separate multiple files). See more details at xref:_exporting_to_camel_main_for_kubernetes[].
 
 |`camel.jbang.javaVersion`
 |Java version (11 or 17)

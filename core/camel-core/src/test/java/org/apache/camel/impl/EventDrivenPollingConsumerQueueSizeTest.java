@@ -35,7 +35,10 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 
@@ -68,13 +71,10 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
 
         assertEquals(10, edpc.getQueueSize());
 
-        try {
-            template.sendBody(uri, "Message 10");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            // queue should be full
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.sendBody(uri, "Message 10"),
+                "Should have thrown exception");
+
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
 
         Exchange out = consumer.receive(5000);
         assertNotNull(out);

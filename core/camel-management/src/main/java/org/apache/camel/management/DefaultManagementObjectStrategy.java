@@ -439,7 +439,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
                 answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
-            } else if (target instanceof DataTypeProcessor) {
+            } else if (target instanceof DataTypeProcessor && definition instanceof TransformDefinition) {
                 answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
             } else if (target instanceof PredicateValidatingProcessor) {
                 answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, (ValidateDefinition) definition);

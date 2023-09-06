@@ -310,7 +310,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                         return doProcess(exchange, callback);
                     }
                 }, exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             } finally {
                 callback.done(true);
@@ -329,7 +329,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             if (pairs instanceof Collection) {
                 size = ((Collection<ProcessorExchangePair>) pairs).size();
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
             // unexpected exception was thrown, maybe from iterator etc. so do not regard as exhausted
             // and do the done work
@@ -474,7 +474,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                             doDone(result.get(), true);
                         }
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     original.setException(e);
                     // and do the done work
                     doDone(null, false);
@@ -502,7 +502,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                         }
                     }
                     doDone(result.get(), true);
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     original.setException(e);
                     // and do the done work
                     doDone(null, false);
@@ -849,8 +849,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 for (ProcessorExchangePair pair : pairs) {
                     processorExchangeFactory.release(pair.getExchange());
                 }
-            } catch (Throwable e) {
-                LOG.warn("Error releasing exchange due to " + e.getMessage() + ". This exception is ignored.", e);
+            } catch (Exception e) {
+                LOG.warn("Error releasing exchange due to {}. This exception is ignored.", e.getMessage(), e);
             }
         }
         // we are done so close the pairs iterator

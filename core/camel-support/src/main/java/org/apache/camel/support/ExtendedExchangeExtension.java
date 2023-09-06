@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
@@ -327,5 +328,14 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setRedeliveryExhausted(false);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
+    }
+
+    @Override
+    public Exchange createCopyWithProperties(CamelContext context) {
+        DefaultExchange answer = new DefaultExchange(context, exchange.internalProperties, exchange.properties);
+
+        answer.setPattern(exchange.pattern);
+
+        return answer;
     }
 }

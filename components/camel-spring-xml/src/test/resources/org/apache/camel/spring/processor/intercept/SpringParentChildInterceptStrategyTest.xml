@@ -28,6 +28,7 @@
         class="org.apache.camel.processor.intercept.ParentChildInterceptStrategyTest$MyParentChildInterceptStrategy"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route id="route">
       <from uri="direct:start"/>
       <to uri="mock:a" id="task-a"/>

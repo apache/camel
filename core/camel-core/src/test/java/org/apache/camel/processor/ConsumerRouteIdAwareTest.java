@@ -31,9 +31,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Isolated;
 
-@Isolated
 public class ConsumerRouteIdAwareTest extends ContextTestSupport {
 
     @Override
@@ -88,21 +86,24 @@ public class ConsumerRouteIdAwareTest extends ContextTestSupport {
 
         public MyConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            super.doStart();
 
             Runnable run = () -> {
-                Exchange exchange = endpoint.createExchange();
+                Exchange exchange = getEndpoint().createExchange();
                 exchange.getMessage().setBody("Hello from consumer route " + getRouteId());
                 try {
-                    Thread.sleep(100);
-                    processor.process(exchange);
+                    getProcessor().process(exchange);
                 } catch (Exception e) {
-                    // ignore
+                    exchange.setException(e);
                 }
             };
             Thread t = new Thread(run);
             t.start();
         }
-
     }
 
 }

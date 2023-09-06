@@ -28,7 +28,11 @@ public @interface YamlProperty {
 
     String type();
 
+    String defaultValue() default "";
+
     String format() default "";
+
+    String displayName() default "";
 
     String description() default "";
 
@@ -37,4 +41,6 @@ public @interface YamlProperty {
     boolean required() default false;
 
     String[] values() default {};
+
+    String oneOf() default "";
 }

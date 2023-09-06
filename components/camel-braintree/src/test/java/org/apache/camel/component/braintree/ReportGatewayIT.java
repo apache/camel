@@ -71,7 +71,7 @@ public class ReportGatewayIT extends AbstractBraintreeTestSupport {
         TransactionLevelFeeReport report = result.getTarget();
         assertNotNull(report);
 
-        LOG.debug("transactionLevelFees: " + result);
+        LOG.debug("transactionLevelFees: {}", result);
     }
 
     @Override

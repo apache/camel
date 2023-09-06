@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.util.StringHelper;
+
 /**
  * Copied from org.apache.camel.util.URISupport
  */
@@ -78,11 +80,7 @@ public final class URISupport {
      * @return     the uri without the query parameter
      */
     public static String stripQuery(String uri) {
-        int idx = uri.indexOf('?');
-        if (idx > -1) {
-            uri = uri.substring(0, idx);
-        }
-        return uri;
+        return StringHelper.before(uri, "?", uri);
     }
 
     /**
@@ -92,11 +90,7 @@ public final class URISupport {
      * @return     query parameters, or <tt>null</tt> if no parameters
      */
     public static String extractQuery(String uri) {
-        int idx = uri.indexOf('?');
-        if (idx > -1) {
-            return uri.substring(idx + 1);
-        }
-        return null;
+        return StringHelper.after(uri, "?");
     }
 
     /**
@@ -110,12 +104,9 @@ public final class URISupport {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
-            int idx = schemeSpecificPart.indexOf('?');
-            if (idx < 0) {
-                // return an empty map
+            query = StringHelper.after(schemeSpecificPart, "?");
+            if (query == null) {
                 return new LinkedHashMap<>(0);
-            } else {
-                query = schemeSpecificPart.substring(idx + 1);
             }
         } else {
             query = stripPrefix(query, "?");

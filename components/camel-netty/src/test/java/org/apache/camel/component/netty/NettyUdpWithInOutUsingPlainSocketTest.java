@@ -70,7 +70,7 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
                 from("netty:udp://127.0.0.1:{{port}}?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange exchange) {
                         String s = exchange.getIn().getBody(String.class);
-                        LOG.debug("Server got: " + s);
+                        LOG.debug("Server got: {}", s);
                         exchange.getMessage().setBody("Hello " + s);
                         // just make the remote address is there
                         assertNotNull(exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS),

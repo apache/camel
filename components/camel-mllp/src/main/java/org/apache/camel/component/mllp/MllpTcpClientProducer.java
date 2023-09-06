@@ -39,6 +39,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,12 +110,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         if (getConfiguration().hasIdleTimeout()) {
             // Get the URI without options
             String fullEndpointKey = getEndpoint().getEndpointKey();
-            String endpointKey;
-            if (fullEndpointKey.contains("?")) {
-                endpointKey = fullEndpointKey.substring(0, fullEndpointKey.indexOf('?'));
-            } else {
-                endpointKey = fullEndpointKey;
-            }
+            String endpointKey = StringHelper.before(fullEndpointKey, "?", fullEndpointKey);
 
             idleTimeoutExecutor = Executors.newSingleThreadScheduledExecutor(new IdleTimeoutThreadFactory(endpointKey));
         }

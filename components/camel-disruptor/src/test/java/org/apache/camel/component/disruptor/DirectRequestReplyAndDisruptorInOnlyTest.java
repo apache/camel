@@ -36,7 +36,7 @@ public class DirectRequestReplyAndDisruptorInOnlyTest extends CamelTestSupport {
 
         final String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
-        LOG.info("Got reply " + out);
+        LOG.info("Got reply {}", out);
 
         MockEndpoint.assertIsSatisfied(context);
     }

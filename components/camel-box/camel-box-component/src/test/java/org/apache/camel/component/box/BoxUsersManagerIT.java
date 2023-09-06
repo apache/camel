@@ -76,7 +76,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             headers.put("CamelBox.email", CAMEL_TEST_USER_EMAIL_ALIAS);
             result = requestBodyAndHeaders("direct://ADDUSEREMAILALIAS", null, headers);
             assertNotNull(result, "addUserEmailAlias result");
-            LOG.debug("addUserEmailAlias: " + result);
+            LOG.debug("addUserEmailAlias: {}", result);
         } finally {
             if (result != null) {
                 try {
@@ -107,7 +107,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             result = requestBodyAndHeaders("direct://CREATEAPPUSER", null, headers);
 
             assertNotNull(result, "createAppUser result");
-            LOG.debug("createAppUser: " + result);
+            LOG.debug("createAppUser: {}", result);
         } finally {
             if (result != null) {
                 try {
@@ -148,7 +148,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             result = requestBodyAndHeaders("direct://CREATEENTERPRISEUSER", null, headers);
 
             assertNotNull(result, "createEnterpriseUser result");
-            LOG.debug("createEnterpriseUser: " + result);
+            LOG.debug("createEnterpriseUser: {}", result);
         } finally {
             if (result != null) {
                 try {
@@ -216,7 +216,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         final java.util.List result = requestBodyAndHeaders("direct://GETALLENTERPRISEOREXTERNALUSERS", null, headers);
 
         assertNotNull(result, "getAllEnterpriseOrExternalUsers result");
-        LOG.debug("getAllEnterpriseOrExternalUsers: " + result);
+        LOG.debug("getAllEnterpriseOrExternalUsers: {}", result);
     }
 
     @Test
@@ -224,7 +224,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxUser result = requestBody("direct://GETCURRENTUSER", testUser.getID());
 
         assertNotNull(result, "getCurrentUser result");
-        LOG.debug("getCurrentUser: " + result);
+        LOG.debug("getCurrentUser: {}", result);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBody("direct://GETUSEREMAILALIAS", testUser.getID());
 
         assertNotNull(result, "getUserEmailAlias result");
-        LOG.debug("getUserEmailAlias: " + result);
+        LOG.debug("getUserEmailAlias: {}", result);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxUser.Info result = requestBody("direct://GETUSERINFO", testUser.getID());
 
         assertNotNull(result, "getUserInfo result");
-        LOG.debug("getUserInfo: " + result);
+        LOG.debug("getUserInfo: {}", result);
     }
 
     @Test
@@ -262,7 +262,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             headers.put("CamelBox.info", info);
             final com.box.sdk.BoxUser result = requestBodyAndHeaders("direct://UPDATEUSERINFO", null, headers);
             assertNotNull(result, "updateUserInfo result");
-            LOG.debug("updateUserInfo: " + result);
+            LOG.debug("updateUserInfo: {}", result);
         } finally {
             info = testUser.getInfo();
             info.setJobTitle("");

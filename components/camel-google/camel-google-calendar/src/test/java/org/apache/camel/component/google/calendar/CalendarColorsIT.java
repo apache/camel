@@ -42,7 +42,7 @@ public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
         com.google.api.services.calendar.model.Colors result = requestBody("direct://GET", null);
 
         assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        LOG.debug("get: {}", result);
     }
 
     @Override

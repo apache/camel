@@ -28,7 +28,7 @@ class ResumableTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                         - resumable:
-                            resume-strategy: myResumeStrategyBeanRef
+                            resumeStrategy: myResumeStrategyBeanRef
                             intermittent: true
                         - to: mock:result
             '''

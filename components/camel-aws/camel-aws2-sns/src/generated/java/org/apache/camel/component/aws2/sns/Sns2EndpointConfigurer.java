@@ -50,8 +50,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
-        case "queueurl":
-        case "queueUrl": target.getConfiguration().setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "queuearn":
+        case "queueArn": target.getConfiguration().setQueueArn(property(camelContext, java.lang.String.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -109,8 +109,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": return java.lang.Integer.class;
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
-        case "queueurl":
-        case "queueUrl": return java.lang.String.class;
+        case "queuearn":
+        case "queueArn": return java.lang.String.class;
         case "region": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
@@ -164,8 +164,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
         case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
-        case "queueurl":
-        case "queueUrl": return target.getConfiguration().getQueueUrl();
+        case "queuearn":
+        case "queueArn": return target.getConfiguration().getQueueArn();
         case "region": return target.getConfiguration().getRegion();
         case "secretkey":
         case "secretKey": return target.getConfiguration().getSecretKey();

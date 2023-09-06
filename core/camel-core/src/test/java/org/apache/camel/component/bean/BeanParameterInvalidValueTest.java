@@ -26,7 +26,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -37,15 +39,14 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
     public void testBeanParameterInvalidValueA() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:a", "World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
-            assertEquals(String.class, cause.getFromType());
-            assertEquals(int.class, cause.getToType());
-            assertEquals("A", cause.getValue());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:a", "World"),
+                "Should have thrown exception");
+
+        TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
+        assertEquals(String.class, cause.getFromType());
+        assertEquals(int.class, cause.getToType());
+        assertEquals("A", cause.getValue());
 
         assertMockEndpointsSatisfied();
     }
@@ -54,15 +55,14 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
     public void testBeanParameterInvalidValueB() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:b", "World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
-            assertEquals(String.class, cause.getFromType());
-            assertEquals(int.class, cause.getToType());
-            assertEquals("true", cause.getValue());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:b", "World"),
+                "Should have thrown exception");
+
+        TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
+        assertEquals(String.class, cause.getFromType());
+        assertEquals(int.class, cause.getToType());
+        assertEquals("true", cause.getValue());
 
         assertMockEndpointsSatisfied();
     }
@@ -81,13 +81,12 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
     public void testBeanParameterInvalidValueD() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:d", "World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            ExpressionEvaluationException cause = assertIsInstanceOf(ExpressionEvaluationException.class, e.getCause());
-            assertTrue(cause.getCause().getMessage().startsWith("Unknown function: xxx at location 0"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:d", "World"),
+                "Should have thrown exception");
+
+        ExpressionEvaluationException cause = assertIsInstanceOf(ExpressionEvaluationException.class, e.getCause());
+        assertTrue(cause.getCause().getMessage().startsWith("Unknown function: xxx at location 0"));
 
         assertMockEndpointsSatisfied();
     }

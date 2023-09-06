@@ -41,7 +41,7 @@ public class AddOnGatewayIT extends AbstractBraintreeTestSupport {
         final List<AddOn> result = requestBody("direct://ALL", null, List.class);
 
         assertNotNull(result, "all result");
-        LOG.debug("all: " + result);
+        LOG.debug("all: {}", result);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class MyVmConsumer {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(exchange.getContext(), "exchange.getContext");
 
-        LOG.info("Received body: " + body);
+        LOG.info("Received body: {}", body);
         destination.sendBody(body);
     }
 

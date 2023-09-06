@@ -61,6 +61,8 @@ public class DataFormatsDefinition {
             @XmlElement(name = "jsonApi", type = JsonApiDataFormat.class),
             @XmlElement(name = "lzf", type = LZFDataFormat.class),
             @XmlElement(name = "mimeMultipart", type = MimeMultipartDataFormat.class),
+            @XmlElement(name = "parquetAvro", type = ParquetAvroDataFormat.class),
+            @XmlElement(name = "pgp", type = PGPDataFormat.class),
             @XmlElement(name = "protobuf", type = ProtobufDataFormat.class),
             @XmlElement(name = "rss", type = RssDataFormat.class),
             @XmlElement(name = "soap", type = SoapDataFormat.class),
@@ -74,7 +76,6 @@ public class DataFormatsDefinition {
             @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
             @XmlElement(name = "univocityTsv", type = UniVocityTsvDataFormat.class),
             @XmlElement(name = "xmlSecurity", type = XMLSecurityDataFormat.class),
-            @XmlElement(name = "pgp", type = PGPDataFormat.class),
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })

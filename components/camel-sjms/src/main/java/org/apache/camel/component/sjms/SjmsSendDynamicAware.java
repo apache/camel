@@ -105,12 +105,10 @@ public class SjmsSendDynamicAware extends ServiceSupport implements SendDynamicA
     private String parseDestinationName(String uri) {
         // strip query
         uri = uri.replaceFirst(scheme + "://", ":");
-        int pos = uri.indexOf('?');
-        if (pos != -1) {
-            uri = uri.substring(0, pos);
-        }
+        uri = StringHelper.before(uri, "?", uri);
+
         // destination name is after last colon
-        pos = uri.lastIndexOf(':');
+        int pos = uri.lastIndexOf(':');
         if (pos != -1) {
             return uri.substring(pos + 1);
         } else {

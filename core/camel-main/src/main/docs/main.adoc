@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 120 options, which are listed below.
+The camel.main supports 126 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -35,7 +35,7 @@ The camel.main supports 120 options, which are listed below.
 | *camel.main.backlogTracing* | Sets whether backlog tracing is enabled or not. Default is false. | false | boolean
 | *camel.main.backlogTracing{zwsp}Standby* | Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available. Then the backlog tracer can be enabled later at runtime via JMX or via Java API. Default is false. | false | boolean
 | *camel.main.backlogTracing{zwsp}Templates* | Whether backlog tracing should trace inner details from route templates (or kamelets). Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets. Default is false. | false | boolean
-| *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , and org.apache.camel.TypeConverter classes. If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
+| *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , org.apache.camel.TypeConverter , CamelConfiguration classes, and also classes annotated with org.apache.camel.Converter , or org.apache.camel.BindToRegistry . If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
 | *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean
 | *camel.main.beanIntrospection{zwsp}ExtendedStatistics* | Sets whether bean introspection uses extended statistics. The default is false. | false | boolean
 | *camel.main.beanIntrospection{zwsp}LoggingLevel* | Sets the logging level used by bean introspection, logging activity of its usage. The default is TRACE. |  | LoggingLevel
@@ -50,6 +50,12 @@ The camel.main supports 120 options, which are listed below.
 | *camel.main.description* | Sets the description (intended for humans) of the Camel application. |  | String
 | *camel.main.devConsoleEnabled* | Whether to enable developer console (requires camel-console on classpath). The developer console is only for assisting during development. This is NOT for production usage. | false | boolean
 | *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML. |  | String
+| *camel.main.dumpRoutesGenerated{zwsp}Ids* | Whether to include auto generated IDs in the dumped output. Default is false. | false | boolean
+| *camel.main.dumpRoutesInclude* | Controls what to include in output for route dumping. Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated by comma. Default is routes. | routes | String
+| *camel.main.dumpRoutesLog* | Whether to log route dumps to Logger | true | boolean
+| *camel.main.dumpRoutesOutput* | Whether to save route dumps to an output file. If the output is a filename, then all content is saved to this file. If the output is a directory name, then one or more files are saved to the directory, where the names are based on the original source file names, or auto generated names. |  | String
+| *camel.main.dumpRoutesResolve{zwsp}Placeholders* | Whether to resolve property placeholders in the dumped output. Default is true. | true | boolean
+| *camel.main.dumpRoutesUriAs{zwsp}Parameters* | When dumping routes to YAML format, then this option controls whether endpoint URIs should be expanded into a key/value parameters. | false | boolean
 | *camel.main.durationHitExitCode* | Sets the exit code for the application if duration was hit |  | int
 | *camel.main.durationMaxAction* | Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is triggered. | shutdown | String
 | *camel.main.durationMaxIdle{zwsp}Seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int

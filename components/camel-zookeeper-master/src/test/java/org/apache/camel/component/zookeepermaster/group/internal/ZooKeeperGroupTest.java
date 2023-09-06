@@ -45,7 +45,7 @@ public class ZooKeeperGroupTest {
     private ZooKeeperGroup<NodeState> group;
 
     private int findFreePort() {
-        return AvailablePortFinder.getNextAvailable();
+        return AvailablePortFinder.getNextRandomAvailable();
     }
 
     @BeforeEach

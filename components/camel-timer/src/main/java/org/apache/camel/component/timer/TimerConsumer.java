@@ -188,12 +188,13 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         if (endpoint.isIncludeMetadata()) {
             exchange.setProperty(Exchange.TIMER_COUNTER, counter);
             exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
-            exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
+            if (endpoint.getTime() != null) {
+                exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
+            }
             exchange.setProperty(Exchange.TIMER_PERIOD, endpoint.getPeriod());
 
             Date now = new Date();
-            exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
-            // also set now on in header with same key as quartz to be consistent
+            exchange.setProperty(TimerConstants.HEADER_FIRED_TIME, now);
             exchange.getIn().setHeader(TimerConstants.HEADER_FIRED_TIME, now);
             exchange.getIn().setHeader(TimerConstants.HEADER_MESSAGE_TIMESTAMP, now.getTime());
         }

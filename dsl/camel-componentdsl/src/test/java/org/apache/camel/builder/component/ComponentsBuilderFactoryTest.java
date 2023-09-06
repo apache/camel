@@ -23,12 +23,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.timer.TimerComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComponentsBuilderFactoryTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentsBuilderFactoryTest.class);
 
     @Test
     public void testIfCreateComponentCorrectlyWithoutContextProvided() {

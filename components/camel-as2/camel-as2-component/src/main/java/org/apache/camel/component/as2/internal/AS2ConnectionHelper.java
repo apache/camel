@@ -92,9 +92,8 @@ public final class AS2ConnectionHelper {
                     conn.close();
                 } catch (Exception e) {
                     // ignore
-                    LOG.debug("Error stopping and closing AS2ServerConnection due to " + e.getMessage()
-                              + ". This exception is ignored",
-                            e);
+                    LOG.debug("Error stopping and closing AS2ServerConnection due to {}. This exception is ignored",
+                            e.getMessage(), e);
                 }
             }
         }

@@ -30,8 +30,8 @@ public class InOutConsumerTempQueueAsyncTest extends JmsTestSupport {
     public void testAsync() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello Camel");
 
-        template.sendBody("sjms:start", "Hello Camel");
-        template.sendBody("sjms:start", "Hello World");
+        template.sendBody("sjms:start.queue.InOutConsumerTempQueueAsyncTest", "Hello Camel");
+        template.sendBody("sjms:start.queue.InOutConsumerTempQueueAsyncTest", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -40,13 +40,14 @@ public class InOutConsumerTempQueueAsyncTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:start?asyncConsumer=true")
+                from("sjms:queue:start.queue.InOutConsumerTempQueueAsyncTest?asyncConsumer=true")
                         .log("Requesting ${body} with thread ${threadName}")
-                        .to(ExchangePattern.InOut, "sjms:queue:in.out.temp.queue?replyToConcurrentConsumers=2")
+                        .to(ExchangePattern.InOut,
+                                "sjms:queue:in.out.temp.queue.InOutConsumerTempQueueAsyncTest?replyToConcurrentConsumers=2")
                         .log("Result ${body} with thread ${threadName}")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.temp.queue?concurrentConsumers=2").to("log:before")
+                from("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueAsyncTest?concurrentConsumers=2").to("log:before")
                         .log("Replying ${body} with thread ${threadName}")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

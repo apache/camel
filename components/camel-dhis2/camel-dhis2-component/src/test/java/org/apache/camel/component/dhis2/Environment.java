@@ -36,7 +36,7 @@ public final class Environment {
 
     public static final Dhis2Client DHIS2_CLIENT;
 
-    public static final String ORG_UNIT_ID;
+    public static final String ORG_UNIT_ID_UNDER_TEST;
 
     private static final Network NETWORK = Network.newNetwork();
 
@@ -74,13 +74,14 @@ public final class Environment {
                         .getFirstMappedPort() + "/api",
                 "admin", "district").build();
 
-        ORG_UNIT_ID = createOrgUnit();
+        createOrgUnit("EvilCorp");
+        ORG_UNIT_ID_UNDER_TEST = createOrgUnit("Acme");
         createOrgUnitLevel();
-        addOrgUnitToUser(ORG_UNIT_ID);
+        addOrgUnitToUser(ORG_UNIT_ID_UNDER_TEST);
     }
 
-    private static String createOrgUnit() {
-        OrganisationUnit organisationUnit = new OrganisationUnit().withName("Acme").withShortName("Acme")
+    private static String createOrgUnit(String name) {
+        OrganisationUnit organisationUnit = new OrganisationUnit().withName(name).withShortName(name)
                 .withOpeningDate(new Date());
 
         return (String) ((Map<String, Object>) DHIS2_CLIENT.post("organisationUnits").withResource(organisationUnit)

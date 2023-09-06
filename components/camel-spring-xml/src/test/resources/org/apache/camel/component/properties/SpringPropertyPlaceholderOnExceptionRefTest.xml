@@ -36,6 +36,7 @@
     <context:property-placeholder location="org/apache/camel/component/properties/cheese.properties"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <!-- setup endpoint -->
         <endpoint id="dead" uri="mock:dead"/>

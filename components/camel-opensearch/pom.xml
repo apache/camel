@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-opensearch</artifactId>
@@ -37,7 +37,7 @@
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
 
-        <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
     </properties>
 
     <dependencies>

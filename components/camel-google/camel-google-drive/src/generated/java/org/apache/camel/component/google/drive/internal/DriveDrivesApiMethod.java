@@ -19,6 +19,12 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DriveDrivesApiMethod implements ApiMethod {
 
+    CREATE(
+        com.google.api.services.drive.Drive.Drives.Create.class,
+        "create",
+        arg("requestId", String.class),
+        arg("content", com.google.api.services.drive.model.Drive.class)),
+
     DELETE(
         com.google.api.services.drive.Drive.Drives.Delete.class,
         "delete",
@@ -33,12 +39,6 @@ public enum DriveDrivesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Drives.Hide.class,
         "hide",
         arg("driveId", String.class)),
-
-    INSERT(
-        com.google.api.services.drive.Drive.Drives.Insert.class,
-        "insert",
-        arg("requestId", String.class),
-        arg("content", com.google.api.services.drive.model.Drive.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Drives.List.class,

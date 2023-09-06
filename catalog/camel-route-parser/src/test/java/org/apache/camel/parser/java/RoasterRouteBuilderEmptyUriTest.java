@@ -43,14 +43,14 @@ public class RoasterRouteBuilderEmptyUriTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
         assertEquals("direct:foo", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, false);
         assertEquals(1, list.size());
         for (ParserResult result : list) {
-            LOG.info("Producer: " + result.getElement());
+            LOG.info("Producer: {}", result.getElement());
             assertFalse(result.isParsed(), "Should be invalid");
         }
     }

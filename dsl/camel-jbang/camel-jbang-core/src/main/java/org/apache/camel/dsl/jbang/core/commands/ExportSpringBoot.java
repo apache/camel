@@ -86,10 +86,14 @@ class ExportSpringBoot extends Export {
         FileUtil.removeDir(buildDir);
         buildDir.mkdirs();
 
-        // copy source files
-        String packageName = exportPackageName(ids[0], ids[1]);
         File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
-        File srcJavaDir = new File(srcJavaDirRoot, packageName.replace('.', File.separatorChar));
+        String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
+        File srcJavaDir;
+        if (srcPackageName == null) {
+            srcJavaDir = srcJavaDirRoot;
+        } else {
+            srcJavaDir = new File(srcJavaDirRoot, srcPackageName.replace('.', File.separatorChar));
+        }
         srcJavaDir.mkdirs();
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
@@ -97,8 +101,9 @@ class ExportSpringBoot extends Export {
         srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
         srcKameletsResourcesDir.mkdirs();
+        // copy source files
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, packageName);
+                srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
@@ -107,7 +112,7 @@ class ExportSpringBoot extends Export {
             return prop;
         });
         // create main class
-        createMainClassSource(srcJavaDir, packageName, mainClassname);
+        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs

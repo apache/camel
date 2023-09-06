@@ -30,15 +30,15 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "hawtio", description = "Launch Hawtio web console")
+@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false)
 public class Hawtio extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = "2.17.5")
-    String version = "2.17.5";
+                        description = "Version of the Hawtio web console", defaultValue = "2.17.6")
+    String version = "2.17.6";
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },

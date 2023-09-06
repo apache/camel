@@ -120,9 +120,17 @@ public final class MainHelper {
             final String pk2 = pk.replace('-', '_');
             System.getenv().forEach((k, v) -> {
                 k = k.toUpperCase(Locale.US);
-                if (k.startsWith(pk) || k.startsWith(pk2)) {
-                    String key = k.toLowerCase(Locale.US).replace('_', '.');
-                    answer.put(key, v);
+                // kubernetes ENV injected services should be skipped
+                // (https://learn.microsoft.com/en-us/visualstudio/bridge/kubernetes-environment-variables#environment-variables-table)
+                boolean k8s = k.endsWith("_SERVICE_HOST") || k.endsWith("_SERVICE_PORT") || k.endsWith("_PORT")
+                        || k.contains("_PORT_");
+                if (k8s) {
+                    LOG.trace("Skipping Kubernetes Service OS environment variable: {}", k);
+                } else {
+                    if (k.startsWith(pk) || k.startsWith(pk2)) {
+                        String key = k.toLowerCase(Locale.US).replace('_', '.');
+                        answer.put(key, v);
+                    }
                 }
             });
         }
@@ -343,9 +351,9 @@ public final class MainHelper {
                 throw new PropertyBindingException(
                         e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, key, e.getCause());
             } else {
-                LOG.debug("Error configuring property (" + key + ") with name: " + e.getPropertyName() + ") on bean: " + target
-                          + " with value: " + e.getValue() + ". This exception is ignored as failIfNotSet=false.",
-                        e);
+                LOG.debug(
+                        "Error configuring property ({}) with name: {}) on bean: {} with value: {}. This exception is ignored as failIfNotSet=false.",
+                        key, e.getPropertyName(), target, e.getValue(), e);
             }
         }
 

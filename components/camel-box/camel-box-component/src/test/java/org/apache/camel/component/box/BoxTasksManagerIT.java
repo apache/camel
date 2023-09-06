@@ -75,7 +75,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         result = requestBodyAndHeaders("direct://ADDASSIGNMENTTOTASK", null, headers);
 
         assertNotNull(result, "addAssignmentToTask result");
-        LOG.debug("addAssignmentToTask: " + result);
+        LOG.debug("addAssignmentToTask: {}", result);
     }
 
     @Test
@@ -98,12 +98,12 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
             result = requestBodyAndHeaders("direct://ADDFILETASK", null, headers);
 
             assertNotNull(result, "addFileTask result");
-            LOG.debug("addFileTask: " + result);
+            LOG.debug("addFileTask: {}", result);
         } finally {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -137,7 +137,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         final java.util.List result = requestBody("direct://GETFILETASKS", testFile.getID());
 
         assertNotNull(result, "getFileTasks result");
-        LOG.debug("getFileTasks: " + result);
+        LOG.debug("getFileTasks: {}", result);
     }
 
     @Disabled
@@ -151,12 +151,12 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
             result = requestBody("direct://GETTASKASSIGNMENTINFO", info.getID());
 
             assertNotNull(result, "getTaskAssignmentInfo result");
-            LOG.debug("getTaskAssignmentInfo: " + result);
+            LOG.debug("getTaskAssignmentInfo: {}", result);
         } finally {
             if (result != null) {
                 try {
                     ((BoxTaskAssignment) result.getResource()).delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -181,7 +181,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         final java.util.List result = requestBody("direct://GETTASKASSIGNMENTS", testTask.getID());
 
         assertNotNull(result, "getTaskAssignments result");
-        LOG.debug("getTaskAssignments: " + result);
+        LOG.debug("getTaskAssignments: {}", result);
     }
 
     @Test
@@ -190,7 +190,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxTask.Info result = requestBody("direct://GETTASKINFO", testTask.getID());
 
         assertNotNull(result, "getTaskInfo result");
-        LOG.debug("getTaskInfo: " + result);
+        LOG.debug("getTaskInfo: {}", result);
     }
 
     @Disabled // No way to change BoxTask.Info parameters
@@ -207,7 +207,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxTask result = requestBodyAndHeaders("direct://UPDATETASKINFO", null, headers);
 
         assertNotNull(result, "updateTaskInfo result");
-        LOG.debug("updateTaskInfo: " + result);
+        LOG.debug("updateTaskInfo: {}", result);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     private void deleteTestTask() {
         try {
             testTask.delete();
-        } catch (Throwable t) {
+        } catch (Exception t) {
         }
         testTask = null;
     }

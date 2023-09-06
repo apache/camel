@@ -460,6 +460,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public abstract boolean isAbsolute(String name);
 
+    public boolean isHiddenFilesEnabled() {
+        return false;
+    }
+
     /**
      * Return the file name that will be auto-generated for the given message if none is provided
      */

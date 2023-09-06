@@ -139,11 +139,7 @@ public final class OgnlHelper {
      * @return                the Camel OGNL expression without any trailing operators.
      */
     public static String removeTrailingOperators(String ognlExpression) {
-        int pos = ognlExpression.indexOf('[');
-        if (pos != -1) {
-            return ognlExpression.substring(0, pos);
-        }
-        return ognlExpression;
+        return StringHelper.before(ognlExpression, "[", ognlExpression);
     }
 
     public static String removeOperators(String ognlExpression) {

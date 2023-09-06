@@ -344,6 +344,13 @@ public class MessageTableHelper {
                 s = type.substring(25);
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
+            } else if (type.length() > 34) {
+                // type must not be too long
+                int pos = type.lastIndexOf('.');
+                if (pos == -1) {
+                    pos = type.length() - 34;
+                }
+                s = type.substring(pos + 1);
             } else {
                 s = type;
             }
@@ -394,6 +401,9 @@ public class MessageTableHelper {
         }
 
         String exchangeIdAsValue() {
+            if (value == null) {
+                return "";
+            }
             String s = value.toString();
             if (loggingColor) {
                 Ansi.Color color = exchangeIdColorChooser != null ? exchangeIdColorChooser.color(s) : Ansi.Color.DEFAULT;

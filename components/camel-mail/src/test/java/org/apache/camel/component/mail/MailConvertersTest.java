@@ -36,12 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailConvertersTest extends CamelTestSupport {
-    private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
+
+    private MailboxUser james;
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         Mailbox.clearAll();
+        james = Mailbox.getOrCreateUser("james", "secret");
         super.setUp();
     }
 

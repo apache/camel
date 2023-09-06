@@ -19,6 +19,13 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DriveRepliesApiMethod implements ApiMethod {
 
+    CREATE(
+        com.google.api.services.drive.Drive.Replies.Create.class,
+        "create",
+        arg("fileId", String.class),
+        arg("commentId", String.class),
+        arg("content", com.google.api.services.drive.model.Reply.class)),
+
     DELETE(
         com.google.api.services.drive.Drive.Replies.Delete.class,
         "delete",
@@ -33,26 +40,11 @@ public enum DriveRepliesApiMethod implements ApiMethod {
         arg("commentId", String.class),
         arg("replyId", String.class)),
 
-    INSERT(
-        com.google.api.services.drive.Drive.Replies.Insert.class,
-        "insert",
-        arg("fileId", String.class),
-        arg("commentId", String.class),
-        arg("content", com.google.api.services.drive.model.CommentReply.class)),
-
     LIST(
         com.google.api.services.drive.Drive.Replies.List.class,
         "list",
         arg("fileId", String.class),
         arg("commentId", String.class)),
-
-    PATCH(
-        com.google.api.services.drive.Drive.Replies.Patch.class,
-        "patch",
-        arg("fileId", String.class),
-        arg("commentId", String.class),
-        arg("replyId", String.class),
-        arg("content", com.google.api.services.drive.model.CommentReply.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Replies.Update.class,
@@ -60,7 +52,7 @@ public enum DriveRepliesApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("commentId", String.class),
         arg("replyId", String.class),
-        arg("content", com.google.api.services.drive.model.CommentReply.class));
+        arg("content", com.google.api.services.drive.model.Reply.class));
 
     private final ApiMethod apiMethod;
 

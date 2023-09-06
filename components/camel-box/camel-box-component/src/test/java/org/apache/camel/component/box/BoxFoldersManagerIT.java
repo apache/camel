@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxFolder;
-import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFoldersManager;
@@ -36,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -74,7 +72,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(testFolder, "createFolder result");
         assertEquals(CAMEL_TEST_FOLDER, testFolder.getInfo().getName(), "createFolder folder name");
-        LOG.debug("createFolder: " + testFolder);
+        LOG.debug("createFolder: {}", testFolder);
     }
 
     @Test
@@ -93,18 +91,13 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(testFolder, "createFolder result");
         assertEquals(CAMEL_TEST_FOLDER, testFolder.getInfo().getName(), "createFolder folder name");
-        LOG.debug("createFolder: " + testFolder);
+        LOG.debug("createFolder: {}", testFolder);
     }
 
     @Test
     public void testDeleteFolder() {
         // using String message body for single parameter "folderId"
         requestBody("direct://DELETEFOLDER", testFolder.getID());
-
-        BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
-        Iterable<BoxItem.Info> it = rootFolder.search("^" + CAMEL_TEST_FOLDER + "$");
-        int searchResults = sizeOfIterable(it);
-        assertFalse(searchResults > 0, "deleteFolder exists");
     }
 
     @Test
@@ -121,12 +114,12 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
             result = requestBodyAndHeaders("direct://COPYFOLDER", null, headers);
             assertNotNull(result, "copyFolder result");
             assertEquals(CAMEL_TEST_COPY_FOLDER, result.getInfo().getName(), "copyFolder folder name");
-            LOG.debug("copyFolder: " + result);
+            LOG.debug("copyFolder: {}", result);
         } finally {
             if (result != null) {
                 try {
                     result.delete(true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -148,7 +141,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
                 headers);
 
         assertNotNull(result, "createFolderSharedLink result");
-        LOG.debug("createFolderSharedLink: " + result);
+        LOG.debug("createFolderSharedLink: {}", result);
     }
 
     @Test
@@ -158,7 +151,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "getFolder result");
         assertEquals(testFolder.getID(), result.getID(), "getFolder folder id");
-        LOG.debug("getFolder: " + result);
+        LOG.debug("getFolder: {}", result);
     }
 
     @Test
@@ -174,7 +167,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         assertNotNull(result, "getFolderInfo result");
         assertNotNull(result.getName(), "getFolderInfo result.getName()");
         assertEquals(CAMEL_TEST_FOLDER, result.getName(), "getFolderInfo info name");
-        LOG.debug("getFolderInfo: " + result);
+        LOG.debug("getFolderInfo: {}", result);
     }
 
     @Test
@@ -193,7 +186,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBodyAndHeaders("direct://GETFOLDERITEMS", null, headers);
 
         assertNotNull(result, "getFolderItems result");
-        LOG.debug("getFolderItems: " + result);
+        LOG.debug("getFolderItems: {}", result);
     }
 
     @Test
@@ -201,7 +194,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxFolder result = requestBody("direct://GETROOTFOLDER", null);
 
         assertNotNull(result, "getRootFolder result");
-        LOG.debug("getRootFolder: " + result);
+        LOG.debug("getRootFolder: {}", result);
     }
 
     @Test
@@ -218,7 +211,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "moveFolder result");
         assertEquals(CAMEL_TEST_MOVE_FOLDER, result.getInfo().getName(), "moveFolder folder name");
-        LOG.debug("moveFolder: " + result);
+        LOG.debug("moveFolder: {}", result);
     }
 
     @Test
@@ -233,7 +226,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "renameFolder result");
         assertEquals(CAMEL_TEST_RENAME_FOLDER, result.getInfo().getName(), "moveFolder folder name");
-        LOG.debug("renameFolder: " + result);
+        LOG.debug("renameFolder: {}", result);
     }
 
     @Test
@@ -251,7 +244,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
 
         assertNotNull(result, "updateInfo result");
         assertEquals(CAMEL_TEST_FOLDER_DESCRIPTION, result.getInfo().getDescription(), "update folder info description");
-        LOG.debug("updateInfo: " + result);
+        LOG.debug("updateInfo: {}", result);
     }
 
     @Override

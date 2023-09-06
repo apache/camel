@@ -97,7 +97,7 @@ public class JpaWithNamedQueryAndParametersTest {
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
-                LOG.info("Received exchange: " + e.getIn());
+                LOG.info("Received exchange: {}", e.getIn());
                 receivedExchange = e;
                 latch.countDown();
             }
@@ -142,7 +142,9 @@ public class JpaWithNamedQueryAndParametersTest {
         assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
         endpoint = (JpaEndpoint) value;
 
-        transactionTemplate = endpoint.createTransactionTemplate();
+        if (endpoint.getTransactionStrategy() instanceof DefaultTransactionStrategy strategy) {
+            transactionTemplate = strategy.getTransactionTemplate();
+        }
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();
     }
 

@@ -63,7 +63,7 @@ public final class AsyncProcessorConverterHelper {
             }
             try {
                 processor.process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // must catch throwable so we catch all
                 exchange.setException(e);
             } finally {

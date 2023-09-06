@@ -40,10 +40,12 @@ public class SjmsSendDynamicAwareTest extends CamelTestSupport {
         this.sjmsSendDynamicAware.setScheme("sjms");
         Exchange exchange = createExchangeWithBody("The Body");
         SendDynamicAware.DynamicAwareEntry entry
-                = new SendDynamicAware.DynamicAwareEntry("sjms:destination", "sjms:${header.test}", null, null);
+                = new SendDynamicAware.DynamicAwareEntry(
+                        "sjms:destination.SjmsSendDynamicAwareTest", "sjms:${header.test}", null, null);
         Processor processor = this.sjmsSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
-        assertEquals("destination", exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
+        assertEquals("destination.SjmsSendDynamicAwareTest",
+                exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
     }
 
     @Test
@@ -51,9 +53,11 @@ public class SjmsSendDynamicAwareTest extends CamelTestSupport {
         this.sjmsSendDynamicAware.setScheme("sjms");
         Exchange exchange = createExchangeWithBody("The Body");
         SendDynamicAware.DynamicAwareEntry entry
-                = new SendDynamicAware.DynamicAwareEntry("sjms://destination", "sjms://${header.test}", null, null);
+                = new SendDynamicAware.DynamicAwareEntry(
+                        "sjms://destination.SjmsSendDynamicAwareTest", "sjms://${header.test}", null, null);
         Processor processor = this.sjmsSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
-        assertEquals("destination", exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
+        assertEquals("destination.SjmsSendDynamicAwareTest",
+                exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
     }
 }

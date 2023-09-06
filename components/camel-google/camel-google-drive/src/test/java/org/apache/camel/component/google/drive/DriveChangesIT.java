@@ -44,17 +44,17 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
     @Test
     public void testGet() {
         final com.google.api.services.drive.model.ChangeList list = requestBody("direct://LIST", null);
-        List<Change> items = list.getItems();
+        List<Change> items = list.getChanges();
         assumeFalse(items.isEmpty());
 
         Change change = items.get(0);
-        Long id = change.getId();
+        String id = change.getDriveId();
 
         // using String message body for single parameter "changeId"
         final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
 
         assertNotNull(result, "get result");
-        LOG.debug("get: " + result);
+        LOG.debug("get: {}", result);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
         final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
     }
 
     @Override

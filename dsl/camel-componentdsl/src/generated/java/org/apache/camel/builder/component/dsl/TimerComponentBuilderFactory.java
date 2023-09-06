@@ -71,6 +71,22 @@ public interface TimerComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to include metadata in the exchange such as fired time, timer
+         * name, timer count etc.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param includeMetadata the value to set
+         * @return the dsl builder
+         */
+        default TimerComponentBuilder includeMetadata(boolean includeMetadata) {
+            doSetProperty("includeMetadata", includeMetadata);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -108,6 +124,7 @@ public interface TimerComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((TimerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "includeMetadata": ((TimerComponent) component).setIncludeMetadata((boolean) value); return true;
             case "autowiredEnabled": ((TimerComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.test.junit5.params;
 
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import org.junit.jupiter.api.extension.TestInstantiationException;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
@@ -38,6 +39,8 @@ import org.junit.platform.commons.util.ReflectionUtils;
 
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ParameterizedExtension implements TestTemplateInvocationContextProvider {
 
@@ -116,7 +119,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
 
         @Override
         public java.util.List<Extension> getAdditionalExtensions() {
-            return Arrays.asList(
+            return List.of(
                     (TestInstancePostProcessor) this::postProcessTestInstance);
         }
 
@@ -127,7 +130,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                     .flatMap(Stream::of)
                     .filter(f -> isAnnotated(f, Parameter.class))
                     .sorted(Comparator.comparing(f -> (Integer) f.getAnnotation(Parameter.class).value()))
-                    .collect(Collectors.toList());
+                    .toList();
             if (params.length != fields.size()) {
                 throw new TestInstantiationException(
                         "Expected " + fields.size() + " parameters bug got " + params.length + " when instantiating "
@@ -136,8 +139,15 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
             for (int i = 0; i < fields.size(); i++) {
                 Field f = fields.get(i);
                 f.setAccessible(true);
-                f.set(testInstance, DefaultArgumentConverter.INSTANCE.convert(params[i], f.getType()));
+                f.set(testInstance, DefaultArgumentConverter.INSTANCE.convert(params[i], f.getType(), getContext()));
             }
+        }
+
+        private ParameterContext getContext() throws NoSuchMethodException {
+            Executable executable = this.getClass().getConstructor(Object[].class).getParameters()[0].getDeclaringExecutable();
+            ParameterContext parameterContext = mock(ParameterContext.class);
+            when(parameterContext.getDeclaringExecutable()).thenReturn(executable);
+            return parameterContext;
         }
 
         protected Stream<Class<?>> hierarchy(Class<?> clazz) {

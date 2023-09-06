@@ -19,15 +19,16 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for the FileRenameStrategy using preMoveExpression and expression options
@@ -47,16 +48,12 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     }
 
     @Test
-    public void testIllegalOptions() throws Exception {
-        try {
-            context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true")).createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // ok
-        }
+    public void testIllegalOptions() {
+
+        Endpoint ep = context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true"));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ep.createConsumer(exchange -> {
+        }), "Should have thrown an exception");
     }
 
     @Override

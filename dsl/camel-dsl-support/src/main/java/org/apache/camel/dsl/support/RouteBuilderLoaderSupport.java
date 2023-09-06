@@ -16,11 +16,9 @@
  */
 package org.apache.camel.dsl.support;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +35,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
-import org.apache.camel.util.IOHelper;
 
 /**
  * Base class for {@link RoutesBuilderLoader} implementations.
@@ -46,6 +43,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     private final String extension;
     private final List<CompilePostProcessor> compilePostProcessors = new ArrayList<>();
     private StartupStepRecorder recorder;
+    private SourceLoader sourceLoader = new DefaultSourceLoader();
 
     protected RouteBuilderLoaderSupport(String extension) {
         this.extension = extension;
@@ -93,6 +91,11 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
                     addCompilePostProcessor(pre);
                 }
             }
+            // discover a special source loader to be used
+            SourceLoader sl = getCamelContext().getRegistry().findSingleByType(SourceLoader.class);
+            if (sl != null) {
+                this.sourceLoader = sl;
+            }
         }
     }
 
@@ -129,7 +132,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
      */
     protected InputStream resourceInputStream(Resource resource) throws IOException {
         // load into memory as we need to skip a specific first-line if present
-        String data = loadResource(resource.getInputStream());
+        String data = sourceLoader.loadResource(resource);
         if (data.trim().isEmpty()) {
             throw new IOException("Resource is empty: " + resource.getLocation());
         }
@@ -143,31 +146,5 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
      * @return          a {@link RoutesBuilder}
      */
     protected abstract RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception;
-
-    private static String loadResource(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(in);
-        boolean first = true;
-        try {
-            BufferedReader reader = IOHelper.buffered(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    // we need to skip first line if it starts with a special script marker for camel-jbang in pipe mode
-                    if (first && line.startsWith("///usr/bin/env jbang") && line.contains("camel@apache/camel pipe")) {
-                        line = ""; // use an empty line so line numbers still matches
-                    }
-                    builder.append(line);
-                    builder.append("\n");
-                    first = false;
-                } else {
-                    break;
-                }
-            }
-            return builder.toString();
-        } finally {
-            IOHelper.close(isr, in);
-        }
-    }
 
 }

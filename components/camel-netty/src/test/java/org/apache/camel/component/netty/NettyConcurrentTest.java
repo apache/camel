@@ -91,7 +91,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
         }
 
         notify.matches(60, TimeUnit.SECONDS);
-        LOG.info("Took " + watch.taken() + " millis to process " + files + " messages using " + poolSize + " client threads.");
+        LOG.info("Took {} millis to process {} messages using {} client threads.", watch.taken(), files, poolSize);
         assertEquals(files, responses.size());
 
         // get all responses

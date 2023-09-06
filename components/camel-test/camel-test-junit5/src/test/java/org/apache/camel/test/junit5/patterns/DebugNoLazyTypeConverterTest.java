@@ -44,7 +44,7 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
         // processor
         // from your Java editor you can just add a breakpoint in the code line
         // below
-        LOG.info("Before " + definition + " with body " + exchange.getIn().getBody());
+        LOG.info("Before {} with body {}", definition, exchange.getIn().getBody());
     }
     // END SNIPPET: e1
 

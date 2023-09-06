@@ -44,13 +44,13 @@ public class EventRouteTest extends SpringTestSupport {
         // lets test we receive the context refreshed event
         Exchange exchange = result.getReceivedExchanges().get(0);
         Object body = exchange.getIn().getBody(ContextRefreshedEvent.class);
-        log.info("Received body: " + body);
+        log.info("Received body: {}", body);
         assertNotNull(body);
 
         // lets test we receive the camel event
         exchange = result.getReceivedExchanges().get(1);
         body = exchange.getIn().getBody();
-        log.info("Received body: " + body);
+        log.info("Received body: {}", body);
         CamelEvent event = assertIsInstanceOf(CamelEvent.class, body);
         Object actualBody = event.getExchange().getIn().getBody();
         assertEquals(expectedBody, actualBody, "Received event body");

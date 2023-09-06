@@ -90,12 +90,7 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
         exchange.getMessage().setBody(content);
 
         return next.process(exchange, doneSync -> {
-            // No response data expected
-            if (!isGet.get()) {
-                exchange.getMessage().setBody(content);
-            } else {
-                exchange.getMessage().setBody("");
-            }
+            exchange.getMessage().setBody(content);
 
             callback.done(doneSync);
         });

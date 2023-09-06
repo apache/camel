@@ -447,7 +447,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         try (ProducerTemplate template = context.createProducerTemplate()) {
             return template.requestBodyAndHeaders(endpointUri, body, headers);
         }
-
     }
 
     @Override
@@ -465,16 +464,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
 
-        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, true);
     }
 
     @Override
     public String dumpRoutesAsXml() throws Exception {
-        return dumpRoutesAsXml(false);
+        return dumpRoutesAsXml(false, true);
     }
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception {
+        return dumpRoutesAsXml(resolvePlaceholders, true);
+    }
+
+    @Override
+    public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
         List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -484,7 +488,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds);
     }
 
     @Override
@@ -494,11 +498,17 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String dumpRoutesAsYaml(boolean resolvePlaceholders) throws Exception {
-        return dumpRoutesAsYaml(resolvePlaceholders, false);
+        return dumpRoutesAsYaml(resolvePlaceholders, false, true);
     }
 
     @Override
     public String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception {
+        return dumpRoutesAsYaml(resolvePlaceholders, uriAsParameters, true);
+    }
+
+    @Override
+    public String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds)
+            throws Exception {
         List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -508,7 +518,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters);
+        return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters,
+                generatedIds);
     }
 
     @Override

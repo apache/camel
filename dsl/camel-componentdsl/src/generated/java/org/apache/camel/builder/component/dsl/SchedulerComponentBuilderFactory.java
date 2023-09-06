@@ -75,6 +75,23 @@ public interface SchedulerComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to include metadata in the exchange such as fired time, timer
+         * name, timer count etc.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param includeMetadata the value to set
+         * @return the dsl builder
+         */
+        default SchedulerComponentBuilder includeMetadata(
+                boolean includeMetadata) {
+            doSetProperty("includeMetadata", includeMetadata);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -165,6 +182,7 @@ public interface SchedulerComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((SchedulerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "includeMetadata": ((SchedulerComponent) component).setIncludeMetadata((boolean) value); return true;
             case "autowiredEnabled": ((SchedulerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((SchedulerComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((SchedulerComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;

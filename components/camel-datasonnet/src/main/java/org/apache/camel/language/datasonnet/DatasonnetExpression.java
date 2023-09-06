@@ -176,7 +176,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                         }
                     });
                 } catch (IOException e) {
-                    LOG.warn("Unable to load DataSonnet library from: " + nextPath, e);
+                    LOG.warn("Unable to load DataSonnet library from: {}", nextPath, e);
                 }
             }
         }

@@ -40,7 +40,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
         List<Exchange> list = processor.getExchanges();
         assertEquals(1, list.size(), "Received exchange list: " + list);
 
-        log.debug("Found exchanges: " + list);
+        log.debug("Found exchanges: {}", list);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
             template.sendBody(uri, body);
             fail("We should have failed as this is a bad endpoint URI");
         } catch (NoSuchEndpointException e) {
-            log.debug("Caught expected exception: " + e, e);
+            log.debug("Caught expected exception: {}", e.getMessage(), e);
         }
     }
 

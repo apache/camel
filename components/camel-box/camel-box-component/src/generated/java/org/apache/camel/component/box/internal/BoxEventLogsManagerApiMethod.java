@@ -25,7 +25,7 @@ public enum BoxEventLogsManagerApiMethod implements ApiMethod {
         arg("position", String.class),
         arg("after", java.util.Date.class),
         arg("before", java.util.Date.class),
-        arg("types", new com.box.sdk.BoxEvent.Type[0].getClass()));
+        arg("types", new com.box.sdk.BoxEvent.EventType[0].getClass()));
 
     private final ApiMethod apiMethod;
 

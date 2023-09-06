@@ -27,6 +27,21 @@ import org.apache.camel.RoutesBuilder;
 public interface ExtendedRoutesBuilderLoader extends RoutesBuilderLoader {
 
     /**
+     * Pre-parses the {@link RoutesBuilder} from multiple {@link Resource}s.
+     *
+     * This is used during bootstrap, to eager detect configurations from route DSL resources which makes it possible to
+     * specify configurations that affect the bootstrap, such as by camel-jbang and camel-yaml-dsl.
+     *
+     * @param resources the resources to be pre parsed.
+     */
+    default void preParseRoutes(Collection<Resource> resources) throws Exception {
+        // by default parse one-by-one
+        for (Resource resource : resources) {
+            preParseRoute(resource);
+        }
+    }
+
+    /**
      * Loads {@link RoutesBuilder} from multiple {@link Resource}s.
      *
      * @param  resources the resources to be loaded.

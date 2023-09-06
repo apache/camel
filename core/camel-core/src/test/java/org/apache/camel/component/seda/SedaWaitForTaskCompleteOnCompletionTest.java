@@ -25,7 +25,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport {
 
@@ -35,14 +35,12 @@ public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport 
     public void testAlways() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced", e.getCause().getMessage());
-        }
+        CamelExecutionException e
+                = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Hello World"),
+                        "Should have thrown an exception");
 
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced", e.getCause().getMessage());
         assertMockEndpointsSatisfied();
 
         // 3 + 1 C and A should be last

@@ -27,6 +27,7 @@
     <bean id="myProducerBean" class="org.apache.camel.spring.config.MyProduceBean" scope="prototype"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route>
             <from uri="direct:start"/>

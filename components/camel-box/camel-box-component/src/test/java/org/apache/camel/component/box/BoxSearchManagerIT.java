@@ -61,7 +61,7 @@ public class BoxSearchManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBodyAndHeaders("direct://SEARCHFOLDER", null, headers);
 
         assertNotNull(result, "searchFolder result");
-        LOG.debug("searchFolder: " + result);
+        LOG.debug("searchFolder: {}", result);
     }
 
     @Override

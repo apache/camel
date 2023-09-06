@@ -35,7 +35,7 @@ public class PersonProcessor implements Processor {
 
         BindingOperationInfo boi = (BindingOperationInfo) exchange.getProperty(BindingOperationInfo.class.getName());
         if (boi != null) {
-            LOG.info("boi.isUnwrapped" + boi.isUnwrapped());
+            LOG.info("boi.isUnwrapped {}", boi.isUnwrapped());
         }
 
         GetPerson person = exchange.getIn().getBody(GetPerson.class);

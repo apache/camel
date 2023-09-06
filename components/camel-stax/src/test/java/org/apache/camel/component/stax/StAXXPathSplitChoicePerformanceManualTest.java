@@ -67,12 +67,12 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(60, TimeUnit.SECONDS);
-        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken(), true));
+        log.info("Processed file with {} elements in: {}", size, TimeUtils.printDuration(watch.taken(), true));
 
-        log.info("Processed " + tiny.get() + " tiny messages");
-        log.info("Processed " + small.get() + " small messages");
-        log.info("Processed " + med.get() + " medium messages");
-        log.info("Processed " + large.get() + " large messages");
+        log.info("Processed {} tiny messages", tiny.get());
+        log.info("Processed {} small messages", small.get());
+        log.info("Processed {} medium messages", med.get());
+        log.info("Processed {} large messages", large.get());
 
         assertEquals((size / 10) * 4, tiny.get());
         assertEquals((size / 10) * 2, small.get());
@@ -104,7 +104,7 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
 
                                 int num = tiny.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " tiny messages");
+                                    log.info("Processed {} tiny messages", num);
                                     log.debug(xml);
                                 }
                             }
@@ -117,7 +117,7 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
 
                                 int num = small.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " small messages");
+                                    log.info("Processed {} small messages", num);
                                     log.debug(xml);
                                 }
                             }
@@ -130,7 +130,7 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
 
                                 int num = med.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " medium messages");
+                                    log.info("Processed {} medium messages", num);
                                     log.debug(xml);
                                 }
                             }
@@ -143,7 +143,7 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
 
                                 int num = large.incrementAndGet();
                                 if (num % 100 == 0) {
-                                    log.info("Processed " + num + " large messages");
+                                    log.info("Processed {} large messages", num);
                                     log.debug(xml);
                                 }
                             }

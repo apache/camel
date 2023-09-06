@@ -47,7 +47,7 @@ public class DebugSpringTest extends CamelSpringTestSupport {
             ProcessorDefinition<?> definition, String id, String shortName) {
         // this method is invoked before we are about to enter the given processor
         // from your Java editor you can just add a breakpoint in the code line below
-        LOG.info("Before " + definition + " with body " + exchange.getIn().getBody());
+        LOG.info("Before {} with body {}", definition, exchange.getIn().getBody());
         debugged = true;
     }
 

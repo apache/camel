@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
 
@@ -63,24 +63,18 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertNotNull(exchange.getIn().getBody());
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getBody());
-        try {
-            assertNull(exchange.getIn().getBody(Integer.class));
-            fail("Should have thrown a TypeConversionException");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+
+        assertThrows(TypeConversionException.class, () -> assertNull(exchange.getIn().getBody(Integer.class)),
+                "Should have thrown a TypeConversionException");
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getMandatoryBody());
-        try {
-            exchange.getIn().getMandatoryBody(Integer.class);
-            fail("Should have thrown an InvalidPayloadException");
-        } catch (InvalidPayloadException e) {
-            // expected
-        }
+
+        assertThrows(InvalidPayloadException.class, () -> exchange.getIn().getMandatoryBody(Integer.class),
+                "Should have thrown an InvalidPayloadException");
     }
 
     @Test
-    public void testExceptionAsType() throws Exception {
+    public void testExceptionAsType() {
         exchange.setException(
                 RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
 

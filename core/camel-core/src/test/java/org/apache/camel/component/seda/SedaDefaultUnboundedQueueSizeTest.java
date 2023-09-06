@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
 
@@ -48,12 +48,9 @@ public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
         assertEquals(500, seda.getQueue().size());
 
         // sending one more hit the limit
-        try {
-            template.sendBody("seda:foo", "Message overflow");
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("seda:foo", "Message overflow"),
+                "Should thrown an exception");
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
     }
 
 }

@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.MarshalDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
+import org.junit.jupiter.api.Assertions
 
 class MarshalTest extends YamlTestSupport {
 
@@ -48,7 +49,7 @@ class MarshalTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - marshal:
-                             data-format-type:
+                             dataFormatType:
                                json: 
                                  library: Gson
                           - to: "mock:result"
@@ -66,7 +67,7 @@ class MarshalTest extends YamlTestSupport {
                         uri: "direct:start"
                         steps:    
                           - marshal:
-                             data-format-type:
+                             dataFormatType:
                                json: {}
                           - to: "mock:result"
                     '''),
@@ -84,5 +85,40 @@ class MarshalTest extends YamlTestSupport {
             expected << [
                 'gson', 'gson', 'jackson', 'jackson', 'gson'
             ]
+    }
+
+    def "Error: duplicate dataformat"() {
+        when:
+        var route = '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - marshal:
+                             json: 
+                               library: Gson
+                             jacksonXml: {}
+                          - to: "mock:result"
+            '''
+        then:
+        try {
+            loadRoutes(route);
+            Assertions.fail("Should have thrown exception")
+        } catch (IllegalArgumentException e) {
+            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage());
+        }
+    }
+
+    def "no dataformat"() {
+        when:
+        var route = '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - marshal: {}
+                          - to: "mock:result"
+            '''
+        loadRoutes(route);
+        then:
+        context.routeDefinitions.size() == 1
     }
 }

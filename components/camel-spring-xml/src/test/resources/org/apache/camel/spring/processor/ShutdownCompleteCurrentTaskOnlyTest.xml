@@ -30,6 +30,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route startupOrder="1" shutdownRunningTask="CompleteCurrentTaskOnly">
             <from uri="file:target/data/SpringShutdownCompleteCurrentTaskOnlyTest?initialDelay=0&amp;delay=10&amp;synchronous=true"/>
             <delay><constant>1000</constant></delay>

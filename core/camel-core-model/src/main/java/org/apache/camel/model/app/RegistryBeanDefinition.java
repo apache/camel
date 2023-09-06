@@ -22,10 +22,13 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * A Pojo representing simplified "bean" element to declare registry beans using any DSL. This is not the same as "bean
@@ -34,13 +37,15 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RegistryBeanDefinition {
+public class RegistryBeanDefinition implements ResourceAware {
+
+    @XmlTransient
+    private Resource resource;
 
     @XmlAttribute
     private String name;
     @XmlAttribute
     private String type;
-
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
     private Map<String, Object> properties;
@@ -69,4 +74,13 @@ public class RegistryBeanDefinition {
         this.properties = properties;
     }
 
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
 }

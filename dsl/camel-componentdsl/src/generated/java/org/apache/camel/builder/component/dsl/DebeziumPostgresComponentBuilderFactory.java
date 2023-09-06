@@ -649,6 +649,23 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of retries on connection errors before failing (-1
+         * = no limit, 0 = disabled, 0 = num of retries).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: postgres
+         * 
+         * @param errorsMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder errorsMaxRetries(
+                int errorsMaxRetries) {
+            doSetProperty("errorsMaxRetries", errorsMaxRetries);
+            return this;
+        }
+        /**
          * Specify how failures during processing of events (i.e. when
          * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
@@ -1824,6 +1841,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "databaseUser": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseUser((java.lang.String) value); return true;
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
+            case "errorsMaxRetries": getOrCreateConfiguration((DebeziumPostgresComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "flushLsnSource": getOrCreateConfiguration((DebeziumPostgresComponent) component).setFlushLsnSource((boolean) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;

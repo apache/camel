@@ -38,6 +38,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <!-- also define Camel properties placeholder where we can configure it as well -->
     <propertyPlaceholder id="properties" location="classpath:org/apache/camel/component/properties/myprop.properties"/>
+    <jmxAgent id="jmx" disabled="true"/>
     <!-- in this route we use Camels property placeholder {{ }} style -->
     <route>
       <from uri="direct:{{cool.bar}}"/>

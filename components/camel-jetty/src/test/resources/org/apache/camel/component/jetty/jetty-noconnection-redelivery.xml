@@ -25,6 +25,7 @@
     ">
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="jmx" disabled="true"/>
         <endpoint id="httpEndpoint" uri="http://localhost:{{port}}/hi"/>
         <endpoint id="jettyEndpoint" uri="jetty:http://localhost:{{port}}/hi"/>
 

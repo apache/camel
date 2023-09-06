@@ -33,8 +33,8 @@ public class InOnlyConsumerTopicTest extends JmsTestSupport {
     @Test
     public void testSynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World");
-        template.sendBody("sjms:topic:in.only.topic", "Hello Camel");
-        template.sendBody("sjms:topic:in.only.topic", "Hello World");
+        template.sendBody("sjms:topic:in.only.InOnlyConsumerTopicTest.topic", "Hello Camel");
+        template.sendBody("sjms:topic:in.only.InOnlyConsumerTopicTest.topic", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -42,7 +42,7 @@ public class InOnlyConsumerTopicTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:topic:in.only.topic").to("log:request").process(new Processor() {
+                from("sjms:topic:in.only.InOnlyConsumerTopicTest.topic").to("log:request").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = (String) exchange.getIn().getBody();
                         if (body.contains("Camel")) {

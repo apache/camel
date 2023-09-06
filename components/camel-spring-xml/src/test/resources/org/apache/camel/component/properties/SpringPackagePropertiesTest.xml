@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="org/apache/camel/component/properties/myprop.properties"/>
         <package>{{routebuilders}}</package>
-        <jmxAgent id="agent"/>
+        <jmxAgent id="agent" disabled="true"/>
     </camelContext>
 
 </beans>

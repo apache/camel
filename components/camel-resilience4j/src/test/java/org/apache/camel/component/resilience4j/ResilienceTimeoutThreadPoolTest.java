@@ -89,7 +89,7 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
         for (int i = 0; i < 10; i++) {
-            log.info(">>> test run " + i + " <<<");
+            log.info(">>> test run {} <<<", i);
             Exception exception = assertThrows(Exception.class,
                     () -> template.requestBody("direct:start", "slow"),
                     "Should fail due to timeout");

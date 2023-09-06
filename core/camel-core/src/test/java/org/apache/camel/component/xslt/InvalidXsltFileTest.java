@@ -37,7 +37,7 @@ public class InvalidXsltFileTest extends TestSupport {
         RouteBuilder builder = createRouteBuilder();
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(builder);
-        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, () -> context.start());
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class, context::start);
         assertIsInstanceOf(TransformerConfigurationException.class, exception.getCause().getCause().getCause());
     }
 

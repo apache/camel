@@ -64,7 +64,7 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
             EventHelper.notifyContextReloaded(getCamelContext(), source);
         } catch (Exception e) {
             incFailedCounter();
-            LOG.warn("Error reloading CamelContext (" + camelContext.getName() + ") due to: " + e.getMessage(), e);
+            LOG.warn("Error reloading CamelContext ({}) due to: {}", camelContext.getName(), e.getMessage(), e);
             EventHelper.notifyContextReloadFailure(getCamelContext(), source, e);
         }
     }

@@ -143,13 +143,6 @@ public class JoorLanguage extends TypedLanguageSupport implements ScriptingLangu
 
     @Override
     public void init() {
-        if (java8 == null) {
-            java8 = getJavaMajorVersion() == 8;
-            if (java8) {
-                throw new UnsupportedOperationException("Java 8 is not supported. Use Java 11 or higher");
-            }
-        }
-
         // attempt to load optional configuration from classpath
         loadConfiguration();
     }
@@ -223,11 +216,4 @@ public class JoorLanguage extends TypedLanguageSupport implements ScriptingLangu
             scriptingCompiler.getImports().addAll(imports);
         }
     }
-
-    private static int getJavaMajorVersion() {
-        String javaSpecVersion = System.getProperty("java.specification.version");
-        return javaSpecVersion.contains(".")
-                ? Integer.parseInt(javaSpecVersion.split("\\.")[1]) : Integer.parseInt(javaSpecVersion);
-    }
-
 }

@@ -95,7 +95,7 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
         for (Exchange exchange : list) {
             String body = exchange.getIn().getBody(String.class);
 
-            LOG.debug("Body: " + body);
+            LOG.debug("Body: {}", body);
             assertNotNull(body, "Should have a body!");
             assertTrue(body.contains("<html"), "body should contain: <html");
         }

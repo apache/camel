@@ -35,7 +35,7 @@ public class MyConsumer {
     public void doSomething(String body) {
         ObjectHelper.notNull(destination, "destination");
 
-        LOG.info("Received body: " + body);
+        LOG.info("Received body: {}", body);
         destination.sendBody(body);
     }
 

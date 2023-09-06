@@ -30,11 +30,16 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A+B", "C");
 
+        MockEndpoint input = getMockEndpoint("mock:input");
+        input.expectedMessageCount(3);
+
         // we only send 3, but we get 2 exchanges completed when stopping
         // as we tell it to complete all on stop
         template.sendBodyAndHeader("seda:start", "A", "id", "foo");
         template.sendBodyAndHeader("seda:start", "B", "id", "foo");
         template.sendBodyAndHeader("seda:start", "C", "id", "foo");
+
+        input.assertIsSatisfied();
 
         context.getRouteController().stopRoute("foo");
 
@@ -46,7 +51,9 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy())
+                from("seda:start").routeId("foo")
+                        .to("mock:input")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .aggregationRepository(new MemoryAggregationRepository())
                         .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");

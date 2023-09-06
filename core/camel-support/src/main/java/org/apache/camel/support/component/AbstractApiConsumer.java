@@ -68,7 +68,7 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
             Object result = doInvokeMethod(args);
             return ApiConsumerHelper.getResultsProcessed(this, result, isSplitResult());
 
-        } catch (Throwable t) {
+        } catch (Exception t) {
             throw RuntimeCamelException.wrapRuntimeCamelException(t);
         }
     }

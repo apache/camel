@@ -2,7 +2,7 @@
 :doctitle: AWS Athena
 :shortname: aws2-athena
 :artifactid: camel-aws2-athena
-:description: Access AWS Athena service using AWS SDK version 2.x.
+:description: Access AWS Athena.
 :since: 3.4
 :supportlevel: Stable
 :tabs-sync-option:

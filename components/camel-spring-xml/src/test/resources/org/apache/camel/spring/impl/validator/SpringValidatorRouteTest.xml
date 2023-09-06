@@ -27,7 +27,8 @@
     <bean id="myxml" class="org.apache.camel.processor.validator.ValidatorRouteTest.MyXmlComponent"/>
     
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-    
+    <jmxAgent id="jmx" disabled="true"/>
+
         <validators>
             <predicateValidator type="json"><simple>${body} contains '{name:XOrder'</simple></predicateValidator>
             <endpointValidator type="xml:XmlXOrderResponse" uri="myxml:endpoint"/>

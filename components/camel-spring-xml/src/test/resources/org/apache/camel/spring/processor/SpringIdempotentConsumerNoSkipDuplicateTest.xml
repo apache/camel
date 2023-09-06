@@ -27,6 +27,7 @@
     <bean id="myRepo" class="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <!-- we do not want to skip any duplicate messages -->

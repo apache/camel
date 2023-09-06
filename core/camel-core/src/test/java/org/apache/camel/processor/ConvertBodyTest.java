@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
-import java.util.Locale;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,6 +29,8 @@ import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -183,16 +184,10 @@ public class ConvertBodyTest extends ContextTestSupport {
         result.assertIsNotSatisfied();
     }
 
+    // does not work on AIX
+    @DisabledOnOs(OS.AIX)
     @Test
     public void testConvertToStringCharsetFail() throws Exception {
-
-        // does not work on AIX
-        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        boolean aix = osName.indexOf("aix") > -1;
-        if (aix) {
-            return;
-        }
-
         String body = "Hell\u00F6 W\u00F6rld";
 
         MockEndpoint result = getMockEndpoint("mock:result");

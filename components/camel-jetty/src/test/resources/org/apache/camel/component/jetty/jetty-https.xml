@@ -37,6 +37,7 @@
     <bean id="dynaPort" class="org.apache.camel.test.AvailablePortFinder" factory-method="find" destroy-method="release" />
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="jmx" disabled="true"/>
         <endpoint id="input1" uri="jetty:https://localhost:#{dynaPort.port}/test"/>
 
         <route>

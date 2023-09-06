@@ -99,10 +99,10 @@ from("debezium-db2:[name]?[options]])
         final Struct bodyValue = exchange.getIn().getBody(Struct.class);
         final Schema schemaValue = bodyValue.schema();
 
-        log.info("Body value is :" + bodyValue);
-        log.info("With Schema : " + schemaValue);
-        log.info("And fields of :" + schemaValue.fields());
-        log.info("Field name has `" + schemaValue.field("name").schema() + "` type");
+        log.info("Body value is : {}", bodyValue);
+        log.info("With Schema : {}", schemaValue);
+        log.info("And fields of : {}", schemaValue.fields());
+        log.info("Field name has `{}` type", schemaValue.field("name").schema());
     });
 ----
 

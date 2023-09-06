@@ -70,7 +70,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
                 headers);
 
         assertNotNull(result, "addGroupMembership result");
-        LOG.debug("addGroupMembership: " + result);
+        LOG.debug("addGroupMembership: {}", result);
     }
 
     @Test
@@ -82,12 +82,12 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
             result = requestBody("direct://CREATEGROUP", CAMEL_TEST_CREATE_GROUP_NAME);
             assertNotNull(result, "createGroup result");
             assertEquals(CAMEL_TEST_CREATE_GROUP_NAME, result.getInfo().getName());
-            LOG.debug("createGroup: " + result);
+            LOG.debug("createGroup: {}", result);
         } finally {
             if (result != null) {
                 try {
                     result.delete();
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -107,7 +107,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testDeleteGroupMembership() {
-        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
+        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.GroupRole.MEMBER);
 
         // using String message body for single parameter "groupMembershipId"
         requestBody("direct://DELETEGROUPMEMBERSHIP", info.getID());
@@ -123,7 +123,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBody("direct://GETALLGROUPS", null);
 
         assertNotNull(result, "getAllGroups result");
-        LOG.debug("getAllGroups: " + result);
+        LOG.debug("getAllGroups: {}", result);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         final com.box.sdk.BoxGroup.Info result = requestBody("direct://GETGROUPINFO", testGroup.getID());
 
         assertNotNull(result, "getGroupInfo result");
-        LOG.debug("getGroupInfo: " + result);
+        LOG.debug("getGroupInfo: {}", result);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
             headers.put("CamelBox.groupInfo", info);
             final com.box.sdk.BoxGroup result = requestBodyAndHeaders("direct://UPDATEGROUPINFO", null, headers);
             assertNotNull(result, "updateGroupInfo result");
-            LOG.debug("updateGroupInfo: " + result);
+            LOG.debug("updateGroupInfo: {}", result);
         } finally {
             info = testGroup.getInfo();
             info.setDescription("");
@@ -158,13 +158,13 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testGetGroupMembershipInfo() {
-        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
+        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.GroupRole.MEMBER);
 
         // using String message body for single parameter "groupMembershipId"
         final com.box.sdk.BoxGroupMembership.Info result = requestBody("direct://GETGROUPMEMBERSHIPINFO", info.getID());
 
         assertNotNull(result, "getGroupMembershipInfo result");
-        LOG.debug("getGroupMembershipInfo: " + result);
+        LOG.debug("getGroupMembershipInfo: {}", result);
     }
 
     @Test
@@ -174,13 +174,13 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBody("direct://GETGROUPMEMBERSHIPS", testGroup.getID());
 
         assertNotNull(result, "getGroupMemberships result");
-        LOG.debug("getGroupMemberships: " + result);
+        LOG.debug("getGroupMemberships: {}", result);
     }
 
     @Test
     public void testUpdateGroupMembershipInfo() {
-        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
-        info.setRole(BoxGroupMembership.Role.ADMIN);
+        BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.GroupRole.MEMBER);
+        info.setGroupRole(BoxGroupMembership.GroupRole.ADMIN);
 
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -192,7 +192,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
                 headers);
 
         assertNotNull(result, "updateGroupMembershipInfo result");
-        LOG.debug("updateGroupMembershipInfo: " + result);
+        LOG.debug("updateGroupMembershipInfo: {}", result);
     }
 
     @Override
@@ -261,7 +261,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         if (testGroup != null) {
             try {
                 testGroup.delete();
-            } catch (Throwable t) {
+            } catch (Exception t) {
             }
             testGroup = null;
         }

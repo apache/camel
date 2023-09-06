@@ -49,7 +49,7 @@ public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSuppor
     protected static final String SERVICE_NAME = "my-service";
     protected static final String SERVICE_HOST = "localhost";
     protected static final String SERVICE_PATH = "/camel";
-    protected static final int SERVICE_PORT = AvailablePortFinder.getNextAvailable();
+    protected static final int SERVICE_PORT = AvailablePortFinder.getNextRandomAvailable();
 
     protected ZooKeeperContainer container;
     protected CuratorFramework curator;

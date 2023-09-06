@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -191,7 +190,7 @@ public class CamelRouteCoverageDumper {
                 .append(contextExchangesTotal).append("\n");
 
         if (!uncoveredRoutes.isEmpty()) {
-            builder.append("\t\tUncovered routes: ").append(uncoveredRoutes.stream().collect(Collectors.joining(", ")))
+            builder.append("\t\tUncovered routes: ").append(String.join(", ", uncoveredRoutes))
                     .append("\n");
         }
 

@@ -74,7 +74,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
                 testFolder.getID(), headers);
 
         assertNotNull(result, "addFolderCollaboration result");
-        LOG.debug("addFolderCollaboration: " + result);
+        LOG.debug("addFolderCollaboration: {}", result);
     }
 
     @Disabled //creation of app users could be used only with JWT authentication, which is not possible in this time
@@ -100,7 +100,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATION",
                     testFolder.getID(), headers);
             assertNotNull(result, "addFolderCollaboration result");
-            LOG.debug("addFolderCollaboration: " + result);
+            LOG.debug("addFolderCollaboration: {}", result);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
@@ -118,7 +118,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
                 testCollaboration.getID());
 
         assertNotNull(result, "getCollaborationInfo result");
-        LOG.debug("getCollaborationInfo: " + result);
+        LOG.debug("getCollaborationInfo: {}", result);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBody("direct://GETFOLDERCOLLABORATIONS", testFolder.getID());
 
         assertNotNull(result, "getFolderCollaborations result");
-        LOG.debug("getFolderCollaborations: " + result);
+        LOG.debug("getFolderCollaborations: {}", result);
     }
 
     @SuppressWarnings("rawtypes")
@@ -137,7 +137,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         final java.util.Collection result = requestBody("direct://GETPENDINGCOLLABORATIONS", null);
 
         assertNotNull(result, "getPendingCollaborations result");
-        LOG.debug("getPendingCollaborations: " + result);
+        LOG.debug("getPendingCollaborations: {}", result);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         assertNotNull(result, "updateCollaborationInfo result");
         assertNotNull(result.getInfo(), "updateCollaborationInfo info");
         assertEquals(BoxCollaboration.Role.PREVIEWER, result.getInfo().getRole(), "updateCollaborationInfo info");
-        LOG.debug("updateCollaborationInfo: " + result);
+        LOG.debug("updateCollaborationInfo: {}", result);
     }
 
     @Override

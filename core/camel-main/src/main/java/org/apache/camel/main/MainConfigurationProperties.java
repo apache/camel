@@ -333,8 +333,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder}, and
-     * {@link org.apache.camel.TypeConverter} classes.
+     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder},
+     * {@link org.apache.camel.TypeConverter}, {@link CamelConfiguration} classes, and also classes annotated with
+     * {@link org.apache.camel.Converter}, or {@link org.apache.camel.BindToRegistry}.
      *
      * If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate
      * your route builder classes with `@Component`. In other words only use this for Camel Main in standalone mode.
@@ -588,8 +589,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder}, and
-     * {@link org.apache.camel.TypeConverter} classes.
+     * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder},
+     * {@link org.apache.camel.TypeConverter}, {@link CamelConfiguration} classes, and also classes annotated with
+     * {@link org.apache.camel.Converter}, or {@link org.apache.camel.BindToRegistry}.
      *
      * If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate
      * your route builder classes with `@Component`. In other words only use this for Camel Main in standalone mode.

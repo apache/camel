@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.activemq.Service;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.JmsComponent;
@@ -41,7 +41,7 @@ import org.springframework.jms.core.JmsTemplate;
 @Component("activemq")
 public class ActiveMQComponent extends JmsComponent {
     private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList = new CopyOnWriteArrayList<>();
-    private final CopyOnWriteArrayList<Service> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Object> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<>();
 
     public ActiveMQComponent() {
     }
@@ -177,7 +177,7 @@ public class ActiveMQComponent extends JmsComponent {
         super.setProperties(bean, parameters);
     }
 
-    protected void addPooledConnectionFactoryService(Service pooledConnectionFactoryService) {
+    protected void addPooledConnectionFactoryService(Object pooledConnectionFactoryService) {
         pooledConnectionFactoryServiceList.add(pooledConnectionFactoryService);
     }
 
@@ -215,9 +215,11 @@ public class ActiveMQComponent extends JmsComponent {
 
     @Override
     protected void doStop() throws Exception {
-        for (Service s : pooledConnectionFactoryServiceList) {
+        for (Object s : pooledConnectionFactoryServiceList) {
             try {
-                s.stop();
+                // invoke stop method if exists
+                Method m = s.getClass().getMethod("stop");
+                org.apache.camel.support.ObjectHelper.invokeMethod(m, s);
             } catch (Exception e) {
                 // ignore
             }

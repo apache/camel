@@ -55,7 +55,7 @@ public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
         mock.assertIsSatisfied();
         List<Exchange> tweets = mock.getExchanges();
         for (Exchange e : tweets) {
-            log.info("Tweet: " + e.getIn().getBody(String.class));
+            log.info("Tweet: {}", e.getIn().getBody(String.class));
         }
     }
 
@@ -68,7 +68,7 @@ public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
         mock.assertIsSatisfied();
         List<Exchange> tweets = mock.getExchanges();
         for (Exchange e : tweets) {
-            log.info("Tweet: " + e.getIn().getBody(String.class));
+            log.info("Tweet: {}", e.getIn().getBody(String.class));
         }
     }
 
@@ -84,7 +84,7 @@ public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
         mock.assertIsSatisfied();
         List<Exchange> tweets = mock.getExchanges();
         for (Exchange e : tweets) {
-            log.info("Tweet: " + e.getIn().getBody(String.class));
+            log.info("Tweet: {}", e.getIn().getBody(String.class));
         }
     }
 
@@ -109,7 +109,7 @@ public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
         mock.assertIsSatisfied();
         List<Exchange> tweets = mock.getExchanges();
         for (Exchange e : tweets) {
-            log.info("Tweet: " + e.getIn().getBody(String.class));
+            log.info("Tweet: {}", e.getIn().getBody(String.class));
         }
 
         // calls the same query again, expecting to receive the same amount of

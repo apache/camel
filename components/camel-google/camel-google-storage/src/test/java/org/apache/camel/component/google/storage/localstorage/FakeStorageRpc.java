@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.google.storage.localstorage;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,8 +35,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.LowLevelHttpRequest;
+import com.google.api.client.http.LowLevelHttpResponse;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.testing.http.MockHttpTransport;
+import com.google.api.client.testing.http.MockLowLevelHttpRequest;
+import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.Preconditions;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.ServiceAccount;
 import com.google.api.services.storage.model.StorageObject;
@@ -82,6 +100,11 @@ class FakeStorageRpc extends StorageRpcTestBase {
 
     private static final SimpleDateFormat RFC_3339_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
+    private static final int OK = 200;
+    private static final int PARTIAL_CONTENT = 206;
+    private static final int NOT_FOUND = 404;
+    private static final byte[] EMPTY_BYTES = new byte[0];
+
     // fullname -> metadata
     Map<String, StorageObject> metadata = new HashMap<>();
     // fullname -> contents
@@ -109,7 +132,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
 
     @Override
     public Bucket create(Bucket bucket, Map<Option, ?> options) {
-        LOG.info("create_bucket: " + bucket.getName());
+        LOG.info("create_bucket: {}", bucket.getName());
         buckets.put(bucket.getName(), bucket);
         return bucket;
     }
@@ -303,7 +326,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     public byte[] load(StorageObject storageObject, Map<Option, ?> options) throws StorageException {
         String key = fullname(storageObject);
         if (!contents.containsKey(key)) {
-            throw new StorageException(404, "File not found: " + key);
+            throw new StorageException(NOT_FOUND, "File not found: " + key);
         }
         return contents.get(key);
     }
@@ -314,17 +337,16 @@ class FakeStorageRpc extends StorageRpcTestBase {
             throws StorageException {
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Map.Entry<Option, ?> entry : options.entrySet()) {
-            Option op = entry.getKey();
+        for (Option op : options.keySet()) {
             if (op.equals(StorageRpc.Option.IF_GENERATION_MATCH)) {
-                generationMatch = (Long) entry.getValue();
+                generationMatch = (Long) options.get(op);
             } else {
                 throw new UnsupportedOperationException("Unknown option: " + op);
             }
         }
         String key = fullname(from);
         if (!contents.containsKey(key)) {
-            throw new StorageException(404, "File not found: " + key);
+            throw new StorageException(NOT_FOUND, "File not found: " + key);
         }
         checkGeneration(key, generationMatch);
         long position = zposition;
@@ -350,17 +372,16 @@ class FakeStorageRpc extends StorageRpcTestBase {
             StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Map.Entry<Option, ?> entry : options.entrySet()) {
-            Option op = entry.getKey();
+        for (Option op : options.keySet()) {
             if (op.equals(StorageRpc.Option.IF_GENERATION_MATCH)) {
-                generationMatch = (Long) entry.getValue();
+                generationMatch = (Long) options.get(op);
             } else {
                 throw new UnsupportedOperationException("Unknown option: " + op);
             }
         }
         String key = fullname(from);
         if (!contents.containsKey(key)) {
-            throw new StorageException(404, "File not found: " + key);
+            throw new StorageException(NOT_FOUND, "File not found: " + key);
         }
         checkGeneration(key, generationMatch);
         if (position < 0) {
@@ -385,10 +406,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
         String key = fullname(object);
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Map.Entry<Option, ?> entry : options.entrySet()) {
+        for (Option option : options.keySet()) {
             // this is a bit of a hack, since we don't implement generations.
-            if (entry.getKey() == Option.IF_GENERATION_MATCH) {
-                generationMatch = (Long) entry.getValue();
+            if (option == Option.IF_GENERATION_MATCH) {
+                generationMatch = (Long) options.get(option);
             }
         }
         checkGeneration(key, generationMatch);
@@ -457,15 +478,15 @@ class FakeStorageRpc extends StorageRpcTestBase {
 
         // a little hackish, just good enough for the tests to work.
         if (!contents.containsKey(sourceKey)) {
-            throw new StorageException(404, "File not found: " + sourceKey);
+            throw new StorageException(NOT_FOUND, "File not found: " + sourceKey);
         }
 
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Map.Entry<Option, ?> entry : rewriteRequest.targetOptions.entrySet()) {
+        for (Option option : rewriteRequest.targetOptions.keySet()) {
             // this is a bit of a hack, since we don't implement generations.
-            if (entry.getKey() == Option.IF_GENERATION_MATCH) {
-                generationMatch = (Long) entry.getValue();
+            if (option == Option.IF_GENERATION_MATCH) {
+                generationMatch = (Long) rewriteRequest.targetOptions.get(option);
             }
         }
 
@@ -474,7 +495,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
         // if this is a new file, set generation to 1, else increment the existing generation
         long generation = 1;
         if (metadata.containsKey(destKey)) {
-            generation = metadata.get(destKey).getGeneration() + 1;
+            Long storedGeneration = metadata.get(destKey).getGeneration();
+            if (null != storedGeneration) {
+                generation = storedGeneration + 1;
+            }
         }
 
         checkGeneration(destKey, generationMatch);
@@ -502,7 +526,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     private String fullname(StorageObject so) {
-        return so.getBucket() + "/" + so.getName();
+        return fullname(so.getBucket(), so.getName());
     }
 
     private BigInteger size(StorageObject so) {
@@ -539,7 +563,8 @@ class FakeStorageRpc extends StorageRpcTestBase {
             Long generation = metadata.get(key).getGeneration();
             if (!generationMatch.equals(generation)) {
                 throw new StorageException(
-                        404, "Generation mismatch. Requested " + generationMatch + " but got " + generation);
+                        NOT_FOUND,
+                        "Generation mismatch. Requested " + generationMatch + " but got " + generation);
             }
         }
     }
@@ -574,5 +599,187 @@ class FakeStorageRpc extends StorageRpcTestBase {
     @Override
     public ServiceAccount getServiceAccount(String projectId) {
         return null;
+    }
+
+    @Override
+    public com.google.api.services.storage.Storage getStorage() {
+        HttpTransport transport = new FakeStorageRpcHttpTransport();
+        HttpRequestInitializer httpRequestInitializer = request -> {
+        };
+        return new com.google.api.services.storage.Storage(
+                transport, new GsonFactory(), httpRequestInitializer);
+    }
+
+    private static String fullname(String bucket, String object) {
+        return String.format("http://localhost:65555/b/%s/o/%s", bucket, object);
+    }
+
+    private static final String KEY_PATTERN_DEFINITION = "^.*?/b/(.*?)/o/(.*?)(?:[?].*|$)";
+    private static final Pattern KEY_PATTERN = Pattern.compile(KEY_PATTERN_DEFINITION);
+
+    MyMockLowLevelHttpRequest create(String method, String url) {
+        Matcher m = KEY_PATTERN.matcher(url);
+        Preconditions.checkArgument(
+                m.matches(),
+                "Provided url '%s' does not match expected pattern '%s'",
+                url,
+                KEY_PATTERN_DEFINITION);
+
+        String bucket = m.group(1);
+        String object = m.group(2);
+
+        String decode = urlDecode(object);
+        String key = fullname(bucket, decode);
+        return new MyMockLowLevelHttpRequest(method, url, key);
+    }
+
+    private static String urlDecode(String object) {
+        try {
+            return URLDecoder.decode(object, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private class MyMockLowLevelHttpRequest extends MockLowLevelHttpRequest {
+
+        private final String method;
+        private final String key;
+
+        private MyMockLowLevelHttpRequest(String method, String url, String key) {
+            super(url);
+            this.method = method;
+            this.key = key;
+        }
+
+        /**
+         * {@link MockLowLevelHttpRequest#execute} tries to return a value, but we need to compute based upon possible
+         * request mutations. So override it to call {@link #getResponse()}.
+         */
+        @Override
+        public LowLevelHttpResponse execute() throws IOException {
+            return getResponse();
+        }
+
+        @Override
+        public MockLowLevelHttpResponse getResponse() {
+
+            MockLowLevelHttpResponse resp = new MockLowLevelHttpResponse();
+            byte[] bytes = contents.get(key);
+            StorageObject storageObject = metadata.get(key);
+            if (bytes == null && storageObject == null) {
+                resp.setStatusCode(NOT_FOUND);
+            } else if (storageObject != null && method.equals("PUT")) {
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    this.getStreamingContent().writeTo(baos);
+                    byte[] byteArray = baos.toByteArray();
+                    if (storageObject.getGeneration() != null) {
+                        contents.put(key, concat(bytes, byteArray));
+                    } else {
+                        contents.put(key, byteArray);
+                    }
+
+                    List<String> contentRanges = getHeaders().get("content-range");
+                    if (contentRanges != null && !contentRanges.isEmpty()) {
+                        String contentRange = contentRanges.get(0);
+                        // finalization PUT
+                        // Pattern matches both froms of begin-end/size, */size
+                        Pattern pattern = Pattern.compile("bytes (?:\\d+-\\d+|\\*)/(\\d+)");
+                        Matcher matcher = pattern.matcher(contentRange);
+                        if (matcher.matches()) {
+                            storageObject.setSize(new BigInteger(matcher.group(1), 10));
+                            storageObject.setGeneration(System.currentTimeMillis());
+                            DateTime now = now();
+                            storageObject.setTimeCreated(now);
+                            storageObject.setUpdated(now);
+                            String string = GsonFactory.getDefaultInstance().toPrettyString(storageObject);
+                            resp.addHeader("Content-Type", "application/json;charset=utf-8");
+                            resp.addHeader("Content-Length", String.valueOf(string.length()));
+                            resp.setContent(string);
+                        } else {
+                            resp.setStatusCode(NOT_FOUND);
+                        }
+                    } else {
+                        resp.setStatusCode(NOT_FOUND);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                int length = bytes.length;
+                Map<String, List<String>> headers = getHeaders();
+                List<String> range = headers.get("range");
+                int begin = 0;
+                int endInclusive = length - 1;
+                if (range != null && !range.isEmpty()) {
+                    String rangeString = range.get(0).substring("range=".length());
+                    if ("0-".equals(rangeString)) {
+                        resp.setStatusCode(OK);
+                    } else if (rangeString.startsWith("-")) {
+                        // we don't support negative offsets yet
+                        resp.setStatusCode(400);
+                        return resp;
+                    } else if (rangeString.endsWith("-")) {
+                        // only lower bounded
+                        String beginS = rangeString.substring(0, rangeString.length() - 1);
+                        begin = Integer.parseInt(beginS);
+                        resp.setStatusCode(PARTIAL_CONTENT);
+                    } else {
+                        // otherwise a lower and upper bound
+                        int i = rangeString.indexOf('-');
+                        if (i == -1) {
+                            resp.setStatusCode(400);
+                            return resp;
+                        } else {
+                            String beginS = rangeString.substring(0, i);
+                            String endInclusiveS = rangeString.substring(i + 1);
+                            begin = Integer.parseInt(beginS);
+                            endInclusive = Integer.parseInt(endInclusiveS);
+                            resp.setStatusCode(PARTIAL_CONTENT);
+                        }
+                    }
+
+                    if (begin > length) {
+                        resp.addHeader("Content-Range", String.format("bytes */%d", length));
+                        resp.setContent(EMPTY_BYTES);
+                        resp.setContent(new ByteArrayInputStream(EMPTY_BYTES));
+                    } else {
+                        int newLength = endInclusive - begin + 1;
+                        resp.addHeader("Content-Length", String.valueOf(newLength));
+                        // Content-Range: bytes 4-9/512
+                        resp.addHeader(
+                                "Content-Range", String.format("bytes %d-%d/%d", begin, endInclusive, length));
+                        byte[] content = Arrays.copyOfRange(bytes, begin, endInclusive + 1);
+                        resp.setContent(content);
+                        resp.setContent(new ByteArrayInputStream(content));
+                    }
+                } else {
+                    resp.addHeader("Content-Length", String.valueOf(length));
+                    resp.setContent(bytes);
+                    resp.setContent(new ByteArrayInputStream(bytes));
+                    resp.setStatusCode(OK);
+                }
+            }
+            return resp;
+        }
+    }
+
+    private static byte[] concat(byte[]... arrays) {
+        int total = Arrays.stream(arrays).filter(Objects::nonNull).mapToInt(a -> a.length).sum();
+        byte[] retVal = new byte[total];
+
+        ByteBuffer wrap = ByteBuffer.wrap(retVal);
+        Arrays.stream(arrays).filter(Objects::nonNull).forEach(wrap::put);
+
+        return retVal;
+    }
+
+    private class FakeStorageRpcHttpTransport extends MockHttpTransport {
+
+        @Override
+        public LowLevelHttpRequest buildRequest(String method, String url) {
+            return create(method, url);
+        }
     }
 }

@@ -18,15 +18,19 @@
 
 -->
 <configuration>
-    <appender name="DefaultAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>target/camel-rocketmq-test.log</file>
+        <append>true</append>
         <encoder>
-            <pattern>%d{yyy-MM-dd HH:mm:ss} [%p] [%t] - %m%n</pattern>
-            <charset class="java.nio.charset.Charset">UTF-8</charset>
+            <pattern>%d [%-15.15t] %-5p %-30.30c{1} - %m%n</pattern>
         </encoder>
     </appender>
-    
-    <root>
-        <level value="OFF"/>
-        <appender-ref ref="DefaultAppender"/>
+
+    <root level="INFO">
+        <appender-ref ref="FILE" />
     </root>
+
+    <logger name="org.apache.camel.component.rocketmq" level="DEBUG" additivity="false" >
+        <appender-ref ref="FILE" />
+    </logger>
 </configuration>

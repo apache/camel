@@ -34,7 +34,8 @@ public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
 
     @Test
     public void testConnectionFactory() {
-        Endpoint endpoint = context.getEndpoint("sjms:queue:test?connectionFactory=#activemq");
+        Endpoint endpoint
+                = context.getEndpoint("sjms:queue:test.SjmsEndpointConnectionSettingsTest?connectionFactory=#activemq");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;

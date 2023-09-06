@@ -38,6 +38,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseincludelist":
         case "databaseIncludeList": target.getConfiguration().setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "errorsmaxretries":
+        case "errorsMaxRetries": target.getConfiguration().setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -170,6 +172,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "databaseExcludeList": return java.lang.String.class;
         case "databaseincludelist":
         case "databaseIncludeList": return java.lang.String.class;
+        case "errorsmaxretries":
+        case "errorsMaxRetries": return int.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "exceptionhandler":
@@ -303,6 +307,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databaseincludelist":
         case "databaseIncludeList": return target.getConfiguration().getDatabaseIncludeList();
+        case "errorsmaxretries":
+        case "errorsMaxRetries": return target.getConfiguration().getErrorsMaxRetries();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":

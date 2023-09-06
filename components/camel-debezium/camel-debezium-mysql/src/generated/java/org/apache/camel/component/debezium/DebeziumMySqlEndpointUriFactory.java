@@ -21,7 +21,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(96);
+        Set<String> props = new HashSet<>(97);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
         props.add("binaryHandlingMode");
@@ -52,6 +52,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("datatypePropagateSourceType");
         props.add("decimalHandlingMode");
         props.add("enableTimeAdjuster");
+        props.add("errorsMaxRetries");
         props.add("eventDeserializationFailureHandlingMode");
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");

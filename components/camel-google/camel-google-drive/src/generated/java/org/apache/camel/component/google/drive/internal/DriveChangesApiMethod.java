@@ -19,22 +19,19 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DriveChangesApiMethod implements ApiMethod {
 
-    GET(
-        com.google.api.services.drive.Drive.Changes.Get.class,
-        "get",
-        arg("changeId", String.class)),
-
     GET_START_PAGE_TOKEN(
         com.google.api.services.drive.Drive.Changes.GetStartPageToken.class,
         "getStartPageToken"),
 
     LIST(
         com.google.api.services.drive.Drive.Changes.List.class,
-        "list"),
+        "list",
+        arg("pageToken", String.class)),
 
     WATCH(
         com.google.api.services.drive.Drive.Changes.Watch.class,
         "watch",
+        arg("pageToken", String.class),
         arg("contentChannel", com.google.api.services.drive.model.Channel.class));
 
     private final ApiMethod apiMethod;

@@ -36,7 +36,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
     @Test
     public void testHttpProxy() {
-        LOG.info("Sending " + size + " messages to a http endpoint which is proxied/bridged");
+        LOG.info("Sending {} messages to a http endpoint which is proxied/bridged", size);
 
         StopWatch watch = new StopWatch();
         for (int i = 0; i < size; i++) {
@@ -44,7 +44,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
             assertEquals("Bye " + i, out);
         }
 
-        LOG.info("Time taken: " + TimeUtils.printDuration(watch.taken(), true));
+        LOG.info("Time taken: {}", TimeUtils.printDuration(watch.taken(), true));
     }
 
     @Test

@@ -26,6 +26,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("Channel", com.google.api.services.drive.model.Channel.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
+        map.put("Content", com.google.api.services.drive.model.File.class);
         map.put("Delegate", java.lang.String.class);
         map.put("File", com.google.api.services.drive.model.File.class);
         map.put("FileId", java.lang.String.class);
@@ -55,6 +56,8 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "ClientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "content":
+        case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.File.class, value)); return true;
         case "delegate":
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "file":
@@ -99,6 +102,8 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "ClientId": return java.lang.String.class;
         case "clientsecret":
         case "ClientSecret": return java.lang.String.class;
+        case "content":
+        case "Content": return com.google.api.services.drive.model.File.class;
         case "delegate":
         case "Delegate": return java.lang.String.class;
         case "file":
@@ -139,6 +144,8 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "ClientId": return target.getClientId();
         case "clientsecret":
         case "ClientSecret": return target.getClientSecret();
+        case "content":
+        case "Content": return target.getContent();
         case "delegate":
         case "Delegate": return target.getDelegate();
         case "file":

@@ -1,0 +1,117 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+
+        <head>
+            <title>greetings-route</title>
+            <meta content="no-cache" http-equiv="Cache-Control"/>
+            <meta charset="utf-8"/>
+            <meta content="width=device-width, initial-scale=1" name="viewport"/>
+            <link crossorigin="anonymous"
+                  href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+                  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+                  rel="stylesheet"/>
+            <link crossorigin="anonymous"
+                  href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+                  integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+                  rel="stylesheet"/>
+            <link crossorigin="anonymous"
+                  href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs4/1.10.24/dataTables.bootstrap4.css"
+                  integrity="sha512-jhdR0L3jk/OLUVbrXEYGydtwIfgnRqY9jBdwrCSs3rD+EozU0LY5rMq6ABpZfgRd2UIYuX4MEEdmM9fx/9dTaw=="
+                  rel="stylesheet"/>
+            <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css"
+                  integrity="sha512-1k7mWiTNoyx2XtmI96o+hdjP8nn0f3Z2N4oF/9ZZRgijyV4omsKOXEnqL1gKQNPy2MTSP9rIEWGcH/CInulptA=="
+                  rel="stylesheet"/>
+        </head>
+    
+
+<body>
+
+<div class="card">
+    <div class="card-body">
+        <h1>greetings-route</h1>
+        <table class="table table-striped table-bordered " id="eips" width="100%">
+            <thead>
+            <tr>
+                <td class="text-right">Index</td>
+                <td>EIP</td>
+                <td class="text-center">Tested</td>
+                <td class="text-right">Time (ms)</td>
+                <td>Properties</td>
+            </tr>
+            </thead>
+            <tbody>
+            <span>
+                    <tr>
+                        <td class="text-right">0</td>
+                        <td>from</td>
+                        <td class="text-center"><input type="checkbox" checked="checked"/></td>
+                        <td class="text-right">10</td>
+                        <td>{uri=direct:greetings}</td>
+                    </tr>
+                </span><span>
+                    <tr>
+                        <td class="text-right">24</td>
+                        <td>setBody</td>
+                        <td class="text-center"><input type="checkbox" checked="checked"/></td>
+                        <td class="text-right">1</td>
+                        <td>{constant=Hello from Cloud Cuckoo Camel Land!}</td>
+                    </tr>
+                </span><span>
+                    <tr>
+                        <td class="text-right">25</td>
+                        <td>to</td>
+                        <td class="text-center"><input type="checkbox" checked="checked"/></td>
+                        <td class="text-right">5</td>
+                        <td>{uri=file:target/output}</td>
+                    </tr>
+                </span>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+        <script crossorigin="anonymous"
+                integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+                src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha512-p+aLivYlMXnjFoyXgyBqJJWX7YTG1Z1vegVj7dHy6OSClJr6ITdCsWgWnZe0iyLaKGx4aL2SvX/qcRbV45aBcQ=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha512-6KdCBr5s+FtLkQmT9ckhhousB1IBXxdQNvW7uyVzXTy2iP8gYPeOroZdju09WI7uSrWT0qLyioQr3DKhOs3K7Q=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.js"></script>
+    
+<script type="text/javascript">
+            $(document).ready(function() {
+                $('#eips').DataTable( {
+                    stateSave: true,
+                    order: [ [ 0, 'asc' ] ],
+                    pageLength: 10
+                } );
+            });
+</script>
+</body>
+
+</html>

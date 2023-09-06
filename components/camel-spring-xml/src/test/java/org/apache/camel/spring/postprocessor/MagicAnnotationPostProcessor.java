@@ -39,7 +39,7 @@ public class MagicAnnotationPostProcessor implements SmartInstantiationAwareBean
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 MagicAnnotation annotation = field.getAnnotation(MagicAnnotation.class);
                 if (annotation != null && field.getType() == String.class) {
-                    log.info("Found MagicAnnotation on field " + field + " of class " + bean.getClass());
+                    log.info("Found MagicAnnotation on field {} of class {}", field, bean.getClass());
 
                     ReflectionUtils.makeAccessible(field);
                     field.set(bean, annotation.value());

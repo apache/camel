@@ -95,8 +95,8 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            sslContext = getContainer().createSslContextFromCa();
         });
-        sslContext = getContainer().createSslContextFromCa();
     }
 
     @Override

@@ -28,8 +28,8 @@ class PausableTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                         - pausable:
-                            consumer-listener: myConsumerListenerBeanRef
-                            until-check: myUntilCheckBeanRef
+                            consumerListener: myConsumerListenerBeanRef
+                            untilCheck: myUntilCheckBeanRef
                         - to: mock:result
 
             '''

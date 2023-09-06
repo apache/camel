@@ -100,8 +100,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningBatchSizeDefault = 20000;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
-    @UriParam(label = LABEL_NAME, defaultValue = "2000")
-    private int queryFetchSize = 2000;
+    @UriParam(label = LABEL_NAME, defaultValue = "10000")
+    private int queryFetchSize = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long logMiningSleepTimeMinMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
@@ -140,6 +140,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String columnPropagateSourceType;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferInfinispanCacheProcessedTransactions;
+    @UriParam(label = LABEL_NAME, defaultValue = "-1")
+    private int errorsMaxRetries = -1;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databasePassword;
@@ -1084,6 +1086,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum number of retries on connection errors before failing (-1 =
+     * no limit, 0 = disabled, > 0 = num of retries).
+     */
+    public void setErrorsMaxRetries(int errorsMaxRetries) {
+        this.errorsMaxRetries = errorsMaxRetries;
+    }
+
+    public int getErrorsMaxRetries() {
+        return errorsMaxRetries;
+    }
+
+    /**
      * Password of the database user to be used when connecting to the database.
      */
     public void setDatabasePassword(String databasePassword) {
@@ -1505,6 +1519,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.username.exclude.list", logMiningUsernameExcludeList);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.processed_transactions", logMiningBufferInfinispanCacheProcessedTransactions);
+        addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.events", logMiningBufferInfinispanCacheEvents);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);

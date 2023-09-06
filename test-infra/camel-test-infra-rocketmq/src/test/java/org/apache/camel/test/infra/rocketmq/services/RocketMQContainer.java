@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rocketmq.common.RocketMQProperties;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container;
@@ -37,7 +36,6 @@ public class RocketMQContainer implements RocketMQService, ContainerService<Rock
 
     private final RocketMQNameserverContainer nameserverContainer;
     private final RocketMQBrokerContainer brokerContainer1;
-    private final RocketMQBrokerContainer brokerContainer2;
 
     public RocketMQContainer() {
         Network network = Network.newNetwork();
@@ -45,7 +43,6 @@ public class RocketMQContainer implements RocketMQService, ContainerService<Rock
         nameserverContainer = new RocketMQNameserverContainer(network);
 
         brokerContainer1 = new RocketMQBrokerContainer(network, "broker1");
-        brokerContainer2 = new RocketMQBrokerContainer(network, "broker2");
     }
 
     @Override
@@ -64,24 +61,12 @@ public class RocketMQContainer implements RocketMQService, ContainerService<Rock
         LOG.info("Apache RocketMQ running at address {}", nameserverAddress());
 
         brokerContainer1.start();
-        brokerContainer2.start();
     }
 
     @Override
     public void shutdown() {
         nameserverContainer.stop();
         brokerContainer1.stop();
-        brokerContainer2.stop();
-    }
-
-    @Override
-    public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
-
-    }
-
-    @Override
-    public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
-
     }
 
     public void createTopic(String topic) {
@@ -92,7 +77,8 @@ public class RocketMQContainer implements RocketMQService, ContainerService<Rock
                             "sh", "mqadmin", "updateTopic", "-n", "nameserver:9876", "-t",
                             topic, "-c", "DefaultCluster");
 
-                    LOG.info(execResult.getExitCode() + " " + execResult.getStderr() + " " + execResult.getStdout());
+                    LOG.info("Exit code: {}. Stderr: {} Stdout: {} ", execResult.getExitCode(), execResult.getStderr(),
+                            execResult.getStdout());
 
                     return execResult.getStdout() != null && execResult.getStdout().contains("success");
                 });

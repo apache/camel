@@ -57,6 +57,7 @@ import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedBeanIntrospection;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
+import org.apache.camel.management.mbean.ManagedDumpRouteStrategy;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedExchangeFactoryManager;
@@ -84,6 +85,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -412,7 +414,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            LOG.warn("Could not register Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
     }
 
@@ -427,7 +429,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             unmanageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            LOG.warn("Could not unregister Endpoint MBean for endpoint: {}. This exception will be ignored.", endpoint, e);
         }
     }
 
@@ -462,7 +464,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         try {
             manageObject(managedObject);
         } catch (Exception e) {
-            LOG.warn("Could not register service: " + service + " as Service MBean.", e);
+            LOG.warn("Could not register service: {} as Service MBean.", service, e);
         }
     }
 
@@ -478,7 +480,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             try {
                 unmanageObject(managedObject);
             } catch (Exception e) {
-                LOG.warn("Could not unregister service: " + service + " as Service MBean.", e);
+                LOG.warn("Could not unregister service: {} as Service MBean.", service, e);
             }
         }
     }
@@ -518,6 +520,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             ManagedTracer mt = new ManagedTracer(camelContext, (Tracer) service);
             mt.init(getManagementStrategy());
             answer = mt;
+        } else if (service instanceof DumpRoutesStrategy) {
+            ManagedDumpRouteStrategy mdrs = new ManagedDumpRouteStrategy(camelContext, (DumpRoutesStrategy) service);
+            mdrs.init(getManagementStrategy());
+            answer = mdrs;
         } else if (service instanceof DataFormat) {
             answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, (DataFormat) service);
         } else if (service instanceof Producer) {
@@ -716,7 +722,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
             managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
-            LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
+            LOG.warn("Could not register thread pool: {} as ThreadPool MBean.", threadPool, e);
         }
     }
 

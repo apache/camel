@@ -1,0 +1,99 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<span th:replace="~{fragments-static :: common-head-datatables(title=${route.id})}"></span>
+
+<body>
+
+<div class="card">
+    <div class="card-body">
+        <h1 th:text="${route.id}">Route</h1>
+        <table class="display " id="eips" width="100%">
+            <thead>
+            <tr>
+                <td class="text-right" width="5%">Index</td>
+                <td width="9%">EIP</td>
+                <td class="text-center"width="5%">Tested</td>
+                <td class="text-right"width="5%">Time (ms)</td>
+                <td width="76%">Details</td>
+            </tr>
+            </thead>
+            <tbody>
+            <span th:each="entry : ${eips}">
+                <tr th:each="eipStatistic : ${entry.value}">
+                    <td class="text-right" width="5%" th:text="${entry.key}"></td>
+                    <td width="9%" th:text="${eipStatistic.id}"></td>
+                    <td class="text-center" width="5%"><input th:checked="${eipStatistic.tested}" type="checkbox"/></td>
+                    <td class="text-right" width="5%" th:text="${eipStatistic.totalProcessingTime}"></td>
+                    <span th:if="${eipStatistic.childEipStatisticMap.isEmpty()}"><td width="76%" th:text="${eipStatistic.properties}"></td></span>
+                    <span th:unless="${eipStatistic.childEipStatisticMap.isEmpty()}">
+                        <td width="76%">
+                            <span th:each="childEntry : ${eipStatistic.childEipStatisticMap}">
+                                <table class="display" width="100%">
+                                    <tr>
+                                        <td th:text="${childEntry.key}"></td>
+                                    </tr>
+                                </table>
+                                <table class="display" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <td class="text-right col-1">Index</td>
+                                        <td class="col-2">EIP</td>
+                                        <td class="text-center col-1">Tested</td>
+                                        <td class="text-right col-1">Time (ms)</td>
+                                        <td class="col-7">Details</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <span th:each="childValueMap : ${childEntry.value}">
+                                        <tr th:each="childValueEntry : ${childValueMap.eipStatisticMap}">
+                                            <td class="text-right col-1" th:text="${childValueEntry.key}"></td>
+                                            <td class="col-2" th:text="${childValueEntry.value.id}"></td>
+                                            <td class="text-center col-1"><input th:checked="${childValueEntry.value.tested}" type="checkbox"/></td>
+                                            <td class="text-right col-1" th:text="${childValueEntry.value.totalProcessingTime}"></td>
+                                            <td class="col-7" th:text="${childValueEntry.value.properties}"></td>
+                                        </tr>
+                                    </span>
+                                 </tbody>
+                                </table>
+                            </span>
+
+                        </td>
+                    </span>
+                </tr>
+            </span>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<span th:replace="~{fragments-static :: common-js-datatables}"></span>
+<script type="text/javascript">
+            $(document).ready(function() {
+                $('#eips').DataTable( {
+                    stateSave: true,
+                    order: [ [ 0, 'asc' ] ],
+                    pageLength: 10
+                } );
+            });
+</script>
+</body>
+</html>

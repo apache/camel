@@ -26,6 +26,7 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="file:src/test/data?initialDelay=0&amp;delay=10&amp;noop=true"/>
       <filter>

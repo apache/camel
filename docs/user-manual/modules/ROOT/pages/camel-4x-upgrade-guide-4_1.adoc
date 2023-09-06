@@ -1,0 +1,120 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.0 to 4.1
+
+=== camel-management
+
+Dumping routes to JMX no longer includes `customId="true"` in the XML nodes.
+
+=== camel-scheduler
+
+The `scheduler` no longer includes header with the timestamp of when the exchange was fired.
+This means the exchange by default has no headers, and `null` body.
+
+The option `includeMetadata` can be set to `true` on the endpoint or component level, to turn on
+these additional metadata headers again.
+
+=== camel-timer
+
+The `timer` no longer includes header `firedTime` with the timestamp of when the exchange was fired.
+This means the exchange by default has no headers, and `null` body.
+
+The `firedTime` header has been renamed to `CamelTimerFireTime`.
+
+The option `includeMetadata` can be set to `true` on the endpoint or component level, to turn on
+these additional metadata headers again.
+
+=== camel-aws2-step-functions
+
+The following Message Headers of `camel-aws2-step-functions` component have been renamed to follow standard camel naming convention.
+
+[cols="1,1"]
+|===
+|Old Name|New Name
+
+|CamelAwsStateMachineOperation
+|CamelAwsStepFunctionsOperation
+
+|CamelAwsStateMachinesMaxResults
+|CamelAwsStepFunctionsStateMachinesMaxResults
+
+|CamelAwsStepFunctionsStateMachineActivityName
+|CamelAwsStepFunctionsActivityName
+
+|CamelAwsStepFunctionsStateMachineActivityArn
+|CamelAwsStepFunctionsActivityArn
+
+|CamelAwsStateMachineActivitiesMaxResults
+|CamelAwsStepFunctionsActivitiesMaxResults
+
+|CamelAwsStateMachineExecutionArn
+|CamelAwsStepFunctionsExecutionArn
+
+|CamelAwsStateMachineExecutionName
+|CamelAwsStepFunctionsExecutionName
+
+|CamelAwsStateMachineExecutionInput
+|CamelAwsStepFunctionsExecutionInput
+
+|CamelAwsStateMachineExecutionTraceHeader
+|CamelAwsStepFunctionsExecutionTraceHeader
+
+|CamelAwsStateMachineExecutionHistoryMaxResults
+|CamelAwsStepFunctionsExecutionHistoryMaxResults
+
+|CamelAwsStateMachineExecutionHistoryIncludeExecutionData
+|CamelAwsStepFunctionsExecutionHistoryIncludeExecutionData
+
+|CamelAwsStateMachineExecutionHistoryReverseOrder
+|CamelAwsStepFunctionsExecutionHistoryReverseOrder
+
+|CamelAwsStateMachineExecutionMaxResults
+|CamelAwsStepFunctionsExecutionMaxResults
+|===
+
+This is applicable only if literal constant headers are used such as `CamelAwsStateMachinesMaxResults`. If the headers are used from StepFunctions2Constants Interface like StepFunctions2Constants.STATE_MACHINES_MAX_RESULTS , then there is no change;
+
+For Example before
+
+----
+from("direct:listActivities")
+  .setHeader("CamelAwsStepFunctionsActivitiesMaxResults",5)
+   .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listActivities")
+----
+
+Should be changed to
+
+----
+from("direct:listActivities")
+  .setHeader("CamelAwsStepFunctionsActivitiesMaxResults",5)
+    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=listActivities")
+----
+
+=== camel-aws2-sns
+
+The `queueUrl` parameter has been replaced by the `queueArn` parameter
+
+For Example before
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxx")
+----
+
+Should be changed to
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:xxxxx")
+----
+
+=== camel-pdf
+
+The Camel-PDF component has been updated to Apache PDFBox 3.0.0 and the font parameter is now defined through the following enum values: COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE, HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,SYMBOL and ZAPF_DINGBATS
+
+=== YAML DSL
+The kebab-case style schema file,  `camel-yaml-dsl.json` has been removed from the distribution in favor of the camelCase style schema file, `camelYamlDsl.json`. While the Camel runtime stays supporting kebab-case style also for the moment, it is recommended to migrate to camelCase style. Any tooling should encourage users to use camelCase style.

@@ -22,7 +22,10 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that a Seda component properly set blockWhenFull on endpoints.
@@ -70,18 +73,15 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSedaDefaultWhenFull() throws Exception {
-        try {
-            SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
-            assertFalse(seda.isBlockWhenFull(),
-                    "Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"");
+    public void testSedaDefaultWhenFull() {
+        SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
+        assertFalse(seda.isBlockWhenFull(),
+                "Seda Endpoint is not setting the correct default (should be false) for \"blockWhenFull\"");
 
-            sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE);
+        Exception e = assertThrows(Exception.class, () -> sendTwoOverCapacity(DEFAULT_URI, QUEUE_SIZE),
+                "The route didn't fill the queue beyond capacity: test class isn't working as intended");
 
-            fail("The route didn't fill the queue beyond capacity: test class isn't working as intended");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-        }
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
     }
 
     @Test

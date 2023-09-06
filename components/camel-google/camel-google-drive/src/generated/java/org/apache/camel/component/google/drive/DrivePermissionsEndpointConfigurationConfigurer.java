@@ -27,7 +27,6 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.drive.model.Permission.class);
         map.put("Delegate", java.lang.String.class);
-        map.put("Email", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("PermissionId", java.lang.String.class);
@@ -55,8 +54,6 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "Content": target.setContent(property(camelContext, com.google.api.services.drive.model.Permission.class, value)); return true;
         case "delegate":
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
-        case "email":
-        case "Email": target.setEmail(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
         case "FileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -95,8 +92,6 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "Content": return com.google.api.services.drive.model.Permission.class;
         case "delegate":
         case "Delegate": return java.lang.String.class;
-        case "email":
-        case "Email": return java.lang.String.class;
         case "fileid":
         case "FileId": return java.lang.String.class;
         case "methodname":
@@ -131,8 +126,6 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "Content": return target.getContent();
         case "delegate":
         case "Delegate": return target.getDelegate();
-        case "email":
-        case "Email": return target.getEmail();
         case "fileid":
         case "FileId": return target.getFileId();
         case "methodname":

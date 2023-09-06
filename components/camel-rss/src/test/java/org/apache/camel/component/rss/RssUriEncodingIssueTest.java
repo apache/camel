@@ -39,7 +39,7 @@ public class RssUriEncodingIssueTest extends CamelTestSupport {
         PollingConsumer consumer = context.getEndpoint(uri).createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive();
-        log.info("Receive " + exchange);
+        log.info("Received {}", exchange);
         assertNotNull(exchange);
         assertNotNull(exchange.getIn().getBody());
         consumer.stop();

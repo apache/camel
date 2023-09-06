@@ -75,7 +75,7 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
         final com.google.api.services.calendar.model.Event result = requestBodyAndHeaders("direct://INSERT", null, headers);
 
         assertEquals("Feed the Camel", result.getSummary());
-        LOG.debug("insert: " + result);
+        LOG.debug("insert: {}", result);
     }
 
     @Test

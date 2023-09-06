@@ -186,6 +186,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("import org.apache.camel.TypeConversionException;\n");
         writer.append("import org.apache.camel.TypeConverterLoaderException;\n");
         writer.append("import org.apache.camel.TypeConverter;\n");
+        writer.append("import org.apache.camel.converter.TypeConvertible;\n");
         writer.append("import org.apache.camel.spi.BulkTypeConverters;\n");
         writer.append("import org.apache.camel.spi.TypeConverterLoader;\n");
         writer.append("import org.apache.camel.spi.TypeConverterRegistry;\n");
@@ -233,6 +234,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("    @Override\n");
         writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
         writer.append("        registry.addBulkTypeConverters(this);\n");
+        writer.append("        doRegistration(registry);\n");
         writer.append("    }\n");
         writer.append("\n");
         writer.append("    @Override\n");
@@ -260,6 +262,14 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("    }\n");
         writer.append("\n");
         writer.append(
+                "    private void doRegistration(TypeConverterRegistry registry) {\n");
+        writeRegistration(converters, writer, converterClasses, false);
+        writer.append("        \n");
+        writer.append("        \n");
+        writer.append("    }\n");
+        writer.append("\n");
+
+        writer.append(
                 "    public TypeConverter lookup(Class<?> to, Class<?> from) {\n");
         writeLoader(converters, writer, converterClasses, true);
         writer.append("        }\n");
@@ -283,18 +293,120 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         return writer.toString();
     }
 
+    private void writeRegistration(
+            List<MethodInfo> converters, StringBuilder writer, Set<String> converterClasses, boolean lookup) {
+        for (MethodInfo method : converters) {
+
+            writer.append("        registry.addConverter(new TypeConvertible<>(")
+                    .append(getGenericArgumentsForTypeConvertible(method))
+                    .append("), ")
+                    .append("this);")
+
+                    .append("\n");
+        }
+    }
+
+    /**
+     * This resolves the method to be called for conversion. There are 2 possibilities here: either it calls a static
+     * method, in which case we can refer to it directly ... Or it uses one of the converter classes to do so. In this
+     * case, we do a bit of hacking "by convention" to call the getter of said converter and use it to call the
+     * converter method (i.e.; getDomConverter().myConverter method). There are some cases (like when dealing with jaxp
+     * that require this)
+     *
+     * @param  method The converter method
+     * @return        The resolved converter method to use
+     */
+    private static String resolveMethod(MethodInfo method) {
+        if (Modifier.isStatic(method.flags())) {
+            return method.declaringClass().toString() + "." + method.name();
+        } else {
+            return "get" + method.declaringClass().simpleName() + "()." + method.name();
+        }
+    }
+
+    /**
+     * This generates the cast part of the method
+     *
+     * @param  method The converter method
+     * @return        The cast string to use
+     */
+    private static String generateCast(MethodInfo method) {
+        StringBuilder writer = new StringBuilder(128);
+
+        if (method.parameterTypes().get(0).kind() == Type.Kind.ARRAY
+                || method.parameterTypes().get(0).kind() == Type.Kind.CLASS) {
+            writer.append(method.parameterTypes().get(0).toString());
+        } else {
+            writer.append(method.parameterTypes().get(0).name().toString());
+        }
+
+        return writer.toString();
+    }
+
+    /**
+     * This generates the template arguments for the type convertible.
+     *
+     * @param  method The converter method
+     * @return        A string with the converter arguments
+     */
+
+    private static String getGenericArgumentsForTypeConvertible(MethodInfo method) {
+        StringBuilder writer = new StringBuilder(4096);
+
+        if (method.parameterTypes().get(0).kind() == Type.Kind.ARRAY
+                || method.parameterTypes().get(0).kind() == Type.Kind.CLASS) {
+            writer.append(method.parameterTypes().get(0).toString());
+        } else {
+            writer.append(method.parameterTypes().get(0).name().toString());
+        }
+
+        writer.append(".class, ");
+        writer.append(getToMethod(method));
+        writer.append(".class");
+
+        return writer.toString();
+    }
+
+    /**
+     * This generates the arguments to be passed to the converter method. For instance, given a list of methods, it
+     * traverses the parameter types and generates something like this: "exchange, camelContext".
+     *
+     * @param  method The converter method
+     * @return        A string instance with the converter methods or an empty String if none exist.
+     */
+    private static String getArgumentsForConverter(MethodInfo method) {
+        StringBuilder writer = new StringBuilder(128);
+
+        for (Type type : method.parameterTypes()) {
+
+            if (type.name().withoutPackagePrefix().equalsIgnoreCase("CamelContext")) {
+                writer.append(", camelContext");
+            }
+
+            if (type.name().withoutPackagePrefix().equalsIgnoreCase("Exchange")) {
+                writer.append(", exchange");
+            }
+        }
+
+        return writer.toString();
+    }
+
+    private static String getToMethod(MethodInfo method) {
+        if (Type.Kind.PRIMITIVE.equals(method.returnType().kind())) {
+            return method.returnType().toString();
+        } else if (Type.Kind.ARRAY.equals(method.returnType().kind())) {
+            return method.returnType().toString();
+        } else {
+            return method.returnType().name().toString();
+        }
+    }
+
     private void writeLoader(
             List<MethodInfo> converters, StringBuilder writer, Set<String> converterClasses, boolean lookup) {
         String prevTo = null;
         for (MethodInfo method : converters) {
-            String to;
-            if (Type.Kind.PRIMITIVE.equals(method.returnType().kind())) {
-                to = method.returnType().toString();
-            } else if (Type.Kind.ARRAY.equals(method.returnType().kind())) {
-                to = method.returnType().toString();
-            } else {
-                to = method.returnType().name().toString();
-            }
+            String to = getToMethod(method);
+
             String from = method.parameterTypes().get(0).toString();
             // clip generics
             if (to.indexOf('<') != -1) {

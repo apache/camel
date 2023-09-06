@@ -236,9 +236,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 for (AwaitThread entry : threads) {
                     try {
                         interrupt(entry.getExchange());
-                    } catch (Throwable e) {
-                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName()
-                                 + ". This exception is ignored.",
+                    } catch (Exception e) {
+                        LOG.warn("Error while interrupting thread: {}. This exception is ignored.",
+                                entry.getBlockedThread().getName(),
                                 e);
                     }
                 }

@@ -130,7 +130,7 @@ public class ZooKeeperITSupport extends CamelTestSupport {
                 connected.countDown();
             } else {
                 if (event.getState() == KeeperState.Disconnected) {
-                    log.info("TestClient connected ?" + zk.getState());
+                    log.info("TestClient connected ? {}", zk.getState());
                 }
             }
         }
@@ -146,7 +146,7 @@ public class ZooKeeperITSupport extends CamelTestSupport {
 
         public void delete(String node) throws Exception {
             delay(200);
-            log.debug("Deleting node " + node);
+            log.debug("Deleting node {}", node);
             zk.delete(node, -1);
         }
     }

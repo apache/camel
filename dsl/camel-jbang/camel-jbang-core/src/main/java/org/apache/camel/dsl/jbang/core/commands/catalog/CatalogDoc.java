@@ -48,7 +48,7 @@ import picocli.CommandLine;
 import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
 
 @CommandLine.Command(name = "doc",
-                     description = "Shows documentation for kamelet, component, and other Camel resources")
+                     description = "Shows documentation for kamelet, component, and other Camel resources", sortOptions = false)
 public class CatalogDoc extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
@@ -56,7 +56,7 @@ public class CatalogDoc extends CamelCommand {
     String name;
 
     @CommandLine.Option(names = { "--camel-version" },
-                        description = "To run using a different Camel version than the default version.")
+                        description = "To use a different Camel version than the default version")
     String camelVersion;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,

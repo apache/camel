@@ -44,8 +44,11 @@ import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
+import org.apache.maven.repository.internal.DefaultModelCacheFactory;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
+import org.apache.maven.repository.internal.ModelCacheFactory;
+import org.apache.maven.repository.internal.PluginsMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.apache.maven.settings.Mirror;
@@ -135,12 +138,13 @@ import org.eclipse.aether.internal.impl.TrackingFileManager;
 import org.eclipse.aether.internal.impl.checksum.DefaultChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.internal.impl.checksum.Md5ChecksumAlgorithmFactory;
 import org.eclipse.aether.internal.impl.checksum.Sha1ChecksumAlgorithmFactory;
+import org.eclipse.aether.internal.impl.checksum.Sha256ChecksumAlgorithmFactory;
+import org.eclipse.aether.internal.impl.checksum.Sha512ChecksumAlgorithmFactory;
 import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
 import org.eclipse.aether.internal.impl.collect.DependencyCollectorDelegate;
 import org.eclipse.aether.internal.impl.collect.bf.BfDependencyCollector;
 import org.eclipse.aether.internal.impl.collect.df.DfDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
-import org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMapper;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMappers;
@@ -509,6 +513,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         copy.fresh = fresh;
         copy.apacheSnapshotsIncluded = apacheSnapshotsIncluded;
         copy.customRepositoryCounter = customRepositoryCounter;
+        copy.repositoryResolver = repositoryResolver;
 
         LocalRepositoryManagerFactory lrmFactory = registry.lookupByClass(LocalRepositoryManagerFactory.class);
 
@@ -632,9 +637,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // remaining requirements of org.eclipse.aether.internal.impl.DefaultInstaller
         registry.bind(MetadataGeneratorFactory.class, SnapshotMetadataGeneratorFactory.class);
         registry.bind(MetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+        // Maven 3.9.x
+        registry.bind(MetadataGeneratorFactory.class, PluginsMetadataGeneratorFactory.class);
 
         // remaining requirements of org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider
         registry.bind(LocalRepositoryManagerFactory.class, EnhancedLocalRepositoryManagerFactory.class);
+        //registry.bind(LocalRepositoryManagerFactory.class, SimpleLocalRepositoryManagerFactory.class);
 
         // remaining requirements of org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory
         registry.bind(NamedLockFactoryAdapterFactory.class, NamedLockFactoryAdapterFactoryImpl.class);
@@ -660,19 +668,31 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         registry.bind(NameMappers.FILE_HGAV_NAME, NameMapper.class, NameMappers.fileHashingGavNameMapper());
 
         // requirements of org.apache.maven.repository.internal.DefaultVersionResolver (these are deprecated)
-        registry.bind(org.eclipse.aether.impl.SyncContextFactory.class,
-                org.eclipse.aether.internal.impl.synccontext.legacy.DefaultSyncContextFactory.class);
+        // no longer needed for Maven 3.9+ (see: MNG-7247)
+        //registry.bind(org.eclipse.aether.impl.SyncContextFactory.class,
+        //        org.eclipse.aether.internal.impl.synccontext.legacy.DefaultSyncContextFactory.class);
 
         // requirements of org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory
         registry.bind(LocalPathComposer.class, DefaultLocalPathComposer.class);
         registry.bind(LocalPathPrefixComposerFactory.class, DefaultLocalPathPrefixComposerFactory.class);
 
         // additional services
-        registry.bind(org.eclipse.aether.spi.log.LoggerFactory.class, Slf4jLoggerFactory.class);
+        //registry.bind(org.eclipse.aether.spi.log.LoggerFactory.class, Slf4jLoggerFactory.class);
 
         // resolver 1.9.x
         registry.bind(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class);
         registry.bind(RepositorySystemLifecycle.class, DefaultRepositorySystemLifecycle.class);
+
+        // resolver 1.9.x + maven 3.9.x
+        registry.bind(ModelCacheFactory.class, DefaultModelCacheFactory.class);
+
+        // not used / optional
+        //  - org.eclipse.aether.internal.impl.DefaultArtifactResolver.setArtifactResolverPostProcessors()
+        //  - org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory.setProvidedChecksumSources()
+        //  - org.eclipse.aether.spi.connector.filter.RemoteRepositoryFilterSource.class
+        //     - org.eclipse.aether.internal.impl.filter.GroupIdRemoteRepositoryFilterSource.class
+        //     - org.eclipse.aether.internal.impl.filter.PrefixesRemoteRepositoryFilterSource.class
+        //  - org.eclipse.aether.spi.checksums.TrustedChecksumsSource.class
     }
 
     /**
@@ -708,6 +728,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // checksum algorithm factory selector needs at least MD5 and SHA1 algorithm factories
         registry.bind(ChecksumAlgorithmFactory.class, Md5ChecksumAlgorithmFactory.class);
         registry.bind(ChecksumAlgorithmFactory.class, Sha1ChecksumAlgorithmFactory.class);
+        registry.bind(ChecksumAlgorithmFactory.class, Sha256ChecksumAlgorithmFactory.class);
+        registry.bind(ChecksumAlgorithmFactory.class, Sha512ChecksumAlgorithmFactory.class);
     }
 
     /**

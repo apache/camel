@@ -26,6 +26,7 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -41,31 +42,31 @@ import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "init", description = "Creates a new Camel integration")
+@Command(name = "init", description = "Creates a new Camel integration",
+         sortOptions = false)
 public class Init extends CamelCommand {
 
     @Parameters(description = "Name of integration file (or a github link)", arity = "1",
                 paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
-
     private String file;
-
-    @Option(names = { "--integration" },
-            description = "When creating a yaml file should it be created as a Camel K Integration CRD")
-    private boolean integration;
-
-    @Option(names = { "--from-kamelet" },
-            description = "To be used for extending an existing Kamelet")
-    private String fromKamelet;
-
-    @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "4.0.0-RC1")
-    private String kameletsVersion;
 
     @Option(names = {
             "--dir",
             "--directory" }, description = "Directory where the project will be saved", defaultValue = ".")
     private String directory;
+
+    @Option(names = { "--from-kamelet" },
+            description = "To be used when extending an existing Kamelet")
+    private String fromKamelet;
+
+    @Option(names = {
+            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    private String kameletsVersion;
+
+    @Option(names = { "--integration" },
+            description = "When creating a yaml file should it be created as a Camel K Integration CRD")
+    private boolean integration;
 
     public Init(CamelJBangMain main) {
         super(main);
@@ -95,6 +96,9 @@ public class Init extends CamelCommand {
         InputStream is = null;
         if ("kamelet.yaml".equals(ext)) {
             if (fromKamelet != null) {
+                if (kameletsVersion == null) {
+                    kameletsVersion = VersionHelper.extractKameletsVersion();
+                }
                 // load existing kamelet
                 is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion);
             } else if (file.contains("source")) {
@@ -139,7 +143,6 @@ public class Init extends CamelCommand {
             StringBuilder sb = new StringBuilder();
             String[] lines = content.split("\n");
             boolean top = true;
-            boolean ann = false;
             for (String line : lines) {
                 // remove top license header
                 if (top && line.startsWith("#")) {

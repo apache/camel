@@ -1984,6 +1984,7 @@ public class ModelWriter extends BaseWriter {
             RouteConfigurationsDefinition def)
             throws IOException {
         startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteList(null, null, def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinitionRef);
         endElement(name);
     }
@@ -2518,9 +2519,10 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
         domElements(def.getSpringBeans());
-        doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
+        domElements(def.getBlueprintBeans());
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "bean", def.getBeans(), this::doWriteRegistryBeanDefinition);
+        doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
         doWriteList(null, "routeConfiguration", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
         doWriteList(null, "routeTemplate", def.getRouteTemplates(), this::doWriteRouteTemplateDefinition);
@@ -3137,6 +3139,8 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) v);
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) v);
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
+                case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
+                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
@@ -3150,7 +3154,6 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
-                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -4716,6 +4719,7 @@ public class ModelWriter extends BaseWriter {
                 case "ResumableDefinition" -> doWriteResumableDefinition("resumable", (ResumableDefinition) v);
                 case "RollbackDefinition" -> doWriteRollbackDefinition("rollback", (RollbackDefinition) v);
                 case "RouteConfigurationDefinition" -> doWriteRouteConfigurationDefinition("routeConfiguration", (RouteConfigurationDefinition) v);
+                case "RouteConfigurationsDefinition" -> doWriteRouteConfigurationsDefinition("routeConfigurations", (RouteConfigurationsDefinition) v);
                 case "RouteDefinition" -> doWriteRouteDefinition("route", (RouteDefinition) v);
                 case "RouteTemplateDefinition" -> doWriteRouteTemplateDefinition("routeTemplate", (RouteTemplateDefinition) v);
                 case "RouteTemplatesDefinition" -> doWriteRouteTemplatesDefinition("routeTemplates", (RouteTemplatesDefinition) v);

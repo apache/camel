@@ -57,6 +57,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesComponent;
@@ -71,6 +72,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
@@ -263,6 +265,14 @@ public abstract class BaseMainSupport extends BaseService {
         listeners.remove(listener);
     }
 
+    protected void loadCustomBeans(CamelContext camelContext) throws Exception {
+        // auto-detect custom beans via base package scanning
+        String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
+        if (basePackage != null) {
+            PackageScanHelper.registerBeans(camelContext, Set.of(basePackage));
+        }
+    }
+
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // auto-detect camel configurations via base package scanning
         String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
@@ -397,7 +407,7 @@ public abstract class BaseMainSupport extends BaseService {
                 ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                 camelContext.addService(reloader);
             }
-            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
+            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
             scheduler.schedulePeriodTask(r, period);
         }
     }
@@ -429,9 +439,9 @@ public abstract class BaseMainSupport extends BaseService {
         // configure from main configuration properties
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
 
+        // try to load custom beans/configuration classes via package scanning
         configurePackageScan(camelContext);
-
-        // try to load configuration classes
+        loadCustomBeans(camelContext);
         loadConfigurations(camelContext);
 
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
@@ -577,13 +587,20 @@ public abstract class BaseMainSupport extends BaseService {
         return configurer;
     }
 
+    /**
+     * A specialized {@link LifecycleStrategy} that can handle autowiring of Camel components, dataformats, languages.
+     */
+    protected LifecycleStrategy createLifecycleStrategy(CamelContext camelContext) {
+        return new MainAutowiredLifecycleStrategy(camelContext);
+    }
+
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         // gathers the properties (key=value) that was used as property placeholders during bootstrap
         final OrderedLocationProperties propertyPlaceholders = new OrderedLocationProperties();
 
         // use the main autowired lifecycle strategy instead of the default
         camelContext.getLifecycleStrategies().removeIf(s -> s instanceof AutowiredLifecycleStrategy);
-        camelContext.addLifecycleStrategy(new MainAutowiredLifecycleStrategy(camelContext));
+        camelContext.addLifecycleStrategy(createLifecycleStrategy(camelContext));
 
         // setup properties
         configurePropertiesService(camelContext);

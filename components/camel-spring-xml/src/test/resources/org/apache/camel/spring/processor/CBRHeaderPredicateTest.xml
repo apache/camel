@@ -27,6 +27,7 @@
     <bean id="cbrBean" class="org.apache.camel.processor.CBRHeaderPredicateTest$MyCBRBean"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
         <route>
             <from uri="direct:start"/>
             <choice>

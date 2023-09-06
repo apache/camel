@@ -24,7 +24,7 @@ public enum BoxGroupsManagerApiMethod implements ApiMethod {
         "addGroupMembership",
         arg("groupId", String.class),
         arg("userId", String.class),
-        arg("role", com.box.sdk.BoxGroupMembership.Role.class)),
+        arg("role", com.box.sdk.BoxGroupMembership.GroupRole.class)),
 
     CREATE_GROUP(
         com.box.sdk.BoxGroup.class,

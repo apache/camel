@@ -136,19 +136,22 @@ you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
 log a WARN.
 
-== Configuring TransactionManager
+== Configuring TransactionStrategy
+
+The `TransactionStrategy` is a vendor neutral abstraction that allows `camel-jpa`
+to easily plugin and work with Spring `TransactionManager` or Quarkus Transaction API.
 
 The `JpaComponent` looks up automatically the
-`TransactionManager` from the Registry. If Camel
-won't find any `TransactionManager` instance registered, it will also
+`TransactionStrategy` from the Registry. If Camel
+cannot find any `TransactionStrategy` instance registered, it will also
 look up for the `TransactionTemplate` and try to
-extract `TransactionManager` from it.
+extract `TransactionStrategy` from it.
 
 If none `TransactionTemplate` is available in the registry,
-`JpaEndpoint` will auto create their own instance of
-`TransactionManager` which most often is not what you want.
+`JpaEndpoint` will auto create a default instance (`org.apache.camel.component.jpa.DefaultTransactionStrategy`)
+of `TransactionStrategy` which most often is not what you want.
 
-If more than single instance of the `TransactionManager` is found, Camel
+If more than single instance of the `TransactionStrategy` is found, Camel
 will log a WARN. In such cases you might want to instantiate and
 explicitly configure a JPA component that references the
 `myTransactionManager` transaction manager, as follows:
@@ -157,7 +160,7 @@ explicitly configure a JPA component that references the
 -------------------------------------------------------------------
 <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
    <property name="entityManagerFactory" ref="myEMFactory"/>
-   <property name="transactionManager" ref="myTransactionManager"/>
+   <property name="transactionStrategy" ref="myTransactionStrategy"/>
 </bean>
 -------------------------------------------------------------------
 

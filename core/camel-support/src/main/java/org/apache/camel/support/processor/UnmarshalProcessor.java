@@ -88,7 +88,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
             } else {
                 out.setBody(result);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
             exchange.setException(e);

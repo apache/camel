@@ -88,6 +88,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -191,7 +192,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -244,6 +245,61 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     }
 
     @Test
+    public void plainMessageSendTestWhenDispositionNotificationToNotSet() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        // parameter type is String
+        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        // parameter type is String
+        headers.put("CamelAS2.subject", SUBJECT);
+        // parameter type is String
+        headers.put("CamelAS2.from", FROM);
+        // parameter type is String
+        headers.put("CamelAS2.as2From", AS2_NAME);
+        // parameter type is String
+        headers.put("CamelAS2.as2To", AS2_NAME);
+        // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
+        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
+        // parameter type is org.apache.http.entity.ContentType
+        headers.put("CamelAS2.ediMessageContentType",
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
+        // parameter type is String
+        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        // parameter type is String
+        headers.put("CamelAS2.attachedFileName", "");
+
+        final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
+        HttpEntity responseEntity = result.getLeft();
+        HttpRequest request = result.getMiddle();
+        HttpResponse response = result.getRight();
+
+        assertNotNull(result, "send result");
+        LOG.debug("send: {}", result);
+        assertNotNull(request, "Request");
+        assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
+        HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+        assertNotNull(entity, "Request body");
+        assertTrue(entity instanceof ApplicationEntity, "Request body does not contain EDI entity");
+        String ediMessage = ((ApplicationEntity) entity).getEdiMessage();
+        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
+
+        assertNotNull(response, "Response");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE),
+                "Unexpected non-null content type");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION),
+                "Unexpected mime version");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION),
+                "Unexpected AS2 version");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT),
+                "Unexpected MDN subject");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.FROM), "Unexpected MDN from");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM), "Unexpected AS2 from");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO), "Unexpected AS2 to");
+        assertNull(HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID), "Missing message id");
+
+        assertNull(responseEntity, "Response entity");
+    }
+
+    @Test
     public void plainMessageSend2Test() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -270,7 +326,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -357,7 +413,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
 
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
@@ -453,7 +509,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -563,7 +619,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -669,7 +725,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         HttpResponse response = result.getRight();
 
         assertNotNull(result, "send result");
-        LOG.debug("send: " + result);
+        LOG.debug("send: {}", result);
         assertNotNull(request, "Request");
         assertTrue(request instanceof HttpEntityEnclosingRequest, "Request does not contain body");
         HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
@@ -815,7 +871,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         @Override
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
                 throws HttpException, IOException {
-            LOG.info("Received test message: " + request);
+            LOG.info("Received test message: {}", request);
             context.setAttribute(AS2ServerManager.FROM, MDN_FROM);
             context.setAttribute(AS2ServerManager.SUBJECT, MDN_SUBJECT_PREFIX);
 

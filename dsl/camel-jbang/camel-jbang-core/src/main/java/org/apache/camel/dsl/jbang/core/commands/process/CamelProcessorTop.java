@@ -19,7 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
-@Command(name = "processor", description = "Top performing processors")
+@Command(name = "processor", description = "Top performing processors",
+         sortOptions = false)
 public class CamelProcessorTop extends CamelProcessorStatus {
 
     public CamelProcessorTop(CamelJBangMain main) {

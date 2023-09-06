@@ -50,8 +50,7 @@ public class ConditionalExceptionProcessor implements Processor {
         }
 
         // should be printed 2 times due to one re-delivery after one failure
-        LOG.info("Exchange[" + getCount() + "][" + ((getCount() % 2 != 0) ? "Should rollback" : "Should succeed")
-                 + "] = " + exchange);
+        LOG.info("Exchange[{}][{}] = {}", getCount(), ((getCount() % 2 != 0) ? "Should rollback" : "Should succeed"), exchange);
 
         // force rollback on every mod 2 attempt
         if (getCount() % 2 != 0) {

@@ -46,7 +46,7 @@ public class MyInOutTestConsumer implements MessageListener {
     private MessageProducer producer;
 
     static {
-        clientQueueName = "client.messages";
+        clientQueueName = "client.messages.MyInOutTestConsumer";
         ackMode = Session.AUTO_ACKNOWLEDGE;
     }
 
@@ -105,7 +105,7 @@ public class MyInOutTestConsumer implements MessageListener {
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
                 messageText = textMessage.getText();
-                LOG.info("messageText = " + messageText);
+                LOG.info("messageText = {}", messageText);
             }
         } catch (JMSException e) {
             //Handle the exception appropriately

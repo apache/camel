@@ -19,7 +19,7 @@ package org.apache.camel.main;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
@@ -42,8 +42,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private final boolean stopCamelContext;
     private final boolean restartDuration;
     private final String action;
-    private final AtomicInteger doneMessages;
-
+    private final LongAdder doneMessages;
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
 
@@ -57,7 +56,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         this.stopCamelContext = stopCamelContext;
         this.restartDuration = restartDuration;
         this.action = action.toLowerCase();
-        this.doneMessages = new AtomicInteger();
+        this.doneMessages = new LongAdder();
 
         if (maxMessages == 0 && maxIdleSeconds == 0) {
             // we do not need exchange events
@@ -86,7 +85,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             if (restartDuration) {
                 LOG.debug("Routes reloaded. Resetting maxMessages/maxIdleSeconds/maxSeconds");
                 shutdownStrategy.restartAwait();
-                doneMessages.set(0);
+                doneMessages.reset();
                 if (watch != null) {
                     watch.restart();
                 }
@@ -99,21 +98,27 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             complete = event.getType() == CamelEvent.Type.ExchangeCompleted
                     || event.getType() == CamelEvent.Type.ExchangeFailed;
 
-            boolean result = doneMessages.incrementAndGet() >= maxMessages;
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Duration max messages check {} >= {} -> {}", doneMessages.get(), maxMessages, result);
-            }
+            if (complete) {
+                doneMessages.increment();
+                final int doneCount = doneMessages.intValue();
+                final boolean result = doneCount >= maxMessages;
 
-            if (result && shutdownStrategy.isRunAllowed()) {
-                if ("shutdown".equalsIgnoreCase(action)) {
-                    LOG.info("Duration max messages triggering shutdown of the JVM");
-                    // use thread to shut down Camel as otherwise we would block current thread
-                    camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask)
-                            .start();
-                } else if ("stop".equalsIgnoreCase(action)) {
-                    LOG.info("Duration max messages triggering stopping all routes");
-                    // use thread to stop routes as otherwise we would block current thread
-                    camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask).start();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Duration max messages check {} >= {} -> {}", doneCount, maxMessages, result);
+                }
+
+                if (result && shutdownStrategy.isRunAllowed()) {
+                    if ("shutdown".equalsIgnoreCase(action)) {
+                        LOG.info("Duration max messages triggering shutdown of the JVM");
+                        // use thread to shut down Camel as otherwise we would block current thread
+                        camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask)
+                                .start();
+                    } else if ("stop".equalsIgnoreCase(action)) {
+                        LOG.info("Duration max messages triggering stopping all routes");
+                        // use thread to stop routes as otherwise we would block current thread
+                        camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask)
+                                .start();
+                    }
                 }
             }
         }
@@ -133,7 +138,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
     @Override
     public boolean isEnabled(CamelEvent event) {
-        return event.getType() == CamelEvent.Type.ExchangeCreated || event.getType() == CamelEvent.Type.ExchangeCreated
+        return event.getType() == CamelEvent.Type.ExchangeCreated || event.getType() == CamelEvent.Type.ExchangeCompleted
                 || event.getType() == CamelEvent.Type.ExchangeFailed || event.getType() == CamelEvent.Type.RouteReloaded;
     }
 

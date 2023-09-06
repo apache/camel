@@ -50,7 +50,7 @@ class RoasterJavaPartialRouteDslTest extends CamelTestSupport {
         assertEquals("25", list.get(0).getLineNumberEnd());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         assertTrue(tree.contains("25\tfrom"));
     }

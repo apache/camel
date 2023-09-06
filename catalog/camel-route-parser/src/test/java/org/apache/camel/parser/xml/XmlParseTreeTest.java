@@ -56,7 +56,7 @@ public class XmlParseTreeTest {
         assertNull(details.getClassName());
 
         String tree = details.dump(0);
-        LOG.info("\n" + tree);
+        LOG.info("\n{}", tree);
 
         assertTrue(tree.contains("32\tfrom"));
         assertTrue(tree.contains("35\t  transform"));

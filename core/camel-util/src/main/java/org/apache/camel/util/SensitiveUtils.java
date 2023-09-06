@@ -81,6 +81,7 @@ public final class SensitiveUtils {
                     "sascredential",
                     "sasljaasconfig",
                     "sassignature",
+                    "secret",
                     "secretkey",
                     "securerandom",
                     "sharedaccesskey",
@@ -159,6 +160,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qsascredential\\E"
                                                     + "|\\Qsasljaasconfig\\E"
                                                     + "|\\Qsassignature\\E"
+                                                    + "|\\Qsecret\\E"
                                                     + "|\\Qsecretkey\\E"
                                                     + "|\\Qsecurerandom\\E"
                                                     + "|\\Qsharedaccesskey\\E"

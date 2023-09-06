@@ -51,6 +51,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String snapshotCollectionFilterOverrides;
     @UriParam(label = LABEL_NAME)
     private String fieldExcludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "-1")
+    private int errorsMaxRetries = -1;
     @UriParam(label = LABEL_NAME)
     private String databaseExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
@@ -347,6 +349,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getFieldExcludeList() {
         return fieldExcludeList;
+    }
+
+    /**
+     * The maximum number of retries on connection errors before failing (-1 =
+     * no limit, 0 = disabled, > 0 = num of retries).
+     */
+    public void setErrorsMaxRetries(int errorsMaxRetries) {
+        this.errorsMaxRetries = errorsMaxRetries;
+    }
+
+    public int getErrorsMaxRetries() {
+        return errorsMaxRetries;
     }
 
     /**
@@ -764,6 +778,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "snapshot.collection.filter.overrides", snapshotCollectionFilterOverrides);
         addPropertyIfNotNull(configBuilder, "field.exclude.list", fieldExcludeList);
+        addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);

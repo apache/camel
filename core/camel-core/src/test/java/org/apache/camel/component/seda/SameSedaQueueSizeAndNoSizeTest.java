@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -31,46 +31,37 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
 
     @Test
-    public void testSameQueue() throws Exception {
+    public void testSameQueue() {
         for (int i = 0; i < 100; i++) {
             template.sendBody("seda:foo", "" + i);
         }
 
-        try {
-            template.sendBody("seda:foo", "Should be full now");
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            if (!isJavaVendor("ibm")) {
-                assertEquals("Queue full", ise.getMessage());
-            }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("seda:foo", "Should be full now"), "Should fail");
+        IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
+        if (!isJavaVendor("ibm")) {
+            assertEquals("Queue full", ise.getMessage());
         }
     }
 
     @Test
-    public void testSameQueueDifferentSize() throws Exception {
-        try {
-            template.sendBody("seda:foo?size=200", "Should fail");
-            fail("Should fail");
-        } catch (ResolveEndpointFailedException e) {
-            IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals(
-                    "Cannot use existing queue seda://foo as the existing queue size 100 does not match given queue size 200",
-                    ise.getMessage());
-        }
+    public void testSameQueueDifferentSize() {
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> template.sendBody("seda:foo?size=200", "Should fail"), "Should fail");
+        IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals(
+                "Cannot use existing queue seda://foo as the existing queue size 100 does not match given queue size 200",
+                ise.getMessage());
     }
 
     @Test
-    public void testSameQueueDifferentSizeBar() throws Exception {
-        try {
-            template.sendBody("seda:bar?size=200", "Should fail");
-            fail("Should fail");
-        } catch (ResolveEndpointFailedException e) {
-            IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Cannot use existing queue seda://bar as the existing queue size " + SedaConstants.QUEUE_SIZE
-                         + " does not match given queue size 200",
-                    ise.getMessage());
-        }
+    public void testSameQueueDifferentSizeBar() {
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> template.sendBody("seda:bar?size=200", "Should fail"), "Should fail");
+        IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Cannot use existing queue seda://bar as the existing queue size " + SedaConstants.QUEUE_SIZE
+                     + " does not match given queue size 200",
+                ise.getMessage());
     }
 
     @Override

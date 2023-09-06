@@ -47,7 +47,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.getJavaMajorVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -480,12 +479,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
-
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -505,11 +499,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
         assertExpression("${exchangePropertyAsIndex(unknown, OrderLine, 'cool')}", null);
@@ -676,7 +666,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     @Test
     public void testDatePredicates() {
         assertPredicate("${date:now} < ${date:now+60s}");
-        assertPredicate("${date:now-2s+2s} == ${date:now}");
+        assertPredicate("${date:now-5s} < ${date:now}");
+        assertPredicate("${date:now+5s} > ${date:now}");
     }
 
     @Test
@@ -973,11 +964,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${header.unknown[cool]}", null);
     }
@@ -996,11 +983,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            if (getJavaMajorVersion() <= 8) {
-                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            } else {
-                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
-            }
+            assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
         }
         assertExpression("${header.unknown[cool]}", null);
     }

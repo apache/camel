@@ -41,6 +41,7 @@ import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
+import org.apache.camel.management.mbean.ManagedDumpRouteStrategy;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedProcessor;
@@ -58,6 +59,7 @@ import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -162,6 +164,9 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else if (managedObject instanceof ManagedBacklogDebugger) {
             ManagedBacklogDebugger md = (ManagedBacklogDebugger) managedObject;
             objectName = getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
+        } else if (managedObject instanceof ManagedDumpRouteStrategy) {
+            ManagedDumpRouteStrategy md = (ManagedDumpRouteStrategy) managedObject;
+            objectName = getObjectNameForService(md.getContext(), md.getDumpRoutesStrategy());
         } else if (managedObject instanceof ManagedEventNotifier) {
             ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
             objectName = getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
@@ -472,8 +477,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else {
             // non singleton then add hashcoded id
             String uri = ep.getEndpointKey();
-            int pos = uri.indexOf('?');
-            String id = (pos == -1) ? uri : uri.substring(0, pos);
+            String id = StringHelper.before(uri, "?", uri);
             id += "?id=" + ObjectHelper.getIdentityHashCode(ep);
             return id;
         }

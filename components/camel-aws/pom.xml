@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws-parent</artifactId>
@@ -58,7 +58,9 @@
         <module>camel-aws2-ses</module>
         <module>camel-aws2-sns</module>
         <module>camel-aws2-sqs</module>
+        <module>camel-aws2-step-functions</module>
         <module>camel-aws2-sts</module>
+        <module>camel-aws2-timestream</module>
         <module>camel-aws2-translate</module>
         <module>camel-aws-xray</module>
     </modules>

@@ -111,4 +111,7 @@ public final class VersionHelper {
         return s.compareTo(t);
     }
 
+    public static String extractKameletsVersion() {
+        return org.apache.camel.main.util.VersionHelper.extractKameletsVersion();
+    }
 }

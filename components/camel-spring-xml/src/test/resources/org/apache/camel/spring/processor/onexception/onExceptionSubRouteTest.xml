@@ -38,6 +38,7 @@
 
     <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <jmxAgent id="jmx" disabled="true"/>
 
         <route errorHandlerRef="deadLetter">
             <from uri="direct:start"/>

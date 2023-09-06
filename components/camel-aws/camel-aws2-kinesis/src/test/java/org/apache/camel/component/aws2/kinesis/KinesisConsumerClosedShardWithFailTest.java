@@ -41,7 +41,9 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,7 +83,7 @@ public class KinesisConsumerClosedShardWithFailTest {
 
         when(kinesisClient
                 .getRecords(any(GetRecordsRequest.class)))
-                .thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").build());
+                .thenReturn(GetRecordsResponse.builder().nextShardIterator(null).build());
         when(kinesisClient
                 .getShardIterator(any(GetShardIteratorRequest.class)))
                 .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
@@ -92,6 +94,11 @@ public class KinesisConsumerClosedShardWithFailTest {
 
     @Test
     public void itObtainsAShardIteratorOnFirstPoll() {
+        try {
+            underTest.poll();
+        } catch (Exception e) {
+            fail("The first call should not throw an exception");
+        }
         assertThrows(IllegalStateException.class, () -> {
             underTest.poll();
         });
@@ -106,7 +113,7 @@ public class KinesisConsumerClosedShardWithFailTest {
         assertThat(getShardIteratorReqCap.getValue().shardId(), is("shardId"));
         assertThat(getShardIteratorReqCap.getValue().shardIteratorType(), is(ShardIteratorType.LATEST));
 
-        verify(kinesisClient).listShards(getListShardsCap.capture());
+        verify(kinesisClient, times(2)).listShards(getListShardsCap.capture());
         assertThat(getListShardsCap.getValue().streamName(), is("streamName"));
     }
 }

@@ -45,6 +45,7 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
@@ -107,7 +108,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
 
     @BeforeEach
     public void prepareEnvironment() {
-        createStream(client, streamName);
+        createStream(client, streamName, 2);
 
         putRecords(client, streamName, messageCount);
     }
@@ -122,6 +123,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
                 .untilAsserted(() -> result.assertIsSatisfied());
 
         assertEquals(messageCount, receivedMessages.size());
+        String partitionKey = null;
         for (KinesisData data : receivedMessages) {
             ObjectHelper.notNull(data, "data");
             assertNotNull(data.body, "The body should not be null");
@@ -131,6 +133,8 @@ public class KinesisConsumerIT extends CamelTestSupport {
              and so on. This is just testing that the code is not mixing things up.
              */
             assertTrue(data.partition.endsWith(data.body), "The data/partition mismatch for record: " + data);
+            assertNotEquals(partitionKey, data.partition);
+            partitionKey = data.partition;
         }
     }
 }

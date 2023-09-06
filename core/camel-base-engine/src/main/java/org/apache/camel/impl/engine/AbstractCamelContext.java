@@ -31,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -101,6 +100,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
+import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
@@ -262,7 +262,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private volatile String version;
     private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
@@ -385,6 +384,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(DumpRoutesStrategy.class, this::createDumpRoutesStrategy);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -1908,54 +1908,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public String getVersion() {
-        if (version == null) {
-            synchronized (lock) {
-                if (version == null) {
-                    version = doGetVersion();
-                }
-            }
-        }
-        return version;
-    }
-
-    private String doGetVersion() {
-        String resolvedVersion = null;
-
-        InputStream is = null;
-        // try to load from maven properties first
-        try {
-            Properties p = new Properties();
-            is = AbstractCamelContext.class
-                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties");
-            if (is != null) {
-                p.load(is);
-                resolvedVersion = p.getProperty("version", "");
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            if (is != null) {
-                IOHelper.close(is);
-            }
-        }
-
-        // fallback to using Java API
-        if (resolvedVersion == null) {
-            Package aPackage = getClass().getPackage();
-            if (aPackage != null) {
-                resolvedVersion = aPackage.getImplementationVersion();
-                if (resolvedVersion == null) {
-                    resolvedVersion = aPackage.getSpecificationVersion();
-                }
-            }
-        }
-
-        if (resolvedVersion == null) {
-            // we could not compute the version so use a blank
-            resolvedVersion = "";
-        }
-
-        return resolvedVersion;
+        return VersionHolder.VERSION;
     }
 
     @Override
@@ -4063,6 +4016,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory();
 
     protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
+
+    protected abstract DumpRoutesStrategy createDumpRoutesStrategy();
 
     protected abstract Tracer createTracer();
 

@@ -18,20 +18,21 @@
 package org.apache.camel.component.rocketmq;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.rocketmq.services.RocketMQService;
-import org.apache.camel.test.infra.rocketmq.services.RocketMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-public class RocketMQRouteTest extends CamelTestSupport {
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "These tests are flaky on Apache CI - see CAMEL-19832")
+public class RocketMQRouteTest extends RocketMQTestSupport {
 
     public static final String EXPECTED_MESSAGE = "hello, RocketMQ.";
 
@@ -40,9 +41,6 @@ public class RocketMQRouteTest extends CamelTestSupport {
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
     private MockEndpoint resultEndpoint;
-
-    @RegisterExtension
-    public static RocketMQService rocketMQService = RocketMQServiceFactory.createService();
 
     @BeforeAll
     static void beforeAll() throws Exception {
@@ -53,7 +51,7 @@ public class RocketMQRouteTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        resultEndpoint = (MockEndpoint) context.getEndpoint(RESULT_ENDPOINT_URI);
+
     }
 
     @Override
@@ -61,6 +59,7 @@ public class RocketMQRouteTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         RocketMQComponent rocketMQComponent = new RocketMQComponent();
         rocketMQComponent.setNamesrvAddr(rocketMQService.nameserverAddress());
+
         camelContext.addComponent("rocketmq", rocketMQComponent);
         return camelContext;
     }
@@ -78,13 +77,14 @@ public class RocketMQRouteTest extends CamelTestSupport {
 
     @Test
     public void testSimpleRoute() throws Exception {
+        resultEndpoint = (MockEndpoint) context.getEndpoint(RESULT_ENDPOINT_URI);
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
         resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("START_TOPIC");
         resultEndpoint.message(0).header(RocketMQConstants.TAG).isEqualTo("startTag");
 
         template.sendBody(START_ENDPOINT_URI, EXPECTED_MESSAGE);
 
-        resultEndpoint.assertIsSatisfied();
+        Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> resultEndpoint.assertIsSatisfied());
     }
 
     @AfterAll

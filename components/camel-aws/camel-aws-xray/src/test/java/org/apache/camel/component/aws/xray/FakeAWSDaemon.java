@@ -141,13 +141,13 @@ public class FakeAWSDaemon {
                         LOG.trace("Item {} received. JSON content: {}, Raw: {}",
                                 receivedTraces.size(), receivedTraces, raw);
                     } catch (Exception jsonEx) {
-                        LOG.warn("Could not convert segment " + locSegment + " to a Java object", jsonEx);
+                        LOG.warn("Could not convert segment {} to a Java object", locSegment, jsonEx);
                     }
                 }
             } catch (SocketException sex) {
                 LOG.info("UDP socket closed");
             } catch (Exception ex) {
-                LOG.warn("UDP socket failed due to " + ex.getLocalizedMessage(), ex);
+                LOG.warn("UDP socket failed due to {}", ex.getLocalizedMessage(), ex);
             }
         }
 

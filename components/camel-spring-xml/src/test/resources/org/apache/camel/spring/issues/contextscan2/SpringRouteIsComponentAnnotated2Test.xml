@@ -35,6 +35,7 @@
             <!-- and you can use includes/excludes to filter which classes to match -->
             <includes>org.apache.camel.spring.issues.contextscan2.*</includes>
         </contextScan>
+        <jmxAgent id="jmx" disabled="true"/>
     </camelContext>
 
 </beans>

@@ -110,7 +110,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             try {
                 listener.registerHttpEndpoint(model);
             } catch (Exception e) {
-                LOG.warn("Error adding listener due to " + e.getMessage() + ". This exception is ignored", e);
+                LOG.warn("Error adding listener due to {}. This exception is ignored", e.getMessage(), e);
             }
         }
     }
@@ -126,7 +126,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                 try {
                     listener.unregisterHttpEndpoint(model);
                 } catch (Exception e) {
-                    LOG.warn("Error removing listener due to " + e.getMessage() + ". This exception is ignored", e);
+                    LOG.warn("Error removing listener due to {}. This exception is ignored", e.getMessage(), e);
                 }
             }
         });

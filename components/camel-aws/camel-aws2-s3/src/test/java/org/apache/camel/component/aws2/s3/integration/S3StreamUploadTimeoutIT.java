@@ -42,22 +42,27 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(23);
 
-        for (int i = 0; i < 23; i++) {
-            template.sendBody("direct:stream1", "Andrea\n");
+        for (int i = 1; i <= 2; i++) {
+            int count = i * 23;
+
+            result.expectedMessageCount(count);
+
+            for (int j = 0; j < 23; j++) {
+                template.sendBody("direct:stream1", "Andrea\n");
+            }
+
+            Awaitility.await().atMost(11, TimeUnit.SECONDS)
+                    .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+
+            Awaitility.await().atMost(11, TimeUnit.SECONDS)
+                    .untilAsserted(() -> {
+                        Exchange ex = template.request("direct:listObjects", this::process);
+
+                        List<S3Object> resp = ex.getMessage().getBody(List.class);
+                        assertEquals(1, resp.size());
+                    });
         }
-
-        Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
-
-        Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    Exchange ex = template.request("direct:listObjects", this::process);
-
-                    List<S3Object> resp = ex.getMessage().getBody(List.class);
-                    assertEquals(1, resp.size());
-                });
     }
 
     private void process(Exchange exchange) {

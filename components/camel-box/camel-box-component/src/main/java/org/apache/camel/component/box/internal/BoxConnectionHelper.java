@@ -245,7 +245,7 @@ public final class BoxConnectionHelper {
         }
 
         try {
-            return BoxDeveloperEditionAPIConnection.getAppUserConnection(configuration.getUserId(),
+            return BoxDeveloperEditionAPIConnection.getUserConnection(configuration.getUserId(),
                     configuration.getClientId(), configuration.getClientSecret(), encryptionPref, accessTokenCache);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(

@@ -93,9 +93,9 @@ public interface MockEndpointBuilderFactory {
          * use the notifier to know when Camel is done routing some messages,
          * before you call the assertIsSatisfied() method on the mocks. This
          * allows you to not use a fixed assert period, to speedup testing
-         * times. If you want to assert that exactly n'th message arrives to
-         * this mock endpoint, then see also the setAssertPeriod(long) method
-         * for further details.
+         * times. If you want to assert that exactly nth message arrives to this
+         * mock endpoint, then see also the setAssertPeriod(long) method for
+         * further details.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -119,9 +119,9 @@ public interface MockEndpointBuilderFactory {
          * use the notifier to know when Camel is done routing some messages,
          * before you call the assertIsSatisfied() method on the mocks. This
          * allows you to not use a fixed assert period, to speedup testing
-         * times. If you want to assert that exactly n'th message arrives to
-         * this mock endpoint, then see also the setAssertPeriod(long) method
-         * for further details.
+         * times. If you want to assert that exactly nth message arrives to this
+         * mock endpoint, then see also the setAssertPeriod(long) method for
+         * further details.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -304,7 +304,7 @@ public interface MockEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies to only retain the first n'th number of received Exchanges.
+         * Specifies to only retain the first nth number of received Exchanges.
          * This is used when testing with big data, to reduce memory consumption
          * by not storing copies of every Exchange this mock endpoint receives.
          * Important: When using this limitation, then the getReceivedCounter()
@@ -332,7 +332,7 @@ public interface MockEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies to only retain the first n'th number of received Exchanges.
+         * Specifies to only retain the first nth number of received Exchanges.
          * This is used when testing with big data, to reduce memory consumption
          * by not storing copies of every Exchange this mock endpoint receives.
          * Important: When using this limitation, then the getReceivedCounter()
@@ -360,7 +360,7 @@ public interface MockEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies to only retain the last n'th number of received Exchanges.
+         * Specifies to only retain the last nth number of received Exchanges.
          * This is used when testing with big data, to reduce memory consumption
          * by not storing copies of every Exchange this mock endpoint receives.
          * Important: When using this limitation, then the getReceivedCounter()
@@ -388,7 +388,7 @@ public interface MockEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies to only retain the last n'th number of received Exchanges.
+         * Specifies to only retain the last nth number of received Exchanges.
          * This is used when testing with big data, to reduce memory consumption
          * by not storing copies of every Exchange this mock endpoint receives.
          * Important: When using this limitation, then the getReceivedCounter()

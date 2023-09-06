@@ -24,6 +24,7 @@ import java.util.List;
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxEvent;
+import com.box.sdk.EnterpriseEventsRequest;
 import com.box.sdk.EventLog;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class BoxEventLogsManager {
      *
      * @return          A list of all the events that met the given criteria.
      */
-    public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {
+    public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.EventType... types) {
         try {
             LOG.debug("Getting all enterprise events occurring between {} and {} {}",
                     after == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(after),
@@ -77,10 +78,12 @@ public class BoxEventLogsManager {
             }
 
             if (types == null) {
-                types = new BoxEvent.Type[0];
+                types = new BoxEvent.EventType[0];
             }
 
-            EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, position, after, before, types);
+            EnterpriseEventsRequest request = new EnterpriseEventsRequest();
+            request.position(position).after(after).before(before).types(types);
+            EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, request);
 
             List<BoxEvent> results = new ArrayList<>();
             for (BoxEvent event : eventLog) {

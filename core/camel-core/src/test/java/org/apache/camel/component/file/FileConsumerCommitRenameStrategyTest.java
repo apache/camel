@@ -47,6 +47,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     public void testRenameFileExists() throws Exception {
         // create a file in done to let there be a duplicate file
         testDirectory("done", true);
+
         try (FileWriter fw = new FileWriter(testFile("done/london.txt").toFile())) {
             fw.write("I was there once in London");
             fw.flush();

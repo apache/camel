@@ -22,6 +22,8 @@ public class StubComponentConfigurer extends SedaComponentConfigurer implements 
         StubComponent target = (StubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "shadow": target.setShadow(property(camelContext, boolean.class, value)); return true;
+        case "shadowpattern":
+        case "shadowPattern": target.setShadowPattern(property(camelContext, java.lang.String.class, value)); return true;
         default: return true;
         }
     }
@@ -30,6 +32,8 @@ public class StubComponentConfigurer extends SedaComponentConfigurer implements 
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "shadow": return boolean.class;
+        case "shadowpattern":
+        case "shadowPattern": return java.lang.String.class;
         default: return super.getOptionType(name, ignoreCase);
         }
     }
@@ -39,6 +43,8 @@ public class StubComponentConfigurer extends SedaComponentConfigurer implements 
         StubComponent target = (StubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "shadow": return target.isShadow();
+        case "shadowpattern":
+        case "shadowPattern": return target.getShadowPattern();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

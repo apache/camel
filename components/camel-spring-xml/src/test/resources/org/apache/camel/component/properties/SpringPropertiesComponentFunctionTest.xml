@@ -32,6 +32,8 @@
       <propertiesFunction ref="beerFunction"/>
     </propertyPlaceholder>
 
+    <jmxAgent id="jmx" disabled="true"/>
+
     <route>
       <from uri="direct:start"/>
       <to uri="log:{{sys:os.name}}"/>

@@ -116,7 +116,7 @@ public class RequestReplyExample {
                 sb.append('\n');
                 line = orderStatusReply.readLine();
             }
-            LOG.info("Web reply:\n" + sb);
+            LOG.info("Web reply:\n{}", sb);
         }
         orderStatusReply.close();
 
@@ -155,7 +155,7 @@ public class RequestReplyExample {
         private static final Logger LOG = LoggerFactory.getLogger(MarketOrderStatusService.class);
 
         public ExecutionReport getOrderStatus(OrderStatusRequest request) throws FieldNotFound {
-            LOG.info("Received order status request for orderId=" + request.getOrderID().getValue());
+            LOG.info("Received order status request for orderId={}", request.getOrderID().getValue());
             return new ExecutionReport(
                     request.getOrderID(),
                     new ExecID(UUID.randomUUID().toString()),

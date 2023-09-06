@@ -67,8 +67,8 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         assertNotNull(result1.get("items"));
         LOG.debug("list: " + result1);
 
-        Comment comment2 = result1.getItems().get(0);
-        String commentId = comment2.getCommentId();
+        Comment comment2 = result1.getComments().get(0);
+        String commentId = comment2.getId();
 
         // 4. add reply
         headers = new HashMap<>();
@@ -77,7 +77,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", commentId);
         // parameter type is com.google.api.services.drive.model.CommentReply
-        com.google.api.services.drive.model.CommentReply reply = new com.google.api.services.drive.model.CommentReply();
+        com.google.api.services.drive.model.Reply reply = new com.google.api.services.drive.model.Reply();
         reply.setContent("I know :-)");
         headers.put("CamelGoogleDrive.content", reply);
 
@@ -91,11 +91,11 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", commentId);
 
-        final com.google.api.services.drive.model.CommentReplyList result
+        final com.google.api.services.drive.model.Reply result
                 = requestBodyAndHeaders("direct://LIST", null, headers);
 
         assertNotNull(result, "list result");
-        LOG.debug("list: " + result);
+        LOG.debug("list: {}", result);
 
     }
 

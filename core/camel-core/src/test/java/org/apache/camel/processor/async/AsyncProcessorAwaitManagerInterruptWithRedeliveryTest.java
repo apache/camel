@@ -117,8 +117,9 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // redelivery delay should not be too fast as tested on slower CI servers can cause test to fail
                 errorHandler(
-                        deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
+                        deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(500).asyncDelayedRedelivery());
 
                 from("direct:start").routeId("myRoute").to("mock:before").bean("myBean", "callMe").to("mock:result");
             }

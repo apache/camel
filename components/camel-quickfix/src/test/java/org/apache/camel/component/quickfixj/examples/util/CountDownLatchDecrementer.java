@@ -36,7 +36,7 @@ public class CountDownLatchDecrementer {
 
     @Handler
     public void decrement(Exchange exchange) {
-        LOG.info("Decrementing latch count: " + label);
+        LOG.info("Decrementing latch count: {}", label);
         latch.countDown();
     }
 }

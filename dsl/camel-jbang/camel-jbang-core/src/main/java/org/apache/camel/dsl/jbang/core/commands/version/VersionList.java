@@ -47,7 +47,8 @@ import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays available Camel versions")
+@CommandLine.Command(name = "list", description = "Displays available Camel versions",
+                     sortOptions = false)
 public class VersionList extends CamelCommand {
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
@@ -56,10 +57,6 @@ public class VersionList extends CamelCommand {
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/release-%s.md";
     private static final String GIT_CAMEL_QUARKUS_URL
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
-
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by version", defaultValue = "version")
-    String sort;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
                         description = "Runtime (spring-boot, quarkus, or camel-main)")
@@ -81,6 +78,10 @@ public class VersionList extends CamelCommand {
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
+
+    @CommandLine.Option(names = { "--sort" },
+                        description = "Sort by (version, or date)", defaultValue = "version")
+    String sort;
 
     public VersionList(CamelJBangMain main) {
         super(main);
@@ -114,11 +115,24 @@ public class VersionList extends CamelCommand {
                 repo = rr.resolveRepository(repo);
             }
 
+            // ensure from and to-version have major.minor
+            if (fromVersion != null) {
+                if (!(fromVersion.contains(".") || fromVersion.contains(","))) {
+                    fromVersion = fromVersion + ".0";
+                }
+            }
+            if (toVersion != null) {
+                if (!(toVersion.contains(".") || toVersion.contains(","))) {
+                    toVersion = toVersion + ".0";
+                }
+            }
+
             versions = downloader.resolveAvailableVersions(g, a, fromVersion, repo);
             versions = versions.stream().filter(v -> acceptVersion(v[0])).collect(Collectors.toList());
 
             main.stop();
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error downloading available Camel versions");
             return 1;
         }
@@ -188,6 +202,10 @@ public class VersionList extends CamelCommand {
         switch (s) {
             case "version":
                 return VersionHelper.compare(o1.coreVersion, o2.coreVersion) * negate;
+            case "date":
+                String d1 = o1.releaseDate != null ? o1.releaseDate : "";
+                String d2 = o2.releaseDate != null ? o2.releaseDate : "";
+                return d1.compareTo(d2) * negate;
             default:
                 return 0;
         }

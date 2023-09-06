@@ -74,7 +74,7 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
                 = template().requestBody("direct:createSObject" + suffix, account, CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue(result.getSuccess(), "Create success");
-        LOG.debug("Create: " + result);
+        LOG.debug("Create: {}", result);
 
         try {
 

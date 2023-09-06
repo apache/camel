@@ -28,32 +28,32 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
 
     @Test
     public void testAsyncStartConsumer() throws Exception {
-        sendBodyAndAssert("sjms:queue:foo.start");
+        sendBodyAndAssert("sjms:queue:foo.start.AsyncStartStopListenerTest");
     }
 
     @Test
     public void testAsyncStartStopConsumer() throws Exception {
-        sendBodyAndAssert("sjms:queue:foo.startstop");
+        sendBodyAndAssert("sjms:queue:foo.startstop.AsyncStartStopListenerTest");
     }
 
     @Test
     public void testAsyncStopConsumer() throws Exception {
-        sendBodyAndAssert("sjms:queue:foo.stop");
+        sendBodyAndAssert("sjms:queue:foo.stop.AsyncStartStopListenerTest");
     }
 
     @Test
     public void testAsyncStopProducer() throws Exception {
-        sendBodyAndAssert("sjms:queue:foo?asyncStopListener=true");
+        sendBodyAndAssert("sjms:queue:foo.AsyncStartStopListenerTest?asyncStopListener=true");
     }
 
     @Test
     public void testAsyncStartProducer() throws Exception {
-        sendBodyAndAssert("sjms:queue:foo?asyncStartListener=true");
+        sendBodyAndAssert("sjms:queue:foo.AsyncStartStopListenerTest?asyncStartListener=true");
     }
 
     @Test
     public void testAsyncStartStopProducer() throws Exception {
-        sendBodyAndAssert("sjms:queue:foo?asyncStopListener=true&asyncStartListener=true");
+        sendBodyAndAssert("sjms:queue:foo.AsyncStartStopListenerTest?asyncStopListener=true&asyncStartListener=true");
     }
 
     private void sendBodyAndAssert(final String uri) throws InterruptedException {
@@ -70,10 +70,11 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:foo.startstop?asyncStartListener=true&asyncStopListener=true").to("mock:result");
-                from("sjms:queue:foo.start?asyncStartListener=true").to("mock:result");
-                from("sjms:queue:foo.stop?asyncStopListener=true").to("mock:result");
-                from("sjms:queue:foo").to("mock:result");
+                from("sjms:queue:foo.startstop.AsyncStartStopListenerTest?asyncStartListener=true&asyncStopListener=true")
+                        .to("mock:result");
+                from("sjms:queue:foo.start.AsyncStartStopListenerTest?asyncStartListener=true").to("mock:result");
+                from("sjms:queue:foo.stop.AsyncStartStopListenerTest?asyncStopListener=true").to("mock:result");
+                from("sjms:queue:foo.AsyncStartStopListenerTest").to("mock:result");
             }
         };
     }

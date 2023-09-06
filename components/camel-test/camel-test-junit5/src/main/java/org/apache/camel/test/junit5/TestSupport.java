@@ -549,26 +549,6 @@ public final class TestSupport {
     }
 
     /**
-     * Tells whether the current Java version is 1.8.
-     *
-     * @return <tt>true</tt> if its Java 1.8, <tt>false</tt> if its not (for example Java 1.7 or older)
-     */
-    public static boolean isJava18() {
-        return getJavaMajorVersion() == 8;
-
-    }
-
-    /**
-     * Tells whether the current Java version is 1.9.
-     *
-     * @return <tt>true</tt> if its Java 1.9, <tt>false</tt> if its not (for example Java 1.8 or older)
-     */
-    public static boolean isJava19() {
-        return getJavaMajorVersion() == 9;
-
-    }
-
-    /**
      * Returns the current major Java version e.g 8.
      * <p/>
      * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
@@ -577,11 +557,7 @@ public final class TestSupport {
      */
     public static int getJavaMajorVersion() {
         String javaSpecVersion = System.getProperty("java.specification.version");
-        if (javaSpecVersion.contains(".")) { // before jdk 9
-            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
-        } else {
-            return Integer.parseInt(javaSpecVersion);
-        }
+        return Integer.parseInt(javaSpecVersion);
     }
 
     /**

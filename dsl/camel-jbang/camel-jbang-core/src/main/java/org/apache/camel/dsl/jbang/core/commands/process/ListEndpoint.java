@@ -34,7 +34,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "endpoint", description = "Get usage of Camel endpoints")
+@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false)
 public class ListEndpoint extends ProcessWatchCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
@@ -112,6 +112,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 }
                                 row.pid = Long.toString(ph.pid());
                                 row.endpoint = o.getString("uri");
+                                row.stub = o.getBooleanOrDefault("stub", false);
                                 row.direction = o.getString("direction");
                                 row.total = o.getString("hits");
                                 row.uptime = extractSince(ph);
@@ -166,6 +167,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("DIR").with(r -> r.direction),
                 new Column().header("TOTAL").with(r -> r.total),
+                new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
@@ -214,6 +216,7 @@ public class ListEndpoint extends ProcessWatchCommand {
         String endpoint;
         String direction;
         String total;
+        boolean stub;
     }
 
 }

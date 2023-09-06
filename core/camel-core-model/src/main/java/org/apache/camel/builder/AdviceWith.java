@@ -243,7 +243,7 @@ public final class AdviceWith {
         if (logRoutesAsXml && LOG.isInfoEnabled()) {
             try {
                 beforeAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, definition);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
         }
@@ -280,7 +280,7 @@ public final class AdviceWith {
             try {
                 String afterAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, merged);
                 LOG.info("Adviced route before/after as XML:\n{}\n\n{}", beforeAsXml, afterAsXml);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
         }

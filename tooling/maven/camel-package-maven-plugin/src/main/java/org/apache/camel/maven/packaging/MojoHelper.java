@@ -83,7 +83,9 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-mq"),
                         dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
                         dir.resolve("camel-aws2-sns"),
-                        dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-sts"), dir.resolve("camel-aws2-translate"),
+                        dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
+                        dir.resolve("camel-aws2-sts"),
+                        dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
                         dir.resolve("camel-aws-cloudtrail"));
             case "camel-vertx":

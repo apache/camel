@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.sjms.support;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 
 /**
  *
@@ -42,7 +42,7 @@ public class MyAsyncComponent extends DefaultComponent {
         String result = "";
         for (String word : words) {
             result += result.isEmpty() ? "" : " ";
-            result += word.substring(0, 1).toUpperCase(Locale.ENGLISH) + word.substring(1);
+            result += StringHelper.capitalize(word);
         }
         return result;
     }

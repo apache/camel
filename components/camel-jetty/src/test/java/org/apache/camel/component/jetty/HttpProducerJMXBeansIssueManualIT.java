@@ -50,7 +50,7 @@ public final class HttpProducerJMXBeansIssueManualIT extends BaseJettyTest {
 
                 from("direct:leak").process(new Processor() {
                     public void process(Exchange exchange) {
-                        LOG.debug("URL is: " + exchange.getIn().getHeader("url"));
+                        LOG.debug("URL is: {}", exchange.getIn().getHeader("url"));
                     }
                 }).recipientList(header("url"));
             }

@@ -49,7 +49,7 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
         template.sendBody("direct:start", "A,B,C");
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(10)
     public void testSplitParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C

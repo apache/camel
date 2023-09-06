@@ -74,6 +74,7 @@ We have removed deprecated APIs such as the following:
 - Removed `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` as you should use `value` (default) instead.
   For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
 - Removed `label` on `@UriEndpoint` as you should use `category` instead.
+- Removed `consumerClass` on `@UriEndpoint`.
 - Removed all `asyncCallback` methods on `ProducerTemplate`. Use `asyncSend` or `asyncRequest` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
@@ -84,7 +85,7 @@ We have removed deprecated APIs such as the following:
 - Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
 - Removed `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 - Removed `org.apache.camel.builder.SimpleBuilder`. Was mostly used internally in Camel with the Java DSL in some situations.
-- Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanInspection` instead.
+- Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanIntrospection` instead.
 - Removed `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog`.
 - The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`.
 - Added `position` method to `org.apache.camel.StreamCache`.
@@ -313,6 +314,11 @@ This also applies to Java types such as String, int, etc:
 
     "bean:myBean?method=bar(String.class, int.class)"
 
+=== camel-box
+
+Upgraded from Box Java SDK v2 to v4, which have some method signature changes.
+The method to get a file thumbnail is no longer available.
+
 === camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
@@ -320,6 +326,12 @@ The `keyType` parameter has been removed. The Key for the cache will now be only
 === camel-fhir
 
 The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only the `Delete` API method has changed and now returns `ca.uhn.fhir.rest.api.MethodOutcome` instead of `org.hl7.fhir.instance.model.api.IBaseOperationOutcome`. See https://hapifhir.io/hapi-fhir/blog/ for a more detailed list of underlying changes (only the hapi-fhir client is used in Camel).
+
+=== camel-google
+
+The API based components `camel-google-drive`, `camel-google-calendar`, `camel-google-sheets` and `camel-google-mail`
+has been upgraded from Google Java SDK v1 to v2 and to latest API revisions. The `camel-google-drive` and `camel-google-sheets`
+have some API methods changes, but the others are identical as before.
 
 === camel-http
 
@@ -393,6 +405,12 @@ The `camel stop` command will now by default stop all running integrations (the 
 
 The _Placeholders substitutes_ is changed to use `#name` instead of `$name` syntax.
 
+=== camel-jpa
+
+The option `transactionManager` has been removed, and a new option named `transactionStrategy`
+has been added, that acts as vendor neutral abstraction to make it easier to configure Spring Transaction
+or Quarkus Transaction.
+
 === camel-openapi-java
 
 The `camel-openapi-java` component has been changed to use `io.swagger.v3` libraries instead of `io.apicurio.datamodels`.
@@ -434,6 +452,10 @@ Solver Daemon solutions should be migrated to use SolverManager.
 === camel-platform-http-vertx
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
+
+=== camel-salesforce
+
+Property names of blob fields on generated DTOs no longer have 'Url' affixed. E.g., the `ContentVersionUrl` property is now just `ContentVersion`.
 
 === camel-slack
 
@@ -484,3 +506,27 @@ NOTE: The `platform-http-starter` can also be used with Rest DSL.
 
 If the route or consumer is suspended then http status 503 is now returned instead of 404.
 
+=== camel-twitter
+
+The component was updated to use Twitter4j version 4.1.2, which https://twitter4j.org/2022/10/21/264[has moved the packages] used by a few of its classes. If accessing certain twitter-related data, such as the Twit status, you need to update the packages used from `twitter4j.Status` to `twitter4j.v1.Status`.
+
+
+== Upgrading Camel 4.0.0 to 4.0.1
+
+=== camel-aws2-sns
+
+The `queueUrl` parameter has been replaced by the `queueArn` parameter
+
+For Example before
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=https://xxxx")
+----
+
+Should be changed to
+
+----
+from("direct:start")
+  .to("aws2-sns://mytopic?subject=mySubject&autoCreateTopic=true&subscribeSNStoSQS=true&queueArn=arn:aws:sqs:xxxxx")
+----

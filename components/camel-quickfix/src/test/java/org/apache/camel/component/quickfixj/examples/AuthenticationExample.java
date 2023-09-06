@@ -91,10 +91,10 @@ public class AuthenticationExample {
 
     public static class LogonAuthenticator {
         public void authenticate(Exchange exchange) throws RejectLogon, CamelExchangeException, FieldNotFound {
-            LOG.info("Acceptor is rejecting logon for " + exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY));
+            LOG.info("Acceptor is rejecting logon for {}", exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY));
             Message message = exchange.getIn().getMandatoryBody(Message.class);
             if (message.isSetField(RawData.FIELD)) {
-                LOG.info("Invalid password: " + message.getString(RawData.FIELD));
+                LOG.info("Invalid password: {}", message.getString(RawData.FIELD));
             }
             throw new RejectLogon("Rejecting logon for test purposes");
         }

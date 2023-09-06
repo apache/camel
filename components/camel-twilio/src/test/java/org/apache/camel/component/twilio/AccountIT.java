@@ -48,7 +48,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
 
         assertNotNull(result, "fetcher result not null");
         assertNotNull(result.getSid(), "fetcher result sid not null");
-        LOG.debug("fetcher: " + result);
+        LOG.debug("fetcher: {}", result);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
 
         assertNotNull(result, "fetcher result not null");
         assertNotNull(result.getSid(), "fetcher result sid not null");
-        LOG.debug("fetcher: " + result);
+        LOG.debug("fetcher: {}", result);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
         assertNotNull(result, "reader result not null");
         result.forEach(account -> {
             assertNotNull(account, "reader result account not null");
-            LOG.debug("reader: " + account);
+            LOG.debug("reader: {}", account);
         });
     }
 
@@ -80,7 +80,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
         assertNotNull(result, "reader result not null");
         result.forEach(account -> {
             assertEquals(Account.Status.ACTIVE, account.getStatus(), "reader result account active");
-            LOG.debug("reader: " + account);
+            LOG.debug("reader: {}", account);
         });
     }
 

@@ -21,11 +21,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -84,11 +87,24 @@ public class RestComponent extends DefaultComponent {
             // use only what remains and at this point parameters that have been used have been removed
             // without overwriting any query parameters set via queryParameters endpoint option
             final Map<String, Object> queryParameters = new LinkedHashMap<>(parameters);
+
+            // filter out known options from the producer, as they should not be in the query parameters
+            EndpointUriFactory factory = getEndpointUriFactory(pname);
+            if (factory != null) {
+                for (String key : parameters.keySet()) {
+                    if (factory.propertyNames().contains(key)) {
+                        queryParameters.remove(key);
+                    }
+                }
+            }
+
             final Map<String, Object> existingQueryParameters = URISupport.parseQuery(answer.getQueryParameters());
             queryParameters.putAll(existingQueryParameters);
 
             final String remainingParameters = URISupport.createQueryString(queryParameters);
-            answer.setQueryParameters(remainingParameters);
+            if (ObjectHelper.isNotEmpty(remainingParameters)) {
+                answer.setQueryParameters(remainingParameters);
+            }
         }
 
         answer.setParameters(parameters);
@@ -189,6 +205,17 @@ public class RestComponent extends DefaultComponent {
     // ****************************************
     // Helpers
     // ****************************************
+
+    private EndpointUriFactory getEndpointUriFactory(String name) {
+        if (name != null) {
+            UriFactoryResolver resolver
+                    = getCamelContext().getCamelContextExtension().getContextPlugin(UriFactoryResolver.class);
+            if (resolver != null) {
+                return resolver.resolveFactory(name, getCamelContext());
+            }
+        }
+        return null;
+    }
 
     public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)

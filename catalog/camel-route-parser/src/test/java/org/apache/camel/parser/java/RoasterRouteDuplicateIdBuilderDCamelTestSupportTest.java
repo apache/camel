@@ -42,13 +42,13 @@ public class RoasterRouteDuplicateIdBuilderDCamelTestSupportTest {
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
         for (ParserResult result : list) {
-            LOG.info("Consumer: " + result.getElement());
+            LOG.info("Consumer: {}", result.getElement());
         }
         assertEquals(3, list.size());
 
         list = CamelJavaParserHelper.parseCamelRouteIds(method);
         for (ParserResult result : list) {
-            LOG.info("Route id: " + result.getElement());
+            LOG.info("Route id: {}", result.getElement());
         }
         assertEquals(3, list.size());
         assertEquals("foo", list.get(0).getElement());

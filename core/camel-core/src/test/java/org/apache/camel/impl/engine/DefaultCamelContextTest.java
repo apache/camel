@@ -43,7 +43,14 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultCamelContextTest extends TestSupport {
 
@@ -118,18 +125,13 @@ public class DefaultCamelContextTest extends TestSupport {
     }
 
     @Test
-    public void testGetEndpoint() throws Exception {
+    public void testGetEndpoint() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
         Endpoint endpoint = ctx.getEndpoint("log:foo");
         assertNotNull(endpoint);
 
-        try {
-            ctx.getEndpoint((String) null);
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> ctx.getEndpoint(null), "Should have thrown exception");
     }
 
     @Test
@@ -175,27 +177,25 @@ public class DefaultCamelContextTest extends TestSupport {
     }
 
     @Test
-    public void testGetEndpointNotFound() throws Exception {
+    public void testGetEndpointNotFound() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
-        try {
-            ctx.getEndpoint("xxx:foo");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (NoSuchEndpointException e) {
-            assertTrue(e.getMessage().contains("No endpoint could be found for: xxx:"));
-        }
+
+        NoSuchEndpointException e = assertThrows(NoSuchEndpointException.class,
+                () -> ctx.getEndpoint("xxx:foo"),
+                "Should have thrown a ResolveEndpointFailedException");
+
+        assertTrue(e.getMessage().contains("No endpoint could be found for: xxx:"));
     }
 
     @Test
-    public void testGetEndpointUnknownComponentNoScheme() throws Exception {
+    public void testGetEndpointUnknownComponentNoScheme() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
-        try {
-            CamelContextHelper.getMandatoryEndpoint(ctx, "unknownname");
-            fail("Should have thrown a NoSuchEndpointException");
-        } catch (NoSuchEndpointException e) {
-            // expected
-        }
+
+        assertThrows(NoSuchEndpointException.class,
+                () -> CamelContextHelper.getMandatoryEndpoint(ctx, "unknownname"),
+                "Should have thrown a NoSuchEndpointException");
     }
 
     @Test
@@ -258,17 +258,15 @@ public class DefaultCamelContextTest extends TestSupport {
 
         LogComponent log = ctx.getComponent("log", LogComponent.class);
         assertNotNull(log);
-        try {
+
+        assertThrows(IllegalArgumentException.class, () -> {
             ctx.addComponent("direct", new DirectComponent());
             ctx.getComponent("log", DirectComponent.class);
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        }, "Should have thrown exception");
     }
 
     @Test
-    public void testHasEndpoint() throws Exception {
+    public void testHasEndpoint() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
         ctx.getEndpoint("mock://foo");
@@ -279,12 +277,8 @@ public class DefaultCamelContextTest extends TestSupport {
         EndpointRegistry map = ctx.getEndpointRegistry();
         assertEquals(1, map.size());
 
-        try {
-            ctx.hasEndpoint((String) null);
-            fail("Should have thrown exception");
-        } catch (ResolveEndpointFailedException e) {
-            // expected
-        }
+        assertThrows(ResolveEndpointFailedException.class, () -> ctx.hasEndpoint(null),
+                "Should have thrown exception");
     }
 
     @Test

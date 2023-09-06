@@ -117,7 +117,7 @@ public class GroupIT {
 
     @Test
     public void testOrder() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)
@@ -179,7 +179,7 @@ public class GroupIT {
 
     @Test
     public void testJoinAfterConnect() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)
@@ -229,7 +229,7 @@ public class GroupIT {
 
     @Test
     public void testJoinBeforeConnect() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)
@@ -273,7 +273,7 @@ public class GroupIT {
 
     @Test
     public void testRejoinAfterDisconnect() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)
@@ -332,7 +332,7 @@ public class GroupIT {
     //(see  https://github.com/jboss-fuse/fuse/issues/133)
     @Test
     public void testGroupClose() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
         ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
@@ -380,7 +380,7 @@ public class GroupIT {
     @Test
     public void testAddFieldIgnoredOnParse() throws Exception {
 
-        int port = AvailablePortFinder.getNextAvailable();
+        int port = AvailablePortFinder.getNextRandomAvailable();
         ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 

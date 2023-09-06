@@ -24,7 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +38,7 @@ public class FopEndpointTest extends CamelTestSupport {
     private boolean canTest() {
         try {
             context().getEndpoint("fop:pdf");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
 
@@ -124,7 +126,7 @@ public class FopEndpointTest extends CamelTestSupport {
 
         producer.process(exchange);
         try (InputStream inputStream = exchange.getMessage().getBody(InputStream.class)) {
-            PDDocument document = PDDocument.load(inputStream, password);
+            PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(inputStream), password);
             assertTrue(document.isEncrypted());
         }
     }
@@ -150,6 +152,6 @@ public class FopEndpointTest extends CamelTestSupport {
 
     private PDDocument getDocumentFrom(Exchange exchange) throws IOException {
         InputStream inputStream = exchange.getMessage().getBody(InputStream.class);
-        return PDDocument.load(inputStream);
+        return Loader.loadPDF(new RandomAccessReadBuffer(inputStream));
     }
 }

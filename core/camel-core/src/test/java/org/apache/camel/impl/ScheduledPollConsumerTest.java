@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -29,12 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ScheduledPollConsumerTest extends ContextTestSupport {
 
     private static boolean rollback;
-    private static int counter;
     private static String event = "";
 
     @Test
     public void testExceptionOnPollAndCanStartAgain() throws Exception {
-
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
@@ -77,7 +77,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
 
     @Test
     public void testRetryAtMostThreeTimes() throws Exception {
-        counter = 0;
+        final AtomicInteger counter = new AtomicInteger();
         event = "";
 
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
@@ -95,8 +95,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
 
             public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
                 event += "rollback";
-                counter++;
-                if (retryCounter < 3) {
+                int cnt = counter.incrementAndGet();
+                if (cnt <= 3) {
                     return true;
                 }
                 return false;
@@ -111,7 +111,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         consumer.stop();
 
         // 3 retries + 1 last failed attempt when we give up
-        assertEquals(4, counter);
+        assertEquals(4, counter.get());
         assertEquals("rollbackrollbackrollbackrollback", event);
     }
 

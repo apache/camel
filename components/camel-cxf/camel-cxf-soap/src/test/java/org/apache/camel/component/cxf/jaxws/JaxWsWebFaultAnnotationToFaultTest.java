@@ -73,7 +73,7 @@ public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
             fail("Expect to get an exception here");
         } catch (PingMeFault expected) {
             assertEquals(MESSAGE, expected.getMessage());
-        } catch (Throwable t) {
+        } catch (Exception t) {
             LOG.warn("The CXF client did not manage to map the client exception: {}", t.getMessage(), t);
             fail("The CXF client did not manage to map the client exception "
                  + t.getClass().getName() + " to a " + PingMeFault.class.getName()

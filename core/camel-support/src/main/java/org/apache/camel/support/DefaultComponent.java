@@ -107,11 +107,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         Map<String, Object> parameters;
         if (useRawUri()) {
             // when using raw uri then the query is taking from the uri as is
-            String query;
-            int idx = uri.indexOf('?');
-            if (idx > -1) {
-                query = uri.substring(idx + 1);
-            } else {
+            String query = StringHelper.after(uri, "?");
+            if (query == null) {
                 query = u.getRawQuery();
             }
             // and use method parseQuery
