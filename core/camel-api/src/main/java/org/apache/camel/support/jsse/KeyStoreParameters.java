@@ -190,7 +190,13 @@ public class KeyStoreParameters extends JsseParameters {
             ks.load(null, ksPassword);
         } else {
             InputStream is = this.resolveResource(this.parsePropertyValue(this.resource));
-            ks.load(is, ksPassword);
+            if (is == null) {
+                LOG.warn("No keystore could be found at {}.", this.resource);
+            } else {
+                try (is) {
+                    ks.load(is, ksPassword);
+                }
+            }
         }
 
         if (LOG.isDebugEnabled()) {
