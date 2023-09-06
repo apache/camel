@@ -674,6 +674,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         // SOAPAction header may contain quoted value. Remove the quotes here.
                         soapAction = StringHelper.removeLeadingAndEndingQuotes(soapAction);
                         camelHeaders.put(SoapBindingConstants.SOAP_ACTION, soapAction);
+                    } else if (entry.getKey().startsWith(":")) {
+                        /* Ignore HTTP/2 pseudo headers such as :status */
+                        continue;
                     } else {
                         LOG.trace("Populate header from CXF header={} value={}",
                                 entry.getKey(), entry.getValue());
