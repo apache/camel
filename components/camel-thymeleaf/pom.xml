@@ -32,15 +32,6 @@
     <name>Camel :: Thymeleaf</name>
     <description>Camel Thymeleaf support</description>
 
-    <properties>
-        <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
-        <jakarta-servlet-api-version>6.0.0</jakarta-servlet-api-version>
-        <wiremock-version>3.0.0-beta-15</wiremock-version>
-        <pitest-maven-version>1.14.4</pitest-maven-version>
-        <pitest-junit5-plugin-version>1.2.0</pitest-junit5-plugin-version>
-        <jacoco-maven-plugin-version>0.8.10</jacoco-maven-plugin-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -76,7 +67,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.wiremock</groupId>
+            <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock-version}</version>
             <scope>test</scope>
@@ -96,66 +87,5 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>${argLine}</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-code-coverage-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*Configurer.class</exclude>
-                        <exclude>**/*Factory.class</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>${pitest-maven-version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.pitest</groupId>
-                        <artifactId>pitest-junit5-plugin</artifactId>
-                        <version>${pitest-junit5-plugin-version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <targetClasses>
-                        <param>org.apache.camel.component.thymeleaf.*</param>
-                    </targetClasses>
-<!--                    <targetTests>-->
-<!--                        <param>org.apache.camel.component.thymeleaf.*</param>-->
-<!--                    </targetTests>-->
-                    <excludedClasses>
-                        <param>org.apache.camel.component.thymeleaf.*Configurer*</param>
-                        <param>org.apache.camel.component.thymeleaf.*Factory*</param>
-                    </excludedClasses>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
 
 </project>

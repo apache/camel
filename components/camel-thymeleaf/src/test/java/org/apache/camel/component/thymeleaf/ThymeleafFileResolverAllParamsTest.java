@@ -89,7 +89,6 @@ public class ThymeleafFileResolverAllParamsTest extends ThymeleafAbstractBaseTes
 
             public void configure() {
 
-                context.setTracing(true);
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
                         .to("thymeleaf:org/apache/camel/component/thymeleaf/letter?allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&checkExistence=true&encoding=UTF-8&order=1&prefix=src/test/resources/&templateMode=HTML&resolver=FILE&suffix=.html")
