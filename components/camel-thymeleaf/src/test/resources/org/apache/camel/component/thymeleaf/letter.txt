@@ -19,7 +19,7 @@
 <!--/* This code will be removed at thymeleaf parsing time! */-->
 Dear [(${headers.lastName})], [(${headers.firstName})]
 
-Thanks for the order of [(${headers.item})].
+Thank you for your order number [(${exchange.properties.orderNumber})] of [(${headers.item})].
 
 Regards Camel Riders Bookstore
 [(${body})]

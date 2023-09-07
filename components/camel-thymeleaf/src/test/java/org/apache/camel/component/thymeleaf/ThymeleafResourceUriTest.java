@@ -16,41 +16,23 @@
  */
 package org.apache.camel.component.thymeleaf;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit test for wiki documentation
- */
-public class ThymeleafLetterTest extends CamelTestSupport {
-
-    // START SNIPPET: e1
-    private Exchange createLetter() {
-
-        Exchange exchange = context.getEndpoint("direct:a").createExchange();
-
-        Message msg = exchange.getIn();
-        msg.setHeader("firstName", "Claus");
-        msg.setHeader("lastName", "Ibsen");
-        msg.setHeader("item", "Camel in Action");
-        msg.setBody("PS: Next beer is on me, James");
-
-        return exchange;
-    }
+public class ThymeleafResourceUriTest extends ThymeleafAbstractBaseTest {
 
     @Test
-    public void testThymeleafLetter() throws Exception {
+    public void testThymeleaf() throws InterruptedException {
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(1);
-        mock.message(0).body().contains("Dear Ibsen, Claus");
-        mock.message(0).body().contains("Thanks for the order of Camel in Action.");
+        mock.message(0).body().contains(THANK_YOU_FOR_YOUR_ORDER);
+        mock.message(0).body().endsWith(SPAZZ_TESTING_SERVICE);
+        mock.message(0).header(ThymeleafConstants.THYMELEAF_TEMPLATE).isNull();
+        mock.message(0).header(FIRST_NAME).isEqualTo(JANE);
 
-        template.send("direct:a", createLetter());
+        template.request(DIRECT_START, resourceUriHeaderProcessor);
 
         mock.assertIsSatisfied();
     }
@@ -61,13 +43,13 @@ public class ThymeleafLetterTest extends CamelTestSupport {
         return new RouteBuilder() {
 
             public void configure() {
-                context.setTracing(true);
 
-                from("direct:a")
-                        .to("thymeleaf:org/apache/camel/component/thymeleaf/letter.txt")
-                        .to("mock:result");
+                from(DIRECT_START)
+                        .setBody(simple(SPAZZ_TESTING_SERVICE))
+                        .to("thymeleaf:dontcare?allowContextMapAll=true&resolver=CLASS_LOADER")
+                        .to(MOCK_RESULT);
             }
         };
     }
-    // END SNIPPET: e1
+
 }

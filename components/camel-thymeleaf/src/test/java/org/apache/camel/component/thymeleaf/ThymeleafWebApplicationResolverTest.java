@@ -16,13 +16,22 @@
  */
 package org.apache.camel.component.thymeleaf;
 
+import java.io.File;
+import java.io.InputStream;
+
+import jakarta.servlet.ServletContext;
+
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,10 +39,26 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 
-public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
+public class ThymeleafWebApplicationResolverTest extends ThymeleafAbstractBaseTest {
 
     private static final String TEST_ENDPOINT = "testEndpoint";
+
+    private ServletContext servletContext;
+
+    private JakartaServletWebApplication jakartaServletWebApplication;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+
+        super.setUp();
+
+        File initialFile = new File("src/test/resources/WEB-INF/templates/letter.html");
+        InputStream targetStream = FileUtils.openInputStream(initialFile);
+        Mockito.when(servletContext.getResourceAsStream(anyString())).thenReturn(targetStream);
+    }
 
     @Test
     public void testThymeleaf() throws InterruptedException {
@@ -62,16 +87,16 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
                 () -> assertEquals(ExchangePattern.InOut, thymeleafEndpoint.getExchangePattern()),
                 () -> assertNull(thymeleafEndpoint.getOrder()),
                 () -> assertNull(thymeleafEndpoint.getPrefix()),
-                () -> assertEquals(ThymeleafResolverType.CLASS_LOADER, thymeleafEndpoint.getResolver()),
+                () -> assertEquals(ThymeleafResolverType.WEB_APP, thymeleafEndpoint.getResolver()),
                 () -> assertNull(thymeleafEndpoint.getSuffix()),
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
         assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
         ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
-        assertTrue(resolver instanceof ClassLoaderTemplateResolver);
+        assertTrue(resolver instanceof WebApplicationTemplateResolver);
 
-        ClassLoaderTemplateResolver templateResolver = (ClassLoaderTemplateResolver) resolver;
+        WebApplicationTemplateResolver templateResolver = (WebApplicationTemplateResolver) resolver;
         assertAll("templateResolver",
                 () -> assertTrue(templateResolver.isCacheable()),
                 () -> assertNull(templateResolver.getCacheTTLMs()),
@@ -83,6 +108,24 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
                 () -> assertEquals(TemplateMode.HTML, templateResolver.getTemplateMode()));
     }
 
+    private ServletContext servletContext() {
+
+        if (servletContext == null) {
+            servletContext = mock(ServletContext.class);
+        }
+
+        return servletContext;
+    }
+
+    private JakartaServletWebApplication jakartaServletWebApplication() {
+
+        if (jakartaServletWebApplication == null) {
+            jakartaServletWebApplication = JakartaServletWebApplication.buildApplication(servletContext());
+        }
+
+        return jakartaServletWebApplication;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
 
@@ -92,8 +135,10 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
                 ThymeleafEndpoint endpoint = new ThymeleafEndpoint();
                 endpoint.setCamelContext(context);
+                endpoint.setJakartaServletWebApplication(jakartaServletWebApplication());
                 endpoint.setAllowContextMapAll(true);
-                endpoint.setResourceUri("org/apache/camel/component/thymeleaf/letter.txt");
+                endpoint.setResourceUri("WEB-INF/templates/letter.html");
+                endpoint.setResolver(ThymeleafResolverType.WEB_APP);
 
                 context.addEndpoint(TEST_ENDPOINT, endpoint);
 

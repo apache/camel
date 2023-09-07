@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,18 +16,9 @@
     limitations under the License.
 
 -->
-<letter>
-    <greeting>
-        Dear [[${headers.lastName}]], [[${headers.firstName}]]
-    </greeting>
-    <message>
-        Thanks for the order of [[${headers.item}]].
-    </message>
-    <closing>
-        Regards Camel Riders Bookstore
-    </closing>
-    <signature th:attr="content=${body}">
-        1 Jupiter Road, Junit, CA 98765
-    </signature>
-</letter>
+Dear <span th:remove="tag" th:text="${body.lastName}"/>, <span th:remove="tag" th:text="${body.firstName}"/>
 
+Thank you for your order number [(${exchange.properties.orderNumber})] of [(${body.item})].
+
+Regards Camel Riders Bookstore
+<span th:remove="tag" th:text="${body.closing}"/>

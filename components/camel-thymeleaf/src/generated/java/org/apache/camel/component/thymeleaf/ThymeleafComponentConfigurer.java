@@ -21,16 +21,10 @@ public class ThymeleafComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ThymeleafComponent target = (ThymeleafComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowcontextmapall":
-        case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
-        case "allowtemplatefromheader":
-        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "templateengine":
-        case "templateEngine": target.setTemplateEngine(property(camelContext, org.thymeleaf.TemplateEngine.class, value)); return true;
         default: return false;
         }
     }
@@ -38,16 +32,10 @@ public class ThymeleafComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowcontextmapall":
-        case "allowContextMapAll": return boolean.class;
-        case "allowtemplatefromheader":
-        case "allowTemplateFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "templateengine":
-        case "templateEngine": return org.thymeleaf.TemplateEngine.class;
         default: return null;
         }
     }
@@ -56,16 +44,10 @@ public class ThymeleafComponentConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ThymeleafComponent target = (ThymeleafComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowcontextmapall":
-        case "allowContextMapAll": return target.isAllowContextMapAll();
-        case "allowtemplatefromheader":
-        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "templateengine":
-        case "templateEngine": return target.getTemplateEngine();
         default: return null;
         }
     }

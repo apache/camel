@@ -15,21 +15,26 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class ThymeleafEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":resourceUri";
+    private static final String BASE = ":templatePath";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(13);
         props.add("allowContextMapAll");
-        props.add("allowTemplateFromHeader");
+        props.add("cacheTimeToLive");
+        props.add("cacheable");
+        props.add("checkExistence");
         props.add("contentCache");
         props.add("encoding");
         props.add("lazyStartProducer");
-        props.add("loaderCache");
-        props.add("propertiesFile");
+        props.add("order");
+        props.add("prefix");
+        props.add("resolver");
         props.add("resourceUri");
+        props.add("suffix");
+        props.add("templateMode");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

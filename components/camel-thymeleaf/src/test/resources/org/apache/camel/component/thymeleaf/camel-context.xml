@@ -24,17 +24,17 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route trace="true">
 	   	<from uri="direct:start"/>
 	    <filter>
 	   		<method ref="fruitFilter" method="isApple"/>
-        	<to uri="thymeleaf:org/apache/camel/component/thymeleaf/AppleTemplate.ftl?allowContextMapAll=true" />
+        	<to uri="thymeleaf:org/apache/camel/component/thymeleaf/apple.html?templateMode=HTML&amp;allowContextMapAll=true" />
         	<to uri="mock:result" />
 	    </filter>
 	    <filter>
 	   		<method ref="fruitFilter" method="isOrange"/>
-        	<to uri="thymeleaf:org/apache/camel/component/thymeleaf/OrangeTemplate.ftl?allowContextMapAll=true" />
-    	    <to uri="mock:result" />
+        	<to uri="thymeleaf:org/apache/camel/component/thymeleaf/orange.html?templateMode=HTML&amp;allowContextMapAll=true" />
+			<to uri="mock:result" />
 	    </filter>
    </route>
   </camelContext>

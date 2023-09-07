@@ -16,9 +16,9 @@
     limitations under the License.
 
 -->
-Dear [[${headers.lastName}]], [[${headers.firstName}]]
+Dear <span th:remove="tag" th:text="${headers.lastName}"/>, <span th:remove="tag" th:text="${headers.firstName}"/>
 
-Thanks for the order of [[${headers.item}]].
+Thank you for your order number [(${exchange.properties.orderNumber})] of [(${headers.item})].
 
 Regards Camel Riders Bookstore
-[[${body}]]
+<span th:remove="tag" th:text="${body}"/>
