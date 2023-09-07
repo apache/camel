@@ -14,28 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
 
-import java.util.Arrays;
-import java.util.Collections;
+package org.apache.camel.dataformat.bindy.model.fixed.link;
 
-import org.junit.jupiter.api.Test;
+import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
+import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+@CsvRecord(separator = ",", skipField = true)
+public class MyModel2 {
 
-public class CamelServiceNowGenerateMojoTest extends CamelServiceNowMojoTestSupport {
+    @DataField(pos = 1)
+    private String a;
 
-    @Test
-    public void testExecute() throws Exception {
-        final CamelServiceNowGenerateMojo mojo = createMojo();
+    @DataField(pos = 2)
+    private String b;
 
-        mojo.objects = Arrays.asList("incident");
-        mojo.fields = Collections.singletonMap("incident", "sys_id");
-        mojo.fieldsExcludePattern = Collections.singletonMap("incident", "^sys_.*$");
-
-        mojo.execute();
-
-        assertTrue(mojo.outputDirectory.exists(), "Output directory was not created");
-        assertTrue(mojo.outputDirectory.list().length > 0, "Output directory is empty");
+    public String getA() {
+        return a;
     }
+
+    public void setA(String a) {
+        this.a = a;
+    }
+
+    public String getB() {
+        return b;
+    }
+
+    public void setB(String b) {
+        this.b = b;
+    }
+
 }
