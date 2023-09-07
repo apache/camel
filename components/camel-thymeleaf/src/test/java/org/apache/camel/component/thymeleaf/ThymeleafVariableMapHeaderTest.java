@@ -17,8 +17,26 @@
 package org.apache.camel.component.thymeleaf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
-public class ThymeleafLetterWithoutHeaderTest extends ThymeleafLetterTest {
+public class ThymeleafVariableMapHeaderTest extends ThymeleafAbstractBaseTest {
+
+    @Test
+    public void testThymeleaf() throws InterruptedException {
+
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+        mock.expectedMessageCount(1);
+        mock.message(0).body().contains(THANK_YOU_FOR_YOUR_ORDER);
+        mock.message(0).body().endsWith(SPAZZ_TESTING_SERVICE);
+        mock.message(0).header(ThymeleafConstants.THYMELEAF_TEMPLATE).isNull();
+        mock.message(0).header(ThymeleafConstants.THYMELEAF_VARIABLE_MAP).isNull();
+        mock.message(0).header(FIRST_NAME).isNull();
+
+        template.request(DIRECT_START, variableMapHeaderProcessor);
+
+        mock.assertIsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -27,8 +45,10 @@ public class ThymeleafLetterWithoutHeaderTest extends ThymeleafLetterTest {
 
             public void configure() {
 
-                from("direct:a").to("thymeleaf:org/apache/camel/component/thymeleaf/header.txt")
-                        .to("thymeleaf:org/apache/camel/component/thymeleaf/letterWithoutHeader.txt").to("mock:result");
+                from(DIRECT_START)
+                        .setBody(simple(SPAZZ_TESTING_SERVICE))
+                        .to("thymeleaf:dontcare?templateMode=HTML&resolver=DEFAULT")
+                        .to(MOCK_RESULT);
             }
         };
     }

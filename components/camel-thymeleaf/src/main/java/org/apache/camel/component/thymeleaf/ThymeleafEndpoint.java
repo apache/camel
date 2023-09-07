@@ -30,7 +30,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.DefaultTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
@@ -38,45 +37,47 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.thymeleaf.templateresolver.UrlTemplateResolver;
 import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 /**
  * Transform messages using a Thymeleaf template.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "thymeleaf", title = "Thymeleaf", syntax = "thymeleaf:resourceUri",
+@UriEndpoint(firstVersion = "1.0.0", scheme = "thymeleaf", title = "Thymeleaf", syntax = "thymeleaf:templatePath",
              producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = ThymeleafConstants.class)
 public class ThymeleafEndpoint extends ResourceEndpoint {
 
     private TemplateEngine templateEngine;
 
+    private String template;
+
+    private JakartaServletWebApplication jakartaServletWebApplication;
+
     @UriParam(defaultValue = "CLASS_LOADER", description = "The type of resolver to be used by the template engine.",
               javaType = "org.apache.camel.component.thymeleaf.ThymeleafResolverType")
     private ThymeleafResolverType resolver = ThymeleafResolverType.CLASS_LOADER;
 
-    @UriParam
+    @UriParam(description = "The template mode to be applied to templates.")
     private String templateMode;
 
-    @UriParam
+    @UriParam(description = "An optional prefix added to template names to convert them into resource names.")
     private String prefix;
 
-    @UriParam
+    @UriParam(description = "An optional suffix added to template names to convert them into resource names.")
     private String suffix;
 
-    @UriParam
-    private String template;
-
-    @UriParam
+    @UriParam(description = "The character encoding to be used for reading template resources.")
     private String encoding;
 
-    @UriParam
+    @UriParam(description = "The order in which this template will be resolved as part of the resolver chain.")
     private Integer order;
 
-    @UriParam
+    @UriParam(description = "Whether a template resources will be checked for existence before being returned.")
     private Boolean checkExistence;
 
-    @UriParam
+    @UriParam(description = "The cache Time To Live for templates, expressed in milliseconds.")
     private Long cacheTimeToLive;
 
-    @UriParam
+    @UriParam(description = "Whether templates have to be considered cacheable or not.")
     private Boolean cacheable;
 
     public ThymeleafEndpoint() {
@@ -100,19 +101,8 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         return "thymeleaf:" + getResourceUri();
     }
 
-    public String getTemplate() {
-
-        return template;
-    }
-
-    public void setTemplate(String template) {
-
-        this.template = template;
-    }
-
     public String getTemplateMode() {
 
-        TemplateMode f;
         return templateMode;
     }
 
@@ -227,7 +217,7 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         this.order = order;
     }
 
-    public Boolean isCheckExistence() {
+    public Boolean getCheckExistence() {
 
         return checkExistence;
     }
@@ -268,7 +258,7 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         this.cacheTimeToLive = cacheTimeToLive;
     }
 
-    public Boolean isCacheable() {
+    public Boolean getCacheable() {
 
         return cacheable;
     }
@@ -285,7 +275,7 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         this.cacheable = cacheable;
     }
 
-    private synchronized TemplateEngine getTemplateEngine() {
+    protected synchronized TemplateEngine getTemplateEngine() {
 
         if (templateEngine == null) {
             ITemplateResolver templateResolver;
@@ -335,6 +325,19 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         this.templateEngine = templateEngine;
     }
 
+    public void setJakartaServletWebApplication(JakartaServletWebApplication jakartaServletWebApplication) {
+
+        this.jakartaServletWebApplication = jakartaServletWebApplication;
+    }
+
+    @Override
+    public void clearContentCache() {
+
+        if (templateEngine != null) {
+            templateEngine.clearTemplateCache();
+        }
+    }
+
     public ThymeleafEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
 
         String newUri = uri.replace(getResourceUri(), newResourceUri);
@@ -350,40 +353,45 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
 
         String newResourceUri = exchange.getIn().getHeader(ThymeleafConstants.THYMELEAF_RESOURCE_URI, String.class);
         if (newResourceUri != null) {
-            // remove the header to avoid it being propagated in the routing
+            // remove the header so that it is not propagated in the exchange
             exchange.getIn().removeHeader(ThymeleafConstants.THYMELEAF_RESOURCE_URI);
 
-            log.debug("{} set to {} creating new endpoint to handle exchange",
+            log.debug("{} set to {}, creating new endpoint to handle exchange",
                     ThymeleafConstants.THYMELEAF_RESOURCE_URI, newResourceUri);
-            ThymeleafEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
-            newEndpoint.onExchange(exchange);
+            try (ThymeleafEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri)) {
+                newEndpoint.onExchange(exchange);
+            }
 
             return;
         }
 
         String template = exchange.getIn().getHeader(ThymeleafConstants.THYMELEAF_TEMPLATE, String.class);
         if (template != null) {
-            // remove the header to avoid it being propagated in the routing
+            this.template = template;
+            // remove the header so that it is not propagated in the exchange
             exchange.getIn().removeHeader(ThymeleafConstants.THYMELEAF_TEMPLATE);
+        } else {
+            this.template = path;
         }
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> dataModel = exchange.getIn().getHeader(ThymeleafConstants.THYMELEAF_VARIABLE_MAP, Map.class);
         if (dataModel == null) {
             dataModel = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         } else {
-            // remove the header to avoid it being propagated in the routing
+            ExchangeHelper.populateVariableMap(exchange, dataModel, isAllowContextMapAll());
+
+            // remove the header so that it is not propagated in the exchange
             exchange.getIn().removeHeader(ThymeleafConstants.THYMELEAF_VARIABLE_MAP);
         }
 
         // let thymeleaf parse and generate the result
         TemplateEngine templateEngine = getTemplateEngine();
-
         Context context = new Context();
         context.setVariables(dataModel);
+        String buffer = templateEngine.process(this.template, context);
 
-        String buffer = templateEngine.process(template, context);
-
-        // now store the result in the exchange body
+        // store the result in the exchange body
         ExchangeHelper.setInOutBodyPatternAware(exchange, buffer);
     }
 
@@ -513,9 +521,6 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         if (encoding != null) {
             resolver.setCharacterEncoding(encoding);
         }
-        if (checkExistence != null) {
-            resolver.setCheckExistence(checkExistence);
-        }
         if (order != null) {
             resolver.setOrder(order);
         }
@@ -537,7 +542,8 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
 
     private ITemplateResolver webApplicationTemplateResolver() {
 
-        WebApplicationTemplateResolver resolver = new WebApplicationTemplateResolver(null);
+        WebApplicationTemplateResolver resolver = new WebApplicationTemplateResolver(jakartaServletWebApplication);
+
         if (cacheable != null) {
             resolver.setCacheable(cacheable);
         }

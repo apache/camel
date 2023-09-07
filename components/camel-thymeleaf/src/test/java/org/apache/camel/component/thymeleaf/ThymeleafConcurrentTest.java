@@ -16,18 +16,16 @@
  */
 package org.apache.camel.component.thymeleaf;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
-public class ThymeleafConcurrentTest extends CamelTestSupport {
+public class ThymeleafConcurrentTest extends ThymeleafAbstractBaseTest {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -43,20 +41,20 @@ public class ThymeleafConcurrentTest extends CamelTestSupport {
 
     private void doSendMessages(int files, int poolSize) throws Exception {
 
-        getMockEndpoint("mock:result").expectedMessageCount(files);
-        getMockEndpoint("mock:result").assertNoDuplicates(body());
-        getMockEndpoint("mock:result").message(0).body().contains("Bye");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+
+        mock.expectedMessageCount(files);
+        mock.assertNoDuplicates(body());
+        mock.message(0).body().contains("Bye");
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
+            executor.submit(() -> {
 
-                public Object call() {
+                template.sendBody(DIRECT_START, "Hello " + index);
 
-                    template.sendBody("direct:start", "Hello " + index);
-                    return null;
-                }
+                return null;
             });
         }
 
@@ -71,7 +69,9 @@ public class ThymeleafConcurrentTest extends CamelTestSupport {
 
             public void configure() {
 
-                from("direct:start").to("thymeleaf:org/apache/camel/component/thymeleaf/Concurrent.txt").to("mock:result");
+                from(DIRECT_START)
+                        .to("thymeleaf:org/apache/camel/component/thymeleaf/concurrent.txt")
+                        .to(MOCK_RESULT);
             }
         };
     }

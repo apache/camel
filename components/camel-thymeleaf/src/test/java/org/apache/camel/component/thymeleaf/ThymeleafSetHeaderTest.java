@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.thymeleaf;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -33,7 +31,7 @@ public class ThymeleafSetHeaderTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testSendingOrgane() throws Exception {
+    public void testSendingOrange() throws Exception {
 
         assertRespondsWith("orange", "I am an orange");
     }
@@ -42,15 +40,12 @@ public class ThymeleafSetHeaderTest extends CamelSpringTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        //mock.expectedHeaderReceived("fruit", value);
-        mock.expectedBodiesReceived(expectedBody);
-        template.request("direct:start", new Processor() {
+        mock.expectedHeaderReceived("fruit", value);
+        mock.expectedBodyReceived().body().endsWith(expectedBody);
+        template.request("direct:start", exchange -> {
 
-            public void process(Exchange exchange) {
-
-                Message in = exchange.getIn();
-                in.setBody(value);
-            }
+            Message in = exchange.getIn();
+            in.setBody(value);
         });
         mock.assertIsSatisfied();
     }

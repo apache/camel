@@ -18,26 +18,26 @@ package org.apache.camel.component.thymeleaf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit test with the body as a Domain object.
- */
-public class ThymeleafBodyAsDomainObjectTest extends CamelTestSupport {
+public class ThymeleafBodyAsDomainObjectTest extends ThymeleafAbstractBaseTest {
 
     @Test
-    public void testWithObject() throws Exception {
+    public void testThymeleaf() throws InterruptedException {
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(1);
-        mock.message(0).body().contains("Hi Claus how are you? Its a nice day.");
+        mock.message(0).body().contains(THANK_YOU_FOR_YOUR_ORDER);
+        mock.message(0).body().endsWith(SPAZZ_TESTING_SERVICE);
+        mock.message(0).header(ThymeleafConstants.THYMELEAF_TEMPLATE).isNull();
+        mock.message(0).header(ThymeleafConstants.THYMELEAF_VARIABLE_MAP).isNull();
+        mock.message(0).header(FIRST_NAME).isNull();
 
-        MyPerson person = new MyPerson();
-        person.setFamilyName("Ibsen");
-        person.setGivenName("Claus");
+        template.request(DIRECT_START, exchange -> {
 
-        template.requestBody("direct:in", person);
+            exchange.getIn().setBody(letter());
+            exchange.setProperty(ORDER_NUMBER, "7");
+        });
 
         mock.assertIsSatisfied();
     }
@@ -49,48 +49,83 @@ public class ThymeleafBodyAsDomainObjectTest extends CamelTestSupport {
 
             public void configure() {
 
-                from("direct:in")
-                        .to("thymeleaf:org/apache/camel/component/thymeleaf/BodyAsDomainObject.txt")
-                        .to("mock:result");
+                from(DIRECT_START)
+                        .to("thymeleaf:org/apache/camel/component/thymeleaf/letter-domain.html?allowContextMapAll=true")
+                        .to(MOCK_RESULT);
             }
         };
     }
 
-    public static class MyPerson {
+    private Letter letter() {
 
-        private String givenName;
+        Letter letter = new Letter();
+        letter.setFirstName(JANE);
+        letter.setLastName("Doe");
+        letter.setItem("Widgets for Dummies");
+        letter.setClosing(SPAZZ_TESTING_SERVICE);
 
-        private String familyName;
+        return letter;
+    }
 
-        public String getGivenName() {
+    static class Letter {
 
-            return givenName;
+        private String firstName;
+
+        private String lastName;
+
+        private String item;
+
+        private String closing;
+
+        public String getFirstName() {
+
+            return firstName;
         }
 
-        public void setGivenName(String givenName) {
+        public void setFirstName(String firstName) {
 
-            this.givenName = givenName;
+            this.firstName = firstName;
         }
 
-        public String getFamilyName() {
+        public String getLastName() {
 
-            return familyName;
+            return lastName;
         }
 
-        public void setFamilyName(String familyName) {
+        public void setLastName(String lastName) {
 
-            this.familyName = familyName;
+            this.lastName = lastName;
+        }
+
+        public String getItem() {
+
+            return item;
+        }
+
+        public void setItem(String item) {
+
+            this.item = item;
+        }
+
+        public String getClosing() {
+
+            return closing;
+        }
+
+        public void setClosing(String closing) {
+
+            this.closing = closing;
         }
 
         @Override
         public String toString() {
 
-            return "MyPerson{"
-                   + "givenName='"
-                   + givenName + '\''
-                   + ", familyName='"
-                   + familyName + '\''
-                   + '}';
+            return "Letter{" +
+                   "firstName='" + firstName + '\'' +
+                   ", lastName='" + lastName + '\'' +
+                   ", item='" + item + '\'' +
+                   ", closing='" + closing + '\'' +
+                   '}';
         }
 
     }

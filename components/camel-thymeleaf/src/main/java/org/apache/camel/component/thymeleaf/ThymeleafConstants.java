@@ -26,19 +26,15 @@ public class ThymeleafConstants {
     @Metadata(description = "The content of the Thymeleaf template.", javaType = "String")
     public static final String THYMELEAF_TEMPLATE = "CamelThymeleafTemplate";
 
-    @Metadata(description = "The Thymeleaf context to use.", javaType = "org.thymeleaf.context.Context")
-    public static final String THYMELEAF_CONTEXT = "CamelThymeleafContext";
-
-    @Metadata(description = "The locale of the Thymeleaf context.", javaType = "java.util.Locale")
-    public static final String THYMELEAF_LOCALE = "CamelThymeleafLocale";
-
-    @Metadata(description = "To add additional information to the used ThymeleafContext.\n" +
-                            "The value of this header should be a `Map` with key/values that will be\n" +
-                            "added and override any existing key with the same name. \n" +
+    @Metadata(description = "The value of this header should be a `Map` with key/values that will be\n" +
+                            "override any existing key with the same name. \n" +
                             "This can be used to preconfigure common key/values you want to reuse\n" +
                             "in your Thymeleaf endpoints.",
               javaType = "Map<String, Object>")
     public static final String THYMELEAF_VARIABLE_MAP = "CamelThymeleafVariableMap";
+
+    @Metadata(description = "The ServletContext for a web application.", javaType = "jakarta.servlet.ServletContext")
+    public static final String THYMELEAF_SERVLET_CONTEXT = "CamelThymeleafServletContext";
 
     private ThymeleafConstants() {
 

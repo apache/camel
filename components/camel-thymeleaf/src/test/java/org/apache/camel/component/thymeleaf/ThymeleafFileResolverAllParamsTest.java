@@ -21,19 +21,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
-
-    private static final String TEST_ENDPOINT = "testEndpoint";
+public class ThymeleafFileResolverAllParamsTest extends ThymeleafAbstractBaseTest {
 
     @Test
     public void testThymeleaf() throws InterruptedException {
@@ -50,36 +47,38 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         mock.assertIsSatisfied();
 
-        ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(TEST_ENDPOINT, ThymeleafEndpoint.class);
+        ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
+                "thymeleaf:org/apache/camel/component/thymeleaf/letter?allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&checkExistence=true&encoding=UTF-8&order=1&prefix=src/test/resources/&templateMode=HTML&resolver=FILE&suffix=.html",
+                ThymeleafEndpoint.class);
 
         assertAll("properties",
                 () -> assertNotNull(thymeleafEndpoint),
                 () -> assertTrue(thymeleafEndpoint.isAllowContextMapAll()),
-                () -> assertNull(thymeleafEndpoint.getCacheable()),
-                () -> assertNull(thymeleafEndpoint.getCacheTimeToLive()),
-                () -> assertNull(thymeleafEndpoint.getCheckExistence()),
-                () -> assertNull(thymeleafEndpoint.getEncoding()),
+                () -> assertFalse(thymeleafEndpoint.getCacheable()),
+                () -> assertEquals(CACHE_TIME_TO_LIVE, thymeleafEndpoint.getCacheTimeToLive()),
+                () -> assertTrue(thymeleafEndpoint.getCheckExistence()),
+                () -> assertEquals(UTF_8_ENCODING, thymeleafEndpoint.getEncoding()),
                 () -> assertEquals(ExchangePattern.InOut, thymeleafEndpoint.getExchangePattern()),
-                () -> assertNull(thymeleafEndpoint.getOrder()),
-                () -> assertNull(thymeleafEndpoint.getPrefix()),
-                () -> assertEquals(ThymeleafResolverType.CLASS_LOADER, thymeleafEndpoint.getResolver()),
-                () -> assertNull(thymeleafEndpoint.getSuffix()),
+                () -> assertEquals(ORDER, thymeleafEndpoint.getOrder()),
+                () -> assertEquals(PREFIX_SRC_TEST_RESOURCES, thymeleafEndpoint.getPrefix()),
+                () -> assertEquals(ThymeleafResolverType.FILE, thymeleafEndpoint.getResolver()),
+                () -> assertEquals(HTML_SUFFIX, thymeleafEndpoint.getSuffix()),
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
-                () -> assertNull(thymeleafEndpoint.getTemplateMode()));
+                () -> assertEquals(HTML, thymeleafEndpoint.getTemplateMode()));
 
         assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
         ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
-        assertTrue(resolver instanceof ClassLoaderTemplateResolver);
+        assertTrue(resolver instanceof FileTemplateResolver);
 
-        ClassLoaderTemplateResolver templateResolver = (ClassLoaderTemplateResolver) resolver;
+        FileTemplateResolver templateResolver = (FileTemplateResolver) resolver;
         assertAll("templateResolver",
-                () -> assertTrue(templateResolver.isCacheable()),
-                () -> assertNull(templateResolver.getCacheTTLMs()),
-                () -> assertNull(templateResolver.getCharacterEncoding()),
-                () -> assertFalse(templateResolver.getCheckExistence()),
-                () -> assertNull(templateResolver.getOrder()),
-                () -> assertNull(templateResolver.getPrefix()),
-                () -> assertNull(templateResolver.getSuffix()),
+                () -> assertFalse(templateResolver.isCacheable()),
+                () -> assertEquals(CACHE_TIME_TO_LIVE, templateResolver.getCacheTTLMs()),
+                () -> assertEquals(UTF_8_ENCODING, templateResolver.getCharacterEncoding()),
+                () -> assertTrue(templateResolver.getCheckExistence()),
+                () -> assertEquals(ORDER, templateResolver.getOrder()),
+                () -> assertEquals(PREFIX_SRC_TEST_RESOURCES, templateResolver.getPrefix()),
+                () -> assertEquals(HTML_SUFFIX, templateResolver.getSuffix()),
                 () -> assertEquals(TemplateMode.HTML, templateResolver.getTemplateMode()));
     }
 
@@ -88,18 +87,12 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
 
-                ThymeleafEndpoint endpoint = new ThymeleafEndpoint();
-                endpoint.setCamelContext(context);
-                endpoint.setAllowContextMapAll(true);
-                endpoint.setResourceUri("org/apache/camel/component/thymeleaf/letter.txt");
-
-                context.addEndpoint(TEST_ENDPOINT, endpoint);
-
+                context.setTracing(true);
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to(TEST_ENDPOINT)
+                        .to("thymeleaf:org/apache/camel/component/thymeleaf/letter?allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&checkExistence=true&encoding=UTF-8&order=1&prefix=src/test/resources/&templateMode=HTML&resolver=FILE&suffix=.html")
                         .to(MOCK_RESULT);
             }
         };

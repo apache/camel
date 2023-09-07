@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.thymeleaf;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -25,14 +26,14 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-/**
- * Unit test the cache when reloading .ftl files in the classpath
- */
-public class ThymeleafContentCacheTest extends CamelTestSupport {
+import static java.util.Map.entry;
+
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
 
     @Override
     public boolean useJmx() {
@@ -46,127 +47,150 @@ public class ThymeleafContentCacheTest extends CamelTestSupport {
 
         super.setUp();
 
-        // create a vm file in the classpath as this is the tricky reloading stuff
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Hello ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+        // create a template file in the classpath
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
     }
 
     @Test
     public void testNotCached() throws Exception {
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello London");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+        mock.expectedBodiesReceived(expected());
 
-        template.sendBodyAndHeader("direct:a", "Body", "name", "London");
+        Map<String, Object> headerMap = new HashMap<>(
+                Map.ofEntries(entry(LAST_NAME, "Doe"), entry(FIRST_NAME, JANE), entry(ITEM, "Widgets for Dummies")));
+
+        template.sendBodyAndHeaders(DIRECT_START_NO_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
 
         mock.reset();
-        mock.expectedBodiesReceived("Bye Paris");
+        mock.expectedBodiesReceived(expectedNoCache());
 
-        template.sendBodyAndHeader("direct:a", "Body", "name", "Paris");
+        template.sendBodyAndHeaders(DIRECT_START_NO_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testCached() throws Exception {
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello London");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+        mock.expectedBodiesReceived(expected());
 
-        template.sendBodyAndHeader("direct:b", "Body", "name", "London");
+        Map<String, Object> headerMap = new HashMap<>(
+                Map.ofEntries(entry(LAST_NAME, "Doe"), entry(FIRST_NAME, JANE), entry(ITEM, "Widgets for Dummies")));
+
+        template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
 
         mock.reset();
-        // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
-        mock.expectedBodiesReceived("Hello Paris");
+        // we must expect the original file content since caching is enabled
+        mock.expectedBodiesReceived(expected());
 
-        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+        template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
     }
 
     @Test
-    public void testTemplateUpdateDelay() throws Exception {
+    public void testCachedWithDelay() throws Exception {
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello London");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+        mock.expectedBodiesReceived(expected());
 
-        template.sendBodyAndHeader("direct:c", "Body", "name", "London");
+        Map<String, Object> headerMap = new HashMap<>(
+                Map.ofEntries(entry(LAST_NAME, "Doe"), entry(FIRST_NAME, JANE), entry(ITEM, "Widgets for Dummies")));
+
+        template.sendBodyAndHeaders(DIRECT_START_CACHE_TTL, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again .... with no delay
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
 
         mock.reset();
-        // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
-        mock.expectedBodiesReceived("Hello Paris");
+        // we must expect the original file content since caching is enabled
+        mock.expectedBodiesReceived(expected());
 
-        template.sendBodyAndHeader("direct:c", "Body", "name", "Paris");
+        template.sendBodyAndHeaders(DIRECT_START_CACHE_TTL, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again .... after delaying longer than the cache update delay
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
 
         mock.reset();
-        // we must expected the new content, because the cache has expired
-        mock.expectedBodiesReceived("Bye Paris");
-        template.sendBodyAndHeader("direct:c", "Body", "name", "Paris");
+        // we must expect the new content, because the cache has expired
+        mock.expectedBodiesReceived(expectedNoCache());
+
+        template.sendBodyAndHeaders(DIRECT_START_CACHE_TTL, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testClearCacheViaJmx() throws Exception {
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello London");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
+        mock.expectedBodiesReceived(expected());
 
-        template.sendBodyAndHeader("direct:b", "Body", "name", "London");
+        Map<String, Object> headerMap = new HashMap<>(
+                Map.ofEntries(entry(LAST_NAME, "Doe"), entry(FIRST_NAME, JANE), entry(ITEM, "Widgets for Dummies")));
+
+        template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
 
         mock.reset();
-        // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
-        mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+        // we must expect the original file content since caching is enabled
+        mock.expectedBodiesReceived(expected());
+
+        template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> objNameSet = mbeanServer
-                .queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"thymeleaf:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
-        mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
+        Set<ObjectName> objNameSet = mbeanServer.queryNames(
+                new ObjectName("org.apache.camel:type=endpoints,name=\"thymeleaf:*cacheable=true*\",*"), null);
+        // each endpoint has its own template resolver, so cycle through all of them
+        for (ObjectName objectName : objNameSet) {
+            mbeanServer.invoke(objectName, "clearContentCache", null, null);
+        }
 
         // change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
         mock.reset();
-        // we expect the updated file content because the cache was cleared
-        mock.expectedBodiesReceived("Bye Paris");
-        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+
+        // we expect the updated file content because caching was disabled
+        mock.expectedBodiesReceived(expectedNoCache());
+
+        template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
         // change content in the file in the classpath and try again to verify that the caching is still in effect after clearing the cache
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "Hello ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
         mock.reset();
+
         // we expect the cached content from the prior update
-        mock.expectedBodiesReceived("Bye Paris");
-        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+        mock.expectedBodiesReceived(expectedNoCache());
+
+        template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
     }
 
@@ -177,17 +201,29 @@ public class ThymeleafContentCacheTest extends CamelTestSupport {
 
             public void configure() {
 
-                from("direct:a").to("thymeleaf://org/apache/camel/component/thymeleaf/hello.ftl?contentCache=false")
-                        .to("mock:result");
+                context.setTracing(true);
 
-                from("direct:b").to("thymeleaf://org/apache/camel/component/thymeleaf/hello.ftl?contentCache=true")
-                        .to("mock:result");
+                from(DIRECT_START_NO_CACHE)
+                        .setProperty(ORDER_NUMBER, simple("7"))
+                        .to("thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=false&allowContextMapAll=true")
+                        .to(MOCK_RESULT);
 
-                from("direct:c").to(
-                        "thymeleaf://org/apache/camel/component/thymeleaf/hello.ftl?contentCache=true&templateUpdateDelay=1")
-                        .to("mock:result");
+                from(DIRECT_START_WITH_CACHE)
+                        .setProperty(ORDER_NUMBER, simple("7"))
+                        .to("thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=true&allowContextMapAll=true")
+                        .to(MOCK_RESULT);
+
+                from(DIRECT_START_CACHE_TTL)
+                        .setProperty(ORDER_NUMBER, simple("7"))
+                        .to("thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=true&cacheTimeToLive=100&allowContextMapAll=true")
+                        .to(MOCK_RESULT);
             }
         };
+    }
+
+    private String expectedNoCache() {
+
+        return "not-cached\n" + expected();
     }
 
 }

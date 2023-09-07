@@ -1,4 +1,4 @@
-<#--
+<!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -16,4 +16,4 @@
     limitations under the License.
 
 -->
-${request.setHeader('fruit', 'apple')}I am an ${body}
+<span th:text="${request.setHeader('fruit', 'orange')}" th:remove="tag"/>I am an <span th:text="${body}" th:remove="tag"/>

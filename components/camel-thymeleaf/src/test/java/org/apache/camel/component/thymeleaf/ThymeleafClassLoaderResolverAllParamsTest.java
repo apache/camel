@@ -31,9 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
-
-    private static final String TEST_ENDPOINT = "testEndpoint";
+public class ThymeleafClassLoaderResolverAllParamsTest extends ThymeleafAbstractBaseTest {
 
     @Test
     public void testThymeleaf() throws InterruptedException {
@@ -50,20 +48,22 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         mock.assertIsSatisfied();
 
-        ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(TEST_ENDPOINT, ThymeleafEndpoint.class);
+        ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
+                "thymeleaf:letter?allowContextMapAll=true&cacheable=false&cacheTimeToLive=500&checkExistence=true&encoding=UTF-8&order=1&prefix=WEB-INF/templates/&resolver=CLASS_LOADER&suffix=.html",
+                ThymeleafEndpoint.class);
 
         assertAll("properties",
                 () -> assertNotNull(thymeleafEndpoint),
                 () -> assertTrue(thymeleafEndpoint.isAllowContextMapAll()),
-                () -> assertNull(thymeleafEndpoint.getCacheable()),
-                () -> assertNull(thymeleafEndpoint.getCacheTimeToLive()),
-                () -> assertNull(thymeleafEndpoint.getCheckExistence()),
-                () -> assertNull(thymeleafEndpoint.getEncoding()),
+                () -> assertFalse(thymeleafEndpoint.getCacheable()),
+                () -> assertEquals(CACHE_TIME_TO_LIVE, thymeleafEndpoint.getCacheTimeToLive()),
+                () -> assertTrue(thymeleafEndpoint.getCheckExistence()),
+                () -> assertEquals(UTF_8_ENCODING, thymeleafEndpoint.getEncoding()),
                 () -> assertEquals(ExchangePattern.InOut, thymeleafEndpoint.getExchangePattern()),
-                () -> assertNull(thymeleafEndpoint.getOrder()),
-                () -> assertNull(thymeleafEndpoint.getPrefix()),
+                () -> assertEquals(ORDER, thymeleafEndpoint.getOrder()),
+                () -> assertEquals(PREFIX_WEB_INF_TEMPLATES, thymeleafEndpoint.getPrefix()),
                 () -> assertEquals(ThymeleafResolverType.CLASS_LOADER, thymeleafEndpoint.getResolver()),
-                () -> assertNull(thymeleafEndpoint.getSuffix()),
+                () -> assertEquals(HTML_SUFFIX, thymeleafEndpoint.getSuffix()),
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
@@ -73,13 +73,13 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         ClassLoaderTemplateResolver templateResolver = (ClassLoaderTemplateResolver) resolver;
         assertAll("templateResolver",
-                () -> assertTrue(templateResolver.isCacheable()),
-                () -> assertNull(templateResolver.getCacheTTLMs()),
-                () -> assertNull(templateResolver.getCharacterEncoding()),
-                () -> assertFalse(templateResolver.getCheckExistence()),
-                () -> assertNull(templateResolver.getOrder()),
-                () -> assertNull(templateResolver.getPrefix()),
-                () -> assertNull(templateResolver.getSuffix()),
+                () -> assertFalse(templateResolver.isCacheable()),
+                () -> assertEquals(CACHE_TIME_TO_LIVE, templateResolver.getCacheTTLMs()),
+                () -> assertEquals(UTF_8_ENCODING, templateResolver.getCharacterEncoding()),
+                () -> assertTrue(templateResolver.getCheckExistence()),
+                () -> assertEquals(ORDER, templateResolver.getOrder()),
+                () -> assertEquals(PREFIX_WEB_INF_TEMPLATES, templateResolver.getPrefix()),
+                () -> assertEquals(HTML_SUFFIX, templateResolver.getSuffix()),
                 () -> assertEquals(TemplateMode.HTML, templateResolver.getTemplateMode()));
     }
 
@@ -88,18 +88,11 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-
-                ThymeleafEndpoint endpoint = new ThymeleafEndpoint();
-                endpoint.setCamelContext(context);
-                endpoint.setAllowContextMapAll(true);
-                endpoint.setResourceUri("org/apache/camel/component/thymeleaf/letter.txt");
-
-                context.addEndpoint(TEST_ENDPOINT, endpoint);
+            public void configure() {
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to(TEST_ENDPOINT)
+                        .to("thymeleaf:letter?allowContextMapAll=true&cacheable=false&cacheTimeToLive=500&checkExistence=true&encoding=UTF-8&order=1&prefix=WEB-INF/templates/&resolver=CLASS_LOADER&suffix=.html")
                         .to(MOCK_RESULT);
             }
         };

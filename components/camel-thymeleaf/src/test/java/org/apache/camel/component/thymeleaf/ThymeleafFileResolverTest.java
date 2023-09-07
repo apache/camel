@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -31,9 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
-
-    private static final String TEST_ENDPOINT = "testEndpoint";
+public class ThymeleafFileResolverTest extends ThymeleafAbstractBaseTest {
 
     @Test
     public void testThymeleaf() throws InterruptedException {
@@ -50,7 +48,9 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         mock.assertIsSatisfied();
 
-        ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(TEST_ENDPOINT, ThymeleafEndpoint.class);
+        ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
+                "thymeleaf:src/test/resources/org/apache/camel/component/thymeleaf/letter.html?allowContextMapAll=true&resolver=FILE",
+                ThymeleafEndpoint.class);
 
         assertAll("properties",
                 () -> assertNotNull(thymeleafEndpoint),
@@ -62,16 +62,16 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
                 () -> assertEquals(ExchangePattern.InOut, thymeleafEndpoint.getExchangePattern()),
                 () -> assertNull(thymeleafEndpoint.getOrder()),
                 () -> assertNull(thymeleafEndpoint.getPrefix()),
-                () -> assertEquals(ThymeleafResolverType.CLASS_LOADER, thymeleafEndpoint.getResolver()),
+                () -> assertEquals(ThymeleafResolverType.FILE, thymeleafEndpoint.getResolver()),
                 () -> assertNull(thymeleafEndpoint.getSuffix()),
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
         assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
         ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
-        assertTrue(resolver instanceof ClassLoaderTemplateResolver);
+        assertTrue(resolver instanceof FileTemplateResolver);
 
-        ClassLoaderTemplateResolver templateResolver = (ClassLoaderTemplateResolver) resolver;
+        FileTemplateResolver templateResolver = (FileTemplateResolver) resolver;
         assertAll("templateResolver",
                 () -> assertTrue(templateResolver.isCacheable()),
                 () -> assertNull(templateResolver.getCacheTTLMs()),
@@ -88,18 +88,11 @@ public class ThymeleafEndpointTest extends ThymeleafAbstractBaseTest {
 
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
-
-                ThymeleafEndpoint endpoint = new ThymeleafEndpoint();
-                endpoint.setCamelContext(context);
-                endpoint.setAllowContextMapAll(true);
-                endpoint.setResourceUri("org/apache/camel/component/thymeleaf/letter.txt");
-
-                context.addEndpoint(TEST_ENDPOINT, endpoint);
+            public void configure() {
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to(TEST_ENDPOINT)
+                        .to("thymeleaf:src/test/resources/org/apache/camel/component/thymeleaf/letter.html?allowContextMapAll=true&resolver=FILE")
                         .to(MOCK_RESULT);
             }
         };
