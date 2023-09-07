@@ -39,7 +39,7 @@ thymeleaf:templateName[?options]
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
-\file://folder/myfile.txt).
+\file://folder/myfile.html).
 
 
 
@@ -66,7 +66,7 @@ and added as headers, thus making it possible to return values from
 Thymeleaf to the Message.
 
 For example, to set the header value of `fruit` in the Thymeleaf template
-`fruit-template.txt`:
+`fruit-template.html`:
 
 -------------------------------
 $in.setHeader("fruit", "Apple")
@@ -143,7 +143,7 @@ For a simple use case, you could use something like:
 [source,java]
 ----------------------------------------
 from("activemq:My.Queue").
-  to("thymeleaf:com/acme/MyResponse.txt");
+  to("thymeleaf:com/acme/MyResponse.html");
 ----------------------------------------
 
 To use a Thymeleaf template to formulate a response to a message for
@@ -155,17 +155,17 @@ destination, you could use the following route:
 [source,java]
 ----------------------------------------
 from("activemq:My.Queue")
-  .to("thymeleaf:com/acme/MyResponse.txt")
+  .to("thymeleaf:com/acme/MyResponse.html")
   .to("activemq:Another.Queue");
 ----------------------------------------
 
 And to use the content cache, e.g. for use in production, where the
-`.txt` template never changes:
+`.html` template never changes:
 
 [source,java]
 ----------------------------------------------------------
 from("activemq:My.Queue")
-  .to("thymeleaf:com/acme/MyResponse.txt?contentCache=true")
+  .to("thymeleaf:com/acme/MyResponse.html?contentCache=true")
   .to("activemq:Another.Queue");
 ----------------------------------------------------------
 
@@ -174,7 +174,7 @@ And a file based resource:
 [source,java]
 -----------------------------------------------------------------
 from("activemq:My.Queue")
-  .to("thymeleaf:file://myfolder/MyResponse.txt?contentCache=true")
+  .to("thymeleaf:file://myfolder/MyResponse.html?contentCache=true")
   .to("activemq:Another.Queue");
 -----------------------------------------------------------------
 
@@ -184,7 +184,7 @@ should use dynamically via a header, so for example:
 [source,java]
 ---------------------------------------------------------------------------
 from("direct:in")
-  .setHeader("CamelThymeleafResourceUri").constant("path/to/my/template.txt")
+  .setHeader("CamelThymeleafResourceUri").constant("path/to/my/template.html")
   .to("thymeleaf:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------
 
@@ -203,15 +203,15 @@ from("direct:in")
 In this sample we want to use Thymeleaf templating for an order
 confirmation email. The email template is laid out in Thymeleaf as:
 
-.letter.txt
+.letter.html
 [source,text]
 ----------------------------------------------
-Dear ${headers.lastName}, ${headers.firstName}
+Dear [(${headers.lastName})], [(${headers.firstName})]
 
-Thanks for the order of ${headers.item}.
+Thanks for the order of [(${headers.item})].
 
 Regards Camel Riders Bookstore
-${body}
+[(${body})]
 ----------------------------------------------
 
 And the java code (from an unit test):
