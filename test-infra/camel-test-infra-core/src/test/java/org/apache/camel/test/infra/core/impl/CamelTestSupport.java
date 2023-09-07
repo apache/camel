@@ -30,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
@@ -151,11 +152,11 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
 */
 
 
-    protected CamelContext createCamelContext() {
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        ctx.setStreamCaching(Boolean.FALSE);
-        return ctx;
-    }
+//    protected CamelContext createCamelContext() {
+//        DefaultCamelContext ctx = new DefaultCamelContext();
+//        ctx.setStreamCaching(Boolean.FALSE);
+//        return ctx;
+//    }
 
 
 /*    protected void startCamelContext() {
@@ -191,14 +192,18 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
     // MockEndpoint.resolve(context, uri);
 
 
+    protected abstract void configureCamelContext(CamelContext context);
+
+
     @Override
+    @ContextFixture
     public void configureContext(CamelContext context) throws Exception {
-
-
+        configureCamelContext(context);
     }
 
 
     @Override
+    @RouteFixture
     public void createRouteBuilder(CamelContext context) throws Exception {
 
 

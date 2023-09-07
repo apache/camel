@@ -58,17 +58,13 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
     }
 
 
-    protected CamelContext createCamelContext() {
-
-
+    @Override
+    protected void configureCamelContext(CamelContext camelContext) {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
-        context.addComponent("sjms", component);
-
-
-        return context;
+        camelContext.addComponent("sjms", component);
     }
 
     @ContextFixture
