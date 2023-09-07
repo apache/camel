@@ -24,7 +24,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.sjms.support.MyAsyncComponent;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -39,19 +42,6 @@ public class ManualFromQueueManualTest extends CamelTestSupport {
     // private String url = "failover:tcp://localhost:61616";
     private String url = "tcp://localhost:61616";
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camel = super.createCamelContext();
-
-        SjmsComponent sjms = new SjmsComponent();
-        log.info("Using live connection to existing ActiveMQ broker running on {}", url);
-        sjms.setConnectionFactory(new ActiveMQConnectionFactory(url));
-
-        camel.addComponent("sjms", sjms);
-
-        return camel;
-    }
-
     @Test
     public void testConsume() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(3);
@@ -60,6 +50,15 @@ public class ManualFromQueueManualTest extends CamelTestSupport {
     }
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RoutesBuilder routesBuilder = createRouteBuilder();
+
+        if (routesBuilder != null) {
+            context.addRoutes(routesBuilder);
+        }
+    }
+
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -69,5 +68,18 @@ public class ManualFromQueueManualTest extends CamelTestSupport {
                         .to("mock:foo");
             }
         };
+    }
+
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+    }
+
+    @Override
+    protected void configureCamelContext(CamelContext context) {
+        SjmsComponent sjms = new SjmsComponent();
+        log.info("Using live connection to existing ActiveMQ broker running on {}", url);
+        sjms.setConnectionFactory(new ActiveMQConnectionFactory(url));
+
+        context.addComponent("sjms", sjms);
     }
 }

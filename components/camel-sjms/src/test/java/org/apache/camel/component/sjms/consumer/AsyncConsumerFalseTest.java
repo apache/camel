@@ -17,6 +17,9 @@
 package org.apache.camel.component.sjms.consumer;
 
 
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSConnectionFactory;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -57,7 +60,6 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-
     @Override
     protected void configureCamelContext(CamelContext camelContext) {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
@@ -73,11 +75,12 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
     }
 
 
+
+
     @Override
     @RouteFixture
     public void createRouteBuilder(CamelContext context) throws Exception {
         final RouteBuilder routeBuilder = createRouteBuilder();
-
 
         if (routeBuilder != null) {
             context.addRoutes(routeBuilder);

@@ -25,7 +25,9 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -52,21 +54,29 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        camelContext.addComponent("async", new MyAsyncComponent());
-
+    protected void configureCamelContext(CamelContext camelContext) {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
+    }
 
-        return camelContext;
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.addComponent("async", new MyAsyncComponent());
     }
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override

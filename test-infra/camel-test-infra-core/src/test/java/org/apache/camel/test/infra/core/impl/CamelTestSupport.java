@@ -62,9 +62,11 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
     }
 
 
-/*    public CamelContext context() {
+
+
+    public CamelContext context() {
        return context;
-   }*/
+   }
 
 
     public CamelContextExtension getCamelContextExtension() {
@@ -152,13 +154,6 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
 */
 
 
-//    protected CamelContext createCamelContext() {
-//        DefaultCamelContext ctx = new DefaultCamelContext();
-//        ctx.setStreamCaching(Boolean.FALSE);
-//        return ctx;
-//    }
-
-
 /*    protected void startCamelContext() {
        if (camelContextService != null) {
            camelContextService.start();
@@ -191,9 +186,7 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
 
     // MockEndpoint.resolve(context, uri);
 
-
     protected abstract void configureCamelContext(CamelContext context);
-
 
     @Override
     @ContextFixture
