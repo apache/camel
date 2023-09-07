@@ -25,6 +25,7 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -54,17 +55,23 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
 
 
     protected CamelContext createCamelContext() {
-        CamelContext camelContext = super.createCamelContext();
+        //CamelContext camelContext = super.createCamelContext();
 
-        camelContext.addComponent("async", new MyAsyncComponent());
+        //camelContext.addComponent("async", new MyAsyncComponent());
+        configureComponent(context);
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
+        context.addComponent("sjms", component);
 
-        return camelContext;
+        return context;
+    }
+
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.addComponent("async", new MyAsyncComponent());
     }
 
     @Override

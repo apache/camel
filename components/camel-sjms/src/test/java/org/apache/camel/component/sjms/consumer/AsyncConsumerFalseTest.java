@@ -24,6 +24,8 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +36,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  *
  */
 public class AsyncConsumerFalseTest extends CamelTestSupport {
+
+    @BeforeEach
+    void setupTest() {
+        context = camelContextExtension.getContext();
+    }
 
     private static final String SJMS_QUEUE_URI = "sjms:queue:start.AsyncConsumerFalseTest";
 
@@ -50,19 +57,22 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    protected CamelContext createCamelContext() {
-        CamelContext camelContext = super.createCamelContext();
 
-        camelContext.addComponent("async", new MyAsyncComponent());
+    public void configureContext(CamelContext context) {
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
-
-        return camelContext;
+        context.addComponent("sjms", component);
     }
+
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.addComponent("async", new MyAsyncComponent());
+    }
+
+
 
     @Override
     @RouteFixture
@@ -74,7 +84,7 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
         }
     }
 
-
+    @RouteFixture
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -90,4 +100,5 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
             }
         };
     }
+
 }

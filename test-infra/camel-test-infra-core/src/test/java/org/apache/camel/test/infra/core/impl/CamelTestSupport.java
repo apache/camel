@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.core.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ProducerTemplate;
@@ -26,8 +27,10 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
@@ -43,23 +46,24 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
 
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
-
     protected CamelContext context;
     protected volatile ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @BeforeEach
     public void doSetup() {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
 /*    public CamelContext context() {
         return context;
     }*/
 
-    public CamelContextExtension getCamelContextExtension() {
+/*    public CamelContextExtension getCamelContextExtension() {
         return camelContextExtension;
-    }
+    }*/
 
     protected MockEndpoint getMockEndpoint(String uri) {
         return getMockEndpoint(uri, true);
@@ -128,11 +132,19 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
     }
 */
 
-    protected CamelContext createCamelContext() {
+/*    protected CamelContext createCamelContext(){
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.setStreamCaching(Boolean.FALSE);
         return ctx;
-    }
+    }*/
+
+/*    @ContextFixture
+    public void createCamelContext() throws Exception{
+        context = camelContextExtension.getContext();
+    }*/
+
+
+
 
 /*    protected void startCamelContext() {
         if (camelContextService != null) {
@@ -170,5 +182,9 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
     @Override
     public void createRouteBuilder(CamelContext context) throws Exception {
 
+    }
+
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

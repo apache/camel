@@ -58,10 +58,10 @@ public class AsyncConsumerFalseTest extends AbstractJMSTest {
         return "activemq";
     }
 
-    @ContextFixture
+/*    @ContextFixture
     public void configureComponent(CamelContext context) {
         context.addComponent("async", new MyAsyncComponent());
-    }
+    }*/
 
     @Override
     protected RouteBuilder createRouteBuilder() {
