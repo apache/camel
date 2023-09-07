@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -284,11 +285,7 @@ public class SedaComponent extends DefaultComponent {
     }
 
     public String getQueueKey(String uri) {
-        if (uri.contains("?")) {
-            // strip parameters
-            uri = uri.substring(0, uri.indexOf('?'));
-        }
-        return uri;
+        return StringHelper.before(uri, "?", uri);
     }
 
     @Override

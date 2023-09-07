@@ -23,10 +23,11 @@ import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition
+import org.junit.jupiter.api.Assertions
 
 class ErrorHandlerTest extends YamlTestSupport {
 
-    def "error-handler (ref with bean)"() {
+    def "errorHandler (ref with bean)"() {
         setup:
             loadRoutes """
                 - beans:
@@ -37,8 +38,8 @@ class ErrorHandlerTest extends YamlTestSupport {
                     properties:
                       dead-letter-uri: "mock:on-error"
                       redelivery-delay: 0
-                - error-handler:
-                    ref-error-handler: 
+                - errorHandler:
+                    refErrorHandler: 
                       ref: "myErrorHandler"
                 - from:
                     uri: "direct:start"
@@ -62,11 +63,11 @@ class ErrorHandlerTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "error-handler (ref)"() {
+    def "errorHandler (ref)"() {
         setup:
             loadRoutes """
-                - error-handler:
-                    ref-error-handler:
+                - errorHandler:
+                    refErrorHandler:
                       ref: "myErrorHandler"
             """
         when:
@@ -77,11 +78,11 @@ class ErrorHandlerTest extends YamlTestSupport {
             }
     }
 
-    def "error-handler (ref inlined)"() {
+    def "errorHandler (ref inlined)"() {
         setup:
         loadRoutes """
-                - error-handler:
-                    ref-error-handler: "myErrorHandler"
+                - errorHandler:
+                    refErrorHandler: "myErrorHandler"
             """
         when:
         context.start()
@@ -91,14 +92,14 @@ class ErrorHandlerTest extends YamlTestSupport {
         }
     }
 
-    def "error-handler (dead-letter-channel)"() {
+    def "errorHandler (deadLetterChannel)"() {
         setup:
             loadRoutes """
-                - error-handler:
-                    dead-letter-channel: 
-                      dead-letter-uri: "mock:on-error"
-                      redelivery-policy:
-                        maximum-redeliveries: 3
+                - errorHandler:
+                    deadLetterChannel: 
+                      deadLetterUri: "mock:on-error"
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
             """
         when:
             context.start()
@@ -109,14 +110,14 @@ class ErrorHandlerTest extends YamlTestSupport {
             }
     }
 
-    def "error-handler (default-error-handler)"() {
+    def "errorHandler (defaultErrorHandler)"() {
         setup:
         loadRoutes """
-                - error-handler:
-                    default-error-handler:
+                - errorHandler:
+                    defaultErrorHandler:
                       useOriginalMessage: true 
-                      redelivery-policy:
-                        maximum-redeliveries: 2
+                      redeliveryPolicy:
+                        maximumRedeliveries: 2
             """
         when:
         context.start()
@@ -127,11 +128,11 @@ class ErrorHandlerTest extends YamlTestSupport {
         }
     }
 
-    def "error-handler (no)"() {
+    def "errorHandler (no)"() {
         setup:
             loadRoutes """
-                - error-handler:
-                    no-error-handler: {}
+                - errorHandler:
+                    noErrorHandler: {}
             """
         when:
             context.start()
@@ -139,7 +140,7 @@ class ErrorHandlerTest extends YamlTestSupport {
             context.getCamelContextExtension().getErrorHandlerFactory() instanceof NoErrorHandlerDefinition
     }
 
-    def "error-handler (redelivery policy ref)"() {
+    def "errorHandler (redelivery policy ref)"() {
         setup:
         loadRoutes """
                 - beans:
@@ -150,10 +151,10 @@ class ErrorHandlerTest extends YamlTestSupport {
                     properties:
                       maximumRedeliveries: 3
                       logStackTrace: true
-                - error-handler:
-                    default-error-handler:
+                - errorHandler:
+                    defaultErrorHandler:
                       useOriginalMessage: true 
-                      redelivery-policy-ref: myPolicy
+                      redeliveryPolicyRef: myPolicy
                 - from:
                     uri: "direct:start"
                     steps:
@@ -171,5 +172,76 @@ class ErrorHandlerTest extends YamlTestSupport {
         }
     }
 
+    def "Error: duplicate errorHandler"() {
+        when:
+        var route = """
+                - errorHandler:
+                    defaultErrorHandler:
+                      useOriginalMessage: true 
+                      redeliveryPolicy:
+                        maximumRedeliveries: 2
+                    deadLetterChannel: 
+                      deadLetterUri: "mock:on-error"
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch(e) {
+            assert e.message.contains("2 are valid")
+        }
+    }
 
+    def "Error: kebab-case: error-handler"() {
+        when:
+        var route = """
+                - error-handler:
+                    defaultErrorHandler:
+                      useOriginalMessage: true 
+                      redeliveryPolicyRef: myPolicy
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch(e) {
+            assert e.message.contains("additional properties")
+        }
+    }
+
+    def "Error: kebab-case: default-error-handler"() {
+        when:
+        var route = """
+                - errorHandler:
+                    default-error-handler:
+                      useOriginalMessage: true 
+                      redeliveryPolicyRef: myPolicy
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch(e) {
+            assert e.message.contains("additional properties")
+        }
+    }
+
+    def "Error: kebab-case: use-original-message"() {
+        when:
+        var route = """
+                - errorHandler:
+                    defaultErrorHandler:
+                      use-original-message: true 
+                      redeliveryPolicyRef: myPolicy
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch(e) {
+            assert e.message.contains("additional properties")
+        }
+    }
 }

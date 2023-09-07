@@ -48,7 +48,7 @@ public class KameletConsumerUoWIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 routeTemplate("tick")
-                        .from("timer:tick?repeatCount=1&delay=-1")
+                        .from("timer:tick?repeatCount=1&delay=-1&includeMetadata=true")
                         .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
                         .process(new Processor() {
                             @Override

@@ -83,7 +83,7 @@ public class SupplierRegistry extends SimpleRegistry {
         try {
             answer = unwrap(answer);
             return type.cast(answer);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             String msg = "Found bean: " + name + " in SupplierRegistry: " + this
                          + " of type: " + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);

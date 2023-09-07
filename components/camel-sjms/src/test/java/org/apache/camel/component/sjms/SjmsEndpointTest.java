@@ -137,7 +137,8 @@ public class SjmsEndpointTest extends CamelTestSupport {
     public void testReplyToAndMEPMatch() {
         String replyTo = "reply.to.queue";
         Endpoint endpoint = context
-                .getEndpoint("sjms:queue:test.SjmsEndpointTest?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
+                .getEndpoint(
+                        "sjms:queue:test.SjmsEndpointTest?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;

@@ -189,6 +189,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jacksonxml</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-sql</artifactId>
             <scope>test</scope>
         </dependency>
@@ -212,9 +217,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.java-json-tools</groupId>
+            <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
-            <version>${json-schema-validator-version}</version>
+            <version>${networknt-json-schema-validator-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -273,19 +278,8 @@
                         </goals>
                         <configuration>
                             <kebabCase>false</kebabCase>
+                            <additionalProperties>false</additionalProperties>
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
-                        </configuration>
-                    </execution>
-                    <!-- kebab-case -->
-                    <execution>
-                        <id>generate-yaml-schema-kebab-case</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate-yaml-schema</goal>
-                        </goals>
-                        <configuration>
-                            <kebabCase>true</kebabCase>
-                            <outputFile>src/generated/resources/schema/camel-yaml-dsl.json</outputFile>
                         </configuration>
                     </execution>
                 </executions>

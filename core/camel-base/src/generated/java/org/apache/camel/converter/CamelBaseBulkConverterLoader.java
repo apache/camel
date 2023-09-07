@@ -9,6 +9,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.TypeConvertible;
 import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -48,6 +49,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
     @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
         registry.addBulkTypeConverters(this);
+        doRegistration(registry);
     }
 
     @Override
@@ -501,6 +503,132 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
         }
         return null;
+    }
+
+    private void doRegistration(TypeConverterRegistry registry) {
+        registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, char[].class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, char[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Collection.class, java.lang.Object[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object.class, boolean.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, char.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, char.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.BufferedReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.BufferedWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.io.File.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.stream.Stream.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.net.URL.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.StringBuffer.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.StringBuilder.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.io.ObjectInput.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.OutputStream.class, java.io.ObjectOutput.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.OutputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.io.Reader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.OutputStream.class, java.io.Writer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.lang.Boolean.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Boolean.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Boolean.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Number.class, java.lang.Byte.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Byte.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Byte.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Character.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Character.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Class.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Number.class, java.lang.Double.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Double.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Double.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Number.class, java.lang.Float.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Float.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Float.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Number.class, java.lang.Integer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Integer.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Integer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.lang.Iterable.class), this);
+        registry.addConverter(new TypeConvertible<>(java.time.Duration.class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(java.sql.Timestamp.class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Date.class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Number.class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Long.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Number.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Number.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Number.class, java.lang.Short.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.lang.Short.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.Short.class), this);
+        registry.addConverter(new TypeConvertible<>(java.net.URI.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.time.Duration.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(char[].class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.net.URL.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Integer.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Boolean.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.StringBuffer.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.StringBuilder.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.math.BigInteger.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.CharSequence.class, java.net.URI.class), this);
+        registry.addConverter(new TypeConvertible<>(byte[].class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Short.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Integer.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Float.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Double.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.nio.file.Path.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.sql.Timestamp.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.time.Duration.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.time.Duration.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Iterator.class, java.util.ArrayList.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Iterable.class, java.util.ArrayList.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.Collection.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.util.Date.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.HashMap.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.Hashtable.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.util.Iterator.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object[].class, java.util.List.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Collection.class, java.util.List.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Iterable.class, java.util.List.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Iterator.class, java.util.List.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.Properties.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.File.class, java.util.Properties.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.util.Properties.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, java.util.Properties.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.Object[].class, java.util.Set.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Collection.class, java.util.Set.class), this);
+        registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.Set.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.util.TimeZone.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.Expression.class, org.apache.camel.Processor.class), this);
+        registry.addConverter(new TypeConvertible<>(org.apache.camel.Predicate.class, org.apache.camel.Processor.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.apache.camel.spi.Resource.class), this);
+        
+        
     }
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {

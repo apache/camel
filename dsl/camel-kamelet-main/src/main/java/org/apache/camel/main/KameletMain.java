@@ -16,19 +16,13 @@
  */
 package org.apache.camel.main;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Supplier;
 
 import org.w3c.dom.Document;
 
@@ -65,6 +59,8 @@ import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
+import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
+import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -84,16 +80,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.tooling.maven.MavenGav;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.CannotLoadBeanClassException;
-import org.springframework.beans.factory.SmartFactoryBean;
-import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.core.io.AbstractResource;
-import org.springframework.core.metrics.StartupStep;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -114,10 +100,8 @@ public class KameletMain extends MainCommandLineSupport {
     private DownloadListener downloadListener;
     private DependencyDownloaderClassLoader classLoader;
 
-    // when preparing spring-based beans, we may have problems loading classes which are provided with Java DSL
-    // that's why some beans should be processed later
-    private final List<String> delayedBeans = new LinkedList<>();
-    private Set<String> infraBeanNames;
+    private final SpringXmlBeansHandler springXmlBeansHandler = new SpringXmlBeansHandler();
+    private final BlueprintXmlBeansHandler blueprintXmlBeansHandler = new BlueprintXmlBeansHandler();
 
     public KameletMain() {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
@@ -535,7 +519,12 @@ public class KameletMain extends MainCommandLineSupport {
             }
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
             if (download) {
-                answer.addService(new DependencyDownloaderKamelet(answer));
+                Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
+                if (kameletsVersion != null) {
+                    answer.addService(new DependencyDownloaderKamelet(answer, kameletsVersion.toString()));
+                } else {
+                    answer.addService(new DependencyDownloaderKamelet(answer));
+                }
                 answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
                         new DownloadModelineParser(answer));
             }
@@ -629,9 +618,18 @@ public class KameletMain extends MainCommandLineSupport {
     @Override
     protected void configureRoutesLoader(CamelContext camelContext) {
         if (download) {
+            DependencyDownloaderRoutesLoader routesLoader;
+
+            Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
+            if (kameletsVersion != null) {
+                routesLoader = new DependencyDownloaderRoutesLoader(camelContext, kameletsVersion.toString());
+            } else {
+                routesLoader = new DependencyDownloaderRoutesLoader(camelContext);
+            }
+
             // use resolvers that can auto downloaded
             camelContext.getCamelContextExtension()
-                    .addContextPlugin(RoutesLoader.class, new DependencyDownloaderRoutesLoader(camelContext));
+                    .addContextPlugin(RoutesLoader.class, routesLoader);
         } else {
             super.configureRoutesLoader(camelContext);
         }
@@ -661,138 +659,33 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     protected void preProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
-        // camel-kamelet-main has access to Spring libraries, so we can grab XML documents representing
-        // actual Spring Beans and read them using Spring's BeanFactory to populate Camel registry
-        final Map<String, Document> xmls = new TreeMap<>();
+        final Map<String, Document> springXmls = new TreeMap<>();
+        final Map<String, Document> blueprintXmls = new TreeMap<>();
 
-        Map<String, Document> springBeansDocs = registry.findByTypeWithName(Document.class);
-        if (springBeansDocs != null) {
-            springBeansDocs.forEach((id, doc) -> {
-                if (id.startsWith("spring-document:")) {
-                    xmls.put(id, doc);
+        Map<String, Document> xmlDocs = registry.findByTypeWithName(Document.class);
+        if (xmlDocs != null) {
+            xmlDocs.forEach((id, doc) -> {
+                if (id.startsWith("camel-xml-io-dsl-spring-xml:")) {
+                    springXmls.put(id, doc);
+                } else if (id.startsWith("camel-xml-io-dsl-blueprint-xml:")) {
+                    blueprintXmls.put(id, doc);
                 }
             });
         }
-
-        // we _could_ create something like org.apache.camel.spring.spi.ApplicationContextBeanRepository, but
-        // wrapping DefaultListableBeanFactory and use it as one of the
-        // org.apache.camel.support.DefaultRegistry.repositories, but for now let's use it to populate
-        // Spring registry and then copy the beans (whether the scope is)
-        final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-        beanFactory.setAllowCircularReferences(true); // for now
-        beanFactory.setBeanClassLoader(classLoader);
-        registry.bind("SpringBeanFactory", beanFactory);
-
-        // register some existing beans (the list may change)
-        // would be nice to keep the documentation up to date: docs/user-manual/modules/ROOT/pages/camel-jbang.adoc
-        infraBeanNames = Set.of("CamelContext", "MainConfiguration");
-        beanFactory.registerSingleton("CamelContext", camelContext);
-        beanFactory.registerSingleton("MainConfiguration", config);
-        // ...
-
-        // instead of generating an MX parser for spring-beans.xsd and use it to read the docs, we can simply
-        // pass w3c Documents directly to Spring
-        final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
-        xmls.forEach((id, doc) -> {
-            reader.registerBeanDefinitions(doc, new AbstractResource() {
-                @Override
-                public String getDescription() {
-                    return id;
-                }
-
-                @Override
-                public InputStream getInputStream() throws IOException {
-                    return new ByteArrayInputStream(new byte[0]);
-                }
-            });
-        });
-
-        // for full interaction between Spring ApplicationContext and its BeanFactory see
-        // org.springframework.context.support.AbstractApplicationContext.refresh()
-        // see org.springframework.context.support.AbstractApplicationContext.prepareBeanFactory() to check
-        // which extra/infra beans are added
-
-        beanFactory.freezeConfiguration();
-
-        List<String> beanNames = Arrays.asList(beanFactory.getBeanDefinitionNames());
-
-        // Trigger initialization of all non-lazy singleton beans...
-        instantiateAndRegisterBeans(beanFactory, beanNames);
+        if (!springXmls.isEmpty()) {
+            // camel-kamelet-main has access to Spring libraries, so we can grab XML documents representing
+            // actual Spring Beans and read them using Spring's BeanFactory to populate Camel registry
+            springXmlBeansHandler.processSpringBeans(camelContext, config, springXmls);
+        }
+        if (!blueprintXmls.isEmpty()) {
+            blueprintXmlBeansHandler.processBlueprintBeans(camelContext, config, blueprintXmls);
+        }
     }
 
     @Override
     protected void postProcessCamelRegistry(CamelContext camelContext, MainConfigurationProperties config) {
-        if (delayedBeans.isEmpty()) {
-            return;
-        }
-
-        DefaultListableBeanFactory beanFactory
-                = registry.lookupByNameAndType("SpringBeanFactory", DefaultListableBeanFactory.class);
-
-        // we have some beans with classes that we couldn't load before. now, after loading the routes
-        // we may have the needed class definitions
-        for (String beanName : delayedBeans) {
-            BeanDefinition bd = beanFactory.getMergedBeanDefinition(beanName);
-            if (bd instanceof AbstractBeanDefinition abd) {
-                if (!abd.hasBeanClass()) {
-                    Class<?> c = camelContext.getClassResolver().resolveClass(abd.getBeanClassName());
-                    abd.setBeanClass(c);
-                }
-            }
-        }
-
-        instantiateAndRegisterBeans(beanFactory, delayedBeans);
-    }
-
-    private void instantiateAndRegisterBeans(DefaultListableBeanFactory beanFactory, List<String> beanNames) {
-        List<String> instantiatedBeanNames = new LinkedList<>();
-
-        for (String beanName : beanNames) {
-            BeanDefinition bd = beanFactory.getMergedBeanDefinition(beanName);
-            if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
-                try {
-                    if (beanFactory.isFactoryBean(beanName)) {
-                        Object bean = beanFactory.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);
-                        if (bean instanceof SmartFactoryBean<?> smartFactoryBean && smartFactoryBean.isEagerInit()) {
-                            beanFactory.getBean(beanName);
-                            instantiatedBeanNames.add(beanName);
-                        }
-                    } else {
-                        beanFactory.getBean(beanName);
-                        instantiatedBeanNames.add(beanName);
-                    }
-                } catch (CannotLoadBeanClassException ignored) {
-                    // we'll try to resolve later
-                    delayedBeans.add(beanName);
-                }
-            }
-        }
-
-        // Trigger post-initialization callback for all applicable beans...
-        for (String beanName : instantiatedBeanNames) {
-            Object singletonInstance = beanFactory.getSingleton(beanName);
-            if (singletonInstance instanceof SmartInitializingSingleton smartSingleton) {
-                StartupStep smartInitialize = beanFactory.getApplicationStartup()
-                        .start("spring.beans.smart-initialize")
-                        .tag("beanName", beanName);
-                smartSingleton.afterSingletonsInstantiated();
-                smartInitialize.end();
-            }
-        }
-
-        for (String name : instantiatedBeanNames) {
-            if (infraBeanNames.contains(name)) {
-                continue;
-            }
-            BeanDefinition def = beanFactory.getBeanDefinition(name);
-            if (def.isSingleton()) {
-                // just grab the singleton and put into registry
-                registry.bind(name, beanFactory.getBean(name));
-            } else {
-                // rely on the bean factory to implement prototype scope
-                registry.bind(name, (Supplier<Object>) () -> beanFactory.getBean(name));
-            }
-        }
+        springXmlBeansHandler.createAndRegisterBeans(camelContext);
+        blueprintXmlBeansHandler.createAndRegisterBeans(camelContext);
     }
 
     @Override

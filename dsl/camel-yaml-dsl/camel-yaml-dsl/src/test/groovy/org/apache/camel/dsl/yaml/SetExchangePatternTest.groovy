@@ -19,20 +19,38 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.ExchangePattern
 import org.apache.camel.model.SetExchangePatternDefinition
+import org.junit.jupiter.api.Assertions
 
 class SetExchangePatternTest extends YamlTestSupport {
 
-    def "set-exchange-pattern definition"() {
+    def "setExchangePattern definition"() {
         when:
             loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - setExchangePattern: "InOut"
+            '''
+        then:
+            with(context.routeDefinitions[0].outputs[0], SetExchangePatternDefinition) {
+                pattern == ExchangePattern.InOut.name()
+            }
+    }
+
+    def "Error: kebab-case: set-exchange-pattern definition"() {
+        when:
+        var route = '''
                 - from:
                     uri: "direct:start"
                     steps:    
                       - set-exchange-pattern: "InOut"
             '''
         then:
-            with(context.routeDefinitions[0].outputs[0], SetExchangePatternDefinition) {
-                pattern == ExchangePattern.InOut.name()
-            }
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
     }
 }

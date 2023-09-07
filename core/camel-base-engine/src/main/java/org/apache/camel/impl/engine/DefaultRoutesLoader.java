@@ -92,29 +92,53 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources, boolean optional) throws Exception {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
-        // first we need to parse for modeline to gather all the configurations
-        if (camelContext.isModeline()) {
-            ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
-            for (Resource resource : resources) {
-                try (RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional)) {
-                    if (loader != null) {
-                        // gather resources for modeline
-                        factory.parseModeline(resource);
-                        // pre-parse before loading
-                        loader.preParseRoute(resource);
-                    }
-                }
+        // sort groups so java is first
+        List<Resource> sort = new ArrayList<>(resources);
+        sort.sort((o1, o2) -> {
+            String ext1 = FileUtil.onlyExt(o1.getLocation(), false);
+            String ext2 = FileUtil.onlyExt(o2.getLocation(), false);
+            if ("java".equals(ext1)) {
+                return -1;
+            } else if ("java".equals(ext2)) {
+                return 1;
             }
-        }
+            return 0;
+        });
 
-        // now group resources by loader
+        // group resources by loader (java, xml, yaml in their own group)
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
-        for (Resource resource : resources) {
+        for (Resource resource : sort) {
             RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource, optional);
             if (loader != null) {
                 List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
                 list.add(resource);
                 groups.put(loader, list);
+            }
+        }
+
+        // first we need to parse for modeline to gather all the configurations
+        if (camelContext.isModeline()) {
+            ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
+            for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+                // parse modelines for all resources
+                for (Resource resource : entry.getValue()) {
+                    factory.parseModeline(resource);
+                }
+            }
+        }
+
+        // then pre-parse routes
+        for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+            RoutesBuilderLoader loader = entry.getKey();
+            if (loader instanceof ExtendedRoutesBuilderLoader) {
+                // extended loader can load all resources ine one unit
+                ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
+                // pre-parse before loading
+                extLoader.preParseRoutes(entry.getValue());
+            } else {
+                for (Resource resource : entry.getValue()) {
+                    loader.preParseRoute(resource);
+                }
             }
         }
 

@@ -18,14 +18,17 @@ package org.apache.camel.xml;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.ExpressionNode;
@@ -37,6 +40,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NamespaceAware;
@@ -54,12 +58,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        return dumpModelAsXml(context, definition, false);
+        return dumpModelAsXml(context, definition, false, true);
     }
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
             throws Exception {
 
         Properties properties = new Properties();
@@ -84,12 +88,11 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
-                // write customId if not false
-                if (Boolean.TRUE.equals(def.getCustomId())) {
-                    doWriteAttribute("customId", toString(def.getCustomId()));
+
+                if (generatedIds || Boolean.TRUE.equals(def.getCustomId())) {
+                    // write id
+                    doWriteAttribute("id", def.getId());
                 }
-                // write id
-                doWriteAttribute("id", def.getId());
                 // write description
                 if (def.getDescriptionText() != null) {
                     doWriteAttribute("description", def.getDescriptionText());
@@ -169,6 +172,28 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             extractor.accept(route);
         }
         writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+
+        return buffer.toString();
+    }
+
+    @Override
+    public String dumpBeansAsXml(CamelContext context, List<Object> beans) throws Exception {
+        StringWriter buffer = new StringWriter();
+        BeanModelWriter writer = new BeanModelWriter(buffer);
+
+        List<RegistryBeanDefinition> list = new ArrayList<>();
+        for (Object bean : beans) {
+            if (bean instanceof RegistryBeanDefinition rb) {
+                list.add(rb);
+            }
+        }
+        writer.setCamelContext(context);
+        writer.start();
+        try {
+            writer.writeBeans(list);
+        } finally {
+            writer.stop();
+        }
 
         return buffer.toString();
     }
@@ -256,6 +281,61 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         }
 
         return na;
+    }
+
+    private static class BeanModelWriter implements CamelContextAware {
+
+        private final StringWriter buffer;
+        private CamelContext camelContext;
+
+        public BeanModelWriter(StringWriter buffer) {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public void start() {
+            // noop
+        }
+
+        public void stop() {
+            // noop
+        }
+
+        public void writeBeans(List<RegistryBeanDefinition> beans) {
+            if (beans.isEmpty()) {
+                return;
+            }
+            for (RegistryBeanDefinition b : beans) {
+                doWriteRegistryBeanDefinition(b);
+            }
+        }
+
+        private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
+            String type = b.getType();
+            if (type.startsWith("#class:")) {
+                type = type.substring(7);
+            }
+            buffer.write(String.format("    <bean name=\"%s\" type=\"%s\">%n", b.getName(), type));
+            if (b.getProperties() != null && !b.getProperties().isEmpty()) {
+                buffer.write(String.format("        <properties>%n"));
+                for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    buffer.write(String.format("            <property key=\"%s\" value=\"%s\"/>%n", key, value));
+                }
+                buffer.write(String.format("        </properties>%n"));
+            }
+            buffer.write(String.format("    </bean>%n"));
+        }
     }
 
 }

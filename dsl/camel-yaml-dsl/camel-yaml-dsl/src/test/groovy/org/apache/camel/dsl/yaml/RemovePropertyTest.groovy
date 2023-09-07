@@ -21,10 +21,11 @@ import org.apache.camel.model.RemovePropertiesDefinition
 import org.apache.camel.model.RemovePropertyDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
+import org.junit.jupiter.api.Assertions
 
 class RemovePropertyTest extends YamlTestSupport {
 
-    def "remove-property definition (#resource.location)"(Resource resource) {
+    def "removeProperty definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -37,7 +38,7 @@ class RemovePropertyTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - remove-property:
+                          - removeProperty:
                               name: test
                           - to: "mock:result"
                     '''),
@@ -45,22 +46,22 @@ class RemovePropertyTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - remove-property:
+                          - removeProperty:
                               name: test
                           - to: "mock:result"
                     ''')
             ]
     }
 
-    def "remove-properties definition"() {
+    def "removeProperties definition"() {
         when:
             loadRoutes'''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - remove-properties:
+                      - removeProperties:
                           pattern: toRemove
-                          exclude-pattern: toExclude
+                          excludePattern: toExclude
                       - to: "mock:result"
             '''
         then:
@@ -68,5 +69,24 @@ class RemovePropertyTest extends YamlTestSupport {
                 pattern == 'toRemove'
                 excludePattern == 'toExclude'
             }
+    }
+
+    def "Error: kebab-case: remove-property definition"() {
+        when:
+        var route = '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - remove-property:
+                              name: test
+                          - to: "mock:result"
+            '''
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            e.message.contains("additional properties")
+        }
     }
 }

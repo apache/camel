@@ -27,7 +27,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ErrorHandlerOnRedeliveryStopTest extends ContextTestSupport {
 
@@ -37,13 +37,12 @@ public class ErrorHandlerOnRedeliveryStopTest extends ContextTestSupport {
     public void testRetryWhile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should throw an exception");
-        } catch (Exception e) {
-            RejectedExecutionException ree = assertIsInstanceOf(RejectedExecutionException.class, e.getCause());
-            Assertions.assertEquals("I do not want to do this anymore", ree.getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should throw an exception");
+
+        RejectedExecutionException ree = assertIsInstanceOf(RejectedExecutionException.class, e.getCause());
+        Assertions.assertEquals("I do not want to do this anymore", ree.getMessage());
 
         assertMockEndpointsSatisfied();
     }

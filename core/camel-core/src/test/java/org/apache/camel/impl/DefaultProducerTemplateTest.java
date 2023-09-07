@@ -33,7 +33,10 @@ import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for DefaultProducerTemplate
@@ -87,15 +90,12 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:exception", "Hello World");
-            fail("Should have thrown RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-        }
+        RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:exception", "Hello World"),
+                        "Should have thrown RuntimeCamelException");
 
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced exception by unit test", e.getCause().getMessage());
         assertMockEndpointsSatisfied();
     }
 
@@ -104,15 +104,12 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.requestBody("direct:exception", "Hello World", Integer.class);
-            fail("Should have thrown RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("direct:exception", "Hello World", Integer.class),
+                "Should have thrown RuntimeCamelException");
 
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced exception by unit test", e.getCause().getMessage());
         assertMockEndpointsSatisfied();
     }
 
@@ -154,15 +151,12 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.requestBody("direct:exception", "Hello World");
-            fail("Should have thrown RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("direct:exception", "Hello World"),
+                "Should have thrown RuntimeCamelException");
 
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced exception by unit test", e.getCause().getMessage());
         assertMockEndpointsSatisfied();
     }
 

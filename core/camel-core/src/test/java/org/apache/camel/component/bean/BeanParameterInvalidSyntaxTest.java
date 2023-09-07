@@ -23,7 +23,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
 
@@ -31,13 +31,12 @@ public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
     public void testBeanParameterInvalidSyntax() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:a", "World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Method should have even pair of parenthesis, was echo(${body}, 5))", iae.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:a", "World"),
+                "Should have thrown exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Method should have even pair of parenthesis, was echo(${body}, 5))", iae.getMessage());
 
         assertMockEndpointsSatisfied();
     }

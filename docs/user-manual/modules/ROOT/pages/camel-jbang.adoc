@@ -262,6 +262,22 @@ Then only the `jms:inbox` endpoint is stubbed.
 
 TIP: You can stub multiple components separated by comma, such as `--stub=jms,sql`
 
+Camel JBang comes with the `camel cmd stub` command that allows to list all endpoints which
+has been stubbed, and also browse any messages that are currently present in their internal queues.
+A stub endpoint is based on the `seda` component.
+
+[source,bash]
+----
+camel cmd stub
+----
+
+And to browse the messages:
+
+[source,bash]
+----
+camel cmd stub --browse
+----
+
 === Dev mode with live reload
 
 You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),

@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.junit.jupiter.api.Assertions
 
 class InterceptSendToEndpointTest extends YamlTestSupport {
     def "interceptSendToEndpoint"() {
@@ -31,7 +32,7 @@ class InterceptSendToEndpointTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - to: "mock:foo"
-                      - set-body:
+                      - setBody:
                           constant: "Hello Bar"
                       - to: "mock:bar"
                       - to: "mock:result"
@@ -50,4 +51,29 @@ class InterceptSendToEndpointTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "Error: kebab-case: intercept-send-to-endpoint"() {
+        when:
+        var route = """
+                - intercept-send-to-endpoint: 
+                    uri: "mock:bar"
+                    steps:
+                      - to: "mock:intercepted"  
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "mock:foo"
+                      - setBody:
+                          constant: "Hello Bar"
+                      - to: "mock:bar"
+                      - to: "mock:result"
+            """
+        then:
+        try {
+            loadRoutes route
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
+        }
 }

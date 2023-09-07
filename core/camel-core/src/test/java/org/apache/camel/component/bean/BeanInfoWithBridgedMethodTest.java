@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for bridged methods.
@@ -29,37 +29,33 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
 
     @Test
-    public void testBridgedMethod() throws Exception {
+    public void testBridgedMethod() {
         BeanInfo beanInfo = new BeanInfo(context, MyService.class);
 
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request(1));
 
-        try {
+        assertDoesNotThrow(() -> {
             MyService myService = new MyService();
             MethodInvocation mi = beanInfo.createInvocation(null, exchange);
             assertEquals("MyService", mi.getMethod().getDeclaringClass().getSimpleName());
             assertEquals(2, mi.getMethod().invoke(myService, new Request(1)));
-        } catch (AmbiguousMethodCallException e) {
-            fail("This should not be ambiguous!");
-        }
+        }, "This should not be ambiguous!");
     }
 
     @Test
-    public void testPackagePrivate() throws Exception {
+    public void testPackagePrivate() {
         BeanInfo beanInfo = new BeanInfo(context, MyPackagePrivateService.class);
 
         DefaultExchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new Request(1));
 
-        try {
+        assertDoesNotThrow(() -> {
             MyPackagePrivateService myService = new MyPackagePrivateService();
             MethodInvocation mi = beanInfo.createInvocation(null, exchange);
             assertEquals("Service", mi.getMethod().getDeclaringClass().getSimpleName());
             assertEquals(4, mi.getMethod().invoke(myService, new Request(2)));
-        } catch (AmbiguousMethodCallException e) {
-            fail("This should not be ambiguous!");
-        }
+        }, "This should not be ambiguous!");
     }
 
     public static class Request {

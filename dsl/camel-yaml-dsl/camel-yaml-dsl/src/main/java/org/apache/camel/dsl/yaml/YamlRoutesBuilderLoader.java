@@ -318,31 +318,44 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
      * Camel K Integration file
      */
     private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
+        Node spec = nodeAt(root, "/spec");
+        if (spec != null) {
+            return preConfigureIntegrationSpec(spec, ctx, target, preParse);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Camel K Integration spec
+     */
+    private List<Object> preConfigureIntegrationSpec(
+            Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
         // when in pre-parse phase then we only want to gather spec/dependencies,spec/configuration,spec/traits
 
         List<Object> answer = new ArrayList<>();
 
         // if there are dependencies then include them first
-        Node deps = nodeAt(root, "/spec/dependencies");
+        Node deps = nodeAt(root, "/dependencies");
         if (deps != null) {
             var dep = preConfigureDependencies(deps);
             answer.add(dep);
         }
 
         // if there are configurations then include them early
-        Node configuration = nodeAt(root, "/spec/configuration");
+        Node configuration = nodeAt(root, "/configuration");
         if (configuration != null) {
             var list = preConfigureConfiguration(ctx.getResource(), configuration);
             answer.addAll(list);
         }
         // if there are trait configuration then include them early
-        configuration = nodeAt(root, "/spec/traits/camel");
+        configuration = nodeAt(root, "/traits/camel");
         if (configuration != null) {
             var list = preConfigureTraitConfiguration(ctx.getResource(), configuration);
             answer.addAll(list);
         }
         // if there are trait environment then include them early
-        configuration = nodeAt(root, "/spec/traits/environment");
+        configuration = nodeAt(root, "/traits/environment");
         if (configuration != null) {
             var list = preConfigureTraitEnvironment(ctx.getResource(), configuration);
             answer.addAll(list);
@@ -350,15 +363,15 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         if (!preParse) {
             // if there are sources then include them before routes
-            Node sources = nodeAt(root, "/spec/sources");
+            Node sources = nodeAt(root, "/sources");
             if (sources != null) {
                 var list = preConfigureSources(sources);
                 answer.addAll(list);
             }
             // add routes last
-            Node routes = nodeAt(root, "/spec/flows");
+            Node routes = nodeAt(root, "/flows");
             if (routes == null) {
-                routes = nodeAt(root, "/spec/flow");
+                routes = nodeAt(root, "/flow");
             }
             if (routes != null) {
                 // routes should be an array
@@ -621,6 +634,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             if (list != null) {
                 answer.addAll(list);
             }
+        }
+
+        // Pipe may hold an integration spec
+        Node integration = nodeAt(root, "/spec/integration");
+        if (integration != null) {
+            answer.addAll(preConfigureIntegrationSpec(integration, ctx, target, preParse));
         }
 
         if (!preParse) {

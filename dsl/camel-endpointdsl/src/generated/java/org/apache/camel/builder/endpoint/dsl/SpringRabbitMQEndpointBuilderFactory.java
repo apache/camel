@@ -1186,6 +1186,43 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow sending messages with no body. If this option is
+         * false and the message body is null, then an
+         * MessageConversionException is thrown.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder allowNullBody(
+                boolean allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Whether to allow sending messages with no body. If this option is
+         * false and the message body is null, then an
+         * MessageConversionException is thrown.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder allowNullBody(
+                String allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
          * Controls whether to wait for confirms. The connection factory must be
          * configured for publisher confirms and this method. auto = Camel
          * detects if the connection factory uses confirms or not. disabled =

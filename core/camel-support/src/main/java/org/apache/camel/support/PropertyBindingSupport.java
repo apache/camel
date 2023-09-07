@@ -382,11 +382,8 @@ public final class PropertyBindingSupport {
                 // now lets update the target/name/class before next iterator (next part)
                 if (configurer instanceof PropertyConfigurerGetter) {
                     // lets see if we have a specialized configurer
-                    String key = part;
-                    int pos = part.indexOf('[');
-                    if (pos != -1) {
-                        key = part.substring(0, pos);
-                    }
+                    String key = StringHelper.before(part, "[", part);
+
                     // if its a map/list/array type then find out what type the collection uses
                     // so we can use that to lookup as configurer
                     Class<?> collectionType = (Class<?>) ((PropertyConfigurerGetter) configurer)
@@ -426,11 +423,7 @@ public final class PropertyBindingSupport {
             boolean allowPrivateSetter, boolean ignoreCase) {
 
         // if the name has collection lookup then ignore that as we want to create the instance
-        String key = name;
-        int pos = name.indexOf('[');
-        if (pos != -1) {
-            key = name.substring(0, pos);
-        }
+        String key = StringHelper.before(name, "[", name);
 
         Object answer = null;
         Method method = findBestSetterMethod(camelContext, newClass, key, fluentBuilder, allowPrivateSetter, ignoreCase);
@@ -451,11 +444,7 @@ public final class PropertyBindingSupport {
             boolean ignoreCase, PropertyConfigurer configurer) {
 
         // if the name has collection lookup then ignore that as we want to create the instance
-        String key = name;
-        int pos = name.indexOf('[');
-        if (pos != -1) {
-            key = name.substring(0, pos);
-        }
+        String key = StringHelper.before(name, "[", name);
 
         Object answer = null;
         Class<?> parameterType = null;
@@ -541,6 +530,10 @@ public final class PropertyBindingSupport {
             if (str instanceof String) {
                 // resolve property placeholders
                 str = camelContext.resolvePropertyPlaceholders(str.toString());
+            }
+            if (str == null && reference && mandatory && !optional) {
+                // we could not resolve the reference and this is mandatory
+                throw new PropertyBindingException(target, key, value);
             }
             value = str;
         } catch (Exception e) {
@@ -1290,12 +1283,14 @@ public final class PropertyBindingSupport {
                         }
                     }
                 }
-                if (val == null) {
-                    val = camelContext.getTypeConverter().convertTo(paramType, param);
-                }
                 // unquote text
                 if (val instanceof String) {
                     val = StringHelper.removeLeadingAndEndingQuotes((String) val);
+                }
+                if (val != null) {
+                    val = camelContext.getTypeConverter().tryConvertTo(paramType, val);
+                } else {
+                    val = camelContext.getTypeConverter().convertTo(paramType, param);
                 }
                 arr[i] = val;
             }
@@ -1599,7 +1594,7 @@ public final class PropertyBindingSupport {
             }
         } else if (strval.startsWith("#bean:")) {
             String key = strval.substring(6);
-            answer = camelContext.getRegistry().lookupByName(key);
+            answer = CamelContextHelper.mandatoryLookup(camelContext, key);
         } else if (strval.startsWith("#valueAs(")) {
             String text = strval.substring(8);
             String typeName = StringHelper.between(text, "(", ")");

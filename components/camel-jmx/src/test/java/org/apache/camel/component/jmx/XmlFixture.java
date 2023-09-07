@@ -51,7 +51,7 @@ public final class XmlFixture {
                 .checkForSimilar().build();
         try {
             assertFalse(diff.hasDifferences(), aMessage + ":\n" + diff.toString());
-        } catch (Throwable t) {
+        } catch (Exception t) {
             dump(aActual);
             throw t;
         }

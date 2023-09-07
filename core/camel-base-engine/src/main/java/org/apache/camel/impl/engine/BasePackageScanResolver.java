@@ -30,6 +30,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,10 +179,7 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
         }
 
         // Else it's in a JAR, grab the path to the jar
-        if (urlPath.indexOf('!') > 0) {
-            urlPath = urlPath.substring(0, urlPath.indexOf('!'));
-        }
-        return urlPath;
+        return StringHelper.before(urlPath, "!", urlPath);
     }
 
     protected Enumeration<URL> getUrls(String packageName, ClassLoader loader) {

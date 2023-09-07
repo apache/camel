@@ -50,7 +50,8 @@ public final class LoggerHelper {
                 name = loc;
                 if (loc.contains(":")) {
                     // strip prefix
-                    loc = loc.substring(loc.indexOf(':') + 1);
+                    loc = StringHelper.after(loc, ":", loc);
+
                     // file based such as xml and yaml
                     name = FileUtil.stripPath(loc);
                 } else {

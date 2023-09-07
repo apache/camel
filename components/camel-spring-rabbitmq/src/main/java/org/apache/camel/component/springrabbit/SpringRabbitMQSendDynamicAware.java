@@ -128,12 +128,10 @@ public class SpringRabbitMQSendDynamicAware extends ServiceSupport implements Se
     private String parseExchangeName(String uri) {
         // strip query
         uri = uri.replaceFirst(scheme + "://", ":");
-        int pos = uri.indexOf('?');
-        if (pos != -1) {
-            uri = uri.substring(0, pos);
-        }
+        uri = StringHelper.before(uri, "?", uri);
+
         // exchange name is after first colon
-        pos = uri.indexOf(':');
+        int pos = uri.indexOf(':');
         if (pos != -1) {
             return uri.substring(pos + 1);
         } else {

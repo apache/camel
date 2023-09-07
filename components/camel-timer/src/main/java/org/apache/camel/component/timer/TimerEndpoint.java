@@ -63,8 +63,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private String pattern;
     @UriParam(label = "advanced")
     private Timer timer;
-    @UriParam(defaultValue = "true")
-    private boolean includeMetadata = true;
+    @UriParam
+    private boolean includeMetadata;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
@@ -253,8 +253,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc. This information is
-     * default included.
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
      */
     @ManagedAttribute(description = "Include metadata")
     public void setIncludeMetadata(boolean includeMetadata) {

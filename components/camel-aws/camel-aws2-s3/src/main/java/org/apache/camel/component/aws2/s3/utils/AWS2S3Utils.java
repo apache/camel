@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.s3.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -110,6 +111,19 @@ public final class AWS2S3Utils {
             is.reset();
         }
         return size;
+    }
+
+    public static byte[] toByteArray(InputStream is, final int size) throws IOException {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            byte[] data = new byte[4096];
+            int total = 0;
+            int n = 0;
+            while (total < size && (n = is.read(data)) != -1) {
+                output.write(data, 0, n);
+                total += n;
+            }
+            return output.toByteArray();
+        }
     }
 
     public static String determineKey(final Exchange exchange, AWS2S3Configuration configuration) {

@@ -78,14 +78,14 @@ In the route below we request the SAP NetWeaver demo server using the
 following url
 
 ----------------------------------------------------------------------
-https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/
+https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT
 ----------------------------------------------------------------------
 
 And we want to execute the following command
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
-FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')
+FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')
 -------------------------------------------------------------------------------------------------------
 
 To get flight details for the given flight. The command syntax is in
@@ -109,8 +109,8 @@ Where url, username, password and command is defined as:
 ---------------------------------------------------------------------------------------------------------------------------------------
     private String username = "P1909969254";
     private String password = "TODO";
-    private String url = "https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/";
-    private String command = "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')";
+    private String url = "https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT";
+    private String command = "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')";
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 The password is invalid. You would need to create an account at SAP

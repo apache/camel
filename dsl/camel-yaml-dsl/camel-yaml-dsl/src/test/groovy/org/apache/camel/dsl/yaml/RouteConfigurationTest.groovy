@@ -27,15 +27,15 @@ import org.junit.jupiter.api.Assertions
 import static org.apache.camel.util.PropertiesHelper.asProperties
 
 class RouteConfigurationTest extends YamlTestSupport {
-    def "route-configuration"() {
+    def "routeConfiguration"() {
         setup:
         loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - route-configuration:
-                    on-exception:
-                      - on-exception:
+                - routeConfiguration:
+                    onException:
+                      - onException:
                           handled:
                             constant: "true"
                           exception:
@@ -43,12 +43,12 @@ class RouteConfigurationTest extends YamlTestSupport {
                           steps:
                             - transform:
                                 constant: "Sorry"
-                            - to: "mock:on-exception"  
+                            - to: "mock:on-exception"
                 - from:
                     uri: "direct:start"
                     steps:
                       - process: 
-                          ref: "myFailingProcessor"            
+                          ref: "myFailingProcessor"
             """
 
         withMock('mock:on-exception') {
@@ -65,17 +65,47 @@ class RouteConfigurationTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "route-configuration-precondition"() {
+    def "routeConfiguration onCompletion"() {
+        setup:
+        loadRoutes """
+                - routeConfiguration:
+                    onCompletion:
+                      - onCompletion:
+                          steps:
+                            - transform:
+                                constant: "Completed"
+                            - to: "mock:on-completion"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - log: "hello"
+            """
+
+        withMock('mock:on-completion') {
+            expectedBodiesReceived 'Completed'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "routeConfiguration-precondition"() {
         setup:
         context.getPropertiesComponent().setInitialProperties(asProperties("activate", "true"))
         loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - route-configuration:
+                - routeConfiguration:
                     precondition: "{{!activate}}"
-                    on-exception:
-                      - on-exception:
+                    onException:
+                      - onException:
                           handled:
                             constant: "true"
                           exception:
@@ -83,11 +113,11 @@ class RouteConfigurationTest extends YamlTestSupport {
                           steps:
                             - transform:
                                 constant: "Not Activated"
-                            - to: "mock:on-exception"  
-                - route-configuration:
+                            - to: "mock:on-exception"
+                - routeConfiguration:
                     precondition: "{{activate}}"
-                    on-exception:
-                      - on-exception:
+                    onException:
+                      - onException:
                           handled:
                             constant: "true"
                           exception:
@@ -96,8 +126,8 @@ class RouteConfigurationTest extends YamlTestSupport {
                             - transform:
                                 constant: "Activated"
                             - to: "mock:on-exception"
-                    on-completion:
-                      - on-completion:
+                    onCompletion:
+                      - onCompletion:
                           steps:
                             - transform:
                                 constant: "Completed"
@@ -106,7 +136,7 @@ class RouteConfigurationTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - process: 
-                          ref: "myFailingProcessor"            
+                          ref: "myFailingProcessor"
             """
 
         withMock('mock:on-exception') {
@@ -132,24 +162,24 @@ class RouteConfigurationTest extends YamlTestSupport {
         }
     }
 
-    def "route-configuration-separate"() {
+    def "routeConfiguration-separate"() {
         setup:
         // global configurations
         loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - route-configuration:
-                    on-exception:
-                    - on-exception:
-                        handled:
-                          constant: "true"
-                        exception:
-                          - ${MyException.name}
-                        steps:
-                          - transform:
-                              constant: "Sorry"
-                          - to: "mock:on-exception"  
+                - routeConfiguration:
+                    onException:
+                      - onException:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"
             """
         // routes
         loadRoutes """
@@ -157,12 +187,12 @@ class RouteConfigurationTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - process: 
-                          ref: "myFailingProcessor"            
+                          ref: "myFailingProcessor"
                 - from:
                     uri: "direct:start2"
                     steps:
                       - process: 
-                          ref: "myFailingProcessor"            
+                          ref: "myFailingProcessor"
             """
 
         withMock('mock:on-exception') {
@@ -180,17 +210,17 @@ class RouteConfigurationTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "route-configuration-id"() {
+    def "routeConfigurationId"() {
         setup:
         // global configurations
         loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - route-configuration:
+                - routeConfiguration:
                     id: handleError
-                    on-exception:
-                      - on-exception:
+                    onException:
+                      - onException:
                           handled:
                             constant: "true"
                           exception:
@@ -198,23 +228,23 @@ class RouteConfigurationTest extends YamlTestSupport {
                           steps:
                             - transform:
                                 constant: "Sorry"
-                            - to: "mock:on-exception"  
+                            - to: "mock:on-exception"
             """
         // routes
         loadRoutes """
                 - route:
-                    route-configuration-id: handleError 
+                    routeConfigurationId: handleError 
                     from:
                       uri: "direct:start"
                       steps:
                         - process: 
-                            ref: "myFailingProcessor"            
+                            ref: "myFailingProcessor"
                 - route:
                     from:
                       uri: "direct:start2"
                       steps:
                         - process: 
-                            ref: "myFailingProcessor"            
+                            ref: "myFailingProcessor"
             """
 
         withMock('mock:on-exception') {
@@ -238,30 +268,30 @@ class RouteConfigurationTest extends YamlTestSupport {
         Assertions.assertTrue(out2.isFailed())
     }
 
-    def "route-configuration-error-handler"() {
+    def "routeConfiguration-errorHandler"() {
         setup:
         // global configurations
         loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - route-configuration:
-                    error-handler:
-                      dead-letter-channel: 
-                        dead-letter-uri: "mock:on-error"
+                - routeConfiguration:
+                    errorHandler:
+                      deadLetterChannel:
+                        deadLetterUri: "mock:on-error"
             """
         // routes
         loadRoutes """
                 - from:
                     uri: "direct:start"
                     steps:
-                      - process: 
-                          ref: "myFailingProcessor"            
+                      - process:
+                          ref: "myFailingProcessor"
                 - from:
                     uri: "direct:start2"
                     steps:
-                      - process: 
-                          ref: "myFailingProcessor"            
+                      - process:
+                          ref: "myFailingProcessor"
             """
 
         withMock('mock:on-error') {
@@ -279,5 +309,232 @@ class RouteConfigurationTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "routeConfiguration intercept"() {
+        setup:
+        loadRoutesNoValidate """
+                - routeConfiguration:
+                    intercept:
+                      - intercept:
+                          steps:
+                            - transform:
+                                constant: "intercepted"
+                            - to: "mock:intercepted"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - log: "hello"
+            """
+
+        withMock('mock:intercepted') {
+            expectedBodiesReceived 'intercepted'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "routeConfiguration interceptFrom"() {
+        setup:
+        loadRoutesNoValidate """
+                - routeConfiguration:
+                    interceptFrom:
+                      - interceptFrom:
+                          uri: "direct:start"
+                          steps:
+                            - transform:
+                                constant: "intercepted"
+                            - to: "mock:intercepted"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - log: "hello"
+            """
+
+        withMock('mock:intercepted') {
+            expectedBodiesReceived 'intercepted'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "routeConfiguration interceptSendToEndpoint"() {
+        setup:
+        loadRoutesNoValidate """
+                - routeConfiguration:
+                    interceptSendToEndpoint:
+                      - interceptSendToEndpoint:
+                          uri: "direct:start"
+                          steps:
+                            - transform:
+                                constant: "intercepted"
+                            - to: "mock:intercepted"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - log: "hello"
+            """
+
+        withMock('mock:intercepted') {
+            expectedBodiesReceived 'intercepted'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "Error: kebab-case: route-configuration"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - route-configuration:
+                    onException:
+                      - onException:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: on-exception"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - routeConfiguration:
+                    on-exception:
+                      - onException:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process:
+                          ref: "myFailingProcessor"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: onException/on-exception"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - routeConfiguration:
+                    onException:
+                      - on-exception:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: dead-letter-channel"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - routeConfiguration:
+                    errorHandler:
+                      dead-letter-channel:
+                        deadLetterUri: "mock:on-error"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: dead-letter-uri"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - routeConfiguration:
+                    errorHandler:
+                      deadLetterChannel:
+                        dead-letter-uri: "mock:on-error"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 
 }

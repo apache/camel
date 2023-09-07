@@ -45,7 +45,7 @@ public abstract class HdfsTestSupport extends CamelTestSupport {
         try {
             String hadoopHome = Shell.getHadoopHome();
             hasLocalHadoop = StringUtils.isNotEmpty(hadoopHome);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             hasLocalHadoop = false;
         }
         assumeTrue(hasLocalHadoop, "Missing local hadoop configuration");

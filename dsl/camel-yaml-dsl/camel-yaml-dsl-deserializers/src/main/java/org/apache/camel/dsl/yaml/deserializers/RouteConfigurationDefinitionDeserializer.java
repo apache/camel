@@ -44,12 +44,16 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "error-handler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
-                  @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
-                  @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
-                  @YamlProperty(name = "intercept-send-to-endpoint",
+                  @YamlProperty(name = "intercept", wrapItem = true,
+                                type = "array:org.apache.camel.model.InterceptDefinition"),
+                  @YamlProperty(name = "intercept-from", wrapItem = true,
+                                type = "array:org.apache.camel.model.InterceptFromDefinition"),
+                  @YamlProperty(name = "intercept-send-to-endpoint", wrapItem = true,
                                 type = "array:org.apache.camel.model.InterceptSendToEndpointDefinition"),
-                  @YamlProperty(name = "on-completion", type = "array:org.apache.camel.model.OnCompletionDefinition"),
-                  @YamlProperty(name = "on-exception", type = "array:org.apache.camel.model.OnExceptionDefinition")
+                  @YamlProperty(name = "on-completion", wrapItem = true,
+                                type = "array:org.apache.camel.model.OnCompletionDefinition"),
+                  @YamlProperty(name = "on-exception", wrapItem = true,
+                                type = "array:org.apache.camel.model.OnExceptionDefinition")
           })
 public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBase<RouteConfigurationDefinition> {
     public RouteConfigurationDefinitionDeserializer() {

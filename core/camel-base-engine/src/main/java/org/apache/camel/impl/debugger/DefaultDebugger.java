@@ -283,7 +283,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     protected void onBeforeProcess(Exchange exchange, Processor processor, NamedNode definition, Breakpoint breakpoint) {
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
     }
@@ -292,7 +292,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
             Exchange exchange, Processor processor, NamedNode definition, long timeTaken, Breakpoint breakpoint) {
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
     }
@@ -306,7 +306,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
 
         try {
             breakpoint.onEvent(exchange, event, definition);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // ignore
         }
     }

@@ -72,6 +72,11 @@ public final class MongoDbBasicConverters {
     }
 
     @Converter
+    public static Bson fromStringToBson(String s) {
+        return Document.parse(s);
+    }
+
+    @Converter
     public static ObjectId fromStringToObjectId(String s) {
         return new ObjectId(s);
     }

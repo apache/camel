@@ -21,7 +21,9 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
 
@@ -38,14 +40,14 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
                 from("direct:start").to("class:org.apache.camel.component.bean.XXX").to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            ClassNotFoundException not = assertIsInstanceOf(ClassNotFoundException.class, cause.getCause());
-            assertEquals("org.apache.camel.component.bean.XXX", not.getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class,
+                () -> context.start(),
+                "Should have thrown exception");
+
+        ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+        ClassNotFoundException not = assertIsInstanceOf(ClassNotFoundException.class, cause.getCause());
+        assertEquals("org.apache.camel.component.bean.XXX", not.getMessage());
     }
 
     @Test
@@ -56,14 +58,13 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
                 from("direct:start").to("class:org.apache.camel.component.bean.MyPrefixBean?bean.foo=bar").to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().contains("Unknown parameters"));
-            assertTrue(cause.getMessage().contains("foo=bar"));
-        }
-    }
 
+        Exception e = assertThrows(Exception.class,
+                () -> context.start(),
+                "Should have thrown exception");
+
+        ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("Unknown parameters"));
+        assertTrue(cause.getMessage().contains("foo=bar"));
+    }
 }

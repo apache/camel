@@ -479,26 +479,24 @@ public final class IOHelper {
      * Appends the text to the file.
      */
     public static void appendText(String text, File file) throws IOException {
-        if (!file.exists()) {
-            String path = FileUtil.onlyPath(file.getPath());
-            if (path != null) {
-                new File(path).mkdirs();
-            }
-        }
-        writeText(text, new FileOutputStream(file, true));
+        doWriteText(text, file, true);
     }
 
     /**
      * Writes the text to the file.
      */
     public static void writeText(String text, File file) throws IOException {
+        doWriteText(text, file, false);
+    }
+
+    private static void doWriteText(String text, File file, boolean append) throws IOException {
         if (!file.exists()) {
             String path = FileUtil.onlyPath(file.getPath());
             if (path != null) {
                 new File(path).mkdirs();
             }
         }
-        writeText(text, new FileOutputStream(file, false));
+        writeText(text, new FileOutputStream(file, append));
     }
 
     /**

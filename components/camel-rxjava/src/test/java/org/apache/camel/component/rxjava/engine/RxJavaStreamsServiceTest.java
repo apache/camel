@@ -80,7 +80,8 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=5&repeatCount=30").setBody().header(Exchange.TIMER_COUNTER).to("reactive-streams:tick");
+                from("timer:tick?period=5&repeatCount=30&includeMetadata=true").setBody().header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:tick");
             }
         });
 
@@ -127,7 +128,8 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=50").setBody().header(Exchange.TIMER_COUNTER).to("reactive-streams:tick");
+                from("timer:tick?period=50&includeMetadata=true").setBody().header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:tick");
             }
         });
 
@@ -162,7 +164,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
     public void testFrom() throws Exception {
         context.start();
 
-        Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3");
+        Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3&includeMetadata=true");
 
         AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(3);

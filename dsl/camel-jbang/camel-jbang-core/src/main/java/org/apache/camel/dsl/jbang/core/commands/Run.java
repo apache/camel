@@ -93,7 +93,7 @@ public class Run extends CamelCommand {
             "templatedRoute", "templatedRoutes",
             "rest", "rests",
             "routeConfiguration",
-            "beans", "camel"
+            "beans", "blueprint", "camel"
     };
 
     private static final Set<String> ACCEPTED_XML_ROOT_ELEMENTS
@@ -110,6 +110,7 @@ public class Run extends CamelCommand {
 
     private boolean silentRun;
     private boolean pipeRun;
+    private boolean transformRun;
 
     private File logFile;
 
@@ -128,6 +129,9 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
     String camelVersion;
+
+    @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    String kameletsVersion;
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
@@ -266,6 +270,12 @@ public class Run extends CamelCommand {
     protected Integer runSilent() throws Exception {
         // just boot silently and exit
         silentRun = true;
+        return run();
+    }
+
+    protected Integer runTransform() throws Exception {
+        // just boot silently and exit
+        transformRun = true;
         return run();
     }
 
@@ -449,10 +459,21 @@ public class Run extends CamelCommand {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        } else if (transformRun) {
+            main.setSilent(true);
+            // enable stub in silent mode so we do not use real components
+            main.setStubPattern("*");
+            // do not run for very long in silent run
+            main.addInitialProperty("camel.main.autoStartup", "false");
+            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
         } else if (pipeRun) {
             // auto terminate if being idle
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", "1");
         }
+        // any custom initial property
+        doAddInitialProperty(main);
+
         writeSetting(main, profileProperties, "camel.main.durationMaxMessages",
                 () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxSeconds",
@@ -463,6 +484,8 @@ public class Run extends CamelCommand {
                 () -> port > 0 ? String.valueOf(port) : null);
         writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
+
+        writeSetting(main, profileProperties, "camel.jbang.kameletsVersion", kameletsVersion);
 
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
@@ -669,6 +692,10 @@ public class Run extends CamelCommand {
         }
     }
 
+    protected void doAddInitialProperty(KameletMain main) {
+        // noop
+    }
+
     private void setupReload(KameletMain main, StringJoiner sjReload) {
         if (dev && (sourceDir != null || sjReload.length() > 0)) {
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
@@ -728,8 +755,13 @@ public class Run extends CamelCommand {
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
             jvmDebug = "true".equals(answer.getProperty("camel.jbang.jvmDebug", jvmDebug ? "true" : "false"));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
+            kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
+        }
+
+        if (kameletsVersion == null) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
         }
         return answer;
     }
@@ -744,12 +776,18 @@ public class Run extends CamelCommand {
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
         }
+        if (kameletsVersion != null) {
+            cmds.remove("--kamelets-version=" + kameletsVersion);
+        }
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
         jbangArgs.add("run");
         if (camelVersion != null) {
             jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
+        }
+        if (kameletsVersion != null) {
+            jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
         }
         if (jvmDebug) {
             jbangArgs.add("--debug"); // jbang --debug
@@ -825,6 +863,10 @@ public class Run extends CamelCommand {
         }
         content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
 
+        sb = new StringBuilder();
+        sb.append(String.format("//DEPS org.apache.camel.kamelets:camel-kamelets:%s\n", kameletsVersion));
+        content = content.replaceFirst("\\{\\{ \\.CamelKameletsDependencies }}", sb.toString());
+
         String fn = WORK_DIR + "/CustomCamelJBang.java";
         Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
 
@@ -842,6 +884,7 @@ public class Run extends CamelCommand {
         }
 
         cmds.remove("--camel-version=" + camelVersion);
+        cmds.remove("--kamelets-version=" + kameletsVersion);
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");

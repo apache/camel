@@ -113,11 +113,10 @@ public class ConverterTest extends TestSupport {
         assertEquals(2, list.size(), "List size: " + list);
 
         Collection<?> collection = converter.convertTo(Collection.class, array);
+        assertNotNull(collection, "Returned object must not be null");
         assertEquals(2, collection.size(), "Collection size: " + collection);
 
-        Set<?> set = converter.convertTo(Set.class, array);
-        assertEquals(2, set.size(), "Set size: " + set);
-        set = converter.convertTo(Set.class, list);
+        Set<?> set = converter.convertTo(Set.class, list);
         assertEquals(2, set.size(), "Set size: " + set);
     }
 
@@ -234,7 +233,7 @@ public class ConverterTest extends TestSupport {
         CamelContext camel = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(camel);
 
-        Exception ex = assertThrows(NoTypeConversionAvailableException.class,
+        assertThrows(NoTypeConversionAvailableException.class,
                 () -> converter.mandatoryConvertTo(InputStream.class, exchange),
                 "Expected to get a NoTypeConversionAvailableException here");
     }

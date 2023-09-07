@@ -20,5 +20,11 @@ package org.apache.camel.component.jpa;
  * A transaction strategy that is used to run the JPA operations in a transaction.
  */
 public interface TransactionStrategy {
+
+    /**
+     * Execute the work in transaction.
+     *
+     * @param runnable the work to execute.
+     */
     void executeInTransaction(Runnable runnable);
 }

@@ -234,4 +234,26 @@ public final class Strings {
         return answer.toString().toLowerCase(Locale.ENGLISH);
     }
 
+    /**
+     * A simpler version of StringHelper#capitlize for usage in the tooling code
+     *
+     * @param  text the string
+     * @return      the string capitalized (upper case first character) or null if the input is null
+     */
+    public static String capitalize(final String text) {
+        if (text == null) {
+            return null;
+        }
+
+        int length = text.length();
+        final char[] chars = new char[length];
+        text.getChars(0, length, chars, 0);
+
+        // We are OK with the limitations of Character.toUpperCase. The symbols and ideographs
+        // for which it does not return the capitalized value should not be used here (this is
+        // mostly used to capitalize setters/getters)
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
+    }
+
 }

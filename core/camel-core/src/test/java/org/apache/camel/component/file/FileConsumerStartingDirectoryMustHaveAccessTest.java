@@ -21,15 +21,13 @@ import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTestSupport {
 
@@ -50,18 +48,17 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
     }
 
     @Test
-    public void testStartingDirectoryMustHaveAccess() throws Exception {
+    public void testStartingDirectoryMustHaveAccess() {
         Endpoint endpoint = context.getEndpoint(
                 fileUri("noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true"));
-        try {
-            endpoint.createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    // noop
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (IOException e) {
-            assertTrue(e.getMessage().startsWith("Starting directory permission denied"), e.getMessage());
-        }
+
+        IOException e = assertThrows(IOException.class,
+                () -> {
+                    endpoint.createConsumer(exchange -> {
+                        // noop
+                    });
+                }, "Should have thrown an exception");
+
+        assertTrue(e.getMessage().startsWith("Starting directory permission denied"), e.getMessage());
     }
 }

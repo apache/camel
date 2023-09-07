@@ -27,6 +27,7 @@ import org.apache.camel.model.rest.PostDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.model.rest.VerbDefinition
 import org.apache.camel.support.PluginHelper
+import org.junit.jupiter.api.Assertions
 
 class RestTest extends YamlTestSupport {
 
@@ -36,9 +37,9 @@ class RestTest extends YamlTestSupport {
                 - beans:
                   - name: myRestConsumerFactory
                     type: ${MockRestConsumerFactory.name}
-                - rest-configuration:
+                - restConfiguration:
                     component: "servlet"
-                    context-path: "/foo"       
+                    contextPath: "/foo"       
             """
         then:
             context.restConfiguration.component == 'servlet'
@@ -55,7 +56,7 @@ class RestTest extends YamlTestSupport {
                     get:
                       - path: "/foo"
                         type: ${MyFooBar.name}
-                        out-type: ${MyBean.name}
+                        outType: ${MyBean.name}
                         to: "direct:bar"
                 - from:
                     uri: 'direct:bar'
@@ -90,7 +91,7 @@ class RestTest extends YamlTestSupport {
                     get:
                      -  path: "/foo"
                         type: ${MyFooBar.name}
-                        out-type: ${MyBean.name}
+                        outType: ${MyBean.name}
                         to: "direct:bar"
                 - from:
                     uri: 'direct:bar'
@@ -125,7 +126,7 @@ class RestTest extends YamlTestSupport {
                       - path: "/foo"
                         id: "foolish"
                         type: ${MyFooBar.name}
-                        out-type: ${MyBean.name}
+                        outType: ${MyBean.name}
                         to: "direct:foo"
                       - path: "/baz"
                         id: "bazzy"
@@ -208,5 +209,67 @@ class RestTest extends YamlTestSupport {
             }
     }
 
+    def "Error: kebab-case: rest-configuration"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myRestConsumerFactory
+                    type: ${MockRestConsumerFactory.name}
+                - rest-configuration:
+                    component: "servlet"
+                    contextPath: "/foo"       
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 
+    def "Error: kebab-case: context-path"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myRestConsumerFactory
+                    type: ${MockRestConsumerFactory.name}
+                - restConfiguration:
+                    component: "servlet"
+                    context-path: "/foo"       
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: out-type"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myRestConsumerFactory
+                    type: ${MockRestConsumerFactory.name}
+                - rest:
+                    get:
+                      - path: "/foo"
+                        type: ${MyFooBar.name}
+                        out-type: ${MyBean.name}
+                        to: "direct:bar"
+                - from:
+                    uri: 'direct:bar'
+                    steps:
+                      - to: 'mock:bar'          
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 }

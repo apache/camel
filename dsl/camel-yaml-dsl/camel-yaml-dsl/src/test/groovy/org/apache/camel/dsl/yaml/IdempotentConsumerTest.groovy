@@ -18,9 +18,10 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
+import org.junit.jupiter.api.Assertions
 
 class IdempotentConsumerTest extends YamlTestSupport {
-    def 'idempotent-consumer'() {
+    def 'idempotentConsumer'() {
         setup:
             loadRoutes '''
                 - beans:
@@ -29,9 +30,9 @@ class IdempotentConsumerTest extends YamlTestSupport {
                 - from:
                     uri: "direct:route"
                     steps:
-                      - idempotent-consumer:
+                      - idempotentConsumer:
                           simple: "${header.id}"
-                          idempotent-repository: "myRepo"
+                          idempotentRepository: "myRepo"
                           steps:
                             - to: "mock:idempotent"
                       - to: "mock:route"
@@ -56,5 +57,55 @@ class IdempotentConsumerTest extends YamlTestSupport {
             }
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def 'Error: kebab-case: idempotent-consumer'() {
+        when:
+        var route = '''
+                - beans:
+                  - name: myRepo
+                    type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - idempotent-consumer:
+                          simple: "${header.id}"
+                          idempotentRepository: "myRepo"
+                          steps:
+                            - to: "mock:idempotent"
+                      - to: "mock:route"
+            '''
+        then:
+        try {
+            loadRoutes route
+            Assertions.fail('Should have thrown exception')
+        } catch (e) {
+            assert e.message.contains('additional properties')
+        }
+    }
+
+    def 'Error: kebab-case: idempotent-repository'() {
+        when:
+        var route = '''
+                - beans:
+                  - name: myRepo
+                    type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - idempotentConsumer:
+                          simple: "${header.id}"
+                          idempotent-repository: "myRepo"
+                          steps:
+                            - to: "mock:idempotent"
+                      - to: "mock:route"
+            '''
+        then:
+        try {
+            loadRoutes route
+            Assertions.fail('Should have thrown exception')
+        } catch (e) {
+            assert e.message.contains('additional properties')
+        }
     }
 }

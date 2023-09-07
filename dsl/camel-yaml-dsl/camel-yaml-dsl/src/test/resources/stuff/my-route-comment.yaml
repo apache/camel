@@ -35,7 +35,7 @@
             when:
               - simple: "${body} == 'Hello'"
                 steps:
-                  - set-property:
+                  - setProperty:
                       # more blah blah
                       name: testProp
                       simple: "${body}"
@@ -43,7 +43,7 @@
             otherwise:
               steps:
                 # more blah blah
-                - set-property:
+                - setProperty:
                     name: testProp
                     constant: "NoDice"
           # more blah blah

@@ -31,6 +31,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +40,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
@@ -52,7 +55,7 @@ import org.apache.camel.util.URISupport;
 @Metadata(label = "rest")
 @XmlRootElement(name = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> {
+public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> implements ResourceAware {
 
     @XmlAttribute
     private String path;
@@ -89,6 +92,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private List<SecurityDefinition> securityRequirements = new ArrayList<>();
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
+    @XmlTransient
+    private Resource resource;
 
     @Override
     public String getShortName() {
@@ -259,6 +264,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setApiDocs(String apiDocs) {
         this.apiDocs = apiDocs;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     // Fluent API

@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import org.apache.camel.maven.dsl.yaml.support.IndexerSupport;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
@@ -140,6 +141,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = ClassName.get("org.apache.camel.spi.annotations", "YamlType");
     public static final ClassName CN_YAML_PROPERTY
             = ClassName.get("org.apache.camel.spi.annotations", "YamlProperty");
+
+    public static final ClassName CN_YAML_PROPERTY_GROUP
+            = ClassName.get("org.apache.camel.spi.annotations", "YamlPropertyGroup");
     public static final ClassName CN_YAML_IN
             = ClassName.get("org.apache.camel.spi.annotations", "YamlIn");
     public static final ClassName CN_EXPRESSION_DEFINITION
@@ -269,11 +273,15 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         return answer.stream();
     }
 
-    protected static AnnotationSpec yamlProperty(String name, String type) {
-        return yamlProperty(name, type, false, false);
+    protected static AnnotationSpec yamlProperty(String name, String type, String oneOf) {
+        return yamlProperty(name, type, false, false, oneOf);
     }
 
-    protected static AnnotationSpec yamlProperty(String name, String type, boolean required, boolean deprecated) {
+    protected static AnnotationSpec yamlProperty(String name, String type) {
+        return yamlProperty(name, type, false, false, "");
+    }
+
+    protected static AnnotationSpec yamlProperty(String name, String type, boolean required, boolean deprecated, String oneOf) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
         builder.addMember("name", "$S", name);
         builder.addMember("type", "$S", type);
@@ -282,6 +290,9 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         }
         if (deprecated) {
             builder.addMember("deprecated", "$L", deprecated);
+        }
+        if (!Strings.isNullOrEmpty(oneOf)) {
+            builder.addMember("oneOf", "$S", oneOf);
         }
 
         return builder.build();
@@ -314,12 +325,13 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     //
     // **************************
 
-    protected static AnnotationSpec yamlPropertyWithSubtype(String name, String type, String subType) {
-        return yamlPropertyWithSubtype(name, type, subType, false);
+    protected static AnnotationSpec yamlPropertyWithSubtype(String name, String type, String subType, String oneOf) {
+        return yamlPropertyWithSubtype(name, type, subType, false, oneOf);
     }
 
-    protected static AnnotationSpec yamlPropertyWithSubtype(String name, String type, String subType, boolean required) {
-        return yamlProperty(name, type + ":" + subType, required, false);
+    protected static AnnotationSpec yamlPropertyWithSubtype(
+            String name, String type, String subType, boolean required, String oneOf) {
+        return yamlProperty(name, type + ":" + subType, required, false, oneOf);
     }
 
     // **************************

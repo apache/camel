@@ -135,8 +135,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     private Exchange prepareExchange(final Exchange exchange) {
         // send a new copied exchange with new camel context
         // don't copy handovers as they are handled by the Disruptor Event Handlers
-        final Exchange newExchange = ExchangeHelper
-                .copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
+        final Exchange newExchange = ExchangeHelper.copyExchangeWithProperties(exchange, endpoint.getCamelContext());
         // set the from endpoint
         newExchange.getExchangeExtension().setFromEndpoint(endpoint);
         return newExchange;

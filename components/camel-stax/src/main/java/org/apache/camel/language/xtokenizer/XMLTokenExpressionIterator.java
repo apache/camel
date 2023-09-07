@@ -210,7 +210,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 String s = sl[i];
                 if (s.length() > 0) {
                     int d = s.indexOf(':');
-                    String pfx = d > 0 ? s.substring(0, d) : "";
+                    String pfx = StringHelper.before(s, ":", "");
                     this.splitpath[i] = new AttributedQName(
                             "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }

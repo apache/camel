@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSupport {
 
@@ -47,22 +47,21 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
     }
 
     @Test
-    public void testAddConsumer() throws Exception {
-        try {
+    public void testAddConsumer() {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("seda:foo").routeId("fail").to("mock:fail");
                 }
             });
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            FailedToStartRouteException failed = assertIsInstanceOf(FailedToStartRouteException.class, e);
-            assertEquals("fail", failed.getRouteId());
-            assertEquals(
-                    "Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false",
-                    e.getCause().getMessage());
-        }
+        }, "Should have thrown exception");
+
+        FailedToStartRouteException failed = assertIsInstanceOf(FailedToStartRouteException.class, e);
+        assertEquals("fail", failed.getRouteId());
+        assertEquals(
+                "Cannot use existing queue seda://foo as the existing queue multiple consumers true does not match given multiple consumers false",
+                e.getCause().getMessage());
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -53,6 +54,7 @@ public class BaseParser {
 
     protected final MXParser parser;
     protected String namespace;
+    protected Set<String> secondaryNamespaces = new HashSet<>();
     protected Resource resource;
 
     public BaseParser(Resource resource) throws IOException, XmlPullParserException {
@@ -85,6 +87,10 @@ public class BaseParser {
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         this.parser.setInput(reader);
         this.namespace = namespace != null ? namespace : "";
+    }
+
+    public void addSecondaryNamespace(String namespace) {
+        this.secondaryNamespaces.add(namespace);
     }
 
     protected <T> T doParse(
@@ -125,7 +131,7 @@ public class BaseParser {
             if (name.equals("uri") || name.endsWith("Uri")) {
                 val = URISupport.removeNoiseFromUri(val);
             }
-            if (Objects.equals(ns, "") || Objects.equals(ns, namespace)) {
+            if (matchNamespace(ns, true)) {
                 if (attributeHandler == null || !attributeHandler.accept(definition, name, val)) {
                     handleUnexpectedAttribute(ns, name);
                 }
@@ -149,7 +155,7 @@ public class BaseParser {
                     }
                 } else {
                     // pass element to the handler only if matches the declared namespace for the parser
-                    if (Objects.equals(ns, namespace)) {
+                    if (matchNamespace(ns, false)) {
                         if (elementHandler == null || !elementHandler.accept(definition, name)) {
                             handleUnexpectedElement(namespace, name);
                         }
@@ -193,7 +199,7 @@ public class BaseParser {
             } else if (event == XmlPullParser.START_TAG) {
                 String ns = parser.getNamespace();
                 String name = parser.getName();
-                if (Objects.equals(ns, namespace)) {
+                if (matchNamespace(ns, false)) {
                     if (!"value".equals(name)) {
                         handleUnexpectedElement(ns, name);
                     }
@@ -203,7 +209,7 @@ public class BaseParser {
             } else if (event == XmlPullParser.END_TAG) {
                 String ns = parser.getNamespace();
                 String name = parser.getName();
-                if (Objects.equals(ns, namespace)) {
+                if (matchNamespace(ns, false)) {
                     if ("value".equals(name)) {
                         continue;
                     }
@@ -342,7 +348,7 @@ public class BaseParser {
             throw new XmlPullParserException("Expected starting tag");
         }
 
-        if (!Objects.equals(name, parser.getName()) || !Objects.equals(namespace, parser.getNamespace())) {
+        if (!Objects.equals(name, parser.getName()) || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
             return false;
         }
 
@@ -356,7 +362,21 @@ public class BaseParser {
 
         String pn = parser.getName();
         boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn);
-        if (!match || !Objects.equals(namespace, parser.getNamespace())) {
+        if (!match || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
+            return ""; // empty tag
+        }
+
+        return pn;
+    }
+
+    protected String getNextTag(String name, String name2, String name3) throws XmlPullParserException, IOException {
+        if (parser.nextTag() != XmlPullParser.START_TAG) {
+            throw new XmlPullParserException("Expected starting tag");
+        }
+
+        String pn = parser.getName();
+        boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn) || Objects.equals(name3, pn);
+        if (!match || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
             return ""; // empty tag
         }
 
@@ -458,4 +478,24 @@ public class BaseParser {
     interface ValueHandler<T> {
         void accept(T definition, String value) throws IOException, XmlPullParserException;
     }
+
+    protected boolean matchNamespace(String ns, boolean optional) {
+        return matchNamespace(ns, namespace, secondaryNamespaces, optional);
+    }
+
+    protected static boolean matchNamespace(String ns, String namespace, Set<String> secondaryNamespaces, boolean optional) {
+        if (optional && ns.isEmpty()) {
+            return true;
+        }
+        if (Objects.equals(ns, namespace)) {
+            return true;
+        }
+        for (String second : secondaryNamespaces) {
+            if (Objects.equals(ns, second)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

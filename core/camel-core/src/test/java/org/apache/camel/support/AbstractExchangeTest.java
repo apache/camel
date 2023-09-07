@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataType;
@@ -30,9 +31,25 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  */
 public class AbstractExchangeTest {
 
+    static class CustomAbstractExchange extends AbstractExchange {
+
+        CustomAbstractExchange(CustomAbstractExchange abstractExchange) {
+            super(abstractExchange);
+        }
+
+        public CustomAbstractExchange(CamelContext context) {
+            super(context);
+        }
+
+        @Override
+        AbstractExchange newCopy() {
+            return new CustomAbstractExchange(this);
+        }
+    }
+
     @Test
     void shouldPreserveDataTypeOnCopy() {
-        AbstractExchange e1 = new AbstractExchange(new DefaultCamelContext());
+        AbstractExchange e1 = new CustomAbstractExchange(new DefaultCamelContext());
         Object body1 = new Object();
         DataType type1 = new DataType("foo1");
         DefaultMessage in = new DefaultMessage((Exchange) null);

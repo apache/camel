@@ -26,6 +26,7 @@ import org.apache.camel.util.function.Suppliers;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
+import org.infinispan.commons.configuration.Combine;
 
 public class InfinispanRemoteAggregationRepository extends InfinispanAggregationRepository {
     private final Supplier<BasicCache<String, DefaultExchangeHolder>> cache;
@@ -62,7 +63,7 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
         } else {
             conf.setCacheContainerConfiguration(
                     new ConfigurationBuilder()
-                            .read(conf.getCacheContainerConfiguration())
+                            .read(conf.getCacheContainerConfiguration(), Combine.DEFAULT)
                             .addContextInitializer(new DefaultExchangeHolderContextInitializer())
                             .build());
         }

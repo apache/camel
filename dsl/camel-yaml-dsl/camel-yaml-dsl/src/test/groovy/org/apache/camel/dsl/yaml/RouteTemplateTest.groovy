@@ -250,7 +250,7 @@ class RouteTemplateTest extends YamlTestSupport {
                     id: "myTemplate"
                     parameters:
                       - name: "foo"
-                        default-value: "myDefaultFoo"
+                        defaultValue: "myDefaultFoo"
                         description: "myFooDescription"
                       - name: "bar"
                         description: "myBarDescription"
@@ -345,9 +345,9 @@ class RouteTemplateTest extends YamlTestSupport {
                           uri: "direct:route"
                           steps:
                             - aggregate:
-                                aggregation-strategy: "{{myAgg}}"
-                                completion-size: 2
-                                correlation-expression:
+                                aggregationStrategy: "{{myAgg}}"
+                                completionSize: 2
+                                correlationExpression:
                                   header: "StockSymbol"
                                 steps:  
                                   - to: "mock:result"
@@ -390,9 +390,9 @@ class RouteTemplateTest extends YamlTestSupport {
                           uri: "direct:route"
                           steps:
                             - aggregate:
-                                aggregation-strategy: "{{myAgg}}"
-                                completion-size: 2
-                                correlation-expression:
+                                aggregationStrategy: "{{myAgg}}"
+                                completionSize: 2
+                                correlationExpression:
                                   header: "StockSymbol"
                                 steps:  
                                   - to: "mock:result"
@@ -422,52 +422,18 @@ class RouteTemplateTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "create route-template with parameters"() {
-        when:
-        loadRoutes """
-                - route-template:
-                    id: "myTemplate"
-                    parameters:
-                      - name: "foo"
-                      - name: "bar"
-                    from:
-                      uri: "direct:{{foo}}"
-                      steps:
-                        - log: "{{bar}}"
-            """
-        then:
-        context.routeTemplateDefinitions.size() == 1
-
-        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
-            id == 'myTemplate'
-            configurer == null
-
-            templateParameters.any {
-                it.name == 'foo'
-            }
-            templateParameters.any {
-                it.name == 'bar'
-            }
-
-            route.input.endpointUri == 'direct:{{foo}}'
-            with(route.outputs[0], LogDefinition) {
-                message == '{{bar}}'
-            }
-        }
-    }
-
-    def "create route-template with route"() {
+    def "create routeTemplate with route"() {
         setup:
         loadRoutes """
-                - route-template:
+                - routeTemplate:
                     id: "myTemplate"
                     parameters:
                       - name: "foo"
                       - name: "bar"
                     route:
-                      stream-caching: false
-                      message-history: true
-                      log-mask: true
+                      streamCaching: false
+                      messageHistory: true
+                      logMask: true
                       from:
                         uri: "direct:{{foo}}"
                         steps:
@@ -485,10 +451,10 @@ class RouteTemplateTest extends YamlTestSupport {
             }
     }
 
-    def "create route-template with prefix"() {
+    def "create routeTemplate with prefix"() {
         setup:
         loadRoutes """
-                - route-template:
+                - routeTemplate:
                     id: "myTemplate"
                     parameters:
                       - name: "foo"
@@ -525,4 +491,50 @@ class RouteTemplateTest extends YamlTestSupport {
         Assertions.assertEquals(3, context.getRoute("second").filter("bbb*").size());
     }
 
+    def "Error: kebab-case: route-template"() {
+        when:
+        var route = """
+                - route-template:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "bar"
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                        - log: "{{bar}}"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
+
+    def "Error: kebab-case: default-value"() {
+        when:
+        var route = """
+                - routeTemplate:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                        default-value: "myDefaultFoo"
+                        description: "myFooDescription"
+                      - name: "bar"
+                        description: "myBarDescription"
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                        - log: "{{bar}}"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        }
+    }
 }

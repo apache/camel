@@ -131,6 +131,12 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean exchangeFactoryStatisticsEnabled;
     @Metadata(enums = "xml,yaml")
     private String dumpRoutes;
+    private String dumpRoutesInclude = "routes";
+    private boolean dumpRoutesLog = true;
+    private boolean dumpRoutesResolvePlaceholders = true;
+    private boolean dumpRoutesUriAsParameters;
+    private boolean dumpRoutesGeneratedIds;
+    private String dumpRoutesOutput;
     private Map<String, String> globalOptions;
     // route controller
     private boolean routeControllerSuperviseEnabled;
@@ -1386,6 +1392,80 @@ public abstract class DefaultConfigurationProperties<T> {
         this.dumpRoutes = dumpRoutes;
     }
 
+    public String getDumpRoutesInclude() {
+        return dumpRoutesInclude;
+    }
+
+    /**
+     * Controls what to include in output for route dumping.
+     *
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
+     */
+    public void setDumpRoutesInclude(String dumpRoutesInclude) {
+        this.dumpRoutesInclude = dumpRoutesInclude;
+    }
+
+    public boolean isDumpRoutesLog() {
+        return dumpRoutesLog;
+    }
+
+    /**
+     * Whether to log route dumps to Logger
+     */
+    public void setDumpRoutesLog(boolean dumpRoutesLog) {
+        this.dumpRoutesLog = dumpRoutesLog;
+    }
+
+    public boolean isDumpRoutesResolvePlaceholders() {
+        return dumpRoutesResolvePlaceholders;
+    }
+
+    /**
+     * Whether to resolve property placeholders in the dumped output. Default is true.
+     */
+    public void setDumpRoutesResolvePlaceholders(boolean dumpRoutesResolvePlaceholders) {
+        this.dumpRoutesResolvePlaceholders = dumpRoutesResolvePlaceholders;
+    }
+
+    public boolean isDumpRoutesUriAsParameters() {
+        return dumpRoutesUriAsParameters;
+    }
+
+    /**
+     * When dumping routes to YAML format, then this option controls whether endpoint URIs should be expanded into a
+     * key/value parameters.
+     */
+    public void setDumpRoutesUriAsParameters(boolean dumpRoutesUriAsParameters) {
+        this.dumpRoutesUriAsParameters = dumpRoutesUriAsParameters;
+    }
+
+    public boolean isDumpRoutesGeneratedIds() {
+        return dumpRoutesGeneratedIds;
+    }
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    public void setDumpRoutesGeneratedIds(boolean dumpRoutesGeneratedIds) {
+        this.dumpRoutesGeneratedIds = dumpRoutesGeneratedIds;
+    }
+
+    public String getDumpRoutesOutput() {
+        return dumpRoutesOutput;
+    }
+
+    /**
+     * Whether to save route dumps to an output file.
+     *
+     * If the output is a filename, then all content is saved to this file. If the output is a directory name, then one
+     * or more files are saved to the directory, where the names are based on the original source file names, or auto
+     * generated names.
+     */
+    public void setDumpRoutesOutput(String dumpRoutesOutput) {
+        this.dumpRoutesOutput = dumpRoutesOutput;
+    }
+
     public Map<String, String> getGlobalOptions() {
         return globalOptions;
     }
@@ -2575,6 +2655,62 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Controls what to include in output for route dumping.
+     *
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * by comma. Default is routes.
+     */
+    public T withDumpRoutesInclude(String dumpRoutesInclude) {
+        this.dumpRoutesInclude = dumpRoutesInclude;
+        return (T) this;
+    }
+
+    /**
+     * Whether to log route dumps to Logger
+     */
+    public T withDumpRoutesLog(boolean dumpRoutesLog) {
+        this.dumpRoutesLog = dumpRoutesLog;
+        return (T) this;
+    }
+
+    /**
+     * Whether to resolve property placeholders in the dumped output. Default is true.
+     */
+    public T withDumpRoutesResolvePlaceholders(boolean dumpRoutesResolvePlaceholders) {
+        this.dumpRoutesResolvePlaceholders = dumpRoutesResolvePlaceholders;
+        return (T) this;
+    }
+
+    /**
+     * When dumping routes to YAML format, then this option controls whether endpoint URIs should be expanded into a
+     * key/value parameters.
+     */
+    public T withDumpRoutesUriAsParameters(boolean dumpRoutesUriAsParameters) {
+        this.dumpRoutesUriAsParameters = dumpRoutesUriAsParameters;
+        return (T) this;
+    }
+
+    /**
+     * Whether to include auto generated IDs in the dumped output. Default is false.
+     */
+    public T withDumpRoutesGeneratedIds(boolean dumpRoutesGeneratedIds) {
+        this.dumpRoutesGeneratedIds = dumpRoutesGeneratedIds;
+        return (T) this;
+    }
+
+    /**
+     * Whether to save route dumps to an output file.
+     *
+     * If the output is a filename, then all content is saved to this file. If the output is a directory name, then one
+     * or more files are saved to the directory, where the names are based on the original source file names, or auto
+     * generated names.
+     */
+    public T withDumpRoutesOutput(String dumpRoutesOutput) {
+        this.dumpRoutesOutput = dumpRoutesOutput;
         return (T) this;
     }
 

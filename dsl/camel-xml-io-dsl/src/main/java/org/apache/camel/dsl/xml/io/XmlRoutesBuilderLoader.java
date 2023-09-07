@@ -32,6 +32,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -49,7 +50,6 @@ import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.scan.PackageScanHelper;
-import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
@@ -58,11 +58,10 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed XML RoutesBuilderLoader")
 @RoutesLoader(XmlRoutesBuilderLoader.EXTENSION)
 public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
+
     public static final Logger LOG = LoggerFactory.getLogger(XmlRoutesBuilderLoader.class);
 
     public static final String EXTENSION = "xml";
-    public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
-    private static final List<String> NAMESPACES = List.of("", NAMESPACE);
 
     private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
     private final Map<String, Resource> resourceCache = new ConcurrentHashMap<>();
@@ -90,8 +89,8 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         XmlStreamInfo xmlInfo = xmlInfo(resource);
         if (xmlInfo.isValid()) {
             String root = xmlInfo.getRootElementName();
-            if ("beans".equals(root) || "camel".equals(root)) {
-                new ModelParser(resource, xmlInfo.getRootElementNamespace())
+            if ("beans".equals(root) || "blueprint".equals(root) || "camel".equals(root)) {
+                new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                         .parseBeansDefinition()
                         .ifPresent(bd -> {
                             registerBeans(resource, bd);
@@ -117,30 +116,30 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             public void configure() throws Exception {
                 String resourceLocation = input.getLocation();
                 switch (xmlInfo.getRootElementName()) {
-                    case "beans", "camel" -> {
+                    case "beans", "blueprint", "camel" -> {
                         BeansDefinition def = camelAppCache.get(resourceLocation);
                         if (def != null) {
                             configureCamel(def);
                         } else {
-                            new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                            new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                     .parseBeansDefinition()
                                     .ifPresent(this::configureCamel);
                         }
                     }
                     case "routeTemplate", "routeTemplates" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteTemplatesDefinition()
                                 .ifPresent(this::setRouteTemplateCollection);
                     case "templatedRoutes", "templatedRoute" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseTemplatedRoutesDefinition()
                                 .ifPresent(this::setTemplatedRouteCollection);
                     case "rests", "rest" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRestsDefinition()
                                 .ifPresent(this::setRestCollection);
                     case "routes", "route" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRoutesDefinition()
                                 .ifPresent(this::addRoutes);
                     default -> {
@@ -159,7 +158,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             public void configuration() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
                     case "routeConfigurations", "routeConfiguration" ->
-                        new ModelParser(resource, xmlInfo.getRootElementNamespace())
+                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
                     default -> {
@@ -170,8 +169,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             private void configureCamel(BeansDefinition app) {
                 if (!delayedRegistrations.isEmpty()) {
                     // some of the beans were not available yet, so we have to try register them now
-                    for (RegistryBeanDefinition bean : delayedRegistrations) {
-                        registerBeanDefinition(bean, false);
+                    for (RegistryBeanDefinition def : delayedRegistrations) {
+                        def.setResource(getResource());
+                        registerBeanDefinition(def, false);
                     }
                     delayedRegistrations.clear();
                 }
@@ -182,48 +182,58 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 // decides to do so)
 
                 app.getRests().forEach(r -> {
+                    r.setResource(getResource());
                     List<RestDefinition> list = new ArrayList<>();
                     list.add(r);
                     RestsDefinition def = new RestsDefinition();
+                    def.setResource(getResource());
                     def.setRests(list);
                     setRestCollection(def);
                 });
 
                 app.getRouteConfigurations().forEach(rc -> {
+                    rc.setResource(getResource());
                     List<RouteConfigurationDefinition> list = new ArrayList<>();
                     list.add(rc);
                     RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+                    def.setResource(getResource());
                     def.setRouteConfigurations(list);
                     addConfigurations(def);
                 });
 
                 app.getRouteTemplates().forEach(rt -> {
+                    rt.setResource(getResource());
                     List<RouteTemplateDefinition> list = new ArrayList<>();
                     list.add(rt);
                     RouteTemplatesDefinition def = new RouteTemplatesDefinition();
+                    def.setResource(getResource());
                     def.setRouteTemplates(list);
                     setRouteTemplateCollection(def);
                 });
 
                 app.getTemplatedRoutes().forEach(tr -> {
+                    tr.setResource(getResource());
                     List<TemplatedRouteDefinition> list = new ArrayList<>();
                     list.add(tr);
                     TemplatedRoutesDefinition def = new TemplatedRoutesDefinition();
+                    def.setResource(getResource());
                     def.setTemplatedRoutes(list);
                     setTemplatedRouteCollection(def);
                 });
 
                 app.getRoutes().forEach(r -> {
+                    r.setResource(getResource());
                     List<RouteDefinition> list = new ArrayList<>();
                     list.add(r);
                     RoutesDefinition def = new RoutesDefinition();
+                    def.setResource(getResource());
                     def.setRoutes(list);
                     addRoutes(def);
                 });
             }
 
             private void addRoutes(RoutesDefinition routes) {
-                CamelContextAware.trySetCamelContext(routes, getCamelContext());
+                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
 
                 // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                 // so create a copy and use the fluent builder to add the route
@@ -274,8 +284,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         PackageScanHelper.registerBeans(getCamelContext(), packagesToScan);
 
         // <bean>s - register Camel beans directly with Camel injection
-        for (RegistryBeanDefinition bean : app.getBeans()) {
-            registerBeanDefinition(bean, true);
+        for (RegistryBeanDefinition def : app.getBeans()) {
+            def.setResource(resource);
+            registerBeanDefinition(def, true);
         }
 
         // <s:bean>, <s:beans> and <s:alias> elements - all the elements in single BeansDefinition have
@@ -284,7 +295,18 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             Document doc = app.getSpringBeans().get(0).getOwnerDocument();
             // bind as Document, to be picked up later - bean id allows nice sorting
             // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
-            String id = String.format("spring-document:%05d:%s", counter.incrementAndGet(), resource.getLocation());
+            String id = String.format("camel-xml-io-dsl-spring-xml:%05d:%s", counter.incrementAndGet(), resource.getLocation());
+            getCamelContext().getRegistry().bind(id, doc);
+        }
+
+        // <s:bean> elements - all the elements in single BeansDefinition have
+        // one parent org.w3c.dom.Document - and this is what we collect from each resource
+        if (!app.getBlueprintBeans().isEmpty()) {
+            Document doc = app.getBlueprintBeans().get(0).getOwnerDocument();
+            // bind as Document, to be picked up later - bean id allows nice sorting
+            // (can also be single ID - documents will get collected in LinkedHashMap, so we'll be fine)
+            String id = String.format("camel-xml-io-dsl-blueprint-xml:%05d:%s", counter.incrementAndGet(),
+                    resource.getLocation());
             getCamelContext().getRegistry().bind(id, doc);
         }
     }
@@ -292,14 +314,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     /**
      * Try to instantiate bean from the definition. Depending on the stage ({@link #preParseRoute} or
      * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
-     *
-     * @param def
-     * @param delayIfFailed
      */
     private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
-        if (name == null || "".equals(name.trim())) {
+        if (name == null || name.trim().isEmpty()) {
             name = type;
         }
         if (type != null && !type.startsWith("#")) {
@@ -312,11 +331,16 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
                 getCamelContext().getRegistry().unbind(name);
                 getCamelContext().getRegistry().bind(name, target);
+
+                // register bean in model
+                Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
+                model.addRegistryBean(def);
+
             } catch (Exception e) {
                 if (delayIfFailed) {
                     delayedRegistrations.add(def);
                 } else {
-                    LOG.warn("Problem creating bean {}", type, e);
+                    LOG.warn("Error creating bean: {} due to: {}. This exception is ignored.", type, e.getMessage(), e);
                 }
             }
         }

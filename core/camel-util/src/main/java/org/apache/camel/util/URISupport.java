@@ -115,12 +115,8 @@ public final class URISupport {
         if (path.startsWith("//")) {
             path = path.substring(2);
         }
-        int idx = path.indexOf('?');
-        if (idx > -1) {
-            path = path.substring(0, idx);
-        }
 
-        return path;
+        return StringHelper.before(path, "?", path);
     }
 
     /**
@@ -148,11 +144,7 @@ public final class URISupport {
      * @return     the uri without the query parameter
      */
     public static String stripQuery(String uri) {
-        int idx = uri.indexOf('?');
-        if (idx > -1) {
-            uri = uri.substring(0, idx);
-        }
-        return uri;
+        return StringHelper.before(uri, "?", uri);
     }
 
     /**

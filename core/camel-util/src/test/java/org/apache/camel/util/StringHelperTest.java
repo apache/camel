@@ -559,4 +559,45 @@ public class StringHelperTest {
         assertTrue(items.contains("b"));
         assertTrue(items.contains("c"));
     }
+
+    @Test
+    public void testSplitOnCharacter() {
+        String[] list = splitOnCharacter("foo", "'", 1);
+        assertEquals(1, list.length);
+        assertEquals("foo", list[0]);
+
+        list = splitOnCharacter("foo,bar", ",", 2);
+        assertEquals(2, list.length);
+        assertEquals("foo", list[0]);
+        assertEquals("bar", list[1]);
+
+        list = splitOnCharacter("foo,bar,", ",", 3);
+        assertEquals(3, list.length);
+        assertEquals("foo", list[0]);
+        assertEquals("bar", list[1]);
+
+        list = splitOnCharacter(",foo,bar", ",", 3);
+        assertEquals(3, list.length);
+        assertEquals("foo", list[1]);
+        assertEquals("bar", list[2]);
+
+        list = splitOnCharacter(",foo,bar,", ",", 4);
+        assertEquals(4, list.length);
+        assertEquals("foo", list[1]);
+        assertEquals("bar", list[2]);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            sb.append(i);
+            sb.append(",");
+        }
+        String value = sb.toString();
+
+        int count = StringHelper.countChar(value, ',') + 1;
+        list = splitOnCharacter(value, ",", count);
+        assertEquals(101, list.length);
+        assertEquals("0", list[0]);
+        assertEquals("50", list[50]);
+        assertEquals("99", list[99]);
+    }
 }

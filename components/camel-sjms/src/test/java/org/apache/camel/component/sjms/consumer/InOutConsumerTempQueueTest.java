@@ -38,7 +38,8 @@ public class InOutConsumerTempQueueTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:start.queue.InOutConsumerTempQueueTest").to("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut")
+                from("sjms:queue:start.queue.InOutConsumerTempQueueTest")
+                        .to("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut")
                         .to("mock:result");
 
                 from("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut").to("log:before")

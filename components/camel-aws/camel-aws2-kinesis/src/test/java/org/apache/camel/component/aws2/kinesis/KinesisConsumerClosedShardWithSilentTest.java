@@ -89,7 +89,7 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
         when(kinesisClient
                 .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
-                        .nextShardIterator("shardIterator")
+                        .nextShardIterator("nextShardIterator")
                         .records(
                                 Record.builder().sequenceNumber("1")
                                         .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
@@ -185,10 +185,10 @@ public class KinesisConsumerClosedShardWithSilentTest {
         underTest.poll();
 
         final ArgumentCaptor<GetRecordsRequest> getRecordsReqCap = ArgumentCaptor.forClass(GetRecordsRequest.class);
-
-        verify(kinesisClient, times(2)).getShardIterator(any(GetShardIteratorRequest.class));
+        // On second call it uses the one returned from the first call
+        verify(kinesisClient, times(1)).getShardIterator(any(GetShardIteratorRequest.class));
         verify(kinesisClient, times(2)).getRecords(getRecordsReqCap.capture());
         assertThat(getRecordsReqCap.getAllValues().get(0).shardIterator(), is("shardIterator"));
-        assertThat(getRecordsReqCap.getAllValues().get(1).shardIterator(), is("shardIterator"));
+        assertThat(getRecordsReqCap.getAllValues().get(1).shardIterator(), is("nextShardIterator"));
     }
 }

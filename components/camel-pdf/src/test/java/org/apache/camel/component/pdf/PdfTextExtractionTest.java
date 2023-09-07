@@ -25,6 +25,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -33,6 +35,7 @@ import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,7 +54,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        contentStream.setFont(PDType1Font.HELVETICA, 12);
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
         contentStream.beginText();
         contentStream.newLineAtOffset(20, 400);
         contentStream.showText(expectedText);
@@ -87,7 +90,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        contentStream.setFont(PDType1Font.HELVETICA, 12);
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
         contentStream.beginText();
         contentStream.newLineAtOffset(20, 400);
         contentStream.showText(expectedText);
@@ -100,7 +103,8 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         document.save(output);
 
         // Encryption happens after saving.
-        PDDocument encryptedDocument = PDDocument.load(new ByteArrayInputStream(output.toByteArray()), userPass);
+        PDDocument encryptedDocument
+                = Loader.loadPDF(new RandomAccessReadBuffer(new ByteArrayInputStream(output.toByteArray())), userPass);
 
         template.sendBodyAndHeader("direct:start",
                 encryptedDocument,

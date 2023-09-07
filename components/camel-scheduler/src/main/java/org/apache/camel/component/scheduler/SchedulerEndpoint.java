@@ -41,6 +41,8 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
     @UriPath
     @Metadata(required = true)
     private String name;
+    @UriParam
+    private boolean includeMetadata;
     @UriParam(defaultValue = "1", label = "scheduler")
     private int poolSize = 1;
     @UriParam(defaultValue = "false", label = "advanced",
@@ -78,6 +80,17 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
+    }
+
+    /**
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     */
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
     }
 
     public int getPoolSize() {

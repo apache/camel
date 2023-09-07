@@ -44,6 +44,39 @@ public interface SchedulerEndpointBuilderFactory {
             return (AdvancedSchedulerEndpointBuilder) this;
         }
         /**
+         * Whether to include metadata in the exchange such as fired time, timer
+         * name, timer count etc.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param includeMetadata the value to set
+         * @return the dsl builder
+         */
+        default SchedulerEndpointBuilder includeMetadata(boolean includeMetadata) {
+            doSetProperty("includeMetadata", includeMetadata);
+            return this;
+        }
+        /**
+         * Whether to include metadata in the exchange such as fired time, timer
+         * name, timer count etc.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param includeMetadata the value to set
+         * @return the dsl builder
+         */
+        default SchedulerEndpointBuilder includeMetadata(String includeMetadata) {
+            doSetProperty("includeMetadata", includeMetadata);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 

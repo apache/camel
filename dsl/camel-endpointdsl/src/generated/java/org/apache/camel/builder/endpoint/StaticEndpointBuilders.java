@@ -1328,6 +1328,57 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Timestream (camel-aws2-timestream)
+     * A Camel Amazon Web Services TimeStream component
+     * 
+     * Category: cloud,database
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-timestream
+     * 
+     * Syntax: <code>aws2-timestream:clientType:label</code>
+     * 
+     * Path parameter: clientType (required)
+     * Type of client - write/query
+     * There are 2 enums and the value can be one of: write, query
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path clientType:label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory.Timestream2EndpointBuilder aws2Timestream(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory.endpointBuilder("aws2-timestream", path);
+    }
+    /**
+     * AWS Timestream (camel-aws2-timestream)
+     * A Camel Amazon Web Services TimeStream component
+     * 
+     * Category: cloud,database
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-timestream
+     * 
+     * Syntax: <code>aws2-timestream:clientType:label</code>
+     * 
+     * Path parameter: clientType (required)
+     * Type of client - write/query
+     * There are 2 enums and the value can be one of: write, query
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path clientType:label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory.Timestream2EndpointBuilder aws2Timestream(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 

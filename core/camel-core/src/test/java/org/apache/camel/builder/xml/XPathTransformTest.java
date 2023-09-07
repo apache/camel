@@ -24,6 +24,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.XPathBuilder;
+import org.apache.camel.util.StringHelper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -117,15 +118,8 @@ public class XPathTransformTest extends ContextTestSupport {
         if (version.startsWith("1.")) {
             version = version.substring(2, 3);
         } else {
-            int pos = version.indexOf('.');
-            if (pos != -1) {
-                version = version.substring(0, pos);
-            }
-            pos = version.indexOf('-');
-            if (pos != -1) {
-                version = version.substring(0, pos);
-            }
-
+            version = StringHelper.before(version, ".", version);
+            version = StringHelper.before(version, "-", version);
         }
         return Integer.parseInt(version);
     }
