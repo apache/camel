@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.thymeleaf;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Map.entry;
 
@@ -147,12 +147,12 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
     protected String expected() {
 
         return "\n\n" +
-               "Dear Doe, Jane\n" +
-               "\n" +
-               "Thank you for your order number 7 of Widgets for Dummies.\n" +
-               "\n" +
-               "Regards Camel Riders Bookstore\n" +
-               "Spazz Testing Service";
+                "Dear Doe, Jane\n" +
+                "\n" +
+                "Thank you for your order number 7 of Widgets for Dummies.\n" +
+                "\n" +
+                "Regards Camel Riders Bookstore\n" +
+                "Spazz Testing Service";
     }
 
     @Override
