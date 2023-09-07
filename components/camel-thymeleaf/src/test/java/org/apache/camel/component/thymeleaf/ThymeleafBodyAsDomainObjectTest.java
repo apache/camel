@@ -121,11 +121,11 @@ public class ThymeleafBodyAsDomainObjectTest extends ThymeleafAbstractBaseTest {
         public String toString() {
 
             return "Letter{" +
-                   "firstName='" + firstName + '\'' +
-                   ", lastName='" + lastName + '\'' +
-                   ", item='" + item + '\'' +
-                   ", closing='" + closing + '\'' +
-                   '}';
+                    "firstName='" + firstName + '\'' +
+                    ", lastName='" + lastName + '\'' +
+                    ", item='" + item + '\'' +
+                    ", closing='" + closing + '\'' +
+                    '}';
         }
 
     }

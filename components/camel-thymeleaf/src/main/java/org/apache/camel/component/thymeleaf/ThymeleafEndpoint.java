@@ -330,6 +330,11 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         this.jakartaServletWebApplication = jakartaServletWebApplication;
     }
 
+    public void setTemplate(String template) {
+
+        this.template = template;
+    }
+
     @Override
     public void clearContentCache() {
 
