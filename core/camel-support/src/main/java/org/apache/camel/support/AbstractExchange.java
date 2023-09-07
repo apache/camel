@@ -133,7 +133,7 @@ abstract class AbstractExchange implements Exchange {
         }
 
         if (parent.hasSafeCopyProperties()) {
-            this.safeCopyProperties = parent.getSafeCopyProperties();
+            this.safeCopyProperties = parent.copySafeCopyProperties();
         }
     }
 
@@ -381,11 +381,13 @@ abstract class AbstractExchange implements Exchange {
         return properties;
     }
 
-    Map<String, SafeCopyProperty> getSafeCopyProperties() {
-        if (safeCopyProperties == null) {
-            this.safeCopyProperties = new ConcurrentHashMap<>(2);
+    private Map<String, SafeCopyProperty> copySafeCopyProperties() {
+        Map<String, SafeCopyProperty> copy = new ConcurrentHashMap<>();
+        for (Map.Entry<String, SafeCopyProperty> entry : this.safeCopyProperties.entrySet()) {
+            copy.put(entry.getKey(), entry.getValue().safeCopy());
         }
-        return safeCopyProperties;
+
+        return copy;
     }
 
     @Override
@@ -683,7 +685,7 @@ abstract class AbstractExchange implements Exchange {
         if (!hasSafeCopyProperties()) {
             return null;
         }
-        Object value = getSafeCopyProperties().get(key);
+        Object value = safeCopyProperties.get(key);
 
         if (type.isInstance(value)) {
             return (T) value;
