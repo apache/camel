@@ -81,7 +81,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     testUser.deleteEmailAlias(result.getID());
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -112,7 +112,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -153,7 +153,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (result != null) {
                 try {
                     result.delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }
@@ -308,13 +308,13 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             if (user1 != null) {
                 try {
                     user1.getResource().delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
             if (user2 != null) {
                 try {
                     user2.getResource().delete(false, true);
-                } catch (Throwable t) {
+                } catch (Exception t) {
                 }
             }
         }

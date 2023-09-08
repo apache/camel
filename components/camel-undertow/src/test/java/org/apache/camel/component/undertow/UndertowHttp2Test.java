@@ -47,7 +47,7 @@ public class UndertowHttp2Test extends BaseUndertowTest {
             assertEquals(200, resp.getStatus());
             assertEquals(HttpVersion.HTTP_2, resp.getVersion());
             assertEquals(RESPONSE, new String(resp.getContent()));
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
             fail("HTTP2 endpoint not exposed!, maybe it's not supported?");
         }
