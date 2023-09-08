@@ -617,11 +617,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
      * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
      * initialization.
      */
-    private Logger logger() {
-        class Holder {
-            static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
-        }
+    private static final class Holder {
+        static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
+    }
 
+    private static Logger logger() {
         return Holder.LOG;
     }
 }
