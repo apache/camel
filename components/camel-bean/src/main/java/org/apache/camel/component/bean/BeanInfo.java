@@ -73,7 +73,6 @@ public class BeanInfo {
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
-    private final Object instance;
     private final ParameterMappingStrategy strategy;
     private final MethodInfo defaultMethod;
     // shared state with details of operations introspected from the bean, created during the constructor
@@ -106,7 +105,6 @@ public class BeanInfo {
 
         this.camelContext = camelContext;
         this.type = type;
-        this.instance = instance;
         this.strategy = strategy;
         this.component = beanComponent;
 

@@ -924,8 +924,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ProcessorDefinition<?> end() {
-        // must do this ugly cast to avoid compiler error on AIX/HP-UX
-        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
+        ProcessorDefinition<?> defn = this;
 
         // when using choice .. when .. otherwise - doTry .. doCatch ..
         // doFinally we should always

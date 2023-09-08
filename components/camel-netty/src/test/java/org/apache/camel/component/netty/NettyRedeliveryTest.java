@@ -210,7 +210,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
             try {
                 Thread.sleep(10);
                 socket.close();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
                 try {

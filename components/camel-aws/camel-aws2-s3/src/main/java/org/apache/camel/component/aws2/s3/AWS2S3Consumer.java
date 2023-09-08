@@ -247,7 +247,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             return true;
         } else {
             // Config says to ignore folders/directories
-            return !Optional.of(((GetObjectResponse) s3Object.response()).contentType()).orElse("")
+            return !Optional.of(s3Object.response().contentType()).orElse("")
                     .toLowerCase().startsWith("application/x-directory");
         }
     }

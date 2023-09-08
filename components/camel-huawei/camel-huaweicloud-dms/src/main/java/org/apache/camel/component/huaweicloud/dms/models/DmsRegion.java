@@ -62,7 +62,7 @@ public final class DmsRegion {
         if (StringUtils.isEmpty(regionId)) {
             throw new IllegalArgumentException("Unexpected empty parameter: regionId.");
         } else {
-            Region result = (Region) STATIC_FIELDS.get(regionId);
+            Region result = STATIC_FIELDS.get(regionId);
             if (Objects.nonNull(result)) {
                 return result;
             } else {

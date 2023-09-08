@@ -96,10 +96,9 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                     continue;
                 }
 
-                Map<String, Object> model;
-                boolean isComponent = (model = obj.getMap("component")) != null;
-                boolean isDataFormat = !isComponent && (model = obj.getMap("dataformat")) != null;
-                boolean isLanguage = !isComponent && !isDataFormat && (model = obj.getMap("language")) != null;
+                boolean isComponent = obj.getMap("component") != null;
+                boolean isDataFormat = !isComponent && obj.getMap("dataformat") != null;
+                boolean isLanguage = !isComponent && !isDataFormat && obj.getMap("language") != null;
 
                 // only check these kind
                 if (!isComponent && !isDataFormat && !isLanguage) {
