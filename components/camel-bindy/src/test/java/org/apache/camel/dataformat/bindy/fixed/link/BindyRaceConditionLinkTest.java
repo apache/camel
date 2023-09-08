@@ -76,7 +76,7 @@ public class BindyRaceConditionLinkTest extends CamelTestSupport {
                         .routeId("bindy-link-test")
                         .convertBodyTo(String.class)
                         .split(body().tokenize("\n"))
-                            .parallelProcessing(true)
+                        .parallelProcessing(true)
                         .unmarshal(bindy)
                         .to(end);
             }
