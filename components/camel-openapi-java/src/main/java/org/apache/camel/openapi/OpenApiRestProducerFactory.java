@@ -139,7 +139,6 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
 
             if (produces == null) {
                 StringJoiner producesBuilder = new StringJoiner(",");
-                List<String> list = new ArrayList<>();
                 if (operation.getResponses() != null) {
                     for (ApiResponse response : operation.getResponses().values()) {
                         if (response.getContent() != null) {
