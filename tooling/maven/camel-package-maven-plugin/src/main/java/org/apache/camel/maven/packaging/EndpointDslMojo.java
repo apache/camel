@@ -194,14 +194,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 }
 
                 ComponentModel model = compModels.get(0); // master component
-                List<String> aliases = compModels.stream().map(ComponentModel::getScheme).collect(Collectors.toList());
-
-                String overrideComponentName = null;
-                if (aliases.size() > 1) {
-                    // determine component name when there are multiple ones
-                    overrideComponentName = model.getArtifactId().replace("camel-", "");
-                }
-
                 createEndpointDsl(model, compModels);
             }
         }
