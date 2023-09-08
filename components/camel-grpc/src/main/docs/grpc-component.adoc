@@ -43,7 +43,7 @@ add following configuration property to the maven file
 == URI format
 
 -------------------------------------
-grpc://service[?options]
+grpc:host:port/service[?options]
 -------------------------------------
 
 
