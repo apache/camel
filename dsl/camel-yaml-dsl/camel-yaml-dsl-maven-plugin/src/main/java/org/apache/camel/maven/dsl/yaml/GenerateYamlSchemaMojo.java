@@ -539,7 +539,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                             .withArray("anyOf")
                             .addObject()
                             .withArray("required")
-                            .addAll((ArrayNode) referredObject.withArray("required"));
+                            .addAll(referredObject.withArray("required"));
                 }
                 return;
             }

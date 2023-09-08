@@ -399,7 +399,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
     protected void injectNestedClasses(final Object bean, final String beanName) {
         ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
-            BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
+            BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
             if (ann != null) {
                 // it is a nested class so we don't have a bean instance for it
                 bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
