@@ -250,7 +250,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
             // then the references!
             // check the validation status of each Reference
-            for (Reference ref : (List<Reference>) signature.getSignedInfo().getReferences()) {
+            for (Reference ref : signature.getSignedInfo().getReferences()) {
                 boolean refValid = ref.validate(valContext);
                 if (!refValid) {
                     handler.referenceValidationFailed(ref);
@@ -259,12 +259,12 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
             // validate Manifests, if property set
             if (Boolean.TRUE.equals(valContext.getProperty("org.jcp.xml.dsig.validateManifests"))) {
-                for (XMLObject xo : (List<XMLObject>) signature.getObjects()) {
+                for (XMLObject xo : signature.getObjects()) {
                     List<XMLStructure> content = xo.getContent();
                     for (XMLStructure xs : content) {
                         if (xs instanceof Manifest) {
                             Manifest man = (Manifest) xs;
-                            for (Reference ref : (List<Reference>) man.getReferences()) {
+                            for (Reference ref : man.getReferences()) {
                                 boolean refValid = ref.validate(valContext);
                                 if (!refValid) {
                                     handler.manifestReferenceValidationFailed(ref);
