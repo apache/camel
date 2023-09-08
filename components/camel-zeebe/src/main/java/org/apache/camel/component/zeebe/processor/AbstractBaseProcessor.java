@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.zeebe.processor;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
