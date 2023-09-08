@@ -308,6 +308,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory,

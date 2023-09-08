@@ -13905,6 +13905,61 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Thymeleaf (camel-thymeleaf)
+     * Transform messages using a Thymeleaf template.
+     * 
+     * Category: transformation
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-thymeleaf
+     * 
+     * Syntax: <code>thymeleaf:templatePath</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param path templatePath
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.endpointBuilder("thymeleaf", path);
+    }
+    /**
+     * Thymeleaf (camel-thymeleaf)
+     * Transform messages using a Thymeleaf template.
+     * 
+     * Category: transformation
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-thymeleaf
+     * 
+     * Syntax: <code>thymeleaf:templatePath</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path templatePath
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Tika (camel-tika)
      * Parse documents and extract metadata and text using Apache Tika.
      * 
