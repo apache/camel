@@ -48,7 +48,6 @@ public abstract class AbstractBaseProcessor extends BaseService implements Zeebe
     }
 
     protected void removeHeaders(Exchange exchange) {
-        Map<String, Object> headers = exchange.getMessage().getHeaders();
         exchange.getMessage().removeHeaders(ZeebeConstants.HEADER_PREFIX + ".*");
     }
 }
