@@ -26,7 +26,9 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -41,7 +43,7 @@ public class AsyncQueueProducerTest extends CamelTestSupport {
     private static String route = "";
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testAsyncJmsProducerEndpoint() throws Exception {
@@ -63,24 +65,20 @@ public class AsyncQueueProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                service.serviceAddress());
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
-
-        return camelContext;
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.addComponent("async", new MyAsyncComponent());
+                //context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start.AsyncQueueProducerTest")
                         .to("mock:before")
@@ -111,5 +109,20 @@ public class AsyncQueueProducerTest extends CamelTestSupport {
                         .to("mock:result");
             }
         };
+    }
+
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.addComponent("async", new MyAsyncComponent());
+    }
+
+    @Override
+    protected void configureCamelContext(CamelContext camelContext) {
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
+                service.serviceAddress());
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+
     }
 }

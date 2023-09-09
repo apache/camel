@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-
-import jakarta.jms.ConnectionFactory;
-import jakarta.jms.JMSConnectionFactory;
-
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,7 +27,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.impl.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

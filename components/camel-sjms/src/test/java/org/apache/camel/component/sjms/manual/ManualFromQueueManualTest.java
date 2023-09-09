@@ -25,16 +25,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Disabled("Manual test")
 public class ManualFromQueueManualTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -72,14 +78,17 @@ public class ManualFromQueueManualTest extends CamelTestSupport {
 
     @ContextFixture
     public void configureComponent(CamelContext context) {
+        context.addComponent("async", new MyAsyncComponent());
     }
 
     @Override
-    protected void configureCamelContext(CamelContext context) {
+    @RouteFixture
+    protected void configureCamelContext(CamelContext camelContext) {
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
         SjmsComponent sjms = new SjmsComponent();
         log.info("Using live connection to existing ActiveMQ broker running on {}", url);
-        sjms.setConnectionFactory(new ActiveMQConnectionFactory(url));
+        sjms.setConnectionFactory(connectionFactory);
 
-        context.addComponent("sjms", sjms);
+        camelContext.addComponent("sjms", sjms);
     }
 }
