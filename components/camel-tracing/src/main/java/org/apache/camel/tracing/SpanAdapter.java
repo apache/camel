@@ -23,23 +23,11 @@ public interface SpanAdapter {
 
     void setError(boolean error);
 
-    void setTag(Tag key, String value);
-
-    void setTag(Tag key, Number value);
-
     void setTag(String key, String value);
 
     void setTag(String key, Number value);
 
     void setTag(String key, Boolean value);
-
-    default void setLowCardinalityTag(Tag key, String value) {
-        setTag(key, value);
-    }
-
-    default void setLowCardinalityTag(Tag key, Number value) {
-        setTag(key, value);
-    }
 
     default void setLowCardinalityTag(String key, String value) {
         setTag(key, value);

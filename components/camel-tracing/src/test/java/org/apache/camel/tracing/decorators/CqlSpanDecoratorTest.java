@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
-import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -49,9 +49,9 @@ public class CqlSpanDecoratorTest {
 
         decorator.pre(span, exchange, endpoint);
 
-        assertEquals(CqlSpanDecorator.CASSANDRA_DB_TYPE, span.tags().get(Tag.DB_TYPE.name()));
-        assertEquals(cql, span.tags().get(Tag.DB_STATEMENT.name()));
-        assertEquals(keyspace, span.tags().get(Tag.DB_INSTANCE.name()));
+        assertEquals(CqlSpanDecorator.CASSANDRA_DB_TYPE, span.tags().get(TagConstants.DB_SYSTEM));
+        assertEquals(cql, span.tags().get(TagConstants.DB_STATEMENT));
+        assertEquals(keyspace, span.tags().get(TagConstants.DB_NAME));
     }
 
     @Test
@@ -72,9 +72,9 @@ public class CqlSpanDecoratorTest {
 
         decorator.pre(span, exchange, endpoint);
 
-        assertEquals(CqlSpanDecorator.CASSANDRA_DB_TYPE, span.tags().get(Tag.DB_TYPE.name()));
-        assertEquals(cql, span.tags().get(Tag.DB_STATEMENT.name()));
-        assertNull(span.tags().get(Tag.DB_INSTANCE.name()));
+        assertEquals(CqlSpanDecorator.CASSANDRA_DB_TYPE, span.tags().get(TagConstants.DB_SYSTEM));
+        assertEquals(cql, span.tags().get(TagConstants.DB_STATEMENT));
+        assertNull(span.tags().get(TagConstants.DB_NAME));
     }
 
 }
