@@ -32,9 +32,9 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 public class CwComponentTest extends CamelTestSupport {
 
     @BindToRegistry("now")
-    private static final Instant NOW = Instant.now();
+    public static final Instant NOW = Instant.now();
 
-    private static final Instant LATER = Instant.ofEpochMilli(NOW.getNano() + 1);
+    public static final Instant LATER = Instant.ofEpochMilli(NOW.getNano() + 1);
 
     @BindToRegistry("amazonCwClient")
     private CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
