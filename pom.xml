@@ -750,6 +750,24 @@
                             </execution>
                         </executions>
                     </plugin>
+                   <plugin>
+                   <groupId>org.cyclonedx</groupId>
+                   <artifactId>cyclonedx-maven-plugin</artifactId>
+                   <version>${cyclonedx-maven-plugin-version}</version>
+                   <inherited>false</inherited>
+                   <executions>
+                       <execution>
+                           <phase>package</phase>
+                           <goals>
+                               <goal>makeAggregateBom</goal>
+                           </goals>
+                      </execution>
+                   </executions>
+                   <configuration>
+                         <outputName>${project.artifactId}-${project.version}-sbom</outputName>
+                   </configuration>
+                </plugin>
+                    
                 </plugins>
             </build>
         </profile>
