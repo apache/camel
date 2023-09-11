@@ -1322,7 +1322,6 @@ public final class ObjectHelper {
         }
     }
 
-
     /*
      * NOTE: see CAMEL-19724. We log like this instead of using a statically declared logger in order to
      * reduce the risk of dropping log messages due to slf4j log substitution behavior during its own
