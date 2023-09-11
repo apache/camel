@@ -43,11 +43,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JCacheConfigurationTest extends JCacheComponentTestSupport {
 
     @BindToRegistry("myExpiryPolicyFactory")
-    private static final Factory<ExpiryPolicy> EXPIRY_POLICY_FACTORY = AccessedExpiryPolicy.factoryOf(Duration.ONE_MINUTE);
+    public static final Factory<ExpiryPolicy> EXPIRY_POLICY_FACTORY = AccessedExpiryPolicy.factoryOf(Duration.ONE_MINUTE);
     @BindToRegistry("myCacheWriterFactory")
-    private static final Factory<CacheWriter<Object, Object>> CACHE_WRITER_FACTORY = MyCacheWriter.factory();
+    public static final Factory<CacheWriter<Object, Object>> CACHE_WRITER_FACTORY = MyCacheWriter.factory();
     @BindToRegistry("myCacheLoaderFactory")
-    private static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
+    public static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
 
     @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory"
                             + "&cacheWriterFactory=#myCacheWriterFactory"
