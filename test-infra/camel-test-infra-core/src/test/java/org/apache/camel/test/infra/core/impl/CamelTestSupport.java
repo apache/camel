@@ -18,28 +18,28 @@
 
 package org.apache.camel.test.infra.core.impl;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -48,10 +48,12 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
 
 
     @RegisterExtension
-    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
 
 
     protected CamelContext context;
+
+    @Produce
     protected volatile ProducerTemplate template;
 
 
@@ -180,7 +182,7 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
 
     // MockEndpoint.resolve(context, uri);
 
-    protected abstract void configureCamelContext(CamelContext context);
+    protected abstract void configureCamelContext(CamelContext context) throws Exception;
 
     @Override
     @ContextFixture
@@ -192,7 +194,5 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
     @Override
     @RouteFixture
     public void createRouteBuilder(CamelContext context) throws Exception {
-
-
     }
 }

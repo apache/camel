@@ -31,7 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
     private static final int TRANSACTION_REDELIVERY_COUNT = 10;
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -90,21 +91,17 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
         }
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected int getShutdownTimeout() {
+        return 2;
+    }
 
+    @Override
+    @ContextFixture
+    protected void configureCamelContext(CamelContext camelContext) {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
 
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
-
-        return camelContext;
-    }
-
-    @Override
-    protected int getShutdownTimeout() {
-        return 2;
     }
 }

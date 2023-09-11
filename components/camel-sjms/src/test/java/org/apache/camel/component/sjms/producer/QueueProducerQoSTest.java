@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
 import jakarta.jms.Session;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
@@ -24,22 +28,28 @@ import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 public class QueueProducerQoSTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(QueueProducerQoSTest.class);
@@ -51,9 +61,9 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
     @RegisterExtension
-    public ArtemisService service = new ArtemisEmbeddedServiceBuilder()
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withPersistent(true)
-            .withCustomConfiguration(configuration -> configureArtemis(configuration))
+            .withCustomConfiguration(QueueProducerQoSTest::configureArtemis)
             .build();
 
     protected ActiveMQConnectionFactory connectionFactory;
@@ -61,25 +71,8 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     @EndpointInject(MOCK_EXPIRED_ADVISORY)
     MockEndpoint mockExpiredAdvisory;
 
-    private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
-
-        connection = connectionFactory.createConnection();
-        connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
-
-        return camelContext;
-    }
 
     @Test
     public void testInOutQueueProducerTTL() throws Exception {
@@ -88,14 +81,18 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         String endpoint = String.format("sjms:queue:%s?timeToLive=1000&exchangePattern=InOut&requestTimeout=500",
                 TEST_INOUT_DESTINATION_NAME);
 
-        try {
-            template.requestBody(endpoint, "test message");
-            fail("we aren't expecting any consumers, so should not succeed");
-        } catch (Exception e) {
+        assertThrows(CamelExecutionException.class, () -> template.requestBody(endpoint, "test message"),
+                "we aren't expecting any consumers, so should not succeed");
+
+        //assertTimeout(Duration.ofMillis(500), () -> template.requestBody(endpoint, "test message"),
+        //        "we aren't expecting any consumers, so should not succeed");
+
+
+
+
             // we are expecting an exception here because there are no consumers on this queue,
             // so we will not be able to do a real InOut/request-response, but that's okay
             // we're just interested in the message becoming expired
-        }
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -116,16 +113,25 @@ public class QueueProducerQoSTest extends CamelTestSupport {
                 "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
     }
 
-    private static Configuration configureArtemis(Configuration configuration) {
-        return configuration.addAddressSetting("#",
-                new AddressSettings()
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue"))
-                        .setExpiryDelay(1000L))
+    private static void configureArtemis(Configuration configuration) {
+        configuration.addAddressSetting("#",
+                        new AddressSettings()
+                                .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
+                                .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue"))
+                                .setExpiryDelay(1000L))
                 .setMessageExpiryScanPeriod(500L);
     }
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -137,4 +143,22 @@ public class QueueProducerQoSTest extends CamelTestSupport {
             }
         };
     }
+
+/*    @ContextFixture
+    public void configureComponent(CamelContext context) {
+    }*/
+    @Override
+    protected void configureCamelContext(CamelContext camelContext) throws JMSException {
+
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }
+
 }

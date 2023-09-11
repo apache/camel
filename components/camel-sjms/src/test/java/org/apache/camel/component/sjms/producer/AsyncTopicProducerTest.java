@@ -115,6 +115,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
     }
 
     @Override
+    @ContextFixture
     protected void configureCamelContext(CamelContext camelContext) {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 service.serviceAddress());

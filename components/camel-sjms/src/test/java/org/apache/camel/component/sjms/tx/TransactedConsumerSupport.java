@@ -29,7 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @RegisterExtension
-    protected ArtemisService service = ArtemisServiceFactory.createVMService();
+    protected static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     public abstract String getBrokerUri();
 
@@ -81,16 +82,14 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    @ContextFixture
+    protected void configureCamelContext(CamelContext camelContext){
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(getBrokerUri());
 
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
-
-        return camelContext;
     }
 
     protected void addRoute(

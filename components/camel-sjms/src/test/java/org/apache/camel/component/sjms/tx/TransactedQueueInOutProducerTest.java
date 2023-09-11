@@ -29,10 +29,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TransactedQueueInOutProducerTest extends CamelTestSupport {
@@ -48,29 +51,24 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World 2");
         getMockEndpoint("mock:result2").expectedBodiesReceived("Changed Hello World 2");
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World 1", "isfailed", true);
-            fail("Should fail");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBodyAndHeader("direct:start", "Hello World 1", "isfailed", true),
+                "Should fail");
+
         template.sendBodyAndHeader("direct:start", "Hello World 2", "isfailed", false);
 
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory(service.serviceAddress());
-        CamelContext camelContext = super.createCamelContext();
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
-        return camelContext;
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -103,5 +101,15 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
                         .transform(body().prepend("Changed "));
             }
         };
+    }
+
+    @Override
+    @ContextFixture
+    protected void configureCamelContext(CamelContext camelContext) {
+        ActiveMQConnectionFactory connectionFactory
+                = new ActiveMQConnectionFactory(service.serviceAddress());
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
     }
 }
