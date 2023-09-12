@@ -223,7 +223,7 @@
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
         <jackson2-version>2.15.2</jackson2-version>
         <jackrabbit-version>2.21.19</jackrabbit-version>
-        <jasminb-jsonapi-version>0.12</jasminb-jsonapi-version>
+        <jasminb-jsonapi-version>0.13</jasminb-jsonapi-version>
         <jandex-version>3.1.2</jandex-version>
         <jansi-version>2.4.0</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
