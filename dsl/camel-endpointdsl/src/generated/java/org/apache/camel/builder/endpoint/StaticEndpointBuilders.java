@@ -13912,7 +13912,7 @@ public class StaticEndpointBuilders {
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-thymeleaf
      * 
-     * Syntax: <code>thymeleaf:templatePath</code>
+     * Syntax: <code>thymeleaf:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
@@ -13923,7 +13923,7 @@ public class StaticEndpointBuilders {
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 
-     * @param path templatePath
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(
@@ -13938,7 +13938,7 @@ public class StaticEndpointBuilders {
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-thymeleaf
      * 
-     * Syntax: <code>thymeleaf:templatePath</code>
+     * Syntax: <code>thymeleaf:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
@@ -13951,7 +13951,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path templatePath
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(

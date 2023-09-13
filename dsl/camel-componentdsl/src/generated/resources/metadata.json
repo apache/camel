@@ -6603,7 +6603,7 @@
     "version": "4.1.0-SNAPSHOT",
     "scheme": "thymeleaf",
     "extendsScheme": "",
-    "syntax": "thymeleaf:templatePath",
+    "syntax": "thymeleaf:resourceUri",
     "async": false,
     "api": false,
     "consumerOnly": false,
