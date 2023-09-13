@@ -73,8 +73,11 @@ public class CqlSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(CqlSpanDecorator.CASSANDRA_DB_TYPE, span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals(CqlSpanDecorator.CASSANDRA_DB_TYPE, span.tags().get(Tag.DB_TYPE.getAttribute()));
         assertEquals(cql, span.tags().get(Tag.DB_STATEMENT.name()));
+        assertEquals(cql, span.tags().get(Tag.DB_STATEMENT.getAttribute()));
         assertNull(span.tags().get(Tag.DB_INSTANCE.name()));
+        assertNull(span.tags().get(Tag.DB_INSTANCE.getAttribute()));
     }
 
 }

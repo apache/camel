@@ -65,8 +65,11 @@ public class MongoDBSpanDecoratorTest {
         decorator.pre(span, null, endpoint);
 
         assertEquals("mongodb", span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals("mongodb", span.tags().get(Tag.DB_TYPE.getAttribute()));
         assertEquals("flights", span.tags().get(Tag.DB_INSTANCE.name()));
+        assertEquals("flights", span.tags().get(Tag.DB_INSTANCE.getAttribute()));
         assertTrue(span.tags().containsKey(Tag.DB_STATEMENT.name()));
+        assertTrue(span.tags().containsKey(Tag.DB_STATEMENT.getAttribute()));
     }
 
 }

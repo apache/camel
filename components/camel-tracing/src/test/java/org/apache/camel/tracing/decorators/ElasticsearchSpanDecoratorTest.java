@@ -62,8 +62,11 @@ public class ElasticsearchSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(ElasticsearchSpanDecorator.ELASTICSEARCH_DB_TYPE, span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals(ElasticsearchSpanDecorator.ELASTICSEARCH_DB_TYPE, span.tags().get(Tag.DB_TYPE.getAttribute()));
         assertEquals(indexName, span.tags().get(Tag.DB_INSTANCE.name()));
+        assertEquals(indexName, span.tags().get(Tag.DB_INSTANCE.getAttribute()));
         assertEquals(cluster, span.tags().get(ElasticsearchSpanDecorator.ELASTICSEARCH_CLUSTER_TAG));
+        assertEquals(cluster, span.tags().get(Tag.SERVER_ADDRESS.getAttribute()));
     }
 
 }

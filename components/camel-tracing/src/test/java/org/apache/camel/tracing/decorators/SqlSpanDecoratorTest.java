@@ -48,7 +48,9 @@ public class SqlSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals("sql", span.tags().get(Tag.DB_TYPE.name()));
+        assertEquals("sql", span.tags().get(Tag.DB_TYPE.getAttribute()));
         assertEquals(SQL_STATEMENT, span.tags().get(Tag.DB_STATEMENT.name()));
+        assertEquals(SQL_STATEMENT, span.tags().get(Tag.DB_STATEMENT.getAttribute()));
     }
 
 }

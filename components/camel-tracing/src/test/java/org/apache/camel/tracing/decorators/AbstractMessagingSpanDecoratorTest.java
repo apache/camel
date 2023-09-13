@@ -104,6 +104,7 @@ public class AbstractMessagingSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(messageId, span.tags().get(AbstractMessagingSpanDecorator.MESSAGE_BUS_ID));
+        assertEquals(messageId, span.tags().get(Tag.MESSAGE_ID.getAttribute()));
     }
 
 }

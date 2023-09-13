@@ -55,6 +55,7 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     @Override
     public void setTag(Tag key, String value) {
         this.observation.highCardinalityKeyValue(key.toString(), value);
+        this.observation.highCardinalityKeyValue(key.getAttribute(), value);
     }
 
     @Override
@@ -80,11 +81,13 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     @Override
     public void setLowCardinalityTag(Tag key, String value) {
         observation.lowCardinalityKeyValue(key.toString(), value);
+        observation.lowCardinalityKeyValue(key.getAttribute(), value);
     }
 
     @Override
     public void setLowCardinalityTag(Tag key, Number value) {
         observation.lowCardinalityKeyValue(key.toString(), value.toString());
+        observation.lowCardinalityKeyValue(key.getAttribute(), value.toString());
     }
 
     @Override
