@@ -408,7 +408,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-thymeleaf
          * 
-         * Syntax: <code>thymeleaf:templatePath</code>
+         * Syntax: <code>thymeleaf:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
          * Path to the resource. You can prefix with: classpath, file, http,
@@ -420,7 +420,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
          * 
-         * @param path templatePath
+         * @param path resourceUri
          * @return the dsl builder
          */
         default ThymeleafEndpointBuilder thymeleaf(String path) {
@@ -434,7 +434,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-thymeleaf
          * 
-         * Syntax: <code>thymeleaf:templatePath</code>
+         * Syntax: <code>thymeleaf:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
          * Path to the resource. You can prefix with: classpath, file, http,
@@ -448,7 +448,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path templatePath
+         * @param path resourceUri
          * @return the dsl builder
          */
         default ThymeleafEndpointBuilder thymeleaf(
