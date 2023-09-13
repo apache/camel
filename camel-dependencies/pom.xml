@@ -283,7 +283,7 @@
     <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
     <jakarta-mail-version>1.6.7</jakarta-mail-version>
-    <jakarta.el-version>3.0.3</jakarta.el-version>
+    <jakarta.el-version>3.0.4</jakarta.el-version>
     <jandex-version>3.0.3</jandex-version>
     <jansi-version>2.4.0</jansi-version>
     <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
