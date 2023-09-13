@@ -40,6 +40,11 @@ class KotlinCompilationConfiguration : ScriptCompilationConfiguration(
         //
         compilerOptions.append("-jvm-target")
         compilerOptions.append(JVM_TARGET)
+
+        //
+        // We may remove when https://youtrack.jetbrains.com/issue/KT-57907 is solved
+        //
+        compilerOptions.append("-Xadd-modules=ALL-MODULE-PATH")
     }
     ide {
         acceptedLocations(ScriptAcceptedLocation.Everywhere)
