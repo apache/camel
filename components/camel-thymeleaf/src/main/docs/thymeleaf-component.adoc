@@ -3,8 +3,8 @@
 :shortname: thymeleaf
 :artifactid: camel-thymeleaf
 :description: Transform messages using a Thymeleaf template.
-:since: 1.0
-:supportlevel: Stable
+:since: 4.1
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

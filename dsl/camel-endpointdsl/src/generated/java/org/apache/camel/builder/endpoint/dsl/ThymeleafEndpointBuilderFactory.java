@@ -392,7 +392,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * Transform messages using a Thymeleaf template.
          * 
          * Category: transformation
-         * Since: 1.0
+         * Since: 4.1
          * Maven coordinates: org.apache.camel:camel-thymeleaf
          * 
          * @return the dsl builder for the headers' name.
@@ -405,7 +405,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * Transform messages using a Thymeleaf template.
          * 
          * Category: transformation
-         * Since: 1.0
+         * Since: 4.1
          * Maven coordinates: org.apache.camel:camel-thymeleaf
          * 
          * Syntax: <code>thymeleaf:resourceUri</code>
@@ -431,7 +431,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * Transform messages using a Thymeleaf template.
          * 
          * Category: transformation
-         * Since: 1.0
+         * Since: 4.1
          * Maven coordinates: org.apache.camel:camel-thymeleaf
          * 
          * Syntax: <code>thymeleaf:resourceUri</code>

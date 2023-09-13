@@ -3990,7 +3990,7 @@ public interface ComponentsBuilderFactory {
      * Transform messages using a Thymeleaf template.
      * 
      * Category: transformation
-     * Since: 1.0
+     * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-thymeleaf
      * 
      * @return the dsl builder
