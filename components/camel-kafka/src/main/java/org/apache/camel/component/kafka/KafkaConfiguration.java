@@ -1895,15 +1895,4 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public void setIsolationLevel(String isolationLevel) {
         this.isolationLevel = isolationLevel;
     }
-
-    public String getKerberosConfigLocation() {
-        return kerberosConfigLocation;
-    }
-
-    /**
-     * Location of the kerberos config file.
-     */
-    public void setKerberosConfigLocation(String kerberosConfigLocation) {
-        this.kerberosConfigLocation = kerberosConfigLocation;
-    }
 }
