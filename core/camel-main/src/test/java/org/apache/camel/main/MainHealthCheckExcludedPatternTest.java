@@ -107,7 +107,7 @@ public class MainHealthCheckExcludedPatternTest {
             HealthCheckRegistryRepository registryRepository = (HealthCheckRegistryRepository) repository.get();
             assertTrue(registryRepository.isEnabled());
 
-            List<HealthCheck> healthChecks = registryRepository.stream().collect(Collectors.toList());
+            List<HealthCheck> healthChecks = registryRepository.stream().toList();
             assertEquals(1, healthChecks.size());
 
             assertTrue(healthCheckRegistry.getCheck("custom").isPresent());
@@ -143,14 +143,14 @@ public class MainHealthCheckExcludedPatternTest {
                     = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
-            List<HealthCheck> healthChecks = healthCheckRegistry.stream().collect(Collectors.toList());
+            List<HealthCheck> healthChecks = healthCheckRegistry.stream().toList();
             int before = healthChecks.size();
 
             // register custom health check which should be excluded
             boolean added = healthCheckRegistry.register(healthCheck);
             assertTrue(added);
 
-            healthChecks = healthCheckRegistry.stream().collect(Collectors.toList());
+            healthChecks = healthCheckRegistry.stream().toList();
             int after = healthChecks.size();
             assertEquals(before + 1, after);
 

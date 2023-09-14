@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
