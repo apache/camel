@@ -55,7 +55,7 @@ public class ConcurrentConsumersTest extends BaseReactiveTest {
         // Ensure order is preserved when using a single consumer
         List<Long> nums = endpoint.getExchanges().stream()
                 .map(x -> x.getIn().getBody(Long.class))
-                .collect(Collectors.toList());
+                .toList();
 
         long prev = -1;
         for (long n : nums) {

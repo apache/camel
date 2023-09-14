@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.jaxws;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -161,7 +160,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
 
         org.apache.camel.Message out = exchange.getMessage();
         final List<String> pseudoHeaders
-                = out.getHeaders().keySet().stream().filter(key -> key.startsWith(":")).collect(Collectors.toList());
+                = out.getHeaders().keySet().stream().filter(key -> key.startsWith(":")).toList();
         assertTrue(pseudoHeaders.isEmpty(), "Pseudo-headers such as :status should be filtered out; found: " + pseudoHeaders);
     }
 

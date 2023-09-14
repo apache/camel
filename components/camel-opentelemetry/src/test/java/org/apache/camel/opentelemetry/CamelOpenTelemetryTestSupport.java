@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
@@ -120,7 +119,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         if (async) {
             final List<SpanData> unsortedSpans = spans;
             spans = Arrays.stream(expected)
-                    .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
+                    .map(td -> findSpan(td, unsortedSpans)).distinct().toList();
             assertEquals(expected.length, spans.size(), "Incorrect number of spans after sorting");
         }
 

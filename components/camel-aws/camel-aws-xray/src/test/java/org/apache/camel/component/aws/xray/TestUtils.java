@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.xray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSegment;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestSubsegment;
@@ -49,8 +48,8 @@ public final class TestUtils {
 
     private static void verifyTraces(TestTrace expected, TestTrace actual) {
         assertThat("Incorrect number of segment for trace. Expected traces: "
-                   + expected.getSegments().stream().map(s -> s.name).collect(Collectors.toList())
-                   + " but found " + actual.getSegments().stream().map(s -> s.name).collect(Collectors.toList()),
+                   + expected.getSegments().stream().map(s -> s.name).toList()
+                   + " but found " + actual.getSegments().stream().map(s -> s.name).toList(),
                 actual.getSegments().size(), is(equalTo(expected.getSegments().size())));
         List<TestSegment> expectedSegments = new ArrayList<>(expected.getSegments());
         List<TestSegment> actualSegments = new ArrayList<>(actual.getSegments());
