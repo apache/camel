@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
