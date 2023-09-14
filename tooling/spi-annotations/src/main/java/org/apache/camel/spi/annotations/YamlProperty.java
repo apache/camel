@@ -43,4 +43,6 @@ public @interface YamlProperty {
     String[] values() default {};
 
     String oneOf() default "";
+
+    boolean wrapItem() default false;
 }

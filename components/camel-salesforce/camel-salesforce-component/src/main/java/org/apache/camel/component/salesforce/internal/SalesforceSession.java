@@ -363,7 +363,6 @@ public class SalesforceSession extends ServiceSupport {
             final ContentResponse logoutResponse = logoutGet.send();
 
             final int statusCode = logoutResponse.getStatus();
-            final String reason = logoutResponse.getReason();
 
             if (statusCode == HttpStatus.OK_200) {
                 LOG.debug("Logout successful");

@@ -90,6 +90,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         items = root.putObject("items");
         items.put("maxProperties", 1);
+        if (!additionalProperties) {
+            items.put("additionalProperties", false);
+        }
 
         definitions = items.putObject("definitions");
         step = definitions.withObject("/org.apache.camel.model.ProcessorDefinition")
@@ -235,6 +238,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             final String propertyOneOf = annotationValue(property, "oneOf")
                     .map(AnnotationValue::asString)
                     .orElse("");
+            final boolean propertyWrapItem = annotationValue(property, "wrapItem")
+                    .map(AnnotationValue::asBoolean)
+                    .orElse(false);
 
             boolean isInOneOf = !StringUtils.isEmpty(propertyOneOf);
             if (isInOneOf) {
@@ -297,7 +303,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     propertyDisplayName,
                     propertyDefaultValue,
                     propertyFormat,
-                    propertyDeprecated);
+                    propertyDeprecated,
+                    propertyWrapItem,
+                    additionalProperties);
 
             if (propertyRequired) {
                 String name = kebabCase ? propertyName : StringHelper.dashToCamelCase(propertyName);
@@ -314,32 +322,49 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         if (composition != null) {
             composition.forEach(this::kebabToCamelCase);
         }
+        if (node.has("required")) {
+            ArrayNode required = node.withArray("required");
+            if (required != null) {
+                for (int i = 0; i < required.size(); i++) {
+                    String name = required.get(i).asText();
+                    required.set(i, StringHelper.dashToCamelCase(name));
+                }
+            }
+        }
         if (node.has("properties")) {
             ObjectNode props = node.withObject("/properties");
             ArrayNode required = null;
             if (node.has("required")) {
                 required = node.withArray("required");
             }
-            Map<String, JsonNode> rebuild = new LinkedHashMap<>();
-            // the properties are in mixed kebab-case and camelCase
-            for (Iterator<String> it = props.fieldNames(); it.hasNext();) {
-                String n = it.next();
-                String t = StringHelper.dashToCamelCase(n);
-                JsonNode prop = props.get(n);
-                rebuild.put(t, prop);
-                if (required != null) {
-                    for (int i = 0; i < required.size(); i++) {
-                        String r = required.get(i).asText();
-                        if (r.equals(n)) {
-                            required.set(i, t);
-                        }
+            kebabToCamelCaseProperties(props, required);
+        }
+    }
+
+    private void kebabToCamelCaseProperties(ObjectNode props, ArrayNode required) {
+        Map<String, JsonNode> rebuild = new LinkedHashMap<>();
+        // the properties are in mixed kebab-case and camelCase
+        for (Iterator<String> it = props.fieldNames(); it.hasNext();) {
+            String n = it.next();
+            String t = StringHelper.dashToCamelCase(n);
+            JsonNode prop = props.get(n);
+            JsonNode subProps = prop.findPath("properties");
+            if (!subProps.isMissingNode()) {
+                kebabToCamelCaseProperties((ObjectNode) subProps, null);
+            }
+            rebuild.put(t, prop);
+            if (required != null) {
+                for (int i = 0; i < required.size(); i++) {
+                    String r = required.get(i).asText();
+                    if (r.equals(n)) {
+                        required.set(i, t);
                     }
                 }
             }
-            if (!rebuild.isEmpty()) {
-                props.removeAll();
-                rebuild.forEach(props::set);
-            }
+        }
+        if (!rebuild.isEmpty()) {
+            props.removeAll();
+            rebuild.forEach(props::set);
         }
     }
 
@@ -351,7 +376,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             String propertyDisplayName,
             String propertyDefaultValue,
             String propertyFormat,
-            boolean deprecated) {
+            boolean deprecated,
+            boolean wrapItem,
+            boolean additionalProperties) {
 
         final ObjectNode current = objectDefinition.withObject("/properties/" + propertyName);
         current.put("type", propertyType);
@@ -385,9 +412,29 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
             String arrayType = StringHelper.after(propertyType, ":");
             if (arrayType.contains(".")) {
-                current.withObject("/items").put("$ref", "#/items/definitions/" + arrayType);
+                if (wrapItem) {
+                    ObjectNode itemSchema = current.withObject("/items");
+                    if (!additionalProperties) {
+                        itemSchema.put("additionalProperties", false);
+                    }
+                    itemSchema.put("type", "object")
+                            .withObject("/properties/" + propertyName)
+                            .put("$ref", "#/items/definitions/" + arrayType);
+                } else {
+                    current.withObject("/items").put("$ref", "#/items/definitions/" + arrayType);
+                }
             } else {
-                current.withObject("/items").put("type", arrayType);
+                if (wrapItem) {
+                    ObjectNode itemSchema = current.withObject("/items");
+                    if (!additionalProperties) {
+                        itemSchema.put("additionalProperties", false);
+                    }
+                    itemSchema.put("type", "object")
+                            .withObject("/properties/" + propertyName)
+                            .put("type", arrayType);
+                } else {
+                    current.withObject("/items").put("type", arrayType);
+                }
             }
         } else if (propertyType.startsWith("enum:")) {
 
@@ -492,7 +539,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                             .withArray("anyOf")
                             .addObject()
                             .withArray("required")
-                            .addAll((ArrayNode) referredObject.withArray("required"));
+                            .addAll(referredObject.withArray("required"));
                 }
                 return;
             }

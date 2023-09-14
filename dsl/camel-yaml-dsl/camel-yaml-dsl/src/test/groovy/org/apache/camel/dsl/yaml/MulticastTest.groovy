@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.MulticastDefinition
 import org.apache.camel.model.ToDefinition
+import org.junit.jupiter.api.Assertions
 
 class MulticastTest extends YamlTestSupport {
 
@@ -29,8 +30,8 @@ class MulticastTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:    
                       - multicast:  
-                         stop-on-exception: true
-                         parallel-processing: true
+                         stopOnException: true
+                         parallelProcessing: true
                          steps:
                            - to: "direct:a"
                            - to: "direct:b"
@@ -49,5 +50,29 @@ class MulticastTest extends YamlTestSupport {
                     endpointUri == 'direct:b'
                 }
             }
+    }
+
+    def "Error: kebab-case: stop-on-exception"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - multicast:  
+                         stop--on-exception: true
+                         parallelProcessing: true
+                         steps:
+                           - to: "direct:a"
+                           - to: "direct:b"
+                      - to: "direct:result" 
+            '''
+        then:
+        try {
+            loadRoutes route
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            e.message.contains("additional properties")
+
+        }
     }
 }

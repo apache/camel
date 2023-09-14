@@ -299,6 +299,7 @@
 ** xref:stub-component.adoc[Stub]
 ** xref:telegram-component.adoc[Telegram]
 ** xref:thrift-component.adoc[Thrift]
+** xref:thymeleaf-component.adoc[Thymeleaf]
 ** xref:tika-component.adoc[Tika]
 ** xref:timer-component.adoc[Timer]
 ** xref:twilio-component.adoc[Twilio]

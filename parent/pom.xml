@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.2</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.140</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.146</aws-java-sdk2-version>
         <aws-xray-version>2.14.0</aws-xray-version>
         <azure-sdk-bom-version>1.2.16</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
@@ -214,7 +214,7 @@
         <icu4j-version>73.2</icu4j-version>
         <ignite-version>2.15.0</ignite-version>
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.14.Final</infinispan-version>
+        <infinispan-version>14.0.17.Final</infinispan-version>
         <influx-java-driver-version>2.23</influx-java-driver-version>
         <influx-client-java-driver-version>6.10.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
@@ -223,7 +223,7 @@
         <jackson-jq-version>1.0.0-preview.20230409</jackson-jq-version>
         <jackson2-version>2.15.2</jackson2-version>
         <jackrabbit-version>2.21.19</jackrabbit-version>
-        <jasminb-jsonapi-version>0.12</jasminb-jsonapi-version>
+        <jasminb-jsonapi-version>0.13</jasminb-jsonapi-version>
         <jandex-version>3.1.2</jandex-version>
         <jansi-version>2.4.0</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
@@ -263,7 +263,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
         <jgit-version>6.6.1.202309021850-r</jgit-version>
-        <jgroups-version>5.2.17.Final</jgroups-version>
+        <jgroups-version>5.3.0.Final</jgroups-version>
         <jgroups-raft-version>1.0.11.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -299,11 +299,11 @@
         <kotlin-version>1.9.0</kotlin-version>
         <kubernetes-client-version>6.7.2</kubernetes-client-version>
         <kubernetes-model-version>6.7.2</kubernetes-model-version>
-        <kudu-version>1.16.0</kudu-version>
+        <kudu-version>1.17.0</kudu-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
-        <libphonenumber-version>8.13.18</libphonenumber-version>
+        <libphonenumber-version>8.13.20</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.20.0</log4j2-version>
@@ -442,7 +442,7 @@
         <swagger-openapi3-java-parser-version>2.1.16</swagger-openapi3-java-parser-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <testcontainers-version>1.18.3</testcontainers-version>
+        <testcontainers-version>1.19.0</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.0</tika-version>
         <twilio-version>9.9.1</twilio-version>
@@ -2276,6 +2276,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-thrift</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-thymeleaf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
