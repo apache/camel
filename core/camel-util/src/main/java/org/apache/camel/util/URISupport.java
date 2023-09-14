@@ -515,7 +515,6 @@ public final class URISupport {
         }
     }
 
-
     @Deprecated
     public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
         return createQueryString(sortedKeys.toArray(new String[0]), options, encode);
@@ -590,13 +589,13 @@ public final class URISupport {
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
      * value has <b>not</b> been encoded.
      *
-     * @param  uri                          the uri
-     * @return                              the normalized uri
-     * @throws URISyntaxException           in thrown if the uri syntax is invalid
-
-     * @see                                 #RAW_TOKEN_PREFIX
-     * @see                                 #RAW_TOKEN_START
-     * @see                                 #RAW_TOKEN_END
+     * @param  uri                the uri
+     * @return                    the normalized uri
+     * @throws URISyntaxException in thrown if the uri syntax is invalid
+     *
+     * @see                       #RAW_TOKEN_PREFIX
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
     public static String normalizeUri(String uri) throws URISyntaxException {
         // try to parse using the simpler and faster Camel URI parser
@@ -894,9 +893,9 @@ public final class URISupport {
     }
 
     /**
-     * Remove white-space noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to format
-     * their Camel routes in more human-readable format, but at runtime those attributes must be trimmed. The parser
-     * removes most of the noise, but keeps spaces in the attribute values
+     * Remove white-space noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to
+     * format their Camel routes in more human-readable format, but at runtime those attributes must be trimmed. The
+     * parser removes most of the noise, but keeps spaces in the attribute values
      */
     public static String removeNoiseFromUri(String uri) {
         String before = StringHelper.before(uri, "?");

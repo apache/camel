@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
@@ -71,7 +70,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
 
         // check the file should only have the last 2 entries as it was trunked
         try (Stream<String> fileContent = Files.lines(store.toPath())) {
-            List<String> fileEntries = fileContent.collect(Collectors.toList());
+            List<String> fileEntries = fileContent.toList();
             // expected order
             MatcherAssert.assertThat(fileEntries, IsIterableContainingInOrder.contains("ZZZZZZZZZZ", "XXXXXXXXXX"));
         }
