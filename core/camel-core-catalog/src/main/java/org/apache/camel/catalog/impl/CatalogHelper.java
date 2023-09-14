@@ -24,6 +24,8 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.util.IOHelper;
+
 public final class CatalogHelper {
 
     private CatalogHelper() {
@@ -67,16 +69,7 @@ public final class CatalogHelper {
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        try (final InputStreamReader isr = new InputStreamReader(in);
-             final BufferedReader reader = new LineNumberReader(isr)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-                builder.append("\n");
-            }
-            return builder.toString();
-        }
+        return IOHelper.loadText(in);
     }
 
     /**
@@ -92,50 +85,6 @@ public final class CatalogHelper {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Returns the string after the given token
-     *
-     * @param  text  the text
-     * @param  after the token
-     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
-     */
-    public static String after(String text, String after) {
-        if (!text.contains(after)) {
-            return null;
-        }
-        return text.substring(text.indexOf(after) + after.length());
-    }
-
-    /**
-     * Returns the string before the given token
-     *
-     * @param  text   the text
-     * @param  before the token
-     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
-     */
-    public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
-    }
-
-    /**
-     * Returns the string between the given tokens
-     *
-     * @param  text   the text
-     * @param  after  the before token
-     * @param  before the after token
-     * @return        the text between the tokens, or <tt>null</tt> if text does not contain the tokens
-     */
-    public static String between(String text, String after, String before) {
-        text = after(text, after);
-        if (text == null) {
-            return null;
-        }
-        return before(text, before);
     }
 
     /**
@@ -164,28 +113,4 @@ public final class CatalogHelper {
             return true;
         }
     }
-
-    /**
-     * Removes all leading and ending quotes (single and double) from the string
-     *
-     * @param  s the string
-     * @return   the string without leading and ending quotes (single and double)
-     */
-    public static String removeLeadingAndEndingQuotes(String s) {
-        if (isEmpty(s)) {
-            return s;
-        }
-
-        String copy = s.trim();
-        if (copy.startsWith("'") && copy.endsWith("'")) {
-            return copy.substring(1, copy.length() - 1);
-        }
-        if (copy.startsWith("\"") && copy.endsWith("\"")) {
-            return copy.substring(1, copy.length() - 1);
-        }
-
-        // no quotes, so return as-is
-        return s;
-    }
-
 }
