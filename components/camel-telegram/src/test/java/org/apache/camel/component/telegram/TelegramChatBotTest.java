@@ -47,7 +47,7 @@ public class TelegramChatBotTest extends TelegramTestSupport {
                         rawMessages -> rawMessages.size() >= 2)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
-                .collect(Collectors.toList());
+                .toList();
 
         assertCollectionSize(msgs, 2);
         assertTrue(msgs.stream().anyMatch(m -> "echo from the bot: Hello World!".equals(m.getText())));

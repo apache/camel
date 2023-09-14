@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
@@ -58,7 +57,7 @@ class ServiceBusProducerTest extends BaseCamelServiceBusTestSupport {
 
         // let's check our data
         final List<ServiceBusReceivedMessage> receivedMessages
-                = receiverAsyncClient.receiveMessages().toStream().collect(Collectors.toList());
+                = receiverAsyncClient.receiveMessages().toStream().toList();
 
         final boolean batch1Exists = receivedMessages.stream()
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("123456789"));

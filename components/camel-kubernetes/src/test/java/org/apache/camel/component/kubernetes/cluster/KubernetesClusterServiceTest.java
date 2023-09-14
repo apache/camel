@@ -112,7 +112,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     public void testMultipleMembersLeaderElection(LeaseResourceType type) {
         int number = 5;
         List<LeaderRecorder> members
-                = IntStream.range(0, number).mapToObj(i -> addMember("mypod" + i, type)).collect(Collectors.toList());
+                = IntStream.range(0, number).mapToObj(i -> addMember("mypod" + i, type)).toList();
         context.start();
 
         for (LeaderRecorder member : members) {
@@ -371,7 +371,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     private void checkLeadershipChangeDistance(long minimum, TimeUnit unit, LeaderRecorder... recorders) {
         List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders).flatMap(lr -> lr.getLeadershipInfo().stream())
                 .sorted(Comparator.comparingLong(LeaderRecorder.LeadershipInfo::getChangeTimestamp))
-                .collect(Collectors.toList());
+                .toList();
 
         LeaderRecorder.LeadershipInfo currentLeaderLastSeen = null;
         for (LeaderRecorder.LeadershipInfo info : infos) {

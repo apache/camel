@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
@@ -77,7 +76,7 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
         try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
                 .filter(l -> l.trim().length() > 0)) {
-            List<String> lines = stream.collect(Collectors.toList());
+            List<String> lines = stream.toList();
             assertEquals(3, lines.size());
         }
     }
