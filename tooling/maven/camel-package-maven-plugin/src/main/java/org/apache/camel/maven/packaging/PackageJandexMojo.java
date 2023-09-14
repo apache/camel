@@ -74,8 +74,8 @@ public class PackageJandexMojo extends AbstractGeneratorMojo {
             return;
         }
         try (Stream<Path> pathStream = Files.walk(classesDirectory.toPath())) {
-            List<Path> inputs = pathStream.filter(f -> f.getFileName().toString().endsWith(".class"))
-                    .collect(Collectors.toList());
+            final List<Path> inputs = pathStream.filter(f -> f.getFileName().toString().endsWith(".class"))
+                    .toList();
             if (index.exists()) {
                 if (isUpToDate(inputs)) {
                     return;

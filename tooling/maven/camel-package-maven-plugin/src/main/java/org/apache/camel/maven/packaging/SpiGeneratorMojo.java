@@ -32,7 +32,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.ConstantProvider;
@@ -193,7 +192,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
 
         List<JarEntry> classes = jf.stream()
                 .filter(je -> je.getName().endsWith(".class"))
-                .collect(Collectors.toList());
+                .toList();
 
         for (JarEntry je : classes) {
             try (InputStream is = jf.getInputStream(je)) {
