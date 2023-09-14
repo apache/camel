@@ -202,7 +202,8 @@ public class Run extends CamelCommand {
     boolean trace;
 
     @Option(names = { "--properties" },
-            description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+            description = "comma separated list of properties file" +
+                    " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
