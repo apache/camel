@@ -114,7 +114,7 @@ public final class RouteDefinitionHelper {
     private static String normalizeUri(String uri) {
         try {
             return URISupport.normalizeUri(uri);
-        } catch (UnsupportedEncodingException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             // ignore
         }
         return null;
