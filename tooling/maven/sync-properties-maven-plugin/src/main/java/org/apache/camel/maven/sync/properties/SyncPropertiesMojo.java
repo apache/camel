@@ -186,7 +186,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
         } else {
             final List<Pattern> patterns = regularExpressions.stream()
                     .map(Pattern::compile)
-                    .collect(Collectors.toList());
+                    .toList();
             return key -> patterns.stream().anyMatch(pattern -> pattern.matcher(key).matches());
         }
     }

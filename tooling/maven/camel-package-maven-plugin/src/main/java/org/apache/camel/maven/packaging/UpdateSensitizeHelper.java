@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.ComponentModel;
@@ -78,7 +77,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         }
         List<Path> jsonFiles;
         try (Stream<Path> stream = PackageHelper.findJsonFiles(jsonDir.toPath())) {
-            jsonFiles = stream.collect(Collectors.toList());
+            jsonFiles = stream.toList();
         }
         Set<String> secrets = new TreeSet<>();
 
