@@ -541,7 +541,7 @@ public final class URISupport {
      * @throws UnsupportedEncodingException is thrown if encoding error
      */
     public static String appendParametersToURI(String originalURI, Map<String, Object> newParameters)
-            throws URISyntaxException, UnsupportedEncodingException {
+            throws URISyntaxException {
         URI uri = new URI(normalizeUri(originalURI));
         Map<String, Object> parameters = parseParameters(uri);
         parameters.putAll(newParameters);
@@ -559,12 +559,11 @@ public final class URISupport {
      * @param  uri                          the uri
      * @return                              the normalized uri
      * @throws URISyntaxException           in thrown if the uri syntax is invalid
-     * @throws UnsupportedEncodingException is thrown if encoding error
      * @see                                 #RAW_TOKEN_PREFIX
      * @see                                 #RAW_TOKEN_START
      * @see                                 #RAW_TOKEN_END
      */
-    public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
+    public static String normalizeUri(String uri) throws URISyntaxException {
         // try to parse using the simpler and faster Camel URI parser
         String[] parts = CamelURIParser.fastParseUri(uri);
         if (parts != null) {

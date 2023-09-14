@@ -17,6 +17,8 @@
 
 package org.apache.camel.test.infra.core;
 
+import java.net.URISyntaxException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
@@ -73,7 +75,7 @@ public final class MockUtils {
         String n;
         try {
             n = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
         // strip query
