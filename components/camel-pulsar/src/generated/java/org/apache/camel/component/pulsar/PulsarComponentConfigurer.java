@@ -71,6 +71,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deadLetterTopic": getOrCreateConfiguration(target).setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "enableretry":
         case "enableRetry": getOrCreateConfiguration(target).setEnableRetry(property(camelContext, boolean.class, value)); return true;
+        case "hashingscheme":
+        case "hashingScheme": getOrCreateConfiguration(target).setHashingScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "initialsequenceid":
         case "initialSequenceId": getOrCreateConfiguration(target).setInitialSequenceId(property(camelContext, long.class, value)); return true;
         case "keysharedpolicy":
@@ -176,6 +178,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deadLetterTopic": return java.lang.String.class;
         case "enableretry":
         case "enableRetry": return boolean.class;
+        case "hashingscheme":
+        case "hashingScheme": return java.lang.String.class;
         case "initialsequenceid":
         case "initialSequenceId": return long.class;
         case "keysharedpolicy":
@@ -277,6 +281,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deadLetterTopic": return getOrCreateConfiguration(target).getDeadLetterTopic();
         case "enableretry":
         case "enableRetry": return getOrCreateConfiguration(target).isEnableRetry();
+        case "hashingscheme":
+        case "hashingScheme": return getOrCreateConfiguration(target).getHashingScheme();
         case "initialsequenceid":
         case "initialSequenceId": return getOrCreateConfiguration(target).getInitialSequenceId();
         case "keysharedpolicy":
