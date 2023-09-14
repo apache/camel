@@ -161,7 +161,7 @@ public final class EndpointHelper {
     public static String normalizeEndpointUri(String uri) {
         try {
             uri = URISupport.normalizeUri(uri);
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             throw new ResolveEndpointFailedException(uri, e);
         }
         return uri;
