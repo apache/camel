@@ -63,6 +63,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "hashingscheme":
+        case "hashingScheme": target.getPulsarConfiguration().setHashingScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "initialsequenceid":
         case "initialSequenceId": target.getPulsarConfiguration().setInitialSequenceId(property(camelContext, long.class, value)); return true;
         case "keysharedpolicy":
@@ -158,6 +160,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hashingscheme":
+        case "hashingScheme": return java.lang.String.class;
         case "initialsequenceid":
         case "initialSequenceId": return long.class;
         case "keysharedpolicy":
@@ -254,6 +258,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "hashingscheme":
+        case "hashingScheme": return target.getPulsarConfiguration().getHashingScheme();
         case "initialsequenceid":
         case "initialSequenceId": return target.getPulsarConfiguration().getInitialSequenceId();
         case "keysharedpolicy":

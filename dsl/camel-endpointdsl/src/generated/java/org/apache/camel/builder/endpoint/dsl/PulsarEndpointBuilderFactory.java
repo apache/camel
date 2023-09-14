@@ -1194,6 +1194,22 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Hashing function to use when choosing the partition to use for a
+         * particular message.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: JavaStringHash
+         * Group: producer
+         * 
+         * @param hashingScheme the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder hashingScheme(String hashingScheme) {
+            doSetProperty("hashingScheme", hashingScheme);
+            return this;
+        }
+        /**
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
