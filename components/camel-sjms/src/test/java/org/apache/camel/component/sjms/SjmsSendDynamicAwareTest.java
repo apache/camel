@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.sjms;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,6 @@ public class SjmsSendDynamicAwareTest extends CamelTestSupport {
 
     @BeforeEach
     public void setUp() throws Exception {
-        super.setUp();
         this.sjmsSendDynamicAware = new SjmsSendDynamicAware();
     }
 
@@ -59,5 +59,9 @@ public class SjmsSendDynamicAwareTest extends CamelTestSupport {
         processor.process(exchange);
         assertEquals("destination.SjmsSendDynamicAwareTest",
                 exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
+    }
+
+    @Override
+    protected void configureCamelContext(CamelContext context) throws Exception {
     }
 }

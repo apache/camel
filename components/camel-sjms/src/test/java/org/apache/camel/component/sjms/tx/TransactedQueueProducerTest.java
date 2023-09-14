@@ -40,10 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class TransactedQueueProducerTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
-
-    @Produce
-    protected ProducerTemplate template;
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testRoute() throws Exception {

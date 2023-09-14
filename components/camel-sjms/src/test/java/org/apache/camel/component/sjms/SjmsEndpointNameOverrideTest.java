@@ -20,7 +20,7 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +31,6 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
 
     private static final String BEAN_NAME = "not-sjms";
 
-    @Override
     protected boolean useJmx() {
         return true;
     }
@@ -63,15 +62,11 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
         ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent(BEAN_NAME, component);
-
-        return camelContext;
     }
 }

@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
 import jakarta.jms.Session;
 
@@ -30,6 +31,8 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
@@ -66,12 +69,10 @@ public class QueueProducerQoSTest extends CamelTestSupport {
             .withCustomConfiguration(QueueProducerQoSTest::configureArtemis)
             .build();
 
-    protected ActiveMQConnectionFactory connectionFactory;
-
     @EndpointInject(MOCK_EXPIRED_ADVISORY)
     MockEndpoint mockExpiredAdvisory;
 
-    private Session session;
+    protected Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
     @Test
@@ -144,13 +145,17 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         };
     }
 
-/*    @ContextFixture
-    public void configureComponent(CamelContext context) {
-    }*/
+
+    @ContextFixture
+    public void configureComponent(CamelContext camelContext) {
+    }
+
+
     @Override
+    //@ContextFixture
     protected void configureCamelContext(CamelContext camelContext) throws JMSException {
 
-        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
 
         Connection connection = connectionFactory.createConnection();
         connection.start();

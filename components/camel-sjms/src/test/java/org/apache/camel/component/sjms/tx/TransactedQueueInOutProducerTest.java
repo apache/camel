@@ -41,10 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class TransactedQueueInOutProducerTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
-
-    @Produce
-    protected ProducerTemplate template;
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testRoute() throws Exception {
@@ -104,7 +101,6 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
     }
 
     @Override
-    @ContextFixture
     protected void configureCamelContext(CamelContext camelContext) {
         ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory(service.serviceAddress());

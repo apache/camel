@@ -37,9 +37,6 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
-    @Produce
-    protected ProducerTemplate template;
-
     @Test
     void testOnCompletion() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

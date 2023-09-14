@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SjmsEndpointTest extends CamelTestSupport {
 
-    @Override
     protected boolean useJmx() {
         return true;
     }
@@ -156,15 +155,11 @@ public class SjmsEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
         ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
-
-        return camelContext;
     }
 }

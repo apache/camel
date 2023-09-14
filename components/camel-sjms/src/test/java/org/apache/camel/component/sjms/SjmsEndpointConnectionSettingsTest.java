@@ -17,20 +17,27 @@
 package org.apache.camel.component.sjms;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
-    private final ActiveMQConnectionFactory connectionFactory
-            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+
+    @BindToRegistry("activemq")
+    protected static ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
 
     @Test
     public void testConnectionFactory() {
@@ -43,9 +50,8 @@ public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() {
+    protected void configureCamelContext(CamelContext context) throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("activemq", connectionFactory);
-        return new DefaultCamelContext(registry);
     }
 }

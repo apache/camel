@@ -18,11 +18,12 @@ package org.apache.camel.component.sjms;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -34,12 +35,10 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
     private ActiveMQConnectionFactory connectionFactory
             = new ActiveMQConnectionFactory(service.serviceAddress());
 
-    @Override
     protected boolean useJmx() {
         return false;
     }
 
-    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
@@ -108,5 +107,9 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
+    }
+
+    @Override
+    protected void configureCamelContext(CamelContext context) throws Exception {
     }
 }
