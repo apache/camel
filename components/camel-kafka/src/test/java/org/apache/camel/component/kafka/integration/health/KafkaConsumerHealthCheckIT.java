@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.integration.health;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
@@ -166,9 +167,18 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
         serviceShutdown = true;
 
         // health-check readiness should be DOWN
-        final Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(context);
-        final boolean down = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-        Assertions.assertTrue(down, "readiness check");
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
+            Assertions.assertTrue(res2.size() > 0);
+            Optional<HealthCheck.Result> down
+                    = res2.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
+            Assertions.assertTrue(down.isPresent());
+            String msg = down.get().getMessage().get();
+            Assertions.assertTrue(msg.contains("KafkaConsumer is not ready"));
+            Map<String, Object> map = down.get().getDetails();
+            Assertions.assertEquals(TOPIC, map.get("topic"));
+            Assertions.assertEquals("test-health-it", map.get("route.id"));
+        });
     }
 
 }

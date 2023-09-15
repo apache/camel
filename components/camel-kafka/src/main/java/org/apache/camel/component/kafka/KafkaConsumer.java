@@ -30,7 +30,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.WritableHealthCheckRepository;
+import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.resume.ConsumerListenerAware;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
@@ -53,7 +53,7 @@ public class KafkaConsumer extends DefaultConsumer
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private KafkaConsumerHealthCheck consumerHealthCheck;
-    private WritableHealthCheckRepository healthCheckRepository;
+    private HealthCheckRepository healthCheckRepository;
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
@@ -126,13 +126,13 @@ public class KafkaConsumer extends DefaultConsumer
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
                 endpoint.getCamelContext(),
-                "components",
-                WritableHealthCheckRepository.class);
+                "consumers",
+                HealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
             consumerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckConsumerEnabled());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
+            setHealthCheck(consumerHealthCheck);
         }
 
         // is the offset repository already started?
@@ -175,7 +175,6 @@ public class KafkaConsumer extends DefaultConsumer
         }
 
         if (healthCheckRepository != null && consumerHealthCheck != null) {
-            healthCheckRepository.removeHealthCheck(consumerHealthCheck);
             consumerHealthCheck = null;
         }
 
