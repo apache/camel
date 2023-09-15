@@ -323,6 +323,7 @@
         <module>camel-rest-openapi</module>
         <!-- build jooq last as it cause component builds to be slower afterwards -->
         <module>camel-jooq</module>
+        <module>camel-aws/camel-aws2-redshift-data</module>
     </modules>
 
     <properties>
