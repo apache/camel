@@ -17,7 +17,6 @@
 package org.apache.camel.impl.cloud;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;

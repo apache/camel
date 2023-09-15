@@ -124,7 +124,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
             messageConverter = new DefaultMessageConverter(getCamelContext());
         }
         if (messagePropertiesConverter == null) {
-            messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext(), getHeaderFilterStrategy());
+            messagePropertiesConverter = new DefaultMessagePropertiesConverter(getCamelContext());
         }
     }
 
@@ -134,6 +134,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setConnectionFactory(connectionFactory);
         endpoint.setTestConnectionOnStartup(testConnectionOnStartup);
         endpoint.setMessageConverter(messageConverter);
+        messagePropertiesConverter.setHeaderFilterStrategy(getHeaderFilterStrategy());
         endpoint.setMessagePropertiesConverter(messagePropertiesConverter);
         endpoint.setAutoStartup(autoStartup);
         endpoint.setAutoDeclare(autoDeclare);

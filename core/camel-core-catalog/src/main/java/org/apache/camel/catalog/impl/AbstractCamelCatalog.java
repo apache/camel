@@ -674,7 +674,7 @@ public abstract class AbstractCamelCatalog {
         }
 
         // now parse the uri parameters
-        Map<String, Object> parameters = URISupport.parseParameters(u);
+        Map<String, Object> parameters = CatalogHelper.parseParameters(u);
 
         // and covert the values to String so its JMX friendly
         while (!parameters.isEmpty()) {
