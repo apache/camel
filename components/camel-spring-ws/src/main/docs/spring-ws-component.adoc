@@ -34,6 +34,8 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+*Be aware* Spring WS version 4.x does not support Axiom anymore (because Axiom does not support Jakarte JEE 9)
+
 == URI format
 
 The URI scheme for this component is as follows
