@@ -199,7 +199,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-aws2-redshiftdata</artifactId>
+            <artifactId>camel-aws2-redshift</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
