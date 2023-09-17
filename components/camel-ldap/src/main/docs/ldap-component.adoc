@@ -64,9 +64,33 @@ The result is returned to Out body as a `List<javax.naming.directory.SearchResul
 
 == DirContext
 
-The URI, `ldap:ldapserver`, references a Spring bean with the ID,
+The URI, `ldap:ldapserver`, references a bean with the ID 
 `ldapserver`. The `ldapserver` bean may be defined as follows:
 
+[tabs]
+====
+Java (Quarkus)::
++
+[source,java]
+----
+public class LdapServerProducer {
+
+    @Produces
+    @Dependent
+    @Named("ldapserver")
+    public DirContext createLdapServer() throws Exception {
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, "ldap://localhost:10389");
+        env.put(Context.SECURITY_AUTHENTICATION, "none");
+
+        return new InitialDirContext(env);
+    }
+}
+----
+
+XML (Spring)::
++
 [source,xml]
 -----------------------------------------------------------------------------------------
 <bean id="ldapserver" class="javax.naming.directory.InitialDirContext" scope="prototype">
@@ -79,18 +103,16 @@ The URI, `ldap:ldapserver`, references a Spring bean with the ID,
   </constructor-arg>
 </bean>
 -----------------------------------------------------------------------------------------
+====
 
 The preceding example declares a regular Sun based LDAP `DirContext`
 that connects anonymously to a locally hosted LDAP server.
 
 [NOTE]
 ====
-`DirContext` objects are *not* required to support concurrency by
-contract. It is therefore important that the directory context is
-declared with the setting, `scope="prototype"`, in the `bean` definition
-or that the context supports concurrency. In the Spring framework,
-`prototype` scoped objects are instantiated each time they are looked
-up.
+`DirContext` objects are *not* required to support concurrency by contract. It is therefore important to manage the directory context's lifecycle appropriately. In the Spring framework, `prototype` scoped objects are instantiated each time they are looked up to ensure concurrency and avoid sharing the same context between multiple threads.
+
+For Camel Quarkus applications, you can achieve similar behavior by using the `@Dependent` annotation. When you annotate a component or bean with `@Dependent`, a new instance of the component is created for each injection point or usage, which effectively provides the same concurrency guarantees as Spring's `prototype` scope. This ensures that each part of your application interacts with a separate and isolated `DirContext` instance, preventing unintended thread interference.
 ====
 
 == Security concerns related to LDAP injection
@@ -105,7 +127,7 @@ for information about https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Inject
 
 == Samples
 
-Following on from the Spring configuration above, the code sample below
+Following on from the configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
 Name is then extracted from the response.
 
@@ -120,7 +142,7 @@ Collection<SearchResult> results = template.requestBody(
 if (results.size() > 0) {
   // Extract what we need from the device's profile
 
-  Iterator resultIter = results.iterator();
+  Iterator<SearchResult> resultIter = results.iterator();
   SearchResult searchResult = (SearchResult) resultIter.next();
   Attributes attributes = searchResult.getAttributes();
   Attribute deviceCNAttr = attributes.get("cn");
@@ -190,6 +212,31 @@ the InitialDirContext bean - see below sample.
 
 *SSL Configuration*
 
+[tabs]
+====
+Java (Quarkus)::
++
+[source,java]
+----
+public class LdapServerProducer {
+
+    @Produces
+    @Dependent
+    @Named("ldapserver")
+    public DirContext createLdapServer() throws Exception {
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, "ldaps://" + InetAddress.getLocalHost().getCanonicalHostName() + ":10636");
+        env.put(Context.SECURITY_AUTHENTICATION, "none");
+        env.put("java.naming.ldap.factory.socket", CustomSSLSocketFactory.class.getName());
+
+        return new InitialDirContext(env);
+    }
+}
+----
+
+XML (Spring)::
++
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------
 <?xml version="1.0" encoding="UTF-8"?>
@@ -223,9 +270,107 @@ the InitialDirContext bean - see below sample.
     </bean>
 </beans>
 ----------------------------------------------------------------------------------------------------------------------------------
+====
 
 *Custom Socket Factory*
 
+[tabs]
+====
+Java (Quarkus)::
++
+[source,java]
+----
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.KeyStore;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.eclipse.microprofile.config.ConfigProvider;
+
+public class CustomSSLSocketFactory extends SSLSocketFactory {
+
+    private SSLSocketFactory delegate;
+
+    public CustomSSLSocketFactory() throws Exception {
+        String trustStoreFilename = ConfigProvider.getConfig().getValue("ldap.trustStore", String.class);
+        String trustStorePassword = ConfigProvider.getConfig().getValue("ldap.trustStorePassword", String.class);
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        try (InputStream in = new FileInputStream(trustStoreFilename)) {
+            keyStore.load(in, trustStorePassword.toCharArray());
+        }
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(keyStore);
+        SSLContext ctx = SSLContext.getInstance("TLS");
+        ctx.init(null, tmf.getTrustManagers(), null);
+        delegate = ctx.getSocketFactory();
+    }
+
+    public static SocketFactory getDefault() {
+        try {
+            return new CustomSSLSocketFactory();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+        return delegate.createSocket(s, host, port, autoClose);
+    }
+
+    @Override
+    public String[] getDefaultCipherSuites() {
+        return delegate.getDefaultCipherSuites();
+    }
+
+    @Override
+    public String[] getSupportedCipherSuites() {
+        return delegate.getSupportedCipherSuites();
+    }
+
+    @Override
+    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+        return delegate.createSocket(host, port);
+    }
+
+    @Override
+    public Socket createSocket(InetAddress address, int port) throws IOException {
+        return delegate.createSocket(address, port);
+    }
+
+    @Override
+    public Socket createSocket(String host, int port, InetAddress localAddress, int localPort)
+            throws IOException, UnknownHostException {
+        return delegate.createSocket(host, port, localAddress, localPort);
+    }
+
+    @Override
+    public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)
+            throws IOException {
+        return delegate.createSocket(address, port, localAddress, localPort);
+    }
+}
+----
++
+The constructor uses the `ConfigProvider` to read the `ldap.trustStore` and `ldap.trustStorePassword` configuration properties, which could be specified in the `application.properties` file as follows:
++
+[source,properties]
+----
+ldap.trustStore=/path/to/truststore.jks
+ldap.trustStorePassword=secret
+----
+
+XML (Spring)::
++
 [source,java]
 -----------------------------------------------------------------------------------------------------
 package com.example.ldap;
@@ -314,6 +459,6 @@ public class CustomSocketFactory extends SSLSocketFactory {
     }
 }
 -----------------------------------------------------------------------------------------------------
-
+====
 
 include::spring-boot:partial$starter.adoc[]
