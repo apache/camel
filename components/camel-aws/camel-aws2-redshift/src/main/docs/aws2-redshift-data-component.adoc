@@ -2,7 +2,7 @@
 :doctitle: AWS RedshiftData
 :shortname: aws2-redshift-data
 :artifactid: camel-aws2-redshift
-:description: Manage and invoke AWS Redshift Data.
+:description: Perform operations on AWS Redshift using Redshift Data API.
 :since: 4.1
 :supportlevel: Preview
 :tabs-sync-option:

@@ -512,7 +512,7 @@
     "kind": "component",
     "name": "aws2-redshift-data",
     "title": "AWS RedshiftData",
-    "description": "Manage and invoke AWS Redshift Data.",
+    "description": "Perform operations on AWS Redshift using Redshift Data API.",
     "deprecated": false,
     "firstVersion": "4.1.0",
     "label": "cloud,serverless,database,bigdata",

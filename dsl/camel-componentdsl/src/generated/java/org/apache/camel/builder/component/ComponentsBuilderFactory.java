@@ -372,7 +372,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS RedshiftData (camel-aws2-redshift)
-     * Manage and invoke AWS Redshift Data.
+     * Perform operations on AWS Redshift using Redshift Data API.
      * 
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1

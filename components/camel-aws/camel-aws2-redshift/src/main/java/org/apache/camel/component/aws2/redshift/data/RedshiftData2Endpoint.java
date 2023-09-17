@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
 
 /**
- * Manage and invoke AWS Redshift Data.
+ * Perform operations on AWS Redshift using Redshift Data API.
  */
 @UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-redshift-data", title = "AWS RedshiftData",
              syntax = "aws2-redshift-data:label",
