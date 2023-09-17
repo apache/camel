@@ -29,7 +29,9 @@ import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
  */
 @UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-redshift-data", title = "AWS RedshiftData",
              syntax = "aws2-redshift-data:label",
-             producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
+             producerOnly = true, category = {
+                     Category.CLOUD, Category.SERVERLESS,
+                     Category.DATABASE, Category.BIGDATA },
              headersClass = RedshiftData2Constants.class)
 public class RedshiftData2Endpoint extends DefaultEndpoint {
 
