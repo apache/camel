@@ -129,12 +129,8 @@ public final class URISupport {
         if (uri == null) {
             return null;
         }
-        int pos = uri.indexOf('?');
-        if (pos != -1) {
-            return uri.substring(pos + 1);
-        } else {
-            return null;
-        }
+
+        return StringHelper.after(uri, "?");
     }
 
     /**
@@ -286,12 +282,7 @@ public final class URISupport {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
-            int idx = schemeSpecificPart.indexOf('?');
-            if (idx < 0) {
-                return null;
-            } else {
-                query = schemeSpecificPart.substring(idx + 1);
-            }
+            query = StringHelper.after(schemeSpecificPart, "?");
         } else if (query.indexOf('?') == 0) {
             // skip leading query
             query = query.substring(1);
