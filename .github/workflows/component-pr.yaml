@@ -64,7 +64,7 @@ jobs:
             
             * You can use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot.
             
-            * You can label commits using `build-all`, `build-dependents`, `skip-tests` and `test-dependents` to fine-tune the checks executed by this PR.
+            * You can label commits using \`build-all\`, \`build-dependents\`, \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
             
             * Build and test logs are available in the Summary page. *Only* to [Apache Camel committers](https://camel.apache.org/community/team/#committers) have access to the summary. 
             
