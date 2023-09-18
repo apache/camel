@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Integration test that requires a pub/sub key to run")
-public class PubNubStateExample extends CamelTestSupport {
+public class PubNubStateManualTest extends CamelTestSupport {
 
     @Test
     public void testStateChange() throws Exception {

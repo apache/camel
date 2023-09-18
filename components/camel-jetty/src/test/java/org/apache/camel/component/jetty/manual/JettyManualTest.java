@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * http://localhost:9080/myapp/myservice
  */
 @Disabled
-public class JettyManual extends BaseJettyTest {
+public class JettyManualTest extends BaseJettyTest {
 
     @Test
     public void testManual() throws Exception {
