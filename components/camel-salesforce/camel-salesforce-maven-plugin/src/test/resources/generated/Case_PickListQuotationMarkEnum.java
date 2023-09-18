@@ -3,7 +3,7 @@
  */
 package $packageName;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
