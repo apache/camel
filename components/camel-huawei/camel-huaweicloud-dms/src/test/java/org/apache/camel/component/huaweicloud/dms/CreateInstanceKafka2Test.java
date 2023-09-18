@@ -23,6 +23,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
+import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceRequest;
 import org.apache.camel.component.huaweicloud.dms.models.CreateInstanceResponse;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,7 +33,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateInstanceKafkaTest1 extends CamelTestSupport {
+public class CreateInstanceKafka2Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("dmsClient")
@@ -51,28 +52,31 @@ public class CreateInstanceKafkaTest1 extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:operation")
+                        .setProperty(DMSProperties.NAME, constant(testConfiguration.getProperty("name")))
+                        .setProperty(DMSProperties.ENGINE, constant("kafka"))
+                        .setProperty(DMSProperties.ENGINE_VERSION, constant(testConfiguration.getProperty("engineVersion")))
+                        .setProperty(DMSProperties.SPECIFICATION, constant(testConfiguration.getProperty("specification")))
+                        .setProperty(DMSProperties.STORAGE_SPACE, constant(1000))
+                        .setProperty(DMSProperties.PARTITION_NUM, constant(500))
+                        .setProperty(DMSProperties.VPC_ID, constant(testConfiguration.getProperty("vpcId")))
+                        .setProperty(DMSProperties.SECURITY_GROUP_ID,
+                                constant(testConfiguration.getProperty("securityGroupId")))
+                        .setProperty(DMSProperties.SUBNET_ID, constant(testConfiguration.getProperty("subnetId")))
+                        .setProperty(DMSProperties.AVAILABLE_ZONES, constant(availableZones))
+                        .setProperty(DMSProperties.PRODUCT_ID, constant(testConfiguration.getProperty("productId")))
+                        .setProperty(DMSProperties.KAFKA_MANAGER_USER,
+                                constant(testConfiguration.getProperty("kafkaManagerUser")))
+                        .setProperty(DMSProperties.KAFKA_MANAGER_PASSWORD,
+                                constant(testConfiguration.getProperty("kafkaManagerPassword")))
+                        .setProperty(DMSProperties.STORAGE_SPEC_CODE,
+                                constant(testConfiguration.getProperty("storageSpecCode")))
                         .to("hwcloud-dms:createInstance?" +
                             "serviceKeys=#serviceKeys" +
                             "&projectId=" + testConfiguration.getProperty("projectId") +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&instanceId=" + testConfiguration.getProperty("instanceId") +
                             "&ignoreSslVerification=true" +
-                            "&dmsClient=#dmsClient" +
-
-                            "&name=" + testConfiguration.getProperty("name") +
-                            "&engine=kafka" +
-                            "&engineVersion=" + testConfiguration.getProperty("engineVersion") +
-                            "&specification=" + testConfiguration.getProperty("specification") +
-                            "&storageSpace=1000" +
-                            "&partitionNum=500" +
-                            "&vpcId=" + testConfiguration.getProperty("vpcId") +
-                            "&securityGroupId=" + testConfiguration.getProperty("securityGroupId") +
-                            "&subnetId=" + testConfiguration.getProperty("subnetId") +
-                            "&availableZones=#availableZones" +
-                            "&productId=" + testConfiguration.getProperty("productId") +
-                            "&kafkaManagerUser=" + testConfiguration.getProperty("kafkaManagerUser") +
-                            "&kafkaManagerPassword=" + testConfiguration.getProperty("kafkaManagerPassword") +
-                            "&storageSpecCode=" + testConfiguration.getProperty("storageSpecCode"))
+                            "&dmsClient=#dmsClient")
                         .log("Operation successful")
                         .to("mock:operation_result");
             }

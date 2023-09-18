@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateInstanceRmqTest1 extends CamelTestSupport {
+public class CreateInstanceKafka1Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("dmsClient")
@@ -60,16 +60,18 @@ public class CreateInstanceRmqTest1 extends CamelTestSupport {
                             "&dmsClient=#dmsClient" +
 
                             "&name=" + testConfiguration.getProperty("name") +
-                            "&engine=rabbitmq" +
+                            "&engine=kafka" +
                             "&engineVersion=" + testConfiguration.getProperty("engineVersion") +
+                            "&specification=" + testConfiguration.getProperty("specification") +
                             "&storageSpace=1000" +
-                            "&accessUser=" + testConfiguration.getProperty("accessUser") +
-                            "&password=" + testConfiguration.getProperty("password") +
+                            "&partitionNum=500" +
                             "&vpcId=" + testConfiguration.getProperty("vpcId") +
                             "&securityGroupId=" + testConfiguration.getProperty("securityGroupId") +
                             "&subnetId=" + testConfiguration.getProperty("subnetId") +
                             "&availableZones=#availableZones" +
                             "&productId=" + testConfiguration.getProperty("productId") +
+                            "&kafkaManagerUser=" + testConfiguration.getProperty("kafkaManagerUser") +
+                            "&kafkaManagerPassword=" + testConfiguration.getProperty("kafkaManagerPassword") +
                             "&storageSpecCode=" + testConfiguration.getProperty("storageSpecCode"))
                         .log("Operation successful")
                         .to("mock:operation_result");

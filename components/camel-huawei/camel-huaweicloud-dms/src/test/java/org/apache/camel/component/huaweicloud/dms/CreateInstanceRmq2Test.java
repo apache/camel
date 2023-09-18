@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateInstanceRmqTest2 extends CamelTestSupport {
+public class CreateInstanceRmq2Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("dmsClient")
