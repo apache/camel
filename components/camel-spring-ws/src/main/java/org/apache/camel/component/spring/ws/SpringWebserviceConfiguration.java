@@ -106,7 +106,7 @@ public class SpringWebserviceConfiguration {
     }
 
     /**
-     * Option to provide a custom WebServiceMessageFactory. 
+     * Option to provide a custom WebServiceMessageFactory.
      */
     public void setMessageFactory(WebServiceMessageFactory messageFactory) {
         this.messageFactory = messageFactory;
