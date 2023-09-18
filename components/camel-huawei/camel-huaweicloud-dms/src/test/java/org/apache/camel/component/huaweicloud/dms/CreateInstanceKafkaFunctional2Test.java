@@ -23,6 +23,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
+import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -31,23 +32,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateInstanceRmqFunctionalTest1 extends CamelTestSupport {
+public class CreateInstanceKafkaFunctional2Test extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String PROJECT_ID = "replace_this_with_project_id";
     private static final String REGION = "replace_this_with_region";
 
-    // new RabbitMQ instance options: https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html
+    // new Kafka instance options: https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514002.html
     private static final String NAME = "replace_this_with_name";
     private static final String ENGINE_VERSION = "replace_this_with_engine_version";
-    private static final String STORAGE_SPACE = "replace_this_with_storage_space";
-    private static final String ACCESS_USER = "replace_this_with_storage_access_user";
-    private static final String PASSWORD = "replace_this_with_password";
+    private static final String SPECIFICATION = "replace_this_with_specification";
+    private static final int STORAGE_SPACE = 0/*replace_this_with_storage_space*/;
+    private static final int PARTITION_NUM = 0/*replace_this_with_partition_num*/;
     private static final String VPC_ID = "replace_this_with_vpc_id";
     private static final String SECURITY_GROUP_ID = "replace_this_with_security_group_id";
     private static final String SUBNET_ID = "replace_this_with_subnet_id";
     private static final String AVAILABLE_ZONE = "replace_this_with_available_zone";
     private static final String PRODUCT_ID = "replace_this_with_product_id";
+    private static final String KAFKA_MANAGER_USER = "replace_this_with_kafka_manager_user";
+    private static final String KAFKA_MANAGER_PASSWORD = "replace_this_with_kafka_manager_password";
     private static final String STORAGE_SPEC_CODE = "replace_this_with_storage_spec_code";
 
     @BindToRegistry("serviceKeys")
@@ -60,24 +63,25 @@ public class CreateInstanceRmqFunctionalTest1 extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:operation")
+                        .setProperty(DMSProperties.NAME, constant(NAME))
+                        .setProperty(DMSProperties.ENGINE, constant("kafka"))
+                        .setProperty(DMSProperties.ENGINE_VERSION, constant(ENGINE_VERSION))
+                        .setProperty(DMSProperties.SPECIFICATION, constant(SPECIFICATION))
+                        .setProperty(DMSProperties.STORAGE_SPACE, constant(STORAGE_SPACE))
+                        .setProperty(DMSProperties.PARTITION_NUM, constant(PARTITION_NUM))
+                        .setProperty(DMSProperties.VPC_ID, constant(VPC_ID))
+                        .setProperty(DMSProperties.SECURITY_GROUP_ID, constant(SECURITY_GROUP_ID))
+                        .setProperty(DMSProperties.SUBNET_ID, constant(SUBNET_ID))
+                        .setProperty(DMSProperties.AVAILABLE_ZONES, constant(availableZones))
+                        .setProperty(DMSProperties.PRODUCT_ID, constant(PRODUCT_ID))
+                        .setProperty(DMSProperties.KAFKA_MANAGER_USER, constant(KAFKA_MANAGER_USER))
+                        .setProperty(DMSProperties.KAFKA_MANAGER_PASSWORD, constant(KAFKA_MANAGER_PASSWORD))
+                        .setProperty(DMSProperties.STORAGE_SPEC_CODE, constant(STORAGE_SPEC_CODE))
                         .to("hwcloud-dms:createInstance?" +
                             "serviceKeys=#serviceKeys" +
                             "&projectId=" + PROJECT_ID +
                             "&region=" + REGION +
-                            "&ignoreSslVerification=true" +
-                            "&engine=rabbitmq" +
-
-                            "&name=" + NAME +
-                            "&engineVersion=" + ENGINE_VERSION +
-                            "&storageSpace=" + STORAGE_SPACE +
-                            "&accessUser=" + ACCESS_USER +
-                            "&password=" + PASSWORD +
-                            "&vpcId=" + VPC_ID +
-                            "&securityGroupId=" + SECURITY_GROUP_ID +
-                            "&subnetId=" + SUBNET_ID +
-                            "&availableZones=#availableZones" +
-                            "&productId=" + PRODUCT_ID +
-                            "&storageSpecCode=" + STORAGE_SPEC_CODE)
+                            "&ignoreSslVerification=true")
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");

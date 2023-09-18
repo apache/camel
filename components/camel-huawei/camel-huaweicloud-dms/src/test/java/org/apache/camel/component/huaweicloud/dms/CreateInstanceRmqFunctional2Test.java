@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateInstanceRmqFunctionalTest2 extends CamelTestSupport {
+public class CreateInstanceRmqFunctional2Test extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String PROJECT_ID = "replace_this_with_project_id";
