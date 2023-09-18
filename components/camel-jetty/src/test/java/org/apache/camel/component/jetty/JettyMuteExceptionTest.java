@@ -41,12 +41,28 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         }
     }
 
+    @Test
+    public void testDefaultMuteException() throws Exception {
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/fooDefault");
+        get.addHeader("Accept", "application/text");
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(get)) {
+
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertEquals("", responseString);
+            assertEquals(500, response.getCode());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("jetty:http://localhost:{{port}}/foo?muteException=true").to("mock:destination")
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
+
+                from("jetty:http://localhost:{{port}}/fooDefault").to("mock:destination")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
