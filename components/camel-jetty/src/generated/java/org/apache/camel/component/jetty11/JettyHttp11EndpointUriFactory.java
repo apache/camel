@@ -21,7 +21,7 @@ public class JettyHttp11EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(34);
         props.add("async");
         props.add("bridgeErrorHandler");
         props.add("chunked");
@@ -40,6 +40,7 @@ public class JettyHttp11EndpointUriFactory extends org.apache.camel.support.comp
         props.add("httpBinding");
         props.add("httpMethodRestrict");
         props.add("httpUri");
+        props.add("logException");
         props.add("mapHttpMessageBody");
         props.add("mapHttpMessageFormUrlEncodedBody");
         props.add("mapHttpMessageHeaders");
