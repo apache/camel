@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Trying to reproduce CAMEL-927.
  */
-public class TwoTimerWithJMXIssue extends ContextTestSupport {
+public class TwoTimerWithJMXIssueTest extends ContextTestSupport {
 
     private static int counter;
 

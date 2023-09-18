@@ -30,7 +30,7 @@ import org.springframework.transaction.TransactionStatus;
 
 import static org.apache.camel.builder.Builder.constant;
 
-public class AdviceWithOnExceptionTransacted extends CamelSpringTestSupport {
+public class AdviceWithOnExceptionTransactedTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
