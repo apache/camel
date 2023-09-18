@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
@@ -34,7 +35,7 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
-        assertEquals("", response.getText());
+        assertTrue(response.getText().isEmpty());
     }
 
     @Test
@@ -46,7 +47,7 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
-        assertEquals("", response.getText());
+        assertTrue(response.getText().isEmpty());
     }
 
     @Test
@@ -58,7 +59,7 @@ public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
         assertEquals(500, response.getResponseCode());
         assertEquals("text/plain", response.getContentType());
-        assertEquals("", response.getText());
+        assertTrue(response.getText().isEmpty());
     }
 
     @Override
