@@ -603,8 +603,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to provide a custom WebServiceMessageFactory. For example when
-         * you want Apache Axiom to handle web service messages instead of SAAJ.
+         * Option to provide a custom WebServiceMessageFactory.
          * 
          * The option is a:
          * &lt;code&gt;org.springframework.ws.WebServiceMessageFactory&lt;/code&gt; type.
@@ -620,8 +619,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to provide a custom WebServiceMessageFactory. For example when
-         * you want Apache Axiom to handle web service messages instead of SAAJ.
+         * Option to provide a custom WebServiceMessageFactory.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.springframework.ws.WebServiceMessageFactory&lt;/code&gt; type.

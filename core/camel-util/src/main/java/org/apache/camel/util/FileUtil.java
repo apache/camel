@@ -465,7 +465,7 @@ public final class FileUtil {
         if (!deleteFile(from)) {
             throw new IOException(
                     "Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from
-                            + "' after copy succeeded");
+                                  + "' after copy succeeded");
         }
 
         return true;

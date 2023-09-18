@@ -203,7 +203,7 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--properties" },
             description = "comma separated list of properties file" +
-                    " (ex. /path/to/file.properties,/path/to/other.properties")
+                          " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
