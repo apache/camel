@@ -28,7 +28,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 @Disabled("Integration test that requires ironmq account.")
-public class FileCopyExample extends CamelTestSupport {
+public class FileCopyManualTest extends CamelTestSupport {
     // replace with your proejctid
     private String projectId = "myIronMQproject";
     // replace with your token
