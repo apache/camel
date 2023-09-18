@@ -508,6 +508,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "Aws2RedshiftDataComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws2-redshift-data",
+    "title": "AWS RedshiftData",
+    "description": "Perform operations on AWS Redshift using Redshift Data API.",
+    "deprecated": false,
+    "firstVersion": "4.1.0",
+    "label": "cloud,serverless,database,bigdata",
+    "javaType": "org.apache.camel.component.aws2.redshift.data.RedshiftData2Component",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-redshift",
+    "version": "4.1.0-SNAPSHOT",
+    "scheme": "aws2-redshift-data",
+    "extendsScheme": "",
+    "syntax": "aws2-redshift-data:label",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Aws2S3ComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-s3",

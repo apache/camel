@@ -258,6 +258,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.RedshiftData2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory,
