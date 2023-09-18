@@ -20,7 +20,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
-import software.amazon.awssdk.services.redshiftdata.model.*;
+import software.amazon.awssdk.services.redshiftdata.model.BatchExecuteStatementRequest;
+import software.amazon.awssdk.services.redshiftdata.model.BatchExecuteStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.CancelStatementRequest;
+import software.amazon.awssdk.services.redshiftdata.model.CancelStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.DescribeStatementRequest;
+import software.amazon.awssdk.services.redshiftdata.model.DescribeStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.DescribeTableRequest;
+import software.amazon.awssdk.services.redshiftdata.model.DescribeTableResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ExecuteStatementRequest;
+import software.amazon.awssdk.services.redshiftdata.model.ExecuteStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.GetStatementResultRequest;
+import software.amazon.awssdk.services.redshiftdata.model.GetStatementResultResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListDatabasesRequest;
+import software.amazon.awssdk.services.redshiftdata.model.ListDatabasesResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListSchemasRequest;
+import software.amazon.awssdk.services.redshiftdata.model.ListSchemasResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListStatementsRequest;
+import software.amazon.awssdk.services.redshiftdata.model.ListStatementsResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListTablesRequest;
+import software.amazon.awssdk.services.redshiftdata.model.ListTablesResponse;
+import software.amazon.awssdk.services.redshiftdata.model.StatementData;
+import software.amazon.awssdk.services.redshiftdata.model.TableMember;
 
 public class AmazonRedshiftDataClientMock implements RedshiftDataClient {
 

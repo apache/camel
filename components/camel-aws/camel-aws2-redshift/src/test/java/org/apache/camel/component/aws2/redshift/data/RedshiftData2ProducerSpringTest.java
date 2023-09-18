@@ -26,7 +26,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import software.amazon.awssdk.services.redshiftdata.model.*;
+import software.amazon.awssdk.services.redshiftdata.model.BatchExecuteStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.CancelStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.DescribeStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.DescribeTableResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ExecuteStatementResponse;
+import software.amazon.awssdk.services.redshiftdata.model.GetStatementResultResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListDatabasesResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListSchemasResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListStatementsResponse;
+import software.amazon.awssdk.services.redshiftdata.model.ListTablesResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
