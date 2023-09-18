@@ -171,8 +171,10 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
      */
     private void processCommit(final Exchange exchange) {
         try {
-            LOG.trace("Deleting message with pop receipt handle {}...",
-                    QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Deleting message with pop receipt handle {}...",
+                        QueueExchangeHeaders.getPopReceiptFromHeaders(exchange));
+            }
             queueOperations.deleteMessage(exchange);
         } catch (QueueStorageException ex) {
             getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.",
