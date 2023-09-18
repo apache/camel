@@ -1010,9 +1010,6 @@ public class Run extends CamelCommand {
         if (OPENAPI_GENERATED_FILE.equals(name)) {
             return false;
         }
-        if (name.startsWith(".")) {
-            return true;
-        }
         if ("pom.xml".equalsIgnoreCase(name)) {
             return true;
         }
@@ -1025,6 +1022,14 @@ public class Run extends CamelCommand {
         if ("docker-compose.yml".equals(name) || "docker-compose.yaml".equals(name) || "compose.yml".equals(name)
                 || "compose.yaml".equals(name)) {
             return true;
+        }
+
+        if (name.startsWith(".")) {
+            // relative file is okay, otherwise we assume it's a hidden file
+            boolean ok = name.startsWith("..") || name.startsWith("./");
+            if (!ok) {
+                return false;
+            }
         }
 
         // skip dirs
