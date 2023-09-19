@@ -337,7 +337,7 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
             // add the serviceId to the list of known server
             serviceList.add(definition.getId());
         } catch (Exception e) {
-            LOGGER.warn("", e);
+            LOGGER.warn("{}", e.getMessage(), e);
         }
     }
 
@@ -360,7 +360,7 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("", e);
+            LOGGER.warn("{}", e.getMessage(), e);
         }
     }
 

@@ -109,7 +109,7 @@ public class ConsulClusteredRoutePolicyFactoryIT {
 
             LATCH.countDown();
         } catch (Exception e) {
-            LOGGER.warn("", e);
+            LOGGER.warn("{}", e.getMessage(), e);
         }
     }
 }
