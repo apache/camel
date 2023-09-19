@@ -57,8 +57,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DefaultNamespace": target.withDefaultNamespace(property(camelContext, boolean.class, value)); return true;
         case "disablehostnameverification":
         case "DisableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, boolean.class, value)); return true;
-        case "errormessages":
-        case "ErrorMessages": target.withErrorMessages(property(camelContext, java.util.Map.class, value)); return true;
         case "file":
         case "File": target.withFile(property(camelContext, java.io.File.class, value)); return true;
         case "http2disable":
@@ -170,8 +168,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DefaultNamespace": return boolean.class;
         case "disablehostnameverification":
         case "DisableHostnameVerification": return boolean.class;
-        case "errormessages":
-        case "ErrorMessages": return java.util.Map.class;
         case "file":
         case "File": return java.io.File.class;
         case "http2disable":
@@ -284,8 +280,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DefaultNamespace": return target.isDefaultNamespace();
         case "disablehostnameverification":
         case "DisableHostnameVerification": return target.isDisableHostnameVerification();
-        case "errormessages":
-        case "ErrorMessages": return target.getErrorMessages();
         case "file":
         case "File": return target.getFile();
         case "http2disable":
