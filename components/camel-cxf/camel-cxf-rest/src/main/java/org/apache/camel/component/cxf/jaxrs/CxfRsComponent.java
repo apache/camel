@@ -53,13 +53,6 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        // lookup
-    }
-
-    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint answer;
 

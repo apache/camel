@@ -441,9 +441,4 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         }
         return s3ConsumerToString;
     }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
 }

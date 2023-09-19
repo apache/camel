@@ -88,8 +88,4 @@ public class MyBatisComponent extends HealthCheckComponent {
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
 }

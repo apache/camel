@@ -33,16 +33,6 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
         HashicorpVaultOperation operation = determineOperation(exchange);
         switch (operation) {
