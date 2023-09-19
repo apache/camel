@@ -44,11 +44,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
     protected int poll() throws Exception {
         LookupEventsRequest.Builder eventsRequestBuilder
                 = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
@@ -88,11 +83,6 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
             processedExchanges++;
         }
         return processedExchanges;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
     }
 
     private CloudTrailClient getClient() {

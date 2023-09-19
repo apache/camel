@@ -86,11 +86,6 @@ public class KafkaConsumer extends DefaultConsumer
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-    }
-
-    @Override
     public KafkaEndpoint getEndpoint() {
         return (KafkaEndpoint) super.getEndpoint();
     }

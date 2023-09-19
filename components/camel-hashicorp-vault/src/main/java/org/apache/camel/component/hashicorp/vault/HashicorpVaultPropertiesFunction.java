@@ -119,11 +119,6 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     }
 
     @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
-    @Override
     public String getName() {
         return "hashicorp";
     }
