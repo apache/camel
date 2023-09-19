@@ -165,10 +165,6 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'def'", false);
         assertPredicate("${in.header.foo} == '1'", false);
 
-        // no type converter needed from this point forward
-        context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
-        context.getTypeConverterRegistry().getStatistics().reset();
-
         // boolean to boolean comparison
         exchange.getIn().setHeader("bool", true);
         exchange.getIn().setHeader("booley", false);
@@ -386,9 +382,6 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
 
     @Test
     public void testLessThanOrEqualOperator() {
-        context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
-        context.getTypeConverterRegistry().getStatistics().reset();
-
         // string to string comparison
         assertPredicate("${in.header.foo} <= 'aaa'", false);
         assertPredicate("${in.header.foo} <= 'abc'", true);
@@ -413,9 +406,6 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
 
     @Test
     public void testTypeCoerceNoConversionNeeded() {
-        context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
-        context.getTypeConverterRegistry().getStatistics().reset();
-
         // int to int comparison
         exchange.getIn().setHeader("num", 70);
         assertPredicate("${in.header.num} > 100", false);

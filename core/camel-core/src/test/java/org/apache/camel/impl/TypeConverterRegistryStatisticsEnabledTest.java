@@ -30,7 +30,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+        CamelContext context = new DefaultCamelContext(false);
         context.setTypeConverterStatisticsEnabled(true);
         return context;
     }

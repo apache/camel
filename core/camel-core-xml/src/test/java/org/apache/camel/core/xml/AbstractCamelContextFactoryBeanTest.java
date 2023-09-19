@@ -83,7 +83,7 @@ public class AbstractCamelContextFactoryBeanTest {
                 public boolean supportsAutoWiring() {
                     return false;
                 }
-            }, false);
+            }, false, false);
 
     // properties that should return value that can be converted to boolean
     Set<String> valuesThatReturnBoolean = new HashSet<>(
