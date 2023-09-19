@@ -12274,9 +12274,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.app.RegistryBeanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "name", type = "string"),
+                    @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "properties", type = "object"),
-                    @YamlProperty(name = "type", type = "string")
+                    @YamlProperty(name = "type", type = "string", required = true)
             }
     )
     public static class RegistryBeanDefinitionDeserializer extends YamlDeserializerBase<RegistryBeanDefinition> {

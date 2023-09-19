@@ -42,9 +42,9 @@ public class RegistryBeanDefinition implements ResourceAware {
     @XmlTransient
     private Resource resource;
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String name;
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String type;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)

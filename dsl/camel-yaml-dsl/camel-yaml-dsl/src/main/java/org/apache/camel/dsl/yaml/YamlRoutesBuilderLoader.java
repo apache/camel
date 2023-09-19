@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -106,6 +107,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1";
     private static final String KNATIVE_VERSION = "messaging.knative.dev/v1";
 
+    private final Map<String, Boolean> preparseDone = new ConcurrentHashMap<>();
+
     public YamlRoutesBuilderLoader() {
         super(EXTENSION);
     }
@@ -153,6 +156,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                         doConfigure(target);
                     }
                 }
+
+                // knowing this is the last time an XML may have been parsed, we can clear the cache
+                // (route may get reloaded later)
+                Resource resource = ctx.getResource();
+                if (resource != null) {
+                    preparseDone.remove(resource.getLocation());
+                }
+                beansDeserializer.clearCache();
             }
 
             private boolean doConfigure(Object item) throws Exception {
@@ -264,10 +275,19 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                                 idx = node.getStartMark().get().getIndex();
                             }
                             if (idx == -1 || !indexes.contains(idx)) {
-                                Object item = ctx.mandatoryResolve(node).construct(node);
-                                boolean accepted = doConfiguration(item);
-                                if (accepted && idx != -1) {
-                                    indexes.add(idx);
+                                if (node.getNodeType() == NodeType.MAPPING) {
+                                    MappingNode mn = asMappingNode(node);
+                                    for (NodeTuple nt : mn.getValue()) {
+                                        String key = asText(nt.getKeyNode());
+                                        // only accept route-configuration
+                                        if ("route-configuration".equals(key) || "routeConfiguration".equals(key)) {
+                                            Object item = ctx.mandatoryResolve(node).construct(node);
+                                            boolean accepted = doConfiguration(item);
+                                            if (accepted && idx != -1) {
+                                                indexes.add(idx);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -311,6 +331,32 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             }
         }
 
+        // only detect beans during pre-parsing
+        if (preParse && Objects.equals(root.getNodeType(), NodeType.SEQUENCE)) {
+            final List<Object> list = new ArrayList<>();
+
+            final SequenceNode sn = asSequenceNode(root);
+            for (Node node : sn.getValue()) {
+                if (Objects.equals(node.getNodeType(), NodeType.MAPPING)) {
+                    MappingNode mn = asMappingNode(node);
+                    for (NodeTuple nt : mn.getValue()) {
+                        String key = asText(nt.getKeyNode());
+                        if ("beans".equals(key)) {
+                            // inlined beans
+                            Node beans = nt.getValueNode();
+                            setDeserializationContext(beans, ctx);
+                            Object output = beansDeserializer.construct(beans);
+                            if (output != null) {
+                                list.add(output);
+                            }
+                        }
+                    }
+                }
+            }
+            if (!list.isEmpty()) {
+                target = list;
+            }
+        }
         return target;
     }
 
@@ -842,6 +888,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     @Override
     public void preParseRoute(Resource resource) throws Exception {
+        // preparsing is done at early stage, so we have a chance to load additional beans and populate
+        // Camel registry
+        if (preparseDone.getOrDefault(resource.getLocation(), false)) {
+            return;
+        }
+
         LOG.trace("Pre-parsing: {}", resource.getLocation());
 
         if (!resource.exists()) {
@@ -863,6 +915,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 ctx.close();
             }
         }
+
+        preparseDone.put(resource.getLocation(), true);
     }
 
     private Object preParseNode(final YamlDeserializationContext ctx, final Node root) {

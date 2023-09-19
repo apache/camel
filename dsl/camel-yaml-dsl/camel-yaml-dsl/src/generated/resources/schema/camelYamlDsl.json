@@ -8007,7 +8007,8 @@
           "type" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration" : {
         "title" : "Blacklist Service Filter",
