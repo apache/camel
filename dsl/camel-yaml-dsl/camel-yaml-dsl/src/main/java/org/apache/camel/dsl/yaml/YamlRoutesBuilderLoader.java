@@ -157,7 +157,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                 }
 
-                // knowing this is the last time an XML may have been parsed, we can clear the cache
+                // knowing this is the last time an YAML may have been parsed, we can clear the cache
                 // (route may get reloaded later)
                 Resource resource = ctx.getResource();
                 if (resource != null) {
