@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -64,12 +63,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     // special enum converter for optional performance
     protected final TypeConverter enumTypeConverter = new EnumTypeConverter();
 
-    protected final Statistics statistics = new UtilizationStatistics();
-    protected final LongAdder noopCounter = new LongAdder();
-    protected final LongAdder attemptCounter = new LongAdder();
-    protected final LongAdder missCounter = new LongAdder();
-    protected final LongAdder hitCounter = new LongAdder();
-    protected final LongAdder failedCounter = new LongAdder();
+    private final ConverterStatistics statistics = new TypeConverterStatistics();
 
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Ignore;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.DEBUG;
@@ -292,16 +286,15 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             final Class<?> type, final Exchange exchange, final Object value,
             final boolean tryConvert) {
 
-        boolean statisticsEnabled = !tryConvert && statistics.isStatisticsEnabled(); // we only capture if not try-convert in use
-
         Object answer = null;
         try {
             answer = doConvertTo(type, exchange, value, tryConvert);
         } catch (Exception e) {
             // only record if not try
-            if (statisticsEnabled) {
-                failedCounter.increment();
+            if (!tryConvert) {
+                statistics.incrementFailed();
             }
+
             if (tryConvert) {
                 return null;
             }
@@ -309,15 +302,17 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             wrapConversionException(type, exchange, value, e);
         }
         if (answer == TypeConverter.MISS_VALUE) {
-            // Could not find suitable conversion
-            if (statisticsEnabled) {
-                missCounter.increment();
+            if (!tryConvert) {
+                // Could not find suitable conversion
+                statistics.incrementMiss();
             }
+
             return null;
         } else {
-            if (statisticsEnabled) {
-                hitCounter.increment();
+            if (!tryConvert) {
+                statistics.incrementHit();
             }
+
             return answer;
         }
     }
@@ -366,13 +361,13 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     protected Object doConvertTo(
             final Class<?> type, final Exchange exchange, final Object value,
             final boolean tryConvert) {
-        boolean statisticsEnabled = !tryConvert && statistics.isStatisticsEnabled(); // we only capture if not try-convert in use
 
         if (value == null) {
             // no type conversion was needed
-            if (statisticsEnabled) {
-                noopCounter.increment();
+            if (!tryConvert) {
+                statistics.incrementNoop();
             }
+
             // lets avoid NullPointerException when converting to primitives for null values
             if (type.isPrimitive()) {
                 return nullToPrimitiveType(type);
@@ -383,14 +378,16 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         // same instance type
         if (type.isInstance(value)) {
             // no type conversion was needed
-            if (statisticsEnabled) {
-                noopCounter.increment();
+
+            if (!tryConvert) {
+                statistics.incrementNoop();
             }
+
             return value;
         }
 
-        if (statisticsEnabled) {
-            attemptCounter.increment();
+        if (!tryConvert) {
+            statistics.incrementAttempt();
         }
 
         // attempt bulk first which is the fastest (also taking into account primitives)
@@ -628,76 +625,17 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         super.doStop();
         // log utilization statistics when stopping, including mappings
         if (statistics.isStatisticsEnabled()) {
-            String info = statistics.toString();
-            AtomicInteger misses = new AtomicInteger();
-            converters.forEach((k, v) -> {
-                if (v == MISS_CONVERTER) {
-                    misses.incrementAndGet();
-                }
-            });
-            info += String.format(" mappings[total=%s, misses=%s]", size(), misses);
+            final String info = generateMappingStatisticsMessage();
             LOG.info(info);
         }
 
         statistics.reset();
     }
 
-    /**
-     * Represents utilization statistics
-     */
-    private final class UtilizationStatistics implements Statistics {
+    private String generateMappingStatisticsMessage() {
+        final AtomicInteger misses = ConverterStatistics.computeCachedMisses(converters, MISS_CONVERTER);
 
-        private boolean statisticsEnabled;
-
-        @Override
-        public long getNoopCounter() {
-            return noopCounter.longValue();
-        }
-
-        @Override
-        public long getAttemptCounter() {
-            return attemptCounter.longValue();
-        }
-
-        @Override
-        public long getHitCounter() {
-            return hitCounter.longValue();
-        }
-
-        @Override
-        public long getMissCounter() {
-            return missCounter.longValue();
-        }
-
-        @Override
-        public long getFailedCounter() {
-            return failedCounter.longValue();
-        }
-
-        @Override
-        public void reset() {
-            noopCounter.reset();
-            attemptCounter.reset();
-            hitCounter.reset();
-            missCounter.reset();
-            failedCounter.reset();
-        }
-
-        @Override
-        public boolean isStatisticsEnabled() {
-            return statisticsEnabled;
-        }
-
-        @Override
-        public void setStatisticsEnabled(boolean statisticsEnabled) {
-            this.statisticsEnabled = statisticsEnabled;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
-                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
-        }
+        return String.format("%s mappings[total=%s, misses=%s]", statistics, size(), misses);
     }
 
     /**
