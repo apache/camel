@@ -119,7 +119,7 @@ public final class CatalogHelper {
             return false;
         } else if (value instanceof String) {
             String text = (String) value;
-            return text.trim().length() > 0;
+            return !text.isBlank();
         } else {
             return true;
         }
