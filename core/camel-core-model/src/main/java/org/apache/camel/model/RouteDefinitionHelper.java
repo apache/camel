@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +113,7 @@ public final class RouteDefinitionHelper {
     private static String normalizeUri(String uri) {
         try {
             return URISupport.normalizeUri(uri);
-        } catch (UnsupportedEncodingException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             // ignore
         }
         return null;

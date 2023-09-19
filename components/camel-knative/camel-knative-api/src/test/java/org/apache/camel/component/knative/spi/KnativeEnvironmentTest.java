@@ -38,7 +38,7 @@ public class KnativeEnvironmentTest {
     })
     public void testKnativeEnvironmentDeserializationFromString(String content) throws Exception {
         KnativeEnvironment env = KnativeEnvironment.mandatoryLoadFromSerializedString(content);
-        List<KnativeResource> res = env.lookup(Knative.Type.endpoint, "knative3").collect(Collectors.toList());
+        List<KnativeResource> res = env.lookup(Knative.Type.endpoint, "knative3").toList();
 
         assertThat(res).hasSize(1);
         assertThat(res).first().satisfies(resource -> {

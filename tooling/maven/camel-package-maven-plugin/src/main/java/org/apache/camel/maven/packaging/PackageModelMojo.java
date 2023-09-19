@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.PackageHelper;
@@ -73,7 +72,7 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
                     // strip out .json from the name
                     .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
                     // sort
-                    .sorted().collect(Collectors.toList());
+                    .sorted().toList();
         }
 
         if (!models.isEmpty()) {

@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.zeebe.processor;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
@@ -48,7 +46,6 @@ public abstract class AbstractBaseProcessor extends BaseService implements Zeebe
     }
 
     protected void removeHeaders(Exchange exchange) {
-        Map<String, Object> headers = exchange.getMessage().getHeaders();
         exchange.getMessage().removeHeaders(ZeebeConstants.HEADER_PREFIX + ".*");
     }
 }

@@ -32,12 +32,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
-import org.apache.camel.catalog.impl.URISupport;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 

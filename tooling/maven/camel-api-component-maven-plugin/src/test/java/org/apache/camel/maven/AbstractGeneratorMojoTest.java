@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.maven.model.Build;
@@ -149,7 +148,7 @@ public abstract class AbstractGeneratorMojoTest {
     private void assertCompileSourceRoots(Supplier<List<String>> roots, File... expectedSources) {
         List<String> compileSourceRoots = roots.get();
         assertEquals(expectedSources.length, compileSourceRoots.size());
-        assertEquals(Stream.of(expectedSources).map(File::getAbsolutePath).collect(Collectors.toList()), compileSourceRoots);
+        assertEquals(Stream.of(expectedSources).map(File::getAbsolutePath).toList(), compileSourceRoots);
     }
 
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -139,7 +137,6 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
 
             if (produces == null) {
                 StringJoiner producesBuilder = new StringJoiner(",");
-                List<String> list = new ArrayList<>();
                 if (operation.getResponses() != null) {
                     for (ApiResponse response : operation.getResponses().values()) {
                         if (response.getContent() != null) {

@@ -24,7 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
@@ -73,7 +72,7 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
             return addRouteTask;
         };
 
-        List<Callable<Boolean>> tasks = Stream.generate(addRouteSupplier).limit(4).collect(Collectors.toList());
+        List<Callable<Boolean>> tasks = Stream.generate(addRouteSupplier).limit(4).toList();
 
         ExecutorService ex = Executors.newFixedThreadPool(4);
 

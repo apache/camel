@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -47,7 +46,7 @@ public class TelegramChatBotTest extends TelegramTestSupport {
                         rawMessages -> rawMessages.size() >= 2)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
-                .collect(Collectors.toList());
+                .toList();
 
         assertCollectionSize(msgs, 2);
         assertTrue(msgs.stream().anyMatch(m -> "echo from the bot: Hello World!".equals(m.getText())));

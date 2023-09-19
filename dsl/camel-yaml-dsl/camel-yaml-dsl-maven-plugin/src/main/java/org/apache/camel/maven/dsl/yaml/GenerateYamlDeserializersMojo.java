@@ -48,7 +48,6 @@ import com.squareup.javapoet.TypeSpec;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.Kind;
 import org.apache.camel.maven.dsl.yaml.support.Schema;
 import org.apache.camel.maven.dsl.yaml.support.TypeSpecHolder;
 import org.apache.camel.maven.dsl.yaml.support.YamlProperties;
@@ -414,7 +413,19 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         TypeSpecHolder.put(attributes, "type", info.name().toString());
 
         //TODO: add an option on Camel's definitions to distinguish between IN/OUT types
+        if (info.name().toString().equals("org.apache.camel.model.InterceptDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.InterceptFromDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.InterceptSendToEndpointDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
         if (info.name().toString().equals("org.apache.camel.model.OnExceptionDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.OnCompletionDefinition")) {
             builder.addAnnotation(CN_YAML_IN);
         }
         if (info.name().toString().equals("org.apache.camel.model.rest.RestDefinition")) {
@@ -958,7 +969,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             if (adapter.isEmpty()) {
                 return false;
             }
-            String adapterClass = adapter.get().asClass().name().toString();
             ClassInfo adapterClassInfo = view.getClassByName(adapter.get().asClass().name());
             if (adapterClassInfo.superClassType().kind() == Type.Kind.PARAMETERIZED_TYPE) {
                 List<Type> arguments = adapterClassInfo.superClassType().asParameterizedType().arguments();

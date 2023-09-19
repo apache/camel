@@ -84,7 +84,7 @@ class JSonPathSuppressTest extends YamlTestSupport {
                           when:
                           - jsonpath: 
                               expression: "person.middlename"
-                              suppress-exceptions: true
+                              suppressExceptions: true
                             steps:
                             - to: "mock:middle"
                           otherwise:
@@ -119,7 +119,7 @@ class JSonPathSuppressTest extends YamlTestSupport {
                           when:
                           - jsonpath: 
                               expression: "person.middlename"
-                              suppress-exceptions: true
+                              suppressExceptions: true
                             steps:
                             - to: "mock:middle"
                           otherwise:
@@ -154,12 +154,12 @@ class JSonPathSuppressTest extends YamlTestSupport {
                           when:
                           - jsonpath: 
                               expression: "person.middlename"
-                              suppress-exceptions: true
+                              suppressExceptions: true
                             steps:
                             - to: "mock:middle"
                           - jsonpath: 
                               expression: "person.lastname"
-                              suppress-exceptions: true
+                              suppressExceptions: true
                             steps:
                             - to: "mock:last"
                           otherwise:
@@ -185,5 +185,31 @@ class JSonPathSuppressTest extends YamlTestSupport {
         }
         then:
         MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "Error: kebab-case: suppress-exceptions"() {
+        when:
+        var route = """
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - choice:  
+                          when:
+                          - jsonpath: 
+                              expression: "person.middlename"
+                              suppress-exceptions: true
+                            steps:
+                            - to: "mock:middle"
+                          otherwise:
+                            steps:
+                              - to: "mock:other"
+            """
+        then:
+        try {
+            loadRoutes route
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
     }
 }

@@ -214,7 +214,6 @@ class ExportSpringBoot extends Export {
             MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
-            String v = gav.getVersion();
 
             // transform to camel-spring-boot starter GAV
             if ("org.apache.camel".equals(gid)) {
@@ -344,7 +343,6 @@ class ExportSpringBoot extends Export {
             MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
-            String v = gav.getVersion();
 
             // transform to camel-spring-boot starter GAV
             if ("org.apache.camel".equals(gid)) {

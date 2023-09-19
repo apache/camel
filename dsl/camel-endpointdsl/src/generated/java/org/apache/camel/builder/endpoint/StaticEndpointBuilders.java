@@ -1070,6 +1070,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS RedshiftData (camel-aws2-redshift)
+     * Perform operations on AWS Redshift using Redshift Data API.
+     * 
+     * Category: cloud,serverless,database,bigdata
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-redshift
+     * 
+     * Syntax: <code>aws2-redshift-data:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RedshiftData2EndpointBuilderFactory.RedshiftData2EndpointBuilder aws2RedshiftData(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RedshiftData2EndpointBuilderFactory.endpointBuilder("aws2-redshift-data", path);
+    }
+    /**
+     * AWS RedshiftData (camel-aws2-redshift)
+     * Perform operations on AWS Redshift using Redshift Data API.
+     * 
+     * Category: cloud,serverless,database,bigdata
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-redshift
+     * 
+     * Syntax: <code>aws2-redshift-data:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RedshiftData2EndpointBuilderFactory.RedshiftData2EndpointBuilder aws2RedshiftData(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RedshiftData2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
@@ -13903,6 +13946,61 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Thymeleaf (camel-thymeleaf)
+     * Transform messages using a Thymeleaf template.
+     * 
+     * Category: transformation
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-thymeleaf
+     * 
+     * Syntax: <code>thymeleaf:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param path resourceUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.endpointBuilder("thymeleaf", path);
+    }
+    /**
+     * Thymeleaf (camel-thymeleaf)
+     * Transform messages using a Thymeleaf template.
+     * 
+     * Category: transformation
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-thymeleaf
+     * 
+     * Syntax: <code>thymeleaf:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path resourceUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Tika (camel-tika)

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodListBuilder;
-import io.fabric8.kubernetes.client.Config;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.RequestConfig;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
@@ -77,13 +77,13 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
     }
 
     @Override
-    protected Config getMockConfiguration() {
+    public NamespacedKubernetesClient createClient() {
         // Avoid exponential retry backoff from slowing down tests
-        Config mockConfiguration = super.getMockConfiguration();
-        RequestConfig requestConfig = mockConfiguration.getRequestConfig();
+        NamespacedKubernetesClient namespacedKubernetesClient = super.createClient();
+        RequestConfig requestConfig = namespacedKubernetesClient.getConfiguration().getRequestConfig();
         requestConfig.setRequestRetryBackoffInterval(1000);
         requestConfig.setRequestRetryBackoffLimit(0);
-        return mockConfiguration;
+        return namespacedKubernetesClient;
     }
 
     public void addSimulator(ResourceLockSimulator<?> paramLockSimulator) {

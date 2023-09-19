@@ -17,7 +17,6 @@
 package org.apache.camel.impl.cloud;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -48,7 +47,7 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
     public void testMultiServiceFilter() throws Exception {
         CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
-                .custom((exchange, services) -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
+                .custom((exchange, services) -> services.stream().filter(s -> s.getPort() < 2000).toList());
 
         Exchange exchange = new DefaultExchange(context);
         List<ServiceDefinition> services = conf.newInstance(context).apply(exchange, Arrays.asList(
@@ -74,7 +73,7 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
                                 .get("supports"))
                                 .orElse("")
                                 .contains(exchange.getProperty("needs", String.class)))
-                        .collect(Collectors.toList()));
+                        .toList());
 
         Map<String, String> metadata = Collections.singletonMap("supports", "foo,bar");
 

@@ -118,12 +118,6 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        // we defer starting quickfix engines till the onCamelContextStarted callback
-    }
-
-    @Override
     protected void doStop() throws Exception {
         // stop engines when stopping component
         synchronized (engineInstancesLock) {

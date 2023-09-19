@@ -720,7 +720,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             Set<String> parentOptionsNames = parentData.getComponentOptions().stream()
                     .map(ComponentOptionModel::getName).collect(Collectors.toSet());
             options = componentModel.getComponentOptions().stream().filter(o -> !parentOptionsNames.contains(o.getName()))
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             options = componentModel.getComponentOptions();
         }
@@ -778,7 +778,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     .map(EndpointOptionModel::getName).collect(Collectors.toSet());
             options = componentModel.getEndpointParameterOptions().stream()
                     .filter(o -> !parentOptionsNames.contains(o.getName()))
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             options = componentModel.getEndpointParameterOptions();
         }
@@ -906,7 +906,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             // if the component has options with annotations then we only want to generate options that are annotated
             // as ideally components should favour doing this, so we can control what is an option and what is not
-            List<Field> fields = Stream.of(classElement.getDeclaredFields()).collect(Collectors.toList());
+            List<Field> fields = Stream.of(classElement.getDeclaredFields()).toList();
             boolean annotationBasedOptions = fields.stream().anyMatch(f -> f.getAnnotation(Metadata.class) != null)
                     || methods.stream().anyMatch(m -> m.getAnnotation(Metadata.class) != null);
 
@@ -1102,7 +1102,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         List<String> enums = null;
         if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
             String[] values = metadata.enums().split(",");
-            enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+            enums = Stream.of(values).map(String::trim).toList();
         } else if (fieldType != null && fieldType.isEnum()) {
             enums = new ArrayList<>();
             for (Object val : fieldType.getEnumConstants()) {
@@ -1588,7 +1588,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private static List<String> gatherEnums(UriParam param, Class<?> fieldTypeElement) {
         if (!Strings.isNullOrEmpty(param.enums())) {
             String[] values = param.enums().split(",");
-            return Stream.of(values).map(String::trim).collect(Collectors.toList());
+            return Stream.of(values).map(String::trim).toList();
         } else if (fieldTypeElement.isEnum()) {
             return doGatherFromEnum(fieldTypeElement);
         }
@@ -1599,7 +1599,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private static List<String> gatherEnums(UriPath path, Class<?> fieldTypeElement) {
         if (!Strings.isNullOrEmpty(path.enums())) {
             String[] values = path.enums().split(",");
-            return Stream.of(values).map(String::trim).collect(Collectors.toList());
+            return Stream.of(values).map(String::trim).toList();
         } else if (fieldTypeElement.isEnum()) {
             return doGatherFromEnum(fieldTypeElement);
         }
@@ -1801,7 +1801,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (sourceRoots == null) {
             sourceRoots = project.getCompileSourceRoots().stream()
                     .map(Paths::get)
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return sourceRoots;
     }

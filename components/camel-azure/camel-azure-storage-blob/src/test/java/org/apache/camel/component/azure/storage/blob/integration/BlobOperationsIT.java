@@ -31,7 +31,6 @@ import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.models.PageRange;
@@ -447,7 +446,7 @@ class BlobOperationsIT extends Base {
         assertNotNull(response);
 
         final PagedIterable<?> pagedIterable = (PagedIterable<?>) response.getBody();
-        List<?> pageRangeItems = pagedIterable.stream().collect(Collectors.toList());
+        List<?> pageRangeItems = pagedIterable.stream().toList();
 
         assertEquals(1, pageRangeItems.size());
         assertInstanceOf(PageRangeItem.class, pageRangeItems.get(0));

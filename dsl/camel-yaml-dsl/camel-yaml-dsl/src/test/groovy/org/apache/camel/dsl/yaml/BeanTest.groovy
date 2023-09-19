@@ -19,35 +19,11 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
+import org.junit.jupiter.api.Assertions
 
 class BeanTest extends YamlTestSupport {
 
     def "bean"() {
-        setup:
-            loadRoutes """
-                - from:
-                   uri: "direct:route"
-                   steps:
-                     - bean:
-                         bean-type: ${MyUppercaseProcessor.name}
-                     - to: "mock:route"
-            """
-
-            withMock('mock:route') {
-                expectedBodiesReceived 'TEST'
-            }
-
-        when:
-            context.start()
-
-            withTemplate {
-                to('direct:route').withBody('test').send()
-            }
-        then:
-            MockEndpoint.assertIsSatisfied(context)
-    }
-
-    def "bean-camelCase"() {
         setup:
             loadRoutes """
                 - from:
@@ -71,4 +47,23 @@ class BeanTest extends YamlTestSupport {
         then:
             MockEndpoint.assertIsSatisfied(context)
     }
-}
+
+    def "Error: kebab-case: bean-type"() {
+        when:
+        var route = """
+                - from:
+                   uri: "direct:route"
+                   steps:
+                     - bean:
+                         bean-type: ${MyUppercaseProcessor.name}
+                     - to: "mock:route"
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            assert e.message.contains("additional properties")
+        }
+    }
+ }

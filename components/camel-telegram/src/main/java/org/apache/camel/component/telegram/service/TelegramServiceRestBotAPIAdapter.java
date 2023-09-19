@@ -17,7 +17,6 @@
 package org.apache.camel.component.telegram.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -140,7 +139,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
             final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(uri)).GET().build();
             return sendSyncRequest(request, UpdateResult.class);
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }

@@ -20,15 +20,16 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.model.MyException
 import org.apache.camel.dsl.yaml.support.model.MyFailingProcessor
+import org.junit.jupiter.api.Assertions
 
 class OnExceptionTest extends YamlTestSupport {
-    def "on-exception"() {
+    def "onException"() {
         setup:
             loadRoutes """
                 - beans:
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
-                - on-exception:
+                - onException:
                     handled:
                       constant: "true"
                     exception:
@@ -56,5 +57,38 @@ class OnExceptionTest extends YamlTestSupport {
             }
         then:
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "Error: kebab-case: on-exception"() {
+        when:
+        var route = """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - on-exception:
+                    handled:
+                      constant: "true"
+                    exception:
+                      - ${MyException.name}
+                    steps:
+                      - transform:
+                          constant: "Sorry"
+                      - to: "mock:on-exception"  
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"            
+            """
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            with(e) {
+                message.contains("additional properties")
+            }
+        }
+
     }
 }

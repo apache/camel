@@ -328,10 +328,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // sasl.jaas.config
     private String saslJaasConfig;
 
-    // Confluent only options
-    @UriParam(label = "confluent")
+    // Schema registry only options
+    @UriParam(label = "schema")
     private String schemaRegistryURL;
-    @UriParam(label = "confluent,consumer")
+    @UriParam(label = "schema,consumer")
     private boolean specificAvroReader;
 
     // Additional properties
@@ -867,9 +867,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * URL of the Confluent Platform schema registry servers to use. The format is host1:port1,host2:port2. This is
-     * known as schema.registry.url in the Confluent Platform documentation. This option is only available in the
-     * Confluent Platform (not standard Apache Kafka)
+     * URL of the schema registry servers to use. The format is host1:port1,host2:port2. This is known as
+     * schema.registry.url in multiple Schema registries documentation. This option is only available externally (not
+     * standard Apache Kafka)
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
@@ -880,9 +880,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * This enables the use of a specific Avro reader for use with the Confluent Platform schema registry and the
-     * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is only available in the Confluent Platform
-     * (not standard Apache Kafka)
+     * This enables the use of a specific Avro reader for use with the in multiple Schema registries documentation with
+     * Avro Deserializers implementation. This option is only available externally (not standard Apache Kafka)
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
         this.specificAvroReader = specificAvroReader;

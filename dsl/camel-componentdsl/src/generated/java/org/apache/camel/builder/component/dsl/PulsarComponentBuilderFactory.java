@@ -650,6 +650,23 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Hashing function to use when choosing the partition to use for a
+         * particular message.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: JavaStringHash
+         * Group: producer
+         * 
+         * @param hashingScheme the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder hashingScheme(
+                java.lang.String hashingScheme) {
+            doSetProperty("hashingScheme", hashingScheme);
+            return this;
+        }
+        /**
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
@@ -903,6 +920,7 @@ public interface PulsarComponentBuilderFactory {
             case "blockIfQueueFull": getOrCreateConfiguration((PulsarComponent) component).setBlockIfQueueFull((boolean) value); return true;
             case "chunkingEnabled": getOrCreateConfiguration((PulsarComponent) component).setChunkingEnabled((boolean) value); return true;
             case "compressionType": getOrCreateConfiguration((PulsarComponent) component).setCompressionType((org.apache.pulsar.client.api.CompressionType) value); return true;
+            case "hashingScheme": getOrCreateConfiguration((PulsarComponent) component).setHashingScheme((java.lang.String) value); return true;
             case "initialSequenceId": getOrCreateConfiguration((PulsarComponent) component).setInitialSequenceId((long) value); return true;
             case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxPendingMessages": getOrCreateConfiguration((PulsarComponent) component).setMaxPendingMessages((int) value); return true;

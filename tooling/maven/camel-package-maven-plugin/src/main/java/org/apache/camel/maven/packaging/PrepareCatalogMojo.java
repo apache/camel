@@ -454,7 +454,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 .collect(Collectors.toCollection(TreeSet::new));
         componentFiles.stream().filter(p -> p.endsWith("component.properties")).forEach(p -> {
             Path parent = getModule(p);
-            List<Path> jsons = jsonFiles.stream().filter(f -> f.startsWith(parent)).collect(Collectors.toList());
+            List<Path> jsons = jsonFiles.stream().filter(f -> f.startsWith(parent)).toList();
             if (jsons.isEmpty()) {
                 missingComponents.add(parent);
             }
@@ -818,7 +818,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         try (Stream<Path> pathStream = PackageHelper.walk(dir.resolve("src/main/docs"))
                                 .filter(f -> f.getFileName().toString().endsWith(".adoc"))) {
                             List<Path> l = pathStream
-                                    .collect(Collectors.toList());
+                                    .toList();
 
                             if (l.isEmpty()) {
                                 String n = dir.getFileName().toString();

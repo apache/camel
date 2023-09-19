@@ -1,0 +1,1 @@
+../../../../../components/camel-aws/camel-aws2-redshift/src/main/docs/aws2-redshift-data-component.adoc

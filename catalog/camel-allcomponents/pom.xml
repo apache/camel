@@ -199,6 +199,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws2-redshift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws2-s3</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1675,6 +1680,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-thrift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-thymeleaf</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

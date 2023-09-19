@@ -371,6 +371,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2MskComponentBuilderFactory.aws2Msk();
     }
     /**
+     * AWS RedshiftData (camel-aws2-redshift)
+     * Perform operations on AWS Redshift using Redshift Data API.
+     * 
+     * Category: cloud,serverless,database,bigdata
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-aws2-redshift
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Aws2RedshiftDataComponentBuilderFactory.Aws2RedshiftDataComponentBuilder aws2RedshiftData() {
+        return org.apache.camel.builder.component.dsl.Aws2RedshiftDataComponentBuilderFactory.aws2RedshiftData();
+    }
+    /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
@@ -3984,6 +3997,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ThriftComponentBuilderFactory.ThriftComponentBuilder thrift() {
         return org.apache.camel.builder.component.dsl.ThriftComponentBuilderFactory.thrift();
+    }
+    /**
+     * Thymeleaf (camel-thymeleaf)
+     * Transform messages using a Thymeleaf template.
+     * 
+     * Category: transformation
+     * Since: 4.1
+     * Maven coordinates: org.apache.camel:camel-thymeleaf
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ThymeleafComponentBuilderFactory.ThymeleafComponentBuilder thymeleaf() {
+        return org.apache.camel.builder.component.dsl.ThymeleafComponentBuilderFactory.thymeleaf();
     }
     /**
      * Tika (camel-tika)

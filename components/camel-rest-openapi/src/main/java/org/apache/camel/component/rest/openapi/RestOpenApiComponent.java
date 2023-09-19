@@ -22,11 +22,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.rest.openapi.validator.RequestValidationCustomizer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.PropertiesHelper;
 
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
 import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
@@ -136,6 +138,15 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
               defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
+    @Metadata(description = "Enable validation of requests against the configured OpenAPI specification",
+              defaultValue = "false")
+    private boolean requestValidationEnabled;
+
+    @Metadata(description = "If request validation is enabled, this option provides the capability to customize"
+                            + " the creation of OpenApiInteractionValidator used to validate requests.",
+              defaultValue = "org.apache.camel.component.rest.openapi.validator.DefaultRequestValidationCustomizer")
+    private RequestValidationCustomizer requestValidationCustomizer;
+
     public RestOpenApiComponent() {
     }
 
@@ -146,7 +157,8 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
             throws Exception {
-        Endpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
+        RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
+        endpoint.setRequestValidationLevels(PropertiesHelper.extractProperties(parameters, "validation."));
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -217,4 +229,20 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public void setRequestValidationEnabled(boolean requestValidationEnabled) {
+        this.requestValidationEnabled = requestValidationEnabled;
+    }
+
+    public boolean isRequestValidationEnabled() {
+        return this.requestValidationEnabled;
+    }
+
+    public void setRequestValidationCustomizer(
+            RequestValidationCustomizer requestValidationCustomizer) {
+        this.requestValidationCustomizer = requestValidationCustomizer;
+    }
+
+    public RequestValidationCustomizer getRequestValidationCustomizer() {
+        return requestValidationCustomizer;
+    }
 }

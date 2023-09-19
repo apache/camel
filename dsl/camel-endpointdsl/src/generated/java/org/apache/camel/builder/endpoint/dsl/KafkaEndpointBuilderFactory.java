@@ -1145,10 +1145,10 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This enables the use of a specific Avro reader for use with the
-         * Confluent Platform schema registry and the
-         * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is
-         * only available in the Confluent Platform (not standard Apache Kafka).
+         * This enables the use of a specific Avro reader for use with the in
+         * multiple Schema registries documentation with Avro Deserializers
+         * implementation. This option is only available externally (not
+         * standard Apache Kafka).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1164,10 +1164,10 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * This enables the use of a specific Avro reader for use with the
-         * Confluent Platform schema registry and the
-         * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is
-         * only available in the Confluent Platform (not standard Apache Kafka).
+         * This enables the use of a specific Avro reader for use with the in
+         * multiple Schema registries documentation with Avro Deserializers
+         * implementation. This option is only available externally (not
+         * standard Apache Kafka).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1236,25 +1236,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: confluent
-         * 
-         * @param schemaRegistryURL the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -1273,6 +1254,24 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder interceptorClasses(
                 String interceptorClasses) {
             doSetProperty("interceptorClasses", interceptorClasses);
+            return this;
+        }
+        /**
+         * URL of the schema registry servers to use. The format is
+         * host1:port1,host2:port2. This is known as schema.registry.url in
+         * multiple Schema registries documentation. This option is only
+         * available externally (not standard Apache Kafka).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryURL the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryURL(
+                String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -3500,25 +3499,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: confluent
-         * 
-         * @param schemaRegistryURL the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -3537,6 +3517,24 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder interceptorClasses(
                 String interceptorClasses) {
             doSetProperty("interceptorClasses", interceptorClasses);
+            return this;
+        }
+        /**
+         * URL of the schema registry servers to use. The format is
+         * host1:port1,host2:port2. This is known as schema.registry.url in
+         * multiple Schema registries documentation. This option is only
+         * available externally (not standard Apache Kafka).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryURL the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryURL(
+                String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -4388,24 +4386,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: confluent
-         * 
-         * @param schemaRegistryURL the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -4424,6 +4404,23 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointBuilder interceptorClasses(
                 String interceptorClasses) {
             doSetProperty("interceptorClasses", interceptorClasses);
+            return this;
+        }
+        /**
+         * URL of the schema registry servers to use. The format is
+         * host1:port1,host2:port2. This is known as schema.registry.url in
+         * multiple Schema registries documentation. This option is only
+         * available externally (not standard Apache Kafka).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryURL the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**

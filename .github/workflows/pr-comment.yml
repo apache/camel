@@ -53,7 +53,7 @@ jobs:
                   pull_number: context.issue.number
             });
             core.exportVariable('pr_sha', pr.data.head.sha)
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ env.pr_sha }}
       - id: install-packages

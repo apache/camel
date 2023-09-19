@@ -294,6 +294,7 @@
         <module>camel-telegram</module>
         <module>camel-threadpoolfactory-vertx</module>
         <module>camel-thrift</module>
+        <module>camel-thymeleaf</module>
         <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>

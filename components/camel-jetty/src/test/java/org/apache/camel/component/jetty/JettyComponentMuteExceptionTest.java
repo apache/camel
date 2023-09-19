@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty11.JettyHttpComponent11;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -37,7 +39,7 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(get)) {
 
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             assertEquals("", responseString);
             assertEquals(500, response.getCode());
         }

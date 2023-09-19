@@ -60,6 +60,36 @@ There are few ways you can provide a reproducer:
 - Create a sample project that reproduces the issue.
 - Provide route files, Kamelets or any other file we can run with Camel JBang.
 
+==== Providing a good reproducer
+
+We appreciate all reproducers, but there are a few tips that can make us appreciate it even more!
+
+* Reproducers provided as tests to Camel Core code base are easier for the community to work with than external applications.
+** Make sure to check the "Making a good contribution" section below for more details.
+* When an external application is required, reduce debugging friction:
+** Use the plain Camel Core (i.e.: if it's a problem on Camel Core, avoid creating a reproducer based on Camel Quarkus, Camel Spring Boot and others).
+** Use Java: the Camel Core is written in Java and that's the language the community is most familiar with.
+
+
+[NOTE]
+====
+You can easily create an external reproducer using the following command:
+
+[source,bash]
+----
+mvn archetype:generate -B \
+    -DarchetypeGroupId=org.apache.camel.archetypes \
+    -DarchetypeArtifactId=camel-archetype-java \
+    -DarchetypeVersion=4.0.0 \
+    -Dpackage=org.apache.camel \
+    -DgroupId=org.apache.camel.reproducer \
+    -DartifactId=testing-routes-with-test-container \
+    -Dversion=1.0.0-SNAPSHOT
+----
+
+Make sure to replace the camel version in `-DarchetypeVersion=4.0.0` with the version of Camel you are reporting the bug.
+====
+
 [NOTE]
 ====
 You will need to register to create or comment on JIRA issues. The “Log In” link in the upper right will allow you to log in with an existing account or sign up for an account.
@@ -199,7 +229,7 @@ Be mindful of the source checks, formatting, and structure of the git commit mes
 CAMEL-9999: Some message goes here
 ----
 
-Other guidelines include:
+=== Making a contribution
 
 * Ensure that the unit tests include proper assertions.
 * Avoid simply outputting changes to the standard output/error or just logging.
@@ -207,6 +237,12 @@ Other guidelines include:
 * When submitting a performance improvement, providing JMH test data as evidence or adding a JMH-based test on the https://github.com/apache/camel-performance-tests/[camel-performance-tests] repository is strongly recommended.
 * Be responsive, assume good intent and respect the https://www.apache.org/foundation/policies/conduct.html[Code of Conduct]
 * When contributing components, please make sure that their dependencies are available in the https://search.maven.org[Maven Central]. We do not accept contributions if the dependencies are not publicly available.
+* Tests must follow the following naming convention:
+** `*Test.java` (i.e.: MyComponentTest.java) for unit tests.
+** `*IT.java` (i.e.: MyComponentIT.java) for integration tests.
+** `*ManualTest.java` (i.e.: MyComponentManualTest.java) for manual tests.
+** Avoid `Thread.sleep` (they make our tests slow and unreliable)
+** To disable tests use JUnit's https://junit.org/junit5/docs/current/api/org.junit.jupiter.api/org/junit/jupiter/api/Disabled.html[@Disabled] annotation or one of its siblings (i.e.: `@DisabledIfSystemProperty` and others)
 
 Following these guidelines will help you in getting your contribution accepted.
 

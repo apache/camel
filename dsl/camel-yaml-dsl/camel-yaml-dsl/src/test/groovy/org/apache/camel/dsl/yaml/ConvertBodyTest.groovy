@@ -19,42 +19,11 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.model.ConvertBodyDefinition
+import org.junit.jupiter.api.Assertions
 
 class ConvertBodyTest extends YamlTestSupport {
 
     def "convert-body-to"() {
-        setup:
-            loadRoutes '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - convert-body-to:  
-                          type: "java.lang.String"
-                          charset: "UTF8"
-                      - to: "mock:result"
-            '''
-
-            withMock('mock:result') {
-                expectedBodiesReceived 'test'
-            }
-        when:
-            context.start()
-
-            withTemplate {
-                to('direct:start').withBody('test'.bytes).send()
-            }
-        then:
-            context.routeDefinitions.size() == 1
-
-            with(context.routeDefinitions[0].outputs[0], ConvertBodyDefinition) {
-                type == 'java.lang.String'
-                charset == 'UTF8'
-            }
-
-            MockEndpoint.assertIsSatisfied(context)
-    }
-
-    def "convert-body-to (camelCase)"() {
         setup:
             loadRoutes '''
                 - from:
@@ -84,5 +53,29 @@ class ConvertBodyTest extends YamlTestSupport {
             }
 
             MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "Error: kebab-case: convert-body-to"() {
+        when:
+        var route = '''
+                - from:
+                    uri: "direct:start"
+                    steps:    
+                      - convert-body-to:  
+                          type: "java.lang.String"
+                          charset: "UTF8"
+                      - to: "mock:result"
+            '''
+
+        withMock('mock:result') {
+            expectedBodiesReceived 'test'
+        }
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (e) {
+            Assertions.assertTrue(e.message.contains("additional properties"))
+        }
     }
 }

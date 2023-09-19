@@ -34,13 +34,10 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.SafeCopyProperty;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.support.MessageHelper.copyBody;
 
 /**
  * Base class for the two official and only implementations of {@link Exchange}, the {@link DefaultExchange} and
@@ -51,7 +48,7 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  *
  * @see DefaultExchange
  */
-class AbstractExchange implements Exchange {
+abstract class AbstractExchange implements Exchange {
     protected final EnumMap<ExchangePropertyKey, Object> internalProperties;
 
     protected final CamelContext context;
@@ -74,7 +71,7 @@ class AbstractExchange implements Exchange {
         this.context = context;
         this.internalProperties = new EnumMap<>(internalProperties);
         this.privateExtension = new ExtendedExchangeExtension(this);
-        this.properties = properties;
+        this.properties = safeCopyProperties(properties);
     }
 
     public AbstractExchange(CamelContext context) {
@@ -103,6 +100,43 @@ class AbstractExchange implements Exchange {
         privateExtension.setUnitOfWork(parent.getUnitOfWork());
     }
 
+    AbstractExchange(AbstractExchange parent) {
+        this.context = parent.getContext();
+        this.pattern = parent.getPattern();
+        this.created = parent.getCreated();
+
+        this.internalProperties = new EnumMap<>(parent.internalProperties);
+
+        privateExtension = new ExtendedExchangeExtension(this);
+        privateExtension.setFromEndpoint(parent.getFromEndpoint());
+        privateExtension.setFromRouteId(parent.getFromRouteId());
+        privateExtension.setUnitOfWork(parent.getUnitOfWork());
+
+        setIn(parent.getIn().copy());
+
+        if (parent.hasOut()) {
+            setOut(parent.getOut().copy());
+        }
+
+        setException(parent.exception);
+        setRouteStop(parent.routeStop);
+        setRollbackOnly(parent.rollbackOnly);
+        setRollbackOnlyLast(parent.rollbackOnlyLast);
+
+        privateExtension.setNotifyEvent(parent.getExchangeExtension().isNotifyEvent());
+        privateExtension.setRedeliveryExhausted(parent.getExchangeExtension().isRedeliveryExhausted());
+        privateExtension.setErrorHandlerHandled(parent.getExchangeExtension().getErrorHandlerHandled());
+        privateExtension.setStreamCacheDisabled(parent.getExchangeExtension().isStreamCacheDisabled());
+
+        if (parent.hasProperties()) {
+            this.properties = safeCopyProperties(parent.properties);
+        }
+
+        if (parent.hasSafeCopyProperties()) {
+            this.safeCopyProperties = parent.copySafeCopyProperties();
+        }
+    }
+
     public AbstractExchange(Endpoint fromEndpoint) {
         this.context = fromEndpoint.getCamelContext();
         this.pattern = fromEndpoint.getExchangePattern();
@@ -128,43 +162,11 @@ class AbstractExchange implements Exchange {
         return created;
     }
 
+    abstract AbstractExchange newCopy();
+
     @Override
     public Exchange copy() {
-        DefaultExchange exchange = new DefaultExchange(this);
-
-        exchange.setIn(getIn().copy());
-        copyBody(getIn(), exchange.getIn());
-        if (getIn().hasHeaders()) {
-            exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
-        }
-        if (hasOut()) {
-            exchange.setOut(getOut().copy());
-            copyBody(getOut(), exchange.getOut());
-            if (getOut().hasHeaders()) {
-                exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
-            }
-        }
-
-        exchange.setException(exception);
-        exchange.setRouteStop(routeStop);
-        exchange.setRollbackOnly(rollbackOnly);
-        exchange.setRollbackOnlyLast(rollbackOnlyLast);
-        final ExtendedExchangeExtension newExchangeExtension = exchange.getExchangeExtension();
-        newExchangeExtension.setNotifyEvent(getExchangeExtension().isNotifyEvent());
-        newExchangeExtension.setRedeliveryExhausted(getExchangeExtension().isRedeliveryExhausted());
-        newExchangeExtension.setErrorHandlerHandled(getExchangeExtension().getErrorHandlerHandled());
-        newExchangeExtension.setStreamCacheDisabled(getExchangeExtension().isStreamCacheDisabled());
-
-        // copy properties after body as body may trigger lazy init
-        if (hasProperties()) {
-            copyProperties(getProperties(), exchange.getProperties());
-        }
-
-        if (hasSafeCopyProperties()) {
-            safeCopyProperties(this.safeCopyProperties, exchange.getSafeCopyProperties());
-        }
-        // copy over internal properties
-        exchange.internalProperties.putAll(internalProperties);
+        AbstractExchange exchange = newCopy();
 
         if (getContext().isMessageHistory()) {
             exchange.internalProperties.computeIfPresent(ExchangePropertyKey.MESSAGE_HISTORY,
@@ -172,32 +174,6 @@ class AbstractExchange implements Exchange {
         }
 
         return exchange;
-    }
-
-    private Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
-        if (headers == null) {
-            return null;
-        }
-
-        if (context != null) {
-            HeadersMapFactory factory = context.getCamelContextExtension().getHeadersMapFactory();
-            if (factory != null) {
-                return factory.newMap(headers);
-            }
-        }
-        // should not really happen but some tests dont start camel context
-        return new HashMap<>(headers);
-    }
-
-    private void copyProperties(Map<String, Object> source, Map<String, Object> target) {
-        target.putAll(source);
-    }
-
-    private void safeCopyProperties(
-            Map<String, SafeCopyProperty> source, Map<String, SafeCopyProperty> target) {
-        source.entrySet().stream().forEach(entry -> {
-            target.put(entry.getKey(), entry.getValue().safeCopy());
-        });
     }
 
     @Override
@@ -405,11 +381,13 @@ class AbstractExchange implements Exchange {
         return properties;
     }
 
-    Map<String, SafeCopyProperty> getSafeCopyProperties() {
-        if (safeCopyProperties == null) {
-            this.safeCopyProperties = new ConcurrentHashMap<>(2);
+    private Map<String, SafeCopyProperty> copySafeCopyProperties() {
+        Map<String, SafeCopyProperty> copy = new ConcurrentHashMap<>();
+        for (Map.Entry<String, SafeCopyProperty> entry : this.safeCopyProperties.entrySet()) {
+            copy.put(entry.getKey(), entry.getValue().safeCopy());
         }
-        return safeCopyProperties;
+
+        return copy;
     }
 
     @Override
@@ -707,7 +685,7 @@ class AbstractExchange implements Exchange {
         if (!hasSafeCopyProperties()) {
             return null;
         }
-        Object value = getSafeCopyProperties().get(key);
+        Object value = safeCopyProperties.get(key);
 
         if (type.isInstance(value)) {
             return (T) value;
@@ -718,5 +696,12 @@ class AbstractExchange implements Exchange {
 
     public ExtendedExchangeExtension getExchangeExtension() {
         return privateExtension;
+    }
+
+    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
+        if (properties == null) {
+            return null;
+        }
+        return new ConcurrentHashMap<>(properties);
     }
 }

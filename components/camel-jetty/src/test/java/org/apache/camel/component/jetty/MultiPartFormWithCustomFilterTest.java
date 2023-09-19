@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.activation.DataHandler;
 import jakarta.servlet.FilterChain;
@@ -73,7 +74,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(httppost)) {
             assertEquals(200, response.getCode(), "Get a wrong response status");
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("A binary file of some kind", responseString, "Get a wrong result");
             assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
