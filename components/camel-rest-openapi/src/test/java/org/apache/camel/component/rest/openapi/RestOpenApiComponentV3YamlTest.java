@@ -92,13 +92,13 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
         doSetUp(componentName);
 
         final Pet pet = new Pet();
-        pet.name = "Jean-Luc Picard";
+        pet.setName("Jean-Luc Picard");
 
         final Pet created = template.requestBody("direct:addPet", pet, Pet.class);
 
         assertNotNull(created);
 
-        assertEquals(Integer.valueOf(14), created.id);
+        assertEquals(14, created.getId());
 
         petstore.verify(
                 postRequestedFor(urlEqualTo("/api/v3/pet")).withHeader("Accept", equalTo("application/xml, application/json"))
@@ -114,8 +114,8 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -130,8 +130,8 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
@@ -149,8 +149,8 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(
                 getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept", equalTo("application/xml, application/json"))
@@ -169,8 +169,8 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
 
         assertNotNull(pet);
 
-        assertEquals(Integer.valueOf(14), pet.id);
-        assertEquals("Olafur Eliason Arnalds", pet.name);
+        assertEquals(14, pet.getId());
+        assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14?api_key=dolphins")).withHeader("Accept",
                 equalTo("application/xml, application/json")));
