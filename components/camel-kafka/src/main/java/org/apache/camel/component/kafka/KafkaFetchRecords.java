@@ -209,9 +209,12 @@ public class KafkaFetchRecords implements Runnable {
             if (consumerListener != null) {
                 consumerListener.setConsumer(consumer);
 
-                SeekPolicy seekPolicy = kafkaConsumer.getEndpoint().getComponent().getConfiguration().getSeekTo();
+                SeekPolicy seekPolicy = kafkaConsumer.getEndpoint().getConfiguration().getSeekTo();
                 if (seekPolicy == null) {
-                    seekPolicy = SeekPolicy.BEGINNING;
+                    seekPolicy = kafkaConsumer.getEndpoint().getComponent().getConfiguration().getSeekTo();
+                    if (seekPolicy == null) {
+                        seekPolicy = SeekPolicy.BEGINNING;
+                    }
                 }
 
                 consumerListener.setSeekPolicy(seekPolicy);
