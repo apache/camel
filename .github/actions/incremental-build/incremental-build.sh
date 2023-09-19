@@ -22,8 +22,14 @@ maxNumberOfTestableProjects=50
 
 function findProjectRoot () {
   local path=${1}
-  while [[ "$path" != "." && ! -e "$path/pom.xml" ]]; do
-    path=$(dirname $path)
+  while [[ "$path" != "." ]]; do
+    if [[ ! -e "$path/pom.xml" ]] ; then
+      path=$(dirname $path)
+    elif [[ $(dirname $path) == */src/it ]] ; then
+      path=$(dirname $(dirname $path))
+    else
+      break
+    fi
   done
   echo "$path"
 }
@@ -58,7 +64,7 @@ function main() {
       local projectRoot
       projectRoot=$(findProjectRoot ${project})
       if [[ ${projectRoot} = "." ]] ; then
-        echo "There root project is affected, so a complete build is triggered"
+        echo "The root project is affected, so a complete build is triggered"
         buildAll=true
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]] ; then
         (( totalAffected ++ ))
