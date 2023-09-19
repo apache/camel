@@ -30,6 +30,7 @@ import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteBuilderLifecycleStrategy;
+import org.apache.camel.spi.BeanLoader;
 import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
@@ -44,6 +45,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     private final List<CompilePostProcessor> compilePostProcessors = new ArrayList<>();
     private StartupStepRecorder recorder;
     private SourceLoader sourceLoader = new DefaultSourceLoader();
+    private BeanLoader beanLoader;
 
     protected RouteBuilderLoaderSupport(String extension) {
         this.extension = extension;
@@ -70,12 +72,21 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         this.compilePostProcessors.add(preProcessor);
     }
 
+    public BeanLoader getBeanLoader() {
+        return beanLoader;
+    }
+
+    public void setBeanLoader(BeanLoader beanLoader) {
+        this.beanLoader = beanLoader;
+    }
+
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
 
         if (getCamelContext() != null) {
             this.recorder = getCamelContext().getCamelContextExtension().getStartupStepRecorder();
+            this.beanLoader = new AutoConfigureBeanLoader();
         }
     }
 
@@ -96,6 +107,13 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
             if (sl != null) {
                 this.sourceLoader = sl;
             }
+            CamelContextAware.trySetCamelContext(this.sourceLoader, getCamelContext());
+            // discover a special bean loader to be used
+            BeanLoader bl = getCamelContext().getRegistry().findSingleByType(BeanLoader.class);
+            if (bl != null) {
+                this.beanLoader = bl;
+            }
+            CamelContextAware.trySetCamelContext(this.beanLoader, getCamelContext());
         }
     }
 

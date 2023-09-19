@@ -28,6 +28,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
 import org.apache.camel.dsl.yaml.deserializers.ModelDeserializersResolver;
+import org.apache.camel.spi.BeanLoader;
 import org.apache.camel.spi.Resource;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
@@ -47,10 +48,14 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         super(extension);
     }
 
-    protected YamlDeserializationContext newYamlDeserializationContext(LoadSettings settings, Resource resource) {
+    protected YamlDeserializationContext newYamlDeserializationContext(
+            LoadSettings settings,
+            Resource resource,
+            BeanLoader beanLoader) {
         YamlDeserializationContext ctx = new YamlDeserializationContext(settings);
 
         ctx.setResource(resource);
+        ctx.setBeanLoader(beanLoader);
         ctx.setCamelContext(getCamelContext());
         ctx.addResolvers(new CustomResolver());
         ctx.addResolvers(new ModelDeserializersResolver());
@@ -67,7 +72,7 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
             // need a local settings because we want the label to be the resource we parse so the parser
             // can show parsing errors referring to actual resource file being parsed.
             LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
-            final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
+            final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource, getBeanLoader());
             final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
             final Parser parser = new ParserImpl(local, reader);
             final Composer composer = new Composer(local, parser);

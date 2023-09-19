@@ -336,6 +336,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
                 model.addRegistryBean(def);
 
+                // notify about bean loaded
+                if (getBeanLoader() != null) {
+                    getBeanLoader().onLoadedBean(name, target);
+                }
+
             } catch (Exception e) {
                 if (delayIfFailed) {
                     delayedRegistrations.add(def);

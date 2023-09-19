@@ -32,6 +32,7 @@ import org.apache.camel.Service;
 import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
 import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.spi.BeanLoader;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
@@ -48,6 +49,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     private final Map<String, ConstructNode> constructors;
     private CamelContext camelContext;
     private Resource resource;
+    private BeanLoader beanLoader;
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
@@ -73,6 +75,14 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     public void setResource(Resource resource) {
         this.resource = resource;
+    }
+
+    public BeanLoader getBeanLoader() {
+        return beanLoader;
+    }
+
+    public void setBeanLoader(BeanLoader beanLoader) {
+        this.beanLoader = beanLoader;
     }
 
     @Override

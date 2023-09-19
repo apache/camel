@@ -850,7 +850,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         try (InputStream is = resourceInputStream(resource)) {
             LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
-            YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
+            YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource, getBeanLoader());
             StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
             Parser parser = new ParserImpl(local, reader);
             Composer composer = new Composer(local, parser);

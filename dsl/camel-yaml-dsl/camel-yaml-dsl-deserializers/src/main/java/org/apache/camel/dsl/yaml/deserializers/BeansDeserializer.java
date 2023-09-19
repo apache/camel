@@ -25,6 +25,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
+import org.apache.camel.spi.BeanLoader;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -46,9 +47,9 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
     @Override
     public Object construct(Node node) {
-        final BeansCustomizer answer = new BeansCustomizer();
         final SequenceNode sn = asSequenceNode(node);
         final YamlDeserializationContext dc = getDeserializationContext(node);
+        final BeansCustomizer answer = new BeansCustomizer(dc != null ? dc.getBeanLoader() : null);
 
         for (Node item : sn.getValue()) {
             setDeserializationContext(item, dc);
@@ -82,6 +83,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
     protected void registerBean(
             CamelContext camelContext,
+            BeanLoader beanLoader,
             List<RegistryBeanDefinition> delayedRegistrations,
             RegistryBeanDefinition def, boolean delayIfFailed) {
         try {
@@ -95,6 +97,11 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
             model.addRegistryBean(def);
 
+            // notify about bean loaded
+            if (beanLoader != null) {
+                beanLoader.onLoadedBean(name, bean);
+            }
+
         } catch (Exception e) {
             if (delayIfFailed) {
                 delayedRegistrations.add(def);
@@ -106,8 +113,13 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
     private class BeansCustomizer implements CamelContextCustomizer {
 
+        private final BeanLoader beanLoader;
         private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
         private final List<RegistryBeanDefinition> beans = new ArrayList<>();
+
+        public BeansCustomizer(BeanLoader beanLoader) {
+            this.beanLoader = beanLoader;
+        }
 
         public void addBean(RegistryBeanDefinition bean) {
             beans.add(bean);
@@ -117,12 +129,12 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         public void configure(CamelContext camelContext) {
             // first-pass of creating beans
             for (RegistryBeanDefinition bean : beans) {
-                registerBean(camelContext, delayedRegistrations, bean, true);
+                registerBean(camelContext, beanLoader, delayedRegistrations, bean, true);
             }
             beans.clear();
             // second-pass of creating beans should fail if not possible
             for (RegistryBeanDefinition bean : delayedRegistrations) {
-                registerBean(camelContext, delayedRegistrations, bean, false);
+                registerBean(camelContext, beanLoader, delayedRegistrations, bean, false);
             }
             delayedRegistrations.clear();
         }
