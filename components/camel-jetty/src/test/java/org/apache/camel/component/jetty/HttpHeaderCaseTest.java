@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
 
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse response = client.execute(method)) {
-            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
             assertEquals("Bye World", responseString);
             assertEquals("aBc123", response.getFirstHeader("MyCaseHeader").getValue());
