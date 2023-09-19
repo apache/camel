@@ -178,7 +178,7 @@ public final class OgnlHelper {
      */
     public static List<String> splitOgnl(String ognl) {
         // return an empty list if ognl is empty
-        if (ognl == null || ognl.isEmpty() || ognl.trim().isEmpty()) {
+        if (ognl == null || ognl.isBlank()) {
             return Collections.emptyList();
         }
 

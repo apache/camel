@@ -242,7 +242,7 @@ public final class PropertyConfigurerGenerator {
 
             // nested type was stored in extra as we use BaseOptionModel to hold the option data
             boolean hasNestedTypes
-                    = options.stream().map(BaseOptionModel::getNestedType).anyMatch(s -> s != null && !s.trim().isEmpty());
+                    = options.stream().map(BaseOptionModel::getNestedType).anyMatch(s -> s != null && !s.isBlank());
             if (hasNestedTypes) {
                 w.append('\n');
                 w.append("    @Override\n");

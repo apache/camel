@@ -272,7 +272,7 @@ public class RestOpenApiReader {
         securityRequirements.forEach(requirement -> {
             SecurityRequirement oasRequirement = new SecurityRequirement();
             List<String> scopes;
-            if (requirement.getScopes() == null || requirement.getScopes().trim().isEmpty()) {
+            if (requirement.getScopes() == null || requirement.getScopes().isBlank()) {
                 scopes = Collections.emptyList();
             } else {
                 scopes = Arrays.asList(requirement.getScopes().trim().split("\\s*,\\s*"));

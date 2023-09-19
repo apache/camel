@@ -198,7 +198,7 @@ public final class ObjectHelper {
      * @return       true if empty
      */
     public static boolean isEmpty(String value) {
-        return value == null || value.trim().isEmpty();
+        return value == null || value.isBlank();
     }
 
     /**

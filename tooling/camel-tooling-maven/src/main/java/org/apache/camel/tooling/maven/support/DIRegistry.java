@@ -123,7 +123,7 @@ public class DIRegistry extends SupplierRegistry {
         for (Annotation ann : type.getAnnotations()) {
             if (isNamedAnnotation(ann)) {
                 name = getNamedAnnotationValue(type);
-                if (name == null || name.trim().isEmpty()) {
+                if (name == null || name.isBlank()) {
                     name = key.getName();
                 }
             }

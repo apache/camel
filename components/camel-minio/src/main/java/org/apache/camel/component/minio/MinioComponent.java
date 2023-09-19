@@ -47,7 +47,7 @@ public class MinioComponent extends HealthCheckComponent {
 
     @Override
     protected MinioEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (isEmpty(remaining) || remaining.trim().length() == 0) {
+        if (isEmpty(remaining) || remaining.isBlank()) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
 

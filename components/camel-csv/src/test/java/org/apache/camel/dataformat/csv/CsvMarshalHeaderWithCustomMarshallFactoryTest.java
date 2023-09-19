@@ -75,7 +75,7 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         body.put("last_name", "Mustermann");
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
         try (Stream<String> stream = Files.lines(Paths.get(outputFile.toURI()))
-                .filter(l -> l.trim().length() > 0)) {
+                .filter(l -> !l.isBlank())) {
             List<String> lines = stream.toList();
             assertEquals(3, lines.size());
         }

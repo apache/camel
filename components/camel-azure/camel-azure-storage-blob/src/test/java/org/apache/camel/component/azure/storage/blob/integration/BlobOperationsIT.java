@@ -418,7 +418,7 @@ class BlobOperationsIT extends Base {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
-        assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8).trim().isEmpty());
+        assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8).isBlank());
 
         blobClientWrapper.delete(null, null, null);
     }
