@@ -89,11 +89,13 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -233,6 +235,15 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration combine.self="override">
+                    <!-- Prevent the maven-javadoc-plugin from generating the Javadoc of the test classes generated
+                    by jooq-codegen-maven -->
+                    <sourcepath>${project.build.sourceDirectory};src/generated/java</sourcepath>
+                </configuration>
             </plugin>
         </plugins>
     </build>
