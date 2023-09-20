@@ -103,7 +103,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sheets scopes.
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
          * 
          * The option is a:
          * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
@@ -119,7 +122,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sheets scopes.
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
@@ -985,7 +991,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sheets scopes.
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
          * 
          * The option is a:
          * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
@@ -1001,7 +1010,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sheets scopes.
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
@@ -1209,7 +1221,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sheets scopes.
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
          * 
          * The option is a:
          * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
@@ -1225,7 +1240,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sheets scopes.
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
