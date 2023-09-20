@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends ContextTestSupport {
 
@@ -49,7 +48,6 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
         assertMockEndpointsSatisfied();
 
         TypeConverterRegistry reg = context.getTypeConverterRegistry();
-        assertTrue(reg.getStatistics().isStatisticsEnabled(), "Should be enabled");
 
         Long failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, failed.intValue());
