@@ -216,7 +216,7 @@ class TryTest extends YamlTestSupport {
         }
     }
 
-    def "Error: kebab-case: do-catch"() {
+    def "Error: kebab-case: do-catch2"() {
         when:
         var route = '''
                 - from:

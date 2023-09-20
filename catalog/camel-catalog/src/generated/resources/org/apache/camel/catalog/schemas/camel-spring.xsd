@@ -13600,8 +13600,8 @@ org.apache.camel.builder.RouteBuilder.
     <xs:sequence>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:string"/>
-    <xs:attribute name="type" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="xs:string" use="required"/>
   </xs:complexType>
   <xs:complexType name="restConfigurationDefinition">
     <xs:sequence>

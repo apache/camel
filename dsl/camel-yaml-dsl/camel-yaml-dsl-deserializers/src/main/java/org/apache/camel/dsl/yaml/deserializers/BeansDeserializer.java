@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
@@ -44,6 +46,9 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
                                 type = "array:org.apache.camel.model.app.RegistryBeanDefinition")
           })
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
+
+    private final Set<String> beanCache = new HashSet<>();
+
     @Override
     public Object construct(Node node) {
         final BeansCustomizer answer = new BeansCustomizer();
@@ -64,10 +69,22 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
                 bean.setType("#class:" + bean.getType());
             }
 
-            answer.addBean(bean);
+            // due to yaml-dsl is pre parsing beans which gets created eager
+            // and then later beans can be parsed again such as from Camel K Integration CRD files
+            // we need to avoid double creating beans and therefore has a cache to check for duplicates
+            String key = bean.getName() + ":" + bean.getType();
+            boolean duplicate = beanCache.contains(key);
+            if (!duplicate) {
+                answer.addBean(bean);
+                beanCache.add(key);
+            }
         }
 
         return answer;
+    }
+
+    public void clearCache() {
+        beanCache.clear();
     }
 
     public Object newInstance(RegistryBeanDefinition bean, CamelContext context) throws Exception {
