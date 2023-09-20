@@ -28,8 +28,8 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.component.extension.MetaDataExtension.MetaData;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;

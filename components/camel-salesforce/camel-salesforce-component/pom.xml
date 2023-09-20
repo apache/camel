@@ -93,13 +93,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jsonSchema</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.validation</groupId>
-                    <artifactId>validation-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>jackson-module-jsonSchema-jakarta</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
