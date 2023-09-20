@@ -126,13 +126,6 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb-impl-version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-
         <!-- Pub/Sub API dependencies -->
         <dependency>
             <groupId>io.grpc</groupId>
@@ -289,6 +282,27 @@
                         <goals>
                             <goal>compile</goal>
                             <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Remove it once https://github.com/grpc/grpc-java/issues/9179 is resolved -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <replace token= "@javax.annotation.Generated"
+                                         value="@jakarta.annotation.Generated"
+                                         dir="target/generated-sources/protobuf/grpc-java">
+                                    <include name="**/*.java"/>
+                                </replace>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
                         </goals>
                     </execution>
                 </executions>

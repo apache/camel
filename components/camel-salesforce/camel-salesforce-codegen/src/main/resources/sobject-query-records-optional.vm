@@ -23,7 +23,7 @@ package $packageName;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
 import java.util.List;
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * Salesforce QueryRecords DTO for type $desc.Name
