@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.impl.converter.TypeResolverHelper.tryAssignableFrom;
 
-public class CoreTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
+public abstract class CoreTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
     protected static final TypeConverter MISS_CONVERTER = new TypeConverterSupport() {
         @Override
@@ -63,7 +63,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     // special enum converter for optional performance
     protected final TypeConverter enumTypeConverter = new EnumTypeConverter();
 
-    private final ConverterStatistics statistics = new TypeConverterStatistics();
+    private final ConverterStatistics statistics;
 
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Ignore;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.DEBUG;
@@ -71,6 +71,14 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     // Why 256: as of Camel 4, we have about 230 type converters. Therefore, set the capacity to a few more to provide
     // space for others added during runtime
     private final Map<TypeConvertible<?, ?>, TypeConverter> converters = new ConcurrentHashMap<>(256);
+
+    protected CoreTypeConverterRegistry(boolean statisticsEnabled) {
+        if (statisticsEnabled) {
+            statistics = new TypeConverterStatistics();
+        } else {
+            statistics = new NoopTypeConverterStatistics();
+        }
+    }
 
     @Override
     public boolean allowNull() {
