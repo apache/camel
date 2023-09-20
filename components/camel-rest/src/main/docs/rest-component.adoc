@@ -33,6 +33,10 @@ rest://method:path[:uriTemplate]?[options]
 
 // component options: START
 include::partial$component-configure-options.adoc[]
+[NOTE]
+====
+If you want to configure custom headerFilterStrategy, its recommended to extend the rest based(org.apache.camel.http.common.HttpRestHeaderFilterStrategy) and ensure to call its super methods
+====
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
