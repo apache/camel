@@ -175,32 +175,13 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         return (T) doConvertToAndStat(type, exchange, value, false);
     }
 
-    // must be 4 or 5 in length
     private static Boolean customParseBoolean(String str) {
-        int len = str.length();
-        // fast check the value as-is in lower case which is most common
-        if (len == 4) {
-            if ("true".equals(str)) {
-                return Boolean.TRUE;
-            }
-
-            if ("TRUE".equals(str.toUpperCase())) {
-                return Boolean.TRUE;
-            }
-
-            return null;
+        if ("true".equalsIgnoreCase(str)) {
+            return Boolean.TRUE;
         }
 
-        if (len == 5) {
-            if ("false".equals(str)) {
-                return Boolean.FALSE;
-            }
-
-            if ("FALSE".equals(str.toUpperCase())) {
-                return Boolean.FALSE;
-            }
-
-            return null;
+        if ("false".equalsIgnoreCase(str)) {
+            return Boolean.FALSE;
         }
 
         return null;
