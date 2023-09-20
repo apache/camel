@@ -16,12 +16,27 @@
  */
 package org.apache.camel.component.sjms;
 
+import jakarta.jms.Session;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class JmsSelectorTest extends JmsTestSupport {
+
+    protected ActiveMQConnectionFactory connectionFactory;
+
+    protected Session session;
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Override
     protected boolean useJmx() {
@@ -44,6 +59,15 @@ public class JmsSelectorTest extends JmsTestSupport {
     }
 
     @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

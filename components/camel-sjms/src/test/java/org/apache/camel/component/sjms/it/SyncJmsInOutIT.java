@@ -18,11 +18,24 @@ package org.apache.camel.component.sjms.it;
 
 import java.util.concurrent.TimeUnit;
 
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
@@ -30,7 +43,16 @@ import static org.apache.camel.test.junit5.TestSupport.body;
  * Integration test that verifies the ability of SJMS to correctly process synchronous InOut exchanges from both the
  * Producer and Consumer perspective using a replyTo destination.
  */
-public class SyncJmsInOutIT extends JmsTestSupport {
+public class SyncJmsInOutIT extends CamelTestSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(org.apache.camel.test.infra.core.impl.CamelTestSupport.class);
+
+    protected ActiveMQConnectionFactory connectionFactory;
+
+    protected Session session;
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testSynchronous() throws Exception {
@@ -51,6 +73,28 @@ public class SyncJmsInOutIT extends JmsTestSupport {
     }
 
     @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override

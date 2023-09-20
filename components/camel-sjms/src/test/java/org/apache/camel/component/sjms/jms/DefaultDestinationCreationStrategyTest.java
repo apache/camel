@@ -16,62 +16,90 @@
  */
 package org.apache.camel.component.sjms.jms;
 
+import jakarta.jms.Connection;
 import jakarta.jms.Queue;
+import jakarta.jms.Session;
 import jakarta.jms.TemporaryQueue;
 import jakarta.jms.TemporaryTopic;
 import jakarta.jms.Topic;
 
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DefaultDestinationCreationStrategyTest extends JmsTestSupport {
-
+public class DefaultDestinationCreationStrategyTest extends CamelTestSupport {
     private DestinationCreationStrategy strategy = new DefaultDestinationCreationStrategy();
+
+    protected ActiveMQConnectionFactory connectionFactory;
+
+    protected Session session;
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testQueueCreation() throws Exception {
-        Queue destination = (Queue) strategy.createDestination(getSession(), "queue://test", false);
+        Queue destination = (Queue) strategy.createDestination(session, "queue://test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
 
-        destination = (Queue) strategy.createDestination(getSession(), "queue:test", false);
+        destination = (Queue) strategy.createDestination(session, "queue:test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
 
-        destination = (Queue) strategy.createDestination(getSession(), "test", false);
+        destination = (Queue) strategy.createDestination(session, "test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
     }
 
     @Test
     public void testTopicCreation() throws Exception {
-        Topic destination = (Topic) strategy.createDestination(getSession(), "topic://test", true);
+        Topic destination = (Topic) strategy.createDestination(session, "topic://test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
 
-        destination = (Topic) strategy.createDestination(getSession(), "topic:test", true);
+        destination = (Topic) strategy.createDestination(session, "topic:test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
 
-        destination = (Topic) strategy.createDestination(getSession(), "test", true);
+        destination = (Topic) strategy.createDestination(session, "test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
     }
 
     @Test
     public void testTemporaryQueueCreation() throws Exception {
-        TemporaryQueue destination = (TemporaryQueue) strategy.createTemporaryDestination(getSession(), false);
+        TemporaryQueue destination = (TemporaryQueue) strategy.createTemporaryDestination(session, false);
         assertNotNull(destination);
         assertNotNull(destination.getQueueName());
     }
 
     @Test
     public void testTemporaryTopicCreation() throws Exception {
-        TemporaryTopic destination = (TemporaryTopic) strategy.createTemporaryDestination(getSession(), true);
+        TemporaryTopic destination = (TemporaryTopic) strategy.createTemporaryDestination(session, true);
         assertNotNull(destination);
         assertNotNull(destination.getTopicName());
+    }
+
+    @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
     }
 }

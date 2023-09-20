@@ -28,6 +28,7 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
@@ -35,7 +36,8 @@ import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -75,11 +77,9 @@ public class JmsTestSupport extends CamelTestSupport {
         try (InputStream inStream = url.openStream()) {
             properties.load(inStream);
         }
-
         brokerUri = service.serviceAddress();
     }
 
-    @Override
     protected boolean useJmx() {
         return false;
     }
@@ -94,10 +94,9 @@ public class JmsTestSupport extends CamelTestSupport {
         }
     }
 
-    @Override
     @AfterEach
     public void tearDown() throws Exception {
-        super.tearDown();
+        //super.tearDown();
         DefaultCamelContext dcc = (DefaultCamelContext) context;
         while (!dcc.isStopped()) {
             log.info("Waiting on the Camel Context to stop");
@@ -112,23 +111,6 @@ public class JmsTestSupport extends CamelTestSupport {
             connection.stop();
             connection = null;
         }
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        connectionFactory = new ActiveMQConnectionFactory(brokerUri);
-
-        setupFactoryExternal(connectionFactory);
-        connection = connectionFactory.createConnection();
-        connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        if (addSjmsComponent) {
-            SjmsComponent component = new SjmsComponent();
-            component.setConnectionFactory(connectionFactory);
-            camelContext.addComponent("sjms", component);
-        }
-        return camelContext;
     }
 
     public void setSession(Session session) {
@@ -169,4 +151,20 @@ public class JmsTestSupport extends CamelTestSupport {
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
+
+    @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+
+        setupFactoryExternal(connectionFactory);
+        connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        if (addSjmsComponent) {
+            SjmsComponent component = new SjmsComponent();
+            component.setConnectionFactory(connectionFactory);
+            camelContext.addComponent("sjms", component);
+        }
+    }
+
 }

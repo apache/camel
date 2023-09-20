@@ -19,12 +19,22 @@ package org.apache.camel.component.sjms.bugfixes;
 import java.io.File;
 import java.io.InputStream;
 
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -32,13 +42,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Unit test for CAMEL_6820Test. This test is to verify the ability to support the Camel File Component more cleanly
  * along with better support for ByteMessages.
  */
-public class CAMEL6820Test extends JmsTestSupport {
+public class CAMEL6820Test extends CamelTestSupport {
 
     private static final String TEST_DATA_DIR = "target/testdata";
     private static final String FILE_OUTPUT_URI = "file:" + TEST_DATA_DIR;
     private static final String FILE_INPUT_URI = "file:" + TEST_DATA_DIR;
     private static final String SJMS_QUEUE_URI = "sjms:queue:file.converter.queue.CAMEL6820Test";
     private static final String MOCK_RESULT_URI = "mock:result";
+
+    protected ActiveMQConnectionFactory connectionFactory;
+    protected Session session;
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     @Test
     public void testCamelGenericFileConverterMessage() throws Exception {
@@ -74,6 +90,28 @@ public class CAMEL6820Test extends JmsTestSupport {
     }
 
     @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

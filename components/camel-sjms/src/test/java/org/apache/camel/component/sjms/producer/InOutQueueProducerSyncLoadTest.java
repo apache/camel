@@ -19,25 +19,49 @@ package org.apache.camel.component.sjms.producer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.MessageListener;
 import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
+public class InOutQueueProducerSyncLoadTest extends CamelTestSupport {
+    private static final Logger log = LoggerFactory.getLogger(org.apache.camel.test.infra.core.impl.CamelTestSupport.class);
+    private DestinationCreationStrategy strategy = new DefaultDestinationCreationStrategy();
+
+    protected ActiveMQConnectionFactory connectionFactory;
+
+    protected Session session;
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerSyncLoadTest";
     private MessageConsumer mc1;
@@ -46,22 +70,19 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     public InOutQueueProducerSyncLoadTest() {
     }
 
-    @Override
     protected boolean useJmx() {
         return false;
     }
 
-    @Override
     @BeforeEach
     public void setUp() throws Exception {
-        super.setUp();
+        //super.setUp();
         mc1 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
         mc2 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
         mc1.setMessageListener(new MyMessageListener());
         mc2.setMessageListener(new MyMessageListener());
     }
 
-    @Override
     @AfterEach
     public void tearDown() throws Exception {
         MyMessageListener l1 = (MyMessageListener) mc1.getMessageListener();
@@ -70,7 +91,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
         MyMessageListener l2 = (MyMessageListener) mc2.getMessageListener();
         l2.close();
         mc2.close();
-        super.tearDown();
+        //super.tearDown();
     }
 
     /**
@@ -83,19 +104,15 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
 
         for (int i = 1; i <= 5000; i++) {
             final int tempI = i;
-            Runnable worker = new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        final String requestText = "Message " + tempI;
-                        final String responseText = "Response Message " + tempI;
-                        String response = template.requestBody("direct:start", requestText, String.class);
-                        assertNotNull(response);
-                        assertEquals(responseText, response);
-                    } catch (Exception e) {
-                        log.warn("Error", e);
-                    }
+            Runnable worker = () -> {
+                try {
+                    final String requestText = "Message " + tempI;
+                    final String responseText = "Response Message " + tempI;
+                    String response = template.requestBody("direct:start", requestText, String.class);
+                    assertNotNull(response);
+                    assertEquals(responseText, response);
+                } catch (Exception e) {
+                    log.warn("Error", e);
                 }
             };
             executor.execute(worker);
@@ -110,6 +127,33 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     }
 
     @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }
+
+    public MessageConsumer createQueueConsumer(String destination) throws Exception {
+        return new Jms11ObjectFactory().createMessageConsumer(session,
+                strategy.createDestination(session, destination, false), null, false, null, true, false);
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -132,11 +176,11 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
                 TextMessage request = (TextMessage) message;
                 String text = request.getText();
 
-                TextMessage response = getSession().createTextMessage();
+                TextMessage response = session.createTextMessage();
                 response.setText("Response " + text);
                 response.setJMSCorrelationID(request.getJMSCorrelationID());
                 if (mp == null) {
-                    mp = getSession().createProducer(message.getJMSReplyTo());
+                    mp = session.createProducer(message.getJMSReplyTo());
                 }
                 mp.send(response);
             } catch (JMSException e) {

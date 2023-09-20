@@ -18,33 +18,56 @@ package org.apache.camel.component.sjms.producer;
 
 import java.util.UUID;
 
+import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.MessageListener;
 import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.SjmsConstants;
+import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.impl.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class InOutQueueProducerTest extends JmsTestSupport {
+public class InOutQueueProducerTest extends CamelTestSupport {
+
+    private DestinationCreationStrategy strategy = new DefaultDestinationCreationStrategy();
+
+    protected ActiveMQConnectionFactory connectionFactory;
+
+    protected Session session;
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerTest";
 
     public InOutQueueProducerTest() {
     }
 
-    @Override
     protected boolean useJmx() {
         return false;
     }
@@ -107,6 +130,33 @@ public class InOutQueueProducerTest extends JmsTestSupport {
      * @throws Exception
      */
     @Override
+    protected void configureCamelContext(CamelContext camelContext) throws Exception {
+        connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
+
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+    }
+
+    public MessageConsumer createQueueConsumer(String destination) throws Exception {
+        return new Jms11ObjectFactory().createMessageConsumer(session,
+                strategy.createDestination(session, destination, false), null, false, null, true, false);
+    }
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -136,10 +186,10 @@ public class InOutQueueProducerTest extends JmsTestSupport {
                 String text = request.getText();
                 assertEquals(requestText, text);
 
-                TextMessage response = getSession().createTextMessage();
+                TextMessage response = session.createTextMessage();
                 response.setText(responseText);
                 response.setJMSCorrelationID(request.getJMSCorrelationID());
-                MessageProducer mp = getSession().createProducer(message.getJMSReplyTo());
+                MessageProducer mp = session.createProducer(message.getJMSReplyTo());
                 mp.send(response);
                 mp.close();
             } catch (JMSException e) {

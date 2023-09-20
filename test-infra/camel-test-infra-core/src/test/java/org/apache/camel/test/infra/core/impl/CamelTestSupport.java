@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.core.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -35,22 +36,28 @@ import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public abstract class CamelTestSupport implements ConfigurableContext, ConfigurableRoute {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
+
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
 
     protected CamelContext context;
     protected volatile ProducerTemplate template;
+    protected volatile ConsumerTemplate consumer;
 
     @BeforeEach
     public void doSetup() {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     public CamelContext context() {
@@ -139,4 +146,10 @@ public abstract class CamelTestSupport implements ConfigurableContext, Configura
         message.setBody(body);
         return exchange;
     }
+
+
+    protected void doPreSetup() throws Exception {
+
+    }
+
 }
