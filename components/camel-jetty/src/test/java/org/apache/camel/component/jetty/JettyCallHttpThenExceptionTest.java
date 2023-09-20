@@ -52,7 +52,7 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/myserver").to("log:A")
+                from("jetty://http://localhost:{{port}}/myserver?muteException=false").to("log:A")
                         // remove http headers before and after invoking http
                         // service
                         .removeHeaders("CamelHttp*").to("http://localhost:{{port}}/other").removeHeaders("CamelHttp*")

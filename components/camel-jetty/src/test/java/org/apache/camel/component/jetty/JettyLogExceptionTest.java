@@ -16,45 +16,46 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.nio.charset.StandardCharsets;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class JettyMuteExceptionTest extends BaseJettyTest {
+public class JettyLogExceptionTest extends BaseJettyTest {
 
     @Test
-    public void testMuteException() throws Exception {
+    public void testLogException() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
         get.addHeader("Accept", "application/text");
-        try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(get)) {
 
-            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-            assertTrue(responseString.isEmpty());
-            assertEquals(500, response.getCode());
+        Appender appender = mock(Appender.class);
+        when(appender.getName()).thenReturn("mockAppender");
+        when(appender.isStarted()).thenReturn(true);
+        Logger logger = (Logger) LogManager.getLogger(DefaultHttpBinding.class);
+        logger.addAppender(appender);
+
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            client.execute(get);
         }
-    }
 
-    @Test
-    public void testDefaultMuteException() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/fooDefault");
-        get.addHeader("Accept", "application/text");
-        try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(get)) {
-
-            String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-            assertTrue(responseString.isEmpty());
-            assertEquals(500, response.getCode());
-        }
+        ArgumentCaptor<LogEvent> captor = ArgumentCaptor.forClass(LogEvent.class);
+        verify(appender, atLeastOnce()).append(captor.capture());
+        assertTrue(captor.getAllValues().stream().anyMatch(
+                event -> event.getMessage().getFormattedMessage().equals(
+                        "Server internal error response returned due to 'Camel cannot do this'")));
     }
 
     @Override
@@ -62,13 +63,9 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:{{port}}/foo?muteException=true").to("mock:destination")
-                        .throwException(new IllegalArgumentException("Camel cannot do this"));
-
-                from("jetty:http://localhost:{{port}}/fooDefault").to("mock:destination")
+                from("jetty:http://localhost:{{port}}/foo?muteException=true&logException=true").to("mock:destination")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
-
 }

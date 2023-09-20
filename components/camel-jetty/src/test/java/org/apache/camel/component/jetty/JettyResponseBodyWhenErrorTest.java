@@ -56,7 +56,7 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false").process(new MyBookService());
             }
         };
     }
