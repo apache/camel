@@ -104,37 +104,6 @@ public interface ServletEndpointBuilderFactory {
             doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
-/**
-         * Configure the consumer to work in async mode.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param async the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder async(boolean async) {
-            doSetProperty("async", async);
-            return this;
-        }
-        /**
-         * Configure the consumer to work in async mode.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param async the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder async(String async) {
-            doSetProperty("async", async);
-            return this;
-        }
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
@@ -217,7 +186,38 @@ public interface ServletEndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
-                /**
+        /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder async(boolean async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder async(String async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
          * Used to only allow consuming if the HttpMethod matches, such as
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.

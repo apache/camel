@@ -65,6 +65,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @UriPath
     @Metadata(required = true)
     private String resourceUri;
+    @UriParam
+    private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
     @UriParam(label = "advanced")
@@ -114,10 +116,37 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
+        if (allowTemplateFromHeader) {
+            String newResourceUri = exchange.getIn().getHeader(XsltConstants.XSLT_RESOURCE_URI, String.class);
+            if (newResourceUri != null) {
+                exchange.getIn().removeHeader(XsltConstants.XSLT_RESOURCE_URI);
+
+                LOG.trace("{} set to {} creating new endpoint to handle exchange", XsltConstants.XSLT_RESOURCE_URI,
+                        newResourceUri);
+                XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+                newEndpoint.onExchange(exchange);
+                return;
+            }
+        }
         if (!contentCache || cacheCleared) {
             loadResource(resourceUri, xslt);
         }
         super.onExchange(exchange);
+    }
+
+    @ManagedAttribute(description = "Whether to allow to use resource template from header or not (default false).")
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     public boolean isCacheCleared() {
