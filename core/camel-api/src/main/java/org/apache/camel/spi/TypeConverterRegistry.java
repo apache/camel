@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spi;
 
+import java.util.function.LongConsumer;
+import java.util.function.LongSupplier;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
@@ -67,10 +70,9 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
          */
         void reset();
 
-        /**
-         * Whether statistics is enabled.
-         */
-        boolean isStatisticsEnabled();
+        default void computeIfEnabled(LongSupplier supplier, LongConsumer consumer) {
+            consumer.accept(supplier.getAsLong());
+        }
     }
 
     /**

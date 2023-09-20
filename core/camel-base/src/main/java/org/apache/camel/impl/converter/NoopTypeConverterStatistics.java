@@ -49,11 +49,6 @@ final class NoopTypeConverterStatistics implements ConverterStatistics {
     }
 
     @Override
-    public boolean isStatisticsEnabled() {
-        return false;
-    }
-
-    @Override
     public void incrementFailed() {
         // NO-OP
     }
@@ -76,5 +71,11 @@ final class NoopTypeConverterStatistics implements ConverterStatistics {
     @Override
     public void incrementAttempt() {
         // NO-OP
+    }
+
+    @Override
+    public String toString() {
+        return String.format("NoopTypeConverterStatistics utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
+                getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
     }
 }
