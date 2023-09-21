@@ -169,7 +169,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         // load resource from classpath otherwise load in doStart()
-        if (ResourceHelper.isClasspathUri(getResourceUri())) {
+        if (isContentCache() && ResourceHelper.isClasspathUri(getResourceUri())) {
             loadResource(getResourceUri(), getXslt());
         }
 
@@ -180,7 +180,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (!ResourceHelper.isClasspathUri(getResourceUri())) {
+        if (isContentCache() && !ResourceHelper.isClasspathUri(getResourceUri())) {
             loadResource(getResourceUri(), getXslt());
         }
     }
