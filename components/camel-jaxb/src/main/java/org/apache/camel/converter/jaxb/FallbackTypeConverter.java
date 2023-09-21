@@ -148,7 +148,11 @@ public class FallbackTypeConverter {
     }
 
     private <T> boolean hasXmlRootElement(Class<T> type) {
-        return type.getAnnotation(XmlRootElement.class) != null;
+        boolean answer = type.getAnnotation(XmlRootElement.class) != null;
+        if (!answer && LOG.isDebugEnabled()) {
+            LOG.debug("Class {} is not annotated with @{}", type.getName(), XmlRootElement.class.getName());
+        }
+        return answer;
     }
 
     protected <T> boolean isJaxbType(Class<T> type, Exchange exchange, boolean objectFactory) {
