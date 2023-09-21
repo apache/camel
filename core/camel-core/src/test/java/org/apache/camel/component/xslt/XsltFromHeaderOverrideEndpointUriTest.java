@@ -65,8 +65,8 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xslt:org/apache/camel/component/xslt/transform.xsl?allowTemplateFromHeader=true")
-                    .multicast()
+                        .to("xslt:org/apache/camel/component/xslt/transform.xsl?allowTemplateFromHeader=true")
+                        .multicast()
                         .bean("testBean")
                         .to("mock:result");
             }
