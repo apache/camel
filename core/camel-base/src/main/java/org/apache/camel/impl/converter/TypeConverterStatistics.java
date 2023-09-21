@@ -90,8 +90,13 @@ final class TypeConverterStatistics implements ConverterStatistics {
     }
 
     @Override
+    public boolean isStatisticsEnabled() {
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return String.format("TypeConverterStatistics utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
+        return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
                 getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
     }
 }
