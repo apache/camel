@@ -270,15 +270,15 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.errorListener = errorListener;
     }
 
-    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded.")
+    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded on startup.")
     public boolean isContentCache() {
         return contentCache;
     }
 
     /**
-     * Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the
-     * stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to
-     * reload at runtime via JMX using the clearCachedStylesheet operation.
+     * Cache for the resource content (the stylesheet file) when it is loaded on startup. If set to false Camel will
+     * reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be
+     * forced to reload at runtime via JMX using the clearCachedStylesheet operation.
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
@@ -381,16 +381,17 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         // load resource from classpath otherwise load in doStart()
-        if (ResourceHelper.isClasspathUri(resourceUri)) {
+        if (contentCache && ResourceHelper.isClasspathUri(resourceUri)) {
             loadResource(resourceUri, xslt);
         }
-        setProcessor(getXslt());
+        setProcessor(xslt);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+
+        if (contentCache && !ResourceHelper.isClasspathUri(resourceUri)) {
             loadResource(resourceUri, xslt);
         }
     }

@@ -84,10 +84,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * loaded on startup. If set to false Camel will reload the stylesheet
+         * file on each message processing. This is good for development. A
+         * cached stylesheet can be forced to reload at runtime via JMX using
+         * the clearCachedStylesheet operation.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -103,10 +103,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * loaded on startup. If set to false Camel will reload the stylesheet
+         * file on each message processing. This is good for development. A
+         * cached stylesheet can be forced to reload at runtime via JMX using
+         * the clearCachedStylesheet operation.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
