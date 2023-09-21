@@ -664,8 +664,8 @@ public interface XsltEndpointBuilderFactory {
         private static final XsltHeaderNameBuilder INSTANCE = new XsltHeaderNameBuilder();
 
         /**
-         * A URI for the template resource to use instead of the endpoint
-         * configured.
+         * A URI for the template resource to load and use instead of the
+         * endpoint configured.
          * 
          * The option is a: {@code String} type.
          * 
@@ -675,6 +675,19 @@ public interface XsltEndpointBuilderFactory {
          */
         public String xsltResourceUri() {
             return "XsltResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltStylesheet}.
+         */
+        public String xsltStylesheet() {
+            return "XsltStylesheet";
         }
 
         /**

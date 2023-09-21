@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.EntityResolver;
 
@@ -127,11 +129,26 @@ public class XsltEndpoint extends ProcessorEndpoint {
                 newEndpoint.onExchange(exchange);
                 return;
             }
+            String template = exchange.getIn().getHeader(XsltConstants.XSLT_STYLESHEET, String.class);
+            if (template != null) {
+                // need to create a new builder that uses this template as source
+                LOG.trace("Using XSLT stylesheet from header: {}", XsltConstants.XSLT_STYLESHEET);
+                XsltBuilder builder = createBuilderForCustomStylesheet(template, exchange);
+                builder.process(exchange);
+                return;
+            }
         }
         if (!contentCache || cacheCleared) {
             loadResource(resourceUri, xslt);
         }
         super.onExchange(exchange);
+    }
+
+    protected XsltBuilder createBuilderForCustomStylesheet(String template, Exchange exchange) throws Exception {
+        InputStream is = getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, template);
+        XsltBuilder builder = createXsltBuilder();
+        builder.setTransformerSource(new StreamSource(is));
+        return builder;
     }
 
     @ManagedAttribute(description = "Whether to allow to use resource template from header or not (default false).")
