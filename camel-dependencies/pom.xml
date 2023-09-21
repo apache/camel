@@ -271,7 +271,7 @@
     <influx-java-driver-version>2.22</influx-java-driver-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.5</ironmq-version>
-    <ivy-version>2.5.1</ivy-version>
+    <ivy-version>2.5.2</ivy-version>
     <jackrabbit-version>2.21.18</jackrabbit-version>
     <jackson-jq-version>1.0.0-preview.20220705</jackson-jq-version>
     <jackson-version>1.9.12</jackson-version>
@@ -521,7 +521,7 @@
     <spring-integration-version>5.5.17</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.8</spring-rabbitmq-version>
-    <spring-security-version>5.8.5</spring-security-version>
+    <spring-security-version>5.8.7</spring-security-version>
     <spring-vault-core-version>2.3.3</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
