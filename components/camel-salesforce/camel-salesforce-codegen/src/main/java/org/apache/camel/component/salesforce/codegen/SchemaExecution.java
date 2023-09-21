@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.slf4j.Logger;

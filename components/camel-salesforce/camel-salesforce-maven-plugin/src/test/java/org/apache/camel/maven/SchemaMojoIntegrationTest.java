@@ -20,8 +20,8 @@ import java.io.File;
 import java.nio.file.Path;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
