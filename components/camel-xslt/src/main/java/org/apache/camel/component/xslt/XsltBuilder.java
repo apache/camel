@@ -125,7 +125,7 @@ public class XsltBuilder implements Processor {
             resultHandler.setBody(out);
         } finally {
             releaseTransformer(transformer);
-            // IOHelper can handle if is is null
+            // IOHelper can handle if null
             IOHelper.close(is);
         }
     }
