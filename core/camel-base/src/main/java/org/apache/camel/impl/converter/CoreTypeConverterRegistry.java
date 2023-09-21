@@ -613,9 +613,10 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     protected void doStop() throws Exception {
         super.doStop();
         // log utilization statistics when stopping, including mappings
-
-        final String info = generateMappingStatisticsMessage();
-        LOG.info(info);
+        if (statistics.isStatisticsEnabled()) {
+            final String info = generateMappingStatisticsMessage();
+            LOG.info(info);
+        }
 
         statistics.reset();
     }
