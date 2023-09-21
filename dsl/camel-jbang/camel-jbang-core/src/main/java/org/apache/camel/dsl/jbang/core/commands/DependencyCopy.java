@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -50,9 +52,15 @@ public class DependencyCopy extends Export {
         Integer answer = doExport();
         if (answer == 0) {
             File buildDir = new File(EXPORT_DIR);
+            String outputDirectoryParameter = "-DoutputDirectory=";
+            if (Paths.get(outputDirectory).isAbsolute()) {
+                outputDirectoryParameter += outputDirectory;
+            } else {
+                outputDirectoryParameter += "../../" + outputDirectory;
+            }
             Process p = Runtime.getRuntime()
-                    .exec("mvn dependency:copy-dependencies -DincludeScope=compile -DexcludeGroupIds=org.fusesource.jansi,org.apache.logging.log4j -DoutputDirectory=../../"
-                          + outputDirectory,
+                    .exec("mvn dependency:copy-dependencies -DincludeScope=compile -DexcludeGroupIds=org.fusesource.jansi,org.apache.logging.log4j "
+                          + outputDirectoryParameter,
                             null,
                             buildDir);
             boolean done = p.waitFor(60, TimeUnit.SECONDS);
