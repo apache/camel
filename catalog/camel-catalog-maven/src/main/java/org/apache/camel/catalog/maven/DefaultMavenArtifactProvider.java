@@ -94,7 +94,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             }
 
             try (OpenURLClassLoader classLoader = new OpenURLClassLoader()) {
-                if (version == null || version.trim().isEmpty()) {
+                if (version == null || version.isBlank()) {
                     version = "LATEST";
                 }
                 String gav = String.format("%s:%s:%s", groupId, artifactId, version);

@@ -49,6 +49,26 @@ public interface XsltComponentBuilderFactory {
      */
     interface XsltComponentBuilder extends ComponentBuilder<XsltComponent> {
         /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default XsltComponentBuilder allowTemplateFromHeader(
+                boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
          * Cache for the resource content (the stylesheet file) when it is
          * loaded. If set to false Camel will reload the stylesheet file on each
          * message processing. This is good for development. A cached stylesheet
@@ -195,6 +215,7 @@ public interface XsltComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "allowTemplateFromHeader": ((XsltComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "contentCache": ((XsltComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((XsltComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((XsltComponent) component).setAutowiredEnabled((boolean) value); return true;

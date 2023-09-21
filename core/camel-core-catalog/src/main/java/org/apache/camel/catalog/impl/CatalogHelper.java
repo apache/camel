@@ -119,13 +119,11 @@ public final class CatalogHelper {
             return false;
         } else if (value instanceof String) {
             String text = (String) value;
-            return text.trim().length() > 0;
+            return !text.isBlank();
         } else {
             return true;
         }
     }
-
-
 
     /**
      * Parses the query parameters of the uri (eg the query part) manually.
@@ -151,11 +149,10 @@ public final class CatalogHelper {
         return parseQueryManually(query);
     }
 
-
     /**
      * Parses the query part of the uri (eg the parameters) manually. This method is mostly used by the CamelCatalog in
-     * order to be able to handle certain special characters markers (i.e.: "{{" and "}}"). It should not be used anywhere
-     * else.
+     * order to be able to handle certain special characters markers (i.e.: "{{" and "}}"). It should not be used
+     * anywhere else.
      * <p/>
      * The URI parameters will by default be URI encoded. However, you can define a parameter values with the syntax:
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
@@ -175,7 +172,7 @@ public final class CatalogHelper {
         if (uri.endsWith("&")) {
             throw new URISyntaxException(
                     uri, "Invalid uri syntax: Trailing & marker found. "
-                    + "Check the uri and remove the trailing & marker.");
+                         + "Check the uri and remove the trailing & marker.");
         }
 
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
@@ -258,7 +255,6 @@ public final class CatalogHelper {
             addParameter(aKey, valueStr, rc, isRaw);
         }
     }
-
 
     private static void addParameter(String name, final String value, Map<String, Object> map, boolean isRaw) {
         name = URLDecoder.decode(name, CHARSET);

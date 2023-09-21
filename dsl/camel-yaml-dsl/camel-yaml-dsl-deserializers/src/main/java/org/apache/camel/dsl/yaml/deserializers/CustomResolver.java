@@ -25,6 +25,12 @@ public class CustomResolver implements YamlDeserializerResolver {
         return YamlDeserializerResolver.ORDER_DEFAULT;
     }
 
+    private final BeansDeserializer beansDeserializer;
+
+    public CustomResolver(BeansDeserializer beansDeserializer) {
+        this.beansDeserializer = beansDeserializer;
+    }
+
     @Override
     public ConstructNode resolve(String id) {
         switch (id) {
@@ -71,7 +77,7 @@ public class CustomResolver implements YamlDeserializerResolver {
             // Misc
             //
             case "beans":
-                return new BeansDeserializer();
+                return beansDeserializer;
             case "error-handler":
             case "errorHandler":
                 return new ErrorHandlerBuilderDeserializer();

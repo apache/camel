@@ -91,7 +91,7 @@ public final class ExecParseUtils {
      * @return       true if the regular expression is matched
      */
     protected static boolean isSingleQuoted(String input) {
-        if (input == null || input.trim().length() == 0) {
+        if (input == null || input.isBlank()) {
             return false;
         }
         return input.matches("(^" + QUOTE_CHAR + "{1}([^" + QUOTE_CHAR + "]+)" + QUOTE_CHAR + "{1})");
@@ -104,7 +104,7 @@ public final class ExecParseUtils {
      * @return       true if the regular expression is matched
      */
     protected static boolean isDoubleQuoted(String input) {
-        if (input == null || input.trim().length() == 0) {
+        if (input == null || input.isBlank()) {
             return false;
         }
         return input.matches("(^" + QUOTE_CHAR + "{2}([^" + QUOTE_CHAR + "]+)" + QUOTE_CHAR + "{2})");

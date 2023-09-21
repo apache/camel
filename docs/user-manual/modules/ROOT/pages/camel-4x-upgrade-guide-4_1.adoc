@@ -118,3 +118,21 @@ The Camel-PDF component has been updated to Apache PDFBox 3.0.0 and the font par
 
 === YAML DSL
 The kebab-case style schema file,  `camel-yaml-dsl.json` has been removed from the distribution in favor of the camelCase style schema file, `camelYamlDsl.json`. While the Camel runtime stays supporting kebab-case style also for the moment, it is recommended to migrate to camelCase style. Any tooling should encourage users to use camelCase style.
+
+=== camel-jetty / camel-servlet / camel-atmosphere-websocket / camel-http-common
+
+By default stack traces will not be included in HTTP responses,
+exceptions are muted.
+Stack traces can be included in HTTP responses by disabling `muteException`.
+For example
+
+----
+from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false")
+----
+
+When exceptions are muted stack traces may be logged by enabling `logException`.
+For example
+
+----
+from("jetty:http://localhost:{{port}}/myapp/myservice?logException=true")
+----

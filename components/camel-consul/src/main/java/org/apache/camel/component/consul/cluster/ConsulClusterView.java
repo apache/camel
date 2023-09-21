@@ -261,7 +261,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
         @Override
         public void onFailure(Throwable throwable) {
-            LOGGER.debug("", throwable);
+            LOGGER.debug("{}", throwable.getMessage(), throwable);
 
             if (sessionId.get() != null) {
                 keyValueClient.releaseLock(configuration.getRootPath(), sessionId.get());

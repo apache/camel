@@ -56,13 +56,19 @@ jobs:
               repo: context.repo.repo,
               body: `:star2: Thank you for your contribution to the Apache Camel project! :star2: 
             
-            :camel: Maintainers, please note that first-time contributors *require manual approval* for the GitHub Actions to run.
+            :robot: CI automation will test this PR automatically.
             
-            :warning: Please note that the changes on this PR may be **tested automatically** if they change components.
+            :camel: Apache Camel Committers, please review the following items:
             
-            :robot: Use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot.
+            * First-time contributors **require MANUAL approval** for the GitHub Actions to run
             
-            If necessary Apache Camel Committers may access logs and test results in the job summaries!`
+            * You can use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot.
+            
+            * You can label PRs using \`build-all\`, \`build-dependents\`, \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
+            
+            * Build and test logs are available in the Summary page. **Only** [Apache Camel committers](https://camel.apache.org/community/team/#committers) have access to the summary. 
+            
+            * :warning: Be careful when sharing logs. Review their contents before sharing them publicly.`
             
             })
       - name: 'Download artifact'

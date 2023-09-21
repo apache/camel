@@ -418,6 +418,8 @@ class BlobOperationsIT extends Base {
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
 
+        // The string returned here is a 512 long sequence of null code points (U+000) which is considered a space for
+        // trim(), but not for isBlank.
         assertTrue(IOUtils.toString((InputStream) getBlobResponse.getBody(), StandardCharsets.UTF_8).trim().isEmpty());
 
         blobClientWrapper.delete(null, null, null);

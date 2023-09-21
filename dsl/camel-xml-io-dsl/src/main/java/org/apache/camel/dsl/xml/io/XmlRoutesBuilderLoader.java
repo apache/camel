@@ -318,7 +318,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
-        if (name == null || name.trim().isEmpty()) {
+        if (name == null || name.isBlank()) {
             name = type;
         }
         if (type != null && !type.startsWith("#")) {

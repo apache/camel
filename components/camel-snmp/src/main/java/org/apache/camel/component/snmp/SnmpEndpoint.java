@@ -259,7 +259,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         URI uri = URI.create(getEndpointUri());
         String host = uri.getHost();
         int port = uri.getPort();
-        if (host == null || host.trim().length() < 1) {
+        if (host == null || host.isBlank()) {
             host = "127.0.0.1";
         }
         if (port == -1) {

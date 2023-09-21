@@ -85,7 +85,7 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
         port = uri.getPort() == -1 ? DEFAULT_PORT : uri.getPort();
 
-        if (uri.getPath() == null || uri.getPath().trim().length() == 0) {
+        if (uri.getPath() == null || uri.getPath().isBlank()) {
             throw new IllegalArgumentException(URI_ERROR);
         }
         database = uri.getPath().substring(1);

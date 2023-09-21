@@ -690,10 +690,10 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * This enables the use of a specific Avro reader for use with the
-         * Confluent Platform schema registry and the
-         * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is
-         * only available in the Confluent Platform (not standard Apache Kafka).
+         * This enables the use of a specific Avro reader for use with the in
+         * multiple Schema registries documentation with Avro Deserializers
+         * implementation. This option is only available externally (not
+         * standard Apache Kafka).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1648,25 +1648,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: confluent
-         * 
-         * @param schemaRegistryURL the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder schemaRegistryURL(
-                java.lang.String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
          * Used for enabling or disabling all consumer based health checks from
          * this component.
          * 
@@ -1721,6 +1702,24 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder interceptorClasses(
                 java.lang.String interceptorClasses) {
             doSetProperty("interceptorClasses", interceptorClasses);
+            return this;
+        }
+        /**
+         * URL of the schema registry servers to use. The format is
+         * host1:port1,host2:port2. This is known as schema.registry.url in
+         * multiple Schema registries documentation. This option is only
+         * available externally (not standard Apache Kafka).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryURL the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder schemaRegistryURL(
+                java.lang.String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -2285,10 +2284,10 @@ public interface KafkaComponentBuilderFactory {
             case "autowiredEnabled": ((KafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "kafkaClientFactory": ((KafkaComponent) component).setKafkaClientFactory((org.apache.camel.component.kafka.KafkaClientFactory) value); return true;
             case "synchronous": getOrCreateConfiguration((KafkaComponent) component).setSynchronous((boolean) value); return true;
-            case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "healthCheckConsumerEnabled": ((KafkaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((KafkaComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
+            case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;
             case "kerberosConfigLocation": getOrCreateConfiguration((KafkaComponent) component).setKerberosConfigLocation((java.lang.String) value); return true;
             case "kerberosInitCmd": getOrCreateConfiguration((KafkaComponent) component).setKerberosInitCmd((java.lang.String) value); return true;

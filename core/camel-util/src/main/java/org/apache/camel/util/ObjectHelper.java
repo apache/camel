@@ -123,14 +123,14 @@ public final class ObjectHelper {
         }
         if (value instanceof byte[]) {
             String str = new String((byte[]) value);
-            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
+            if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
         if (value instanceof String) {
             // we only want to accept true or false as accepted values
             String str = (String) value;
-            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
+            if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
@@ -198,7 +198,7 @@ public final class ObjectHelper {
      * @return       true if empty
      */
     public static boolean isEmpty(String value) {
-        return value == null || value.trim().isEmpty();
+        return value == null || value.isBlank();
     }
 
     /**
@@ -1320,6 +1320,15 @@ public final class ObjectHelper {
             }
             list.add(idx, value);
         }
+    }
+
+    /**
+     * Checks whether the given string is a valid boolean value (i.e.; either "true" or "false") ignoring its case
+     * @param str the string to evaluate
+     * @return true if it is a valid boolean value or false otherwise
+     */
+    public static boolean isBoolean(String str) {
+        return "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str);
     }
 
     /*

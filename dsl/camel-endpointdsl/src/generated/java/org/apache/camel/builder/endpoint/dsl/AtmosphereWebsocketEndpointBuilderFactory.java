@@ -305,6 +305,43 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder logException(
+                boolean logException) {
+            doSetProperty("logException", logException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder logException(
+                String logException) {
+            doSetProperty("logException", logException);
+            return this;
+        }
+        /**
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
