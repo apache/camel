@@ -314,14 +314,12 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
     @Override
     protected boolean isMatchedHiddenFile(GenericFile<File> file, boolean isDirectory) {
+        String name = file.getFileNameOnly();
+        if (isDirectory) {
+            return getEndpoint().isIncludeHiddenDir() && !".camel".equals(name);
+        }
+
         if (getEndpoint().isIncludeHiddenFiles()) {
-            if (isDirectory) {
-                // skip hidden folders
-                String name = file.getFileNameOnly();
-                if (name.startsWith(".")) {
-                    return false;
-                }
-            }
             return true;
         } else {
             return super.isMatchedHiddenFile(file, isDirectory);
