@@ -332,6 +332,7 @@
                             <Jenkinsfile.deploy>SLASHSTAR_STYLE</Jenkinsfile.deploy>
                             <Jenkinsfile.dryrun>SLASHSTAR_STYLE</Jenkinsfile.dryrun>
                             <Jenkinsfile.jdk17>SLASHSTAR_STYLE</Jenkinsfile.jdk17>
+                            <Jenkinsfile.jdk21>SLASHSTAR_STYLE</Jenkinsfile.jdk21>
                             <Jenkinsfile.ppc64le>SLASHSTAR_STYLE</Jenkinsfile.ppc64le>
                             <Jenkinsfile.s390x>SLASHSTAR_STYLE</Jenkinsfile.s390x>
                             <atom>XML_STYLE</atom>
