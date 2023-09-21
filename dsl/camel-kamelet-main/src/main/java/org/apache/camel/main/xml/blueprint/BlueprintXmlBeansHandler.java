@@ -194,7 +194,7 @@ public class BlueprintXmlBeansHandler {
     private void registerBeanDefinition(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
-        if (name == null || name.trim().isEmpty()) {
+        if (name == null || name.isBlank()) {
             name = type;
         }
         if (type != null) {

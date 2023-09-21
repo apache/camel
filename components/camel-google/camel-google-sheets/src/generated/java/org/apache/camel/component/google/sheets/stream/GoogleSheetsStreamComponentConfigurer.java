@@ -57,7 +57,7 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "range": getOrCreateConfiguration(target).setRange(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresults":
@@ -100,7 +100,7 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "range": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.util.Collection.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "splitresults":

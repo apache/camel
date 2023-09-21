@@ -88,6 +88,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "consumer",
               description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     boolean muteException;
+    @UriParam(label = "consumer",
+              description = "If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged"
+                            + " when the exception stack trace is not sent in the response's body.")
+    boolean logException;
     @UriParam(label = "producer", defaultValue = "false",
               description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
@@ -389,6 +393,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return muteException;
     }
 
+    public boolean isLogException() {
+        return logException;
+    }
+
     public boolean isConnectionClose() {
         return connectionClose;
     }
@@ -419,6 +427,14 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged when
+     * the exception stack trace is not sent in the response's body.
+     */
+    public void setLogException(boolean logException) {
+        this.logException = logException;
     }
 
     public boolean isTraceEnabled() {

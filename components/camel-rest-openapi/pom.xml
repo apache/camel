@@ -75,6 +75,23 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson2-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.oai</groupId>
+            <artifactId>swagger-request-validator-core</artifactId>
+            <version>${swagger-request-validator-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>findbugs</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- test -->
         <dependency>
@@ -125,6 +142,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
             <scope>test</scope>
         </dependency>
 

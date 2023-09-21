@@ -44,11 +44,6 @@ public class SimpleNotificationProducer extends DefaultProducer {
         super(endpoint);
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
     public void process(Exchange exchange) throws Exception {
 
         ClientConfigurations clientConfigurations = new ClientConfigurations();

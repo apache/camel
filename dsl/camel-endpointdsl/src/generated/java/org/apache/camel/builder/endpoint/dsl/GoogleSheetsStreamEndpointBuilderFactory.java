@@ -45,7 +45,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return (AdvancedGoogleSheetsStreamEndpointBuilder) this;
         }
         /**
-         * Google sheets application name. Example would be
+         * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -190,7 +190,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * more info.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -198,7 +198,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scopes(
-                List<java.lang.String> scopes) {
+                Collection<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -209,7 +209,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * more info.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -819,7 +819,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 

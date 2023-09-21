@@ -303,7 +303,7 @@ abstract class PropertiesValidationResult implements Serializable {
     }
 
     static boolean isEmpty(String value) {
-        return value == null || value.isEmpty() || value.trim().isEmpty();
+        return value == null || value.isBlank();
     }
 
 }

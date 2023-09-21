@@ -119,8 +119,7 @@ public class HdfsProducer extends DefaultProducer {
                         config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
-            LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
-            LOG.debug("", e);
+            LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage(), e);
             throw new RuntimeCamelException(e);
         } finally {
             HdfsComponent.setJAASConfiguration(auth);

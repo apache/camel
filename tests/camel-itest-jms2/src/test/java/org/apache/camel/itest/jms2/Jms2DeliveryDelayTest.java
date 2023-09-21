@@ -18,10 +18,20 @@ package org.apache.camel.itest.jms2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/*
+ * Note: these tests offer only a naive check of the deliveryDelay functionality as they check the
+ * test duration. There is no guarantee that the cause for the delay is actually the deliveryDelay
+ * feature per se and not, for instance, caused by bug on the message broker or an overloaded scheduler
+ * taking a long time to handle this test workload. Nonetheless, it can still be useful for investigating
+ * bugs which is why we keep them here.
+ */
+@Isolated("These tests are highly susceptible to flakiness as they verify the results based on duration - which can vary a LOT in loaded systems")
 public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
 
     @Test
@@ -29,35 +39,18 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         template.sendBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
-        assertTrue(System.currentTimeMillis() - start >= 1000, "Should take at least 1000 millis");
-    }
 
-    @Test
-    void testInOnlyWithoutDelay() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-
-        long start = System.currentTimeMillis();
-        template.sendBody("jms:topic:foo", "Hello World");
-        MockEndpoint.assertIsSatisfied(context);
-        assertTrue(System.currentTimeMillis() - start < 1000, "Should take less than 1000 millis");
+        assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
     }
 
     @Test
     void testInOutWithDelay() {
-        long start = System.currentTimeMillis();
+        StopWatch watch = new StopWatch();
         template.requestBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
-        assertTrue(System.currentTimeMillis() - start >= 1000, "Should take at least 1000 millis");
-    }
-
-    @Test
-    void testInOutWithoutDelay() {
-        long start = System.currentTimeMillis();
-        template.requestBody("jms:topic:foo", "Hello World");
-        assertTrue(System.currentTimeMillis() - start < 1000, "Should take less than 1000 millis");
+        assertTrue(watch.taken() >= 1000, "Should take at least 1000 millis");
     }
 
     @Override

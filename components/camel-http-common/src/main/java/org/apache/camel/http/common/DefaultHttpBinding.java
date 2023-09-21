@@ -84,6 +84,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
     private boolean muteException;
+    private boolean logException;
     private boolean allowJavaSerializedObject;
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
@@ -104,6 +105,7 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
         this.muteException = endpoint.isMuteException();
+        this.logException = endpoint.isLogException();
         if (endpoint.getComponent() != null) {
             this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
         }
@@ -387,6 +389,9 @@ public class DefaultHttpBinding implements HttpBinding {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setContentLength(0);
             response.setContentType("text/plain");
+            if (isLogException()) {
+                LOG.error("Server internal error response returned due to '{}'", exception.getMessage(), exception);
+            }
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
@@ -460,7 +465,7 @@ public class DefaultHttpBinding implements HttpBinding {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
+            if (body == null || body instanceof String && ((String) body).isBlank()) {
                 // no content
                 codeToUse = currentCode == null ? 204 : currentCode;
             }
@@ -696,6 +701,16 @@ public class DefaultHttpBinding implements HttpBinding {
     @Override
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
+    }
+
+    @Override
+    public boolean isLogException() {
+        return logException;
+    }
+
+    @Override
+    public void setLogException(boolean logException) {
+        this.logException = logException;
     }
 
     @Override

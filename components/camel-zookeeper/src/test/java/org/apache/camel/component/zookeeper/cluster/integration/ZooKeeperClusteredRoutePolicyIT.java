@@ -110,7 +110,7 @@ public final class ZooKeeperClusteredRoutePolicyIT {
 
             LATCH.countDown();
         } catch (Exception e) {
-            LOGGER.warn("", e);
+            LOGGER.warn("{}", e.getMessage(), e);
         }
     }
 }

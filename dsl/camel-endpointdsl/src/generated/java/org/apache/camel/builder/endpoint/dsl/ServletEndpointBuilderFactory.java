@@ -105,37 +105,6 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configure the consumer to work in async mode.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param async the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder async(boolean async) {
-            doSetProperty("async", async);
-            return this;
-        }
-        /**
-         * Configure the consumer to work in async mode.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param async the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder async(String async) {
-            doSetProperty("async", async);
-            return this;
-        }
-        /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
@@ -218,6 +187,37 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder async(boolean async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder async(String async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
          * Used to only allow consuming if the HttpMethod matches, such as
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
@@ -232,6 +232,41 @@ public interface ServletEndpointBuilderFactory {
         default ServletEndpointBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
             doSetProperty("httpMethodRestrict", httpMethodRestrict);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder logException(boolean logException) {
+            doSetProperty("logException", logException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * exception's stack trace will be logged when the exception stack trace
+         * is not sent in the response's body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param logException the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder logException(String logException) {
+            doSetProperty("logException", logException);
             return this;
         }
         /**

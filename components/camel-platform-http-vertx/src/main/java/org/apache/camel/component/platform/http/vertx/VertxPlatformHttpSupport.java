@@ -156,7 +156,7 @@ public final class VertxPlatformHttpSupport {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {
-            if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
+            if (body == null || body instanceof String && ((String) body).isBlank()) {
                 // no content
                 codeToUse = currentCode == null ? 204 : currentCode;
             }

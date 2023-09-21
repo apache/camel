@@ -324,7 +324,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         // check for unmapped non-whitespace data at the end of the line
-        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).trim().isEmpty()
+        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).isBlank()
                 && !isIgnoreTrailingChars()) {
             throw new IllegalArgumentException(
                     "Unexpected / unmapped characters found at the end of the fixed-length record at line : " + line);

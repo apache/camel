@@ -53,6 +53,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -297,7 +298,7 @@ public abstract class AbstractCamelCatalog {
                 // is boolean
                 if (!multiValue && !valuePlaceholder && !lookup && "boolean".equals(row.getType())) {
                     // value must be a boolean
-                    boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
+                    boolean bool = ObjectHelper.isBoolean(value);
                     if (!bool) {
                         result.addInvalidBoolean(name, value);
                     }
@@ -1177,7 +1178,7 @@ public abstract class AbstractCamelCatalog {
             // is boolean
             if (!optionPlaceholder && !lookup && "boolean".equals(row.getType())) {
                 // value must be a boolean
-                boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
+                boolean bool = ObjectHelper.isBoolean(value);
                 if (!bool) {
                     result.addInvalidBoolean(longKey, value);
                 }

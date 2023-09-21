@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spi;
 
+import java.util.function.LongConsumer;
+import java.util.function.LongSupplier;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
@@ -27,7 +30,8 @@ import org.apache.camel.converter.TypeConvertible;
  * Registry for type converters.
  * <p/>
  * The utilization {@link Statistics} is by default disabled, as it has a slight performance impact under very high
- * concurrent load. The statistics can be enabled using {@link Statistics#setStatisticsEnabled(boolean)} method.
+ * concurrent load. The statistics can be enabled using
+ * {@link org.apache.camel.CamelContext#setTypeConverterStatisticsEnabled(Boolean)} (boolean)} method.
  */
 public interface TypeConverterRegistry extends StaticService, CamelContextAware {
 
@@ -66,17 +70,9 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
          */
         void reset();
 
-        /**
-         * Whether statistics is enabled.
-         */
-        boolean isStatisticsEnabled();
-
-        /**
-         * Sets whether statistics is enabled.
-         *
-         * @param statisticsEnabled <tt>true</tt> to enable
-         */
-        void setStatisticsEnabled(boolean statisticsEnabled);
+        default void computeIfEnabled(LongSupplier supplier, LongConsumer consumer) {
+            consumer.accept(supplier.getAsLong());
+        }
     }
 
     /**

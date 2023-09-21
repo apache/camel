@@ -6,7 +6,7 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;

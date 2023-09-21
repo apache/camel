@@ -29,7 +29,7 @@
 					"default": "https"
 				},
 				"host": {
-					"default": "petstore.swagger.io"
+					"default": "petstore3.swagger.io"
 				},
 				"basePath": {
 					"default": "/api/v3"
