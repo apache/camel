@@ -90,7 +90,7 @@ class CosmosDbContainerOperationsIT {
 
         containerOperations = CosmosDbClientOperations.withClient(clientWrapper)
                 .createDatabaseIfNotExistAndGetDatabaseOperations(DATABASE_NAME, null)
-                .createContainerIfNotExistAndGetContainerOperations(containerId, "partition", null);
+                .createContainerIfNotExistAndGetContainerOperations(containerId, "partition", null, null);
 
         // make sure container is created
         containerOperations.getContainerId().block();

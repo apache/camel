@@ -61,6 +61,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "databaseEndpoint": getOrCreateConfiguration(target).setDatabaseEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "hostname":
         case "hostName": getOrCreateConfiguration(target).setHostName(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexingpolicy":
+        case "indexingPolicy": getOrCreateConfiguration(target).setIndexingPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "itemid":
         case "itemId": getOrCreateConfiguration(target).setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
@@ -130,6 +132,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "databaseEndpoint": return java.lang.String.class;
         case "hostname":
         case "hostName": return java.lang.String.class;
+        case "indexingpolicy":
+        case "indexingPolicy": return java.lang.String.class;
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":
@@ -195,6 +199,8 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "databaseEndpoint": return getOrCreateConfiguration(target).getDatabaseEndpoint();
         case "hostname":
         case "hostName": return getOrCreateConfiguration(target).getHostName();
+        case "indexingpolicy":
+        case "indexingPolicy": return getOrCreateConfiguration(target).getIndexingPolicy();
         case "itemid":
         case "itemId": return getOrCreateConfiguration(target).getItemId();
         case "itempartitionkey":

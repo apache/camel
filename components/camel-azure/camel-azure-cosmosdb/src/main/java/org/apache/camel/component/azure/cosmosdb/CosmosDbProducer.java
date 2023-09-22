@@ -178,7 +178,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
             final Mono<CosmosContainerResponse> operation = getDatabaseOperations(exchange)
                     .createContainer(configurationOptionsProxy.getContainerName(exchange),
                             configurationOptionsProxy.getContainerPartitionKeyPath(exchange),
-                            configurationOptionsProxy.getThroughputProperties(exchange));
+                            configurationOptionsProxy.getThroughputProperties(exchange),
+                            configurationOptionsProxy.getIndexingPolicy(exchange));
 
             subscribeToMono(operation, exchange, setCosmosContainerResponseOnExchange(exchange), callback);
         };
@@ -341,6 +342,7 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
                 .withContainerName(configurationOptionsProxy.getContainerName(exchange))
                 .withContainerPartitionKeyPath(configurationOptionsProxy.getContainerPartitionKeyPath(exchange))
                 .withCreateContainerIfNotExist(configurationOptionsProxy.isCreateContainerIfNotExist(exchange))
+                .withIndexingPolicy(configurationOptionsProxy.getIndexingPolicy(exchange))
                 .buildContainerOperations();
     }
 

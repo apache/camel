@@ -20,14 +20,9 @@ import java.util.function.Function;
 
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosAsyncDatabase;
-import com.azure.cosmos.models.CosmosContainerProperties;
-import com.azure.cosmos.models.CosmosContainerResponse;
-import com.azure.cosmos.models.CosmosDatabaseRequestOptions;
-import com.azure.cosmos.models.CosmosDatabaseResponse;
-import com.azure.cosmos.models.CosmosQueryRequestOptions;
-import com.azure.cosmos.models.ThroughputProperties;
-import com.azure.cosmos.models.ThroughputResponse;
+import com.azure.cosmos.models.*;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbUtils;
+import org.apache.camel.util.ObjectHelper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -49,7 +44,8 @@ public class CosmosDbDatabaseOperations {
     }
 
     public Mono<CosmosContainerResponse> createContainer(
-            final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties) {
+            final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties,
+            final String indexingPolicy) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, "containerPartitionKeyPath");
 
@@ -61,23 +57,36 @@ public class CosmosDbDatabaseOperations {
             enhancedContainerPartitionKeyPath = containerPartitionKeyPath;
         }
 
-        return applyToDatabase(database -> database.createContainerIfNotExists(containerId, enhancedContainerPartitionKeyPath,
-                throughputProperties));
+        if (ObjectHelper.isNotEmpty(indexingPolicy)) {
+            CosmosContainerProperties cosmosProp
+                    = new CosmosContainerProperties(containerId, enhancedContainerPartitionKeyPath);
+            IndexingPolicy indexPolicy = new IndexingPolicy();
+            indexPolicy.setIndexingMode(IndexingMode.valueOf(indexingPolicy));
+            cosmosProp.setIndexingPolicy(indexPolicy);
+
+            return applyToDatabase(database -> database.createContainerIfNotExists(cosmosProp,
+                    throughputProperties));
+        } else {
+            return applyToDatabase(database -> database.createContainerIfNotExists(containerId, containerPartitionKeyPath,
+                    throughputProperties));
+        }
     }
 
     public CosmosDbContainerOperations createContainerIfNotExistAndGetContainerOperations(
-            final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties) {
+            final String containerId, final String containerPartitionKeyPath, final ThroughputProperties throughputProperties,
+            final String indexingPolicy) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerPartitionKeyPath, "containerPartitionKeyPath");
 
         return new CosmosDbContainerOperations(
-                getAndCreateContainerIfNotExist(containerId, containerPartitionKeyPath, true, throughputProperties));
+                getAndCreateContainerIfNotExist(containerId, containerPartitionKeyPath, true, throughputProperties,
+                        indexingPolicy));
     }
 
     public CosmosDbContainerOperations getContainerOperations(final String containerId) {
         CosmosDbUtils.validateIfParameterIsNotEmpty(containerId, "containerId");
 
-        return new CosmosDbContainerOperations(getAndCreateContainerIfNotExist(containerId, null, false, null));
+        return new CosmosDbContainerOperations(getAndCreateContainerIfNotExist(containerId, null, false, null, null));
     }
 
     public Mono<ThroughputResponse> replaceDatabaseThroughput(final ThroughputProperties throughputProperties) {
@@ -102,9 +111,9 @@ public class CosmosDbDatabaseOperations {
 
     private Mono<CosmosAsyncContainer> getAndCreateContainerIfNotExist(
             final String containerId, final String containerPartitionKeyPath, final boolean createContainerIfNotExist,
-            final ThroughputProperties throughputProperties) {
+            final ThroughputProperties throughputProperties, final String indexingPolicy) {
         if (createContainerIfNotExist) {
-            return createContainer(containerId, containerPartitionKeyPath, throughputProperties)
+            return createContainer(containerId, containerPartitionKeyPath, throughputProperties, indexingPolicy)
                     .then(database)
                     .map(database -> getContainer(database, containerId));
         }
