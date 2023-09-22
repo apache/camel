@@ -121,10 +121,10 @@ public interface XJEndpointBuilderFactory {
         }
         /**
          * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * loaded on startup. If set to false Camel will reload the stylesheet
+         * file on each message processing. This is good for development. A
+         * cached stylesheet can be forced to reload at runtime via JMX using
+         * the clearCachedStylesheet operation.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -140,10 +140,10 @@ public interface XJEndpointBuilderFactory {
         }
         /**
          * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * loaded on startup. If set to false Camel will reload the stylesheet
+         * file on each message processing. This is good for development. A
+         * cached stylesheet can be forced to reload at runtime via JMX using
+         * the clearCachedStylesheet operation.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -835,8 +835,8 @@ public interface XJEndpointBuilderFactory {
         }
 
         /**
-         * A URI for the template resource to use instead of the endpoint
-         * configured.
+         * A URI for the template resource to load and use instead of the
+         * endpoint configured.
          * 
          * The option is a: {@code String} type.
          * 
@@ -846,6 +846,19 @@ public interface XJEndpointBuilderFactory {
          */
         public String xsltResourceUri() {
             return "XsltResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltStylesheet}.
+         */
+        public String xsltStylesheet() {
+            return "XsltStylesheet";
         }
     }
     static XJEndpointBuilder endpointBuilder(String componentName, String path) {

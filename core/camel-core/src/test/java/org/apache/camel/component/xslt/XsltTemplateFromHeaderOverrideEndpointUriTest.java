@@ -23,22 +23,28 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
+public class XsltTemplateFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
 
     @Test
     public void testSendMessageAndHaveItTransformed() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
+        String sheet = IOHelper.loadText(XsltTemplateFromHeaderOverrideEndpointUriTest.class
+                .getResourceAsStream("/org/apache/camel/component/xslt/transform_to_foo.xsl"));
+        Assertions.assertNotNull(sheet);
+
         template.sendBodyAndHeader("direct:start",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
-                XsltConstants.XSLT_RESOURCE_URI, "org/apache/camel/component/xslt/transform_to_foo.xsl");
+                XsltConstants.XSLT_STYLESHEET, sheet);
 
         assertMockEndpointsSatisfied();
 
@@ -65,7 +71,7 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("xslt:org/apache/camel/component/xslt/transform.xsl?allowTemplateFromHeader=true")
+                        .to("xslt:dummy.xsl?contentCache=false&allowTemplateFromHeader=true")
                         .multicast()
                         .bean("testBean")
                         .to("mock:result");

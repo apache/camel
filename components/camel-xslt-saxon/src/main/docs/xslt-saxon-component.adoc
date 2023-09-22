@@ -90,7 +90,7 @@ To make the parameters useable, you will need to declare them.
 [source,xml]
 ----
 <setHeader name="myParam"><constant>42</constant></setHeader>
-<to uri="xslt:MyTransform.xsl"/>
+<to uri="xslt-saxon:MyTransform.xsl"/>
 ----
 
 The parameter also needs to be declared in the top level of the XSLT for it to be
@@ -195,9 +195,33 @@ With Spring XML:
 
 == Dynamic stylesheets
 
-To provide a dynamic stylesheet at runtime you can define a dynamic URI.
-See xref:manual:faq:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
+To provide a dynamic stylesheet at runtime you can either
+
+- Define a dynamic URI. See xref:manual:faq:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
 to()] for more information.
+- Use header with the stylesheet.
+
+When using a header for dynamic stylesheet, then you can either refer to the stylesheet as a `file` or `classpath`
+with the header `CamelXsltResourceUri`, such as:
+
+[source,java]
+----
+from("direct:transform")
+    .setHeader("CamelXsltResourceUri", simple("file:styles/${header.region}.xsl"))
+    .to("xslt-saxon:template.xsl?allowTemplateFromHeader=true");
+----
+
+Here we set the `CamelXsltResourceUri` header to refer to a stylesheet to be loaded from the file system,
+with a dynamic name that is computed from another header (`region`).
+
+Notice how the `allowTemplateFromHeader` must be set to `true` on the XSLT endpoint to support dynamic templates.
+
+You can also use the header `CamelXsltStylesheet` which instead should contain the content of the stylesheet
+to use, instead of referring to a file as the example from above.
+
+TIP: You can set `contentCache=false` and refer to a non-existing template, such as `"xslt-saxon:dummy.xsl?contentCache=false&allowTemplateFromHeader=true"`
+as this will tell Camel to not load `dummy.xsl` on startup but to load the stylesheet on demand. And because you
+provide the stylesheet via headers then its fully dynamic.
 
 == Accessing warnings, errors and fatalErrors from XSLT ErrorListener
 
