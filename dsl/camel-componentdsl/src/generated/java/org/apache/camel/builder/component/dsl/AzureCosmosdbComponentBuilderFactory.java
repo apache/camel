@@ -240,6 +240,24 @@ public interface AzureCosmosdbComponentBuilderFactory {
             return this;
         }
         /**
+         * The CosmosDB Indexing Policy that will be set in case of container
+         * creation, this option is related to createLeaseContainerIfNotExists
+         * and it will be taken into account when the latter is true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: CONSISTENT
+         * Group: common
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AzureCosmosdbComponentBuilder indexingPolicy(
+                java.lang.String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
          * Sets the flag to enable writes on any regions for geo-replicated
          * database accounts in the Azure Cosmos DB service. When the value of
          * this property is true, the SDK will direct write operations to
@@ -648,6 +666,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
             case "createContainerIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateContainerIfNotExists((boolean) value); return true;
             case "createDatabaseIfNotExists": getOrCreateConfiguration((CosmosDbComponent) component).setCreateDatabaseIfNotExists((boolean) value); return true;
             case "databaseEndpoint": getOrCreateConfiguration((CosmosDbComponent) component).setDatabaseEndpoint((java.lang.String) value); return true;
+            case "indexingPolicy": getOrCreateConfiguration((CosmosDbComponent) component).setIndexingPolicy((java.lang.String) value); return true;
             case "multipleWriteRegionsEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setMultipleWriteRegionsEnabled((boolean) value); return true;
             case "preferredRegions": getOrCreateConfiguration((CosmosDbComponent) component).setPreferredRegions((java.lang.String) value); return true;
             case "readRequestsFallbackEnabled": getOrCreateConfiguration((CosmosDbComponent) component).setReadRequestsFallbackEnabled((boolean) value); return true;

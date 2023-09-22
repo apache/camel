@@ -55,6 +55,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "hostname":
         case "hostName": target.getConfiguration().setHostName(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexingpolicy":
+        case "indexingPolicy": target.getConfiguration().setIndexingPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "itemid":
         case "itemId": target.getConfiguration().setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
@@ -125,6 +127,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "hostname":
         case "hostName": return java.lang.String.class;
+        case "indexingpolicy":
+        case "indexingPolicy": return java.lang.String.class;
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":
@@ -191,6 +195,8 @@ public class CosmosDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return target.getExchangePattern();
         case "hostname":
         case "hostName": return target.getConfiguration().getHostName();
+        case "indexingpolicy":
+        case "indexingPolicy": return target.getConfiguration().getIndexingPolicy();
         case "itemid":
         case "itemId": return target.getConfiguration().getItemId();
         case "itempartitionkey":

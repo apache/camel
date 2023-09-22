@@ -88,6 +88,11 @@ public class CosmosDbConfigurationOptionsProxy {
                 String.class);
     }
 
+    public String getIndexingPolicy(final Exchange exchange) {
+        return getOption(exchange, CosmosDbConstants.INDEXING_POLICY, configuration::getIndexingPolicy,
+                String.class);
+    }
+
     public CosmosContainerRequestOptions getContainerRequestOptions(final Exchange exchange) {
         return getOption(exchange, CosmosDbConstants.CONTAINER_REQUEST_OPTIONS, nullFallback(),
                 CosmosContainerRequestOptions.class);
